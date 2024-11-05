@@ -4,8 +4,9 @@ let baseURL = window.location.origin
 if (baseURL.startsWith("http://localhost")) baseURL += environment
 
 class DataManager {
-
-  constructor(){
+  services = []
+  constructor(services){
+    this.services = services
   }
 
   getPages() {
@@ -242,6 +243,8 @@ const iconsData = [
        ` 
     },
   ];
+
+
   
 
 

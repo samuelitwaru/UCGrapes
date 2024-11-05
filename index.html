@@ -1,206 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input and Button</title>
+    <style>
+        /* Container styling */
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Input field styling */
+        .input-field {
+            padding: 8px;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        /* Button styling */
+        .add-button {
+            padding: 8px 16px;
+            background-color: #3b5998; /* Facebook blue color */
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Button hover effect */
+        .add-button:hover {
+            background-color: #334d84;
+        }
+    </style>
+</head>
 <body>
-    <div id="frame-container" class="frame-container">
-       <div
-          class="container-column">
-          <div class="container-row">
-             <div
-                tile-text="Tile" tile-text-color="#000000"
-                tile-text-align="left" tile-icon="icon-name"
-                tile-icon-color="#000000" tile-icon-align="left"
-                tile-bg-color="#ffffff" tile-bg-image
-                tile-bg-image-opacity="100" tile-action-object="Page"
-                tile-action-object-id id="i8xg"
-                class="template-wrapper">
-                <div class="template-block">
-                   <div
-                      class="tile-icon-section"><span
-                      class="tile-close-icon top-right selected-tile-icon">×</span><span
-                      class="tile-icon">\n </span></div>
-                   <div
-                      class="tile-title-section"><span
-                      class="tile-close-icon top-right selected-tile-title">×</span><span
-                      class="tile-title">Title</span></div>
-                </div>
-                <button
-                   title="Delete template"
-                   class="action-button delete-button">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <button
-                   title="Add template below"
-                   class="action-button add-button-bottom">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="12" y1="5" x2="12" y2="19"></line>
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <button
-                   title="Add template right"
-                   class="action-button add-button-right">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="12" y1="5" x2="12" y2="19"></line>
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <div
-                   class="resize-handle">\n </div>
-             </div>
-          </div>
-          <div
-             class="container-row">
-             <div tile-text="Tile"
-                tile-text-color="#000000" tile-text-align="left"
-                tile-icon="icon-name" tile-icon-color="#000000"
-                tile-icon-align="left" tile-bg-color="#ffffff" tile-bg-image
-                tile-bg-image-opacity="100" tile-action-object="Page"
-                tile-action-object-id id="irlud"
-                class="template-wrapper">
-                <div class="template-block">
-                   <div
-                      class="tile-icon-section"><span
-                      class="tile-close-icon top-right selected-tile-icon">×</span><span
-                      class="tile-icon">\n </span></div>
-                   <div
-                      class="tile-title-section"><span
-                      class="tile-close-icon top-right selected-tile-title">×</span><span
-                      class="tile-title">Title</span></div>
-                </div>
-                <button
-                   title="Delete template"
-                   class="action-button delete-button">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <button
-                   title="Add template below"
-                   class="action-button add-button-bottom">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="12" y1="5" x2="12" y2="19"></line>
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <button
-                   title="Add template right"
-                   class="action-button add-button-right">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="12" y1="5" x2="12" y2="19"></line>
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <div
-                   class="resize-handle">\n </div>
-             </div>
-          </div>
-          <div
-             class="container-row">
-             <div tile-text="Tile"
-                tile-text-color="#000000" tile-text-align="left"
-                tile-icon="icon-name" tile-icon-color="#000000"
-                tile-icon-align="left" tile-bg-color="#ffffff" tile-bg-image
-                tile-bg-image-opacity="100" tile-action-object="Page"
-                tile-action-object-id id="i9bsi"
-                class="template-wrapper">
-                <div class="template-block">
-                   <div
-                      class="tile-icon-section"><span
-                      class="tile-close-icon top-right selected-tile-icon">×</span><span
-                      class="tile-icon">\n </span></div>
-                   <div
-                      class="tile-title-section"><span
-                      class="tile-close-icon top-right selected-tile-title">×</span><span
-                      class="tile-title">Title</span></div>
-                </div>
-                <button
-                   title="Delete template"
-                   class="action-button delete-button">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <button
-                   title="Add template below"
-                   class="action-button add-button-bottom">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="12" y1="5" x2="12" y2="19"></line>
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <button
-                   title="Add template right"
-                   class="action-button add-button-right">
-                   <svg
-                      xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <line
-                         x1="12" y1="5" x2="12" y2="19"></line>
-                      <line
-                         x1="5" y1="12" x2="19"
-                         y2="12"></line>
-                   </svg>
-                </button>
-                <div
-                   class="resize-handle">\n
-                </div>
-             </div>
-          </div>
-       </div>
+    <div class="input-container">
+        <input type="text" class="input-field" placeholder="Page name ..." />
+        <button class="add-button">Add</button>
     </div>
- </body>
+</body>
+</html>

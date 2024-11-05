@@ -1,7 +1,16 @@
 let globalVar = null;
 class ToolBoxManager {
-  dataManager = null
-  constructor(editorManager, dataManager, themes, icons, templates, mapping, media) {
+  dataManager = null;
+  constructor(
+    editorManager,
+    dataManager,
+    themes,
+    icons,
+    templates,
+    mapping,
+    media,
+    currentLanguage
+  ) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
     this.themes = themes;
@@ -11,21 +20,22 @@ class ToolBoxManager {
     this.mappingsItems = mapping;
     this.selectedFile = null;
     this.media = media;
+    this.currentLanguage = currentLanguage;
     this.init();
   }
 
   init() {
     let self = this;
-    this.dataManager.getPages().then(pages=>{
+    this.dataManager.getPages().then((pages) => {
       localStorage.clear();
       pages.forEach((page) => {
         if (page.PageName === "Home") {
           this.editorManager.pageId = page.PageId;
-          this.editorManager.setCurrentPage(page)
-          this.editorManager.editor.trigger("load")
+          this.editorManager.setCurrentPage(page);
+          this.editorManager.editor.trigger("load");
         }
       });
-    })
+    });
 
     this.loadTheme();
     this.listThemesInSelectField();
@@ -33,7 +43,11 @@ class ToolBoxManager {
     this.loadTiles();
     this.loadPageTemplates();
 
-    this.actionList = new ActionList(this.editorManager, this.dataManager, this)
+    this.actionList = new ActionList(
+      this.editorManager,
+      this.dataManager,
+      this
+    );
 
     this.handleFileManager();
     const tabButtons = document.querySelectorAll(".toolbox-tab-button");
@@ -82,13 +96,15 @@ class ToolBoxManager {
           PageId: pageId,
           PageJsonContent: JSON.stringify(pageData),
           PageGJSHtml: this.editorManager.editor.getHtml(),
-          PageGJSJson: JSON.stringify(this.editorManager.editor.getProjectData()),
+          PageGJSJson: JSON.stringify(
+            this.editorManager.editor.getProjectData()
+          ),
           SDT_Page: pageData,
-          PageIsPublished: true
-        }
-        this.dataManager.updatePage(data).then(res=>{
-          this.displayAlertMessage("Page Save Successfully", "success")
-        })
+          PageIsPublished: true,
+        };
+        this.dataManager.updatePage(data).then((res) => {
+          this.displayAlertMessage("Page Save Successfully", "success");
+        });
       }
     };
 
@@ -239,47 +255,42 @@ class ToolBoxManager {
     });
 
     // Create new page
-    const createPageButton = document.getElementById("create-new-page");
+    const pageFormSection = document.getElementById("page-form");
+    pageFormSection.style.display = "block";
+    const pageInput = document.getElementById("page-title");
+    const pageSubmit = document.getElementById("page-submit");
 
-    createPageButton.addEventListener("click", (e) => {
+    pageSubmit.disabled = true;
+
+    pageInput.addEventListener("input", () => {
+      pageSubmit.disabled = !pageInput.value.trim();
+    });
+
+    pageSubmit.addEventListener("click", (e) => {
       e.preventDefault();
-      const pageFormSection = document.getElementById("page-form");
-      pageFormSection.style.display = "block";
-      const pageInput = document.getElementById("page-title");
-      const pageSubmit = document.getElementById("page-submit");
+      const pageTitle = pageInput.value.trim();
+      if (pageTitle) {
+        // Additional check to ensure value exists
+        this.dataManager.createNewPage(pageTitle).then((res) => {
+          const pageInput = document.getElementById("page-title");
+          pageInput.value = "";
 
-      pageSubmit.disabled = true;
+          this.dataManager
+            .getPagesService()
+            .then((pages) => {
+              // Clear the current tree structure
+              const treeContainer = document.getElementById("tree-container"); // Assuming tree is rendered here
+              treeContainer.innerHTML = ""; // Clear existing nodes
 
-      pageInput.addEventListener("input", () => {
-        pageSubmit.disabled = !pageInput.value.trim();
-      });
-
-      pageSubmit.addEventListener("click", (e) => {
-        e.preventDefault();
-        const pageTitle = pageInput.value.trim();
-        if (pageTitle) {
-          // Additional check to ensure value exists
-          this.dataManager.createNewPage(pageTitle).then( res => {
-            const pageInput = document.getElementById("page-title");
-            pageInput.value = "";
-
-            this.dataManager
-              .getPagesService()
-              .then((pages) => {
-                // Clear the current tree structure
-                const treeContainer = document.getElementById("tree-container"); // Assuming tree is rendered here
-                treeContainer.innerHTML = ""; // Clear existing nodes
-
-                // Re-create the tree with updated pages data
-                const newTree = self.createTree(pages, true); // Set isRoot to true if it's the root
-                treeContainer.appendChild(newTree); // Append the new tree structure to the container
-              })
-              .catch((error) => {
-                console.error("Error fetching pages:", error);
-              });
-          })
-        }
-      });
+              // Re-create the tree with updated pages data
+              const newTree = self.createTree(pages, true); // Set isRoot to true if it's the root
+              treeContainer.appendChild(newTree); // Append the new tree structure to the container
+            })
+            .catch((error) => {
+              console.error("Error fetching pages:", error);
+            });
+        });
+      }
     });
   }
 
@@ -302,11 +313,15 @@ class ToolBoxManager {
         this.themeColorPalette(this.currentTheme.colors);
         localStorage.setItem("selectedTheme", themeName);
 
-        const message = "Theme applied successfully";
+        const message = this.currentLanguage.getTranslation(
+          "theme_applied_success_message"
+        );
         const status = "success";
         this.displayAlertMessage(message, status);
       } else {
-        const message = "Error applying theme. Please try again";
+        const message = this.currentLanguage.getTranslation(
+          "error_applying_theme_message"
+        );
         const status = "error";
         this.displayAlertMessage(message, status);
       }
@@ -480,7 +495,7 @@ class ToolBoxManager {
         this.editorManager.selectedComponent.addStyle({
           color: colorValues[colorKey],
         });
-        this.setAttributeToSelected("tile-text-color", colorValues[colorKey])
+        this.setAttributeToSelected("tile-text-color", colorValues[colorKey]);
       };
     });
 
@@ -488,7 +503,7 @@ class ToolBoxManager {
       const colorKey = Object.keys(colorValues)[index];
 
       box.style.backgroundColor = colorValues[colorKey];
-      
+
       box.onclick = () => {
         if (this.editorManager.selectedTemplateWrapper) {
           const svgIcon = this.editorManager.editor
@@ -498,14 +513,21 @@ class ToolBoxManager {
           if (svgIcon) {
             svgIcon.removeAttributes("fill");
             svgIcon.addAttributes({ fill: colorValues[colorKey] }); // Use the correct color key
-            this.setAttributeToSelected("tile-icon-color", colorValues[colorKey])
+            this.setAttributeToSelected(
+              "tile-icon-color",
+              colorValues[colorKey]
+            );
           } else {
-            const message = "Svg icon not found. Try again";
+            const message = this.currentLanguage.getTranslation(
+              "no_icon_selected_error_message"
+            );
             const status = "error";
             this.displayAlertMessage(message, status);
           }
         } else {
-          const message = "No tile selected. Please select a tile";
+          const message = this.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
           const status = "error";
           this.displayAlertMessage(message, status);
         }
@@ -550,12 +572,16 @@ class ToolBoxManager {
             //   }
             // }
           } else {
-            const message = "No tile selected. Please select a tile";
+            const message = this.currentLanguage.getTranslation(
+              "no_tile_selected_error_message"
+            );
             const status = "error";
             this.displayAlertMessage(message, status);
           }
         } else {
-          const message = "No tile selected. Please select a tile";
+          const message = this.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
           const status = "error";
           this.displayAlertMessage(message, status);
         }
@@ -580,11 +606,6 @@ class ToolBoxManager {
       templateBlock.title = "Click to load template"; //
       templateBlock.innerHTML = `<div>${template.media}</div>`;
 
-      // Prevent the image from being dragged
-      // templateBlock.querySelector("img").addEventListener("dragstart", (e) => {
-      //   //alert(templateBlock)
-      //   //e.preventDefault();
-      // });
       blockElement.addEventListener("click", () => {
         const popup = this.popupModal();
         document.body.appendChild(popup);
@@ -620,14 +641,15 @@ class ToolBoxManager {
   loadMappings() {
     const treeContainer = document.getElementById("tree-container");
     this.clearMappings();
-    this.dataManager.getPagesService()
+    this.dataManager
+      .getPagesService()
       .then((pages) => {
         treeContainer.appendChild(this.createTree(pages, true));
       })
       .catch((error) => {
         console.error("Error fetching pages:", error);
-      });
-  }
+      });
+  }
 
   clearMappings() {
     const treeContainer = document.getElementById("tree-container");
@@ -650,14 +672,14 @@ class ToolBoxManager {
       li.appendChild(span);
       li.className = this.checkActivePage(item.Id) ? "selected-page" : "";
       span.title = item.Id;
-      let pageTile = document.createElement("span")
-      pageTile.textContent = item.Name
+      let pageTile = document.createElement("span");
+      pageTile.textContent = item.Name;
       if (item.Children && item.Children.length > 0) {
         const childrenContainer = this.createTree(item.Children); // Recursively create children
         li.appendChild(childrenContainer);
 
-        let childToggle = document.createElement("span")
-        
+        let childToggle = document.createElement("span");
+
         childToggle.textContent = " + ";
         span.style.cursor = "pointer";
 
@@ -666,14 +688,12 @@ class ToolBoxManager {
             childrenContainer.style.display === "none" ? "block" : "none";
 
           childToggle.textContent =
-            childrenContainer.style.display === "none"
-              ? " + "
-              : " - ";
+            childrenContainer.style.display === "none" ? " + " : " - ";
         };
 
         //span.appendChild(pageTile)
-        span.appendChild(childToggle)
-      } 
+        span.appendChild(childToggle);
+      }
       //else {
       span.onclick = () => {
         this.editorManager.setCurrentPageName(item.Name);
@@ -693,7 +713,9 @@ class ToolBoxManager {
         const mainPage = document.getElementById("current-page-title");
         mainPage.textContent = this.updateActivePageName();
 
-        const message = `${item.Name} Page loaded successfully`;
+        const message = `${item.Name} ${this.currentLanguage.getTranslation(
+          "page_loaded_success_message"
+        )}`;
         const status = "success";
         this.displayAlertMessage(message, status);
       };
@@ -742,7 +764,9 @@ class ToolBoxManager {
 
     modalContent.innerHTML = `
     <div class="toolbox-modal-header">
-        <h2>Upload</h2>
+        <h2>${this.currentLanguage.getTranslation(
+          "file_upload_modal_title"
+        )}</h2>
         <span class="close">
             <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
                 <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -753,12 +777,12 @@ class ToolBoxManager {
         <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
             <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
           </svg>
-        <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
+        ${this.currentLanguage.getTranslation("upload_section_text")}
     </div>
     <div class="file-list" id="fileList">${fileListHtml}</div>
     <div class="modal-actions">
-        <button class="toolbox-btn toolbox-btn-outline" id="cancelBtn">Cancel</button>
-        <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
+        <button class="toolbox-btn toolbox-btn-outline" id="cancel_btn">Cancel</button>
+        <button class="toolbox-btn toolbox-btn-primary" id="save_btn">Save</button>
     </div>
     `;
     modal.appendChild(modalContent);
@@ -819,12 +843,14 @@ class ToolBoxManager {
             const reader = new FileReader();
             reader.onload = (e) => {
               img.src = e.target.result;
-              this.uploadFile(e.target.result, file.name, file.size, file.type).then(response=>{
-                if (response.MediaId) {
-                  this.media.push(response);
-                  this.displayMediaFile(response);
-                }
-              })
+              this.dataManager
+                .uploadFile(e.target.result, file.name, file.size, file.type)
+                .then((response) => {
+                  if (response.MediaId) {
+                    this.media.push(response);
+                    this.displayMediaFile(response);
+                  }
+                });
             };
             reader.readAsDataURL(file);
             img.alt = "File thumbnail";
@@ -872,7 +898,9 @@ class ToolBoxManager {
           });
         };
       } else {
-        const message = "Please select a tile to continue";
+        const message = this.currentLanguage.getTranslation(
+          "no_tile_selected_error_message"
+        );
         const status = "error";
         this.displayAlertMessage(message, status);
       }
@@ -885,14 +913,14 @@ class ToolBoxManager {
       document.body.removeChild(fileInputField);
     };
 
-    const cancelBtn = modal.querySelector("#cancelBtn");
+    const cancelBtn = modal.querySelector("#cancel_btn");
     cancelBtn.onclick = () => {
       modal.style.display = "none";
       document.body.removeChild(modal);
       document.body.removeChild(fileInputField);
     };
 
-    const saveBtn = modal.querySelector("#saveBtn");
+    const saveBtn = modal.querySelector("#save_btn");
     saveBtn.onclick = () => {
       if (this.selectedFile) {
         const templateBlock = this.editorManager.editor
@@ -904,7 +932,10 @@ class ToolBoxManager {
           "background-position": "center",
         });
 
-        this.setAttributeToSelected("tile-bg-image-url", this.selectedFile.MediaUrl)
+        this.setAttributeToSelected(
+          "tile-bg-image-url",
+          this.selectedFile.MediaUrl
+        );
       }
 
       modal.style.display = "none";
@@ -1007,7 +1038,9 @@ class ToolBoxManager {
     popup.innerHTML = `
       <div class="popup">
         <div class="popup-header">
-          <span id="confirmation_modal_title">Confirmation</span>
+          <span>${this.currentLanguage.getTranslation(
+            "confirmation_modal_title"
+          )}</span>
           <button class="close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
                 <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -1016,11 +1049,15 @@ class ToolBoxManager {
         </div>
         <hr>
         <div class="popup-body" id="confirmation_modal_message">
-          When you continue, all the changes you have made will be cleared.
+          ${this.currentLanguage.getTranslation("confirmation_modal_message")}
         </div>
         <div class="popup-footer">
-          <button id="accept_popup" class="toolbox-btn toolbox-btn-primary">OK</button>
-          <button id="close_popup" class="toolbox-btn toolbox-btn-outline">Cancel</button>
+          <button id="accept_popup" class="toolbox-btn toolbox-btn-primary">
+          ${this.currentLanguage.getTranslation("accept_popup")}
+          </button>
+          <button id="close_popup" class="toolbox-btn toolbox-btn-outline">
+          ${this.currentLanguage.getTranslation("cancel_btn")}
+          </button>
         </div>
       </div>
     `;
@@ -1049,9 +1086,15 @@ class ToolBoxManager {
     alertBox.classList = `alert ${status == "success" ? "success" : "error"}`;
     alertBox.innerHTML = `
       <div class="alert-header">
-        <strong>${status == "success" ? "Success" : "Error"}</strong>
+        <strong>
+          ${
+            status == "success"
+              ? this.currentLanguage.getTranslation("alert_type_success")
+              : this.currentLanguage.getTranslation("alert_type_error")
+          }
+        </strong>
         <span class="alert-close-btn">✖</span>
-      </div> 
+      </div>
       <p>${message}</p>
     `;
 
@@ -1071,10 +1114,12 @@ class ToolBoxManager {
       this.editorManager.editor
         .getSelected()
         .addAttributes({ [attributeName]: attributeValue });
-    }else{
-      this.displayAlertMessage("No tile selected. Please select a tile", "error")
+    } else {
+      this.displayAlertMessage(
+        this.currentLanguage.getTranslation("no_tile_selected_error_message"),
+        "error"
+      );
     }
-
   }
 }
 

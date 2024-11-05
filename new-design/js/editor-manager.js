@@ -1,7 +1,7 @@
 var globalEditor = null;
 
 class EditorManager {
-  constructor(editor) {
+  constructor(editor, currentLanguage) {
     globalEditor = editor;
     this.editor = editor;
     this.selectedTemplateWrapper = null;
@@ -11,6 +11,7 @@ class EditorManager {
     this.currentResizer = null;
     this.initialX = null;
     this.initialWidth = null;
+    this.currentLanguage = currentLanguage;
 
     this.pageId = this.getCurrentPageId();
 
@@ -53,7 +54,7 @@ class EditorManager {
             this.editor.loadProjectData(parsedData);
           } catch (error) {
             console.log("Error loading data:" + error);
-            const message = "Error loading data";
+            const message = this.currentLanguage.getTranslation("error_loading_data_message");
             const status = "error";
             this.toolsSection.displayAlertMessage(message, status);
           }
@@ -261,7 +262,7 @@ class EditorManager {
         </div>
         `);
 
-    const message = "Template added successfully";
+    const message = this.currentLanguage.getTranslation("template_added_success_message");
     const status = "success";
     this.toolsSection.displayAlertMessage(message, status);
   }
@@ -864,8 +865,8 @@ class EditorManager {
 
     } catch (error) {
       console.log(error)
-      const message = "Failed to save current page";
-      const status = "succuss";
+      const message = this.currentLanguage.getTranslation("failed_to_save_current_page_message");;
+      const status = "error";
       this.toolsSection.displayAlertMessage(message, status);
     }
   }

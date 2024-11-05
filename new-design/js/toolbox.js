@@ -595,13 +595,13 @@ class ToolBoxManager {
           document.body.removeChild(popup);
         };
 
-        const cancelBtn = popup.querySelector("#close-popup");
+        const cancelBtn = popup.querySelector("#close_popup");
         cancelBtn.onclick = () => {
           popup.style.display = "none";
           document.body.removeChild(popup);
         };
 
-        const acceptBtn = popup.querySelector("#accept-popup");
+        const acceptBtn = popup.querySelector("#accept_popup");
         acceptBtn.onclick = () => {
           popup.style.display = "none";
           document.body.removeChild(popup);
@@ -1006,7 +1006,7 @@ class ToolBoxManager {
     popup.innerHTML = `
       <div class="popup">
         <div class="popup-header">
-          <span>Confirmation</span>
+          <span id="confirmation_modal_title">Confirmation</span>
           <button class="close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
                 <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -1014,12 +1014,12 @@ class ToolBoxManager {
           </button>
         </div>
         <hr>
-        <div class="popup-body">
+        <div class="popup-body" id="confirmation_modal_message">
           When you continue, all the changes you have made will be cleared.
         </div>
         <div class="popup-footer">
-          <button id="accept-popup" class="toolbox-btn toolbox-btn-primary">OK</button>
-          <button id="close-popup" class="toolbox-btn toolbox-btn-outline">Cancel</button>
+          <button id="accept_popup" class="toolbox-btn toolbox-btn-primary">OK</button>
+          <button id="close_popup" class="toolbox-btn toolbox-btn-outline">Cancel</button>
         </div>
       </div>
     `;

@@ -16,7 +16,11 @@ const translations = {
         tile_has_bg_image_error_message: "The tile has no background image",
         error_applying_theme_message: "Error applying theme",
         no_icon_selected_error_message: "No icon selected",
-        error_save_message: "Failed to save current page"
+        error_save_message: "Failed to save current page",
+        confirmation_modal_title: "Confirmation",
+        confirmation_modal_message: "When you continue, all the changes you have made will be cleared.",
+        accept_popup: "Ok",
+        close_popup: "Close",
     },
     dutch: {
         navbar_title: "De app gereedschapskist bouwer",

@@ -4,8 +4,9 @@ let baseURL = window.location.origin
 if (baseURL.startsWith("http://localhost")) baseURL += environment
 
 class DataManager {
-
-  constructor(){
+  services = []
+  constructor(services){
+    this.services = services
   }
 
   getPages() {
@@ -56,7 +57,6 @@ class DataManager {
   }
 
   updatePage(data) {
-    console.log(data)
     return new Promise((resolve, reject)=>{
       $.ajax({
         url:
@@ -64,7 +64,6 @@ class DataManager {
         type: "POST",
         data: JSON.stringify(data),
         success: function (response) {
-          console.log("Success:", response);
           resolve(response)
         },
         error: function (xhr, status, error) {
@@ -185,133 +184,7 @@ class DataManager {
 }
 
 
-const themesData = [
-      {
-        name: "Modern Theme",
-        colors: {
-          primaryColor: "#173f5f",         
-          secondaryColor: "#535353",       
-          backgroundColor: "#f7f7f7",      
-          textColor: "#20639b",            
-          buttonBgColor: "#758a71",       
-          buttonTextColor: "#788799",      
-          cardBgColor: "#a72928",          
-          cardTextColor: "#ec6665",        
-          accentColor: "#ee6809",          
-          borderColor: "#eea622"           
-        },
-        fontFamily: "Helvetica",
-      },
-      {
-        name: "Retro Theme",
-        colors: {
-          primaryColor: "#653993",         
-          secondaryColor: "#06394f",       
-          backgroundColor: "#b7f5fe",      
-          textColor: "#126e68",            
-          buttonBgColor: "#ead1b5",        
-          buttonTextColor: "#f09605",     
-          cardBgColor: "#f57f5c",          
-          cardTextColor: "#dd5342",        
-          accentColor: "#b11d3b",          
-          borderColor: "#844a27"           
-        },
-        fontFamily: "Georgia",
-      },
-      {
-        name: "Minimalistic Theme",
-        colors: {
-          primaryColor: "#d99e80",         // Deep Blue
-          secondaryColor: "#7f3e3a",       // Cyan
-          backgroundColor: "#fef2f1",      // Very Light Blue
-          textColor: "#668d63",            // Darker Blue
-          buttonBgColor: "#a2ad9f",        // Light Blue
-          buttonTextColor: "#a2ad9f",      // White
-          cardBgColor: "#c8ad94",          // Pale Blue
-          cardTextColor: "#b3783e",        // Navy Blue
-          accentColor: "#c8653e",          // Orange
-          borderColor: "#554940"           // Sky Blue
-        },
-        fontFamily: "Roboto",
-      }
-  ];
-  
-  const templatesData = [
-    {
-      id: "tile-template-1",
-      label: "Template 1",
-      media: `<img src="/Resources/UCGrapes/new-design/img/template-1.png" style="width: 100%; height: 100%;" />`,
-      content: [1, 2, 1, 3],
-    },
-    {
-      id: "tile-template-2",
-      label: "Template 2",
-      media: `<img src="/Resources/UCGrapes/new-design/img/template-2.png" style="width: 100%; height: 100%;" />`,
-      content: [1, 1, 1],
-    },
-    {
-      id: "tile-template-3",
-      label: "Template 3",
-      media: `<img src="/Resources/UCGrapes/new-design/img/template-3.png" style="width: 100%; height: 100%;" />`,
-      content: [2, 1, 2, 2]
-        
-    },
-    {
-      id: "tile-template-4",
-      label: "Template 4",
-      media: `<img src="/Resources/UCGrapes/new-design/img/template-4.png" style="width: 100%; height: 100%;" />`,
-      content: [1, 2, 2]
-    },
-  ];
-  
-  const services = [
-    { name: "Laundry", icon: "fa fa-tshirt" },
-    { name: "Bakery", icon: "fa fa-bread-slice" },
-    { name: "Repair", icon: "fa fa-tools" },
-    { name: "Cleaning", icon: "fa fa-broom" },
-    { name: "Delivery", icon: "fa fa-truck" },
-    { name: "Gardening", icon: "fa fa-seedling" }, // Gardening services
-    { name: "Transportation", icon: "fa fa-car" }, // Transportation services
-    { name: "Home Care", icon: "fa fa-user-md" }, // Health care services
-    { name: "Meals", icon: "fa fa-utensils" }, // Meal services
-    { name: "Companionship", icon: "fa fa-user-friends" }, // Companionship services
-    { name: "Shopping", icon: "fa fa-shopping-cart" }, // Shopping help
-    { name: "Technology", icon: "fa fa-laptop" }, // Tech help
-    { name: "Fitness ", icon: "fa fa-dumbbell" }, // Fitness services
-    { name: "Pet Care", icon: "fa fa-paw" }, // Pet care services
-    { name: "Pharmacy", icon: "fa fa-prescription-bottle-alt" }, // Pharmacy services
-  ];
-  
-  const mappingData = [
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345678", name: "Reception" },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345679", name: "Agenda" },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345680", name: "Mailbox" },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345681", name: "Location Information" },
-    {
-      id: "1a2b3c4d-1234-5678-90ab-cdef12345682",
-      name: "My Care",
-      children: [
-        { id: "1a2b3c4d-1234-5678-90ab-cdef12345683", name: "My Care Record" },
-        { id: "1a2b3c4d-1234-5678-90ab-cdef12345684", name: "My Care Team" },
-        { id: "1a2b3c4d-1234-5678-90ab-cdef12345685", name: "Advice" },
-      ],
-    },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345686", name: "My Living" },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345687", name: "My Services" },
-    {
-      id: "1a2b3c4d-1234-5678-90ab-cdef12345688",
-      name: "My Care",
-      children: [
-        { id: "1a2b3c4d-1234-5678-90ab-cdef12345689", name: "My Care Record" },
-        { id: "1a2b3c4d-1234-5678-90ab-cdef12345690", name: "My Care Team" },
-        { id: "1a2b3c4d-1234-5678-90ab-cdef12345691", name: "Advice" },
-      ],
-    },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345692", name: "My Living" },
-    { id: "1a2b3c4d-1234-5678-90ab-cdef12345693", name: "My Services" },
-  ];
-
-  const iconsData = [
+const iconsData = [
     { 
       name: "Broom",
       svg: `
@@ -370,18 +243,10 @@ const themesData = [
        ` 
     },
   ];
+
+
   
 
-const tileDefaultData = {
-    text: "Tile",
-    textColor: "#000000",
-    textAlignment: "left",
-    icon: "Tile",
-    iconColor: "#000000",
-    iconAlignment: "left",
-    bgColor: "#ffffff",
-    bgImage: "",
-}
 
 const defaultTileAttrs = `
   tile-text="Tile"

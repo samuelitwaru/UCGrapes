@@ -11,6 +11,7 @@ class ActionListComponent {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
+
     this.categoryData = [
       {
         name: "Page",
@@ -52,12 +53,16 @@ class ActionListComponent {
   }
 
   init() {
+    
     this.dataManager
       .getPagesService()
       .then((pages) => {
+       
         this.pageOptions = this.mapPageNamesToOptions(pages);
+        
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
+            
             category.options = this.pageOptions;
           }
         });
@@ -243,7 +248,7 @@ class ActionListComponent {
 
 class MappingComponent {
   treeContainer = document.getElementById("tree-container");
-  createPageButton = document.getElementById("create-new-page");
+  createPageButton = document.getElementById("page-submit");
 
   constructor(dataManager, editorManager, toolBoxManager) {
     this.dataManager = dataManager;
@@ -396,7 +401,7 @@ class MediaComponent {
     }
 
     init () {
-        this.handleFileManager()
+      this.handleFileManager()
     }
 
     openFileUploadModal() {
@@ -404,10 +409,11 @@ class MediaComponent {
         modal.className = "toolbox-modal";
         const modalContent = document.createElement("div");
         modalContent.className = "toolbox-modal-content";
+      
         
         let fileListHtml = ``;
-        
         for (let index = 0; index < this.dataManager.media.length; index++) {
+
           const file = this.dataManager.media[index];
           fileListHtml += `
             <div class="file-item valid" 
@@ -446,7 +452,6 @@ class MediaComponent {
         </div>
         `;
         modal.appendChild(modalContent);
-    
         return modal;
     }
 
@@ -455,6 +460,7 @@ class MediaComponent {
       const openModal = document.getElementById("image-bg");
       const fileInputField = document.createElement("input");
       const modal = this.openFileUploadModal();
+      
       let selectedFile = null;
       let allUploadedFiles = [];
 
@@ -595,6 +601,7 @@ class MediaComponent {
           document.body.removeChild(modal);
           document.body.removeChild(fileInputField);
       };
+
     }
 
     displayMediaFile(file) {

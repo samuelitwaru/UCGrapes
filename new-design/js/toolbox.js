@@ -37,23 +37,17 @@ class ToolBoxManager {
       });
     });
 
+    
     this.loadTheme();
     this.listThemesInSelectField();
     this.colorPalette();
     this.loadTiles();
     this.loadPageTemplates();
     
-    this.actionList = new ActionListComponent(this.editorManager, this.dataManager, this)
+    this.actionList = new ActionListComponent(this.editorManager, this.dataManager, this.currentLanguage, this)
+    
     this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
-
-    this.actionList = new ActionList(
-      this.editorManager,
-      this.dataManager,
-      this.currentLanguage,
-      this
-    );
-
-    this.handleFileManager();
+    this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
     const tabButtons = document.querySelectorAll(".toolbox-tab-button");
     const tabContents = document.querySelectorAll(".toolbox-tab-content");
     tabButtons.forEach((button) => {

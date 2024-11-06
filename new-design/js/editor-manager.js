@@ -12,11 +12,8 @@ class EditorManager {
     this.initialX = null;
     this.initialWidth = null;
     this.currentLanguage = currentLanguage;
-
     this.pageId = this.getCurrentPageId();
-
     this.pageName = "Home";
-
     this.toolsSection = null;
   }
 
@@ -867,7 +864,7 @@ class EditorManager {
           SDT_Page: pageData,
           PageIsPublished: true,
         };
-        console.log;
+        
         this.toolsSection.dataManager.updatePage(data).then((res) => {
           console.log("Page Save Successfully");
         });

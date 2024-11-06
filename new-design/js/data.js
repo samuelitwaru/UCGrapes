@@ -1,4 +1,4 @@
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL"
+const environment = "/Comforta_versionFinaleDevelopmentNETPostgreSQL"
 let baseURL = window.location.origin 
 
 if (baseURL.startsWith("http://localhost")) baseURL += environment

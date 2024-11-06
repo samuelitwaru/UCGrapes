@@ -1,7 +1,7 @@
 var globalEditor = null;
 
 class EditorManager {
-  constructor(editor) {
+  constructor(editor, currentLanguage) {
     globalEditor = editor;
     this.editor = editor;
     this.selectedTemplateWrapper = null;
@@ -11,11 +11,17 @@ class EditorManager {
     this.currentResizer = null;
     this.initialX = null;
     this.initialWidth = null;
+    this.currentLanguage = currentLanguage;
 
     this.pageId = this.getCurrentPageId();
 
     this.pageName = "Home";
-    //this.toolsSection = new ToolBoxManager();
+
+    this.toolsSection = null;
+  }
+
+  setToolsSection(toolBox) {
+    this.toolsSection = toolBox;
   }
 
   init() {
@@ -53,7 +59,9 @@ class EditorManager {
             this.editor.loadProjectData(parsedData);
           } catch (error) {
             console.log("Error loading data:" + error);
-            const message = "Error loading data";
+            const message = this.currentLanguage.getTranslation(
+              "error_loading_data_message"
+            );
             const status = "error";
             this.toolsSection.displayAlertMessage(message, status);
           }
@@ -154,6 +162,8 @@ class EditorManager {
           .classList.remove("active-tab");
         document.querySelector(`#pages-content`).classList.add("active-tab");
       }
+
+      this.toolsSection.updateTileProperties(this.editor);
     });
 
     // Listen for component drag start and change the cursor
@@ -205,7 +215,7 @@ class EditorManager {
     return this.selectedComponent;
   }
 
-  setCurrentPage(page){
+  setCurrentPage(page) {
     localStorage.setItem("pageId", page.PageId);
     localStorage.setItem("pageName", page.PageName);
     const localStorageKey = `page-${page.PageId}`;
@@ -226,7 +236,7 @@ class EditorManager {
 
   setCurrentPageName(pageName) {
     this.pageName = pageName;
-    localStorage.setItem("pageName", pageName)
+    localStorage.setItem("pageName", pageName);
   }
 
   addFreshTemplate(template) {
@@ -261,7 +271,9 @@ class EditorManager {
         </div>
         `);
 
-    const message = "Template added successfully";
+    const message = this.currentLanguage.getTranslation(
+      "template_added_success_message"
+    );
     const status = "success";
     this.toolsSection.displayAlertMessage(message, status);
   }
@@ -844,9 +856,7 @@ class EditorManager {
     try {
       const data = this.editor.getProjectData();
       localStorage.setItem(localStorageKey, JSON.stringify(data));
-      let pageData = mapTemplateToPageData(
-        this.editor.getProjectData()
-      );
+      let pageData = mapTemplateToPageData(this.editor.getProjectData());
       let pageId = this.getCurrentPageId();
       if (pageId) {
         let data = {
@@ -855,17 +865,19 @@ class EditorManager {
           PageGJSHtml: this.editor.getHtml(),
           PageGJSJson: JSON.stringify(this.editor.getProjectData()),
           SDT_Page: pageData,
-          PageIsPublished: true
-        }
-        this.toolsSection.dataManager.updatePage(data).then(res=>{
-          console.log("Page Save Successfully")
-        })
+          PageIsPublished: true,
+        };
+        console.log;
+        this.toolsSection.dataManager.updatePage(data).then((res) => {
+          console.log("Page Save Successfully");
+        });
       }
-
     } catch (error) {
-      console.log(error)
-      const message = "Failed to save current page";
-      const status = "succuss";
+      console.log(error);
+      const message = this.currentLanguage.getTranslation(
+        "failed_to_save_current_page_message"
+      );
+      const status = "error";
       this.toolsSection.displayAlertMessage(message, status);
     }
   }

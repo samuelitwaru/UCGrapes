@@ -1,7 +1,16 @@
 let globalVar = null;
 class ToolBoxManager {
-  dataManager = null
-  constructor(editorManager, dataManager, themes, icons, templates, mapping) {
+  dataManager = null;
+  constructor(
+    editorManager,
+    dataManager,
+    themes,
+    icons,
+    templates,
+    mapping,
+    media,
+    currentLanguage
+  ) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
     this.themes = themes;
@@ -10,21 +19,23 @@ class ToolBoxManager {
     this.templates = templates;
     this.mappingsItems = mapping;
     this.selectedFile = null;
-    this.init();
+    this.media = media;
+    this.currentLanguage = currentLanguage;
+    // this.init();
   }
 
   init() {
     let self = this;
-    this.dataManager.getPages().then(pages=>{
+    this.dataManager.getPages().then((pages) => {
       localStorage.clear();
       pages.forEach((page) => {
         if (page.PageName === "Home") {
           this.editorManager.pageId = page.PageId;
-          this.editorManager.setCurrentPage(page)
-          this.editorManager.editor.trigger("load")
+          this.editorManager.setCurrentPage(page);
+          this.editorManager.editor.trigger("load");
         }
       });
-    })
+    });
 
     this.loadTheme();
     this.listThemesInSelectField();
@@ -35,6 +46,14 @@ class ToolBoxManager {
     this.actionList = new ActionListComponent(this.editorManager, this.dataManager, this)
     this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
 
+    this.actionList = new ActionList(
+      this.editorManager,
+      this.dataManager,
+      this.currentLanguage,
+      this
+    );
+
+    this.handleFileManager();
     const tabButtons = document.querySelectorAll(".toolbox-tab-button");
     const tabContents = document.querySelectorAll(".toolbox-tab-content");
     tabButtons.forEach((button) => {
@@ -81,20 +100,22 @@ class ToolBoxManager {
           PageId: pageId,
           PageJsonContent: JSON.stringify(pageData),
           PageGJSHtml: this.editorManager.editor.getHtml(),
-          PageGJSJson: JSON.stringify(this.editorManager.editor.getProjectData()),
+          PageGJSJson: JSON.stringify(
+            this.editorManager.editor.getProjectData()
+          ),
           SDT_Page: pageData,
-          PageIsPublished: true
-        }
-        this.dataManager.updatePage(data).then(res=>{
-          this.displayAlertMessage("Page Save Successfully", "success")
-        })
+          PageIsPublished: true,
+        };
+        this.dataManager.updatePage(data).then((res) => {
+          this.displayAlertMessage("Page Save Successfully", "success");
+        });
       }
     };
 
     // tile title alignment
-    const leftAlign = document.getElementById("align-left");
-    const centerAlign = document.getElementById("align-center");
-    const rightAlign = document.getElementById("align-right");
+    const leftAlign = document.getElementById("text-align-left");
+    const centerAlign = document.getElementById("text-align-center");
+    const rightAlign = document.getElementById("text-align-right");
 
     leftAlign.addEventListener("click", () => {
       if (this.editorManager.selectedTemplateWrapper) {
@@ -236,8 +257,6 @@ class ToolBoxManager {
         um.redo();
       }
     });
-
-    
   }
 
   listThemesInSelectField() {
@@ -259,11 +278,15 @@ class ToolBoxManager {
         this.themeColorPalette(this.currentTheme.colors);
         localStorage.setItem("selectedTheme", themeName);
 
-        const message = "Theme applied successfully";
+        const message = this.currentLanguage.getTranslation(
+          "theme_applied_success_message"
+        );
         const status = "success";
         this.displayAlertMessage(message, status);
       } else {
-        const message = "Error applying theme. Please try again";
+        const message = this.currentLanguage.getTranslation(
+          "error_applying_theme_message"
+        );
         const status = "error";
         this.displayAlertMessage(message, status);
       }
@@ -386,10 +409,8 @@ class ToolBoxManager {
     const colorEntries = Object.entries(colors);
 
     colorEntries.forEach(([colorName, colorValue], index) => {
-      // Create the HTML for each color
       const alignItem = document.createElement("div");
       alignItem.className = "color-item";
-
       const radioInput = document.createElement("input");
       radioInput.type = "radio";
       radioInput.id = `color-${colorName}`;
@@ -400,6 +421,7 @@ class ToolBoxManager {
       colorBox.className = "color-box";
       colorBox.setAttribute("for", `color-${colorName}`);
       colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
 
       alignItem.appendChild(radioInput);
       alignItem.appendChild(colorBox);
@@ -416,55 +438,122 @@ class ToolBoxManager {
   }
 
   colorPalette() {
-    const textColorBoxes = document.querySelectorAll(
-      "#text-color-palette .color-box"
+    const textColorPaletteContainer = document.getElementById(
+      "text-color-palette"
     );
-    const iconColorBoxes = document.querySelectorAll(
-      "#icon-color-palette .color-box"
+    const iconColorPaletteContainer = document.getElementById(
+      "icon-color-palette"
     );
 
+    // Fixed color values
     const colorValues = {
-      color1: "#ffffff",
-      color2: "#333333",
+      color1: "#ffffff", // Example white
+      color2: "#333333", // Example dark gray
+      // Add more colors as needed
     };
 
-    textColorBoxes.forEach((box, index) => {
-      const colorKey = Object.keys(colorValues)[index];
+    // Create options for text color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
 
-      box.style.backgroundColor = colorValues[colorKey];
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `text-color-${colorName}`;
+      radioInput.name = "text-color";
+      radioInput.value = colorName;
 
-      box.onclick = () => {
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `text-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-text-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      textColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
         this.editorManager.selectedComponent.addStyle({
-          color: colorValues[colorKey],
+          color: colorValue,
         });
-        this.setAttributeToSelected("tile-text-color", colorValues[colorKey])
+        this.setAttributeToSelected("tile-text-color", colorValue);
       };
     });
 
-    iconColorBoxes.forEach((box, index) => {
-      const colorKey = Object.keys(colorValues)[index];
+    // Create options for icon color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
 
-      box.style.backgroundColor = colorValues[colorKey];
-      
-      box.onclick = () => {
-        if (this.editorManager.selectedTemplateWrapper) {
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `icon-color-${colorName}`;
+      radioInput.name = "icon-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `icon-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-icon-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      iconColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
+        const svgIcon = this.editorManager.editor
+          .getSelected()
+          .find(".tile-icon path")[0];
+        if (svgIcon) {
+          svgIcon.removeAttributes("fill");
+          svgIcon.addAttributes({ fill: colorValue });
+          this.setAttributeToSelected("tile-icon-color", colorValue);
+        } else {
+          const message = this.currentLanguage.getTranslation(
+            "no_icon_selected_error_message"
+          );
+          this.displayAlertMessage(message, "error");
+        }
+      };
+    });
+  }
+
+  setupColorRadios(radioGroup, colorValues, type) {
+    Object.keys(colorValues).forEach((colorKey, index) => {
+      const radio = radioGroup[index];
+      const colorValue = colorValues[colorKey];
+
+      const colorBox = radio.nextElementSibling; // Get the color box label
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
+
+      radio.onclick = () => {
+        // Uncheck other radio buttons in the group
+        radioGroup.forEach((r) => (r.checked = false));
+        radio.checked = true;
+
+        // Apply the color based on type
+        if (type === "text") {
+          this.editorManager.selectedComponent.addStyle({
+            color: colorValue,
+          });
+          this.setAttributeToSelected("tile-text-color", colorValue);
+        } else if (type === "icon") {
           const svgIcon = this.editorManager.editor
             .getSelected()
             .find(".tile-icon path")[0];
-
           if (svgIcon) {
             svgIcon.removeAttributes("fill");
-            svgIcon.addAttributes({ fill: colorValues[colorKey] }); // Use the correct color key
-            this.setAttributeToSelected("tile-icon-color", colorValues[colorKey])
+            svgIcon.addAttributes({ fill: colorValue });
+            this.setAttributeToSelected("tile-icon-color", colorValue);
           } else {
-            const message = "Svg icon not found. Try again";
-            const status = "error";
-            this.displayAlertMessage(message, status);
+            const message = this.currentLanguage.getTranslation(
+              "no_icon_selected_error_message"
+            );
+            this.displayAlertMessage(message, "error");
           }
-        } else {
-          const message = "No tile selected. Please select a tile";
-          const status = "error";
-          this.displayAlertMessage(message, status);
         }
       };
     });
@@ -507,12 +596,16 @@ class ToolBoxManager {
             //   }
             // }
           } else {
-            const message = "No tile selected. Please select a tile";
+            const message = this.currentLanguage.getTranslation(
+              "no_tile_selected_error_message"
+            );
             const status = "error";
             this.displayAlertMessage(message, status);
           }
         } else {
-          const message = "No tile selected. Please select a tile";
+          const message = this.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
           const status = "error";
           this.displayAlertMessage(message, status);
         }
@@ -537,11 +630,6 @@ class ToolBoxManager {
       templateBlock.title = "Click to load template"; //
       templateBlock.innerHTML = `<div>${template.media}</div>`;
 
-      // Prevent the image from being dragged
-      // templateBlock.querySelector("img").addEventListener("dragstart", (e) => {
-      //   //alert(templateBlock)
-      //   //e.preventDefault();
-      // });
       blockElement.addEventListener("click", () => {
         const popup = this.popupModal();
         document.body.appendChild(popup);
@@ -553,13 +641,13 @@ class ToolBoxManager {
           document.body.removeChild(popup);
         };
 
-        const cancelBtn = popup.querySelector("#close-popup");
+        const cancelBtn = popup.querySelector("#close_popup");
         cancelBtn.onclick = () => {
           popup.style.display = "none";
           document.body.removeChild(popup);
         };
 
-        const acceptBtn = popup.querySelector("#accept-popup");
+        const acceptBtn = popup.querySelector("#accept_popup");
         acceptBtn.onclick = () => {
           popup.style.display = "none";
           document.body.removeChild(popup);
@@ -582,7 +670,9 @@ class ToolBoxManager {
     popup.innerHTML = `
       <div class="popup">
         <div class="popup-header">
-          <span>Confirmation</span>
+          <span>${this.currentLanguage.getTranslation(
+            "confirmation_modal_title"
+          )}</span>
           <button class="close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
                 <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -590,12 +680,16 @@ class ToolBoxManager {
           </button>
         </div>
         <hr>
-        <div class="popup-body">
-          When you continue, all the changes you have made will be cleared.
+        <div class="popup-body" id="confirmation_modal_message">
+          ${this.currentLanguage.getTranslation("confirmation_modal_message")}
         </div>
         <div class="popup-footer">
-          <button id="accept-popup" class="toolbox-btn toolbox-btn-primary">OK</button>
-          <button id="close-popup" class="toolbox-btn toolbox-btn-outline">Cancel</button>
+          <button id="accept_popup" class="toolbox-btn toolbox-btn-primary">
+          ${this.currentLanguage.getTranslation("accept_popup")}
+          </button>
+          <button id="close_popup" class="toolbox-btn toolbox-btn-outline">
+          ${this.currentLanguage.getTranslation("cancel_btn")}
+          </button>
         </div>
       </div>
     `;
@@ -624,9 +718,15 @@ class ToolBoxManager {
     alertBox.classList = `alert ${status == "success" ? "success" : "error"}`;
     alertBox.innerHTML = `
       <div class="alert-header">
-        <strong>${status == "success" ? "Success" : "Error"}</strong>
+        <strong>
+          ${
+            status == "success"
+              ? this.currentLanguage.getTranslation("alert_type_success")
+              : this.currentLanguage.getTranslation("alert_type_error")
+          }
+        </strong>
         <span class="alert-close-btn">✖</span>
-      </div> 
+      </div>
       <p>${message}</p>
     `;
 
@@ -646,10 +746,95 @@ class ToolBoxManager {
       this.editorManager.editor
         .getSelected()
         .addAttributes({ [attributeName]: attributeValue });
-    }else{
-      this.displayAlertMessage("No tile selected. Please select a tile", "error")
+    } else {
+      this.displayAlertMessage(
+        this.currentLanguage.getTranslation("no_tile_selected_error_message"),
+        "error"
+      );
     }
+  }
 
+  updateTileProperties(editor) {
+    // Combined alignment checker
+    const alignmentTypes = [
+      { type: "text", attribute: "tile-text-align" },
+      { type: "icon", attribute: "tile-icon-align" },
+    ];
+
+    alignmentTypes.forEach(({ type, attribute }) => {
+      const currentAlign = editor.getSelected()?.getAttributes()?.[attribute];
+      ["left", "center", "right"].forEach((align) => {
+        document.getElementById(`${type}-align-${align}`).checked =
+          currentAlign === align;
+      });
+    });
+
+    const currentTextColor = editor.getSelected()?.getAttributes()?.[
+      "tile-text-color"
+    ];
+    const textColorRadios = document.querySelectorAll(
+      '.text-color-palette.text-colors .color-item input[type="radio"]' // Added .text-colors
+    );
+
+    textColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
+    });
+
+    // Update tile icon color
+    const currentIconColor = editor.getSelected()?.getAttributes()?.[
+      "tile-icon-color"
+    ];
+    const iconColorRadios = document.querySelectorAll(
+      '.text-color-palette.icon-colors .color-item input[type="radio"]' // Added .icon-colors
+    );
+
+    iconColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+    });
+
+    // update tile bg color
+    const currentBgColor = editor.getSelected()?.getAttributes()?.[
+      "tile-bgcolor"
+    ];
+    const radios = document.querySelectorAll(
+      '#theme-color-palette input[type="radio"]'
+    );
+
+    radios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
+    });
+
+    // update action
+    const currentActionName = editor.getSelected()?.getAttributes()?.[
+      "tile-action-object"
+    ];
+
+    const currentActionId = editor.getSelected()?.getAttributes()?.[
+      "tile-action-object-id"
+    ];
+
+    const propertySection = document.getElementById("selectedOption");
+    const selectedOptionElement = document.getElementById(currentActionId);
+
+    // Clear background styles for all options
+    const allOptions = document.querySelectorAll(".category-content li");
+    allOptions.forEach((option) => {
+      option.style.background = ""; // Clear any existing background styles
+    });
+
+    if (currentActionName && currentActionId && selectedOptionElement) {
+      propertySection.textContent = currentActionName;
+      propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
+
+      // Set background style for the selected option
+      selectedOptionElement.style.background = "#f0f0f0";
+    }
   }
 }
 

@@ -6,17 +6,20 @@ class ActionListComponent {
   selectedId = null;
   pageOptions = [];
 
-  constructor(editorManager, dataManager, toolBoxManager) {
+  constructor(editorManager, dataManager, currentLanguage, toolBoxManager) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
+    this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
     this.categoryData = [
       {
         name: "Page",
+        label: this.currentLanguage.getTranslation("category_page"),
         options: [],
       },
       {
         name: "Service/Product Page",
+        label: this.currentLanguage.getTranslation("category_services_or_page"),
         options: this.dataManager.services.map((service) => {
           return {
             PageId: service.ProductServiceId,
@@ -26,6 +29,7 @@ class ActionListComponent {
       },
       {
         name: "Dynamic Form",
+        label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [
           {
             PageId: "2354481d-5df0-4154-92b8-2fc0aaf9b3e7",
@@ -35,6 +39,7 @@ class ActionListComponent {
       },
       {
         name: "Call to Action",
+        label: this.currentLanguage.getTranslation("category_call_to_action"),
         options: [
           {
             PageId: "2354481d-5df0-4154-92b8-2fc0aaf9b3e7",
@@ -82,10 +87,10 @@ class ActionListComponent {
     this.categoryData.forEach((category) => {
       const categoryElement = document.createElement("details");
       categoryElement.classList.add("category");
-      categoryElement.setAttribute("data-category", category.name);
+      categoryElement.setAttribute("data-category", category.label);
 
       const summaryElement = document.createElement("summary");
-      summaryElement.innerHTML = `${category.name} <i class="fa fa-angle-right"></i>`;
+      summaryElement.innerHTML = `${category.label} <i class="fa fa-angle-right"></i>`;
       categoryElement.appendChild(summaryElement);
 
       const searchBox = document.createElement("div");
@@ -141,10 +146,6 @@ class ActionListComponent {
     categories.forEach((category) => {
       category.addEventListener("toggle", function () {
         self.selectedObject = category.dataset.category;
-        self.toolBoxManager.setAttributeToSelected(
-          "tile-action-object",
-          category.dataset.category
-        );
         const searchBox = this.querySelector(".search-container");
         const icon = this.querySelector("summary i");
         const isOpen = this.open;
@@ -189,6 +190,12 @@ class ActionListComponent {
             self.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
               this.id
+            );
+            self.toolBoxManager.setAttributeToSelected(
+              "tile-action-object",
+              `${this.closest(".category").dataset.category}, ${
+                this.textContent
+              }`
             );
           }
 

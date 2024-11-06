@@ -137,6 +137,7 @@ button#open-mapping {
 .sidebar h3 {
   margin: 5px;
   color: rgb(70, 69, 69) !;
+  font-size: 20px !important;
 }
 
 .main-content {
@@ -227,22 +228,29 @@ input:focus {
   justify-content: space-between;
 }
 
-button.add-page {
-  border-radius: 50%;
-  height: 30px;
-  width: 30px;
-  border: none;
-  background-color: #586bab;
-  color: white;
-  cursor: pointer;
-}
-
 .page-form {
   display: flex;
-  gap: 8px;
-  max-width: 400px;
+  align-items: center;
   font-family: system-ui, -apple-system, sans-serif;
-  display: none;
+}
+
+.add-page-input {
+  padding: 8px;
+  border: 1px solid #b4b9bd;
+  border-radius: 7px;
+  outline: none;
+  width: 200px;
+  font-size: 14px;
+}
+
+.add-page-button {
+  padding: 8px 16px;
+  background-color: var(--colors_basecolor);
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .tree {
@@ -380,6 +388,14 @@ li .selected-page::after {
   background-color: #f7f7f7;
 } */
 
+.text-color-palette .color-item:has(input[type="radio"]:checked) {
+  border: 1px solid #5f75ae;
+  border-radius: 8px;
+  background-color: #fff;
+}
+.text-color-palette input[type="radio"] {
+  display: none;
+}
 .color-palette .color-item:has(input[type="radio"]:checked) {
   border: 1px solid #5f75ae;
   border-radius: 8px;
@@ -459,6 +475,28 @@ li .selected-page::after {
   background-color: #ffffff;
   width: fit-content;
   margin: 8px 0;
+}
+
+.text-color-palette .color-item {
+  display: flex;
+  padding: 0.2rem 0.13rem;
+  align-items: center;
+}
+
+.text-color-palette .color-item label {
+  cursor: pointer;
+}
+
+.text-color-palette {
+  display: flex;
+  padding: 0.1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #ffffff;
+  width: fit-content;
+  margin: 8px 0;
+  gap: 0.2rem;
 }
 
 .text-alignment {

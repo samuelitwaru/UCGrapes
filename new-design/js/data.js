@@ -5,8 +5,10 @@ if (baseURL.startsWith("http://localhost")) baseURL += environment
 
 class DataManager {
   services = []
-  constructor(services){
+  media = []
+  constructor(services, media){
     this.services = services
+    this.media = media
   }
 
   getPages() {

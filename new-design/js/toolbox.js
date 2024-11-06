@@ -1,7 +1,7 @@
 let globalVar = null;
 class ToolBoxManager {
   dataManager = null
-  constructor(editorManager, dataManager, themes, icons, templates, mapping, media) {
+  constructor(editorManager, dataManager, themes, icons, templates, mapping) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
     this.themes = themes;
@@ -10,7 +10,6 @@ class ToolBoxManager {
     this.templates = templates;
     this.mappingsItems = mapping;
     this.selectedFile = null;
-    this.media = media;
     this.init();
   }
 
@@ -32,10 +31,10 @@ class ToolBoxManager {
     this.colorPalette();
     this.loadTiles();
     this.loadPageTemplates();
+    
+    this.actionList = new ActionListComponent(this.editorManager, this.dataManager, this)
+    this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
 
-    this.actionList = new ActionList(this.editorManager, this.dataManager, this)
-
-    this.handleFileManager();
     const tabButtons = document.querySelectorAll(".toolbox-tab-button");
     const tabContents = document.querySelectorAll(".toolbox-tab-content");
     tabButtons.forEach((button) => {
@@ -68,7 +67,7 @@ class ToolBoxManager {
       mappingSection.style.display =
         mappingSection.style.display === "block" ? "none" : "block";
 
-      this.loadMappings();
+        this.mappingComponent = new MappingComponent(this.dataManager, this.editorManager, this)
     });
 
     publishButton.onclick = (e) => {
@@ -238,49 +237,7 @@ class ToolBoxManager {
       }
     });
 
-    // Create new page
-    const createPageButton = document.getElementById("create-new-page");
-
-    createPageButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      const pageFormSection = document.getElementById("page-form");
-      pageFormSection.style.display = "block";
-      const pageInput = document.getElementById("page-title");
-      const pageSubmit = document.getElementById("page-submit");
-
-      pageSubmit.disabled = true;
-
-      pageInput.addEventListener("input", () => {
-        pageSubmit.disabled = !pageInput.value.trim();
-      });
-
-      pageSubmit.addEventListener("click", (e) => {
-        e.preventDefault();
-        const pageTitle = pageInput.value.trim();
-        if (pageTitle) {
-          // Additional check to ensure value exists
-          this.dataManager.createNewPage(pageTitle).then( res => {
-            const pageInput = document.getElementById("page-title");
-            pageInput.value = "";
-
-            this.dataManager
-              .getPagesService()
-              .then((pages) => {
-                // Clear the current tree structure
-                const treeContainer = document.getElementById("tree-container"); // Assuming tree is rendered here
-                treeContainer.innerHTML = ""; // Clear existing nodes
-
-                // Re-create the tree with updated pages data
-                const newTree = self.createTree(pages, true); // Set isRoot to true if it's the root
-                treeContainer.appendChild(newTree); // Append the new tree structure to the container
-              })
-              .catch((error) => {
-                console.error("Error fetching pages:", error);
-              });
-          })
-        }
-      });
-    });
+    
   }
 
   listThemesInSelectField() {
@@ -617,389 +574,7 @@ class ToolBoxManager {
     });
   }
 
-  loadMappings() {
-    const treeContainer = document.getElementById("tree-container");
-    this.clearMappings();
-    this.dataManager.getPagesService()
-      .then((pages) => {
-        treeContainer.appendChild(this.createTree(pages, true));
-      })
-      .catch((error) => {
-        console.error("Error fetching pages:", error);
-      });
-  }
-
-  clearMappings() {
-    const treeContainer = document.getElementById("tree-container");
-    treeContainer.innerHTML = ""; // Clear previous mappings
-  }
-
-  createTree(data, isRoot = false) {
-    // Sort the data so that "Home" is always first
-    data.sort((a, b) => (a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0));
-
-    const ul = document.createElement("ul");
-    if (!isRoot) ul.style.display = "block";
-
-    console.log("Data: ", data);
-
-    data.forEach((item, index) => {
-      const li = document.createElement("li");
-      const span = document.createElement("span");
-      span.textContent = item.Name;
-      li.appendChild(span);
-      li.className = this.checkActivePage(item.Id) ? "selected-page" : "";
-      span.title = item.Id;
-      let pageTile = document.createElement("span")
-      pageTile.textContent = item.Name
-      if (item.Children && item.Children.length > 0) {
-        const childrenContainer = this.createTree(item.Children); // Recursively create children
-        li.appendChild(childrenContainer);
-
-        let childToggle = document.createElement("span")
-        
-        childToggle.textContent = " + ";
-        span.style.cursor = "pointer";
-
-        childToggle.onclick = () => {
-          childrenContainer.style.display =
-            childrenContainer.style.display === "none" ? "block" : "none";
-
-          childToggle.textContent =
-            childrenContainer.style.display === "none"
-              ? " + "
-              : " - ";
-        };
-
-        //span.appendChild(pageTile)
-        span.appendChild(childToggle)
-      } 
-      //else {
-      span.onclick = () => {
-        this.editorManager.setCurrentPageName(item.Name);
-        this.editorManager.setCurrentPageId(item.Id);
-
-        const editor = this.editorManager.editor;
-
-        editor.DomComponents.clear();
-        this.editorManager.templateComponent = null;
-        editor.trigger("load");
-
-        document.querySelectorAll(".selected-page").forEach((el) => {
-          el.classList.remove("selected-page");
-        });
-
-        span.closest("li").classList.add("selected-page");
-        const mainPage = document.getElementById("current-page-title");
-        mainPage.textContent = this.updateActivePageName();
-
-        const message = `${item.Name} Page loaded successfully`;
-        const status = "success";
-        this.displayAlertMessage(message, status);
-      };
-      //}
-      ul.appendChild(li);
-    });
-    return ul;
-  }
-
-  checkActivePage(id) {
-    const pageId = localStorage.getItem("pageId");
-    if (pageId === id) {
-      return true;
-    }
-  }
-
-  updateActivePageName() {
-    return this.editorManager.getCurrentPageName();
-  }
-
-  openFileUploadModal() {
-    const modal = document.createElement("div");
-    modal.className = "toolbox-modal";
-
-    const modalContent = document.createElement("div");
-    modalContent.className = "toolbox-modal-content";
-
-    let fileListHtml = ``;
-
-    for (let index = 0; index < this.media.length; index++) {
-      const file = this.media[index];
-      fileListHtml += `
-        <div class="file-item valid" 
-            data-MediaId="${file.MediaId}" 
-            data-MediaUrl="${file.MediaUrl}" 
-            data-MediaName="${file.MediaName}">
-          <img src="${file.MediaUrl}" alt="${file.MediaName}" class="preview-image">
-          <div class="file-info">
-            <div class="file-name">${file.MediaName}</div>
-            <div class="file-size">${file.MediaSize}</div>
-          </div>
-          <span class="status-icon" style="color: green;"></span>
-        </div>
-      `;
-    }
-
-    modalContent.innerHTML = `
-    <div class="toolbox-modal-header">
-        <h2>Upload</h2>
-        <span class="close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
-                <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
-            </svg>
-        </span>
-    </div>
-    <div class="upload-area" id="uploadArea">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
-            <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
-          </svg>
-        <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
-    </div>
-    <div class="file-list" id="fileList">${fileListHtml}</div>
-    <div class="modal-actions">
-        <button class="toolbox-btn toolbox-btn-outline" id="cancelBtn">Cancel</button>
-        <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
-    </div>
-    `;
-    modal.appendChild(modalContent);
-
-    return modal;
-  }
-
-  handleFileManager() {
-    const openModal = document.getElementById("image-bg");
-    const fileInputField = document.createElement("input");
-    const modal = this.openFileUploadModal();
-
-    let selectedFile = null;
-    let allUploadedFiles = [];
-
-    openModal.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (this.editorManager.editor.getSelected()) {
-        fileInputField.type = "file";
-        fileInputField.multiple = true;
-        fileInputField.accept = "image/jpeg, image/jpg, image/png"; // Only accept specific image types
-        fileInputField.id = "fileInput";
-        fileInputField.style.display = "none";
-
-        document.body.appendChild(modal);
-        document.body.appendChild(fileInputField);
-
-        // add onclick event handler for file items
-        const fileItems = document.querySelectorAll(".file-item");
-        fileItems.forEach((element) => {
-          element.addEventListener("click", (e) => {
-            this.mediaFileClicked(element);
-          });
-        });
-
-        modal.style.display = "flex";
-
-        const uploadArea = modal.querySelector("#uploadArea");
-        uploadArea.onclick = () => {
-          fileInputField.click();
-        };
-
-        fileInputField.onchange = (event) => {
-          // Filter only allowed image types
-          const newFiles = Array.from(event.target.files).filter((file) =>
-            ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
-          );
-          allUploadedFiles = [...allUploadedFiles, ...newFiles];
-
-          const fileList = modal.querySelector("#fileList");
-          //fileList.innerHTML = "";
-
-          allUploadedFiles.forEach((file) => {
-            const fileItem = document.createElement("div");
-            fileItem.className = "file-item";
-
-            const img = document.createElement("img");
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              img.src = e.target.result;
-              this.uploadFile(e.target.result, file.name, file.size, file.type).then(response=>{
-                if (response.MediaId) {
-                  this.media.push(response);
-                  this.displayMediaFile(response);
-                }
-              })
-            };
-            reader.readAsDataURL(file);
-            img.alt = "File thumbnail";
-            img.className = "preview-image";
-
-            const fileInfo = document.createElement("div");
-            fileInfo.className = "file-info";
-
-            const fileName = document.createElement("div");
-            fileName.className = "file-name";
-            fileName.textContent = file.name;
-
-            const fileSize = document.createElement("div");
-            fileSize.className = "file-size";
-            const formatFileSize = (bytes) => {
-              if (bytes < 1024) return `${bytes} B`;
-              if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-              if (bytes < 1024 * 1024 * 1024)
-                return `${Math.round(bytes / 1024 / 1024)} MB`;
-              return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
-            };
-
-            fileSize.textContent = formatFileSize(file.size);
-
-            const statusIcon = document.createElement("span");
-            statusIcon.className = "status-icon";
-
-            // Check file size limit (2MB) and file type
-            const isValidSize = file.size <= 2 * 1024 * 1024;
-            const isValidType = [
-              "image/jpeg",
-              "image/jpg",
-              "image/png",
-            ].includes(file.type);
-
-            if (isValidSize && isValidType) {
-              fileItem.classList.add("valid");
-              statusIcon.innerHTML = "";
-              statusIcon.style.color = "green";
-            } else {
-              fileItem.classList.add("invalid");
-              statusIcon.innerHTML = "⚠";
-              statusIcon.style.color = "red";
-            }
-          });
-        };
-      } else {
-        const message = "Please select a tile to continue";
-        const status = "error";
-        this.displayAlertMessage(message, status);
-      }
-    });
-
-    const closeButton = modal.querySelector(".close");
-    closeButton.onclick = () => {
-      modal.style.display = "none";
-      document.body.removeChild(modal);
-      document.body.removeChild(fileInputField);
-    };
-
-    const cancelBtn = modal.querySelector("#cancelBtn");
-    cancelBtn.onclick = () => {
-      modal.style.display = "none";
-      document.body.removeChild(modal);
-      document.body.removeChild(fileInputField);
-    };
-
-    const saveBtn = modal.querySelector("#saveBtn");
-    saveBtn.onclick = () => {
-      if (this.selectedFile) {
-        const templateBlock = this.editorManager.editor
-          .getSelected()
-          .find(".template-block")[0];
-        templateBlock.addStyle({
-          "background-image": `url(${this.selectedFile.MediaUrl})`,
-          "background-size": "cover",
-          "background-position": "center",
-        });
-
-        this.setAttributeToSelected("tile-bg-image-url", this.selectedFile.MediaUrl)
-      }
-
-      modal.style.display = "none";
-      document.body.removeChild(modal);
-      document.body.removeChild(fileInputField);
-    };
-  }
-
-  displayMediaFile(file) {
-    const fileList = document.querySelector("#fileList");
-    const fileItem = document.createElement("div");
-    fileItem.className = "file-item";
-    fileItem.setAttribute("data-mediaid", file.MediaId);
-
-    const img = document.createElement("img");
-    img.src = file.MediaUrl;
-    img.alt = "File thumbnail";
-    img.className = "preview-image";
-
-    const fileInfo = document.createElement("div");
-    fileInfo.className = "file-info";
-
-    const fileName = document.createElement("div");
-    fileName.className = "file-name";
-    fileName.textContent = file.MediaName;
-
-    const fileSize = document.createElement("div");
-    fileSize.className = "file-size";
-    const formatFileSize = (bytes) => {
-      if (bytes < 1024) return `${bytes} B`;
-      if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-      if (bytes < 1024 * 1024 * 1024)
-        return `${Math.round(bytes / 1024 / 1024)} MB`;
-      return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
-    };
-
-    fileSize.textContent = formatFileSize(file.MediaSize);
-
-    const statusIcon = document.createElement("span");
-    statusIcon.className = "status-icon";
-
-    // Check file size limit (2MB) and file type
-    const isValidSize = file.MediaSize <= 2 * 1024 * 1024;
-    const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(
-      file.MediaType
-    );
-
-    if (isValidSize && isValidType) {
-      fileItem.classList.add("valid");
-      statusIcon.innerHTML = "";
-      statusIcon.style.color = "green";
-    } else {
-      fileItem.classList.add("invalid");
-      statusIcon.innerHTML = "⚠";
-      statusIcon.style.color = "red";
-    }
-
-    fileInfo.appendChild(fileName);
-    fileInfo.appendChild(fileSize);
-
-    fileItem.appendChild(img);
-    fileItem.appendChild(fileInfo);
-    fileItem.appendChild(statusIcon);
-    fileItem.onclick = (e) => {
-      this.mediaFileClicked(fileItem);
-    };
-    fileList.appendChild(fileItem);
-  }
-
-  mediaFileClicked(fileItem) {
-    if (fileItem.classList.contains("invalid")) {
-      return;
-    }
-    document.querySelector(".modal-actions").style.display = "flex";
-
-    document.querySelectorAll(".file-item").forEach((el) => {
-      el.classList.remove("selected");
-      const icon = el.querySelector(".status-icon");
-      if (icon) {
-        icon.innerHTML = el.classList.contains("invalid") ? "⚠" : "";
-      }
-    });
-
-    fileItem.classList.add("selected");
-    let statusIcon = fileItem.querySelector(".status-icon");
-    statusIcon.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13.423" viewBox="0 0 18 13.423">
-                <path id="Icon_awesome-check" data-name="Icon awesome-check" d="M6.114,17.736l-5.85-5.85a.9.9,0,0,1,0-1.273L1.536,9.341a.9.9,0,0,1,1.273,0L6.75,13.282l8.441-8.441a.9.9,0,0,1,1.273,0l1.273,1.273a.9.9,0,0,1,0,1.273L7.386,17.736A.9.9,0,0,1,6.114,17.736Z" transform="translate(0 -4.577)" fill="#3a9341"/>
-              </svg>
-            `;
-    statusIcon.style.color = "green";
-    this.selectedFile = this.media.find(
-      (file) => file.MediaId == fileItem.dataset.mediaid
-    );
-  }
+  
 
   popupModal() {
     const popup = document.createElement("div");

@@ -388,6 +388,14 @@ li .selected-page::after {
   background-color: #f7f7f7;
 } */
 
+.text-color-palette .color-item:has(input[type="radio"]:checked) {
+  border: 1px solid #5f75ae;
+  border-radius: 8px;
+  background-color: #fff;
+}
+.text-color-palette input[type="radio"] {
+  display: none;
+}
 .color-palette .color-item:has(input[type="radio"]:checked) {
   border: 1px solid #5f75ae;
   border-radius: 8px;
@@ -467,6 +475,28 @@ li .selected-page::after {
   background-color: #ffffff;
   width: fit-content;
   margin: 8px 0;
+}
+
+.text-color-palette .color-item {
+  display: flex;
+  padding: 0.2rem 0.13rem;
+  align-items: center;
+}
+
+.text-color-palette .color-item label {
+  cursor: pointer;
+}
+
+.text-color-palette {
+  display: flex;
+  padding: 0.1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #ffffff;
+  width: fit-content;
+  margin: 8px 0;
+  gap: 0.2rem;
 }
 
 .text-alignment {

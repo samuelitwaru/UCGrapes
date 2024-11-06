@@ -21,7 +21,7 @@ class ToolBoxManager {
     this.selectedFile = null;
     this.media = media;
     this.currentLanguage = currentLanguage;
-    this.init();
+    // this.init();
   }
 
   init() {
@@ -46,6 +46,7 @@ class ToolBoxManager {
     this.actionList = new ActionList(
       this.editorManager,
       this.dataManager,
+      this.currentLanguage,
       this
     );
 
@@ -109,9 +110,9 @@ class ToolBoxManager {
     };
 
     // tile title alignment
-    const leftAlign = document.getElementById("align-left");
-    const centerAlign = document.getElementById("align-center");
-    const rightAlign = document.getElementById("align-right");
+    const leftAlign = document.getElementById("text-align-left");
+    const centerAlign = document.getElementById("text-align-center");
+    const rightAlign = document.getElementById("text-align-right");
 
     leftAlign.addEventListener("click", () => {
       if (this.editorManager.selectedTemplateWrapper) {
@@ -444,10 +445,8 @@ class ToolBoxManager {
     const colorEntries = Object.entries(colors);
 
     colorEntries.forEach(([colorName, colorValue], index) => {
-      // Create the HTML for each color
       const alignItem = document.createElement("div");
       alignItem.className = "color-item";
-
       const radioInput = document.createElement("input");
       radioInput.type = "radio";
       radioInput.id = `color-${colorName}`;
@@ -458,6 +457,7 @@ class ToolBoxManager {
       colorBox.className = "color-box";
       colorBox.setAttribute("for", `color-${colorName}`);
       colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
 
       alignItem.appendChild(radioInput);
       alignItem.appendChild(colorBox);
@@ -474,62 +474,122 @@ class ToolBoxManager {
   }
 
   colorPalette() {
-    const textColorBoxes = document.querySelectorAll(
-      "#text-color-palette .color-box"
+    const textColorPaletteContainer = document.getElementById(
+      "text-color-palette"
     );
-    const iconColorBoxes = document.querySelectorAll(
-      "#icon-color-palette .color-box"
+    const iconColorPaletteContainer = document.getElementById(
+      "icon-color-palette"
     );
 
+    // Fixed color values
     const colorValues = {
-      color1: "#ffffff",
-      color2: "#333333",
+      color1: "#ffffff", // Example white
+      color2: "#333333", // Example dark gray
+      // Add more colors as needed
     };
 
-    textColorBoxes.forEach((box, index) => {
-      const colorKey = Object.keys(colorValues)[index];
+    // Create options for text color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
 
-      box.style.backgroundColor = colorValues[colorKey];
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `text-color-${colorName}`;
+      radioInput.name = "text-color";
+      radioInput.value = colorName;
 
-      box.onclick = () => {
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `text-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-text-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      textColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
         this.editorManager.selectedComponent.addStyle({
-          color: colorValues[colorKey],
+          color: colorValue,
         });
-        this.setAttributeToSelected("tile-text-color", colorValues[colorKey]);
+        this.setAttributeToSelected("tile-text-color", colorValue);
       };
     });
 
-    iconColorBoxes.forEach((box, index) => {
-      const colorKey = Object.keys(colorValues)[index];
+    // Create options for icon color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
 
-      box.style.backgroundColor = colorValues[colorKey];
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `icon-color-${colorName}`;
+      radioInput.name = "icon-color";
+      radioInput.value = colorName;
 
-      box.onclick = () => {
-        if (this.editorManager.selectedTemplateWrapper) {
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `icon-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-icon-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      iconColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
+        const svgIcon = this.editorManager.editor
+          .getSelected()
+          .find(".tile-icon path")[0];
+        if (svgIcon) {
+          svgIcon.removeAttributes("fill");
+          svgIcon.addAttributes({ fill: colorValue });
+          this.setAttributeToSelected("tile-icon-color", colorValue);
+        } else {
+          const message = this.currentLanguage.getTranslation(
+            "no_icon_selected_error_message"
+          );
+          this.displayAlertMessage(message, "error");
+        }
+      };
+    });
+  }
+
+  setupColorRadios(radioGroup, colorValues, type) {
+    Object.keys(colorValues).forEach((colorKey, index) => {
+      const radio = radioGroup[index];
+      const colorValue = colorValues[colorKey];
+
+      const colorBox = radio.nextElementSibling; // Get the color box label
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
+
+      radio.onclick = () => {
+        // Uncheck other radio buttons in the group
+        radioGroup.forEach((r) => (r.checked = false));
+        radio.checked = true;
+
+        // Apply the color based on type
+        if (type === "text") {
+          this.editorManager.selectedComponent.addStyle({
+            color: colorValue,
+          });
+          this.setAttributeToSelected("tile-text-color", colorValue);
+        } else if (type === "icon") {
           const svgIcon = this.editorManager.editor
             .getSelected()
             .find(".tile-icon path")[0];
-
           if (svgIcon) {
             svgIcon.removeAttributes("fill");
-            svgIcon.addAttributes({ fill: colorValues[colorKey] }); // Use the correct color key
-            this.setAttributeToSelected(
-              "tile-icon-color",
-              colorValues[colorKey]
-            );
+            svgIcon.addAttributes({ fill: colorValue });
+            this.setAttributeToSelected("tile-icon-color", colorValue);
           } else {
             const message = this.currentLanguage.getTranslation(
               "no_icon_selected_error_message"
             );
-            const status = "error";
-            this.displayAlertMessage(message, status);
+            this.displayAlertMessage(message, "error");
           }
-        } else {
-          const message = this.currentLanguage.getTranslation(
-            "no_tile_selected_error_message"
-          );
-          const status = "error";
-          this.displayAlertMessage(message, status);
         }
       };
     });
@@ -1119,6 +1179,89 @@ class ToolBoxManager {
         this.currentLanguage.getTranslation("no_tile_selected_error_message"),
         "error"
       );
+    }
+  }
+
+  updateTileProperties(editor) {
+    // Combined alignment checker
+    const alignmentTypes = [
+      { type: "text", attribute: "tile-text-align" },
+      { type: "icon", attribute: "tile-icon-align" },
+    ];
+
+    alignmentTypes.forEach(({ type, attribute }) => {
+      const currentAlign = editor.getSelected()?.getAttributes()?.[attribute];
+      ["left", "center", "right"].forEach((align) => {
+        document.getElementById(`${type}-align-${align}`).checked =
+          currentAlign === align;
+      });
+    });
+
+    const currentTextColor = editor.getSelected()?.getAttributes()?.[
+      "tile-text-color"
+    ];
+    const textColorRadios = document.querySelectorAll(
+      '.text-color-palette.text-colors .color-item input[type="radio"]' // Added .text-colors
+    );
+
+    textColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
+    });
+
+    // Update tile icon color
+    const currentIconColor = editor.getSelected()?.getAttributes()?.[
+      "tile-icon-color"
+    ];
+    const iconColorRadios = document.querySelectorAll(
+      '.text-color-palette.icon-colors .color-item input[type="radio"]' // Added .icon-colors
+    );
+
+    iconColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+    });
+
+    // update tile bg color
+    const currentBgColor = editor.getSelected()?.getAttributes()?.[
+      "tile-bgcolor"
+    ];
+    const radios = document.querySelectorAll(
+      '#theme-color-palette input[type="radio"]'
+    );
+
+    radios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
+    });
+
+    // update action
+    const currentActionName = editor.getSelected()?.getAttributes()?.[
+      "tile-action-object"
+    ];
+
+    const currentActionId = editor.getSelected()?.getAttributes()?.[
+      "tile-action-object-id"
+    ];
+
+    const propertySection = document.getElementById("selectedOption");
+    const selectedOptionElement = document.getElementById(currentActionId);
+
+    // Clear background styles for all options
+    const allOptions = document.querySelectorAll(".category-content li");
+    allOptions.forEach((option) => {
+      option.style.background = ""; // Clear any existing background styles
+    });
+
+    if (currentActionName && currentActionId && selectedOptionElement) {
+      propertySection.textContent = currentActionName;
+      propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
+
+      // Set background style for the selected option
+      selectedOptionElement.style.background = "#f0f0f0";
     }
   }
 }

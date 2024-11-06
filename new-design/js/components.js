@@ -4,33 +4,51 @@ class ActionList {
   toolBoxManager = null;
   selectedObject = null;
   selectedId = null;
-  pageOptions = []
-  
-  constructor(editorManager, dataManager, toolBoxManager) {
+  pageOptions = [];
+
+  constructor(editorManager, dataManager, currentLanguage, toolBoxManager) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
+    this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
     this.categoryData = [
-        {
-          name: "Page",
-          options: [],
-        },
-        {
-          name: "Service/Product Page",
-          options: this.dataManager.services.map(service => {
-            return {PageId:service.ProductServiceId, PageName:service.ProductServiceName}
-          })
-        },
-        {
-          name: "Dynamic Form",
-          options: [{PageId:"2354481d-5df0-4154-92b8-2fc0aaf9b3e7", PageName:"Form 1"}],
-        },
-        {
-          name: "Call to Action",
-          options: [{PageId:"2354481d-5df0-4154-92b8-2fc0aaf9b3e7", PageName:"Call To Action"}],
-        },
-      ];
-    this.init()
+      {
+        name: "Page",
+        label: this.currentLanguage.getTranslation("category_page"),
+        options: [],
+      },
+      {
+        name: "Service/Product Page",
+        label: this.currentLanguage.getTranslation("category_services_or_page"),
+        options: this.dataManager.services.map((service) => {
+          return {
+            PageId: service.ProductServiceId,
+            PageName: service.ProductServiceName,
+          };
+        }),
+      },
+      {
+        name: "Dynamic Form",
+        label: this.currentLanguage.getTranslation("category_dynamic_form"),
+        options: [
+          {
+            PageId: "2354481d-5df0-4154-92b8-2fc0aaf9b3e7",
+            PageName: "Form 1",
+          },
+        ],
+      },
+      {
+        name: "Call to Action",
+        label: this.currentLanguage.getTranslation("category_call_to_action"),
+        options: [
+          {
+            PageId: "2354481d-5df0-4154-92b8-2fc0aaf9b3e7",
+            PageName: "Call To Action",
+          },
+        ],
+      },
+    ];
+    this.init();
   }
 
   init() {
@@ -59,20 +77,20 @@ class ActionList {
     }));
     console.log("Pages", pageOptions);
     return pageOptions;
-  };
+  }
 
-  populateDropdownMenu(){
-    let self = this
+  populateDropdownMenu() {
+    let self = this;
     const dropdownMenu = document.getElementById("dropdownMenu");
     dropdownMenu.innerHTML = "";
 
     this.categoryData.forEach((category) => {
       const categoryElement = document.createElement("details");
       categoryElement.classList.add("category");
-      categoryElement.setAttribute("data-category", category.name);
+      categoryElement.setAttribute("data-category", category.label);
 
       const summaryElement = document.createElement("summary");
-      summaryElement.innerHTML = `${category.name} <i class="fa fa-angle-right"></i>`;
+      summaryElement.innerHTML = `${category.label} <i class="fa fa-angle-right"></i>`;
       categoryElement.appendChild(summaryElement);
 
       const searchBox = document.createElement("div");
@@ -127,8 +145,7 @@ class ActionList {
     // Toggle display of the search box based on category open state and handle icons
     categories.forEach((category) => {
       category.addEventListener("toggle", function () {
-        self.selectedObject = category.dataset.category
-        self.toolBoxManager.setAttributeToSelected("tile-action-object", category.dataset.category)
+        self.selectedObject = category.dataset.category;
         const searchBox = this.querySelector(".search-container");
         const icon = this.querySelector("summary i");
         const isOpen = this.open;
@@ -170,9 +187,18 @@ class ActionList {
           // add apage to a selected tile
           const currentPageId = localStorage.getItem("pageId");
           if (currentPageId !== undefined) {
-            self.toolBoxManager.setAttributeToSelected("tile-action-object-id", this.id)
+            self.toolBoxManager.setAttributeToSelected(
+              "tile-action-object-id",
+              this.id
+            );
+            self.toolBoxManager.setAttributeToSelected(
+              "tile-action-object",
+              `${this.closest(".category").dataset.category}, ${
+                this.textContent
+              }`
+            );
           }
-          
+
           if (titleComponent) {
             titleComponent.components(this.textContent);
 
@@ -212,5 +238,5 @@ class ActionList {
         noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
       });
     });
-  };
+  }
 }

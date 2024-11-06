@@ -29,6 +29,10 @@ const translations = {
     upload_section_text: `<p>Drag and drop or <a href="#" id="browseLink">browse</a></p>`,
     cancel_btn: "Cancel",
     save_btn: "Save",
+    category_page: "Page",
+    category_services_or_page: "Service/Product Page",
+    category_dynamic_form: "Dynamic Form",
+    category_call_to_action: "Call to Action",
   },
   dutch: {
     navbar_title: "De app gereedschapskist bouwer",
@@ -62,6 +66,10 @@ const translations = {
     upload_section_text: `<p>Slepen en neerzetten of <a href="#" id="browseLink">bladeren</a></p>`,
     cancel_btn: "Annuleren",
     save_btn: "Opslaan",
+    category_page: "Pagina",
+    category_services_or_page: "Dienst/Productpagina",
+    category_dynamic_form: "Dynamisch Formulier",
+    category_call_to_action: "Oproep tot Actie",
   },
 };
 

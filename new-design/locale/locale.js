@@ -75,7 +75,6 @@ const translations = {
 
 class Locale {
   constructor(language) {
-    console.log(language);
     if (!translations[language]) {
       throw new Error(`Unsupported language: ${language}`);
     }

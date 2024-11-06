@@ -194,7 +194,7 @@ class EditorManager {
     //auto save page every 2 seconds
     setInterval(() => {
       this.saveCurrentPage();
-    }, 10000);
+    }, 2000);
   }
 
   updateTileTitle(inputTitle) {

@@ -326,6 +326,7 @@ class MappingComponent {
       const li = document.createElement("li");
       const span = document.createElement("span");
       span.textContent = item.Name;
+      span.id = item.Id;
       li.appendChild(span);
       li.className = this.checkActivePage(item.Id) ? "selected-page" : "";
       span.title = item.Id;
@@ -355,7 +356,8 @@ class MappingComponent {
       span.onclick = () => {
         this.editorManager.setCurrentPageName(item.Name);
         this.editorManager.setCurrentPageId(item.Id);
-
+        let page = this.dataManager.pages.find(page=>page.PageId == item.Id)
+        this.editorManager.setCurrentPage(page)
         const editor = this.editorManager.editor;
 
         editor.DomComponents.clear();
@@ -413,7 +415,6 @@ class MediaComponent {
         
         let fileListHtml = ``;
         for (let index = 0; index < this.dataManager.media.length; index++) {
-
           const file = this.dataManager.media[index];
           fileListHtml += `
             <div class="file-item valid" 
@@ -512,7 +513,7 @@ class MediaComponent {
                   self.dataManager.uploadFile(e.target.result, file.name, file.size, file.type).then(response=>{
                   if (response.MediaId) {
                       this.dataManager.media.push(response);
-                      this.displayMediaFile(response);
+                      this.displayMediaFile(fileList, response);
                   }
                   })
               };
@@ -564,7 +565,7 @@ class MediaComponent {
           } else {
           const message = "Please select a tile to continue";
           const status = "error";
-          this.displayAlertMessage(message, status);
+          self.toolBoxManager.displayAlertMessage(message, status);
           }
       });
 
@@ -604,27 +605,26 @@ class MediaComponent {
 
     }
 
-    displayMediaFile(file) {
-    const fileList = document.querySelector("#fileList");
-    const fileItem = document.createElement("div");
-    fileItem.className = "file-item";
-    fileItem.setAttribute("data-mediaid", file.MediaId);
+    displayMediaFile(fileList, file) {
+      const fileItem = document.createElement("div");
+      fileItem.className = "file-item";
+      fileItem.setAttribute("data-mediaid", file.MediaId);
 
-    const img = document.createElement("img");
-    img.src = file.MediaUrl;
-    img.alt = "File thumbnail";
-    img.className = "preview-image";
+      const img = document.createElement("img");
+      img.src = file.MediaUrl;
+      img.alt = "File thumbnail";
+      img.className = "preview-image";
 
-    const fileInfo = document.createElement("div");
-    fileInfo.className = "file-info";
+      const fileInfo = document.createElement("div");
+      fileInfo.className = "file-info";
 
-    const fileName = document.createElement("div");
-    fileName.className = "file-name";
-    fileName.textContent = file.MediaName;
+      const fileName = document.createElement("div");
+      fileName.className = "file-name";
+      fileName.textContent = file.MediaName;
 
-    const fileSize = document.createElement("div");
-    fileSize.className = "file-size";
-    const formatFileSize = (bytes) => {
+      const fileSize = document.createElement("div");
+      fileSize.className = "file-size";
+      const formatFileSize = (bytes) => {
         if (bytes < 1024) return `${bytes} B`;
         if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
         if (bytes < 1024 * 1024 * 1024)
@@ -652,6 +652,8 @@ class MediaComponent {
         statusIcon.innerHTML = "⚠";
         statusIcon.style.color = "red";
     }
+
+    console.log(fileItem)
 
     fileInfo.appendChild(fileName);
     fileInfo.appendChild(fileSize);

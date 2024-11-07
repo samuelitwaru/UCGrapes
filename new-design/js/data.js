@@ -23,6 +23,7 @@ class DataManager {
         }),
         success: function (response) {
           self.pages = response;
+          console.log(self.pages)
           resolve(self.pages);
         },
         error: function (xhr, status, error) {

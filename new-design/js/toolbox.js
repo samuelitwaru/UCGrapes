@@ -31,6 +31,7 @@ class ToolBoxManager {
       pages.forEach((page) => {
         if (page.PageName === "Home") {
           this.editorManager.pageId = page.PageId;
+          console.log(page)
           this.editorManager.setCurrentPage(page);
           this.editorManager.editor.trigger("load");
         }
@@ -46,7 +47,6 @@ class ToolBoxManager {
     
     this.actionList = new ActionListComponent(this.editorManager, this.dataManager, this.currentLanguage, this)
     
-    this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
     this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
     const tabButtons = document.querySelectorAll(".toolbox-tab-button");
     const tabContents = document.querySelectorAll(".toolbox-tab-content");
@@ -85,21 +85,25 @@ class ToolBoxManager {
 
     publishButton.onclick = (e) => {
       e.preventDefault();
-      let pageData = mapTemplateToPageData(
-        this.editorManager.editor.getProjectData()
+      let projectData = this.editorManager.editor.getProjectData()
+      let htmlData = this.editorManager.editor.getHtml()
+      let jsonData = mapTemplateToPageData(
+        projectData
       );
+
       let pageId = this.editorManager.getCurrentPageId();
       if (pageId) {
         let data = {
           PageId: pageId,
-          PageJsonContent: JSON.stringify(pageData),
-          PageGJSHtml: this.editorManager.editor.getHtml(),
+          PageJsonContent: JSON.stringify(jsonData),
+          PageGJSHtml: htmlData,
           PageGJSJson: JSON.stringify(
-            this.editorManager.editor.getProjectData()
+            projectData
           ),
-          SDT_Page: pageData,
+          SDT_Page: jsonData,
           PageIsPublished: true,
         };
+        console.log(data)
         this.dataManager.updatePage(data).then((res) => {
           this.displayAlertMessage("Page Save Successfully", "success");
         });

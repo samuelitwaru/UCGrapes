@@ -189,9 +189,9 @@ class EditorManager {
     frameEl.contentDocument.addEventListener("mouseup", this.stopResize);
 
     //auto save page every 2 seconds
-    setInterval(() => {
-      this.saveCurrentPage();
-    }, 2000);
+    // setInterval(() => {
+    //   this.saveCurrentPage();
+    // }, 2000);
   }
 
   updateTileTitle(inputTitle) {
@@ -310,7 +310,7 @@ class EditorManager {
 
   createTemplateHTML(isDefault = false) {
     return `
-        <div class="template-wrapper ${isDefault ? "default-template" : ""}"
+        <div ${defaultTileAttrs} class="template-wrapper ${isDefault ? "default-template" : ""}"
               data-gjs-type="template-wrapper"
               data-gjs-droppable="false">
           <div class="template-block"
@@ -853,20 +853,21 @@ class EditorManager {
     try {
       const data = this.editor.getProjectData();
       localStorage.setItem(localStorageKey, JSON.stringify(data));
-      let pageData = mapTemplateToPageData(this.editor.getProjectData());
+      let projectData = this.editor.getProjectData()
+      let pageData = mapTemplateToPageData(projectData);
       let pageId = this.getCurrentPageId();
       if (pageId) {
         let data = {
           PageId: pageId,
           PageJsonContent: JSON.stringify(pageData),
           PageGJSHtml: this.editor.getHtml(),
-          PageGJSJson: JSON.stringify(this.editor.getProjectData()),
+          PageGJSJson: JSON.stringify(projectData),
           SDT_Page: pageData,
           PageIsPublished: true,
         };
         
         this.toolsSection.dataManager.updatePage(data).then((res) => {
-          console.log("Page Save Successfully");
+          //console.log("Page Save Successfully");
         });
       }
     } catch (error) {

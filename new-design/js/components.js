@@ -53,16 +53,13 @@ class ActionListComponent {
   }
 
   init() {
-    
     this.dataManager
       .getPagesService()
       .then((pages) => {
-       
         this.pageOptions = this.mapPageNamesToOptions(pages);
-        
+
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
-            
             category.options = this.pageOptions;
           }
         });
@@ -393,29 +390,29 @@ class MappingComponent {
 }
 
 class MediaComponent {
-    constructor (dataManager, editorManager, toolBoxManager) {
-        this.dataManager = dataManager
-        this.editorManager = editorManager
-        this.toolBoxManager = toolBoxManager
-        this.init()
-    }
+  constructor(dataManager, editorManager, currentLanguage, toolBoxManager) {
+    this.dataManager = dataManager;
+    this.editorManager = editorManager;
+    this.currentLanguage = currentLanguage;
+    this.toolBoxManager = toolBoxManager;
+    this.init();
+  }
 
-    init () {
-      this.handleFileManager()
-    }
+  init() {
+    console.log("Current language: ", this.currentLanguage);
+    this.handleFileManager();
+  }
 
-    openFileUploadModal() {
-        const modal = document.createElement("div");
-        modal.className = "toolbox-modal";
-        const modalContent = document.createElement("div");
-        modalContent.className = "toolbox-modal-content";
-      
-        
-        let fileListHtml = ``;
-        for (let index = 0; index < this.dataManager.media.length; index++) {
+  openFileUploadModal() {
+    const modal = document.createElement("div");
+    modal.className = "toolbox-modal";
+    const modalContent = document.createElement("div");
+    modalContent.className = "toolbox-modal-content";
 
-          const file = this.dataManager.media[index];
-          fileListHtml += `
+    let fileListHtml = ``;
+    for (let index = 0; index < this.dataManager.media.length; index++) {
+      const file = this.dataManager.media[index];
+      fileListHtml += `
             <div class="file-item valid" 
                 data-MediaId="${file.MediaId}" 
                 data-MediaUrl="${file.MediaUrl}" 
@@ -428,11 +425,13 @@ class MediaComponent {
               <span class="status-icon" style="color: green;"></span>
             </div>
           `;
-        }
+    }
 
-        modalContent.innerHTML = `
+    modalContent.innerHTML = `
         <div class="toolbox-modal-header">
-            <h2>Upload</h2>
+            <h2>${this.currentLanguage.getTranslation(
+              "file_upload_modal_title"
+            )}</h2>
             <span class="close">
                 <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
                     <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -443,7 +442,7 @@ class MediaComponent {
             <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
                 <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
               </svg>
-            <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
+              ${this.currentLanguage.getTranslation("upload_section_text")}
         </div>
         <div class="file-list" id="fileList">${fileListHtml}</div>
         <div class="modal-actions">
@@ -451,160 +450,166 @@ class MediaComponent {
             <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
         </div>
         `;
-        modal.appendChild(modalContent);
-        return modal;
-    }
+    modal.appendChild(modalContent);
+    return modal;
+  }
 
-    handleFileManager() {
-      let self = this;
-      const openModal = document.getElementById("image-bg");
-      const fileInputField = document.createElement("input");
-      const modal = this.openFileUploadModal();
-      
-      let selectedFile = null;
-      let allUploadedFiles = [];
+  handleFileManager() {
+    let self = this;
+    const openModal = document.getElementById("image-bg");
+    const fileInputField = document.createElement("input");
+    const modal = this.openFileUploadModal();
 
-      openModal.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (self.editorManager.editor.getSelected()) {
-          fileInputField.type = "file";
-          fileInputField.multiple = true;
-          fileInputField.accept = "image/jpeg, image/jpg, image/png"; // Only accept specific image types
-          fileInputField.id = "fileInput";
-          fileInputField.style.display = "none";
+    let selectedFile = null;
+    let allUploadedFiles = [];
 
-          document.body.appendChild(modal);
-          document.body.appendChild(fileInputField);
+    openModal.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (self.editorManager.editor.getSelected()) {
+        fileInputField.type = "file";
+        fileInputField.multiple = true;
+        fileInputField.accept = "image/jpeg, image/jpg, image/png"; // Only accept specific image types
+        fileInputField.id = "fileInput";
+        fileInputField.style.display = "none";
 
-          // add onclick event handler for file items
-          const fileItems = document.querySelectorAll(".file-item");
-          fileItems.forEach((element) => {
-              element.addEventListener("click", (e) => {
-              this.mediaFileClicked(element);
-              });
+        document.body.appendChild(modal);
+        document.body.appendChild(fileInputField);
+
+        // add onclick event handler for file items
+        const fileItems = document.querySelectorAll(".file-item");
+        fileItems.forEach((element) => {
+          element.addEventListener("click", (e) => {
+            this.mediaFileClicked(element);
           });
+        });
 
-          modal.style.display = "flex";
+        modal.style.display = "flex";
 
-          const uploadArea = modal.querySelector("#uploadArea");
-          uploadArea.onclick = () => {
-              fileInputField.click();
-          };
+        const uploadArea = modal.querySelector("#uploadArea");
+        uploadArea.onclick = () => {
+          fileInputField.click();
+        };
 
-          fileInputField.onchange = (event) => {
-              // Filter only allowed image types
-              const newFiles = Array.from(event.target.files).filter((file) =>
-              ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
-              );
-              allUploadedFiles = [...allUploadedFiles, ...newFiles];
+        fileInputField.onchange = (event) => {
+          // Filter only allowed image types
+          const newFiles = Array.from(event.target.files).filter((file) =>
+            ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
+          );
+          allUploadedFiles = [...allUploadedFiles, ...newFiles];
 
-              const fileList = modal.querySelector("#fileList");
-              //fileList.innerHTML = "";
+          const fileList = modal.querySelector("#fileList");
+          //fileList.innerHTML = "";
 
-              allUploadedFiles.forEach((file) => {
-              const fileItem = document.createElement("div");
-              fileItem.className = "file-item";
+          allUploadedFiles.forEach((file) => {
+            const fileItem = document.createElement("div");
+            fileItem.className = "file-item";
 
-              const img = document.createElement("img");
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                  img.src = e.target.result;
-                  self.dataManager.uploadFile(e.target.result, file.name, file.size, file.type).then(response=>{
+            const img = document.createElement("img");
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              img.src = e.target.result;
+              self.dataManager
+                .uploadFile(e.target.result, file.name, file.size, file.type)
+                .then((response) => {
                   if (response.MediaId) {
-                      this.dataManager.media.push(response);
-                      this.displayMediaFile(response);
+                    this.dataManager.media.push(response);
+                    this.displayMediaFile(response);
                   }
-                  })
-              };
-              reader.readAsDataURL(file);
-              img.alt = "File thumbnail";
-              img.className = "preview-image";
+                });
+            };
+            reader.readAsDataURL(file);
+            img.alt = "File thumbnail";
+            img.className = "preview-image";
 
-              const fileInfo = document.createElement("div");
-              fileInfo.className = "file-info";
+            const fileInfo = document.createElement("div");
+            fileInfo.className = "file-info";
 
-              const fileName = document.createElement("div");
-              fileName.className = "file-name";
-              fileName.textContent = file.name;
+            const fileName = document.createElement("div");
+            fileName.className = "file-name";
+            fileName.textContent = file.name;
 
-              const fileSize = document.createElement("div");
-              fileSize.className = "file-size";
-              const formatFileSize = (bytes) => {
-                  if (bytes < 1024) return `${bytes} B`;
-                  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-                  if (bytes < 1024 * 1024 * 1024)
-                  return `${Math.round(bytes / 1024 / 1024)} MB`;
-                  return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
-              };
+            const fileSize = document.createElement("div");
+            fileSize.className = "file-size";
+            const formatFileSize = (bytes) => {
+              if (bytes < 1024) return `${bytes} B`;
+              if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+              if (bytes < 1024 * 1024 * 1024)
+                return `${Math.round(bytes / 1024 / 1024)} MB`;
+              return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
+            };
 
-              fileSize.textContent = formatFileSize(file.size);
+            fileSize.textContent = formatFileSize(file.size);
 
-              const statusIcon = document.createElement("span");
-              statusIcon.className = "status-icon";
+            const statusIcon = document.createElement("span");
+            statusIcon.className = "status-icon";
 
-              // Check file size limit (2MB) and file type
-              const isValidSize = file.size <= 2 * 1024 * 1024;
-              const isValidType = [
-                  "image/jpeg",
-                  "image/jpg",
-                  "image/png",
-              ].includes(file.type);
+            // Check file size limit (2MB) and file type
+            const isValidSize = file.size <= 2 * 1024 * 1024;
+            const isValidType = [
+              "image/jpeg",
+              "image/jpg",
+              "image/png",
+            ].includes(file.type);
 
-              if (isValidSize && isValidType) {
-                  fileItem.classList.add("valid");
-                  statusIcon.innerHTML = "";
-                  statusIcon.style.color = "green";
-              } else {
-                  fileItem.classList.add("invalid");
-                  statusIcon.innerHTML = "⚠";
-                  statusIcon.style.color = "red";
-              }
-              });
-          };
-          } else {
-          const message = "Please select a tile to continue";
-          const status = "error";
-          this.displayAlertMessage(message, status);
-          }
-      });
-
-      const closeButton = modal.querySelector(".close");
-      closeButton.onclick = () => {
-          modal.style.display = "none";
-          document.body.removeChild(modal);
-          document.body.removeChild(fileInputField);
-      };
-
-      const cancelBtn = modal.querySelector("#cancelBtn");
-      cancelBtn.onclick = () => {
-          modal.style.display = "none";
-          document.body.removeChild(modal);
-          document.body.removeChild(fileInputField);
-      };
-
-      const saveBtn = modal.querySelector("#saveBtn");
-      saveBtn.onclick = () => {
-          if (this.selectedFile) {
-          const templateBlock = this.editorManager.editor
-              .getSelected()
-              .find(".template-block")[0];
-          templateBlock.addStyle({
-              "background-image": `url(${this.selectedFile.MediaUrl})`,
-              "background-size": "cover",
-              "background-position": "center",
+            if (isValidSize && isValidType) {
+              fileItem.classList.add("valid");
+              statusIcon.innerHTML = "";
+              statusIcon.style.color = "green";
+            } else {
+              fileItem.classList.add("invalid");
+              statusIcon.innerHTML = "⚠";
+              statusIcon.style.color = "red";
+            }
           });
+        };
+      } else {
+        const message = this.currentLanguage.getTranslation(
+          "error_loading_data_message"
+        );
+        const status = "error";
+        this.toolBoxManager.displayAlertMessage(message, status);
+      }
+    });
 
-          self.toolBoxManager.setAttributeToSelected("tile-bg-image-url", this.selectedFile.MediaUrl)
-          }
+    const closeButton = modal.querySelector(".close");
+    closeButton.onclick = () => {
+      modal.style.display = "none";
+      document.body.removeChild(modal);
+      document.body.removeChild(fileInputField);
+    };
 
-          modal.style.display = "none";
-          document.body.removeChild(modal);
-          document.body.removeChild(fileInputField);
-      };
+    const cancelBtn = modal.querySelector("#cancelBtn");
+    cancelBtn.onclick = () => {
+      modal.style.display = "none";
+      document.body.removeChild(modal);
+      document.body.removeChild(fileInputField);
+    };
 
-    }
+    const saveBtn = modal.querySelector("#saveBtn");
+    saveBtn.onclick = () => {
+      if (this.selectedFile) {
+        const templateBlock = this.editorManager.editor
+          .getSelected()
+          .find(".template-block")[0];
+        templateBlock.addStyle({
+          "background-image": `url(${this.selectedFile.MediaUrl})`,
+          "background-size": "cover",
+          "background-position": "center",
+        });
 
-    displayMediaFile(file) {
+        self.toolBoxManager.setAttributeToSelected(
+          "tile-bg-image-url",
+          this.selectedFile.MediaUrl
+        );
+      }
+
+      modal.style.display = "none";
+      document.body.removeChild(modal);
+      document.body.removeChild(fileInputField);
+    };
+  }
+
+  displayMediaFile(file) {
     const fileList = document.querySelector("#fileList");
     const fileItem = document.createElement("div");
     fileItem.className = "file-item";
@@ -625,11 +630,11 @@ class MediaComponent {
     const fileSize = document.createElement("div");
     fileSize.className = "file-size";
     const formatFileSize = (bytes) => {
-        if (bytes < 1024) return `${bytes} B`;
-        if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-        if (bytes < 1024 * 1024 * 1024)
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+      if (bytes < 1024 * 1024 * 1024)
         return `${Math.round(bytes / 1024 / 1024)} MB`;
-        return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
+      return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
     };
 
     fileSize.textContent = formatFileSize(file.MediaSize);
@@ -640,17 +645,17 @@ class MediaComponent {
     // Check file size limit (2MB) and file type
     const isValidSize = file.MediaSize <= 2 * 1024 * 1024;
     const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(
-        file.MediaType
+      file.MediaType
     );
 
     if (isValidSize && isValidType) {
-        fileItem.classList.add("valid");
-        statusIcon.innerHTML = "";
-        statusIcon.style.color = "green";
+      fileItem.classList.add("valid");
+      statusIcon.innerHTML = "";
+      statusIcon.style.color = "green";
     } else {
-        fileItem.classList.add("invalid");
-        statusIcon.innerHTML = "⚠";
-        statusIcon.style.color = "red";
+      fileItem.classList.add("invalid");
+      statusIcon.innerHTML = "⚠";
+      statusIcon.style.color = "red";
     }
 
     fileInfo.appendChild(fileName);
@@ -660,23 +665,23 @@ class MediaComponent {
     fileItem.appendChild(fileInfo);
     fileItem.appendChild(statusIcon);
     fileItem.onclick = (e) => {
-        this.mediaFileClicked(fileItem);
+      this.mediaFileClicked(fileItem);
     };
     fileList.appendChild(fileItem);
-    }
+  }
 
-    mediaFileClicked(fileItem) {
+  mediaFileClicked(fileItem) {
     if (fileItem.classList.contains("invalid")) {
-        return;
+      return;
     }
     document.querySelector(".modal-actions").style.display = "flex";
 
     document.querySelectorAll(".file-item").forEach((el) => {
-        el.classList.remove("selected");
-        const icon = el.querySelector(".status-icon");
-        if (icon) {
+      el.classList.remove("selected");
+      const icon = el.querySelector(".status-icon");
+      if (icon) {
         icon.innerHTML = el.classList.contains("invalid") ? "⚠" : "";
-        }
+      }
     });
 
     fileItem.classList.add("selected");
@@ -688,7 +693,7 @@ class MediaComponent {
             `;
     statusIcon.style.color = "green";
     this.selectedFile = this.dataManager.media.find(
-        (file) => file.MediaId == fileItem.dataset.mediaid
+      (file) => file.MediaId == fileItem.dataset.mediaid
     );
-    }
+  }
 }

@@ -37,17 +37,30 @@ class ToolBoxManager {
       });
     });
 
-    
     this.loadTheme();
     this.listThemesInSelectField();
     this.colorPalette();
     this.loadTiles();
     this.loadPageTemplates();
-    
-    this.actionList = new ActionListComponent(this.editorManager, this.dataManager, this.currentLanguage, this)
-    
-    this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
-    this.mediaComponent = new MediaComponent(this.dataManager, this.editorManager, this)
+
+    this.actionList = new ActionListComponent(
+      this.editorManager,
+      this.dataManager,
+      this.currentLanguage,
+      this
+    );
+
+    this.mediaComponent = new MediaComponent(
+      this.dataManager,
+      this.editorManager,
+      this.currentLanguage,
+      this
+    );
+    // this.mediaComponent = new MediaComponent(
+    //   this.dataManager,
+    //   this.editorManager,
+    //   this
+    // );
     const tabButtons = document.querySelectorAll(".toolbox-tab-button");
     const tabContents = document.querySelectorAll(".toolbox-tab-content");
     tabButtons.forEach((button) => {
@@ -80,7 +93,11 @@ class ToolBoxManager {
       mappingSection.style.display =
         mappingSection.style.display === "block" ? "none" : "block";
 
-        this.mappingComponent = new MappingComponent(this.dataManager, this.editorManager, this)
+      this.mappingComponent = new MappingComponent(
+        this.dataManager,
+        this.editorManager,
+        this
+      );
     });
 
     publishButton.onclick = (e) => {
@@ -655,8 +672,6 @@ class ToolBoxManager {
       pageTemplates.appendChild(blockElement);
     });
   }
-
-  
 
   popupModal() {
     const popup = document.createElement("div");

@@ -184,6 +184,29 @@ class DataManager {
       });
     })
   }
+
+  createContentPage(pageId){
+    return new Promise((resolve, reject)=>{
+      $.ajax({
+        url:
+          `${baseURL}/api/toolbox/create-content-page`,
+        type: "POST",
+        contentType: "application/json", // Ensure JSON content type
+        data: JSON.stringify({ PageId: pageId }),
+        success: function (response) {
+          console.log("Success:", response);
+          resolve(response)
+        },
+        error: function (xhr, status, error) {
+          if (xhr.status === 404) {
+            console.error("Error 404: Not Found");
+          } else {
+            console.error("Error:", status, error);
+          }
+        },
+      });
+    })
+  }
 }
 
 

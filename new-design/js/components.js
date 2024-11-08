@@ -179,6 +179,7 @@ class ActionListComponent {
     // Handle selecting an option and displaying it in the header
     document.querySelectorAll(".category-content li").forEach((item) => {
       item.addEventListener("click", function () {
+        
         dropdownHeader.textContent = `${
           this.closest(".category").dataset.category
         }, ${this.textContent}`;
@@ -202,6 +203,11 @@ class ActionListComponent {
                 this.textContent
               }`
             );
+            alert(self.selectedObject)
+            if (self.selectedObject == 'Service/Product Page'){
+              self.createContentPage(this.id)
+            }
+
           }
 
           if (titleComponent) {
@@ -243,6 +249,10 @@ class ActionListComponent {
         noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
       });
     });
+  }
+
+  createContentPage(pageId) {
+    this.dataManager.createContentPage(pageId)
   }
 }
 

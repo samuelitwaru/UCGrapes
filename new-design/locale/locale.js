@@ -108,6 +108,8 @@ class Locale {
       "sidebar_mapping_title",
       "alert_type_success",
       "alert_type_error",
+      "cancel_btn",
+      "save_btn",
     ];
 
     elementsToTranslate.forEach((elementId) => {

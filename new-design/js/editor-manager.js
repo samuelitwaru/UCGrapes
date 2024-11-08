@@ -57,7 +57,7 @@ class EditorManager {
           } catch (error) {
             console.log("Error loading data:" + error);
             const message = this.currentLanguage.getTranslation(
-              "error_loading_data_message"
+              "no_icon_selected_error_message"
             );
             const status = "error";
             this.toolsSection.displayAlertMessage(message, status);
@@ -865,7 +865,7 @@ class EditorManager {
           SDT_Page: pageData,
           PageIsPublished: true,
         };
-        
+
         this.toolsSection.dataManager.updatePage(data).then((res) => {
           //console.log("Page Save Successfully");
         });

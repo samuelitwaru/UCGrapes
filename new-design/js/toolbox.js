@@ -38,7 +38,6 @@ class ToolBoxManager {
       });
     });
 
-    
     this.loadTheme();
     this.listThemesInSelectField();
     this.colorPalette();
@@ -80,7 +79,11 @@ class ToolBoxManager {
       mappingSection.style.display =
         mappingSection.style.display === "block" ? "none" : "block";
 
-        this.mappingComponent = new MappingComponent(this.dataManager, this.editorManager, this)
+      this.mappingComponent = new MappingComponent(
+        this.dataManager,
+        this.editorManager,
+        this
+      );
     });
 
     publishButton.onclick = (e) => {
@@ -659,8 +662,6 @@ class ToolBoxManager {
       pageTemplates.appendChild(blockElement);
     });
   }
-
-  
 
   popupModal() {
     const popup = document.createElement("div");

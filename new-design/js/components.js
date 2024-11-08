@@ -203,7 +203,7 @@ class ActionListComponent {
                 this.textContent
               }`
             );
-            alert(self.selectedObject)
+
             if (self.selectedObject == 'Service/Product Page'){
               self.createContentPage(this.id)
             }

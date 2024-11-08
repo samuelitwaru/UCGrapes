@@ -280,32 +280,34 @@ class MappingComponent {
         pageSubmit.disabled = !pageInput.value.trim();
       });
 
-      pageSubmit.addEventListener("click", (e) => {
-        e.preventDefault();
-        const pageTitle = pageInput.value.trim();
-        if (pageTitle) {
-          // Additional check to ensure value exists
-          this.dataManager.createNewPage(pageTitle).then((res) => {
-            const pageInput = document.getElementById("page-title");
-            pageInput.value = "";
+      e.preventDefault();
+      console.log("Clicked");
+      const pageTitle = pageInput.value.trim();
+      if (pageTitle) {
+        // Additional check to ensure value exists
+        this.dataManager.createNewPage(pageTitle).then((res) => {
+          const pageInput = document.getElementById("page-title");
+          pageInput.value = "";
 
-            this.dataManager
-              .getPagesService()
-              .then((pages) => {
-                // Clear the current tree structure
-                const treeContainer = document.getElementById("tree-container"); // Assuming tree is rendered here
-                treeContainer.innerHTML = ""; // Clear existing nodes
+          this.dataManager
+            .getPagesService()
+            .then((pages) => {
+              // Clear the current tree structure
+              const treeContainer = document.getElementById("tree-container"); // Assuming tree is rendered here
+              treeContainer.innerHTML = ""; // Clear existing nodes
 
-                // Re-create the tree with updated pages data
-                const newTree = self.createTree(pages, true); // Set isRoot to true if it's the root
-                treeContainer.appendChild(newTree); // Append the new tree structure to the container
-              })
-              .catch((error) => {
-                console.error("Error fetching pages:", error);
-              });
-          });
-        }
-      });
+              // Re-create the tree with updated pages data
+              const newTree = self.createTree(pages, true); // Set isRoot to true if it's the root
+              treeContainer.appendChild(newTree); // Append the new tree structure to the container
+            })
+            .catch((error) => {
+              console.error("Error fetching pages:", error);
+            });
+        });
+      }
+      // pageSubmit.addEventListener("click", (e) => {
+
+      // });
     });
   }
 

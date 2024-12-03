@@ -1,4 +1,4 @@
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 let baseURL = window.location.origin;
 
 if (baseURL.startsWith("http://localhost")) baseURL += environment;
@@ -793,6 +793,27 @@ class DataManager {
     return new Promise((resolve, reject) => {
       $.ajax({
         url: `${baseURL}/api/toolbox/singlepage?Pageid=${pageId}`,
+        type: "GET",
+        contentType: "application/json",
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (xhr, status, error) {
+          if (xhr.status === 404) {
+            console.error("Error 404: Not Found");
+          } else {
+            console.error("Error:", status, error);
+          }
+          reject(error);
+        },
+      });
+    });
+  }
+
+  deletePage(pageId) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: `${baseURL}/api/toolbox/deletepage?Pageid=${pageId}`,
         type: "GET",
         contentType: "application/json",
         success: function (response) {

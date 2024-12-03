@@ -134,7 +134,6 @@ class ChildEditorManager{
             const canvas = editor.Canvas.getElement();
             if (canvas) {
               canvas.style.setProperty("height", "calc(100% - 100px)", "important");
-              console.log("canvas found, ", canvas);
             }
         }else{
             editor.loadProjectData(JSON.parse(page.PageGJSJson))

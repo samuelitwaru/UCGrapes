@@ -61,8 +61,8 @@ class ToolBoxManager {
       this.editorManager,
       this
     );
-    const tabButtons = document.querySelectorAll(".toolbox-tab-button");
-    const tabContents = document.querySelectorAll(".toolbox-tab-content");
+    const tabButtons = document.querySelectorAll(".tb-tab-button");
+    const tabContents = document.querySelectorAll(".tb-tab-content");
     tabButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
         e.preventDefault();
@@ -273,7 +273,8 @@ class ToolBoxManager {
 
   updateTileTitle(inputTitle) {
     if (this.editorManager.selectedTemplateWrapper) {
-      const titleComponent = this.editorManager.selectedComponent.find(".tile-title")[0];
+      const titleComponent =
+        this.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.components(inputTitle);
         this.selectedComponent.addAttributes({ "tile-title": inputTitle });
@@ -282,9 +283,9 @@ class ToolBoxManager {
   }
 
   publishPages() {
-    const editors = Object.values(this.editorManager.editors)
+    const editors = Object.values(this.editorManager.editors);
 
-    console.log(editors)
+    console.log(editors);
     // let editors = this.editorManager.editors;
     if (editors && editors.length) {
       for (let index = 0; index < editors.length; index++) {
@@ -424,8 +425,7 @@ class ToolBoxManager {
     const root = document.documentElement;
     const iframe = document.querySelector(".mobile-frame iframe");
 
-    if (!iframe) return
-
+    if (!iframe) return;
 
     // Set CSS variables from the selected theme
     root.style.setProperty(
@@ -462,7 +462,7 @@ class ToolBoxManager {
       this.currentTheme.colors.accentColor
     );
 
-    console.log(this.currentTheme)
+    console.log(this.currentTheme);
 
     root.style.setProperty("--font-family", this.currentTheme.fontFamily);
 
@@ -671,15 +671,15 @@ class ToolBoxManager {
             ...selectedComponent.find(".plain-button"),
           ];
 
-          console.log("Component selected: ", selectedComponent)
-          console.log("Component picked: ", componentsWithClass)
+          console.log("Component selected: ", selectedComponent);
+          console.log("Component picked: ", componentsWithClass);
 
           // Get the first matching component
           const button =
             componentsWithClass.length > 0 ? componentsWithClass[0] : null;
 
           if (button) {
-            console.log("Button opened ", button)
+            console.log("Button opened ", button);
             button.addStyle({
               "background-color": colorValue,
               "border-color": colorValue,
@@ -698,11 +698,11 @@ class ToolBoxManager {
       contentPageCtas.innerHTML = "";
 
       if (!callToActions) {
-        $("#content-page-section").show()
-        return
+        $("#content-page-section").show();
+        return;
       }
 
-      $("#content-page-section").show()
+      $("#content-page-section").show();
 
       callToActions.forEach((cta) => {
         const ctaItem = document.createElement("div");
@@ -771,35 +771,36 @@ class ToolBoxManager {
             .getWrapper()
             .find(".cta-button-container")[0];
 
-            if (!ctaButton) {
-              console.error("CTA Button container not found.");
-              return;
+          if (!ctaButton) {
+            console.error("CTA Button container not found.");
+            return;
           }
-          
+
           const selectedComponent = this.editorManager.selectedComponent;
           if (!selectedComponent) {
-              console.error("No selected component found.");
-              return;
+            console.error("No selected component found.");
+            return;
           }
-          
+
           const attributes = selectedComponent.getAttributes();
-          
+
           const existingSelectedComponent =
-              attributes["cta-button-id"] === cta.CallToActionId;
-          
-          const existingButton = ctaButton.find(`#id-${cta.CallToActionId}`)?.[0];
-          
+            attributes["cta-button-id"] === cta.CallToActionId;
+
+          const existingButton = ctaButton.find(
+            `#id-${cta.CallToActionId}`
+          )?.[0];
+
           if (existingButton) {
-              if (existingSelectedComponent) {
-                console.log("Replaced")
-                  selectedComponent.replaceWith(ctaComponent);
-              } else {
-              }
-              return;
+            if (existingSelectedComponent) {
+              console.log("Replaced");
+              selectedComponent.replaceWith(ctaComponent);
+            } else {
+            }
+            return;
           }
-          console.log("New")
+          console.log("New");
           ctaButton.append(ctaComponent);
-          
         };
 
         contentPageCtas.appendChild(ctaItem);
@@ -856,7 +857,9 @@ class ToolBoxManager {
                 `;
 
                 // Remove the current component and replace it
-                this.editorManager.selectedComponent.replaceWith(plainButtonComponent);
+                this.editorManager.selectedComponent.replaceWith(
+                  plainButtonComponent
+                );
               } else {
                 const message = this.currentLanguage.getTranslation(
                   "please_select_cta_button"
@@ -941,7 +944,9 @@ class ToolBoxManager {
                 `;
 
                 // Remove the current component and replace it
-                this.editorManager.selectedComponent.replaceWith(imgButtonComponent);
+                this.editorManager.selectedComponent.replaceWith(
+                  imgButtonComponent
+                );
               } else {
                 const message = this.currentLanguage.getTranslation(
                   "please_select_cta_button"
@@ -957,7 +962,7 @@ class ToolBoxManager {
 
     renderCtas();
 
-    return
+    return;
 
     // handling badge clicks
     const wrapper = editorInstance.getWrapper();
@@ -1177,10 +1182,10 @@ class ToolBoxManager {
           ${this.currentLanguage.getTranslation("confirmation_modal_message")}
         </div>
         <div class="popup-footer">
-          <button id="accept_popup" class="toolbox-btn toolbox-btn-primary">
+          <button id="accept_popup" class="tb-btn tb-btn-primary">
           ${this.currentLanguage.getTranslation("accept_popup")}
           </button>
-          <button id="close_popup" class="toolbox-btn toolbox-btn-outline">
+          <button id="close_popup" class="tb-btn tb-btn-outline">
           ${this.currentLanguage.getTranslation("cancel_btn")}
           </button>
         </div>
@@ -1239,7 +1244,7 @@ class ToolBoxManager {
       this.editorManager.selectedComponent.addAttributes({
         [attributeName]: attributeValue,
       });
-      console.log(this.editorManager.selectedComponent)
+      console.log(this.editorManager.selectedComponent);
     } else {
       this.displayAlertMessage(
         this.currentLanguage.getTranslation("no_tile_selected_error_message"),
@@ -1257,7 +1262,7 @@ class ToolBoxManager {
         this.editorManager.selectedComponent?.getAttributes()?.[
           "cta-background-color"
         ];
-      
+
       const CtaRadios = document.querySelectorAll(
         '#cta-color-palette input[type="radio"]'
       );
@@ -1265,7 +1270,8 @@ class ToolBoxManager {
       CtaRadios.forEach((radio) => {
         const colorBox = radio.nextElementSibling;
         radio.checked =
-          colorBox.getAttribute("data-cta-color").toUpperCase() === currentCtaBgColor.toUpperCase();
+          colorBox.getAttribute("data-cta-color").toUpperCase() ===
+          currentCtaBgColor.toUpperCase();
       });
     } else {
       // Combined alignment checker

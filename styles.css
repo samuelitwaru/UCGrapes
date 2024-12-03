@@ -1,0 +1,81 @@
+/* Reset browser styles */
+body, ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background-color: #f8f9fa; /* Light gray background similar to Bootstrap */
+    padding: 20px;
+  }
+  
+  .list-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff; /* White background */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow */
+    padding: 20px;
+  }
+  
+  .list-title {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: #343a40; /* Dark gray */
+    text-align: center;
+  }
+  
+  .custom-list {
+    padding: 10px 0;
+  }
+  
+  .custom-list-item {
+    padding: 10px 15px;
+    margin: 5px 0;
+    border: 1px solid #ddd; /* Light border for each item */
+    border-radius: 4px;
+    background-color: #ffffff; /* White background */
+    color: #495057; /* Text color */
+    transition: background-color 0.2s, transform 0.2s; /* Smooth hover effect */
+    position: relative; /* Position for dropdown */
+  }
+  
+  .custom-list-item:hover {
+    background-color: #e9ecef; /* Light hover effect */
+    cursor: pointer;
+  }
+  
+  /* Dropdown menu styles */
+  .dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%; /* Position below the parent item */
+    left: 0;
+    background-color: #ffffff; /* White background */
+    border: 1px solid #ddd; /* Border for dropdown */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    z-index: 10;
+    min-width: 150px;
+    padding: 10px 0;
+  }
+  
+  .dropdown-item {
+    padding: 8px 15px;
+    color: #495057; /* Text color */
+    white-space: nowrap; /* Prevent wrapping */
+  }
+  
+  .dropdown-item:hover {
+    background-color: #e9ecef; /* Hover effect */
+    cursor: pointer;
+  }
+  
+  /* Show dropdown when active */
+  .dropdown.active .dropdown-menu {
+    display: block;
+  }
+  

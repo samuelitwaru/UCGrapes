@@ -11,7 +11,7 @@ class ActionListComponent {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
-    console.log("Data is: ", dataManager)
+    console.log("Data is: ", dataManager);
 
     this.categoryData = [
       {
@@ -37,12 +37,13 @@ class ActionListComponent {
     this.dataManager
       .getPagesService()
       .then((pages) => {
-        console.log('ActionList', pages)
-        this.pageOptions = this.mapPageNamesToOptions(pages.filter(page=>page.Name!="Home"));
-        
+        console.log("ActionList", pages);
+        this.pageOptions = this.mapPageNamesToOptions(
+          pages.filter((page) => page.Name != "Home")
+        );
+
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
-            
             category.options = this.pageOptions;
           }
         });
@@ -106,17 +107,18 @@ class ActionListComponent {
     const categories = document.querySelectorAll(".category");
 
     // Toggle dropdown menu visibility
-    
-    if(!this.added){
-    dropdownHeader.removeEventListener('click', (e)=>{})
-    dropdownHeader.addEventListener("click", (e) => {
-      dropdownMenu.style.display =
-      dropdownMenu.style.display === "block" ? "none" : "block";
-      dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
-      dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");
-    });}
 
-    this.added = true
+    if (!this.added) {
+      dropdownHeader.removeEventListener("click", (e) => {});
+      dropdownHeader.addEventListener("click", (e) => {
+        dropdownMenu.style.display =
+          dropdownMenu.style.display === "block" ? "none" : "block";
+        dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
+        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");
+      });
+    }
+
+    this.added = true;
 
     // Close dropdown when clicking outside
     document.addEventListener("click", (event) => {
@@ -166,12 +168,10 @@ class ActionListComponent {
           this.closest(".category").dataset.category
         }, ${this.textContent}`;
 
-        console.log(self.editorManager.getCurrentEditor())
-        const editor = self.editorManager.getCurrentEditor()
+        console.log(self.editorManager.getCurrentEditor());
+        const editor = self.editorManager.getCurrentEditor();
         if (editor.getSelected()) {
-          const titleComponent = editor
-            .getSelected()
-            .find(".tile-title")[0];
+          const titleComponent = editor.getSelected().find(".tile-title")[0];
 
           // add apage to a selected tile
           const currentPageId = localStorage.getItem("pageId");
@@ -187,13 +187,12 @@ class ActionListComponent {
                 this.textContent
               }`
             );
-            if (self.selectedObject == 'Service/Product Page'){
-              self.createContentPage(this.id)
+            if (self.selectedObject == "Service/Product Page") {
+              self.createContentPage(this.id);
             }
             // let page = self.toolBoxManager.editorManager.getPage(this.id)
             // console.log(page)
             // self.toolBoxManager.editorManager.createChildEditor(page)
-
           }
 
           if (titleComponent) {
@@ -238,14 +237,19 @@ class ActionListComponent {
   }
 
   createContentPage(pageId) {
-    let self = this
-    this.dataManager.createContentPage(pageId).then(res=>{
-      this.dataManager.getPages().then(pages=>{
-        let treePages = pages.map(page=>{return {Id:page.PageId, Name:page.PageName}})
-        const newTree = self.toolBoxManager.mappingComponent.createTree(treePages, true); // Set isRoot to true if it's the root
+    let self = this;
+    this.dataManager.createContentPage(pageId).then((res) => {
+      this.dataManager.getPages().then((pages) => {
+        let treePages = pages.map((page) => {
+          return { Id: page.PageId, Name: page.PageName };
+        });
+        const newTree = self.toolBoxManager.mappingComponent.createTree(
+          treePages,
+          true
+        ); // Set isRoot to true if it's the root
         self.toolBoxManager.mappingComponent.treeContainer.appendChild(newTree);
-      })
-    })
+      });
+    });
   }
 }
 
@@ -270,7 +274,7 @@ class MappingComponent {
     const pageInput = document.getElementById("page-title");
 
     createPageButton.removeEventListener("click", this.boundCreatePage);
-    
+
     pageInput.addEventListener("input", () => {
       createPageButton.disabled = !pageInput.value.trim() || this.isLoading;
     });
@@ -280,7 +284,7 @@ class MappingComponent {
 
   async loadPageTree() {
     if (this.isLoading) return;
-    
+
     try {
       this.isLoading = true;
       const pages = await this.dataManager.getPagesService();
@@ -296,9 +300,9 @@ class MappingComponent {
 
   async handleCreatePage(e) {
     e.preventDefault();
-    
+
     if (this.isLoading) return;
-    
+
     const pageInput = document.getElementById("page-title");
     const createPageButton = document.getElementById("page-submit");
     const pageTitle = pageInput.value.trim();
@@ -308,24 +312,26 @@ class MappingComponent {
     try {
       this.isLoading = true;
       createPageButton.disabled = true;
-      pageInput.disabled = true;  // Disable input during creation
-      
+      pageInput.disabled = true; // Disable input during creation
+
       // Create the page
       await this.dataManager.createNewPage(pageTitle);
-      
+
       // Clear input
       pageInput.value = "";
-      
+
       // First clear the tree
       this.clearMappings();
-      
+
       // Then reload the pages and rebuild the tree
-      this.dataManager.getPages().then(pages=>{
-        let treePages = pages.map(page=>{return {Id:page.PageId, Name:page.PageName}})
+      this.dataManager.getPages().then((pages) => {
+        let treePages = pages.map((page) => {
+          return { Id: page.PageId, Name: page.PageName };
+        });
         const newTree = this.createTree(treePages, true); // Set isRoot to true if it's the root
         this.treeContainer.appendChild(newTree);
-        this.toolBoxManager.actionList.init()
-      })
+        this.toolBoxManager.actionList.init();
+      });
 
       // this.displayMessage(`Page "${pageTitle}" created successfully`, "success");
     } catch (error) {
@@ -334,7 +340,7 @@ class MappingComponent {
     } finally {
       this.isLoading = false;
       createPageButton.disabled = !pageInput.value.trim();
-      pageInput.disabled = false;  // Re-enable input
+      pageInput.disabled = false; // Re-enable input
     }
   }
 
@@ -344,86 +350,151 @@ class MappingComponent {
     }
   }
 
-  createTree(data, isRoot = false) {
-    console.log('data for tree', data)
-    // Create a deep copy to avoid modifying original data
-    const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) => 
-      a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
-    );
+  createTree(data) {
+    const buildListItem = (item) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("tb-custom-list-item");
 
-    const ul = document.createElement("ul");
-    if (!isRoot) ul.style.display = "block";
+      const menuItem = document.createElement("div");
+      menuItem.classList.add("tb-custom-menu-item");
 
-    sortedData.forEach((item) => {
-      const li = document.createElement("li");
-      const span = document.createElement("span");
-      
-      // Create text node instead of using textContent to prevent XSS
-      span.appendChild(document.createTextNode(item.Name));
-      span.id = item.Id;
-      li.appendChild(span);
-      li.className = this.checkActivePage(item.Id) ? "selected-page" : "";
-      span.title = item.Id;
+      const toggle = document.createElement("span");
+      toggle.classList.add("tb-dropdown-toggle");
+      toggle.setAttribute("role", "button");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = `<i class="fa fa-caret-right tree-icon"></i><span>${item.Name}</span>`;
 
-      if (item.Children?.length > 0) {
-        const childrenContainer = this.createTree(item.Children);
-        li.appendChild(childrenContainer);
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+      deleteIcon.setAttribute("data-id", item.Id);
 
-        const childToggle = document.createElement("span");
-        childToggle.appendChild(document.createTextNode(" + "));
-        span.style.cursor = "pointer";
+      // Add delete functionality to deleteIcon
+      deleteIcon.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const itemId = event.target.getAttribute("data-id");
+        const deletePage = this.dataManager.deletePage(itemId);
+        // Remove the dropdown item from the DOM (optional)
+        if (deletePage) {
+          listItem.remove();
+        }
+      });
 
-        // Use a single bound click handler
-        const toggleChildren = (e) => {
-          e.stopPropagation();
-          const isHidden = childrenContainer.style.display === "none";
-          childrenContainer.style.display = isHidden ? "block" : "none";
-          childToggle.textContent = isHidden ? " - " : " + ";
-        };
+      menuItem.appendChild(toggle);
+      if (item.Name !== "Home") {
+        menuItem.appendChild(deleteIcon);
+      }
+      listItem.appendChild(menuItem);
 
-        childToggle.onclick = toggleChildren;
-        span.appendChild(childToggle);
-      } else {
-        // Add trash icon for items without children
-          const trashIcon = document.createElement("i");
-          trashIcon.className = "fa fa-trash delete-tree-item";
-          trashIcon.style.marginLeft = "30px";
-          trashIcon.style.cursor = "pointer";
-          trashIcon.style.opacity = 0;
-          
-          // Add click handler for trash icon
-          trashIcon.onclick = (e) => {
-              e.stopPropagation();
-          };
-          
-          span.appendChild(trashIcon);
+      if (item.Children) {
+        const dropdownMenu = document.createElement("ul");
+        dropdownMenu.classList.add("tb-dropdown-menu");
+        item.Children.forEach((child) => {
+          const dropdownItem = document.createElement("li");
+          dropdownItem.classList.add("tb-dropdown-item");
+          dropdownItem.innerHTML = `<span><i style="margin-right: 10px;" class="fa-regular fa-file tree-icon"></i>${child.Name}</span><i data-id="${child.Id}" class="fa-regular fa-trash-can tb-delete-icon"></i>`;
+
+          // Add delete functionality for child items
+          const childDeleteIcon = dropdownItem.querySelector(".tb-delete-icon");
+          childDeleteIcon.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const childItemId = event.target.getAttribute("data-id");
+            const deletePage = this.dataManager.deletePage(childItemId);
+            // Remove the dropdown item from the DOM (optional)
+            if (deletePage) {
+              dropdownItem.remove();
+            }
+          });
+
+          dropdownMenu.appendChild(dropdownItem);
+        });
+        listItem.appendChild(dropdownMenu);
+        listItem.classList.add("tb-dropdown");
+
+        // Add click listener for dropdown toggle
+        menuItem.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const isActive = listItem.classList.contains("active");
+
+          // Close other active dropdowns
+          const activeDropdowns = document.querySelectorAll(
+            ".tb-dropdown.active"
+          );
+          activeDropdowns.forEach((dropdown) => {
+            if (dropdown !== listItem) {
+              dropdown.classList.remove("active");
+              dropdown
+                .querySelector(".tb-dropdown-toggle")
+                .setAttribute("aria-expanded", "false");
+              dropdown
+                .querySelector(".tb-custom-menu-item")
+                .classList.remove("active-tree-item");
+            }
+          });
+
+          // Toggle current dropdown
+          if (!isActive) {
+            listItem.classList.add("active");
+            toggle.setAttribute("aria-expanded", "true");
+            menuItem.classList.add("active-tree-item");
+          } else {
+            listItem.classList.remove("active");
+            toggle.setAttribute("aria-expanded", "false");
+            menuItem.classList.remove("active-tree-item");
+          }
+        });
       }
 
-      // Bind the click handler with proper context
-      span.onclick = (e) => {
-        e.stopPropagation();
-        if (!this.isLoading) {
-          console.log("Item is: "+ item +" and span is: "+ span)
-          this.handlePageSelection(item, span);
-        }
-      };
+      return listItem;
+    };
 
-      ul.appendChild(li);
+    // Create the main container ul
+    const container = document.createElement("ul");
+    container.classList.add("tb-custom-list");
+
+    const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
+      a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
+    );
+    // Build the list from data
+    sortedData.forEach((item) => {
+      const listItem = buildListItem(item);
+      container.appendChild(listItem);
     });
 
-    return ul;
+    // Add global click listener to close dropdowns
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
+        dropdown.classList.remove("active");
+        dropdown
+          .querySelector(".tb-dropdown-toggle")
+          .setAttribute("aria-expanded", "false");
+        dropdown
+          .querySelector(".tb-custom-menu-item")
+          .classList.remove("active-tree-item");
+      });
+    });
+
+    // Prevent dropdown menu from closing when clicked
+    container.querySelectorAll(".tb-dropdown-menu").forEach((menu) => {
+      menu.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+    });
+
+    return container;
   }
 
   async handlePageSelection(item, span) {
     if (this.isLoading) return;
-    console.log("Item is: "+ item +" and span is: "+ span)
+    console.log("Item is: " + item + " and span is: " + span);
     try {
       this.isLoading = true;
-      
+
       this.editorManager.setCurrentPageName(item.Name);
       this.editorManager.setCurrentPageId(item.Id);
 
-      const page = this.dataManager.pages.find(page => page.PageId === item.Id);
+      const page = this.dataManager.pages.find(
+        (page) => page.PageId === item.Id
+      );
       this.editorManager.setCurrentPage(page);
 
       const editor = globalEditor;
@@ -432,12 +503,12 @@ class MappingComponent {
       editor.trigger("load");
 
       // Update UI
-      document.querySelectorAll(".selected-page").forEach(el => {
+      document.querySelectorAll(".selected-page").forEach((el) => {
         el.classList.remove("selected-page");
       });
 
       span.closest("li").classList.add("selected-page");
-      
+
       const mainPage = document.getElementById("current-page-title");
       mainPage.textContent = this.updateActivePageName();
 
@@ -463,30 +534,28 @@ class MappingComponent {
   }
 }
 
-
 class MediaComponent {
-    constructor (dataManager, editorManager, toolBoxManager) {
-        this.dataManager = dataManager
-        this.editorManager = editorManager
-        this.toolBoxManager = toolBoxManager
-        this.init()
-    }
+  constructor(dataManager, editorManager, toolBoxManager) {
+    this.dataManager = dataManager;
+    this.editorManager = editorManager;
+    this.toolBoxManager = toolBoxManager;
+    this.init();
+  }
 
-    init () {
-      this.handleFileManager()
-    }
+  init() {
+    this.handleFileManager();
+  }
 
-    openFileUploadModal() {
-        const modal = document.createElement("div");
-        modal.className = "toolbox-modal";
-        const modalContent = document.createElement("div");
-        modalContent.className = "toolbox-modal-content";
-      
-        
-        let fileListHtml = ``;
-        for (let index = 0; index < this.dataManager.media.length; index++) {
-          const file = this.dataManager.media[index];
-          fileListHtml += `
+  openFileUploadModal() {
+    const modal = document.createElement("div");
+    modal.className = "tb-modal";
+    const modalContent = document.createElement("div");
+    modalContent.className = "tb-modal-content";
+
+    let fileListHtml = ``;
+    for (let index = 0; index < this.dataManager.media.length; index++) {
+      const file = this.dataManager.media[index];
+      fileListHtml += `
             <div class="file-item valid" 
                 data-MediaId="${file.MediaId}" 
                 data-MediaUrl="${file.MediaUrl}" 
@@ -499,10 +568,10 @@ class MediaComponent {
               <span class="status-icon" style="color: green;"></span>
             </div>
           `;
-        }
+    }
 
-        modalContent.innerHTML = `
-        <div class="toolbox-modal-header">
+    modalContent.innerHTML = `
+        <div class="tb-modal-header">
             <h2>Upload</h2>
             <span class="close">
                 <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
@@ -518,187 +587,191 @@ class MediaComponent {
         </div>
         <div class="file-list" id="fileList">${fileListHtml}</div>
         <div class="modal-actions">
-            <button class="toolbox-btn toolbox-btn-outline" id="cancelBtn">Cancel</button>
-            <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
+            <button class="tb-btn tb-btn-outline" id="cancelBtn">Cancel</button>
+            <button class="tb-btn tb-btn-primary" id="saveBtn">Save</button>
         </div>
         `;
-        modal.appendChild(modalContent);
-        return modal;
-    }
+    modal.appendChild(modalContent);
+    return modal;
+  }
 
-    handleFileManager() {
-      let self = this;
-      const openModal = document.getElementById("image-bg");
-      const fileInputField = document.createElement("input");
-      const modal = this.openFileUploadModal();
-      
-      let selectedFile = null;
-      let allUploadedFiles = [];
+  handleFileManager() {
+    let self = this;
+    const openModal = document.getElementById("image-bg");
+    const fileInputField = document.createElement("input");
+    const modal = this.openFileUploadModal();
 
-      openModal.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (this.editorManager.selectedComponent) {
-          fileInputField.type = "file";
-          fileInputField.multiple = true;
-          fileInputField.accept = "image/jpeg, image/jpg, image/png"; // Only accept specific image types
-          fileInputField.id = "fileInput";
-          fileInputField.style.display = "none";
+    let selectedFile = null;
+    let allUploadedFiles = [];
 
-          document.body.appendChild(modal);
-          document.body.appendChild(fileInputField);
+    openModal.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (this.editorManager.selectedComponent) {
+        fileInputField.type = "file";
+        fileInputField.multiple = true;
+        fileInputField.accept = "image/jpeg, image/jpg, image/png"; // Only accept specific image types
+        fileInputField.id = "fileInput";
+        fileInputField.style.display = "none";
 
-          // add onclick event handler for file items
-          const fileItems = document.querySelectorAll(".file-item");
-          fileItems.forEach((element) => {
-              element.addEventListener("click", (e) => {
-              this.mediaFileClicked(element);
-              });
+        document.body.appendChild(modal);
+        document.body.appendChild(fileInputField);
+
+        // add onclick event handler for file items
+        const fileItems = document.querySelectorAll(".file-item");
+        fileItems.forEach((element) => {
+          element.addEventListener("click", (e) => {
+            this.mediaFileClicked(element);
           });
+        });
 
-          modal.style.display = "flex";
+        modal.style.display = "flex";
 
-          const uploadArea = modal.querySelector("#uploadArea");
-          uploadArea.onclick = () => {
-              fileInputField.click();
-          };
+        const uploadArea = modal.querySelector("#uploadArea");
+        uploadArea.onclick = () => {
+          fileInputField.click();
+        };
 
-          fileInputField.onchange = (event) => {
-              // Filter only allowed image types
-              const newFiles = Array.from(event.target.files).filter((file) =>
-              ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
-              );
-              allUploadedFiles = [...allUploadedFiles, ...newFiles];
+        fileInputField.onchange = (event) => {
+          // Filter only allowed image types
+          const newFiles = Array.from(event.target.files).filter((file) =>
+            ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
+          );
+          allUploadedFiles = [...allUploadedFiles, ...newFiles];
 
-              const fileList = modal.querySelector("#fileList");
-              //fileList.innerHTML = "";
+          const fileList = modal.querySelector("#fileList");
+          //fileList.innerHTML = "";
 
-              allUploadedFiles.forEach((file) => {
-              const fileItem = document.createElement("div");
-              fileItem.className = "file-item";
+          allUploadedFiles.forEach((file) => {
+            const fileItem = document.createElement("div");
+            fileItem.className = "file-item";
 
-              const img = document.createElement("img");
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                  img.src = e.target.result;
-                  self.dataManager.uploadFile(e.target.result, file.name, file.size, file.type).then(response=>{
+            const img = document.createElement("img");
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              img.src = e.target.result;
+              self.dataManager
+                .uploadFile(e.target.result, file.name, file.size, file.type)
+                .then((response) => {
                   if (response.MediaId) {
-                      this.dataManager.media.push(response);
-                      this.displayMediaFile(fileList, response);
+                    this.dataManager.media.push(response);
+                    this.displayMediaFile(fileList, response);
                   }
-                  })
-              };
-              reader.readAsDataURL(file);
-              img.alt = "File thumbnail";
-              img.className = "preview-image";
+                });
+            };
+            reader.readAsDataURL(file);
+            img.alt = "File thumbnail";
+            img.className = "preview-image";
 
-              const fileInfo = document.createElement("div");
-              fileInfo.className = "file-info";
+            const fileInfo = document.createElement("div");
+            fileInfo.className = "file-info";
 
-              const fileName = document.createElement("div");
-              fileName.className = "file-name";
-              fileName.textContent = file.name;
+            const fileName = document.createElement("div");
+            fileName.className = "file-name";
+            fileName.textContent = file.name;
 
-              const fileSize = document.createElement("div");
-              fileSize.className = "file-size";
-              const formatFileSize = (bytes) => {
-                  if (bytes < 1024) return `${bytes} B`;
-                  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-                  if (bytes < 1024 * 1024 * 1024)
-                  return `${Math.round(bytes / 1024 / 1024)} MB`;
-                  return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
-              };
+            const fileSize = document.createElement("div");
+            fileSize.className = "file-size";
+            const formatFileSize = (bytes) => {
+              if (bytes < 1024) return `${bytes} B`;
+              if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+              if (bytes < 1024 * 1024 * 1024)
+                return `${Math.round(bytes / 1024 / 1024)} MB`;
+              return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
+            };
 
-              fileSize.textContent = formatFileSize(file.size);
+            fileSize.textContent = formatFileSize(file.size);
 
-              const statusIcon = document.createElement("span");
-              statusIcon.className = "status-icon";
+            const statusIcon = document.createElement("span");
+            statusIcon.className = "status-icon";
 
-              // Check file size limit (2MB) and file type
-              const isValidSize = file.size <= 2 * 1024 * 1024;
-              const isValidType = [
-                  "image/jpeg",
-                  "image/jpg",
-                  "image/png",
-              ].includes(file.type);
+            // Check file size limit (2MB) and file type
+            const isValidSize = file.size <= 2 * 1024 * 1024;
+            const isValidType = [
+              "image/jpeg",
+              "image/jpg",
+              "image/png",
+            ].includes(file.type);
 
-              if (isValidSize && isValidType) {
-                  fileItem.classList.add("valid");
-                  statusIcon.innerHTML = "";
-                  statusIcon.style.color = "green";
-              } else {
-                  fileItem.classList.add("invalid");
-                  statusIcon.innerHTML = "⚠";
-                  statusIcon.style.color = "red";
-              }
-              });
-          };
-          } else {
-          const message = "Please select a tile to continue";
-          const status = "error";
-          self.toolBoxManager.displayAlertMessage(message, status);
-          }
-      });
-
-      const closeButton = modal.querySelector(".close");
-      closeButton.onclick = () => {
-          modal.style.display = "none";
-          document.body.removeChild(modal);
-          document.body.removeChild(fileInputField);
-      };
-
-      const cancelBtn = modal.querySelector("#cancelBtn");
-      cancelBtn.onclick = () => {
-          modal.style.display = "none";
-          document.body.removeChild(modal);
-          document.body.removeChild(fileInputField);
-      };
-
-      const saveBtn = modal.querySelector("#saveBtn");
-      saveBtn.onclick = () => {
-          if (this.selectedFile) {
-          const templateBlock =  this.editorManager.selectedComponent
-              // .find(".template-block")[0];
-          templateBlock.addStyle({
-              "background-image": `url(${this.selectedFile.MediaUrl})`,
-              "background-size": "cover",
-              "background-position": "center",
+            if (isValidSize && isValidType) {
+              fileItem.classList.add("valid");
+              statusIcon.innerHTML = "";
+              statusIcon.style.color = "green";
+            } else {
+              fileItem.classList.add("invalid");
+              statusIcon.innerHTML = "⚠";
+              statusIcon.style.color = "red";
+            }
           });
+        };
+      } else {
+        const message = "Please select a tile to continue";
+        const status = "error";
+        self.toolBoxManager.displayAlertMessage(message, status);
+      }
+    });
 
-          self.toolBoxManager.setAttributeToSelected("tile-bg-image-url", this.selectedFile.MediaUrl)
-          }
+    const closeButton = modal.querySelector(".close");
+    closeButton.onclick = () => {
+      modal.style.display = "none";
+      document.body.removeChild(modal);
+      document.body.removeChild(fileInputField);
+    };
 
-          modal.style.display = "none";
-          document.body.removeChild(modal);
-          document.body.removeChild(fileInputField);
-      };
+    const cancelBtn = modal.querySelector("#cancelBtn");
+    cancelBtn.onclick = () => {
+      modal.style.display = "none";
+      document.body.removeChild(modal);
+      document.body.removeChild(fileInputField);
+    };
 
-    }
+    const saveBtn = modal.querySelector("#saveBtn");
+    saveBtn.onclick = () => {
+      if (this.selectedFile) {
+        const templateBlock = this.editorManager.selectedComponent;
+        // .find(".template-block")[0];
+        templateBlock.addStyle({
+          "background-image": `url(${this.selectedFile.MediaUrl})`,
+          "background-size": "cover",
+          "background-position": "center",
+        });
 
-    displayMediaFile(fileList, file) {
-      const fileItem = document.createElement("div");
-      fileItem.className = "file-item";
-      fileItem.setAttribute("data-mediaid", file.MediaId);
+        self.toolBoxManager.setAttributeToSelected(
+          "tile-bg-image-url",
+          this.selectedFile.MediaUrl
+        );
+      }
 
-      const img = document.createElement("img");
-      img.src = file.MediaUrl;
-      img.alt = "File thumbnail";
-      img.className = "preview-image";
+      modal.style.display = "none";
+      document.body.removeChild(modal);
+      document.body.removeChild(fileInputField);
+    };
+  }
 
-      const fileInfo = document.createElement("div");
-      fileInfo.className = "file-info";
+  displayMediaFile(fileList, file) {
+    const fileItem = document.createElement("div");
+    fileItem.className = "file-item";
+    fileItem.setAttribute("data-mediaid", file.MediaId);
 
-      const fileName = document.createElement("div");
-      fileName.className = "file-name";
-      fileName.textContent = file.MediaName;
+    const img = document.createElement("img");
+    img.src = file.MediaUrl;
+    img.alt = "File thumbnail";
+    img.className = "preview-image";
 
-      const fileSize = document.createElement("div");
-      fileSize.className = "file-size";
-      const formatFileSize = (bytes) => {
-        if (bytes < 1024) return `${bytes} B`;
-        if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-        if (bytes < 1024 * 1024 * 1024)
+    const fileInfo = document.createElement("div");
+    fileInfo.className = "file-info";
+
+    const fileName = document.createElement("div");
+    fileName.className = "file-name";
+    fileName.textContent = file.MediaName;
+
+    const fileSize = document.createElement("div");
+    fileSize.className = "file-size";
+    const formatFileSize = (bytes) => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+      if (bytes < 1024 * 1024 * 1024)
         return `${Math.round(bytes / 1024 / 1024)} MB`;
-        return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
+      return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
     };
 
     fileSize.textContent = formatFileSize(file.MediaSize);
@@ -709,17 +782,17 @@ class MediaComponent {
     // Check file size limit (2MB) and file type
     const isValidSize = file.MediaSize <= 2 * 1024 * 1024;
     const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(
-        file.MediaType
+      file.MediaType
     );
 
     if (isValidSize && isValidType) {
-        fileItem.classList.add("valid");
-        statusIcon.innerHTML = "";
-        statusIcon.style.color = "green";
+      fileItem.classList.add("valid");
+      statusIcon.innerHTML = "";
+      statusIcon.style.color = "green";
     } else {
-        fileItem.classList.add("invalid");
-        statusIcon.innerHTML = "⚠";
-        statusIcon.style.color = "red";
+      fileItem.classList.add("invalid");
+      statusIcon.innerHTML = "⚠";
+      statusIcon.style.color = "red";
     }
 
     fileInfo.appendChild(fileName);
@@ -729,23 +802,23 @@ class MediaComponent {
     fileItem.appendChild(fileInfo);
     fileItem.appendChild(statusIcon);
     fileItem.onclick = (e) => {
-        this.mediaFileClicked(fileItem);
+      this.mediaFileClicked(fileItem);
     };
     fileList.appendChild(fileItem);
-    }
+  }
 
-    mediaFileClicked(fileItem) {
+  mediaFileClicked(fileItem) {
     if (fileItem.classList.contains("invalid")) {
-        return;
+      return;
     }
     document.querySelector(".modal-actions").style.display = "flex";
 
     document.querySelectorAll(".file-item").forEach((el) => {
-        el.classList.remove("selected");
-        const icon = el.querySelector(".status-icon");
-        if (icon) {
+      el.classList.remove("selected");
+      const icon = el.querySelector(".status-icon");
+      if (icon) {
         icon.innerHTML = el.classList.contains("invalid") ? "⚠" : "";
-        }
+      }
     });
 
     fileItem.classList.add("selected");
@@ -757,7 +830,7 @@ class MediaComponent {
             `;
     statusIcon.style.color = "green";
     this.selectedFile = this.dataManager.media.find(
-        (file) => file.MediaId == fileItem.dataset.mediaid
+      (file) => file.MediaId == fileItem.dataset.mediaid
     );
-    }
+  }
 }

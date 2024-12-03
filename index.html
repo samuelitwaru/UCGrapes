@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input and Button</title>
+    <style>
+        /* Container styling */
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Input field styling */
+        .input-field {
+            padding: 8px;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        /* Button styling */
+        .add-button {
+            padding: 8px 16px;
+            background-color: #3b5998; /* Facebook blue color */
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Button hover effect */
+        .add-button:hover {
+            background-color: #334d84;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <input type="text" class="input-field" placeholder="Page name ..." />
+        <button class="add-button">Add</button>
+    </div>
+</body>
+</html>

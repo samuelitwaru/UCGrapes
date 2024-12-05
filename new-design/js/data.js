@@ -966,6 +966,28 @@ class DataManager {
     });
   }
 
+  deleteMedia(mediaId) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: `${baseURL}/api/media/delete`, // Replace with the actual API endpoint
+        type: "GET",
+        data: {
+          MediaId: mediaId
+        },
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (xhr, status, error) {
+          if (xhr.status === 404) {
+            console.error("Error 404: Not Found");
+          } else {
+            console.error("Error:", status, error);
+          }
+        },
+      });
+    });
+  }
+
   getMediaFiles() {
     return new Promise((resolve, reject) => {
       $.ajax({
@@ -1137,3 +1159,18 @@ const defaultConstraints = `
     data-gjs-resizable="false"
     data-gjs-hoverable="false"
 `;
+
+const predefinedPages = {
+  "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c": {
+    PageName: "RECEPTION"
+  },
+  "784c2d18-622f-43f3-bde1-7b00035d6a07": {
+    PageName: "INFORMATION LOCATION"
+  },
+  "5e200c35-16fe-4401-93c6-b106d14c89cc": {
+    PageName: "CALENDAR"
+  },
+  "e22b29bc-1982-414a-87cf-71a839806a75": {
+    PageName: "MAIL BOX"
+  },
+}

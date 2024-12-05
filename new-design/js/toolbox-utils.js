@@ -140,7 +140,7 @@ function mapContentToPageData(templateData, page) {
   // Find image and text content
   components.forEach((component) => {
     
-    const topComponents = component.components?.[0]?.components?.[0]?.components
+    const topComponents = component.components?.[0]?.components?.[0]?.components || []
 
     for (let index = 0; index < topComponents.length; index++) {
       const component = topComponents[index];

@@ -206,6 +206,7 @@ class ChildEditorManager{
                 this.currentPageId = $(editorContainerId).data().pageid
                 if (e.target.attributes['tile-action-object-id']) {
                     console.log(this.dataManager.pages)
+                    console.log(e.target.attributes['tile-action-object-id'].value)
                     const page = this.getPage(e.target.attributes['tile-action-object-id'].value)
                     console.log(page)
                     if (page) {

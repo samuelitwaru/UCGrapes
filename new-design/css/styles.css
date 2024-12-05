@@ -1227,11 +1227,12 @@ h5#current-page-title {
   border-radius: 8px;
   font-size: 14px;
 }
-i.fa {
+
+/* i.fa {
   font-weight: 600;
   color: #b4b9bd;
   font-size: 12px;
-}
+} */
 
 .no-records-message {
   color: red; /* Change this to your desired color */

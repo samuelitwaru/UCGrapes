@@ -257,6 +257,33 @@ class ChildEditorManager {
     });
   }
 
+    addEditorEventListners(editor) {
+        editor.on('load', (model) => {
+            const wrapper = editor.getWrapper();
+            wrapper.view.el.addEventListener("click", (e) => {
+                const editorId = editor.getConfig().container
+                const editorContainerId = editorId + '-frame'
+                $(editorContainerId).nextAll().remove()
+                this.setCurrentEditor(editorId)
+                this.currentPageId = $(editorContainerId).data().pageid
+                if (e.target.attributes['tile-action-object-id']) {
+                    console.log(this.dataManager.pages)
+                    console.log(e.target.attributes['tile-action-object-id'].value)
+                    const page = this.getPage(e.target.attributes['tile-action-object-id'].value)
+                    console.log(page)
+                    if (page) {
+                        this.createChildEditor(page)
+                        $("#content-page-section").hide()
+                        if (page.PageIsContentPage) {
+                            $("#content-page-section").show()
+                        }
+                    }
+                }
+                
+                if (e.target.classList.contains("fa-minus")) {
+                    // remove call to action
+                }
+
   addEditorEventListners(editor) {
     editor.on("load", (model) => {
       const wrapper = editor.getWrapper();

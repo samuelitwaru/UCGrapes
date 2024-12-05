@@ -29,6 +29,16 @@ class ActionListComponent {
           };
         }),
       },
+      {
+        name: "Predefined Page",
+        label: this.currentLanguage.getTranslation("category_predefined_page"),
+        options: [
+          {PageId: "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c", PageName: "Reception"},
+          {PageId: "5e200c35-16fe-4401-93c6-b106d14c89cc", PageName: "Calendar"},
+          {PageId: "e22b29bc-1982-414a-87cf-71a839806a75", PageName: "Mail Box"},
+          {PageId: "784c2d18-622f-43f3-bde1-7b00035d6a07", PageName: "Location Information"},
+        ],
+      },
     ];
     this.init();
   }
@@ -612,6 +622,7 @@ class MediaComponent {
                 <div class="file-name">${file.MediaName}</div>
                 <div class="file-size">${file.MediaSize}</div>
               </div>
+              <button class="btn btn-danger delete-media fa fa-trash" data-mediaid="${file.MediaId}"></button>
               <span class="status-icon" style="color: green;"></span>
             </div>
           `;
@@ -638,18 +649,18 @@ class MediaComponent {
             <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
         </div>
         `;
-    modal.appendChild(modalContent);
-    return modal;
-  }
+        modal.appendChild(modalContent);
 
-  handleFileManager() {
-    let self = this;
-    const openModal = document.getElementById("image-bg");
-    const fileInputField = document.createElement("input");
-    const modal = this.openFileUploadModal();
+        return modal;
+    }
 
-    let selectedFile = null;
-    let allUploadedFiles = [];
+    handleFileManager() {
+      let self = this;
+      const openModal = document.getElementById("image-bg");
+      const fileInputField = document.createElement("input");
+      const modal = this.openFileUploadModal();
+      
+      let allUploadedFiles = [];
 
     openModal.addEventListener("click", (e) => {
       e.preventDefault();
@@ -663,13 +674,20 @@ class MediaComponent {
         document.body.appendChild(modal);
         document.body.appendChild(fileInputField);
 
-        // add onclick event handler for file items
-        const fileItems = document.querySelectorAll(".file-item");
-        fileItems.forEach((element) => {
-          element.addEventListener("click", (e) => {
-            this.mediaFileClicked(element);
+          // add onclick event handler for file items
+          const fileItems = document.querySelectorAll(".file-item");
+          fileItems.forEach((element) => {
+              element.addEventListener("click", (e) => {
+              this.mediaFileClicked(element);
+              });
           });
-        });
+
+          $(".delete-media").on("click", (e) => {
+            const mediaId = e.target.dataset.mediaid
+            if (mediaId) {
+              this.deleteMedia(mediaId)
+            }
+          })
 
         modal.style.display = "flex";
 
@@ -852,7 +870,15 @@ class MediaComponent {
       this.mediaFileClicked(fileItem);
     };
     fileList.appendChild(fileItem);
-  }
+    }
+
+    deleteMedia(mediaId) {
+      this.dataManager.deleteMedia(mediaId).then(res=>{
+        this.dataManager.getMediaFiles().then(res=>{
+          this.dataManager.media = res
+        })
+      })
+    }
 
   mediaFileClicked(fileItem) {
     if (fileItem.classList.contains("invalid")) {

@@ -385,6 +385,11 @@ class MappingComponent {
       }
       listItem.appendChild(menuItem);
 
+      listItem.onclick = (e) => {
+        e.stopPropagation();
+        this.handlePageSelection(item);
+      };
+
       if (item.Children) {
         const dropdownMenu = document.createElement("ul");
         dropdownMenu.classList.add("tb-dropdown-menu");
@@ -398,11 +403,14 @@ class MappingComponent {
           childDeleteIcon.addEventListener("click", (event) => {
             event.stopPropagation();
             const childItemId = event.target.getAttribute("data-id");
-            const deletePage = this.dataManager.deletePage(childItemId);
-            // Remove the dropdown item from the DOM (optional)
-            if (deletePage) {
-              dropdownItem.remove();
-            }
+            const popup = this.popupModal();
+            document.body.appendChild(popup);
+            popup.style.display = "flex";
+            // const deletePage = this.dataManager.deletePage(childItemId);
+            // // Remove the dropdown item from the DOM (optional)
+            // if (deletePage) {
+            //   dropdownItem.remove();
+            // }
           });
 
           dropdownMenu.appendChild(dropdownItem);
@@ -411,8 +419,13 @@ class MappingComponent {
         listItem.classList.add("tb-dropdown");
 
         // Add click listener for dropdown toggle
-        menuItem.addEventListener("click", (event) => {
-          event.stopPropagation();
+        listItem.onclick = (e) => {
+          e.stopPropagation();
+
+          // Handle page selection
+          this.handlePageSelection(item);
+
+          // Toggle dropdown logic
           const isActive = listItem.classList.contains("active");
 
           // Close other active dropdowns
@@ -441,7 +454,7 @@ class MappingComponent {
             toggle.setAttribute("aria-expanded", "false");
             menuItem.classList.remove("active-tree-item");
           }
-        });
+        };
       }
 
       return listItem;
@@ -483,34 +496,68 @@ class MappingComponent {
     return container;
   }
 
+  popupModal() {
+    const popup = document.createElement("div");
+    popup.className = "popup-modal";
+    popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>${this.currentLanguage.getTranslation(
+            "confirmation_modal_title"
+          )}</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          ${this.currentLanguage.getTranslation("page_confirmation_message")}
+        </div>
+        <div class="popup-footer">
+          <button id="delete_page" class="tb-btn tb-btn-primary">
+          ${this.currentLanguage.getTranslation("accept_popup")}
+          </button>
+          <button id="close_popup" class="tb-btn tb-btn-outline">
+          ${this.currentLanguage.getTranslation("cancel_btn")}
+          </button>
+        </div>
+      </div>
+    `;
+
+    return popup;
+  }
+
   async handlePageSelection(item, span) {
     if (this.isLoading) return;
     console.log("Item is: " + item + " and span is: " + span);
     try {
       this.isLoading = true;
 
-      this.editorManager.setCurrentPageName(item.Name);
-      this.editorManager.setCurrentPageId(item.Id);
+      // this.editorManager.setCurrentPageName(item.Name);
+      // this.editorManager.setCurrentPageId(item.Id);
 
       const page = this.dataManager.pages.find(
         (page) => page.PageId === item.Id
       );
-      this.editorManager.setCurrentPage(page);
+      // this.editorManager.setCurrentPage(page);
 
-      const editor = globalEditor;
-      editor.DomComponents.clear();
-      this.editorManager.templateComponent = null;
+      // const editor = globalEditor;
+      // editor.DomComponents.clear();
+      this.editorManager.editors = null;
+      this.editorManager.createChildEditor(page)
       editor.trigger("load");
 
       // Update UI
-      document.querySelectorAll(".selected-page").forEach((el) => {
-        el.classList.remove("selected-page");
-      });
+      // document.querySelectorAll(".selected-page").forEach((el) => {
+      //   el.classList.remove("selected-page");
+      // });
 
-      span.closest("li").classList.add("selected-page");
+      // span.closest("li").classList.add("selected-page");
 
-      const mainPage = document.getElementById("current-page-title");
-      mainPage.textContent = this.updateActivePageName();
+      // const mainPage = document.getElementById("current-page-title");
+      // mainPage.textContent = this.updateActivePageName();
 
       this.displayMessage(`${item.Name} Page loaded successfully`, "success");
     } catch (error) {
@@ -548,9 +595,9 @@ class MediaComponent {
 
   openFileUploadModal() {
     const modal = document.createElement("div");
-    modal.className = "tb-modal";
+    modal.className = "toolbox-modal";
     const modalContent = document.createElement("div");
-    modalContent.className = "tb-modal-content";
+    modalContent.className = "toolbox-modal-content";
 
     let fileListHtml = ``;
     for (let index = 0; index < this.dataManager.media.length; index++) {
@@ -571,7 +618,7 @@ class MediaComponent {
     }
 
     modalContent.innerHTML = `
-        <div class="tb-modal-header">
+        <div class="toolbox-modal-header">
             <h2>Upload</h2>
             <span class="close">
                 <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
@@ -587,8 +634,8 @@ class MediaComponent {
         </div>
         <div class="file-list" id="fileList">${fileListHtml}</div>
         <div class="modal-actions">
-            <button class="tb-btn tb-btn-outline" id="cancelBtn">Cancel</button>
-            <button class="tb-btn tb-btn-primary" id="saveBtn">Save</button>
+            <button class="toolbox-btn toolbox-btn-outline" id="cancelBtn">Cancel</button>
+            <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
         </div>
         `;
     modal.appendChild(modalContent);

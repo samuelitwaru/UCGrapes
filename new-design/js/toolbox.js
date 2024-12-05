@@ -418,14 +418,16 @@ class ToolBoxManager {
     this.themeColorPalette(this.currentTheme.colors);
     localStorage.setItem("selectedTheme", themeName);
 
+    this.applyThemeIcons();
+
     return true;
   }
 
   applyTheme() {
     const root = document.documentElement;
-    const iframe = document.querySelector(".mobile-frame iframe");
+    const iframes = document.querySelectorAll(".mobile-frame iframe");
 
-    if (!iframe) return;
+    if (!iframes.length) return;
 
     // Set CSS variables from the selected theme
     root.style.setProperty(
@@ -461,53 +463,106 @@ class ToolBoxManager {
       "--accent-color",
       this.currentTheme.colors.accentColor
     );
-
-    console.log(this.currentTheme);
-
     root.style.setProperty("--font-family", this.currentTheme.fontFamily);
 
-    // Apply this.currentTheme to iframe (canvas editor)
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    iframeDoc.body.style.setProperty(
-      "--primary-color",
-      this.currentTheme.colors.primaryColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--secondary-color",
-      this.currentTheme.colors.secondaryColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--background-color",
-      this.currentTheme.colors.backgroundColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--text-color",
-      this.currentTheme.colors.textColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--button-bg-color",
-      this.currentTheme.colors.buttonBgColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--button-text-color",
-      this.currentTheme.colors.buttonTextColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--card-bg-color",
-      this.currentTheme.colors.cardBgColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--card-text-color",
-      this.currentTheme.colors.cardTextColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--accent-color",
-      this.currentTheme.colors.accentColor
-    );
-    iframeDoc.body.style.setProperty(
-      "--font-family",
-      this.currentTheme.fontFamily
-    );
+    iframes.forEach((iframe) => {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      if (iframeDoc && iframeDoc.body) {
+        iframeDoc.body.style.setProperty(
+          "--primary-color",
+          this.currentTheme.colors.primaryColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--secondary-color",
+          this.currentTheme.colors.secondaryColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--background-color",
+          this.currentTheme.colors.backgroundColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--text-color",
+          this.currentTheme.colors.textColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--button-bg-color",
+          this.currentTheme.colors.buttonBgColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--button-text-color",
+          this.currentTheme.colors.buttonTextColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--card-bg-color",
+          this.currentTheme.colors.cardBgColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--card-text-color",
+          this.currentTheme.colors.cardTextColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--accent-color",
+          this.currentTheme.colors.accentColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--font-family",
+          this.currentTheme.fontFamily
+        );
+      }
+    });
+  }
+
+  applyThemeIcons() {
+    const editors = Object.values(this.editorManager.editors);
+
+    if (editors && editors.length) {
+      for (let index = 0; index < editors.length; index++) {
+        const editorData = editors[index];
+        if (!editorData || !editorData.editor) {
+          console.error(`Invalid editorData at index ${index}:`, editorData);
+          return;
+        }
+
+        try {
+          let editor = editorData.editor;
+          // Add additional null checks
+          if (!editor || typeof editor.getWrapper !== 'function') {
+            console.error(`Invalid editor at index ${index}:`, editor);
+            continue;
+          }
+
+          const wrapper = editor.getWrapper();
+          
+          // Additional check for wrapper
+          if (!wrapper || typeof wrapper.find !== 'function') {
+            console.error(`Invalid wrapper at index ${index}:`, wrapper);
+            continue;
+          }
+          
+          const tiles = wrapper.find(".template-block"); // GrapesJS `find` method
+
+          tiles.forEach((tile) => {
+            const tileIconName = tile.getAttributes()["tile-icon"]; // Get the tile-icon attribute
+            const matchingIcon = this.currentTheme.icons.find(
+              (icon) => icon.IconName === tileIconName
+            );
+
+            if (matchingIcon) {
+              const tileIconComponent = tile.find(".tile-icon svg")[0]; // Find the tile-icon component
+
+              if (tileIconComponent) {
+                console.log("Tile component is: ", tileIconComponent);
+                // Update the SVG in GrapesJS way
+                tileIconComponent.replaceWith(matchingIcon.IconSVG);
+              }
+            }
+          });
+        } catch (error) {
+          console.error(`Error processing editor at index ${index}:`, error);
+        }
+      }
+    }
   }
 
   themeColorPalette(colors) {
@@ -962,8 +1017,6 @@ class ToolBoxManager {
 
     renderCtas();
 
-    return;
-
     // handling badge clicks
     const wrapper = editorInstance.getWrapper();
     console.log("Wrapper is: ", wrapper);
@@ -978,7 +1031,6 @@ class ToolBoxManager {
       );
       if (ctaChild)
         if (ctaChild) {
-          console.log("ctaChild is: ", ctaChild);
           // Check if this is the last child in the container
           const parentContainer = ctaChild.closest(".cta-button-container");
           const childId = ctaChild.getAttribute("id");
@@ -1194,6 +1246,7 @@ class ToolBoxManager {
 
     return popup;
   }
+
   displayAlertMessage(message, status) {
     const alertContainer = document.getElementById("alerts-container");
 
@@ -1393,17 +1446,11 @@ class ToolBoxManager {
   }
 }
 
-class PagesManager {
-  constructor(editor) {
-    this.editor = [];
-    this.selectedPageId = null;
-  }
-}
-
 class Clock {
-  constructor() {
+  constructor(pageId) {
+    this.pageId = pageId;
     this.updateTime();
-    setInterval(() => this.updateTime(), 60000); // Update time every minute
+    // setInterval(() => this.updateTime(), 60000); // Update time every minute
   }
 
   updateTime() {
@@ -1414,6 +1461,6 @@ class Clock {
     hours = hours % 12;
     hours = hours ? hours : 12; // Adjust hours for 12-hour format
     const timeString = `${hours}:${minutes}`;
-    document.getElementById("current-time").textContent = timeString;
+    document.getElementById(this.pageId).textContent = timeString;
   }
 }

@@ -775,7 +775,6 @@ class DataManager {
         },
         success: function (response) {
           self.pages = response;
-          console.log('getPages', response);
           resolve(self.pages);
         },
         error: function (xhr, status, error) {
@@ -843,7 +842,7 @@ class DataManager {
         },
         success: function (response) {
           const pages = response;
-          console.log('getPageService', pages)
+          console.log("getPageService", pages);
           resolve(pages); // Resolve the promise with the pages
         },
         error: function (xhr, status, error) {
@@ -880,21 +879,14 @@ class DataManager {
   }
 
   updateLocationTheme() {
-    let themeId = this.selectedTheme.id
-    
-    console.log("Hello", {
-      ThemeId: themeId,
-      LocationId :this.LocationId,
-      OrganisationId: this.OrganisationId,
-    })
+    let themeId = this.selectedTheme.id;
+
     return new Promise((resolve, reject) => {
       $.ajax({
         url: `${baseURL}/api/toolbox/update-location-theme`, // Replace with the actual API endpoint
         type: "POST",
         data: JSON.stringify({
           ThemeId: themeId,
-          LocationId :this.LocationId,
-          OrganisationId: this.OrganisationId,
         }),
         success: function (response) {
           resolve(response);
@@ -990,20 +982,24 @@ class DataManager {
   deleteMedia(mediaId) {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: `${baseURL}/api/media/delete`, // Replace with the actual API endpoint
+        url: `${baseURL}/api/media/delete`, 
         type: "GET",
         data: {
-          MediaId: mediaId
+          MediaId: mediaId,
         },
         success: function (response) {
-          resolve(response);
+          // Log the full response to understand what's being returned
+          console.log('Server response:', response);
+
+          if (response && response.result === 'success') {
+            resolve({ success: true });
+          } else {
+            resolve({ success: false });
+          }
         },
         error: function (xhr, status, error) {
-          if (xhr.status === 404) {
-            console.error("Error 404: Not Found");
-          } else {
-            console.error("Error:", status, error);
-          }
+          console.error("AJAX Error:", status, error);
+          reject({ success: false, error: error });
         },
       });
     });
@@ -1069,7 +1065,6 @@ class DataManager {
       });
     });
   }
-
 
   getLocationTheme() {
     return new Promise((resolve, reject) => {
@@ -1184,15 +1179,15 @@ const defaultConstraints = `
 
 const predefinedPages = {
   "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c": {
-    PageName: "RECEPTION"
+    PageName: "RECEPTION",
   },
   "784c2d18-622f-43f3-bde1-7b00035d6a07": {
-    PageName: "INFORMATION LOCATION"
+    PageName: "INFORMATION LOCATION",
   },
   "5e200c35-16fe-4401-93c6-b106d14c89cc": {
-    PageName: "CALENDAR"
+    PageName: "CALENDAR",
   },
   "e22b29bc-1982-414a-87cf-71a839806a75": {
-    PageName: "MAIL BOX"
+    PageName: "MAIL BOX",
   },
-}
+};

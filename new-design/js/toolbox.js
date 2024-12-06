@@ -37,9 +37,9 @@ class ToolBoxManager {
       // });
     });
 
-    this.dataManager.getLocationTheme().then((theme) => {
-      this.setTheme(theme.ThemeName);
-    });
+    // this.dataManager.getLocationTheme().then((theme) => {
+    //   this.setTheme(theme.ThemeName);
+    // });
 
     this.loadTheme();
     this.listThemesInSelectField();
@@ -87,6 +87,7 @@ class ToolBoxManager {
     this.mappingComponent = new MappingComponent(
       this.dataManager,
       this.editorManager,
+      this.currentLanguage,
       this
     );
 
@@ -350,11 +351,19 @@ class ToolBoxManager {
   listThemesInSelectField() {
     const themeSelect = document.getElementById("theme-select");
 
+    // Clear existing options in case the method is called multiple times
+    themeSelect.innerHTML = "";
+
     this.themes.forEach((theme) => {
       const option = document.createElement("option");
       option.value = theme.name;
       option.textContent = theme.name;
       option.id = theme.id;
+
+      // Check if the current theme matches this theme
+      if (this.currentTheme && theme.name === this.currentTheme.name) {
+        option.selected = true;
+      }
 
       themeSelect.appendChild(option);
     });
@@ -388,11 +397,13 @@ class ToolBoxManager {
     });
   }
 
+
   loadTheme() {
     const savedTheme = localStorage.getItem("selectedTheme");
     if (savedTheme) {
       this.setTheme(savedTheme);
     }
+    this.applyThemeIconsAndColor(savedTheme)
   }
 
   setTheme(themeName) {
@@ -418,7 +429,7 @@ class ToolBoxManager {
     this.themeColorPalette(this.currentTheme.colors);
     localStorage.setItem("selectedTheme", themeName);
 
-    this.applyThemeIconsAndColor();
+    this.applyThemeIconsAndColor(themeName);
 
     return true;
   }
@@ -513,7 +524,7 @@ class ToolBoxManager {
     });
   }
 
-  applyThemeIconsAndColor() {
+  applyThemeIconsAndColor(themeName) {
     const editors = Object.values(this.editorManager.editors);
 
     if (editors && editors.length) {
@@ -534,23 +545,28 @@ class ToolBoxManager {
 
           const wrapper = editor.getWrapper();
           
-          // Additional check for wrapper
-          if (!wrapper || typeof wrapper.find !== 'function') {
-            console.error(`Invalid wrapper at index ${index}:`, wrapper);
-            continue;
-          }
+          // // Additional check for wrapper
+          // if (!wrapper.view || !wrapper.view.$el) {
+          //   console.error(
+          //     `Wrapper view or $el is missing at index ${index}:`,
+          //     wrapper.view
+          //   );
+          //   continue;
+          // }
           
-          const tiles = wrapper.find(".template-block"); // GrapesJS `find` method
+          const theme = this.themes.find((theme) => theme.name === themeName);
+          const tiles = wrapper.find(".template-block"); 
 
           tiles.forEach((tile) => {
             // icons change and its color
-            const tileIconName = tile.getAttributes()["tile-icon"]; // Get the tile-icon attribute
-            const matchingIcon = this.currentTheme.icons.find(
+            const tileIconName = tile.getAttributes()["tile-icon"]; 
+            const matchingIcon = theme.icons.find(
               (icon) => icon.IconName === tileIconName
             );
 
             if (matchingIcon) {
-              const tileIconComponent = tile.find(".tile-icon svg")[0]; // Find the tile-icon component
+              console.log("Icon color changing");
+              const tileIconComponent = tile.find(".tile-icon svg")[0]; 
               // get current icon color:
               const currentIconPath = tileIconComponent.find("path")[0];
               let currentIconColor = "#7c8791"
@@ -576,16 +592,16 @@ class ToolBoxManager {
             const currentTileBgColorCode = tile.getAttributes()?.["tile-bgcolor"];
 
             // Check if there's a matching color name in the current theme
-            const matchingColorCode = this.currentTheme.colors[currentTileBgColorName]; // Get the code from the name
+            const matchingColorCode = theme.colors[currentTileBgColorName]; // Get the code from the name
 
             // If a match is found, update the tile attributes and styles
             if (matchingColorCode) {
-              tile.setAttributes({
+              tile.addAttributes({
                 "tile-bgcolor-name": currentTileBgColorName, // Keep the name as is
                 "tile-bgcolor": matchingColorCode, // Update the code
               });
 
-              tile.setStyle({
+              tile.addStyle({
                 "background-color": matchingColorCode, // Apply the new background color
               });
             } else {
@@ -598,9 +614,22 @@ class ToolBoxManager {
         }
       }
     }
-  }
 
-  
+    const iframes = document.querySelectorAll(".mobile-frame iframe");
+
+    if (iframes === null) return;
+
+    iframes.forEach((iframe) => {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      if (iframeDoc && iframeDoc.body) {
+        iframeDoc.body.style.setProperty(
+          "--font-family",
+          this.currentTheme.fontFamily
+        );
+      }
+    });
+
+  }
 
   themeColorPalette(colors) {
     const colorPaletteContainer = document.getElementById(

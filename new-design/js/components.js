@@ -33,10 +33,22 @@ class ActionListComponent {
         name: "Predefined Page",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [
-          {PageId: "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c", PageName: "Reception"},
-          {PageId: "5e200c35-16fe-4401-93c6-b106d14c89cc", PageName: "Calendar"},
-          {PageId: "e22b29bc-1982-414a-87cf-71a839806a75", PageName: "Mail Box"},
-          {PageId: "784c2d18-622f-43f3-bde1-7b00035d6a07", PageName: "Location Information"},
+          {
+            PageId: "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c",
+            PageName: "Reception",
+          },
+          {
+            PageId: "5e200c35-16fe-4401-93c6-b106d14c89cc",
+            PageName: "Calendar",
+          },
+          {
+            PageId: "e22b29bc-1982-414a-87cf-71a839806a75",
+            PageName: "Mail Box",
+          },
+          {
+            PageId: "784c2d18-622f-43f3-bde1-7b00035d6a07",
+            PageName: "Location Information",
+          },
         ],
       },
     ];
@@ -267,10 +279,11 @@ class MappingComponent {
   treeContainer = document.getElementById("tree-container");
   isLoading = false;
 
-  constructor(dataManager, editorManager, toolBoxManager) {
+  constructor(dataManager, editorManager, toolBoxManager, currentLanguage) {
     this.dataManager = dataManager;
     this.editorManager = editorManager;
     this.toolBoxManager = toolBoxManager;
+    this.currentLanguage = currentLanguage;
     this.boundCreatePage = this.handleCreatePage.bind(this);
   }
 
@@ -382,7 +395,12 @@ class MappingComponent {
       deleteIcon.addEventListener("click", (event) => {
         event.stopPropagation();
         const itemId = event.target.getAttribute("data-id");
-        const deletePage = this.dataManager.deletePage(itemId);
+        const title = "Delete Page";
+        const message = "Are you sure you want to delete this page?";
+        const popup = this.popupModal(title, message);
+        document.body.appendChild(popup);
+        popup.style.display = "flex";
+        // const deletePage = this.dataManager.deletePage(itemId);
         // Remove the dropdown item from the DOM (optional)
         if (deletePage) {
           listItem.remove();
@@ -413,7 +431,9 @@ class MappingComponent {
           childDeleteIcon.addEventListener("click", (event) => {
             event.stopPropagation();
             const childItemId = event.target.getAttribute("data-id");
-            const popup = this.popupModal();
+            const title = "Delete Page";
+            const message = "Are you sure you want to delete this page?";
+            const popup = this.popupModal(title, message);
             document.body.appendChild(popup);
             popup.style.display = "flex";
             // const deletePage = this.dataManager.deletePage(childItemId);
@@ -506,15 +526,13 @@ class MappingComponent {
     return container;
   }
 
-  popupModal() {
+  popupModal(title, message) {
     const popup = document.createElement("div");
     popup.className = "popup-modal";
     popup.innerHTML = `
       <div class="popup">
         <div class="popup-header">
-          <span>${this.currentLanguage.getTranslation(
-            "confirmation_modal_title"
-          )}</span>
+          <span>${title}</span>
           <button class="close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
                 <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -523,14 +541,14 @@ class MappingComponent {
         </div>
         <hr>
         <div class="popup-body" id="confirmation_modal_message">
-          ${this.currentLanguage.getTranslation("page_confirmation_message")}
+          ${message}
         </div>
         <div class="popup-footer">
-          <button id="delete_page" class="tb-btn tb-btn-primary">
-          ${this.currentLanguage.getTranslation("accept_popup")}
+          <button id="yes_delete" class="tb-btn tb-btn-primary">
+            Delete
           </button>
           <button id="close_popup" class="tb-btn tb-btn-outline">
-          ${this.currentLanguage.getTranslation("cancel_btn")}
+            Cancel
           </button>
         </div>
       </div>
@@ -556,7 +574,7 @@ class MappingComponent {
       // const editor = globalEditor;
       // editor.DomComponents.clear();
       this.editorManager.editors = null;
-      this.editorManager.createChildEditor(page)
+      this.editorManager.createChildEditor(page);
       editor.trigger("load");
 
       // Update UI
@@ -596,296 +614,316 @@ class MediaComponent {
     this.dataManager = dataManager;
     this.editorManager = editorManager;
     this.toolBoxManager = toolBoxManager;
+    this.selectedFile = null;
     this.init();
   }
 
   init() {
-    this.handleFileManager();
+    this.setupFileManager();
+  }
+
+  // File Size Formatting Utility
+  formatFileSize(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${Math.round(bytes / 1024 / 1024)} MB`;
+    return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
+  }
+
+  // Create Modal Elements
+  createModalHeader() {
+    const header = document.createElement("div");
+    header.className = "tb-modal-header";
+    header.innerHTML = `
+      <h2>Upload</h2>
+      <span class="close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
+          <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+        </svg>
+      </span>
+    `;
+    return header;
+  }
+
+  createUploadArea() {
+    const uploadArea = document.createElement("div");
+    uploadArea.className = "upload-area";
+    uploadArea.id = "uploadArea";
+    uploadArea.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
+        <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
+      </svg>
+      <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
+    `;
+    return uploadArea;
+  }
+
+  createModalActions() {
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    actions.innerHTML = `
+      <button class="tb-btn tb-btn-outline" id="cancelBtn">Cancel</button>
+      <button class="tb-btn tb-btn-primary" id="saveBtn">Save</button>
+    `;
+    return actions;
   }
 
   openFileUploadModal() {
     const modal = document.createElement("div");
-    modal.className = "toolbox-modal";
+    modal.className = "tb-modal";
+    
     const modalContent = document.createElement("div");
-    modalContent.className = "toolbox-modal-content";
+    modalContent.className = "tb-modal-content";
 
-    let fileListHtml = ``;
-    for (let index = 0; index < this.dataManager.media.length; index++) {
-      const file = this.dataManager.media[index];
-      fileListHtml += `
-            <div class="file-item valid" 
-                data-MediaId="${file.MediaId}" 
-                data-MediaUrl="${file.MediaUrl}" 
-                data-MediaName="${file.MediaName}">
-              <img src="${file.MediaUrl}" alt="${file.MediaName}" class="preview-image">
-              <div class="file-info">
-                <div class="file-name">${file.MediaName}</div>
-                <div class="file-size">${file.MediaSize}</div>
-              </div>
-              <button class="btn btn-danger delete-media fa fa-trash" data-mediaid="${file.MediaId}"></button>
-              <span class="status-icon" style="color: green;"></span>
-            </div>
-          `;
-    }
+    // Create file list HTML
+    const fileListHtml = this.createExistingFileListHTML();
 
-    modalContent.innerHTML = `
-        <div class="toolbox-modal-header">
-            <h2>Upload</h2>
-            <span class="close">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
-                    <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
-                </svg>
-            </span>
+    // Append elements to modal content
+    modalContent.appendChild(this.createModalHeader());
+    modalContent.appendChild(this.createUploadArea());
+    
+    const fileListContainer = document.createElement("div");
+    fileListContainer.className = "file-list";
+    fileListContainer.id = "fileList";
+    fileListContainer.innerHTML = fileListHtml;
+    modalContent.appendChild(fileListContainer);
+    
+    modalContent.appendChild(this.createModalActions());
+
+    modal.appendChild(modalContent);
+    return modal;
+  }
+
+  createExistingFileListHTML() {
+    const removeBeforeFirstHyphen = (str) => str.split('-').slice(1).join('-');
+    return this.dataManager.media.map(file => `
+      <div class="file-item valid" 
+           data-MediaId="${file.MediaId}" 
+           data-MediaUrl="${file.MediaUrl}" 
+           data-MediaName="${file.MediaName}">
+        <img src="${file.MediaUrl}" alt="${file.MediaName}" class="preview-image">
+        <div class="file-info">
+          <div class="file-name">${removeBeforeFirstHyphen(file.MediaName)}</div>
+          <div class="file-size">${this.formatFileSize(file.MediaSize)}</div>
         </div>
-        <div class="upload-area" id="uploadArea">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
-                <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
-              </svg>
-            <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
-        </div>
-        <div class="file-list" id="fileList">${fileListHtml}</div>
-        <div class="modal-actions">
-            <button class="toolbox-btn toolbox-btn-outline" id="cancelBtn">Cancel</button>
-            <button class="toolbox-btn toolbox-btn-primary" id="saveBtn">Save</button>
-        </div>
-        `;
-        modal.appendChild(modalContent);
+        <span class="status-icon" style="color: green;"></span>
+        <span title="Delete file" class="delete-media fa-regular fa-trash-can" data-mediaid="${file.MediaId}"></span>
+      </div>
+    `).join('');
+  }
 
-        return modal;
-    }
+  setupFileManager() {
+    const openModal = document.getElementById("image-bg");
+    const fileInputField = this.createFileInputField();
+    const modal = this.openFileUploadModal();
 
-    handleFileManager() {
-      let self = this;
-      const openModal = document.getElementById("image-bg");
-      const fileInputField = document.createElement("input");
-      const modal = this.openFileUploadModal();
-      
-      let allUploadedFiles = [];
+    let allUploadedFiles = [];
 
     openModal.addEventListener("click", (e) => {
       e.preventDefault();
-      if (this.editorManager.selectedComponent) {
-        fileInputField.type = "file";
-        fileInputField.multiple = true;
-        fileInputField.accept = "image/jpeg, image/jpg, image/png"; // Only accept specific image types
-        fileInputField.id = "fileInput";
-        fileInputField.style.display = "none";
+      this.handleModalOpen(modal, fileInputField, allUploadedFiles);
+    });
+  }
 
-        document.body.appendChild(modal);
-        document.body.appendChild(fileInputField);
+  createFileInputField() {
+    const fileInputField = document.createElement("input");
+    fileInputField.type = "file";
+    fileInputField.multiple = true;
+    fileInputField.accept = "image/jpeg, image/jpg, image/png";
+    fileInputField.id = "fileInput";
+    fileInputField.style.display = "none";
+    return fileInputField;
+  }
 
-          // add onclick event handler for file items
-          const fileItems = document.querySelectorAll(".file-item");
-          fileItems.forEach((element) => {
-              element.addEventListener("click", (e) => {
-              this.mediaFileClicked(element);
-              });
-          });
+  handleModalOpen(modal, fileInputField, allUploadedFiles) {
+    if (!this.editorManager.selectedComponent) {
+      this.toolBoxManager.displayAlertMessage("Please select a tile to continue", "error");
+      return;
+    }
 
-          $(".delete-media").on("click", (e) => {
-            const mediaId = e.target.dataset.mediaid
-            if (mediaId) {
-              this.deleteMedia(mediaId)
-            }
-          })
+    document.body.appendChild(modal);
+    document.body.appendChild(fileInputField);
 
-        modal.style.display = "flex";
+    this.setupModalEventListeners(modal, fileInputField, allUploadedFiles);
+  }
 
-        const uploadArea = modal.querySelector("#uploadArea");
-        uploadArea.onclick = () => {
-          fileInputField.click();
-        };
+  setupModalEventListeners(modal, fileInputField, allUploadedFiles) {
+    // File item click listeners
+    this.addFileItemClickListeners(modal);
 
-        fileInputField.onchange = (event) => {
-          // Filter only allowed image types
-          const newFiles = Array.from(event.target.files).filter((file) =>
-            ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
-          );
-          allUploadedFiles = [...allUploadedFiles, ...newFiles];
+    // Delete media listeners
+    this.addDeleteMediaListeners(modal);
 
-          const fileList = modal.querySelector("#fileList");
-          //fileList.innerHTML = "";
+    // Modal display and interactions
+    this.setupModalInteractions(modal, fileInputField, allUploadedFiles);
+  }
 
-          allUploadedFiles.forEach((file) => {
-            const fileItem = document.createElement("div");
-            fileItem.className = "file-item";
+  addFileItemClickListeners(modal) {
+    const fileItems = modal.querySelectorAll(".file-item");
+    fileItems.forEach((element) => {
+      element.addEventListener("click", () => {
+        this.mediaFileClicked(element);
+      });
+    });
+  }
 
-            const img = document.createElement("img");
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              img.src = e.target.result;
-              self.dataManager
-                .uploadFile(e.target.result, file.name, file.size, file.type)
-                .then((response) => {
-                  if (response.MediaId) {
-                    this.dataManager.media.push(response);
-                    this.displayMediaFile(fileList, response);
-                  }
-                });
-            };
-            reader.readAsDataURL(file);
-            img.alt = "File thumbnail";
-            img.className = "preview-image";
+  addDeleteMediaListeners(modal) {
+    $(modal).find(".delete-media").on("click", (e) => {
+      const mediaId = e.target.dataset.mediaid;
+      if (mediaId) {
+        const popup = this.popupModal("Delete media", "Are you sure you want to delete this media file?");
+        document.body.appendChild(popup);
+        popup.style.display = "flex";
 
-            const fileInfo = document.createElement("div");
-            fileInfo.className = "file-info";
-
-            const fileName = document.createElement("div");
-            fileName.className = "file-name";
-            fileName.textContent = file.name;
-
-            const fileSize = document.createElement("div");
-            fileSize.className = "file-size";
-            const formatFileSize = (bytes) => {
-              if (bytes < 1024) return `${bytes} B`;
-              if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-              if (bytes < 1024 * 1024 * 1024)
-                return `${Math.round(bytes / 1024 / 1024)} MB`;
-              return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
-            };
-
-            fileSize.textContent = formatFileSize(file.size);
-
-            const statusIcon = document.createElement("span");
-            statusIcon.className = "status-icon";
-
-            // Check file size limit (2MB) and file type
-            const isValidSize = file.size <= 2 * 1024 * 1024;
-            const isValidType = [
-              "image/jpeg",
-              "image/jpg",
-              "image/png",
-            ].includes(file.type);
-
-            if (isValidSize && isValidType) {
-              fileItem.classList.add("valid");
-              statusIcon.innerHTML = "";
-              statusIcon.style.color = "green";
-            } else {
-              fileItem.classList.add("invalid");
-              statusIcon.innerHTML = "⚠";
-              statusIcon.style.color = "red";
-            }
-          });
-        };
-      } else {
-        const message = "Please select a tile to continue";
-        const status = "error";
-        self.toolBoxManager.displayAlertMessage(message, status);
+        this.setupPopupButtonListeners(popup, mediaId);
       }
     });
+  }
 
+  setupPopupButtonListeners(popup, mediaId) {
+    const confirmButton = popup.querySelector("#yes_delete");
+    confirmButton.onclick = () => {
+      this.deleteMedia(mediaId);
+      popup.style.display = "none";
+    };
+
+    const cancelButton = popup.querySelector("#close_popup");
+    cancelButton.onclick = () => {
+      popup.style.display = "none";
+    };
+  }
+
+  setupModalInteractions(modal, fileInputField, allUploadedFiles) {
+    const uploadArea = modal.querySelector("#uploadArea");
+    const fileList = modal.querySelector("#fileList");
     const closeButton = modal.querySelector(".close");
-    closeButton.onclick = () => {
-      modal.style.display = "none";
-      document.body.removeChild(modal);
-      document.body.removeChild(fileInputField);
-    };
-
     const cancelBtn = modal.querySelector("#cancelBtn");
-    cancelBtn.onclick = () => {
-      modal.style.display = "none";
-      document.body.removeChild(modal);
-      document.body.removeChild(fileInputField);
-    };
-
     const saveBtn = modal.querySelector("#saveBtn");
-    saveBtn.onclick = () => {
-      if (this.selectedFile) {
-        const templateBlock = this.editorManager.selectedComponent;
-        // .find(".template-block")[0];
-        templateBlock.addStyle({
-          "background-image": `url(${this.selectedFile.MediaUrl})`,
-          "background-size": "cover",
-          "background-position": "center",
-        });
 
-        self.toolBoxManager.setAttributeToSelected(
-          "tile-bg-image-url",
-          this.selectedFile.MediaUrl
-        );
-      }
+    // Upload area click
+    uploadArea.onclick = () => fileInputField.click();
 
-      modal.style.display = "none";
-      document.body.removeChild(modal);
-      document.body.removeChild(fileInputField);
+    // File input change
+    fileInputField.onchange = (event) => {
+      this.handleFileInputChange(event, allUploadedFiles, fileList);
     };
+
+    // Close and cancel buttons
+    closeButton.onclick = cancelBtn.onclick = () => {
+      this.closeModal(modal, fileInputField);
+    };
+
+    // Save button
+    saveBtn.onclick = () => {
+      this.saveSelectedFile(modal, fileInputField);
+    };
+
+    modal.style.display = "flex";
+  }
+
+  handleFileInputChange(event, allUploadedFiles, fileList) {
+    const newFiles = Array.from(event.target.files).filter((file) =>
+      ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
+    );
+    allUploadedFiles.push(...newFiles);
+
+    newFiles.forEach((file) => {
+      const imageName = `${Date.now()}-${file.name}`;
+      this.processUploadedFile(file, imageName, fileList);
+    });
+  }
+
+  processUploadedFile(file, imageName, fileList) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.dataManager
+        .uploadFile(e.target.result, imageName, file.size, file.type)
+        .then((response) => {
+          if (response.MediaId) {
+            this.dataManager.media.push(response);
+            this.displayMediaFile(fileList, response);
+          }
+        });
+    };
+    reader.readAsDataURL(file);
   }
 
   displayMediaFile(fileList, file) {
     const fileItem = document.createElement("div");
-    fileItem.className = "file-item";
+    fileItem.className = `file-item ${this.validateFile(file) ? 'valid' : 'invalid'}`;
     fileItem.setAttribute("data-mediaid", file.MediaId);
 
-    const img = document.createElement("img");
-    img.src = file.MediaUrl;
-    img.alt = "File thumbnail";
-    img.className = "preview-image";
+    const removeBeforeFirstHyphen = (str) => str.split('-').slice(1).join('-');
 
-    const fileInfo = document.createElement("div");
-    fileInfo.className = "file-info";
+    const isValid = this.validateFile(file);
+    fileItem.innerHTML = `
+      <img src="${file.MediaUrl}" alt="File thumbnail" class="preview-image">
+      <div class="file-info">
+        <div class="file-name">${removeBeforeFirstHyphen(file.MediaName)}</div>
+        <div class="file-size">${this.formatFileSize(file.MediaSize)}</div>
+      </div>
+      <span class="status-icon" style="color: ${isValid ? 'green' : 'red'}">
+        ${isValid ? '' : '⚠'}
+      </span>
+      <span class="delete-media fa-regular fa-trash-can" data-mediaid="${file.MediaId}"></span>
+    `;
 
-    const fileName = document.createElement("div");
-    fileName.className = "file-name";
-    fileName.textContent = file.MediaName;
-
-    const fileSize = document.createElement("div");
-    fileSize.className = "file-size";
-    const formatFileSize = (bytes) => {
-      if (bytes < 1024) return `${bytes} B`;
-      if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-      if (bytes < 1024 * 1024 * 1024)
-        return `${Math.round(bytes / 1024 / 1024)} MB`;
-      return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
+    fileItem.onclick = () => {
+      if (!fileItem.classList.contains("invalid")) {
+        this.mediaFileClicked(fileItem);
+      }
     };
 
-    fileSize.textContent = formatFileSize(file.MediaSize);
+    $(fileItem).find(".delete-media").on("click", (e) => {
+      const mediaId = e.target.dataset.mediaid;
+      if (mediaId) {
+        const popup = this.popupModal("Delete media", "Are you sure you want to delete this media file?");
+        document.body.appendChild(popup);
+        popup.style.display = "flex";
 
-    const statusIcon = document.createElement("span");
-    statusIcon.className = "status-icon";
+        this.setupPopupButtonListeners(popup, mediaId);
+      }
+    });
 
-    // Check file size limit (2MB) and file type
-    const isValidSize = file.MediaSize <= 2 * 1024 * 1024;
-    const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(
-      file.MediaType
-    );
-
-    if (isValidSize && isValidType) {
-      fileItem.classList.add("valid");
-      statusIcon.innerHTML = "";
-      statusIcon.style.color = "green";
-    } else {
-      fileItem.classList.add("invalid");
-      statusIcon.innerHTML = "⚠";
-      statusIcon.style.color = "red";
-    }
-
-    fileInfo.appendChild(fileName);
-    fileInfo.appendChild(fileSize);
-
-    fileItem.appendChild(img);
-    fileItem.appendChild(fileInfo);
-    fileItem.appendChild(statusIcon);
-    fileItem.onclick = (e) => {
-      this.mediaFileClicked(fileItem);
-    };
     fileList.appendChild(fileItem);
+  }
+
+  validateFile(file) {
+    const isValidSize = file.MediaSize <= 2 * 1024 * 1024;
+    const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(file.MediaType);
+    return isValidSize && isValidType;
+  }
+
+  closeModal(modal, fileInputField) {
+    modal.style.display = "none";
+    document.body.removeChild(modal);
+    document.body.removeChild(fileInputField);
+  }
+
+  saveSelectedFile(modal, fileInputField) {
+    if (this.selectedFile) {
+      const templateBlock = this.editorManager.selectedComponent;
+      templateBlock.addStyle({
+        "background-image": `url(${this.selectedFile.MediaUrl})`,
+        "background-size": "cover",
+        "background-position": "center",
+      });
+
+      this.toolBoxManager.setAttributeToSelected(
+        "tile-bg-image-url",
+        this.selectedFile.MediaUrl
+      );
     }
 
-    deleteMedia(mediaId) {
-      this.dataManager.deleteMedia(mediaId).then(res=>{
-        this.dataManager.getMediaFiles().then(res=>{
-          this.dataManager.media = res
-        })
-      })
-    }
+    this.closeModal(modal, fileInputField);
+  }
 
   mediaFileClicked(fileItem) {
-    if (fileItem.classList.contains("invalid")) {
-      return;
-    }
+    if (fileItem.classList.contains("invalid")) return;
+
     document.querySelector(".modal-actions").style.display = "flex";
 
+    // Reset other file items
     document.querySelectorAll(".file-item").forEach((el) => {
       el.classList.remove("selected");
       const icon = el.querySelector(".status-icon");
@@ -894,16 +932,82 @@ class MediaComponent {
       }
     });
 
+    // Select current file item
     fileItem.classList.add("selected");
     let statusIcon = fileItem.querySelector(".status-icon");
     statusIcon.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13.423" viewBox="0 0 18 13.423">
-                <path id="Icon_awesome-check" data-name="Icon awesome-check" d="M6.114,17.736l-5.85-5.85a.9.9,0,0,1,0-1.273L1.536,9.341a.9.9,0,0,1,1.273,0L6.75,13.282l8.441-8.441a.9.9,0,0,1,1.273,0l1.273,1.273a.9.9,0,0,1,0,1.273L7.386,17.736A.9.9,0,0,1,6.114,17.736Z" transform="translate(0 -4.577)" fill="#3a9341"/>
-                </svg>
-            `;
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13.423" viewBox="0 0 18 13.423">
+        <path id="Icon_awesome-check" d="M6.114,17.736l-5.85-5.85a.9.9,0,0,1,0-1.273L1.536,9.341a.9.9,0,0,1,1.273,0L6.75,13.282l8.441-8.441a.9.9,0,0,1,1.273,0l1.273,1.273a.9.9,0,0,1,0,1.273L7.386,17.736A.9.9,0,0,1,6.114,17.736Z" transform="translate(0 -4.577)" fill="#3a9341"/>
+      </svg>
+    `;
     statusIcon.style.color = "green";
+
+    // Find and set selected file
     this.selectedFile = this.dataManager.media.find(
       (file) => file.MediaId == fileItem.dataset.mediaid
     );
+  }
+
+  deleteMedia(mediaId) {
+    this.dataManager
+      .deleteMedia(mediaId)
+      .then((res) => {
+        if (res.success === true) {
+          // Remove the media item from the DOM
+          const mediaItem = document.querySelector(`[data-mediaid="${mediaId}"]`);
+          if (mediaItem) {
+            mediaItem.remove();
+          }
+
+          // Provide feedback to the user
+          this.toolBoxManager.displayAlertMessage(
+            "Media file deleted successfully.",
+            "success"
+          );
+        } else {
+          this.toolBoxManager.displayAlertMessage(
+            "Failed to delete media file. Please try again.",
+            "error"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting media file:", error);
+        this.toolBoxManager.displayAlertMessage(
+          "An error occurred while deleting the media file.",
+          "error"
+        );
+      });
+  }
+
+  popupModal(title, message) {
+    const popup = document.createElement("div");
+    popup.className = "popup-modal";
+    popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>${title}</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+              <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          ${message}
+        </div>
+        <div class="popup-footer">
+          <button id="yes_delete" class="tb-btn tb-btn-primary">
+            Delete
+          </button>
+          <button id="close_popup" class="tb-btn tb-btn-outline">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+
+    return popup;
   }
 }

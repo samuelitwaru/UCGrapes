@@ -211,8 +211,6 @@ class ChildEditorManager {
       hoverable: false,
     });
 
-    // Apply Theme and Activate Navigators
-    this.applyTheme();
     this.activateNavigators();
     new Clock(`current-time-${pageId}`);
   }
@@ -259,6 +257,12 @@ class ChildEditorManager {
 
   addEditorEventListners(editor) {
     editor.on("load", (model) => {
+      // Apply Theme and Activate Navigators
+      // this.toolsSection.applyThemeIconsAndColor(this.theme.ThemeName);
+
+      this.dataManager.getLocationTheme().then((theme) => {
+        this.toolsSection.setTheme(theme.ThemeName);
+      });
       const wrapper = editor.getWrapper();
       wrapper.view.el.addEventListener("click", (e) => {
         const editorId = editor.getConfig().container;
@@ -303,6 +307,10 @@ class ChildEditorManager {
           this.addTemplateRight(this.templateComponent, editor);
         }
       });
+
+      wrapper.view.el.addEventListener("contextmenu", (e) =>
+        this.rightClickEventHandler(editor)
+      );
     });
 
     editor.on("component:selected", (component) => {
@@ -611,12 +619,12 @@ class ChildEditorManager {
     for (let i = 0; i < columns; i++) {
       wrappers += `
             <div class="template-wrapper"
-                      ${defaultTileAttrs}
                       style="flex: 0 0 ${columnWidth}%);"
                       data-gjs-type="template-wrapper"
                       data-gjs-selectable="false"
                       data-gjs-droppable="false">
                       <div class="template-block"
+                        ${defaultTileAttrs}
                         data-gjs-draggable="false"
                         data-gjs-selectable="true"
                         data-gjs-editable="false"
@@ -878,6 +886,101 @@ class ChildEditorManager {
         this.themeData.colors.accentColor
       );
       iframeDoc.body.style.setProperty("--font-family", this.theme.fontFamily);
+    });
+  }
+
+  rightClickEventHandler(editorInstance) {
+    // Select all iframes in the document
+    document.querySelectorAll("iframe").forEach((iframe) => {
+      if (!iframe) {
+        console.error("Iframe not found.");
+        return;
+      }
+
+      const iframeDoc =
+        iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) {
+        console.error("Iframe document not accessible.");
+        return;
+      }
+
+      const contextMenu = document.getElementById("contextMenu");
+      if (!contextMenu) {
+        console.error("Context menu element not found.");
+        return;
+      }
+
+      // Helper function to hide context menu
+      const hideContextMenu = () => {
+        contextMenu.style.display = "none";
+        window.currentBlock = null; // Reset current block reference
+      };
+
+      // Hide context menu when clicking outside of it
+      document.addEventListener("click", (e) => {
+        if (!contextMenu.contains(e.target)) {
+          hideContextMenu();
+        }
+      });
+
+      // Hide context menu when clicking inside iframe
+      iframeDoc.addEventListener("click", () => {
+        hideContextMenu();
+      });
+
+      // Handle right-click (context menu)
+      iframeDoc.addEventListener("contextmenu", (e) => {
+        const block = e.target.closest(".template-block");
+        if (block) {
+          e.preventDefault();
+
+          // Get iframe's position relative to viewport
+          const iframeRect = iframe.getBoundingClientRect();
+
+          // Calculate position relative to viewport
+          const x = e.clientX + iframeRect.left;
+          const y = e.clientY + iframeRect.top;
+
+          // Position and display context menu
+          contextMenu.style.position = "fixed";
+          contextMenu.style.left = `${x}px`;
+          contextMenu.style.top = `${y}px`;
+          contextMenu.style.display = "block";
+
+          // Store the current block reference
+          window.currentBlock = block;
+        } else {
+          hideContextMenu();
+        }
+      });
+
+      // Handle delete image action
+      const deleteImage = document.getElementById("delete-bg-image");
+      if (deleteImage) {
+        deleteImage.addEventListener("click", () => {
+          const blockToDelete = window.currentBlock;
+          if (blockToDelete) {
+            const currentStyles = this.selectedComponent.getStyle() || {};
+
+            // Remove the background-image property while preserving other styles
+            delete currentStyles["background-image"];
+
+            // Reapply the updated styles
+            this.selectedComponent.setStyle(currentStyles);
+
+            hideContextMenu();
+          }
+        });
+      } else {
+        console.error("Delete image button not found.");
+      }
+
+      // Close context menu on Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          hideContextMenu();
+        }
+      });
     });
   }
 }

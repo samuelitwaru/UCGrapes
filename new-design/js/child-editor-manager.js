@@ -262,9 +262,8 @@ class ChildEditorManager {
       const wrapper = editor.getWrapper();
       wrapper.view.el.addEventListener("click", (e) => {
         const editorId = editor.getConfig().container;
-        const editorContainerId = editorId + "-frame";
-        $(editorContainerId).nextAll().remove();
         this.setCurrentEditor(editorId);
+        const editorContainerId = editorId + "-frame";
         this.currentPageId = $(editorContainerId).data().pageid;
         if (e.target.attributes["tile-action-object-id"]) {
           console.log(this.dataManager.pages);
@@ -273,6 +272,7 @@ class ChildEditorManager {
           );
           console.log(page);
           if (page) {
+            $(editorContainerId).nextAll().remove();
             this.createChildEditor(page);
             $("#content-page-section").hide();
             if (page.PageIsContentPage) {

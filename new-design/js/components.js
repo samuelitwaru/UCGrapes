@@ -683,6 +683,7 @@ class MediaComponent {
           });
 
           $(".delete-media").on("click", (e) => {
+            e.stopPropagation()
             const mediaId = e.target.dataset.mediaid
             if (mediaId) {
               this.deleteMedia(mediaId)

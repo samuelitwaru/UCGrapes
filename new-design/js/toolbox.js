@@ -87,8 +87,8 @@ class ToolBoxManager {
     this.mappingComponent = new MappingComponent(
       this.dataManager,
       this.editorManager,
-      this.currentLanguage,
-      this
+      this,
+      this.currentLanguage
     );
 
     mappingButton.addEventListener("click", (e) => {

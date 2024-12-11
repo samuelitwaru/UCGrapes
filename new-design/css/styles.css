@@ -150,7 +150,7 @@ button#open-mapping {
 
 .sidebar,
 .main-content {
-  height: 100vh;
+  /* height: 75vh; */
   overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -203,18 +203,16 @@ button#open-mapping {
   flex-shrink: 0;
   width: 50vw;
   height: 90vh;
-  max-width: 280px;
-  max-height: 560px;
+  max-width: 320px;
+  max-height: 680px;
   background-color: #fdfdfd;
   border-radius: 25px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   position: relative;
   border: #373737 solid 5px;
-  /* margin-top: 20px; */
   min-height: 400px;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
-
   opacity: 0.8;
   transform: scale(1);
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -415,7 +413,7 @@ h5#current-page-title {
   width: 100%;
 }
 
-.tb-dropdown-menu {
+.tb-tree-dropdown-menu {
   display: none;
   border: none;
   z-index: 10;
@@ -445,7 +443,7 @@ h5#current-page-title {
   cursor: pointer;
 }
 
-.tb-dropdown.active .tb-dropdown-menu {
+.tb-dropdown.active .tb-tree-dropdown-menu {
   display: flex;
   flex-direction: column;
 }

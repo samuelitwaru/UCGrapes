@@ -232,44 +232,6 @@ class ToolBoxManager {
         }
       }
     });
-
-    // Navigators
-    const editorsContainer = document.getElementById("child-container");
-    const leftButton = document.getElementById("scroll-left");
-    const rightButton = document.getElementById("scroll-right");
-
-    // Adjust the scroll amount (number of pixels)
-    const scrollAmount = 200;
-
-    // Arrow function to update button visibility
-    const updateButtonVisibility = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = editorsContainer;
-
-      // Show/hide left button
-      leftButton.style.display = scrollLeft > 0 ? "block" : "none";
-
-      // Show/hide right button
-      rightButton.style.display =
-        scrollLeft + clientWidth < scrollWidth ? "block" : "none";
-    };
-
-    // Scroll left on left arrow click
-    leftButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      editorsContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    });
-
-    // Scroll right on right arrow click
-    rightButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      editorsContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    });
-
-    // Listen to scroll events to update button visibility
-    editorsContainer.addEventListener("scroll", updateButtonVisibility);
-
-    // Initial check
-    updateButtonVisibility();
   }
 
   updateTileTitle(inputTitle) {
@@ -289,6 +251,9 @@ class ToolBoxManager {
     console.log(editors);
     // let editors = this.editorManager.editors;
     if (editors && editors.length) {
+      let saveCount = 0; // Counter to track saves
+      const totalPages = editors.length; // Total number of pages to save
+
       for (let index = 0; index < editors.length; index++) {
         const editorData = editors[index];
         console.log(editorData);
@@ -318,8 +283,16 @@ class ToolBoxManager {
             SDT_Page: jsonData,
             PageIsPublished: true,
           };
+
           this.dataManager.updatePage(data).then((res) => {
-            this.displayAlertMessage("Page Save Successfully", "success");
+            saveCount++; // Increment counter after each save
+            if (saveCount === totalPages) {
+              // Show alert only after all saves are completed
+              this.displayAlertMessage(
+                "All Pages Saved Successfully",
+                "success"
+              );
+            }
           });
         }
       }
@@ -397,13 +370,12 @@ class ToolBoxManager {
     });
   }
 
-
   loadTheme() {
     const savedTheme = localStorage.getItem("selectedTheme");
     if (savedTheme) {
       this.setTheme(savedTheme);
     }
-    this.applyThemeIconsAndColor(savedTheme)
+    this.applyThemeIconsAndColor(savedTheme);
   }
 
   setTheme(themeName) {
@@ -538,13 +510,13 @@ class ToolBoxManager {
         try {
           let editor = editorData.editor;
           // Add additional null checks
-          if (!editor || typeof editor.getWrapper !== 'function') {
+          if (!editor || typeof editor.getWrapper !== "function") {
             console.error(`Invalid editor at index ${index}:`, editor);
             continue;
           }
 
           const wrapper = editor.getWrapper();
-          
+
           // // Additional check for wrapper
           // if (!wrapper.view || !wrapper.view.$el) {
           //   console.error(
@@ -553,33 +525,33 @@ class ToolBoxManager {
           //   );
           //   continue;
           // }
-          
+
           const theme = this.themes.find((theme) => theme.name === themeName);
-          const tiles = wrapper.find(".template-block"); 
+          const tiles = wrapper.find(".template-block");
 
           tiles.forEach((tile) => {
             // icons change and its color
-            const tileIconName = tile.getAttributes()["tile-icon"]; 
+            const tileIconName = tile.getAttributes()["tile-icon"];
             const matchingIcon = theme.icons.find(
               (icon) => icon.IconName === tileIconName
             );
 
             if (matchingIcon) {
               console.log("Icon color changing");
-              const tileIconComponent = tile.find(".tile-icon svg")[0]; 
+              const tileIconComponent = tile.find(".tile-icon svg")[0];
               // get current icon color:
               const currentIconPath = tileIconComponent.find("path")[0];
-              let currentIconColor = "#7c8791"
+              let currentIconColor = "#7c8791";
               if (currentIconPath) {
                 currentIconColor = currentIconPath.getAttributes()?.["fill"];
-              }              
+              }
 
               console.log("Current color is: ", currentIconColor);
               if (tileIconComponent) {
                 console.log("Tile component is: ", tileIconComponent);
 
                 matchingIcon.IconSVG = matchingIcon.IconSVG.replace(
-                  /fill="[^"]*"/g, 
+                  /fill="[^"]*"/g,
                   `fill="${currentIconColor}"`
                 );
                 // Update the SVG in GrapesJS way
@@ -588,8 +560,10 @@ class ToolBoxManager {
             }
 
             // Get the current tile background color name and code
-            const currentTileBgColorName = tile.getAttributes()?.["tile-bgcolor-name"];
-            const currentTileBgColorCode = tile.getAttributes()?.["tile-bgcolor"];
+            const currentTileBgColorName =
+              tile.getAttributes()?.["tile-bgcolor-name"];
+            const currentTileBgColorCode =
+              tile.getAttributes()?.["tile-bgcolor"];
 
             // Check if there's a matching color name in the current theme
             const matchingColorCode = theme.colors[currentTileBgColorName]; // Get the code from the name
@@ -605,9 +579,10 @@ class ToolBoxManager {
                 "background-color": matchingColorCode, // Apply the new background color
               });
             } else {
-              console.warn(`No matching color found for: ${currentTileBgColorName}`);
+              console.warn(
+                `No matching color found for: ${currentTileBgColorName}`
+              );
             }
-
           });
         } catch (error) {
           console.error(`Error processing editor at index ${index}:`, error);
@@ -628,7 +603,6 @@ class ToolBoxManager {
         );
       }
     });
-
   }
 
   themeColorPalette(colors) {

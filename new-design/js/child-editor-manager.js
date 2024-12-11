@@ -257,9 +257,6 @@ class ChildEditorManager {
 
   addEditorEventListners(editor) {
     editor.on("load", (model) => {
-      // Apply Theme and Activate Navigators
-      // this.toolsSection.applyThemeIconsAndColor(this.theme.ThemeName);
-
       this.dataManager.getLocationTheme().then((theme) => {
         this.toolsSection.setTheme(theme.ThemeName);
       });
@@ -270,14 +267,22 @@ class ChildEditorManager {
         $(editorContainerId).nextAll().remove();
         this.setCurrentEditor(editorId);
         this.currentPageId = $(editorContainerId).data().pageid;
+
         if (e.target.attributes["tile-action-object-id"]) {
           console.log(this.dataManager.pages);
           const page = this.getPage(
             e.target.attributes["tile-action-object-id"].value
           );
-          console.log(page);
           if (page) {
+            // const openedPage = Object.values(this.editors).some(editor => editor.pageId === page.PageId);
+            // if (openedPage) {
+            //   console.log("Page already opened");
+            // } else{
+            //   this.createChildEditor(page);
+            // }
+
             this.createChildEditor(page);
+            
             $("#content-page-section").hide();
             if (page.PageIsContentPage) {
               $("#content-page-section").show();
@@ -314,7 +319,7 @@ class ChildEditorManager {
     });
 
     editor.on("component:selected", (component) => {
-      this.toolsSection.resetPropertySection();
+      // this.toolsSection.resetPropertySection();
       this.selectedTemplateWrapper = component.getEl();
 
       this.selectedComponent = component;
@@ -349,7 +354,18 @@ class ChildEditorManager {
       this.hideContextMenu();
 
       this.toolsSection.unDoReDo(this.currentEditor.editor);
+      this.updateUIState();
     });
+  }
+
+  updateUIState() {
+    document.querySelector("#templates-button").classList.remove("active");
+    document.querySelector("#pages-button").classList.remove("active");
+    document.querySelector("#pages-button").classList.add("active");
+    document.querySelector("#mapping-section").style.display = "none";
+    document.querySelector("#tools-section").style.display = "block";
+    document.querySelector("#templates-content").style.display = "none";
+    document.querySelector("#pages-content").style.display = "block";
   }
 
   deleteTemplate(templateComponent) {
@@ -472,11 +488,45 @@ class ChildEditorManager {
       // Display the navigators
       leftNavigator.style.display = "block";
       rightNavigator.style.display = "block";
-
-      // Add event listeners for scrolling
-      const scrollLeftButton = document.getElementById("scroll-left");
-      const scrollRightButton = document.getElementById("scroll-right");
     }
+
+    // Navigators
+    const editorsContainer = document.getElementById("child-container");
+    const leftButton = document.getElementById("scroll-left");
+    const rightButton = document.getElementById("scroll-right");
+
+    // Adjust the scroll amount (number of pixels)
+    const scrollAmount = 300;
+
+    // Arrow function to update button visibility
+    const updateButtonVisibility = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = editorsContainer;
+
+      // Show/hide left button
+      leftButton.style.display = scrollLeft > 0 ? "block" : "none";
+
+      // Show/hide right button
+      rightButton.style.display =
+        scrollLeft + clientWidth < scrollWidth ? "block" : "none";
+    };
+
+    // Scroll left on left arrow click
+    leftButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      editorsContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+
+    // Scroll right on right arrow click
+    rightButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      editorsContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+
+    // Listen to scroll events to update button visibility
+    editorsContainer.addEventListener("scroll", updateButtonVisibility);
+
+    // Initial check
+    updateButtonVisibility();
   }
 
   initialContentPageTemplate(contentPageData) {

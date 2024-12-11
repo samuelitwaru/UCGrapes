@@ -1,3 +1,4 @@
+const log = console.log;
 class ActionListComponent {
   editorManager = null;
   dataManager = null;
@@ -347,14 +348,11 @@ class MappingComponent {
       this.clearMappings();
 
       // Then reload the pages and rebuild the tree
-      this.dataManager.getPages().then((pages) => {
-        let treePages = pages.map((page) => {
-          return { Id: page.PageId, Name: page.PageName };
-        });
-        const newTree = this.createTree(treePages, true); // Set isRoot to true if it's the root
-        this.treeContainer.appendChild(newTree);
-        this.toolBoxManager.actionList.init();
-      });
+      const treePages = this.dataManager.getPagesService();
+      console.log("Created page now loading")
+      const newTree = this.createTree(treePages, true); // Set isRoot to true if it's the root
+      this.treeContainer.appendChild(newTree);
+      this.toolBoxManager.actionList.init();
 
       // this.displayMessage(`Page "${pageTitle}" created successfully`, "success");
     } catch (error) {
@@ -400,11 +398,23 @@ class MappingComponent {
         const popup = this.popupModal(title, message);
         document.body.appendChild(popup);
         popup.style.display = "flex";
-        // const deletePage = this.dataManager.deletePage(itemId);
-        // Remove the dropdown item from the DOM (optional)
-        if (deletePage) {
-          listItem.remove();
-        }
+        const deleteButton = popup.querySelector("#yes_delete");
+        const closeButton = popup.querySelector("#close_popup");
+
+        deleteButton.addEventListener("click", () => {
+          console.log("Delete button clicked, Id is:", item.Id);
+          const deletePage = this.dataManager.deletePage(item.Id);
+          // Remove the dropdown item from the DOM (optional)
+          if (deletePage) {
+            listItem.remove();
+          }
+          popup.remove();
+        });
+
+        closeButton.addEventListener("click", () => {
+          popup.remove();
+        });
+
       });
 
       menuItem.appendChild(toggle);
@@ -415,12 +425,12 @@ class MappingComponent {
 
       listItem.onclick = (e) => {
         e.stopPropagation();
-        this.handlePageSelection(item);
+        // this.handlePageSelection(item);
       };
 
       if (item.Children) {
         const dropdownMenu = document.createElement("ul");
-        dropdownMenu.classList.add("tb-dropdown-menu");
+        dropdownMenu.classList.add("tb-tree-dropdown-menu");
         item.Children.forEach((child) => {
           const dropdownItem = document.createElement("li");
           dropdownItem.classList.add("tb-dropdown-item");
@@ -436,11 +446,26 @@ class MappingComponent {
             const popup = this.popupModal(title, message);
             document.body.appendChild(popup);
             popup.style.display = "flex";
-            // const deletePage = this.dataManager.deletePage(childItemId);
-            // // Remove the dropdown item from the DOM (optional)
-            // if (deletePage) {
-            //   dropdownItem.remove();
-            // }
+            const deletePage = this.dataManager.deletePage(childItemId);
+            // Remove the dropdown item from the DOM (optional)
+            if (deletePage) {
+              dropdownItem.remove();
+            }
+            const deleteButton = popup.querySelector("#yes_delete");
+            const closeButton = popup.querySelector("#close_popup");
+
+            deleteButton.addEventListener("click", () => {
+              const deletePage = this.dataManager.deletePage(childItemId);
+              // Remove the dropdown item from the DOM (optional)
+              if (deletePage) {
+                dropdownItem.remove();
+              }
+              popup.remove();
+            });
+
+            closeButton.addEventListener("click", () => {
+              popup.remove();
+            });
           });
 
           dropdownMenu.appendChild(dropdownItem);
@@ -453,7 +478,7 @@ class MappingComponent {
           e.stopPropagation();
 
           // Handle page selection
-          this.handlePageSelection(item);
+          // this.handlePageSelection(item);
 
           // Toggle dropdown logic
           const isActive = listItem.classList.contains("active");
@@ -517,7 +542,7 @@ class MappingComponent {
     });
 
     // Prevent dropdown menu from closing when clicked
-    container.querySelectorAll(".tb-dropdown-menu").forEach((menu) => {
+    container.querySelectorAll(".tb-tree-dropdown-menu").forEach((menu) => {
       menu.addEventListener("click", (event) => {
         event.stopPropagation();
       });
@@ -573,9 +598,9 @@ class MappingComponent {
 
       // const editor = globalEditor;
       // editor.DomComponents.clear();
-      this.editorManager.editors = null;
-      this.editorManager.createChildEditor(page);
-      editor.trigger("load");
+      // this.editorManager.editors = null;
+      // this.editorManager.createChildEditor(page);
+      // editor.trigger("load");
 
       // Update UI
       // document.querySelectorAll(".selected-page").forEach((el) => {
@@ -599,6 +624,8 @@ class MappingComponent {
   checkActivePage(id) {
     return localStorage.getItem("pageId") === id;
   }
+
+  setActivePageOnTre(pageId) {}
 
   updateActivePageName() {
     return this.editorManager.getCurrentPageName();
@@ -626,7 +653,8 @@ class MediaComponent {
   formatFileSize(bytes) {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-    if (bytes < 1024 * 1024 * 1024) return `${Math.round(bytes / 1024 / 1024)} MB`;
+    if (bytes < 1024 * 1024 * 1024)
+      return `${Math.round(bytes / 1024 / 1024)} MB`;
     return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
   }
 
@@ -671,7 +699,7 @@ class MediaComponent {
   openFileUploadModal() {
     const modal = document.createElement("div");
     modal.className = "tb-modal";
-    
+
     const modalContent = document.createElement("div");
     modalContent.className = "tb-modal-content";
 
@@ -681,13 +709,13 @@ class MediaComponent {
     // Append elements to modal content
     modalContent.appendChild(this.createModalHeader());
     modalContent.appendChild(this.createUploadArea());
-    
+
     const fileListContainer = document.createElement("div");
     fileListContainer.className = "file-list";
     fileListContainer.id = "fileList";
     fileListContainer.innerHTML = fileListHtml;
     modalContent.appendChild(fileListContainer);
-    
+
     modalContent.appendChild(this.createModalActions());
 
     modal.appendChild(modalContent);
@@ -695,21 +723,31 @@ class MediaComponent {
   }
 
   createExistingFileListHTML() {
-    const removeBeforeFirstHyphen = (str) => str.split('-').slice(1).join('-');
-    return this.dataManager.media.map(file => `
+    const removeBeforeFirstHyphen = (str) => str.split("-").slice(1).join("-");
+    return this.dataManager.media
+      .map(
+        (file) => `
       <div class="file-item valid" 
            data-MediaId="${file.MediaId}" 
            data-MediaUrl="${file.MediaUrl}" 
            data-MediaName="${file.MediaName}">
-        <img src="${file.MediaUrl}" alt="${file.MediaName}" class="preview-image">
+        <img src="${file.MediaUrl}" alt="${
+          file.MediaName
+        }" class="preview-image">
         <div class="file-info">
-          <div class="file-name">${removeBeforeFirstHyphen(file.MediaName)}</div>
+          <div class="file-name">${removeBeforeFirstHyphen(
+            file.MediaName
+          )}</div>
           <div class="file-size">${this.formatFileSize(file.MediaSize)}</div>
         </div>
         <span class="status-icon" style="color: green;"></span>
-        <span title="Delete file" class="delete-media fa-regular fa-trash-can" data-mediaid="${file.MediaId}"></span>
+        <span title="Delete file" class="delete-media fa-regular fa-trash-can" data-mediaid="${
+          file.MediaId
+        }"></span>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   }
 
   setupFileManager() {
@@ -737,7 +775,10 @@ class MediaComponent {
 
   handleModalOpen(modal, fileInputField, allUploadedFiles) {
     if (!this.editorManager.selectedComponent) {
-      this.toolBoxManager.displayAlertMessage("Please select a tile to continue", "error");
+      this.toolBoxManager.displayAlertMessage(
+        "Please select a tile to continue",
+        "error"
+      );
       return;
     }
 
@@ -768,16 +809,21 @@ class MediaComponent {
   }
 
   addDeleteMediaListeners(modal) {
-    $(modal).find(".delete-media").on("click", (e) => {
-      const mediaId = e.target.dataset.mediaid;
-      if (mediaId) {
-        const popup = this.popupModal("Delete media", "Are you sure you want to delete this media file?");
-        document.body.appendChild(popup);
-        popup.style.display = "flex";
+    $(modal)
+      .find(".delete-media")
+      .on("click", (e) => {
+        const mediaId = e.target.dataset.mediaid;
+        if (mediaId) {
+          const popup = this.popupModal(
+            "Delete media",
+            "Are you sure you want to delete this media file?"
+          );
+          document.body.appendChild(popup);
+          popup.style.display = "flex";
 
-        this.setupPopupButtonListeners(popup, mediaId);
-      }
-    });
+          this.setupPopupButtonListeners(popup, mediaId);
+        }
+      });
   }
 
   setupPopupButtonListeners(popup, mediaId) {
@@ -850,10 +896,12 @@ class MediaComponent {
 
   displayMediaFile(fileList, file) {
     const fileItem = document.createElement("div");
-    fileItem.className = `file-item ${this.validateFile(file) ? 'valid' : 'invalid'}`;
+    fileItem.className = `file-item ${
+      this.validateFile(file) ? "valid" : "invalid"
+    }`;
     fileItem.setAttribute("data-mediaid", file.MediaId);
 
-    const removeBeforeFirstHyphen = (str) => str.split('-').slice(1).join('-');
+    const removeBeforeFirstHyphen = (str) => str.split("-").slice(1).join("-");
 
     const isValid = this.validateFile(file);
     fileItem.innerHTML = `
@@ -862,10 +910,12 @@ class MediaComponent {
         <div class="file-name">${removeBeforeFirstHyphen(file.MediaName)}</div>
         <div class="file-size">${this.formatFileSize(file.MediaSize)}</div>
       </div>
-      <span class="status-icon" style="color: ${isValid ? 'green' : 'red'}">
-        ${isValid ? '' : '⚠'}
+      <span class="status-icon" style="color: ${isValid ? "green" : "red"}">
+        ${isValid ? "" : "⚠"}
       </span>
-      <span class="delete-media fa-regular fa-trash-can" data-mediaid="${file.MediaId}"></span>
+      <span class="delete-media fa-regular fa-trash-can" data-mediaid="${
+        file.MediaId
+      }"></span>
     `;
 
     fileItem.onclick = () => {
@@ -874,23 +924,30 @@ class MediaComponent {
       }
     };
 
-    $(fileItem).find(".delete-media").on("click", (e) => {
-      const mediaId = e.target.dataset.mediaid;
-      if (mediaId) {
-        const popup = this.popupModal("Delete media", "Are you sure you want to delete this media file?");
-        document.body.appendChild(popup);
-        popup.style.display = "flex";
+    $(fileItem)
+      .find(".delete-media")
+      .on("click", (e) => {
+        const mediaId = e.target.dataset.mediaid;
+        if (mediaId) {
+          const popup = this.popupModal(
+            "Delete media",
+            "Are you sure you want to delete this media file?"
+          );
+          document.body.appendChild(popup);
+          popup.style.display = "flex";
 
-        this.setupPopupButtonListeners(popup, mediaId);
-      }
-    });
+          this.setupPopupButtonListeners(popup, mediaId);
+        }
+      });
 
     fileList.appendChild(fileItem);
   }
 
   validateFile(file) {
     const isValidSize = file.MediaSize <= 2 * 1024 * 1024;
-    const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(file.MediaType);
+    const isValidType = ["image/jpeg", "image/jpg", "image/png"].includes(
+      file.MediaType
+    );
     return isValidSize && isValidType;
   }
 
@@ -954,7 +1011,9 @@ class MediaComponent {
       .then((res) => {
         if (res.success === true) {
           // Remove the media item from the DOM
-          const mediaItem = document.querySelector(`[data-mediaid="${mediaId}"]`);
+          const mediaItem = document.querySelector(
+            `[data-mediaid="${mediaId}"]`
+          );
           if (mediaItem) {
             mediaItem.remove();
           }

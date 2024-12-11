@@ -1,4 +1,4 @@
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 let baseURL = window.location.origin;
 
 if (baseURL.startsWith("http://localhost")) baseURL += environment;
@@ -1191,3 +1191,163 @@ const predefinedPages = {
     PageName: "MAIL BOX",
   },
 };
+
+const predefinedPages1 = {
+  "Reception": {
+    "assets": [],
+    "pages": [
+      {
+        "id": "page-id-1",
+        "name": "Page 1",
+        "component": {
+          "type": "wrapper",
+          "components": [
+            {
+              "type": "image",
+              "src": "https://staging.comforta.yukon.software/media/receptie-197@3x.png",
+              "style": {
+                "width": "100%",
+                "height": "auto",
+                "display": "block"
+              },
+              "attributes": {
+                "alt": "Sample Image"
+              },
+              "selectable": false
+            },
+            {
+              "type": "text",
+              "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              "style": {
+                "margin": "20px auto",
+                "width": "80%",
+                "text-align": "left",
+                "font-size": "16px",
+                "line-height": "1.5"
+              },
+              "selectable": true
+            }
+          ]
+        }
+      }
+    ],
+    "styles": "",
+    "css": "",
+    "html": "",
+    "components": "",
+    "stylesheets": [],
+    "scripts": []
+  },
+  "Location": {
+    "assets": [],
+    "pages": [
+      {
+        "id": "page-id-1",
+        "name": "Page 1",
+        "component": {
+          "type": "wrapper",
+          "components": [
+            {
+              "type": "image",
+              "src": "https://via.placeholder.com/300",
+              "style": {
+                "width": "300px",
+                "height": "auto",
+                "margin": "10px auto",
+                "display": "block"
+              },
+              "attributes": {
+                "alt": "Sample Image"
+              },
+              "selectable": false
+            },
+            {
+              "type": "text",
+              "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              "style": {
+                "margin": "20px auto",
+                "width": "80%",
+                "text-align": "left",
+                "font-size": "16px",
+                "line-height": "1.5"
+              },
+              "selectable": true
+            }
+          ]
+        }
+      }
+    ],
+    "styles": "",
+    "css": "",
+    "html": "",
+    "components": "",
+    "stylesheets": [],
+    "scripts": []
+  },
+  "Calendar": {
+    "assets": [],
+    "pages": [
+      {
+        "id": "page-id-1",
+        "name": "Page 1",
+        "component": {
+          "type": "wrapper",
+          "components": [
+            {
+              "type": "image",
+              "src": "https://staging.comforta.yukon.software/media/calendar-page.png",
+              "style": {
+                "width": "100%",
+                "height": "auto",
+                "display": "block"
+              },
+              "attributes": {
+                "alt": "Sample Image"
+              },
+              "selectable": false
+            },
+          ]
+        }
+      }
+    ],
+    "styles": "",
+    "css": "",
+    "html": "",
+    "components": "",
+    "stylesheets": [],
+    "scripts": []
+  },
+  "Mailbox": {
+    "assets": [],
+    "pages": [
+      {
+        "id": "page-id-1",
+        "name": "Page 1",
+        "component": {
+          "type": "wrapper",
+          "components": [
+            {
+              "type": "image",
+              "src": "https://staging.comforta.yukon.software/media/mailbox.png",
+              "style": {
+                "width": "100%",
+                "height": "auto",
+                "display": "block"
+              },
+              "attributes": {
+                "alt": "Sample Image"
+              },
+              "selectable": false
+            },
+          ]
+        }
+      }
+    ],
+    "styles": "",
+    "css": "",
+    "html": "",
+    "components": "",
+    "stylesheets": [],
+    "scripts": []
+  },
+}

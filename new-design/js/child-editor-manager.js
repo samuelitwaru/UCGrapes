@@ -1,5 +1,4 @@
 class ChildEditorManager {
-  // child editor manager
   editors = {};
   pages = [];
   theme = [];
@@ -22,7 +21,7 @@ class ChildEditorManager {
         this.createChildEditor(homePage);
         this.currentPageId = homePage.PageId;
       } else {
-        alert("No Home Page Found");
+        this.toolsSection.displayAlertMessage("No Home Page Found", "danger")
         return;
       }
     });
@@ -166,24 +165,32 @@ class ChildEditorManager {
         editor.loadProjectData(JSON.parse(page.PageGJSJson));
       }
     } else {
-      this.dataManager
-        .getContentPageData(page.PageId)
-        .then((contentPageData) => {
-          if (contentPageData) {
-            const projectData =
-              this.initialContentPageTemplate(contentPageData);
-            editor.addComponents(projectData)[0];
+      if (page.PageIsContentPage) {
+        this.dataManager
+          .getContentPageData(page.PageId)
+          .then((contentPageData) => {
+            if (contentPageData) {
+              const projectData =
+                this.initialContentPageTemplate(contentPageData);
+              editor.addComponents(projectData)[0];
+  
+              // Ensure Call To Actions are applied
+              this.toolsSection.pageContentCtas(
+                contentPageData.CallToActions,
+                editor
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching content page data:", error);
+          });
+      }else{
 
-            // Ensure Call To Actions are applied
-            this.toolsSection.pageContentCtas(
-              contentPageData.CallToActions,
-              editor
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching content page data:", error);
-        });
+        editor.loadProjectData(
+          predefinedPages1[page.PageName]
+        )
+
+      }
     }
 
     // Adjust Canvas for Content Pages
@@ -263,9 +270,8 @@ class ChildEditorManager {
       const wrapper = editor.getWrapper();
       wrapper.view.el.addEventListener("click", (e) => {
         const editorId = editor.getConfig().container;
-        const editorContainerId = editorId + "-frame";
-        $(editorContainerId).nextAll().remove();
         this.setCurrentEditor(editorId);
+        const editorContainerId = editorId + "-frame";
         this.currentPageId = $(editorContainerId).data().pageid;
 
         if (e.target.attributes["tile-action-object-id"]) {
@@ -274,6 +280,7 @@ class ChildEditorManager {
             e.target.attributes["tile-action-object-id"].value
           );
           if (page) {
+            $(editorContainerId).nextAll().remove();
             // const openedPage = Object.values(this.editors).some(editor => editor.pageId === page.PageId);
             // if (openedPage) {
             //   console.log("Page already opened");

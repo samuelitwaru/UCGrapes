@@ -33,24 +33,7 @@ class ActionListComponent {
       {
         name: "Predefined Page",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
-        options: [
-          {
-            PageId: "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c",
-            PageName: "Reception",
-          },
-          {
-            PageId: "5e200c35-16fe-4401-93c6-b106d14c89cc",
-            PageName: "Calendar",
-          },
-          {
-            PageId: "e22b29bc-1982-414a-87cf-71a839806a75",
-            PageName: "Mail Box",
-          },
-          {
-            PageId: "784c2d18-622f-43f3-bde1-7b00035d6a07",
-            PageName: "Location Information",
-          },
-        ],
+        options: [],
       },
     ];
     this.init();
@@ -58,16 +41,27 @@ class ActionListComponent {
 
   init() {
     this.dataManager
-      .getPagesService()
+      .getPages()
       .then((pages) => {
         console.log("ActionList", pages);
-        this.pageOptions = this.mapPageNamesToOptions(
-          pages.filter((page) => page.Name != "Home")
-        );
-
+        this.pageOptions = pages.filter(
+          page => !page.PageIsContentPage && !page.PageIsPredefined
+        )
+        this.predefinedPageOptions = pages.filter(
+          page => page.PageIsPredefined && page.PageName != "Home"
+        )
+        this.servicePageOptions = pages.filter(
+          page => page.PageIsContentPage
+        )
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
             category.options = this.pageOptions;
+          }
+          else if (category.name == "Service/Product Page") {
+            category.options = this.servicePageOptions;
+          }
+          else if (category.name == "Predefined Page") {
+            category.options = this.predefinedPageOptions;
           }
         });
 
@@ -284,6 +278,7 @@ class MappingComponent {
     this.dataManager = dataManager;
     this.editorManager = editorManager;
     this.toolBoxManager = toolBoxManager;
+    console.log(this.toolBoxManager)
     this.currentLanguage = currentLanguage;
     this.boundCreatePage = this.handleCreatePage.bind(this);
   }
@@ -340,7 +335,6 @@ class MappingComponent {
 
       // Create the page
       await this.dataManager.createNewPage(pageTitle);
-
       // Clear input
       pageInput.value = "";
 
@@ -348,11 +342,15 @@ class MappingComponent {
       this.clearMappings();
 
       // Then reload the pages and rebuild the tree
-      const treePages = this.dataManager.getPagesService();
-      console.log("Created page now loading")
-      const newTree = this.createTree(treePages, true); // Set isRoot to true if it's the root
-      this.treeContainer.appendChild(newTree);
-      this.toolBoxManager.actionList.init();
+      this.dataManager.getPages().then((pages) => {
+        let treePages = pages.map((page) => {
+          return { Id: page.PageId, Name: page.PageName };
+        });
+        const newTree = this.createTree(treePages, true); // Set isRoot to true if it's the root
+        this.treeContainer.appendChild(newTree);
+        console.log(this.toolBoxManager)
+        this.toolBoxManager.actionList.init();
+      });
 
       // this.displayMessage(`Page "${pageTitle}" created successfully`, "success");
     } catch (error) {
@@ -782,6 +780,13 @@ class MediaComponent {
       return;
     }
 
+          $(".delete-media").on("click", (e) => {
+            e.stopPropagation()
+            const mediaId = e.target.dataset.mediaid
+            if (mediaId) {
+              this.deleteMedia(mediaId)
+            }
+          })
     document.body.appendChild(modal);
     document.body.appendChild(fileInputField);
 

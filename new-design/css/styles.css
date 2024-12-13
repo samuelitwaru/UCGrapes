@@ -1340,3 +1340,31 @@ h5#current-page-title {
   /* justify-items: center; */
   justify-content: center;
 }
+
+/* Toast message */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background-color: #333;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: all 0.3s ease-out;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-width: 300px;
+  transition: "opacity 0.5s";
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+#toast.hide {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+}

@@ -451,6 +451,8 @@ class MappingComponent {
   
       const deleteButton = popup.querySelector("#yes_delete");
       const closeButton = popup.querySelector("#close_popup");
+      const closePopup = popup.querySelector(".close");
+
   
       deleteButton.addEventListener("click", () => {
         if (this.dataManager.deletePage(id)) {
@@ -460,6 +462,10 @@ class MappingComponent {
       });
   
       closeButton.addEventListener("click", () => {
+        popup.remove();
+      });
+
+      closePopup.addEventListener("click", () => {
         popup.remove();
       });
     };
@@ -803,6 +809,11 @@ class MediaComponent {
     cancelButton.onclick = () => {
       popup.style.display = "none";
     };
+
+    const closePopup = popup.querySelector(".close");
+    closePopup.addEventListener("click", () => {
+      popup.remove();
+    });
   }
 
   setupModalInteractions(modal, fileInputField, allUploadedFiles) {

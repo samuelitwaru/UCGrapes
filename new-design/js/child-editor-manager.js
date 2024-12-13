@@ -1,4 +1,7 @@
+let currentIndex = 0;
+
 class ChildEditorManager {
+  // child editor manager
   editors = {};
   pages = [];
   theme = [];
@@ -21,7 +24,7 @@ class ChildEditorManager {
         this.createChildEditor(homePage);
         this.currentPageId = homePage.PageId;
       } else {
-        this.toolsSection.displayAlertMessage("No Home Page Found", "danger")
+        alert("No Home Page Found");
         return;
       }
     });
@@ -50,6 +53,7 @@ class ChildEditorManager {
   }
 
   createChildEditor(page) {
+    console.log("Page is: ", page)
     const pageId = page.PageId;
     const count = this.container.children.length;
     const editorContainer = document.createElement("div");
@@ -124,7 +128,6 @@ class ChildEditorManager {
 
     // Add Event Listeners
     this.addEditorEventListners(editor);
-
     // Load or Initialize Editor Content
     if (page.PageGJSJson) {
       editor.loadProjectData(JSON.parse(page.PageGJSJson));
@@ -165,32 +168,24 @@ class ChildEditorManager {
         editor.loadProjectData(JSON.parse(page.PageGJSJson));
       }
     } else {
-      if (page.PageIsContentPage) {
-        this.dataManager
-          .getContentPageData(page.PageId)
-          .then((contentPageData) => {
-            if (contentPageData) {
-              const projectData =
-                this.initialContentPageTemplate(contentPageData);
-              editor.addComponents(projectData)[0];
-  
-              // Ensure Call To Actions are applied
-              this.toolsSection.pageContentCtas(
-                contentPageData.CallToActions,
-                editor
-              );
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching content page data:", error);
-          });
-      }else{
+      this.dataManager
+        .getContentPageData(page.PageId)
+        .then((contentPageData) => {
+          if (contentPageData) {
+            const projectData =
+              this.initialContentPageTemplate(contentPageData);
+            editor.addComponents(projectData)[0];
 
-        editor.loadProjectData(
-          predefinedPages1[page.PageName]
-        )
-
-      }
+            // Ensure Call To Actions are applied
+            this.toolsSection.pageContentCtas(
+              contentPageData.CallToActions,
+              editor
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching content page data:", error);
+        });
     }
 
     // Adjust Canvas for Content Pages
@@ -218,7 +213,8 @@ class ChildEditorManager {
       hoverable: false,
     });
 
-    this.activateNavigators();
+    const navigator = this.activateNavigators();
+    navigator.updateButtonVisibility();
     new Clock(`current-time-${pageId}`);
   }
 
@@ -232,6 +228,10 @@ class ChildEditorManager {
       backButton.addEventListener("click", (e) => {
         e.preventDefault();
         $("#" + editorContainerId).remove();
+        // currentIndex = currentIndex - 1;
+        const navigator = this.activateNavigators();
+        navigator.updateScroll();
+        navigator.updateButtonsVisibility();
       });
     }
   }
@@ -270,8 +270,9 @@ class ChildEditorManager {
       const wrapper = editor.getWrapper();
       wrapper.view.el.addEventListener("click", (e) => {
         const editorId = editor.getConfig().container;
-        this.setCurrentEditor(editorId);
         const editorContainerId = editorId + "-frame";
+
+        this.setCurrentEditor(editorId);
         this.currentPageId = $(editorContainerId).data().pageid;
 
         if (e.target.attributes["tile-action-object-id"]) {
@@ -281,15 +282,9 @@ class ChildEditorManager {
           );
           if (page) {
             $(editorContainerId).nextAll().remove();
-            // const openedPage = Object.values(this.editors).some(editor => editor.pageId === page.PageId);
-            // if (openedPage) {
-            //   console.log("Page already opened");
-            // } else{
-            //   this.createChildEditor(page);
-            // }
 
             this.createChildEditor(page);
-            
+
             $("#content-page-section").hide();
             if (page.PageIsContentPage) {
               $("#content-page-section").show();
@@ -305,8 +300,6 @@ class ChildEditorManager {
         if (!button) return;
         const templateWrapper = button.closest(".template-wrapper");
         if (!templateWrapper) return;
-
-        console.log(templateWrapper);
 
         this.templateComponent = editor.Components.getById(templateWrapper.id);
         if (!this.templateComponent) return;
@@ -487,53 +480,131 @@ class ChildEditorManager {
     }
   }
 
+  // activateNavigators() {
+  //   const wrapper = document.getElementById("child-container");
+  //   const prevButton = document.getElementById("scroll-left");
+  //   const nextButton = document.getElementById("scroll-right");
+
+  //   if (!wrapper || !prevButton || !nextButton) {
+  //     console.error("Essential elements are missing from the DOM");
+  //     return;
+  //   }
+
+  //   const items = document.querySelectorAll(".mobile-frame");
+  //   const itemWidth = 250; // Item width + gap
+  //   const totalItems = items.length;
+
+  //   if (totalItems > 1) {
+  //     wrapper.style.justifyContent = "flex-start";
+  //   } else {
+  //     wrapper.style.justifyContent = "center";
+  //   }
+
+  //   const moveSlide = (direction) => {
+  //     const itemsToScroll = 1; // Number of items to scroll at a time
+
+  //     // Calculate the new index
+  //     const newIndex = currentIndex + (direction * itemsToScroll);
+
+  //     // Prevent scrolling out of bounds
+  //     currentIndex = Math.max(0, Math.min(newIndex, totalItems - 1));
+
+  //     // Scroll by translating the wrapper
+  //     const translateX = currentIndex * itemWidth;
+  //     wrapper.style.transform = `translateX(-${translateX}px)`;
+
+  //     // Update button visibility
+  //     updateButtonsVisibility();
+  //   }
+
+  //   const updateButtonsVisibility = () => {
+  //     prevButton.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+  //     nextButton.style.visibility =
+  //       currentIndex === totalItems - 1 ? "hidden" : "visible";
+  //   }
+
+  //   prevButton.addEventListener("click", () => moveSlide(-1));
+  //   nextButton.addEventListener("click", () => moveSlide(1));
+
+  //   const updateScroll = () => {
+  //     // Remove the specific item
+  //     const items = document.querySelectorAll(".mobile-frame");
+  //     const totalItems = items.length;
+
+  //     // Adjust current index if it's now out of bounds
+  //     currentIndex = Math.min(currentIndex, totalItems - 1);
+
+  //     // Reposition the view
+  //     const translateX = currentIndex * itemWidth;
+  //     wrapper.style.transform = `translateX(-${translateX}px)`;
+
+  //     // Update button visibility
+  //     updateButtonsVisibility();
+  //   }
+
+  //   const scrollToFrame = () => {
+  //     const items = document.querySelectorAll(".mobile-frame");
+  //     const totalItems = items.length;
+
+  //     currentIndex = totalItems - 1;
+
+  //     // Calculate the translation value
+  //     const translateX = currentIndex * itemWidth;
+
+  //     // Apply the transformation to scroll
+  //     wrapper.style.transform = `translateX(-${translateX}px)`;
+  //     // Update button visibility
+  //     updateButtonsVisibility();
+  //   };
+
+  //   // Initialize button visibility
+  //   updateButtonsVisibility();
+
+  //   // Return the utility functions
+  //   return {
+  //     updateScroll,
+  //     scrollToFrame,
+  //     updateButtonsVisibility,
+  //   };
+  // }
   activateNavigators() {
-    const leftNavigator = document.querySelector(".page-navigator-left");
-    const rightNavigator = document.querySelector(".page-navigator-right");
+    const scrollContainer = document.getElementById("child-container");
+    const prevButton = document.getElementById("scroll-left");
+    const nextButton = document.getElementById("scroll-right");
 
-    if (leftNavigator && rightNavigator) {
-      // Display the navigators
-      leftNavigator.style.display = "block";
-      rightNavigator.style.display = "block";
-    }
+    const frames = document.querySelectorAll(".mobile-frame");
 
-    // Navigators
-    const editorsContainer = document.getElementById("child-container");
-    const leftButton = document.getElementById("scroll-left");
-    const rightButton = document.getElementById("scroll-right");
+    // Adjust the alignment based on the number of frames
+    const alignment = frames.length > 1 ? "flex-start" : "center";
+    scrollContainer.style.setProperty("justify-content", alignment);
 
-    // Adjust the scroll amount (number of pixels)
-    const scrollAmount = 300;
+    // Smooth scroll functionality for buttons
+    const scrollBy = (offset) => {
+      scrollContainer.scrollTo({
+        left: scrollContainer.scrollLeft + offset,
+        behavior: "smooth",
+      });
+    };
 
-    // Arrow function to update button visibility
+    prevButton.addEventListener("click", () => scrollBy(-200));
+    nextButton.addEventListener("click", () => scrollBy(200));
+
+    // Update button visibility based on scroll position
     const updateButtonVisibility = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = editorsContainer;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
 
-      // Show/hide left button
-      leftButton.style.display = scrollLeft > 0 ? "block" : "none";
-
-      // Show/hide right button
-      rightButton.style.display =
+      prevButton.style.display = scrollLeft > 0 ? "block" : "none";
+      nextButton.style.display =
         scrollLeft + clientWidth < scrollWidth ? "block" : "none";
     };
 
-    // Scroll left on left arrow click
-    leftButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      editorsContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    });
-
-    // Scroll right on right arrow click
-    rightButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      editorsContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    });
-
-    // Listen to scroll events to update button visibility
-    editorsContainer.addEventListener("scroll", updateButtonVisibility);
-
-    // Initial check
+    // Ensure visibility is updated initially and on scroll
     updateButtonVisibility();
+    scrollContainer.addEventListener("scroll", updateButtonVisibility);
+
+    return {
+      updateButtonVisibility,
+    }
   }
 
   initialContentPageTemplate(contentPageData) {

@@ -50,7 +50,7 @@
 }
 
 .edit-actions span:hover {
-  color: var(--colors_basecolor);
+  color: #222f54;
 }
 
 .btn-transparent {
@@ -68,11 +68,11 @@
   border-radius: 4px;
   font-size: 14px;
   font-weight: 400;
-  color: var(--colors_basecolor);
+  color: #222f54;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--colors_basecolor); /* Assuming outline refers to this */
+  border: 1px solid #222f54; /* Assuming outline refers to this */
 }
 
 button#open-mapping {
@@ -85,17 +85,17 @@ button#open-mapping {
 }
 
 .tb-btn-outline {
-  border: 1.5px solid var(--colors_basecolor);
-  color: var(--colors_basecolor);
+  border: 1.5px solid #222f54;
+  color: #222f54;
   background-color: transparent;
 }
 
 .tb-btn-outline svg path {
-  fill: var(--colors_basecolor);
+  fill: #222f54;
 }
 
 .tb-btn-outline:hover {
-  background-color: var(--colors_basecolor);
+  background-color: #222f54;
   color: #fff;
 }
 
@@ -104,14 +104,14 @@ button#open-mapping {
 }
 
 .tb-btn-outline:hover {
-  background-color: var(--colors_basecolor);
+  background-color: #222f54;
   color: #fff;
 }
 
 .tb-btn-primary {
   color: #fff;
-  border: 1.5px solid var(--colors_basecolor);
-  background-color: var(--colors_basecolor);
+  border: 1.5px solid #222f54;
+  background-color: #222f54;
 }
 
 .tb-btn svg {
@@ -150,7 +150,7 @@ button#open-mapping {
 
 .sidebar,
 .main-content {
-  /* height: 75vh; */
+  height: 100vh;
   overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -158,22 +158,32 @@ button#open-mapping {
 }
 
 .frame-list {
+  max-width: 800px;
+  overflow: hidden;
+  align-content: center;
+  display: flex;
+  overflow-x: scroll;
+  gap: 2.5rem;
+  padding: 10px;
+  scroll-behavior: smooth;
+  align-items: center;
+  margin: 0 auto;
+}
+
+#frame-carousel-wrapper {
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: 2.5em;
-  padding: 60px;
-  justify-content: flex-start;
-  /* max-width: 600px; */
-  overflow-x: auto;
-  white-space: nowrap;
+  justify-content: center;
+  gap: 2.5em; /* Space between items */
+  margin: 0 auto; /* Center wrapper horizontally */
+  transition: transform 0.4s ease-in-out; /* Smooth scrolling effect */
 }
-
 .frame-list::-webkit-scrollbar {
   display: none;
 }
 
-/* .page-navigator-left button,
+.page-navigator-left button,
 .page-navigator-right button {
   background-color: white;
   color: #5068a8;
@@ -184,18 +194,23 @@ button#open-mapping {
   font-size: 16px;
   width: 50px;
   height: 50px;
-} */
+}
 
 .page-navigator-left g:hover,
 .page-navigator-right g:hover {
-  fill: var(--colors_basecolor);
+  fill: #222f54;
   cursor: pointer;
 }
 
 .page-navigator-left path:hover,
 .page-navigator-right path:hover {
-  fill: #fff;
+  /* fill: #fff; */
   cursor: pointer;
+}
+
+.page-navigator-left:hover path,
+.page-navigator-right:hover path {
+  fill: #fff;
 }
 
 /* Mobile frame */
@@ -303,7 +318,7 @@ button#open-mapping {
 }
 
 input:focus {
-  border-color: #4caf50; /* Changes border color when focused */
+  border-color: #222f54; /* Changes border color when focused */
 }
 
 .theme-selection {
@@ -348,7 +363,7 @@ input:focus {
 
 .add-page-button {
   padding: 8px 16px;
-  background-color: var(--colors_basecolor);
+  background-color: #222f54;
   color: white;
   border: none;
   border-radius: 6px;
@@ -806,9 +821,9 @@ h5#current-page-title {
 
 .tb-tabs .tb-tab-button.active {
   background-color: #ffffff;
-  color: var(--colors_basecolor);
+  color: #222f54;
   font-weight: 600;
-  border: 1px solid var(--colors_basecolor);
+  border: 1px solid #222f54;
 }
 
 .tb-tab-content {
@@ -834,7 +849,7 @@ h5#current-page-title {
 .page-template-block {
   flex: 1;
   background-color: #ffffff;
-  border: 3.5px dashed var(--colors_basecolor);
+  border: 3.5px dashed #222f54;
   border-radius: 5px;
   padding: 10px;
   cursor: pointer;
@@ -843,7 +858,7 @@ h5#current-page-title {
 }
 
 .page-template-block:hover {
-  border: 2.5px dashed var(--colors_basecolor);
+  border: 2.5px dashed #222f54;
 }
 
 .tb-modal {
@@ -877,7 +892,7 @@ h5#current-page-title {
 
 .tb-modal-header h2 {
   margin: 0;
-  color: var(--colors_basecolor);
+  color: #222f54;
 }
 
 .close {
@@ -906,7 +921,7 @@ h5#current-page-title {
 }
 
 .upload-area a {
-  color: var(--colors_basecolor);
+  color: #222f54;
   text-decoration: none;
 }
 
@@ -940,7 +955,7 @@ h5#current-page-title {
 .file-item .file-name {
   font-weight: bold;
   margin-bottom: 2px;
-  color: var(--colors_basecolor);
+  color: #222f54;
 }
 
 .file-item .file-size {
@@ -1006,7 +1021,7 @@ h5#current-page-title {
   align-items: center;
   font-size: 18px;
   padding: 10px 12px;
-  color: var(--colors_basecolor);
+  color: #222f54;
   font-weight: 600;
 }
 .popup-header button {
@@ -1256,7 +1271,7 @@ h5#current-page-title {
 @media (max-width: 1440px) {
   .frame-list {
     gap: 1.2em;
-    padding: 20px;
+    max-width: 600px;
   }
 
   /* .main-content {

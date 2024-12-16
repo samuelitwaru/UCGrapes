@@ -128,6 +128,7 @@ class ChildEditorManager {
     console.log("Editor Initialized", editor)
     // Add Event Listeners
     this.addEditorEventListners(editor);
+    this.toolsSection.unDoReDo(editor);
     // Load or Initialize Editor Content
     if (page.PageGJSJson) {
       editor.loadProjectData(JSON.parse(page.PageGJSJson));
@@ -217,6 +218,7 @@ class ChildEditorManager {
 
     const navigator = this.activateNavigators();
     navigator.updateButtonVisibility();
+    navigator.scrollBy(200);
     new Clock(`current-time-${pageId}`);
   }
 
@@ -607,6 +609,7 @@ class ChildEditorManager {
 
     return {
       updateButtonVisibility,
+      scrollBy,
     }
   }
 

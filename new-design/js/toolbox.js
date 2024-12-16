@@ -401,7 +401,6 @@ class ToolBoxManager {
       };
 
       this.dataManager.updatePage(data).then((res) => {
-        console.log(`Page ${pageName} saved successfully.`);
         this.openToastMessage(); // Show the toast message after saving
       });
     }
@@ -428,6 +427,7 @@ class ToolBoxManager {
   }
 
   unDoReDo(editorInstance) {
+    console.log("Editor at undo redo", editorInstance);
     const um = editorInstance.UndoManager;
     //undo
     const undoButton = document.getElementById("undo");
@@ -676,13 +676,13 @@ class ToolBoxManager {
               console.log("Current color is: ", currentIconColor);
               if (tileIconComponent) {
                 console.log("Tile component is: ", tileIconComponent);
-
-                matchingIcon.IconSVG = matchingIcon.IconSVG.replace(
+                let localizedSVG = matchingIcon.IconSVG;
+                localizedSVG = matchingIcon.IconSVG.replace(
                   /fill="[^"]*"/g,
                   `fill="${currentIconColor}"`
                 );
                 // Update the SVG in GrapesJS way
-                tileIconComponent.replaceWith(matchingIcon.IconSVG);
+                tileIconComponent.replaceWith(localizedSVG);
               }
             }
 

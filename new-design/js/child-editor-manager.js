@@ -53,7 +53,6 @@ class ChildEditorManager {
   }
 
   createChildEditor(page) {
-    console.log("Page is: ", page)
     const pageId = page.PageId;
     const count = this.container.children.length;
     const editorContainer = document.createElement("div");
@@ -126,6 +125,7 @@ class ChildEditorManager {
       selectable: false,
     });
 
+    console.log("Editor Initialized", editor)
     // Add Event Listeners
     this.addEditorEventListners(editor);
     // Load or Initialize Editor Content
@@ -277,6 +277,8 @@ class ChildEditorManager {
         this.setCurrentEditor(editorId);
         this.currentPageId = $(editorContainerId).data().pageid;
 
+        this.toolsSection.unDoReDo(editor);
+
         if (e.target.attributes["tile-action-object-id"]) {
           console.log(this.dataManager.pages);
           const page = this.getPage(
@@ -355,7 +357,6 @@ class ChildEditorManager {
       );
       this.hideContextMenu();
 
-      this.toolsSection.unDoReDo(this.currentEditor.editor);
       this.updateUIState();
     });
   }

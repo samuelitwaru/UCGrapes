@@ -401,7 +401,10 @@ class ToolBoxManager {
       };
 
       this.dataManager.updatePage(data).then((res) => {
-        this.openToastMessage(); // Show the toast message after saving
+        this.openToastMessage();
+        this.dataManager.getPages().then((pages) => {
+          this.editorManager.pages = pages;
+        });
       });
     }
   }

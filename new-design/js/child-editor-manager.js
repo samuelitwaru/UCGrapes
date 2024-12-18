@@ -24,7 +24,10 @@ class ChildEditorManager {
         this.createChildEditor(homePage);
         this.currentPageId = homePage.PageId;
       } else {
-        alert("No Home Page Found");
+        this.toolsSection.displayAlertMessage(
+          "No home page found.",
+          "danger"
+        );
         return;
       }
     });
@@ -53,7 +56,6 @@ class ChildEditorManager {
   }
 
   createChildEditor(page) {
-    console.log("Page is: ", page)
     const pageId = page.PageId;
     const count = this.container.children.length;
     const editorContainer = document.createElement("div");
@@ -126,25 +128,47 @@ class ChildEditorManager {
       selectable: false,
     });
 
+    console.log("Editor Initialized", editor)
     // Add Event Listeners
     this.addEditorEventListners(editor);
+    this.toolsSection.unDoReDo(editor);
     // Load or Initialize Editor Content
     if (page.PageGJSJson) {
       editor.loadProjectData(JSON.parse(page.PageGJSJson));
 
-      if (page.PageIsContentPage) {
+      if (page.PageIsPredefined) {
+        if (page.PageName == "Location") {
+          // globalVar = editor
+          // console.log(globalVar)
+          // console.log(editor.getProjectData())
+          // console.log(editor.DomComponents.getWrapper().find('#product-service-image'))
+          // const wrapper = editor.DomComponents.getWrapper();
+          // if (wrapper) {
+          //   const img = wrapper.find("#product-service-image");
+          //   const p = wrapper.find("#product-service-description");
+          //   console.log(img, p)
+          // }
+
+          const pageData = JSON.parse(page.PageGJSJson)
+          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src = this.dataManager.Location.LocationImage_GXI
+          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content = this.dataManager.Location.LocationDescription
+          editor.DomComponents.clear()
+          editor.loadProjectData(pageData);
+        }
+      }
+
+      else if (page.PageIsContentPage) {
         this.dataManager
           .getContentPageData(page.PageId)
           .then((contentPageData) => {
             // Then check and update elements
-            const wrapper = editor.getWrapper();
-            if (wrapper) {
-              const img = wrapper.components().find("#product-service-image");
-              const p = wrapper
-                .components()
-                .find("#product-service-description");
+            const wrapper = editor.DomComponents.getWrapper();
 
-              if (img && p) {
+            if (wrapper) {
+              const img = wrapper.find("#product-service-image");
+              const p = wrapper.find("#product-service-description");
+              console.log(img, p)
+              if (img.length && p.length) {
                 img[0].setAttributes({
                   src: contentPageData.ProductServiceImage,
                 });
@@ -164,15 +188,6 @@ class ChildEditorManager {
           .catch((error) => {
             console.error("Error loading content page data:", error);
           });
-      } else {
-        if (page.PageName == "Location") {
-          const pageData = JSON.parse(page.PageGJSJson)
-          console.log(this.dataManager.Location)
-          pageData.pages[0].component.components[0].src = this.dataManager.Location.LocationImage_GXI
-          pageData.pages[0].component.components[1].content = this.dataManager.Location.LocationDescription 
-          editor.DomComponents.clear()
-          editor.loadProjectData(pageData);
-        }
       }
 
     } else {
@@ -212,6 +227,8 @@ class ChildEditorManager {
       this.setCurrentEditor(`#${editorId}`);
     }
 
+    console.log("Editor Instances are:", this.editors);
+
     // Wrapper Settings
     const wrapper = editor.getWrapper();
     wrapper.set({
@@ -223,6 +240,7 @@ class ChildEditorManager {
 
     const navigator = this.activateNavigators();
     navigator.updateButtonVisibility();
+    navigator.scrollBy(200);
     new Clock(`current-time-${pageId}`);
   }
 
@@ -282,6 +300,8 @@ class ChildEditorManager {
 
         this.setCurrentEditor(editorId);
         this.currentPageId = $(editorContainerId).data().pageid;
+
+        this.toolsSection.unDoReDo(editor);
 
         if (e.target.attributes["tile-action-object-id"]) {
           console.log(this.dataManager.pages);
@@ -361,7 +381,6 @@ class ChildEditorManager {
       );
       this.hideContextMenu();
 
-      this.toolsSection.unDoReDo(this.currentEditor.editor);
       this.updateUIState();
     });
   }
@@ -612,6 +631,7 @@ class ChildEditorManager {
 
     return {
       updateButtonVisibility,
+      scrollBy,
     }
   }
 
@@ -1119,4 +1139,5 @@ class ChildEditorManager {
       });
     });
   }
+
 }

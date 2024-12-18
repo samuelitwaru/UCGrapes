@@ -105,7 +105,52 @@ class ToolBoxManager {
 
     publishButton.onclick = (e) => {
       e.preventDefault();
-      this.publishPages();
+      const popup = document.createElement("div");
+      popup.className = "popup-modal";
+      popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>Confirm Publish</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          Are you sure you want to publish? Once published, all currently visible pages will be finalized and visible to residents. This action cannot be undone.
+        </div>
+        <div class="popup-footer">
+          <button id="yes_publish" class="tb-btn tb-btn-primary">
+            Publish
+          </button>
+          <button id="close_popup" class="tb-btn tb-btn-outline">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+
+      document.body.appendChild(popup);
+      popup.style.display = "flex";
+
+      const publishButton = popup.querySelector("#yes_publish");
+      const closeButton = popup.querySelector("#close_popup");
+      const closePopup = popup.querySelector(".close");
+
+      publishButton.addEventListener("click", () => {
+        this.publishPages();
+        popup.remove();
+      });
+
+      closeButton.addEventListener("click", () => {
+        popup.remove();
+      });
+
+      closePopup.addEventListener("click", () => {
+        popup.remove();
+      });
     };
 
     const sidebarInputTitle = document.getElementById("tile-title");
@@ -232,6 +277,38 @@ class ToolBoxManager {
         }
       }
     });
+
+    // Autosave
+    setInterval(() => {
+      const editors = Object.values(this.editorManager.editors);
+
+      if (!this.previousStates) {
+        this.previousStates = new Map(); 
+      }
+
+      if (editors && editors.length) {
+        for (let index = 0; index < editors.length; index++) {
+          const editorData = editors[index];
+          const editor = editorData.editor;
+          const pageId = editorData.pageId;
+
+          if (!this.previousStates.has(pageId)) {
+            this.previousStates.set(pageId, editor.getHtml());
+          }
+
+          // Get the current state of the editor
+          const currentState = editor.getHtml();
+
+          if (currentState !== this.previousStates.get(pageId)) {
+            console.log(`Changes detected in editor with pageId: ${pageId}`);
+
+            this.autoSavePage(editorData);
+
+            this.previousStates.set(pageId, currentState);
+          }
+        }
+      }
+    }, 30000);
   }
 
   updateTileTitle(inputTitle) {
@@ -247,8 +324,6 @@ class ToolBoxManager {
 
   publishPages() {
     const editors = Object.values(this.editorManager.editors);
-
-    console.log(editors);
     // let editors = this.editorManager.editors;
     if (editors && editors.length) {
       let saveCount = 0; // Counter to track saves
@@ -299,8 +374,63 @@ class ToolBoxManager {
     }
   }
 
+  autoSavePage(editorData) {
+    let pageId = editorData.pageId;
+    let editor = editorData.editor;
+    let page = this.dataManager.pages.find((page) => page.PageId == pageId);
+    let projectData = editor.getProjectData();
+    let htmlData = editor.getHtml();
+    let jsonData;
+    let pageName = page.PageName;
+
+    if (page.PageIsContentPage) {
+      jsonData = mapContentToPageData(projectData, page);
+    } else {
+      jsonData = mapTemplateToPageData(projectData, page);
+    }
+
+    if (pageId) {
+      let data = {
+        PageId: pageId,
+        PageName: pageName,
+        PageJsonContent: JSON.stringify(jsonData),
+        PageGJSHtml: htmlData,
+        PageGJSJson: JSON.stringify(projectData),
+        SDT_Page: jsonData,
+        // PageIsPublished: false,
+      };
+
+      this.dataManager.updatePage(data).then((res) => {
+        this.openToastMessage();
+        this.dataManager.getPages().then((pages) => {
+          this.editorManager.pages = pages;
+        });
+      });
+    }
+  }
+
+  openToastMessage() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.textContent = "Your changes are saved";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translateX(-50%) translateY(0)";
+    }, 100); 
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 500); 
+    }, 3000);
+  }
+
   unDoReDo(editorInstance) {
-    // undo and redo
+    console.log("Editor at undo redo", editorInstance);
     const um = editorInstance.UndoManager;
     //undo
     const undoButton = document.getElementById("undo");
@@ -549,13 +679,13 @@ class ToolBoxManager {
               console.log("Current color is: ", currentIconColor);
               if (tileIconComponent) {
                 console.log("Tile component is: ", tileIconComponent);
-
-                matchingIcon.IconSVG = matchingIcon.IconSVG.replace(
+                let localizedSVG = matchingIcon.IconSVG;
+                localizedSVG = matchingIcon.IconSVG.replace(
                   /fill="[^"]*"/g,
                   `fill="${currentIconColor}"`
                 );
                 // Update the SVG in GrapesJS way
-                tileIconComponent.replaceWith(matchingIcon.IconSVG);
+                tileIconComponent.replaceWith(localizedSVG);
               }
             }
 

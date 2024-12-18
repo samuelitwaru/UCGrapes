@@ -880,6 +880,7 @@ class DataManager {
 
   updateLocationTheme() {
     let themeId = this.selectedTheme.id;
+    alert(themeId)
 
     return new Promise((resolve, reject) => {
       $.ajax({

@@ -1548,7 +1548,6 @@ class ToolBoxManager {
       const radios = document.querySelectorAll(
         '#theme-color-palette input[type="radio"]'
       );
-
       radios.forEach((radio) => {
         const colorBox = radio.nextElementSibling;
         radio.checked =

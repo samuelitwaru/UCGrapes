@@ -120,6 +120,10 @@ class ToolBoxManager {
         <hr>
         <div class="popup-body" id="confirmation_modal_message">
           Are you sure you want to publish? Once published, all currently visible pages will be finalized and visible to residents. This action cannot be undone.
+          <label for="notify_residents" class="notify_residents">
+              <input type="checkbox" id="notify_residents" name="notify_residents">
+              <span>Notify residents about the updates made.</span>
+          </label>
         </div>
         <div class="popup-footer">
           <button id="yes_publish" class="tb-btn tb-btn-primary">
@@ -140,7 +144,9 @@ class ToolBoxManager {
       const closePopup = popup.querySelector(".close");
 
       publishButton.addEventListener("click", () => {
-        this.publishPages();
+        const isNotifyResidents =
+          document.getElementById("notify_residents").checked;
+        this.publishPages(isNotifyResidents);
         popup.remove();
       });
 
@@ -283,11 +289,13 @@ class ToolBoxManager {
       const editors = Object.values(this.editorManager.editors);
 
       if (!this.previousStates) {
-        this.previousStates = new Map(); 
+        this.previousStates = new Map();
       }
+      // console.log("Previous states created", this.previousStates);
 
       if (editors && editors.length) {
         for (let index = 0; index < editors.length; index++) {
+          console.log(`Reached here`);
           const editorData = editors[index];
           const editor = editorData.editor;
           const pageId = editorData.pageId;
@@ -322,7 +330,7 @@ class ToolBoxManager {
     }
   }
 
-  publishPages() {
+  publishPages(isNotifyResidents) {
     const editors = Object.values(this.editorManager.editors);
     // let editors = this.editorManager.editors;
     if (editors && editors.length) {
@@ -342,10 +350,8 @@ class ToolBoxManager {
 
         if (page.PageIsContentPage) {
           jsonData = mapContentToPageData(projectData, page);
-          console.log("ProjectData is: ", jsonData);
         } else {
           jsonData = mapTemplateToPageData(projectData, page);
-          console.log("ProjectData is: ", jsonData);
         }
 
         if (pageId) {
@@ -357,6 +363,7 @@ class ToolBoxManager {
             PageGJSJson: JSON.stringify(projectData),
             SDT_Page: jsonData,
             PageIsPublished: true,
+            IsNotifyResidents: isNotifyResidents,
           };
 
           this.dataManager.updatePage(data).then((res) => {
@@ -380,24 +387,14 @@ class ToolBoxManager {
     let page = this.dataManager.pages.find((page) => page.PageId == pageId);
     let projectData = editor.getProjectData();
     let htmlData = editor.getHtml();
-    let jsonData;
     let pageName = page.PageName;
-
-    if (page.PageIsContentPage) {
-      jsonData = mapContentToPageData(projectData, page);
-    } else {
-      jsonData = mapTemplateToPageData(projectData, page);
-    }
 
     if (pageId) {
       let data = {
         PageId: pageId,
         PageName: pageName,
-        PageJsonContent: JSON.stringify(jsonData),
         PageGJSHtml: htmlData,
         PageGJSJson: JSON.stringify(projectData),
-        SDT_Page: jsonData,
-        // PageIsPublished: false,
       };
 
       this.dataManager.updatePage(data).then((res) => {
@@ -419,13 +416,13 @@ class ToolBoxManager {
     setTimeout(() => {
       toast.style.opacity = "1";
       toast.style.transform = "translateX(-50%) translateY(0)";
-    }, 100); 
+    }, 100);
 
     setTimeout(() => {
       toast.style.opacity = "0";
       setTimeout(() => {
         document.body.removeChild(toast);
-      }, 500); 
+      }, 500);
     }, 3000);
   }
 
@@ -965,6 +962,7 @@ class ToolBoxManager {
         const ctaComponent = `
           <div class="cta-container-child cta-child" 
             id="id-${cta.CallToActionId}"
+            data-gjs-type="cta-buttons"
             cta-button-id="${cta.CallToActionId}"
             data-gjs-draggable="false"
             data-gjs-editable="false"
@@ -1067,6 +1065,7 @@ class ToolBoxManager {
                       data-gjs-droppable="false"
                       data-gjs-resizable="false"
                       data-gjs-hoverable="false"
+                      data-gjs-type="cta-buttons"
                       id="id-${ctaId}"
                       cta-button-id="${ctaId}"
                       cta-button-label="${ctaName}"
@@ -1152,6 +1151,7 @@ class ToolBoxManager {
                       data-gjs-droppable="false"
                       data-gjs-resizable="false"
                       data-gjs-hoverable="false"
+                      data-gjs-type="cta-buttons"
                       id="id-${ctaId}"
                       cta-button-id="${ctaId}"
                       cta-button-label="${ctaName}"
@@ -1548,7 +1548,6 @@ class ToolBoxManager {
       const radios = document.querySelectorAll(
         '#theme-color-palette input[type="radio"]'
       );
-
       radios.forEach((radio) => {
         const colorBox = radio.nextElementSibling;
         radio.checked =

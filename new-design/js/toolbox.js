@@ -1550,8 +1550,7 @@ class ToolBoxManager {
       );
       radios.forEach((radio) => {
         const colorBox = radio.nextElementSibling;
-        radio.checked =
-          colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
+        radio.checked = colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
       });
       // update action
       const currentActionName =

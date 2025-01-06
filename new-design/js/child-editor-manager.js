@@ -199,7 +199,7 @@ class ChildEditorManager {
         // currentIndex = currentIndex - 1;
         const navigator = this.activateNavigators();
         // navigator.updateScroll();
-        navigator.updateButtonsVisibility();
+        // navigator.updateButtonsVisibility();
       });
     }
   }

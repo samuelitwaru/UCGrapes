@@ -1,4 +1,4 @@
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 let baseURL = window.location.origin;
 
 if (baseURL.startsWith("http://localhost")) baseURL += environment;
@@ -880,6 +880,7 @@ class DataManager {
 
   updateLocationTheme() {
     let themeId = this.selectedTheme.id;
+    alert(themeId)
 
     return new Promise((resolve, reject) => {
       $.ajax({

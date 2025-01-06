@@ -24,7 +24,10 @@ class ChildEditorManager {
         this.createChildEditor(homePage);
         this.currentPageId = homePage.PageId;
       } else {
-        alert("No Home Page Found");
+        this.toolsSection.displayAlertMessage(
+          "No home page found.",
+          "danger"
+        );
         return;
       }
     });
@@ -60,7 +63,7 @@ class ChildEditorManager {
     let appBar = "";
 
     // AppBar HTML
-    if (page.PageIsContentPage) {
+    if (page.PageIsContentPage || (page.PageIsPredefined && page.PageName!="Home")) {
       appBar = `
             <div class="app-bar">
                 <button id="content-back-button" class="back-button">
@@ -125,13 +128,68 @@ class ChildEditorManager {
       selectable: false,
     });
 
+    console.log("Editor Initialized", editor)
     // Add Event Listeners
     this.addEditorEventListners(editor);
     this.toolsSection.unDoReDo(editor);
     // Load or Initialize Editor Content
     if (page.PageGJSJson) {
       editor.loadProjectData(JSON.parse(page.PageGJSJson));
-      this.loadContentPage(editor, page);
+
+      if (page.PageIsPredefined) {
+        if (page.PageName == "Location") {
+          // globalVar = editor
+          // console.log(globalVar)
+          // console.log(editor.getProjectData())
+          // console.log(editor.DomComponents.getWrapper().find('#product-service-image'))
+          // const wrapper = editor.DomComponents.getWrapper();
+          // if (wrapper) {
+          //   const img = wrapper.find("#product-service-image");
+          //   const p = wrapper.find("#product-service-description");
+          //   console.log(img, p)
+          // }
+
+          const pageData = JSON.parse(page.PageGJSJson)
+          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src = this.dataManager.Location.LocationImage_GXI
+          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content = this.dataManager.Location.LocationDescription
+          editor.DomComponents.clear()
+          editor.loadProjectData(pageData);
+        }
+      }
+
+      else if (page.PageIsContentPage) {
+        this.dataManager
+          .getContentPageData(page.PageId)
+          .then((contentPageData) => {
+            // Then check and update elements
+            const wrapper = editor.DomComponents.getWrapper();
+
+            if (wrapper) {
+              const img = wrapper.find("#product-service-image");
+              const p = wrapper.find("#product-service-description");
+              console.log(img, p)
+              if (img.length && p.length) {
+                img[0].setAttributes({
+                  src: contentPageData.ProductServiceImage,
+                });
+                p[0].replaceWith(`
+                          <p id="product-service-description" class="content-page-block" style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px">
+                              ${contentPageData.ProductServiceDescription}
+                          </p>
+                      `);
+              }
+            }
+            // Ensure Call To Actions are applied
+            this.toolsSection.pageContentCtas(
+              contentPageData.CallToActions,
+              editor
+            );
+          })
+          .catch((error) => {
+            console.error("Error loading content page data:", error);
+          });
+      }
+
     } else {
       this.dataManager
         .getContentPageData(page.PageId)
@@ -154,7 +212,7 @@ class ChildEditorManager {
     }
 
     // Adjust Canvas for Content Pages
-    if (page.PageIsContentPage) {
+    if (page.PageIsContentPage || (page.PageIsPredefined && page.PageName!="Home")) {
       const canvas = editor.Canvas.getElement();
       if (canvas) {
         canvas.style.setProperty("height", "calc(100% - 100px)", "important");

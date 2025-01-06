@@ -369,45 +369,41 @@ class MappingComponent {
     const buildListItem = (item) => {
       const listItem = document.createElement("li");
       listItem.classList.add("tb-custom-list-item");
-
+  
       const menuItem = document.createElement("div");
       menuItem.classList.add("tb-custom-menu-item");
-
+  
       const toggle = document.createElement("span");
       toggle.classList.add("tb-dropdown-toggle");
       toggle.setAttribute("role", "button");
       toggle.setAttribute("aria-expanded", "false");
       toggle.innerHTML = `<i class="fa fa-caret-right tree-icon"></i><span>${item.Name}</span>`;
-
+  
       const deleteIcon = document.createElement("i");
       deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
       deleteIcon.setAttribute("data-id", item.Id);
-
-      deleteIcon.addEventListener("click", (event) =>
-        handleDelete(event, item.Id, listItem)
-      );
-
+  
+      deleteIcon.addEventListener("click", (event) => handleDelete(event, item.Id, listItem));
+  
       menuItem.appendChild(toggle);
       if (item.Name !== "Home") {
         menuItem.appendChild(deleteIcon);
       }
       listItem.appendChild(menuItem);
-
+  
       if (item.Children) {
         const dropdownMenu = document.createElement("ul");
         dropdownMenu.classList.add("tb-tree-dropdown-menu");
-
+  
         item.Children.forEach((child) => {
           const dropdownItem = buildDropdownItem(child, item);
           dropdownMenu.appendChild(dropdownItem);
         });
-
+  
         listItem.appendChild(dropdownMenu);
         listItem.classList.add("tb-dropdown");
-
-        listItem.addEventListener("click", (e) =>
-          toggleDropdown(e, listItem, menuItem)
-        );
+  
+        listItem.addEventListener("click", (e) => toggleDropdown(e, listItem, menuItem));
       }
 
       listItem.addEventListener("click", (e) => {
@@ -416,41 +412,33 @@ class MappingComponent {
 
         // Close all dropdowns if this item has no children
         if (!item.Children) {
-          document
-            .querySelectorAll(".tb-dropdown.active")
-            .forEach((dropdown) => {
-              dropdown.classList.remove("active");
-              dropdown
-                .querySelector(".tb-dropdown-toggle")
-                .setAttribute("aria-expanded", "false");
-              dropdown
-                .querySelector(".tb-custom-menu-item")
-                .classList.remove("active-tree-item");
-            });
+          document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
+            dropdown.classList.remove("active");
+            dropdown.querySelector(".tb-dropdown-toggle").setAttribute("aria-expanded", "false");
+            dropdown.querySelector(".tb-custom-menu-item").classList.remove("active-tree-item");
+          });
         }
       });
-
+  
       return listItem;
     };
-
+  
     const buildDropdownItem = (child, parent) => {
       const dropdownItem = document.createElement("li");
       dropdownItem.classList.add("tb-dropdown-item");
       dropdownItem.innerHTML = `<span><i style="margin-right: 10px;" class="fa-regular fa-file tree-icon"></i>${child.Name}</span><i data-id="${child.Id}" class="fa-regular fa-trash-can tb-delete-icon"></i>`;
-
+  
       const childDeleteIcon = dropdownItem.querySelector(".tb-delete-icon");
-      childDeleteIcon.addEventListener("click", (event) =>
-        handleDelete(event, child.Id, dropdownItem)
-      );
-
+      childDeleteIcon.addEventListener("click", (event) => handleDelete(event, child.Id, dropdownItem));
+  
       dropdownItem.addEventListener("click", (e) => {
         e.stopPropagation();
         this.handlePageSelection(child, true, parent);
       });
-
+  
       return dropdownItem;
     };
-
+  
     const handleDelete = (event, id, elementToRemove) => {
       event.stopPropagation();
       const title = "Delete Page";
@@ -458,18 +446,19 @@ class MappingComponent {
       const popup = this.popupModal(title, message);
       document.body.appendChild(popup);
       popup.style.display = "flex";
-
+  
       const deleteButton = popup.querySelector("#yes_delete");
       const closeButton = popup.querySelector("#close_popup");
       const closePopup = popup.querySelector(".close");
 
+  
       deleteButton.addEventListener("click", () => {
         if (this.dataManager.deletePage(id)) {
           elementToRemove.remove();
         }
         popup.remove();
       });
-
+  
       closeButton.addEventListener("click", () => {
         popup.remove();
       });
@@ -478,48 +467,40 @@ class MappingComponent {
         popup.remove();
       });
     };
-
+  
     const toggleDropdown = (event, listItem, menuItem) => {
       event.stopPropagation();
-
+  
       const isActive = listItem.classList.contains("active");
-
+  
       document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
         dropdown.classList.remove("active");
-        dropdown
-          .querySelector(".tb-dropdown-toggle")
-          .setAttribute("aria-expanded", "false");
-        dropdown
-          .querySelector(".tb-custom-menu-item")
-          .classList.remove("active-tree-item");
+        dropdown.querySelector(".tb-dropdown-toggle").setAttribute("aria-expanded", "false");
+        dropdown.querySelector(".tb-custom-menu-item").classList.remove("active-tree-item");
       });
-
+  
       if (!isActive) {
         listItem.classList.add("active");
         menuItem.classList.add("active-tree-item");
-        listItem
-          .querySelector(".tb-dropdown-toggle")
-          .setAttribute("aria-expanded", "true");
+        listItem.querySelector(".tb-dropdown-toggle").setAttribute("aria-expanded", "true");
       } else {
         menuItem.classList.remove("active-tree-item");
-        listItem
-          .querySelector(".tb-dropdown-toggle")
-          .setAttribute("aria-expanded", "false");
+        listItem.querySelector(".tb-dropdown-toggle").setAttribute("aria-expanded", "false");
       }
     };
-
+  
     const container = document.createElement("ul");
     container.classList.add("tb-custom-list");
-
+  
     const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
       a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
     );
-
+  
     sortedData.forEach((item) => {
       const listItem = buildListItem(item);
       container.appendChild(listItem);
     });
-
+  
     // document.addEventListener("click", () => {
     //   document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
     //     dropdown.classList.remove("active");
@@ -527,9 +508,10 @@ class MappingComponent {
     //     dropdown.querySelector(".tb-custom-menu-item").classList.remove("active-tree-item");
     //   });
     // });
-
+  
     return container;
   }
+  
 
   popupModal(title, message) {
     const popup = document.createElement("div");
@@ -566,44 +548,41 @@ class MappingComponent {
     if (this.isLoading) return;
 
     try {
-      this.isLoading = true;
+        this.isLoading = true;
 
-      // Locate the page data
-      const page = this.dataManager.pages.find(
-        (page) => page.PageId === item.Id
-      );
-      if (!page) throw new Error(`Page with ID ${item.Id} not found`);
+        // Locate the page data
+        const page = this.dataManager.pages.find((page) => page.PageId === item.Id);
+        if (!page) throw new Error(`Page with ID ${item.Id} not found`);
 
-      const editors = Object.values(this.editorManager.editors);
-      const mainEditor = editors[0];
+        const editors = Object.values(this.editorManager.editors);
+        const mainEditor = editors[0];
 
-      if (mainEditor) {
-        const editor = mainEditor.editor;
-        const editorId = editor.getConfig().container;
-        const editorContainerId = `${editorId}-frame`;
+        if (mainEditor) {
+            const editor = mainEditor.editor;
+            const editorId = editor.getConfig().container;
+            const editorContainerId = `${editorId}-frame`;
 
-        if (isChild) {
-          if (parent?.Id) {
-            const parentEditorId = editors[1].editor.getConfig().container;
-            console.log("parent editor Id: ", parentEditorId);
-            document
-              .querySelector(`${parentEditorId}-frame`)
-              .nextElementSibling?.remove();
-            this.editorManager.createChildEditor(page);
-          }
-        } else {
-          // Remove extra frames
-          $(editorContainerId).nextAll().remove();
-          this.editorManager.createChildEditor(page);
+            if (isChild) {
+                if (parent?.Id) {
+                  const parentEditorId = editors[1].editor.getConfig().container
+                  console.log("parent editor Id: ", parentEditorId)
+                  document.querySelector(`${parentEditorId}-frame`).nextElementSibling?.remove();
+                  this.editorManager.createChildEditor(page);
+                }
+            } else {                
+                // Remove extra frames
+                $(editorContainerId).nextAll().remove();
+                this.editorManager.createChildEditor(page);
+            }
         }
-      }
     } catch (error) {
-      console.error("Error selecting page:", error);
-      this.displayMessage("Error loading page", "error");
+        console.error("Error selecting page:", error);
+        this.displayMessage("Error loading page", "error");
     } finally {
-      this.isLoading = false;
+        this.isLoading = false;
     }
-  }
+}
+
 
   checkActivePage(id) {
     return localStorage.getItem("pageId") === id;

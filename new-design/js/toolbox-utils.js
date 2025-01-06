@@ -104,13 +104,13 @@ function mapTemplateToPageData(templateData, page) {
         TileBGImageUrl: attributes["tile-bg-image-url"] || "",
         TileBGImageOpacity: attributes["tile-bg-image-opacity"] || "",
 
-        ProductServiceId: "00000000-0000-0000-0000-000000000000",
-        ProductServiceName: "",
-        ProductServiceDescription: "",
-        ProductServiceImage: "",
+        // ProductServiceId: "00000000-0000-0000-0000-000000000000",
+        // ProductServiceName: "",
+        // ProductServiceDescription: "",
+        // ProductServiceImage: "",
         TileAction: {
           ObjectType: attributes['tile-action-object'],
-          ObjectId: (tileActionObjectId == "") ? "00000000-0000-0000-0000-000000000000" : tileActionObjectId
+          ObjectId: (tileActionObjectId == "") ? null : tileActionObjectId
         }
       };
 
@@ -119,7 +119,6 @@ function mapTemplateToPageData(templateData, page) {
 
     return row;
   });
-
   return pageData;
 }
 

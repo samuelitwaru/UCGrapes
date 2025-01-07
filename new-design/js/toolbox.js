@@ -22,6 +22,8 @@ class ToolBoxManager {
     this.media = media;
     this.currentLanguage = currentLanguage;
     // this.init();
+
+    this.currentLanguage.translateUCStrings();
   }
 
   init() {
@@ -59,8 +61,10 @@ class ToolBoxManager {
     this.mediaComponent = new MediaComponent(
       this.dataManager,
       this.editorManager,
+      this.currentLanguage,
       this
     );
+
     const tabButtons = document.querySelectorAll(".tb-tab-button");
     const tabContents = document.querySelectorAll(".tb-tab-content");
     tabButtons.forEach((button) => {
@@ -68,13 +72,16 @@ class ToolBoxManager {
         e.preventDefault();
         tabButtons.forEach((btn) => btn.classList.remove("active"));
         tabContents.forEach((content) =>
-          content.classList.remove("active-tab")
+          // content.classList.remove("active-tab")
+          content.style.display = "none"
         );
 
         button.classList.add("active");
-        document
-          .querySelector(`#${button.dataset.tab}-content`)
-          .classList.add("active-tab");
+        // document
+        //   .querySelector(`#${button.dataset.tab}-content`)
+        //   .classList.add("active-tab");
+          document
+          .querySelector(`#${button.dataset.tab}-content`).style.display = "block";
       });
     });
 
@@ -110,7 +117,7 @@ class ToolBoxManager {
       popup.innerHTML = `
       <div class="popup">
         <div class="popup-header">
-          <span>Confirm Publish</span>
+          <span>${this.currentLanguage.getTranslation("publish_confirm_title")}</span>
           <button class="close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
                 <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -119,18 +126,18 @@ class ToolBoxManager {
         </div>
         <hr>
         <div class="popup-body" id="confirmation_modal_message">
-          Are you sure you want to publish? Once published, all currently visible pages will be finalized and visible to residents. This action cannot be undone.
+        ${this.currentLanguage.getTranslation("publish_confirm_message")}
           <label for="notify_residents" class="notify_residents">
               <input type="checkbox" id="notify_residents" name="notify_residents">
-              <span>Notify residents about the updates made.</span>
+              <span>${this.currentLanguage.getTranslation("nofity_residents_on_publish")}</span>
           </label>
         </div>
         <div class="popup-footer">
           <button id="yes_publish" class="tb-btn tb-btn-primary">
-            Publish
+          ${this.currentLanguage.getTranslation("publish_confirm_button")}
           </button>
           <button id="close_popup" class="tb-btn tb-btn-outline">
-            Cancel
+          ${this.currentLanguage.getTranslation("publish_cancel_button")}
           </button>
         </div>
       </div>
@@ -291,11 +298,8 @@ class ToolBoxManager {
       if (!this.previousStates) {
         this.previousStates = new Map();
       }
-      // console.log("Previous states created", this.previousStates);
-
       if (editors && editors.length) {
         for (let index = 0; index < editors.length; index++) {
-          console.log(`Reached here`);
           const editorData = editors[index];
           const editor = editorData.editor;
           const pageId = editorData.pageId;
@@ -308,7 +312,6 @@ class ToolBoxManager {
           const currentState = editor.getHtml();
 
           if (currentState !== this.previousStates.get(pageId)) {
-            console.log(`Changes detected in editor with pageId: ${pageId}`);
 
             this.autoSavePage(editorData);
 
@@ -339,7 +342,6 @@ class ToolBoxManager {
 
       for (let index = 0; index < editors.length; index++) {
         const editorData = editors[index];
-        console.log(editorData);
         let pageId = editorData.pageId;
         let editor = editorData.editor;
         let page = this.dataManager.pages.find((page) => page.PageId == pageId);
@@ -427,7 +429,6 @@ class ToolBoxManager {
   }
 
   unDoReDo(editorInstance) {
-    console.log("Editor at undo redo", editorInstance);
     const um = editorInstance.UndoManager;
     //undo
     const undoButton = document.getElementById("undo");
@@ -664,7 +665,6 @@ class ToolBoxManager {
             );
 
             if (matchingIcon) {
-              console.log("Icon color changing");
               const tileIconComponent = tile.find(".tile-icon svg")[0];
               // get current icon color:
               const currentIconPath = tileIconComponent.find("path")[0];
@@ -673,9 +673,7 @@ class ToolBoxManager {
                 currentIconColor = currentIconPath.getAttributes()?.["fill"];
               }
 
-              console.log("Current color is: ", currentIconColor);
               if (tileIconComponent) {
-                console.log("Tile component is: ", tileIconComponent);
                 let localizedSVG = matchingIcon.IconSVG;
                 localizedSVG = matchingIcon.IconSVG.replace(
                   /fill="[^"]*"/g,
@@ -862,7 +860,6 @@ class ToolBoxManager {
     };
 
     // Create options for text color palette
-    console.log(colorValues);
     Object.entries(colorValues).forEach(([colorName, colorValue]) => {
       const colorItem = document.createElement("div");
       colorItem.className = "color-item";
@@ -894,15 +891,11 @@ class ToolBoxManager {
             ...selectedComponent.find(".plain-button"),
           ];
 
-          console.log("Component selected: ", selectedComponent);
-          console.log("Component picked: ", componentsWithClass);
-
           // Get the first matching component
           const button =
             componentsWithClass.length > 0 ? componentsWithClass[0] : null;
 
           if (button) {
-            console.log("Button opened ", button);
             button.addStyle({
               "background-color": colorValue,
               "border-color": colorValue,
@@ -1017,13 +1010,11 @@ class ToolBoxManager {
 
           if (existingButton) {
             if (existingSelectedComponent) {
-              console.log("Replaced");
               selectedComponent.replaceWith(ctaComponent);
             } else {
             }
             return;
           }
-          console.log("New");
           ctaButton.append(ctaComponent);
         };
 
@@ -1190,7 +1181,6 @@ class ToolBoxManager {
 
     // handling badge clicks
     const wrapper = editorInstance.getWrapper();
-    console.log("Wrapper is: ", wrapper);
     wrapper.view.el.addEventListener("click", (e) => {
       const badge = e.target.closest(".cta-badge");
       if (!badge) return;
@@ -1253,7 +1243,6 @@ class ToolBoxManager {
   }
 
   loadThemeIcons(themeIconsList) {
-    console.log("Icons: ", themeIconsList);
     const themeIcons = document.getElementById("icons-list");
     const themeIconCategory = document.getElementById("theme_icon_category");
 
@@ -1270,15 +1259,11 @@ class ToolBoxManager {
       // Clear existing icons
       themeIcons.innerHTML = "";
 
-      console.log("Selected Category:", selectedCategory); // Log selected category
-      console.log("Theme Icons List:", themeIconsList); // Log the icons list
-
       // Filter icons based on selected category
       const filteredIcons = themeIconsList.filter(
         (icon) => icon.IconCategory.trim() === selectedCategory.trim()
       );
 
-      console.log("Filtered Icons:", filteredIcons); // Log the filtered icons
 
       if (filteredIcons.length === 0) {
         console.log("No icons found for selected category.");
@@ -1350,7 +1335,7 @@ class ToolBoxManager {
       numberElement.textContent = index + 1; // Set the number
       const templateBlock = document.createElement("div");
       templateBlock.className = "page-template-block";
-      templateBlock.title = "Click to load template"; //
+      templateBlock.title = this.currentLanguage.getTranslation("click_to_load_template"); //
       templateBlock.innerHTML = `<div>${template.media}</div>`;
 
       blockElement.addEventListener("click", () => {
@@ -1468,7 +1453,6 @@ class ToolBoxManager {
       this.editorManager.selectedComponent.addAttributes({
         [attributeName]: attributeValue,
       });
-      console.log(this.editorManager.selectedComponent);
     } else {
       this.displayAlertMessage(
         this.currentLanguage.getTranslation("no_tile_selected_error_message"),
@@ -1478,10 +1462,8 @@ class ToolBoxManager {
   }
 
   updateTileProperties(editor, page) {
-    console.log("Selected", editor);
     if (page && page.PageIsContentPage) {
       // update cta button bg color
-      console.log("Selected", editor);
       const currentCtaBgColor =
         this.editorManager.selectedComponent?.getAttributes()?.[
           "cta-background-color"

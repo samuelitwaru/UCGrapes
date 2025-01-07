@@ -1,4 +1,3 @@
-const log = console.log;
 class ActionListComponent {
   editorManager = null;
   dataManager = null;
@@ -12,7 +11,6 @@ class ActionListComponent {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
-    console.log("Data is: ", dataManager);
 
     this.categoryData = [
       {
@@ -38,7 +36,6 @@ class ActionListComponent {
     this.dataManager
       .getPages()
       .then((pages) => {
-        console.log("ActionList", pages);
         this.pageOptions = pages.filter(
           (page) => !page.PageIsContentPage && !page.PageIsPredefined
         );
@@ -73,7 +70,6 @@ class ActionListComponent {
       PageName: page.Name,
       PageId: page.Id,
     }));
-    console.log("Pages", pageOptions);
     return pageOptions;
   }
 
@@ -181,7 +177,6 @@ class ActionListComponent {
           this.closest(".category").dataset.category
         }, ${this.textContent}`;
 
-        console.log(self.editorManager.getCurrentEditor());
         const editor = self.editorManager.getCurrentEditor();
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
@@ -204,7 +199,7 @@ class ActionListComponent {
               self.createContentPage(this.id);
             }
             // let page = self.toolBoxManager.editorManager.getPage(this.id)
-            // console.log(page)
+        
             // self.toolBoxManager.editorManager.createChildEditor(page)
           }
 
@@ -274,7 +269,6 @@ class MappingComponent {
     this.dataManager = dataManager;
     this.editorManager = editorManager;
     this.toolBoxManager = toolBoxManager;
-    console.log(this.toolBoxManager);
     this.currentLanguage = currentLanguage;
     this.boundCreatePage = this.handleCreatePage.bind(this);
   }
@@ -344,7 +338,6 @@ class MappingComponent {
         });
         const newTree = this.createTree(treePages, true); // Set isRoot to true if it's the root
         this.treeContainer.appendChild(newTree);
-        console.log(this.toolBoxManager);
         this.toolBoxManager.actionList.init();
       });
 
@@ -565,7 +558,6 @@ class MappingComponent {
             if (isChild) {
                 if (parent?.Id) {
                   const parentEditorId = editors[1].editor.getConfig().container
-                  console.log("parent editor Id: ", parentEditorId)
                   document.querySelector(`${parentEditorId}-frame`).nextElementSibling?.remove();
                   this.editorManager.createChildEditor(page);
                 }
@@ -600,10 +592,11 @@ class MappingComponent {
 }
 
 class MediaComponent {
-  constructor(dataManager, editorManager, toolBoxManager) {
+  constructor(dataManager, editorManager, currentLanguage, toolBoxManager) {
     this.dataManager = dataManager;
     this.editorManager = editorManager;
     this.toolBoxManager = toolBoxManager;
+    this.currentLanguage = currentLanguage;
     this.selectedFile = null;
     this.init();
   }
@@ -626,7 +619,7 @@ class MediaComponent {
     const header = document.createElement("div");
     header.className = "tb-modal-header";
     header.innerHTML = `
-      <h2>Upload</h2>
+      <h2>${this.currentLanguage.getTranslation("file_upload_modal_title")}</h2>
       <span class="close">
         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
           <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
@@ -644,7 +637,7 @@ class MediaComponent {
       <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
         <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
       </svg>
-      <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
+      ${this.currentLanguage.getTranslation("upload_section_text")}
     `;
     return uploadArea;
   }
@@ -653,8 +646,8 @@ class MediaComponent {
     const actions = document.createElement("div");
     actions.className = "modal-actions";
     actions.innerHTML = `
-      <button class="tb-btn tb-btn-outline" id="cancelBtn">Cancel</button>
-      <button class="tb-btn tb-btn-primary" id="saveBtn">Save</button>
+      <button class="tb-btn tb-btn-outline" id="cancelBtn">${this.currentLanguage.getTranslation("save_btn")}</button>
+      <button class="tb-btn tb-btn-primary" id="saveBtn">${this.currentLanguage.getTranslation("cancel_btn")}</button>
     `;
     return actions;
   }

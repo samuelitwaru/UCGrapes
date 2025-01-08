@@ -1,1124 +1,1635 @@
-let currentIndex = 0;
-
-class ChildEditorManager {
-  // child editor manager
-  editors = {};
-  pages = [];
-  theme = [];
-  toolsSection = null;
-  currentEditor = null;
-  currentPageId = null;
-
-  container = document.getElementById("child-container");
-
-  constructor(dataManager) {
+let globalVar = null;
+class ToolBoxManager {
+  dataManager = null;
+  constructor(
+    editorManager,
+    dataManager,
+    themes,
+    icons,
+    templates,
+    mapping,
+    media,
+    currentLanguage
+  ) {
+    this.editorManager = editorManager;
     this.dataManager = dataManager;
-    this.dataManager.getLocationTheme().then((res) => {
-      this.theme = res;
-    });
+    this.themes = themes;
+    this.icons = icons;
+    this.currentTheme = null;
+    this.templates = templates;
+    this.mappingsItems = mapping;
+    this.selectedFile = null;
+    this.media = media;
+    this.currentLanguage = currentLanguage;
+    // this.init();
+  }
+
+  init() {
+    let self = this;
     this.dataManager.getPages().then((pages) => {
-      this.pages = pages;
-      console.log(pages);
-      const homePage = this.pages.find((page) => page.PageName == "Home");
-      if (homePage) {
-        this.createChildEditor(homePage);
-        this.currentPageId = homePage.PageId;
-      } else {
-        this.toolsSection.displayAlertMessage(
-          "No home page found.",
-          "danger"
-        );
-        return;
-      }
-    });
-  }
-
-  getCurrentEditor() {
-    return this.currentEditor.editor;
-  }
-
-  setCurrentEditor(editorId) {
-    this.currentEditor = this.editors[editorId];
-    this.activateFrame(editorId + "-frame");
-  }
-
-  activateFrame(activeFrameClass) {
-    const activeFrame = document.querySelector(activeFrameClass);
-
-    const inactiveFrames = document.querySelectorAll(".active-editor");
-    inactiveFrames.forEach((frame) => {
-      if (frame !== activeFrame) {
-        frame.classList.remove("active-editor");
-      }
+      localStorage.clear();
+      // pages.forEach((page) => {
+      //   if (page.PageName === "Home") {
+      //     this.editorManager.pageId = page.PageId;
+      //     // this.editorManager.setCurrentPage(page);
+      //     // globalEditor.trigger("load");
+      //   }
+      // });
     });
 
-    activeFrame.classList.add("active-editor");
-  }
-
-  createChildEditor(page) {
-    const pageId = page.PageId;
-    const count = this.container.children.length;
-    const editorContainer = document.createElement("div");
-    const editorId = `gjs-${count}`;
-    let appBar = "";
-
-    // AppBar HTML
-    if (page.PageIsContentPage || (page.PageIsPredefined && page.PageName!="Home")) {
-      appBar = `
-            <div class="app-bar">
-                <button id="content-back-button" class="back-button">
-                    <svg class="back-arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
-                        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M5 12L12 19M5 12L12 5"/>
-                    </svg>
-                </button>
-                <h1 class="title">${page.PageName}</h1>
-            </div>
-        `;
-    }
-
-    // Editor Container Setup
-    editorContainer.innerHTML = `
-        <div class="header">
-            <span id="current-time-${pageId}"></span>
-            <span class="icons">
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-wifi"></i>
-                <i class="fas fa-battery"></i>
-            </span>
-        </div>
-        ${appBar}
-        <div id="${editorId}"></div>
-    `;
-    editorContainer.id = `${editorId}-frame`;
-    editorContainer.dataset.pageid = pageId;
-    editorContainer.classList.add("mobile-frame", "adding");
-    this.container.appendChild(editorContainer);
-
-    // Remove 'adding' class on next frame
-    requestAnimationFrame(() => {
-      editorContainer.classList.remove("adding");
-    });
-
-    // Initialize GrapesJS Editor
-    const editor = grapesjs.init({
-      container: `#${editorId}`,
-      fromElement: true,
-      height: "100%",
-      width: "auto",
-      canvas: {
-        styles: [
-          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
-          "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
-          "https://fonts.googleapis.com/css2?family=Lora&family=Merriweather&family=Poppins:wght@400;500&family=Roboto:wght@400;500&display=swap",
-          "/Resources/UCGrapes1/new-design/css/toolbox.css",
-          "/Resources/UCGrapes1/new-design/css/child-editor.css",
-        ],
-        scripts: ["/Resources/UCGrapes1/new-design/js/child-editor.js"],
-      },
-      baseCss: " ",
-      dragMode: "normal",
-      panels: { defaults: [] },
-      sidebarManager: false,
-      storageManager: false,
-      modal: false,
-      commands: false,
-      hoverable: false,
-      highlightable: false,
-      selectable: false,
-    });
-
-    console.log("Editor Initialized", editor)
-    // Add Event Listeners
-    this.addEditorEventListners(editor);
-    this.toolsSection.unDoReDo(editor);
-    // Load or Initialize Editor Content
-    if (page.PageGJSJson) {
-      editor.loadProjectData(JSON.parse(page.PageGJSJson));
-
-      if (page.PageIsPredefined) {
-        if (page.PageName == "Location") {
-          // globalVar = editor
-          // console.log(globalVar)
-          // console.log(editor.getProjectData())
-          // console.log(editor.DomComponents.getWrapper().find('#product-service-image'))
-          // const wrapper = editor.DomComponents.getWrapper();
-          // if (wrapper) {
-          //   const img = wrapper.find("#product-service-image");
-          //   const p = wrapper.find("#product-service-description");
-          //   console.log(img, p)
-          // }
-
-          const pageData = JSON.parse(page.PageGJSJson)
-          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src = this.dataManager.Location.LocationImage_GXI
-          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content = this.dataManager.Location.LocationDescription
-          editor.DomComponents.clear()
-          editor.loadProjectData(pageData);
-        }
-      }
-
-      else if (page.PageIsContentPage) {
-        this.dataManager
-          .getContentPageData(page.PageId)
-          .then((contentPageData) => {
-            // Then check and update elements
-            const wrapper = editor.DomComponents.getWrapper();
-
-            if (wrapper) {
-              const img = wrapper.find("#product-service-image");
-              const p = wrapper.find("#product-service-description");
-              console.log(img, p)
-              if (img.length && p.length) {
-                img[0].setAttributes({
-                  src: contentPageData.ProductServiceImage,
-                });
-                p[0].replaceWith(`
-                          <p id="product-service-description" class="content-page-block" style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px">
-                              ${contentPageData.ProductServiceDescription}
-                          </p>
-                      `);
-              }
-            }
-            // Ensure Call To Actions are applied
-            this.toolsSection.pageContentCtas(
-              contentPageData.CallToActions,
-              editor
-            );
-          })
-          .catch((error) => {
-            console.error("Error loading content page data:", error);
-          });
-      }
-
-    } else {
-      this.dataManager
-        .getContentPageData(page.PageId)
-        .then((contentPageData) => {
-          if (contentPageData) {
-            const projectData =
-              this.initialContentPageTemplate(contentPageData);
-            editor.addComponents(projectData)[0];
-
-            // Ensure Call To Actions are applied
-            this.toolsSection.pageContentCtas(
-              contentPageData.CallToActions,
-              editor
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching content page data:", error);
-        });
-    }
-
-    // Adjust Canvas for Content Pages
-    if (page.PageIsContentPage || (page.PageIsPredefined && page.PageName!="Home")) {
-      const canvas = editor.Canvas.getElement();
-      if (canvas) {
-        canvas.style.setProperty("height", "calc(100% - 100px)", "important");
-      }
-      this.backButtonAction(editorContainer.id);
-    }
-
-    // Save Editor Instance
-    const editorData = { pageId, editor };
-    this.editors[`#${editorId}`] = editorData;
-    if (page.PageName === "Home") {
-      this.setCurrentEditor(`#${editorId}`);
-    }
-
-    console.log("Editor Instances are:", this.editors);
-
-    // Wrapper Settings
-    const wrapper = editor.getWrapper();
-    wrapper.set({
-      selectable: false,
-      droppable: false,
-      draggable: false,
-      hoverable: false,
-    });
-
-    const navigator = this.activateNavigators();
-    navigator.updateButtonVisibility();
-    navigator.scrollBy(200);
-    new Clock(`current-time-${pageId}`);
-  }
-
-  getPage(pageId) {
-    return this.dataManager.pages.find((page) => page.PageId == pageId);
-  }
-
-  backButtonAction(editorContainerId) {
-    const backButton = document.getElementById("content-back-button");
-    if (backButton) {
-      backButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        $("#" + editorContainerId).remove();
-        // currentIndex = currentIndex - 1;
-        const navigator = this.activateNavigators();
-        // navigator.updateScroll();
-        // navigator.updateButtonsVisibility();
-      });
-    }
-  }
-
-  loadContentPage(editor, page) {
-    editor.on("load", (model) => {
-      const wrapper = editor.getWrapper();
-      if (page.PageIsContentPage) {
-        this.dataManager
-          .getContentPageData(page.PageId)
-          .then((contentPageData) => {
-            if (wrapper) {
-              // Adjusted the way components are searched
-              const img = wrapper.find(
-                '[data-gjs-type="product-service-image"]'
-              );
-              const p = wrapper.find(
-                '[data-gjs-type="product-service-description"]'
-              );
-
-              if (img.length > 0 && p.length > 0) {
-                console.log("Content Page Data img and p found");
-                img[0].setAttributes({
-                  src: contentPageData.ProductServiceImage,
-                });
-                p[0].replaceWith(`
-                  <p
-                      style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px"
-                      class="content-page-block"
-                      data-gjs-draggable="true"
-                      data-gjs-selectable="false"
-                      data-gjs-editable="false"
-                      data-gjs-droppable="false"
-                      data-gjs-highlightable="false"
-                      data-gjs-hoverable="false"
-                      id="product-service-description"
-                      data-gjs-type="product-service-description"
-                    >
-                    ${contentPageData.ProductServiceDescription}
-                    </p>
-                `);
-              }
-            }
-
-            const validCallToActionIds =
-              contentPageData.CallToActions?.map(
-                (action) => action.CallToActionId
-              ) || [];
-
-            const ctaComponents = wrapper.find('[data-gjs-type="cta-buttons"]');
-            console.log("ctaComponent: ", ctaComponents);
-
-            // If validCallToActionIds is empty, proceed to remove all ctaButtons
-            if (validCallToActionIds.length === 0) {
-              ctaComponents.forEach((ctaButton) => {
-                ctaButton.remove();
-              });
-            } else {
-              // Otherwise, remove only the ctaButtons not included in validCallToActionIds
-              ctaComponents.forEach((ctaButton) => {
-                const ctaButtonId = ctaButton.attributes.attributes.id.replace(
-                  "id-",
-                  ""
-                );
-
-                if (ctaButtonId) {
-                  if (!validCallToActionIds.includes(ctaButtonId)) {
-                    ctaButton.remove();
-                  }
-                }
-              });
-            }
-
-            // Ensure Call To Actions are applied
-            this.toolsSection.pageContentCtas(
-              contentPageData.CallToActions,
-              editor
-            );
-          })
-          .catch((error) => {
-            console.error("Error loading content page data:", error);
-          });
-      }
-    });
-  }
-
-  addEditorEventListners(editor) {
-    editor.on("load", (model) => {
-      this.dataManager.getLocationTheme().then((theme) => {
-        this.toolsSection.setTheme(theme.ThemeName);
-      });
-      const wrapper = editor.getWrapper();
-      wrapper.view.el.addEventListener("click", (e) => {
-        const editorId = editor.getConfig().container;
-        const editorContainerId = editorId + "-frame";
-
-        this.setCurrentEditor(editorId);
-        this.currentPageId = $(editorContainerId).data().pageid;
-
-        this.toolsSection.unDoReDo(editor);
-
-        if (e.target.attributes["tile-action-object-id"]) {
-          console.log(this.dataManager.pages);
-          const page = this.getPage(
-            e.target.attributes["tile-action-object-id"].value
-          );
-          if (page) {
-            $(editorContainerId).nextAll().remove();
-
-            this.createChildEditor(page);
-
-            $("#content-page-section").hide();
-            if (page.PageIsContentPage) {
-              $("#content-page-section").show();
-            }
-          }
-        }
-
-        if (e.target.classList.contains("fa-minus")) {
-          // remove call to action
-        }
-
-        const button = e.target.closest(".action-button");
-        if (!button) return;
-        const templateWrapper = button.closest(".template-wrapper");
-        if (!templateWrapper) return;
-
-        this.templateComponent = editor.Components.getById(templateWrapper.id);
-        if (!this.templateComponent) return;
-
-        if (button.classList.contains("delete-button")) {
-          this.deleteTemplate(this.templateComponent);
-        } else if (button.classList.contains("add-button-bottom")) {
-          this.addTemplateBottom(this.templateComponent, editor);
-        } else if (button.classList.contains("add-button-right")) {
-          this.addTemplateRight(this.templateComponent, editor);
-        }
-      });
-
-      wrapper.view.el.addEventListener("contextmenu", (e) =>
-        this.rightClickEventHandler(editor)
-      );
-    });
-
-    editor.on("component:selected", (component) => {
-      // this.toolsSection.resetPropertySection();
-      this.selectedTemplateWrapper = component.getEl();
-
-      this.selectedComponent = component;
-
-      const sidebarInputTitle = document.getElementById("tile-title");
-      if (this.selectedTemplateWrapper) {
-        const tileLabel =
-          this.selectedTemplateWrapper.querySelector(".tile-title");
-        if (tileLabel) {
-          sidebarInputTitle.value = tileLabel.textContent;
-        }
-
-        this.removeElementOnClick(".selected-tile-icon", ".tile-icon-section");
-        this.removeElementOnClick(
-          ".selected-tile-title",
-          ".tile-title-section"
-        );
-
-        //   this.updateUIState();
-        //   this.activateFrame(`#default-container`);
-
-        // clear existing frames first
-        //   this.clearEditors();
-
-        //   this.handlePageSelection();
-      }
-
-      this.toolsSection.updateTileProperties(
-        this.currentEditor.editor,
-        this.currentPageId
-      );
-      this.hideContextMenu();
-
-      this.updateUIState();
-    });
-  }
-
-  updateUIState() {
-    document.querySelector("#templates-button").classList.remove("active");
-    document.querySelector("#pages-button").classList.remove("active");
-    document.querySelector("#pages-button").classList.add("active");
-    document.querySelector("#mapping-section").style.display = "none";
-    document.querySelector("#tools-section").style.display = "block";
-    document.querySelector("#templates-content").style.display = "none";
-    document.querySelector("#pages-content").style.display = "block";
-  }
-
-  deleteTemplate(templateComponent) {
-    if (
-      !templateComponent ||
-      templateComponent.getClasses().includes("default-template")
-    )
-      return;
-
-    const containerRow = templateComponent.parent();
-    if (!containerRow) return;
-
-    templateComponent.remove();
-
-    // Adjust widths of remaining templates
-    const templates = containerRow.components();
-    const newWidth = 100 / templates.length;
-    templates.forEach((template) => {
-      if (template && template.setStyle) {
-        template.addStyle({ width: `${newWidth}%` });
-      }
-    });
-
-    this.updateRightButtons(containerRow);
-  }
-
-  addTemplateRight(templateComponent, editorInstance) {
-    const containerRow = templateComponent.parent();
-    if (!containerRow || containerRow.components().length >= 3) return;
-    const newComponents = editorInstance.addComponents(createTemplateHTML());
-    const newTemplate = newComponents[0];
-    if (!newTemplate) return;
-
-    const index = templateComponent.index();
-    containerRow.append(newTemplate, { at: index + 1 });
-    const templates = containerRow.components();
-
-    const equalWidth = 100 / templates.length;
-    templates.forEach((template) => {
-      template.addStyle({
-        flex: `0 0 calc(${equalWidth}% - 0.3.5rem)`,
-      });
-    });
-
-    this.updateRightButtons(containerRow);
-  }
-
-  addTemplateBottom(templateComponent, editorInstance) {
-    const currentRow = templateComponent.parent();
-    const containerColumn = currentRow?.parent();
-
-    if (!containerColumn) return;
-
-    const newRow = editorInstance.addComponents(`
-        <div class="container-row"
-            data-gjs-type="template-wrapper"
-            data-gjs-draggable="false"
-            data-gjs-selectable="false"
-            data-gjs-editable="false"
-            data-gjs-highlightable="false"
-            data-gjs-hoverable="false">
-            ${createTemplateHTML()}
-        </div>
-        `)[0];
-
-    const index = currentRow.index();
-    containerColumn.append(newRow, { at: index + 1 });
-  }
-
-  updateRightButtons(containerRow) {
-    if (!containerRow) return;
-
-    const templates = containerRow.components();
-    let totalWidth = 0;
-    templates.forEach((template) => {
-      if (!template || !template.view || !template.view.el) return;
-
-      const rightButton = template.view.el.querySelector(".add-button-right");
-      if (!rightButton) return;
-      const rightButtonComponent = template.find(".add-button-right")[0];
-
-      if (templates.length >= 3) {
-        rightButton.setAttribute("disabled", "true");
-        rightButtonComponent.addStyle({ display: "none" });
-      } else {
-        rightButton.removeAttribute("disabled");
-        rightButtonComponent.addStyle({ display: "flex" });
-      }
-    });
-  }
-
-  setToolsSection(toolBox) {
-    this.toolsSection = toolBox;
-  }
-
-  removeElementOnClick(targetSelector, sectionSelector) {
-    const closeSection = this.selectedComponent?.find(targetSelector)[0];
-    if (closeSection) {
-      const closeEl = closeSection.getEl();
-      if (closeEl) {
-        closeEl.onclick = () => {
-          this.selectedComponent.find(sectionSelector)[0].remove();
-        };
-      }
-    }
-  }
-
-  hideContextMenu() {
-    const contextMenu = document.getElementById("contextMenu");
-    if (contextMenu) {
-      contextMenu.style.display = "none";
-    }
-  }
-
-  activateNavigators() {
-    const leftNavigator = document.querySelector(".page-navigator-left");
-    const rightNavigator = document.querySelector(".page-navigator-right");
-
-    const scrollContainer = document.getElementById("child-container");
-    const prevButton = document.getElementById("scroll-left");
-    const nextButton = document.getElementById("scroll-right");
-
-    const frames = document.querySelectorAll(".mobile-frame");
-
-    leftNavigator.style.display = "block";
-    rightNavigator.style.display = "block";
-
-    // Adjust the alignment based on the number of frames
-    let alignment;
-    if (window.innerWidth <= 1440) {
-      // For screens with max-width 1440px, check the number of frames
-      alignment = frames.length > 1 ? "flex-start" : "center";
-    } else {
-      // For larger screens, use frames.length > 3
-      alignment = frames.length > 3 ? "flex-start" : "center";
-    }
-    scrollContainer.style.setProperty("justify-content", alignment);
-
-    // Smooth scroll functionality for buttons
-    const scrollBy = (offset) => {
-      scrollContainer.scrollTo({
-        left: scrollContainer.scrollLeft + offset,
-        behavior: "smooth",
-      });
-    };
-
-    prevButton.addEventListener("click", () => scrollBy(-200));
-    nextButton.addEventListener("click", () => scrollBy(200));
-
-    // Update button visibility based on scroll position
-    const updateButtonVisibility = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-
-      prevButton.style.display = scrollLeft > 0 ? "block" : "none";
-      nextButton.style.display =
-        scrollLeft + clientWidth < scrollWidth ? "block" : "none";
-    };
-
-    // Ensure visibility is updated initially and on scroll
-    updateButtonVisibility();
-    scrollContainer.addEventListener("scroll", updateButtonVisibility);
-
-    return {
-      updateButtonVisibility,
-      scrollBy,
-    };
-  }
-
-  initialContentPageTemplate(contentPageData) {
-    return `
-          <div
-            class="content-frame-container test"
-            id="frame-container"
-            data-gjs-draggable="false"
-            data-gjs-selectable="false"
-            data-gjs-editable="false"
-            data-gjs-highlightable="false"
-            data-gjs-droppable="false"
-            data-gjs-hoverable="false"
-          >
-            <div
-              class="container-column"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false"
-            >
-              <div
-                class="container-row"
-                data-gjs-draggable="false"
-                data-gjs-selectable="false"
-                data-gjs-editable="false"
-                data-gjs-droppable="false"
-                data-gjs-highlightable="true"
-                data-gjs-hoverable="true"
-              >
-                <div
-                  class="template-wrapper"
-                  data-gjs-draggable="false"
-                  data-gjs-selectable="false"
-                  data-gjs-editable="false"
-                  data-gjs-droppable="false"
-                  data-gjs-highlightable="true"
-                  data-gjs-hoverable="true"
-                  style="display: flex; width: 100%"
-                >
-                  <div
-                    data-gjs-draggable="false"
-                    data-gjs-selectable="false"
-                    data-gjs-editable="false"
-                    data-gjs-highlightable="false"
-                    data-gjs-droppable="true"
-                    data-gjs-resizable="false"
-                    data-gjs-hoverable="false"
-                    style="flex: 1; padding: 0"
-                  >
-                    <img
-                      class="content-page-block"
-                      id="product-service-image"
-                      data-gjs-draggable="true"
-                      data-gjs-selectable="false"
-                      data-gjs-editable="false"
-                      data-gjs-droppable="false"
-                      data-gjs-highlightable="false"
-                      data-gjs-hoverable="false"
-                      src="${contentPageData.ProductServiceImage}"
-                      data-gjs-type="product-service-image"
-                      alt="Full-width Image"
-                    />
-                    <p
-                      style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px"
-                      class="content-page-block"
-                      data-gjs-draggable="true"
-                      data-gjs-selectable="false"
-                      data-gjs-editable="false"
-                      data-gjs-droppable="false"
-                      data-gjs-highlightable="false"
-                      data-gjs-hoverable="false"
-                      id="product-service-description"
-                      data-gjs-type="product-service-description"
-                    >
-                    ${contentPageData.ProductServiceDescription}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="cta-button-container" ${defaultConstraints}></div>      
-            </div>
-          </div>
-        `;
-  }
-
-  addFreshTemplate(template) {
-    this.currentEditor.editor.DomComponents.clear();
-    let fullTemplate = "";
-
-    template.forEach((columns) => {
-      const templateRow = this.generateTemplateRow(columns);
-      fullTemplate += templateRow;
-    });
-
-    this.currentEditor.editor.addComponents(`
-            <div class="frame-container"
-                 id="frame-container"
-                 data-gjs-type="template-wrapper"
-                 data-gjs-draggable="false"
-                 data-gjs-selectable="false"
-                 data-gjs-editable="false"
-                 data-gjs-highlightable="false"
-                 data-gjs-droppable="false"
-                 data-gjs-hoverable="false">
-              <div class="container-column"
-                   data-gjs-type="template-wrapper"
-                   data-gjs-draggable="false"
-                   data-gjs-selectable="false"
-                   data-gjs-editable="false"
-                   data-gjs-highlightable="false"
-                   data-gjs-droppable="false"
-                   data-gjs-hoverable="false">
-                  ${fullTemplate}
-              </div>
-            </div>
-            `);
-
-    const message = this.currentLanguage.getTranslation(
-      "template_added_success_message"
+    // this.dataManager.getLocationTheme().then((theme) => {
+    //   this.setTheme(theme.ThemeName);
+    // });
+
+    this.loadTheme();
+    this.listThemesInSelectField();
+    this.colorPalette();
+    this.ctaColorPalette();
+    // this.pageContentCtas();
+    // this.loadThemeIcons();
+    this.loadPageTemplates();
+
+    this.actionList = new ActionListComponent(
+      this.editorManager,
+      this.dataManager,
+      this.currentLanguage,
+      this
     );
-    const status = "success";
-    this.toolsSection.displayAlertMessage(message, status);
+
+    this.mediaComponent = new MediaComponent(
+      this.dataManager,
+      this.editorManager,
+      this
+    );
+    const tabButtons = document.querySelectorAll(".tb-tab-button");
+    const tabContents = document.querySelectorAll(".tb-tab-content");
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        tabButtons.forEach((btn) => btn.classList.remove("active"));
+        tabContents.forEach((content) =>
+          content.classList.remove("active-tab")
+        );
+
+        button.classList.add("active");
+        document
+          .querySelector(`#${button.dataset.tab}-content`)
+          .classList.add("active-tab");
+      });
+    });
+
+    // mapping
+    const mappingButton = document.getElementById("open-mapping");
+    const publishButton = document.getElementById("publish");
+    const mappingSection = document.getElementById("mapping-section");
+    const toolsSection = document.getElementById("tools-section");
+
+    this.mappingComponent = new MappingComponent(
+      this.dataManager,
+      this.editorManager,
+      this,
+      this.currentLanguage
+    );
+
+    mappingButton.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      toolsSection.style.display =
+        toolsSection.style.display === "none" ? "block" : "none";
+
+      mappingSection.style.display =
+        mappingSection.style.display === "block" ? "none" : "block";
+
+      this.mappingComponent.init();
+    });
+
+    publishButton.onclick = (e) => {
+      e.preventDefault();
+      const popup = document.createElement("div");
+      popup.className = "popup-modal";
+      popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>Confirm Publish</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          Are you sure you want to publish? Once published, all currently visible pages will be finalized and visible to residents. This action cannot be undone.
+          <label for="notify_residents" class="notify_residents">
+              <input type="checkbox" id="notify_residents" name="notify_residents">
+              <span>Notify residents about the updates made.</span>
+          </label>
+        </div>
+        <div class="popup-footer">
+          <button id="yes_publish" class="tb-btn tb-btn-primary">
+            Publish
+          </button>
+          <button id="close_popup" class="tb-btn tb-btn-outline">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+
+      document.body.appendChild(popup);
+      popup.style.display = "flex";
+
+      const publishButton = popup.querySelector("#yes_publish");
+      const closeButton = popup.querySelector("#close_popup");
+      const closePopup = popup.querySelector(".close");
+
+      publishButton.addEventListener("click", () => {
+        const isNotifyResidents =
+          document.getElementById("notify_residents").checked;
+        this.publishPages(isNotifyResidents);
+        popup.remove();
+      });
+
+      closeButton.addEventListener("click", () => {
+        popup.remove();
+      });
+
+      closePopup.addEventListener("click", () => {
+        popup.remove();
+      });
+    };
+
+    const sidebarInputTitle = document.getElementById("tile-title");
+    sidebarInputTitle.addEventListener("input", (e) => {
+      this.updateTileTitle(e.target.value);
+    });
+
+    // tile title alignment
+    const leftAlign = document.getElementById("text-align-left");
+    const centerAlign = document.getElementById("text-align-center");
+    const rightAlign = document.getElementById("text-align-right");
+
+    leftAlign.addEventListener("click", () => {
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock = this.editorManager.selectedComponent.find(
+          ".tile-title-section"
+        )[0];
+
+        if (templateBlock) {
+          templateBlock.setStyle({
+            display: "flex",
+            "align-self": "start",
+          });
+          this.setAttributeToSelected("tile-text-align", "left");
+        }
+      }
+    });
+
+    centerAlign.addEventListener("click", () => {
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock = this.editorManager.selectedComponent.find(
+          ".tile-title-section"
+        )[0];
+
+        if (templateBlock) {
+          templateBlock.setStyle({
+            display: "flex",
+            "align-self": "center",
+          });
+          this.setAttributeToSelected("tile-text-align", "center");
+        }
+      }
+    });
+
+    rightAlign.addEventListener("click", () => {
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock = this.editorManager.selectedComponent.find(
+          ".tile-title-section"
+        )[0];
+
+        if (templateBlock) {
+          templateBlock.setStyle({
+            display: "flex",
+            "align-self": "end",
+          });
+          this.setAttributeToSelected("tile-text-align", "right");
+        }
+      }
+    });
+
+    // tile icon alignment
+    const iconLeftAlign = document.getElementById("icon-align-left");
+    const iconCenterAlign = document.getElementById("icon-align-center");
+    const iconRightAlign = document.getElementById("icon-align-right");
+
+    iconLeftAlign.addEventListener("click", () => {
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock =
+          this.editorManager.selectedComponent.find(".tile-icon-section")[0];
+        if (templateBlock) {
+          templateBlock.setStyle({
+            display: "flex",
+            "align-self": "start",
+          });
+          this.setAttributeToSelected("tile-icon-align", "left");
+        }
+      }
+    });
+
+    iconCenterAlign.addEventListener("click", () => {
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock =
+          this.editorManager.selectedComponent.find(".tile-icon-section")[0];
+
+        if (templateBlock) {
+          templateBlock.setStyle({
+            display: "flex",
+            "align-self": "center",
+          });
+          this.setAttributeToSelected("tile-icon-align", "center");
+        }
+      }
+    });
+
+    iconRightAlign.addEventListener("click", () => {
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock =
+          this.editorManager.selectedComponent.find(".tile-icon-section")[0];
+
+        if (templateBlock) {
+          templateBlock.setStyle({
+            display: "flex",
+            "align-self": "end",
+          });
+          this.setAttributeToSelected("tile-icon-align", "right");
+        }
+      }
+    });
+
+    // apply opacity to a bg image of a selected tile
+    const imageOpacity = document.getElementById("bg-opacity");
+
+    imageOpacity.addEventListener("input", (event) => {
+      const value = event.target.value;
+
+      // add opacity to selected tile image
+      if (this.editorManager.selectedTemplateWrapper) {
+        const templateBlock = this.editorManager.selectedComponent;
+
+        if (templateBlock) {
+          templateBlock.addStyle({
+            opacity: value / 100,
+          });
+        }
+      }
+    });
+
+    // Autosave
+    setInterval(() => {
+      const editors = Object.values(this.editorManager.editors);
+
+      if (!this.previousStates) {
+        this.previousStates = new Map();
+      }
+      // console.log("Previous states created", this.previousStates);
+
+      if (editors && editors.length) {
+        for (let index = 0; index < editors.length; index++) {
+          console.log(`Reached here`);
+          const editorData = editors[index];
+          const editor = editorData.editor;
+          const pageId = editorData.pageId;
+
+          if (!this.previousStates.has(pageId)) {
+            this.previousStates.set(pageId, editor.getHtml());
+          }
+
+          // Get the current state of the editor
+          const currentState = editor.getHtml();
+
+          if (currentState !== this.previousStates.get(pageId)) {
+            console.log(`Changes detected in editor with pageId: ${pageId}`);
+
+            this.autoSavePage(editorData);
+
+            this.previousStates.set(pageId, currentState);
+          }
+        }
+      }
+    }, 15000);
   }
 
-  generateTemplateRow(columns) {
-    let columnWidth = 100 / columns;
-    if (columns === 1) {
-      columnWidth = 100;
-    } else if (columns === 2) {
-      columnWidth = 49;
-    } else if (columns === 3) {
-      columnWidth = 32;
+  updateTileTitle(inputTitle) {
+    if (this.editorManager.selectedTemplateWrapper) {
+      const titleComponent =
+        this.editorManager.selectedComponent.find(".tile-title")[0];
+      if (titleComponent) {
+        titleComponent.components(inputTitle);
+        this.selectedComponent.addAttributes({ "tile-title": inputTitle });
+      }
+    }
+  }
+
+  publishPages(isNotifyResidents) {
+    const editors = Object.values(this.editorManager.editors);
+    // let editors = this.editorManager.editors;
+    if (editors && editors.length) {
+      let saveCount = 0; // Counter to track saves
+      const totalPages = editors.length; // Total number of pages to save
+
+      for (let index = 0; index < editors.length; index++) {
+        const editorData = editors[index];
+        console.log(editorData);
+        let pageId = editorData.pageId;
+        let editor = editorData.editor;
+        let page = this.dataManager.pages.find((page) => page.PageId == pageId);
+        let projectData = editor.getProjectData();
+        let htmlData = editor.getHtml();
+        let jsonData;
+        let pageName = page.PageName;
+
+        if (page.PageIsContentPage) {
+          jsonData = mapContentToPageData(projectData, page);
+        } else {
+          jsonData = mapTemplateToPageData(projectData, page);
+        }
+
+        if (pageId) {
+          let data = {
+            PageId: pageId,
+            PageName: pageName,
+            PageJsonContent: JSON.stringify(jsonData),
+            PageGJSHtml: htmlData,
+            PageGJSJson: JSON.stringify(projectData),
+            SDT_Page: jsonData,
+            PageIsPublished: true,
+            IsNotifyResidents: isNotifyResidents,
+          };
+
+          this.dataManager.updatePage(data).then((res) => {
+            saveCount++; // Increment counter after each save
+            if (saveCount === totalPages) {
+              // Show alert only after all saves are completed
+              this.displayAlertMessage(
+                "All Pages Saved Successfully",
+                "success"
+              );
+            }
+          });
+        }
+      }
+    }
+  }
+
+  autoSavePage(editorData) {
+    let pageId = editorData.pageId;
+    let editor = editorData.editor;
+    let page = this.dataManager.pages.find((page) => page.PageId == pageId);
+    let projectData = editor.getProjectData();
+    let htmlData = editor.getHtml();
+    let pageName = page.PageName;
+
+    if (pageId) {
+      let data = {
+        PageId: pageId,
+        PageName: pageName,
+        PageGJSHtml: htmlData,
+        PageGJSJson: JSON.stringify(projectData),
+      };
+
+      this.dataManager.updatePage(data).then((res) => {
+        this.openToastMessage();
+        this.dataManager.getPages().then((pages) => {
+          this.editorManager.pages = pages;
+        });
+      });
+    }
+  }
+
+  openToastMessage() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.textContent = "Your changes are saved";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translateX(-50%) translateY(0)";
+    }, 100);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 500);
+    }, 3000);
+  }
+
+  unDoReDo(editorInstance) {
+    console.log("Editor at undo redo", editorInstance);
+    const um = editorInstance.UndoManager;
+    //undo
+    const undoButton = document.getElementById("undo");
+    undoButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (um.hasUndo()) {
+        um.undo();
+      }
+    });
+
+    // redo
+    const redoButton = document.getElementById("redo");
+    redoButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (um.hasRedo()) {
+        um.redo();
+      }
+    });
+  }
+
+  listThemesInSelectField() {
+    const themeSelect = document.getElementById("theme-select");
+
+    // Clear existing options in case the method is called multiple times
+    themeSelect.innerHTML = "";
+
+    this.themes.forEach((theme) => {
+      const option = document.createElement("option");
+      option.value = theme.name;
+      option.textContent = theme.name;
+      option.id = theme.id;
+
+      // Check if the current theme matches this theme
+      if (this.currentTheme && theme.name === this.currentTheme.name) {
+        option.selected = true;
+      }
+
+      themeSelect.appendChild(option);
+    });
+
+    themeSelect.addEventListener("change", (e) => {
+      const themeName = e.target.value;
+      // update location theme
+      this.dataManager.selectedTheme = this.themes.find(
+        (theme) => theme.name === themeName
+      );
+
+      this.dataManager.updateLocationTheme();
+
+      if (this.setTheme(themeName)) {
+        this.themeColorPalette(this.currentTheme.colors);
+
+        localStorage.setItem("selectedTheme", themeName);
+
+        const message = this.currentLanguage.getTranslation(
+          "theme_applied_success_message"
+        );
+        const status = "success";
+        this.displayAlertMessage(message, status);
+      } else {
+        const message = this.currentLanguage.getTranslation(
+          "error_applying_theme_message"
+        );
+        const status = "error";
+        this.displayAlertMessage(message, status);
+      }
+    });
+  }
+
+  loadTheme() {
+    const savedTheme = localStorage.getItem("selectedTheme");
+    if (savedTheme) {
+      this.setTheme(savedTheme);
+    }
+    this.applyThemeIconsAndColor(savedTheme);
+  }
+
+  setTheme(themeName) {
+    const theme = this.themes.find((theme) => theme.name === themeName);
+    document.getElementById("theme-select").value = themeName;
+    if (!theme) {
+      return false;
     }
 
-    let wrappers = "";
+    this.currentTheme = theme;
 
-    for (let i = 0; i < columns; i++) {
-      wrappers += `
-            <div class="template-wrapper"
-                      style="flex: 0 0 ${columnWidth}%);"
-                      data-gjs-type="template-wrapper"
-                      data-gjs-selectable="false"
-                      data-gjs-droppable="false">
-                      <div class="template-block"
-                        ${defaultTileAttrs}
-                        data-gjs-draggable="false"
-                        data-gjs-selectable="true"
-                        data-gjs-editable="false"
-                        data-gjs-highlightable="false"
-                        data-gjs-droppable="false"
-                        data-gjs-resizable="false"
-                        data-gjs-hoverable="false">
-                        
-                        <div class="tile-icon-section"
-                          data-gjs-draggable="false"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-resizable="false"
-                          data-gjs-hoverable="false"
-                          >
-                            <span class="tile-close-icon top-right selected-tile-icon"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-resizable="false"
-                              data-gjs-hoverable="false"
-                              >&times;</span>
-                            <span 
-                              class="tile-icon"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-hoverable="false">
-                            </span>
-                        </div>
-                        <div class="tile-title-section"
-                          data-gjs-draggable="false"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-resizable="false"
-                          data-gjs-hoverable="false"
-                          >
-                            <span class="tile-close-icon top-right selected-tile-title"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-resizable="false"
-                              data-gjs-hoverable="false"
-                              >&times;</span>
-                            <span 
-                              class="tile-title"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-hoverable="false">Title</span>
-                            </div>
-                      </div>
-                      <button class="action-button delete-button" title="Delete template"
-                          data-gjs-draggable="false"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-hoverable="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                          data-gjs-draggable="false"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-editable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-hoverable="false">
-                          <line x1="5" y1="12" x2="19" y2="12" 
-                            data-gjs-draggable="false"
-                            data-gjs-selectable="false"
-                            data-gjs-editable="false"
-                            data-gjs-highlightable="false"
-                            data-gjs-droppable="false"
-                            data-gjs-hoverable="false"/>
-                        </svg>
-                      </button>
-                      <button class="action-button add-button-bottom" title="Add template below"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-hoverable="false"
-                              >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-hoverable="false">
-                          <line x1="12" y1="5" x2="12" y2="19" 
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-hoverable="false"/>
-                          <line x1="5" y1="12" x2="19" y2="12" 
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-hoverable="false"/>
-                        </svg>
-                      </button>
-                      <button class="action-button add-button-right" title="Add template right"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-hoverable="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-hoverable="false">
-                          <line x1="12" y1="5" x2="12" y2="19" 
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-hoverable="false"/>
-                          <line x1="5" y1="12" x2="19" y2="12" 
-                              data-gjs-draggable="false"
-                              data-gjs-selectable="false"
-                              data-gjs-editable="false"
-                              data-gjs-highlightable="false"
-                              data-gjs-droppable="false"
-                              data-gjs-hoverable="false"/>
-                        </svg>
-                      </button>
-                      <div class="resize-handle"
-                          data-gjs-draggable="false"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-hoverable="false">
-                      </div>
-                  </div>
-            `;
-    }
-    return `
-                  <div class="container-row"
-                      data-gjs-type="template-wrapper"
-                      data-gjs-draggable="false"
-                      data-gjs-selectable="false"
-                      data-gjs-editable="false"
-                      data-gjs-highlightable="true"
-                      data-gjs-hoverable="true">
-                    ${wrappers}
-                </div>
-          `;
+    this.applyTheme();
+
+    this.icons = theme.icons.map((icon) => {
+      return {
+        name: icon.IconName,
+        svg: icon.IconSVG,
+        category: icon.IconCategory,
+      };
+    });
+    this.loadThemeIcons(theme.icons);
+
+    this.themeColorPalette(this.currentTheme.colors);
+    localStorage.setItem("selectedTheme", themeName);
+
+    this.applyThemeIconsAndColor(themeName);
+
+    return true;
   }
 
   applyTheme() {
-    $("iframe").each((index, iframe) => {
-      const root = document.documentElement;
-      // const iframe = document.querySelector(".mobile-frame iframe");
-      this.themeData = this.toolsSection.themes.find(
-        (theme) => theme.name === this.theme.ThemeName
-      );
-      console.log(this.themeData);
-      if (!iframe) return;
+    const root = document.documentElement;
+    const iframes = document.querySelectorAll(".mobile-frame iframe");
 
-      // Set CSS variables from the selected theme
-      root.style.setProperty(
-        "--primary-color",
-        this.themeData.colors.primaryColor
-      );
-      root.style.setProperty(
-        "--secondary-color",
-        this.themeData.colors.secondaryColor
-      );
-      root.style.setProperty(
-        "--background-color",
-        this.themeData.colors.backgroundColor
-      );
-      root.style.setProperty("--text-color", this.themeData.colors.textColor);
-      root.style.setProperty(
-        "--button-bg-color",
-        this.themeData.colors.buttonBgColor
-      );
-      root.style.setProperty(
-        "--button-text-color",
-        this.themeData.colors.buttonTextColor
-      );
-      root.style.setProperty(
-        "--card-bg-color",
-        this.themeData.colors.cardBgColor
-      );
-      root.style.setProperty(
-        "--card-text-color",
-        this.themeData.colors.cardTextColor
-      );
-      root.style.setProperty(
-        "--accent-color",
-        this.themeData.colors.accentColor
-      );
+    if (!iframes.length) return;
 
-      root.style.setProperty("--font-family", this.theme.fontFamily);
+    // Set CSS variables from the selected theme
+    root.style.setProperty(
+      "--primary-color",
+      this.currentTheme.colors.primaryColor
+    );
+    root.style.setProperty(
+      "--secondary-color",
+      this.currentTheme.colors.secondaryColor
+    );
+    root.style.setProperty(
+      "--background-color",
+      this.currentTheme.colors.backgroundColor
+    );
+    root.style.setProperty("--text-color", this.currentTheme.colors.textColor);
+    root.style.setProperty(
+      "--button-bg-color",
+      this.currentTheme.colors.buttonBgColor
+    );
+    root.style.setProperty(
+      "--button-text-color",
+      this.currentTheme.colors.buttonTextColor
+    );
+    root.style.setProperty(
+      "--card-bg-color",
+      this.currentTheme.colors.cardBgColor
+    );
+    root.style.setProperty(
+      "--card-text-color",
+      this.currentTheme.colors.cardTextColor
+    );
+    root.style.setProperty(
+      "--accent-color",
+      this.currentTheme.colors.accentColor
+    );
+    root.style.setProperty("--font-family", this.currentTheme.fontFamily);
 
-      // Apply this.theme to iframe (canvas editor)
+    iframes.forEach((iframe) => {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      iframeDoc.body.style.setProperty(
-        "--primary-color",
-        this.themeData.colors.primaryColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--secondary-color",
-        this.themeData.colors.secondaryColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--background-color",
-        this.themeData.colors.backgroundColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--text-color",
-        this.themeData.colors.textColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--button-bg-color",
-        this.themeData.colors.buttonBgColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--button-text-color",
-        this.themeData.colors.buttonTextColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--card-bg-color",
-        this.themeData.colors.cardBgColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--card-text-color",
-        this.themeData.colors.cardTextColor
-      );
-      iframeDoc.body.style.setProperty(
-        "--accent-color",
-        this.themeData.colors.accentColor
-      );
-      iframeDoc.body.style.setProperty("--font-family", this.theme.fontFamily);
+
+      if (iframeDoc && iframeDoc.body) {
+        iframeDoc.body.style.setProperty(
+          "--primary-color",
+          this.currentTheme.colors.primaryColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--secondary-color",
+          this.currentTheme.colors.secondaryColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--background-color",
+          this.currentTheme.colors.backgroundColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--text-color",
+          this.currentTheme.colors.textColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--button-bg-color",
+          this.currentTheme.colors.buttonBgColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--button-text-color",
+          this.currentTheme.colors.buttonTextColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--card-bg-color",
+          this.currentTheme.colors.cardBgColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--card-text-color",
+          this.currentTheme.colors.cardTextColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--accent-color",
+          this.currentTheme.colors.accentColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--font-family",
+          this.currentTheme.fontFamily
+        );
+      }
     });
   }
 
-  rightClickEventHandler(editorInstance) {
-    // Select all iframes in the document
-    document.querySelectorAll("iframe").forEach((iframe) => {
-      if (!iframe) {
-        console.error("Iframe not found.");
-        return;
-      }
+  applyThemeIconsAndColor(themeName) {
+    const editors = Object.values(this.editorManager.editors);
 
-      const iframeDoc =
-        iframe.contentDocument || iframe.contentWindow?.document;
-      if (!iframeDoc) {
-        console.error("Iframe document not accessible.");
-        return;
-      }
-
-      const contextMenu = document.getElementById("contextMenu");
-      if (!contextMenu) {
-        console.error("Context menu element not found.");
-        return;
-      }
-
-      // Helper function to hide context menu
-      const hideContextMenu = () => {
-        contextMenu.style.display = "none";
-        window.currentBlock = null; // Reset current block reference
-      };
-
-      // Hide context menu when clicking outside of it
-      document.addEventListener("click", (e) => {
-        if (!contextMenu.contains(e.target)) {
-          hideContextMenu();
+    if (editors && editors.length) {
+      for (let index = 0; index < editors.length; index++) {
+        const editorData = editors[index];
+        if (!editorData || !editorData.editor) {
+          console.error(`Invalid editorData at index ${index}:`, editorData);
+          return;
         }
-      });
 
-      // Hide context menu when clicking inside iframe
-      iframeDoc.addEventListener("click", () => {
-        hideContextMenu();
-      });
-
-      // Handle right-click (context menu)
-      iframeDoc.addEventListener("contextmenu", (e) => {
-        const block = e.target.closest(".template-block");
-        if (block) {
-          e.preventDefault();
-
-          // Get iframe's position relative to viewport
-          const iframeRect = iframe.getBoundingClientRect();
-
-          // Calculate position relative to viewport
-          const x = e.clientX + iframeRect.left;
-          const y = e.clientY + iframeRect.top;
-
-          // Position and display context menu
-          contextMenu.style.position = "fixed";
-          contextMenu.style.left = `${x}px`;
-          contextMenu.style.top = `${y}px`;
-          contextMenu.style.display = "block";
-
-          // Store the current block reference
-          window.currentBlock = block;
-        } else {
-          hideContextMenu();
-        }
-      });
-
-      // Handle delete image action
-      const deleteImage = document.getElementById("delete-bg-image");
-      if (deleteImage) {
-        deleteImage.addEventListener("click", () => {
-          const blockToDelete = window.currentBlock;
-          if (blockToDelete) {
-            const currentStyles = this.selectedComponent.getStyle() || {};
-
-            // Remove the background-image property while preserving other styles
-            delete currentStyles["background-image"];
-
-            // Reapply the updated styles
-            this.selectedComponent.setStyle(currentStyles);
-
-            hideContextMenu();
+        try {
+          let editor = editorData.editor;
+          // Add additional null checks
+          if (!editor || typeof editor.getWrapper !== "function") {
+            console.error(`Invalid editor at index ${index}:`, editor);
+            continue;
           }
+
+          const wrapper = editor.getWrapper();
+
+          // // Additional check for wrapper
+          // if (!wrapper.view || !wrapper.view.$el) {
+          //   console.error(
+          //     `Wrapper view or $el is missing at index ${index}:`,
+          //     wrapper.view
+          //   );
+          //   continue;
+          // }
+
+          const theme = this.themes.find((theme) => theme.name === themeName);
+          const tiles = wrapper.find(".template-block");
+
+          tiles.forEach((tile) => {
+            // icons change and its color
+            const tileIconName = tile.getAttributes()["tile-icon"];
+            const matchingIcon = theme.icons.find(
+              (icon) => icon.IconName === tileIconName
+            );
+
+            if (matchingIcon) {
+              console.log("Icon color changing");
+              const tileIconComponent = tile.find(".tile-icon svg")[0];
+              // get current icon color:
+              const currentIconPath = tileIconComponent.find("path")[0];
+              let currentIconColor = "#7c8791";
+              if (currentIconPath) {
+                currentIconColor = currentIconPath.getAttributes()?.["fill"];
+              }
+
+              console.log("Current color is: ", currentIconColor);
+              if (tileIconComponent) {
+                console.log("Tile component is: ", tileIconComponent);
+                let localizedSVG = matchingIcon.IconSVG;
+                localizedSVG = matchingIcon.IconSVG.replace(
+                  /fill="[^"]*"/g,
+                  `fill="${currentIconColor}"`
+                );
+                // Update the SVG in GrapesJS way
+                tileIconComponent.replaceWith(localizedSVG);
+              }
+            }
+
+            // Get the current tile background color name and code
+            const currentTileBgColorName =
+              tile.getAttributes()?.["tile-bgcolor-name"];
+            const currentTileBgColorCode =
+              tile.getAttributes()?.["tile-bgcolor"];
+
+            // Check if there's a matching color name in the current theme
+            const matchingColorCode = theme.colors[currentTileBgColorName]; // Get the code from the name
+
+            // If a match is found, update the tile attributes and styles
+            if (matchingColorCode) {
+              tile.addAttributes({
+                "tile-bgcolor-name": currentTileBgColorName, // Keep the name as is
+                "tile-bgcolor": matchingColorCode, // Update the code
+              });
+
+              tile.addStyle({
+                "background-color": matchingColorCode, // Apply the new background color
+              });
+            } else {
+              console.warn(
+                `No matching color found for: ${currentTileBgColorName}`
+              );
+            }
+          });
+        } catch (error) {
+          console.error(`Error processing editor at index ${index}:`, error);
+        }
+      }
+    }
+
+    const iframes = document.querySelectorAll(".mobile-frame iframe");
+
+    if (iframes === null) return;
+
+    iframes.forEach((iframe) => {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      if (iframeDoc && iframeDoc.body) {
+        iframeDoc.body.style.setProperty(
+          "--font-family",
+          this.currentTheme.fontFamily
+        );
+      }
+    });
+  }
+
+  themeColorPalette(colors) {
+    const colorPaletteContainer = document.getElementById(
+      "theme-color-palette"
+    );
+    colorPaletteContainer.innerHTML = "";
+
+    const colorEntries = Object.entries(colors);
+
+    colorEntries.forEach(([colorName, colorValue], index) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `color-${colorName}`;
+      radioInput.name = "theme-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+
+      colorPaletteContainer.appendChild(alignItem);
+
+      colorBox.onclick = () => {
+        this.editorManager.selectedComponent.addStyle({
+          "background-color": colorValue,
         });
-      } else {
-        console.error("Delete image button not found.");
+        this.setAttributeToSelected("tile-bgcolor", colorValue);
+        this.setAttributeToSelected("tile-bgcolor-name", colorName);
+      };
+    });
+  }
+
+  colorPalette() {
+    const textColorPaletteContainer =
+      document.getElementById("text-color-palette");
+    const iconColorPaletteContainer =
+      document.getElementById("icon-color-palette");
+
+    // Fixed color values
+    const colorValues = {
+      color1: "#ffffff", // Example white
+      color2: "#333333", // Example dark gray
+      // Add more colors as needed
+    };
+
+    // Create options for text color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
+
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `text-color-${colorName}`;
+      radioInput.name = "text-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `text-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-text-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      textColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
+        this.editorManager.selectedComponent.addStyle({
+          color: colorValue,
+        });
+        this.setAttributeToSelected("tile-text-color", colorValue);
+      };
+    });
+
+    // Create options for icon color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
+
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `icon-color-${colorName}`;
+      radioInput.name = "icon-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `icon-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-icon-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      iconColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
+        const svgIcon =
+          this.editorManager.selectedComponent.find(".tile-icon path")[0];
+        if (svgIcon) {
+          svgIcon.removeAttributes("fill");
+          svgIcon.addAttributes({ fill: colorValue });
+          this.setAttributeToSelected("tile-icon-color", colorValue);
+        } else {
+          const message = this.currentLanguage.getTranslation(
+            "no_icon_selected_error_message"
+          );
+          this.displayAlertMessage(message, "error");
+        }
+      };
+    });
+  }
+
+  ctaColorPalette() {
+    const ctaColorPaletteContainer =
+      document.getElementById("cta-color-palette");
+    // Fixed color values
+    const colorValues = {
+      color1: "#4C9155",
+      color2: "#5068A8",
+      color3: "#EEA622",
+      color4: "#FF6C37",
+    };
+
+    // Create options for text color palette
+    console.log(colorValues);
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const colorItem = document.createElement("div");
+      colorItem.className = "color-item";
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `cta-color-${colorName}`;
+      radioInput.name = "cta-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `cta-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-cta-color", colorValue);
+
+      colorItem.appendChild(radioInput);
+      colorItem.appendChild(colorBox);
+      ctaColorPaletteContainer.appendChild(colorItem);
+
+      radioInput.onclick = () => {
+        if (this.editorManager.selectedComponent) {
+          const selectedComponent = this.editorManager.selectedComponent;
+
+          // Search for components with either class
+          const componentsWithClass = [
+            ...selectedComponent.find(".cta-main-button"),
+            ...selectedComponent.find(".cta-button"),
+            ...selectedComponent.find(".img-button"),
+            ...selectedComponent.find(".plain-button"),
+          ];
+
+          console.log("Component selected: ", selectedComponent);
+          console.log("Component picked: ", componentsWithClass);
+
+          // Get the first matching component
+          const button =
+            componentsWithClass.length > 0 ? componentsWithClass[0] : null;
+
+          if (button) {
+            console.log("Button opened ", button);
+            button.addStyle({
+              "background-color": colorValue,
+              "border-color": colorValue,
+            });
+          }
+          this.setAttributeToSelected("cta-background-color", colorValue);
+        }
+      };
+    });
+  }
+
+  pageContentCtas(callToActions, editorInstance) {
+    const contentPageCtas = document.getElementById("call-to-actions");
+
+    const renderCtas = () => {
+      contentPageCtas.innerHTML = "";
+
+      if (!callToActions) {
+        $("#content-page-section").show();
+        return;
       }
 
-      // Close context menu on Escape key
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          hideContextMenu();
-        }
+      $("#content-page-section").show();
+
+      callToActions.forEach((cta) => {
+        const ctaItem = document.createElement("div");
+        ctaItem.classList.add("call-to-action-item");
+        ctaItem.title = cta.CallToActionName;
+
+        // Map CTA types to icon classes and selectors
+        const ctaTypeMap = {
+          Phone: {
+            icon: "fas fa-phone-alt",
+            iconList: ".fas.fa-phone-alt",
+          },
+          Email: {
+            icon: "fas fa-envelope",
+            iconList: ".fas.fa-envelope",
+          },
+          SiteUrl: {
+            icon: "fas fa-link",
+            iconList: ".fas.fa-link",
+          },
+          Form: {
+            icon: "fas fa-file",
+            iconList: ".fas.fa-file",
+          },
+        };
+
+        const ctaType = ctaTypeMap[cta.CallToActionType] || {
+          icon: "fas fa-question",
+          iconList: ".fas.fa-question",
+        };
+
+        ctaItem.innerHTML = `<i class="${ctaType.icon}"></i>`;
+
+        const ctaComponent = `
+          <div class="cta-container-child cta-child" 
+            id="id-${cta.CallToActionId}"
+            data-gjs-type="cta-buttons"
+            cta-button-id="${cta.CallToActionId}"
+            data-gjs-draggable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-resizable="false"
+            data-gjs-hoverable="false"
+            cta-button-label="${cta.CallToActionName}"
+            cta-button-type="${cta.CallToActionType}"
+            cta-button-action="${
+              cta.CallToActionPhone ||
+              cta.CallToActionEmail ||
+              cta.CallToActionUrl
+            }"
+            cta-background-color="#5068a8"
+          >
+            <div class="cta-button" ${defaultConstraints}>
+              <i class="${ctaType.icon}" ${defaultConstraints}></i>
+              <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
+            </div>
+            <div class="cta-label" ${defaultConstraints}>${
+          cta.CallToActionName
+        }</div>
+          </div>
+        `;
+
+        ctaItem.onclick = (e) => {
+          e.preventDefault();
+          const ctaButton = editorInstance
+            .getWrapper()
+            .find(".cta-button-container")[0];
+
+          if (!ctaButton) {
+            console.error("CTA Button container not found.");
+            return;
+          }
+
+          const selectedComponent = this.editorManager.selectedComponent;
+          if (!selectedComponent) {
+            console.error("No selected component found.");
+            return;
+          }
+
+          const attributes = selectedComponent.getAttributes();
+
+          const existingSelectedComponent =
+            attributes["cta-button-id"] === cta.CallToActionId;
+
+          const existingButton = ctaButton.find(
+            `#id-${cta.CallToActionId}`
+          )?.[0];
+
+          if (existingButton) {
+            if (existingSelectedComponent) {
+              console.log("Replaced");
+              selectedComponent.replaceWith(ctaComponent);
+            } else {
+            }
+            return;
+          }
+          console.log("New");
+          ctaButton.append(ctaComponent);
+        };
+
+        contentPageCtas.appendChild(ctaItem);
+
+        // change button layout to plain
+        const plainButton = document.getElementById("plain-button-layout");
+
+        plainButton.onclick = (e) => {
+          e.preventDefault();
+          const ctaContainer = editorInstance
+            .getWrapper()
+            .find(".cta-button-container")[0];
+
+          if (ctaContainer) {
+            const selectedComponent = this.editorManager.selectedComponent;
+
+            if (selectedComponent) {
+              // Check if the selected component is a CTA
+              const attributes = selectedComponent.getAttributes();
+              const isCta =
+                attributes.hasOwnProperty("cta-button-label") &&
+                attributes.hasOwnProperty("cta-button-type") &&
+                attributes.hasOwnProperty("cta-button-action");
+
+              if (isCta) {
+                // Extract existing attributes
+                const ctaId = attributes["cta-button-id"];
+                const ctaName = attributes["cta-button-label"];
+                const ctaType = attributes["cta-button-type"];
+                const ctaAction = attributes["cta-button-action"];
+                const ctaButtonBgColor = attributes["cta-background-color"];
+
+                const plainButtonComponent = `
+                  <div class="plain-button-container" 
+                      data-gjs-draggable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-resizable="false"
+                      data-gjs-hoverable="false"
+                      data-gjs-type="cta-buttons"
+                      id="id-${ctaId}"
+                      cta-button-id="${ctaId}"
+                      cta-button-label="${ctaName}"
+                      cta-button-type="${ctaType}"
+                      cta-button-action="${ctaAction}"
+                      cta-background-color="${ctaButtonBgColor}"
+                      cta-full-width="true"
+                    >
+                      <button style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" class="plain-button" ${defaultConstraints}>
+                        <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
+                        ${ctaName}
+                      </button>
+                  </div>
+                `;
+
+                // Remove the current component and replace it
+                this.editorManager.selectedComponent.replaceWith(
+                  plainButtonComponent
+                );
+              } else {
+                const message = this.currentLanguage.getTranslation(
+                  "please_select_cta_button"
+                );
+                this.displayAlertMessage(message, "error");
+                return;
+              }
+            }
+          }
+        };
+
+        // change button layout to plain
+        const imgButton = document.getElementById("img-button-layout");
+
+        imgButton.onclick = (e) => {
+          e.preventDefault();
+          const ctaContainer = editorInstance
+            .getWrapper()
+            .find(".cta-button-container")[0];
+
+          if (ctaContainer) {
+            const selectedComponent = this.editorManager.selectedComponent;
+
+            if (selectedComponent) {
+              // Check if the selected component is a CTA
+              const attributes = selectedComponent.getAttributes();
+              const isCta =
+                attributes.hasOwnProperty("cta-button-label") &&
+                attributes.hasOwnProperty("cta-button-type") &&
+                attributes.hasOwnProperty("cta-button-action");
+
+              if (isCta) {
+                // Extract existing attributes
+                const ctaId = attributes["cta-button-id"];
+                const ctaName = attributes["cta-button-label"];
+                const ctaType = attributes["cta-button-type"];
+                const ctaAction = attributes["cta-button-action"];
+                const ctaButtonBgColor = attributes["cta-background-color"];
+
+                let icon;
+                switch (ctaType) {
+                  case "Phone":
+                    icon = "fas fa-phone-alt";
+                    break;
+
+                  case "Email":
+                    icon = "fas fa-envelope";
+                    break;
+
+                  case "SiteUrl":
+                    icon = "fas fa-calendar";
+                    break;
+
+                  case "Form":
+                    icon = "fas fa-file";
+                    break;
+                }
+
+                const imgButtonComponent = `
+                  <div class="img-button-container" 
+                      data-gjs-draggable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-resizable="false"
+                      data-gjs-hoverable="false"
+                      data-gjs-type="cta-buttons"
+                      id="id-${ctaId}"
+                      cta-button-id="${ctaId}"
+                      cta-button-label="${ctaName}"
+                      cta-button-type="${ctaType}"
+                      cta-button-action="${ctaAction}"
+                      cta-background-color="${ctaButtonBgColor}"
+                      cta-full-width="true"
+                    >
+                      <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" class="img-button" ${defaultConstraints}>
+                        <i class="${icon} img-button-icon" ${defaultConstraints}></i>
+                        <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
+                        <span class="img-button-label" ${defaultConstraints}>${ctaName}</span>
+                        <i class="fa fa-angle-right img-button-arrow" ${defaultConstraints}></i>
+                      </div>
+                  </div>
+                `;
+
+                // Remove the current component and replace it
+                this.editorManager.selectedComponent.replaceWith(
+                  imgButtonComponent
+                );
+              } else {
+                const message = this.currentLanguage.getTranslation(
+                  "please_select_cta_button"
+                );
+                this.displayAlertMessage(message, "error");
+                return;
+              }
+            }
+          }
+        };
       });
+    };
+
+    renderCtas();
+
+    // handling badge clicks
+    const wrapper = editorInstance.getWrapper();
+    console.log("Wrapper is: ", wrapper);
+    wrapper.view.el.addEventListener("click", (e) => {
+      const badge = e.target.closest(".cta-badge");
+      if (!badge) return;
+
+      e.stopPropagation();
+
+      const ctaChild = badge.closest(
+        ".cta-container-child, .plain-button-container, .img-button-container"
+      );
+      if (ctaChild)
+        if (ctaChild) {
+          // Check if this is the last child in the container
+          const parentContainer = ctaChild.closest(".cta-button-container");
+          const childId = ctaChild.getAttribute("id");
+          const component = editorInstance.getWrapper().find(`#${childId}`)[0];
+
+          if (component) {
+            component.remove();
+          }
+        }
     });
+  }
+
+  setupColorRadios(radioGroup, colorValues, type) {
+    Object.keys(colorValues).forEach((colorKey, index) => {
+      const radio = radioGroup[index];
+      const colorValue = colorValues[colorKey];
+
+      const colorBox = radio.nextElementSibling;
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
+
+      radio.onclick = () => {
+        // Uncheck other radio buttons in the group
+        radioGroup.forEach((r) => (r.checked = false));
+        radio.checked = true;
+
+        // Apply the color based on type
+        if (type === "text") {
+          this.editorManager.selectedComponent.addStyle({
+            color: colorValue,
+          });
+          this.setAttributeToSelected("tile-text-color", colorValue);
+        } else if (type === "icon") {
+          const svgIcon =
+            this.editorManager.selectedComponent.find(".tile-icon path")[0];
+          if (svgIcon) {
+            svgIcon.removeAttributes("fill");
+            svgIcon.addAttributes({ fill: colorValue });
+            this.setAttributeToSelected("tile-icon-color", colorValue);
+          } else {
+            const message = this.currentLanguage.getTranslation(
+              "no_icon_selected_error_message"
+            );
+            this.displayAlertMessage(message, "error");
+          }
+        }
+      };
+    });
+  }
+
+  loadThemeIcons(themeIconsList) {
+    console.log("Icons: ", themeIconsList);
+    const themeIcons = document.getElementById("icons-list");
+    const themeIconCategory = document.getElementById("theme_icon_category");
+
+    // Set default category
+    let selectedCategory = "General";
+
+    // Add event listener for category changes
+    themeIconCategory.addEventListener("change", (e) => {
+      selectedCategory = e.target.value;
+      renderIcons();
+    });
+
+    const renderIcons = () => {
+      // Clear existing icons
+      themeIcons.innerHTML = "";
+
+      console.log("Selected Category:", selectedCategory); // Log selected category
+      console.log("Theme Icons List:", themeIconsList); // Log the icons list
+
+      // Filter icons based on selected category
+      const filteredIcons = themeIconsList.filter(
+        (icon) => icon.IconCategory.trim() === selectedCategory.trim()
+      );
+
+      console.log("Filtered Icons:", filteredIcons); // Log the filtered icons
+
+      if (filteredIcons.length === 0) {
+        console.log("No icons found for selected category.");
+      }
+      // Render filtered icons
+      filteredIcons.forEach((icon) => {
+        const iconItem = document.createElement("div");
+        iconItem.classList.add("icon");
+        iconItem.title = icon.IconName;
+
+        const displayName = (() => {
+          const maxChars = 7;
+          const words = icon.IconName.split(" ");
+
+          if (words.length > 1) {
+            const firstWord = words[0];
+            if (firstWord.length >= maxChars) {
+              return firstWord.slice(0, maxChars) + "...";
+            } else {
+              return firstWord;
+            }
+          }
+
+          return icon.IconName.length > maxChars
+            ? icon.IconName.slice(0, maxChars) + "..."
+            : icon.IconName;
+        })();
+
+        iconItem.innerHTML = `
+          ${icon.IconSVG}
+          <span class="icon-title">${displayName}</span>
+      `;
+
+        iconItem.onclick = () => {
+          if (this.editorManager.selectedTemplateWrapper) {
+            const iconComponent =
+              this.editorManager.selectedComponent.find(".tile-icon")[0];
+
+            if (iconComponent) {
+              iconComponent.components(icon.IconSVG);
+              this.setAttributeToSelected("tile-icon", icon.IconName);
+            }
+          } else {
+            const message = this.currentLanguage.getTranslation(
+              "no_tile_selected_error_message"
+            );
+            const status = "error";
+            this.displayAlertMessage(message, status);
+          }
+        };
+
+        themeIcons.appendChild(iconItem);
+      });
+    };
+
+    // Initial render with default category
+    renderIcons();
+  }
+
+  loadPageTemplates() {
+    const pageTemplates = document.getElementById("page-templates");
+    this.templates.forEach((template, index) => {
+      const blockElement = document.createElement("div");
+
+      blockElement.className = "page-template-wrapper"; // Wrapper class for each template block
+      // Create the number element
+      const numberElement = document.createElement("div");
+      numberElement.className = "page-template-block-number";
+      numberElement.textContent = index + 1; // Set the number
+      const templateBlock = document.createElement("div");
+      templateBlock.className = "page-template-block";
+      templateBlock.title = "Click to load template"; //
+      templateBlock.innerHTML = `<div>${template.media}</div>`;
+
+      blockElement.addEventListener("click", () => {
+        const popup = this.popupModal();
+        document.body.appendChild(popup);
+        popup.style.display = "flex";
+
+        const closeButton = popup.querySelector(".close");
+        closeButton.onclick = () => {
+          popup.style.display = "none";
+          document.body.removeChild(popup);
+        };
+
+        const cancelBtn = popup.querySelector("#close_popup");
+        cancelBtn.onclick = () => {
+          popup.style.display = "none";
+          document.body.removeChild(popup);
+        };
+
+        const acceptBtn = popup.querySelector("#accept_popup");
+        acceptBtn.onclick = () => {
+          popup.style.display = "none";
+          document.body.removeChild(popup);
+          this.editorManager.addFreshTemplate(template.content);
+        };
+      });
+
+      // Append number and template block to the wrapper
+      blockElement.appendChild(numberElement);
+      blockElement.appendChild(templateBlock);
+      pageTemplates.appendChild(blockElement);
+    });
+  }
+
+  popupModal() {
+    const popup = document.createElement("div");
+    popup.className = "popup-modal";
+    popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>${this.currentLanguage.getTranslation(
+            "confirmation_modal_title"
+          )}</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          ${this.currentLanguage.getTranslation("confirmation_modal_message")}
+        </div>
+        <div class="popup-footer">
+          <button id="accept_popup" class="tb-btn tb-btn-primary">
+          ${this.currentLanguage.getTranslation("accept_popup")}
+          </button>
+          <button id="close_popup" class="tb-btn tb-btn-outline">
+          ${this.currentLanguage.getTranslation("cancel_btn")}
+          </button>
+        </div>
+      </div>
+    `;
+
+    return popup;
+  }
+
+  displayAlertMessage(message, status) {
+    const alertContainer = document.getElementById("alerts-container");
+
+    const alertId = Math.random().toString(10);
+
+    const alertBox = this.alertMessage(message, status, alertId);
+    alertBox.style.display = "flex";
+
+    const closeButton = alertBox.querySelector(".alert-close-btn");
+    closeButton.addEventListener("click", () => {
+      this.closeAlert(alertId);
+    });
+
+    setTimeout(() => this.closeAlert(alertId), 5000);
+    alertContainer.appendChild(alertBox);
+  }
+  alertMessage(message, status, alertId) {
+    const alertBox = document.createElement("div");
+    alertBox.id = alertId;
+    alertBox.classList = `alert ${status == "success" ? "success" : "error"}`;
+    alertBox.innerHTML = `
+      <div class="alert-header">
+        <strong>
+          ${
+            status == "success"
+              ? this.currentLanguage.getTranslation("alert_type_success")
+              : this.currentLanguage.getTranslation("alert_type_error")
+          }
+        </strong>
+        <span class="alert-close-btn">✖</span>
+      </div>
+      <p>${message}</p>
+    `;
+
+    return alertBox;
+  }
+
+  closeAlert(alertId) {
+    const alert = document.getElementById(alertId);
+    if (alert) {
+      alert.style.opacity = 0;
+      setTimeout(() => alert.remove(), 500);
+    }
+  }
+
+  setAttributeToSelected(attributeName, attributeValue) {
+    if (this.editorManager.selectedComponent) {
+      this.editorManager.selectedComponent.addAttributes({
+        [attributeName]: attributeValue,
+      });
+      console.log(this.editorManager.selectedComponent);
+    } else {
+      this.displayAlertMessage(
+        this.currentLanguage.getTranslation("no_tile_selected_error_message"),
+        "error"
+      );
+    }
+  }
+
+  updateTileProperties(editor, page) {
+    console.log("Selected", editor);
+    if (page && page.PageIsContentPage) {
+      // update cta button bg color
+      console.log("Selected", editor);
+      const currentCtaBgColor =
+        this.editorManager.selectedComponent?.getAttributes()?.[
+          "cta-background-color"
+        ];
+
+      const CtaRadios = document.querySelectorAll(
+        '#cta-color-palette input[type="radio"]'
+      );
+
+      CtaRadios.forEach((radio) => {
+        const colorBox = radio.nextElementSibling;
+        radio.checked =
+          colorBox.getAttribute("data-cta-color").toUpperCase() ===
+          currentCtaBgColor.toUpperCase();
+      });
+    } else {
+      // Combined alignment checker
+      const alignmentTypes = [
+        { type: "text", attribute: "tile-text-align" },
+        { type: "icon", attribute: "tile-icon-align" },
+      ];
+
+      alignmentTypes.forEach(({ type, attribute }) => {
+        const currentAlign =
+          this.editorManager.selectedComponent?.getAttributes()?.[attribute];
+        ["left", "center", "right"].forEach((align) => {
+          document.getElementById(`${type}-align-${align}`).checked =
+            currentAlign === align;
+        });
+      });
+
+      const currentTextColor =
+        this.editorManager.selectedComponent?.getAttributes()?.[
+          "tile-text-color"
+        ];
+      const textColorRadios = document.querySelectorAll(
+        '.text-color-palette.text-colors .color-item input[type="radio"]' // Added .text-colors
+      );
+
+      textColorRadios.forEach((radio) => {
+        const colorBox = radio.nextElementSibling;
+        radio.checked =
+          colorBox.getAttribute("data-tile-text-color") === currentTextColor;
+      });
+
+      // Update tile icon color
+      const currentIconColor =
+        this.editorManager.selectedComponent?.getAttributes()?.[
+          "tile-icon-color"
+        ];
+      const iconColorRadios = document.querySelectorAll(
+        '.text-color-palette.icon-colors .color-item input[type="radio"]' // Added .icon-colors
+      );
+
+      iconColorRadios.forEach((radio) => {
+        const colorBox = radio.nextElementSibling;
+        radio.checked =
+          colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+      });
+
+      // update tile bg color
+      const currentBgColor =
+        this.editorManager.selectedComponent?.getAttributes()?.["tile-bgcolor"];
+      const radios = document.querySelectorAll(
+        '#theme-color-palette input[type="radio"]'
+      );
+      radios.forEach((radio) => {
+        const colorBox = radio.nextElementSibling;
+        radio.checked = colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
+      });
+      // update action
+      const currentActionName =
+        this.editorManager.selectedComponent?.getAttributes()?.[
+          "tile-action-object"
+        ];
+
+      const currentActionId =
+        this.editorManager.selectedComponent?.getAttributes()?.[
+          "tile-action-object-id"
+        ];
+
+      const propertySection = document.getElementById("selectedOption");
+      const selectedOptionElement = document.getElementById(currentActionId);
+
+      // Clear background styles for all options
+      const allOptions = document.querySelectorAll(".category-content li");
+      allOptions.forEach((option) => {
+        option.style.background = ""; // Clear any existing background styles
+      });
+
+      if (currentActionName && currentActionId && selectedOptionElement) {
+        propertySection.textContent = currentActionName;
+        propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
+
+        // Set background style for the selected option
+        selectedOptionElement.style.background = "#f0f0f0";
+      }
+    }
+  }
+
+  resetPropertySection() {
+    const themeSection = document.querySelector(".theme-section");
+    const titleSection = document.querySelector(".title-section");
+    const customSelectContainer = document.querySelector(
+      ".custom-select-container"
+    );
+    const servicesSection = document.querySelector(".services-section");
+    const contentPageSection = document.querySelector(".content-page-section");
+
+    if (themeSection) themeSection.style.display = "block";
+    if (titleSection) titleSection.style.display = "block";
+    if (customSelectContainer) customSelectContainer.style.display = "block";
+    if (servicesSection) servicesSection.style.display = "block";
+    //if (contentPageSection) contentPageSection.style.display = "none";
+  }
+
+  updatePropertySection() {
+    const themeSection = document.querySelector(".theme-section");
+    const titleSection = document.querySelector(".title-section");
+    const customSelectContainer = document.querySelector(
+      ".custom-select-container"
+    );
+    const servicesSection = document.querySelector(".services-section");
+    const contentPageSection = document.querySelector(".content-page-section");
+
+    // if (themeSection) themeSection.style.display = "none";
+    // if (titleSection) titleSection.style.display = "none";
+    // if (customSelectContainer) customSelectContainer.style.display = "none";
+    // if (servicesSection) servicesSection.style.display = "none";
+    if (contentPageSection) contentPageSection.style.display = "block";
+  }
+}
+
+class Clock {
+  constructor(pageId) {
+    this.pageId = pageId;
+    this.updateTime();
+    // setInterval(() => this.updateTime(), 60000); // Update time every minute
+  }
+
+  updateTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Adjust hours for 12-hour format
+    const timeString = `${hours}:${minutes}`;
+    document.getElementById(this.pageId).textContent = timeString;
   }
 }

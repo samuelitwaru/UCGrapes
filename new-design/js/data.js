@@ -1,4 +1,4 @@
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 let baseURL = window.location.origin;
 
 if (baseURL.startsWith("http://localhost")) baseURL += environment;
@@ -842,7 +842,6 @@ class DataManager {
         },
         success: function (response) {
           const pages = response;
-          console.log("getPageService", pages);
           resolve(pages); // Resolve the promise with the pages
         },
         error: function (xhr, status, error) {
@@ -865,7 +864,6 @@ class DataManager {
         data: JSON.stringify(data),
         success: function (response) {
           resolve(response);
-          console.log("Reached update");
         },
         error: function (xhr, status, error) {
           if (xhr.status === 404) {
@@ -880,7 +878,7 @@ class DataManager {
 
   updateLocationTheme() {
     let themeId = this.selectedTheme.id;
-    alert(themeId)
+    alert(themeId);
 
     return new Promise((resolve, reject) => {
       $.ajax({
@@ -983,16 +981,14 @@ class DataManager {
   deleteMedia(mediaId) {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: `${baseURL}/api/media/delete`, 
+        url: `${baseURL}/api/media/delete`,
         type: "GET",
         data: {
           MediaId: mediaId,
         },
         success: function (response) {
-          // Log the full response to understand what's being returned
-          console.log('Server response:', response);
 
-          if (response && response.result === 'success') {
+          if (response && response.result === "success") {
             resolve({ success: true });
           } else {
             resolve({ success: false });
@@ -1194,161 +1190,163 @@ const predefinedPages = {
 };
 
 const predefinedPages1 = {
-  "Reception": {
-    "assets": [],
-    "pages": [
+  Reception: {
+    assets: [],
+    pages: [
       {
-        "id": "page-id-1",
-        "name": "Page 1",
-        "component": {
-          "type": "wrapper",
-          "components": [
+        id: "page-id-1",
+        name: "Page 1",
+        component: {
+          type: "wrapper",
+          components: [
             {
-              "type": "image",
-              "src": "https://staging.comforta.yukon.software/media/receptie-197@3x.png",
-              "style": {
-                "width": "100%",
-                "height": "auto",
-                "display": "block"
+              type: "image",
+              src: "https://staging.comforta.yukon.software/media/receptie-197@3x.png",
+              style: {
+                width: "100%",
+                height: "auto",
+                display: "block",
               },
-              "attributes": {
-                "alt": "Sample Image"
+              attributes: {
+                alt: "Sample Image",
               },
-              "selectable": false
+              selectable: false,
             },
             {
-              "type": "text",
-              "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-              "style": {
-                "margin": "20px auto",
-                "width": "80%",
+              type: "text",
+              content:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              style: {
+                margin: "20px auto",
+                width: "80%",
                 "text-align": "left",
                 "font-size": "16px",
-                "line-height": "1.5"
+                "line-height": "1.5",
               },
-              "selectable": true
-            }
-          ]
-        }
-      }
+              selectable: true,
+            },
+          ],
+        },
+      },
     ],
-    "styles": "",
-    "css": "",
-    "html": "",
-    "components": "",
-    "stylesheets": [],
-    "scripts": []
+    styles: "",
+    css: "",
+    html: "",
+    components: "",
+    stylesheets: [],
+    scripts: [],
   },
-  "Location": {
-    "assets": [],
-    "pages": [
+  Location: {
+    assets: [],
+    pages: [
       {
-        "id": "page-id-1",
-        "name": "Page 1",
-        "component": {
-          "type": "wrapper",
-          "components": [
+        id: "page-id-1",
+        name: "Page 1",
+        component: {
+          type: "wrapper",
+          components: [
             {
-              "type": "image",
-              "src": "https://via.placeholder.com/300",
-              "style": {
-                "width": "300px",
-                "height": "auto",
-                "margin": "10px auto",
-                "display": "block"
+              type: "image",
+              src: "https://via.placeholder.com/300",
+              style: {
+                width: "300px",
+                height: "auto",
+                margin: "10px auto",
+                display: "block",
               },
-              "attributes": {
-                "alt": "Sample Image"
+              attributes: {
+                alt: "Sample Image",
               },
-              "selectable": false
+              selectable: false,
             },
             {
-              "type": "text",
-              "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-              "style": {
-                "margin": "20px auto",
-                "width": "80%",
+              type: "text",
+              content:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              style: {
+                margin: "20px auto",
+                width: "80%",
                 "text-align": "left",
                 "font-size": "16px",
-                "line-height": "1.5"
+                "line-height": "1.5",
               },
-              "selectable": true
-            }
-          ]
-        }
-      }
-    ],
-    "styles": "",
-    "css": "",
-    "html": "",
-    "components": "",
-    "stylesheets": [],
-    "scripts": []
-  },
-  "Calendar": {
-    "assets": [],
-    "pages": [
-      {
-        "id": "page-id-1",
-        "name": "Page 1",
-        "component": {
-          "type": "wrapper",
-          "components": [
-            {
-              "type": "image",
-              "src": "https://staging.comforta.yukon.software/media/calendar-page.png",
-              "style": {
-                "width": "100%",
-                "height": "auto",
-                "display": "block"
-              },
-              "attributes": {
-                "alt": "Sample Image"
-              },
-              "selectable": false
+              selectable: true,
             },
-          ]
-        }
-      }
+          ],
+        },
+      },
     ],
-    "styles": "",
-    "css": "",
-    "html": "",
-    "components": "",
-    "stylesheets": [],
-    "scripts": []
+    styles: "",
+    css: "",
+    html: "",
+    components: "",
+    stylesheets: [],
+    scripts: [],
   },
-  "Mailbox": {
-    "assets": [],
-    "pages": [
+  Calendar: {
+    assets: [],
+    pages: [
       {
-        "id": "page-id-1",
-        "name": "Page 1",
-        "component": {
-          "type": "wrapper",
-          "components": [
+        id: "page-id-1",
+        name: "Page 1",
+        component: {
+          type: "wrapper",
+          components: [
             {
-              "type": "image",
-              "src": "https://staging.comforta.yukon.software/media/mailbox.png",
-              "style": {
-                "width": "100%",
-                "height": "auto",
-                "display": "block"
+              type: "image",
+              src: "https://staging.comforta.yukon.software/media/calendar-page.png",
+              style: {
+                width: "100%",
+                height: "auto",
+                display: "block",
               },
-              "attributes": {
-                "alt": "Sample Image"
+              attributes: {
+                alt: "Sample Image",
               },
-              "selectable": false
+              selectable: false,
             },
-          ]
-        }
-      }
+          ],
+        },
+      },
     ],
-    "styles": "",
-    "css": "",
-    "html": "",
-    "components": "",
-    "stylesheets": [],
-    "scripts": []
+    styles: "",
+    css: "",
+    html: "",
+    components: "",
+    stylesheets: [],
+    scripts: [],
   },
-}
+  Mailbox: {
+    assets: [],
+    pages: [
+      {
+        id: "page-id-1",
+        name: "Page 1",
+        component: {
+          type: "wrapper",
+          components: [
+            {
+              type: "image",
+              src: "https://staging.comforta.yukon.software/media/mailbox.png",
+              style: {
+                width: "100%",
+                height: "auto",
+                display: "block",
+              },
+              attributes: {
+                alt: "Sample Image",
+              },
+              selectable: false,
+            },
+          ],
+        },
+      },
+    ],
+    styles: "",
+    css: "",
+    html: "",
+    components: "",
+    stylesheets: [],
+    scripts: [],
+  },
+};

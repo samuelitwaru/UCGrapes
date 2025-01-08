@@ -143,8 +143,6 @@ const tileComponent = {
     },
     init() {
       this.on('custom:event', () => {
-          console.log('Custom event triggered!');
-          console.log(this)
       });
   
       // Dispatching the custom event
@@ -173,184 +171,184 @@ const tileComponent = {
   },
 }
 
-function createTemplateHTML(isDefault = false) {
-return `
-    <div class="template-wrapper ${
-      isDefault ? "default-template" : ""
-    }"        
-          data-gjs-selectable="false"
-          data-gjs-type="template-wrapper"
-          data-gjs-editable="false"
-          data-gjs-highlightable="false"
-          data-gjs-droppable="false"
-          data-gjs-resizable="false"
-          data-gjs-hoverable="false">
-      <div class="template-block"
-          ${defaultTileAttrs} 
-         data-gjs-draggable="false"
-         data-gjs-selectable="true"
-         data-gjs-editable="false"
-         data-gjs-highlightable="false"
-         data-gjs-droppable="false"
-         data-gjs-resizable="false"
-         data-gjs-hoverable="false">
+// function createTemplateHTML(isDefault = false) {
+// return `
+//     <div class="template-wrapper ${
+//       isDefault ? "default-template" : ""
+//     }"        
+//           data-gjs-selectable="false"
+//           data-gjs-type="template-wrapper"
+//           data-gjs-editable="false"
+//           data-gjs-highlightable="false"
+//           data-gjs-droppable="false"
+//           data-gjs-resizable="false"
+//           data-gjs-hoverable="false">
+//       <div class="template-block"
+//           ${defaultTileAttrs} 
+//          data-gjs-draggable="false"
+//          data-gjs-selectable="true"
+//          data-gjs-editable="false"
+//          data-gjs-highlightable="false"
+//          data-gjs-droppable="false"
+//          data-gjs-resizable="false"
+//          data-gjs-hoverable="false">
         
-         <div class="tile-icon-section"
-          data-gjs-draggable="false"
-          data-gjs-selectable="false"
-          data-gjs-editable="false"
-          data-gjs-highlightable="false"
-          data-gjs-droppable="false"
-          data-gjs-resizable="false"
-          data-gjs-hoverable="false"
-          >
-            <span class="tile-close-icon top-right selected-tile-icon"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-resizable="false"
-              data-gjs-hoverable="false"
-              >&times;</span>
-            <span 
-              class="tile-icon"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-droppable="false"
-              data-gjs-highlightable="false"
-              data-gjs-hoverable="false">
-            </span>
-        </div>
-        <div class="tile-title-section"
-          data-gjs-draggable="false"
-          data-gjs-selectable="false"
-          data-gjs-editable="false"
-          data-gjs-highlightable="false"
-          data-gjs-droppable="false"
-          data-gjs-resizable="false"
-          data-gjs-hoverable="false"
-          >
-            <span class="tile-close-icon top-right selected-tile-title"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-resizable="false"
-              data-gjs-hoverable="false"
-              >&times;</span>
-            <span 
-              class="tile-title"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-droppable="false"
-              data-gjs-highlightable="false"
-              data-gjs-hoverable="false">Title</span>
-            </div>
-        </div>
-      ${
-        !isDefault
-          ? `
-        <button class="action-button delete-button" title="Delete template"
-                  data-gjs-draggable="false"
-                  data-gjs-selectable="false"
-                  data-gjs-editable="false"
-                  data-gjs-droppable="false"
-                  data-gjs-highlightable="false"
-                  data-gjs-hoverable="false">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  data-gjs-draggable="false"
-                  data-gjs-selectable="false"
-                  data-gjs-editable="false"
-                  data-gjs-editable="false"
-                  data-gjs-droppable="false"
-                  data-gjs-highlightable="false"
-                  data-gjs-hoverable="false">
-            <line x1="5" y1="12" x2="19" y2="12" 
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false"/>
-          </svg>
-        </button>
-      `
-          : ""
-      }
-      <button class="action-button add-button-bottom" title="Add template below"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-droppable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-hoverable="false">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-editable="false"
-              data-gjs-droppable="false"
-              data-gjs-highlightable="false"
-              data-gjs-hoverable="false">
-          <line x1="12" y1="5" x2="12" y2="19" 
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false"/>
-          <line x1="5" y1="12" x2="19" y2="12" 
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false"/>
-        </svg>
-      </button>
-      <button class="action-button add-button-right" title="Add template right"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-droppable="false"
-              data-gjs-highlightable="false"
-              data-gjs-hoverable="false">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false">
-          <line x1="12" y1="5" x2="12" y2="19" 
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false"/>
-          <line x1="5" y1="12" x2="19" y2="12" 
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false"/>
-        </svg>
-      </button>
-      <div class="resize-handle"
-              data-gjs-draggable="false"
-              data-gjs-selectable="false"
-              data-gjs-editable="false"
-              data-gjs-highlightable="false"
-              data-gjs-droppable="false"
-              data-gjs-hoverable="false">
-      </div>
-    </div>
-  `;
-}
+//          <div class="tile-icon-section"
+//           data-gjs-draggable="false"
+//           data-gjs-selectable="false"
+//           data-gjs-editable="false"
+//           data-gjs-highlightable="false"
+//           data-gjs-droppable="false"
+//           data-gjs-resizable="false"
+//           data-gjs-hoverable="false"
+//           >
+//             <span class="tile-close-icon top-right selected-tile-icon"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-resizable="false"
+//               data-gjs-hoverable="false"
+//               >&times;</span>
+//             <span 
+//               class="tile-icon"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-hoverable="false">
+//             </span>
+//         </div>
+//         <div class="tile-title-section"
+//           data-gjs-draggable="false"
+//           data-gjs-selectable="false"
+//           data-gjs-editable="false"
+//           data-gjs-highlightable="false"
+//           data-gjs-droppable="false"
+//           data-gjs-resizable="false"
+//           data-gjs-hoverable="false"
+//           >
+//             <span class="tile-close-icon top-right selected-tile-title"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-resizable="false"
+//               data-gjs-hoverable="false"
+//               >&times;</span>
+//             <span 
+//               class="tile-title"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-hoverable="false">${this.currentLanguage.getTranslation("tile_title")}</span>
+//             </div>
+//         </div>
+//       ${
+//         !isDefault
+//           ? `
+//         <button class="action-button delete-button" title="Delete template"
+//                   data-gjs-draggable="false"
+//                   data-gjs-selectable="false"
+//                   data-gjs-editable="false"
+//                   data-gjs-droppable="false"
+//                   data-gjs-highlightable="false"
+//                   data-gjs-hoverable="false">
+//           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+//                   data-gjs-draggable="false"
+//                   data-gjs-selectable="false"
+//                   data-gjs-editable="false"
+//                   data-gjs-editable="false"
+//                   data-gjs-droppable="false"
+//                   data-gjs-highlightable="false"
+//                   data-gjs-hoverable="false">
+//             <line x1="5" y1="12" x2="19" y2="12" 
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false"/>
+//           </svg>
+//         </button>
+//       `
+//           : ""
+//       }
+//       <button class="action-button add-button-bottom" title="Add template below"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-hoverable="false">
+//         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-editable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-hoverable="false">
+//           <line x1="12" y1="5" x2="12" y2="19" 
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false"/>
+//           <line x1="5" y1="12" x2="19" y2="12" 
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false"/>
+//         </svg>
+//       </button>
+//       <button class="action-button add-button-right" title="Add template right"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-hoverable="false">
+//         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false">
+//           <line x1="12" y1="5" x2="12" y2="19" 
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false"/>
+//           <line x1="5" y1="12" x2="19" y2="12" 
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false"/>
+//         </svg>
+//       </button>
+//       <div class="resize-handle"
+//               data-gjs-draggable="false"
+//               data-gjs-selectable="false"
+//               data-gjs-editable="false"
+//               data-gjs-highlightable="false"
+//               data-gjs-droppable="false"
+//               data-gjs-hoverable="false">
+//       </div>
+//     </div>
+//   `;
+// }

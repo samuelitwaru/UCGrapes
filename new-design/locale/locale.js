@@ -35,7 +35,20 @@ const translations = {
     category_dynamic_form: "Dynamic Form",
     category_call_to_action: "Call to Action",
     cta_button_exists: "Cta button already exists!",
-    please_select_cta_button: "Please select Cta button"
+    please_select_cta_button: "Please select Cta button",
+    publish_confirm_title: "Confirm Publish",
+    publish_confirm_message:
+      "Are you sure you want to publish? Once published, all currently visible pages will be finalized and visible to residents. This action cannot be undone.",
+    nofity_residents_on_publish: "Notify residents on about the updates made.",
+    publish_confirm_button: "Publish",
+    publish_cancel_button: "Cancel",
+    enter_title_place_holder: "Enter title",
+    icon_category_services: "Services",
+    icon_category_general:  "General",
+    icon_category_health: "Health",
+    icon_category_living: "Living",
+    click_to_load_template: "Click to load template",
+    tile_title: "Title",
   },
   dutch: {
     navbar_title: "De app gereedschapskist bouwer",
@@ -75,7 +88,21 @@ const translations = {
     category_dynamic_form: "Dynamisch Formulier",
     category_call_to_action: "Oproep tot Actie",
     cta_button_exists: "Cta button al bestaat!",
-    please_select_cta_button: "Selecteer alstublieft de Cta-knop"
+    please_select_cta_button: "Selecteer alstublieft de Cta-knop",
+    publish_confirm_title: "Publicatie Bevestigen",
+    publish_confirm_message:
+      "Weet je zeker dat je wilt publiceren? Eenmaal gepubliceerd, worden alle momenteel zichtbare pagina's definitief en zichtbaar voor bewoners. Deze actie kan niet ongedaan worden gemaakt.",
+    nofity_residents_on_publish:
+      "Bewoners informeren over de gemaakte updates.",
+    publish_confirm_button: "Publiceren",
+    publish_cancel_button: "Annuleren",
+    enter_title_place_holder: "Titel invoeren",
+    icon_category_general: "Algemeen",
+    icon_category_health: "Gezondheid",
+    icon_category_living: "Wonen",
+    icon_category_services: "Services",
+    click_to_load_template: "Klik om sjabloon te laden",
+    tile_title: "Titel",
   },
 };
 
@@ -114,6 +141,12 @@ class Locale {
       "alert_type_error",
       "cancel_btn",
       "save_btn",
+      "publish_confirm_title",
+      "publish_confirm_message",
+      "nofity_residents_on_publish",
+      "publish_confirm_button",
+      "publish_cancel_button",
+      "enter_title_place_holder",
     ];
 
     elementsToTranslate.forEach((elementId) => {
@@ -143,5 +176,32 @@ class Locale {
     // Return key as last resort
     console.error(`Translation key '${key}' not found in any language`);
     return key;
+  }
+
+  translateUCStrings() {
+    // tile title input field placeholder
+    document.getElementById("tile-title").placeholder = this.getTranslation("enter_title_place_holder");
+
+    // Icon categories selection
+    // Icon categories selection
+    const options = [
+        { value: "Services", label: "icon_category_services" },
+        { value: "General", label: "icon_category_general", selected: true },
+        { value: "Health", label: "icon_category_health" },
+        { value: "Living", label: "icon_category_living" },
+    ];
+
+    const selectElement = document.getElementById("theme_icon_category");
+    if (selectElement) {
+        // Generate options with proper translations
+        const optionHTML = options.map(opt => `
+            <option value="${opt.value}" ${opt.selected ? "selected" : ""}>
+                ${this.getTranslation(opt.label)}
+            </option>
+        `).join("");
+
+        // Inject options into the select element
+        selectElement.innerHTML = optionHTML;
+    }
   }
 }

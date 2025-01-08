@@ -8,11 +8,12 @@ class ChildEditorManager {
   toolsSection = null;
   currentEditor = null;
   currentPageId = null;
-
+  
   container = document.getElementById("child-container");
 
-  constructor(dataManager) {
+  constructor(dataManager, currentLanguage) {
     this.dataManager = dataManager;
+    this.currentLanguage = currentLanguage;
     this.dataManager.getLocationTheme().then((res) => {
       this.theme = res;
     });
@@ -23,10 +24,7 @@ class ChildEditorManager {
         this.createChildEditor(homePage);
         this.currentPageId = homePage.PageId;
       } else {
-        this.toolsSection.displayAlertMessage(
-          "No home page found.",
-          "danger"
-        );
+        this.toolsSection.displayAlertMessage("No home page found.", "danger");
         return;
       }
     });
@@ -62,7 +60,10 @@ class ChildEditorManager {
     let appBar = "";
 
     // AppBar HTML
-    if (page.PageIsContentPage || (page.PageIsPredefined && page.PageName!="Home")) {
+    if (
+      page.PageIsContentPage ||
+      (page.PageIsPredefined && page.PageName != "Home")
+    ) {
       appBar = `
             <div class="app-bar">
                 <button id="content-back-button" class="back-button">
@@ -127,7 +128,6 @@ class ChildEditorManager {
       selectable: false,
     });
 
-    console.log("Editor Initialized", editor)
     // Add Event Listeners
     this.addEditorEventListners(editor);
     this.toolsSection.unDoReDo(editor);
@@ -137,46 +137,67 @@ class ChildEditorManager {
 
       if (page.PageIsPredefined) {
         if (page.PageName == "Location") {
-          // globalVar = editor
-          // console.log(globalVar)
-          // console.log(editor.getProjectData())
-          // console.log(editor.DomComponents.getWrapper().find('#product-service-image'))
-          // const wrapper = editor.DomComponents.getWrapper();
-          // if (wrapper) {
-          //   const img = wrapper.find("#product-service-image");
-          //   const p = wrapper.find("#product-service-description");
-          //   console.log(img, p)
-          // }
-
-          const pageData = JSON.parse(page.PageGJSJson)
-          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src = this.dataManager.Location.LocationImage_GXI
-          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content = this.dataManager.Location.LocationDescription
-          editor.DomComponents.clear()
+          const pageData = JSON.parse(page.PageGJSJson);
+          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src =
+            this.dataManager.Location.LocationImage_GXI;
+          pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content =
+            this.dataManager.Location.LocationDescription;
+          editor.DomComponents.clear();
           editor.loadProjectData(pageData);
         }
-      }
-
-      else if (page.PageIsContentPage) {
+      } else if (page.PageIsContentPage) {
         this.dataManager
           .getContentPageData(page.PageId)
           .then((contentPageData) => {
             // Then check and update elements
             const wrapper = editor.DomComponents.getWrapper();
 
-            if (wrapper) {
-              const img = wrapper.find("#product-service-image");
-              const p = wrapper.find("#product-service-description");
-              console.log(img, p)
-              if (img.length && p.length) {
-                img[0].setAttributes({
-                  src: contentPageData.ProductServiceImage,
-                });
-                p[0].replaceWith(`
-                          <p id="product-service-description" class="content-page-block" style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px">
-                              ${contentPageData.ProductServiceDescription}
-                          </p>
-                      `);
+            if (!wrapper) {
+              console.error('Wrapper not found in editor');
+              return;
+            }
+
+            const img = wrapper.find('#product-service-image');
+            const p = wrapper.find('#product-service-description');
+
+            if (img.length > 0) {
+              if (!contentPageData?.ProductServiceImage) {
+                console.warn('ProductServiceImage is missing in contentPageData');
+              } else {
+                try {
+                  img[0].setAttributes({
+                    src: contentPageData.ProductServiceImage,
+                    alt: 'Product Service Image' // Adding alt for accessibility
+                  });
+                } catch (err) {
+                  console.error('Error updating image:', err);
+                }
               }
+            } else {
+              console.warn('#product-service-image element not found');
+            }
+        
+            // Validate paragraph element
+            if (p.length > 0) {
+              if (!contentPageData?.ProductServiceDescription) {
+                console.warn('ProductServiceDescription is missing in contentPageData');
+              } else {
+                try {
+                  p[0].replaceWith(`
+                    <p 
+                      id="product-service-description" 
+                      class="content-page-block" 
+                      style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px"
+                    >
+                      ${contentPageData.ProductServiceDescription}
+                    </p>
+                  `);
+                } catch (err) {
+                  console.error('Error updating description:', err);
+                }
+              }
+            } else {
+              console.warn('#product-service-description element not found');
             }
             // Ensure Call To Actions are applied
             this.toolsSection.pageContentCtas(
@@ -188,7 +209,6 @@ class ChildEditorManager {
             console.error("Error loading content page data:", error);
           });
       }
-
     } else {
       this.dataManager
         .getContentPageData(page.PageId)
@@ -211,7 +231,10 @@ class ChildEditorManager {
     }
 
     // Adjust Canvas for Content Pages
-    if (page.PageIsContentPage || (page.PageIsPredefined && page.PageName!="Home")) {
+    if (
+      page.PageIsContentPage ||
+      (page.PageIsPredefined && page.PageName != "Home")
+    ) {
       const canvas = editor.Canvas.getElement();
       if (canvas) {
         canvas.style.setProperty("height", "calc(100% - 100px)", "important");
@@ -225,8 +248,6 @@ class ChildEditorManager {
     if (page.PageName === "Home") {
       this.setCurrentEditor(`#${editorId}`);
     }
-
-    console.log("Editor Instances are:", this.editors);
 
     // Wrapper Settings
     const wrapper = editor.getWrapper();
@@ -286,7 +307,6 @@ class ChildEditorManager {
               );
 
               if (img.length > 0 && p.length > 0) {
-                console.log("Content Page Data img and p found");
                 img[0].setAttributes({
                   src: contentPageData.ProductServiceImage,
                 });
@@ -315,7 +335,6 @@ class ChildEditorManager {
               ) || [];
 
             const ctaComponents = wrapper.find('[data-gjs-type="cta-buttons"]');
-            console.log("ctaComponent: ", ctaComponents);
 
             // If validCallToActionIds is empty, proceed to remove all ctaButtons
             if (validCallToActionIds.length === 0) {
@@ -367,7 +386,6 @@ class ChildEditorManager {
         this.toolsSection.unDoReDo(editor);
 
         if (e.target.attributes["tile-action-object-id"]) {
-          console.log(this.dataManager.pages);
           const page = this.getPage(
             e.target.attributes["tile-action-object-id"].value
           );
@@ -458,6 +476,190 @@ class ChildEditorManager {
     document.querySelector("#pages-content").style.display = "block";
   }
 
+  createTemplateHTML(isDefault = false) {
+    return `
+        <div class="template-wrapper ${
+          isDefault ? "default-template" : ""
+        }"        
+              data-gjs-selectable="false"
+              data-gjs-type="template-wrapper"
+              data-gjs-editable="false"
+              data-gjs-highlightable="false"
+              data-gjs-droppable="false"
+              data-gjs-resizable="false"
+              data-gjs-hoverable="false">
+          <div class="template-block"
+              ${defaultTileAttrs} 
+             data-gjs-draggable="false"
+             data-gjs-selectable="true"
+             data-gjs-editable="false"
+             data-gjs-highlightable="false"
+             data-gjs-droppable="false"
+             data-gjs-resizable="false"
+             data-gjs-hoverable="false">
+            
+             <div class="tile-icon-section"
+              data-gjs-draggable="false"
+              data-gjs-selectable="false"
+              data-gjs-editable="false"
+              data-gjs-highlightable="false"
+              data-gjs-droppable="false"
+              data-gjs-resizable="false"
+              data-gjs-hoverable="false"
+              >
+                <span class="tile-close-icon top-right selected-tile-icon"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-resizable="false"
+                  data-gjs-hoverable="false"
+                  >&times;</span>
+                <span 
+                  class="tile-icon"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-hoverable="false">
+                </span>
+            </div>
+            <div class="tile-title-section"
+              data-gjs-draggable="false"
+              data-gjs-selectable="false"
+              data-gjs-editable="false"
+              data-gjs-highlightable="false"
+              data-gjs-droppable="false"
+              data-gjs-resizable="false"
+              data-gjs-hoverable="false"
+              >
+                <span class="tile-close-icon top-right selected-tile-title"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-resizable="false"
+                  data-gjs-hoverable="false"
+                  >&times;</span>
+                <span 
+                  class="tile-title"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
+                    "tile_title"
+                  )}</span>
+                </div>
+            </div>
+          ${
+            !isDefault
+              ? `
+            <button class="action-button delete-button" title="Delete template"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-editable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">
+                <line x1="5" y1="12" x2="19" y2="12" 
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false"/>
+              </svg>
+            </button>
+          `
+              : ""
+          }
+          <button class="action-button add-button-bottom" title="Add template below"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-hoverable="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-editable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-hoverable="false">
+              <line x1="12" y1="5" x2="12" y2="19" 
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false"/>
+              <line x1="5" y1="12" x2="19" y2="12" 
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false"/>
+            </svg>
+          </button>
+          <button class="action-button add-button-right" title="Add template right"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-hoverable="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false">
+              <line x1="12" y1="5" x2="12" y2="19" 
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false"/>
+              <line x1="5" y1="12" x2="19" y2="12" 
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false"/>
+            </svg>
+          </button>
+          <div class="resize-handle"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-hoverable="false">
+          </div>
+        </div>
+      `;
+  }
+
   deleteTemplate(templateComponent) {
     if (
       !templateComponent ||
@@ -485,7 +687,7 @@ class ChildEditorManager {
   addTemplateRight(templateComponent, editorInstance) {
     const containerRow = templateComponent.parent();
     if (!containerRow || containerRow.components().length >= 3) return;
-    const newComponents = editorInstance.addComponents(createTemplateHTML());
+    const newComponents = editorInstance.addComponents(this.createTemplateHTML());
     const newTemplate = newComponents[0];
     if (!newTemplate) return;
 
@@ -517,7 +719,7 @@ class ChildEditorManager {
             data-gjs-editable="false"
             data-gjs-highlightable="false"
             data-gjs-hoverable="false">
-            ${createTemplateHTML()}
+            ${this.createTemplateHTML()}
         </div>
         `)[0];
 
@@ -831,7 +1033,9 @@ class ChildEditorManager {
                               data-gjs-editable="false"
                               data-gjs-droppable="false"
                               data-gjs-highlightable="false"
-                              data-gjs-hoverable="false">Title</span>
+                              data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
+                                "tile_title"
+                              )}</span>
                             </div>
                       </div>
                       <button class="action-button delete-button" title="Delete template"
@@ -952,7 +1156,7 @@ class ChildEditorManager {
       this.themeData = this.toolsSection.themes.find(
         (theme) => theme.name === this.theme.ThemeName
       );
-      console.log(this.themeData);
+
       if (!iframe) return;
 
       // Set CSS variables from the selected theme

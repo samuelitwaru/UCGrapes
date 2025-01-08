@@ -10,7 +10,20 @@
   padding: 0;
   box-sizing: border-box;
 }
+#tb-body input:focus {
+  outline: 1px solid #B4B9BD;
+  border: 1px solid #B4B9BD;
+}
 
+#tb-body select:focus {
+  outline: 1px solid #B4B9BD;
+  border: 1px solid #B4B9BD;
+}
+
+.percentage-wrapper input:focus {
+  outline: none !important;
+  border: none !important;
+}
 /*2 - Navbar Styles ********************************************/
 .tb-navbar {
   display: flex;
@@ -588,12 +601,12 @@ h5#current-page-title {
 .bg-section .add-image .plus {
   font-size: 14px;
   margin-right: 5px;
-  color: #333333;
+  color: #B4B9BD;
 }
 
 .bg-section .add-image .icon {
   font-size: 16px;
-  color: #333333;
+  color: #B4B9BD;
 }
 
 .bg-section .percentage-wrapper {
@@ -854,7 +867,7 @@ h5#current-page-title {
 .page-template-block {
   flex: 1;
   background-color: #ffffff;
-  border: 3.5px dashed #222f54;
+  border: 3px dashed #222f54a2;
   border-radius: 5px;
   padding: 10px;
   cursor: pointer;
@@ -863,7 +876,7 @@ h5#current-page-title {
 }
 
 .page-template-block:hover {
-  border: 2.5px dashed #222f54;
+  border: 2.5px dashed #222f54a2;
 }
 
 .tb-modal {
@@ -1345,8 +1358,6 @@ h5#current-page-title {
   /* justify-items: center; */
   justify-content: center;
 }
-<<<<<<< HEAD
-=======
 
 /* Toast message */
 #toast {

@@ -972,7 +972,7 @@ class ToolBoxManager {
             }"
             cta-background-color="#5068a8"
           >
-            <div class="cta-button" ${defaultConstraints}>
+            <div class="cta-button" ${defaultConstraints} style="background-color: #5068a8;">
               <i class="${ctaType.icon}" ${defaultConstraints}></i>
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
@@ -1009,8 +1009,32 @@ class ToolBoxManager {
           )?.[0];
 
           if (existingButton) {
+            const existingBackgroundColor = existingButton.getAttributes()["cta-background-color"];
+            console.log("Existing background color: ", existingBackgroundColor);
+            
+            let updatedCtaComponent = ctaComponent.replace(
+              /style="background-color: #5068a8;"/,
+              `style="background-color: ${existingBackgroundColor};"`
+            );
+
+            updatedCtaComponent = updatedCtaComponent.replace(
+              /cta-background-color="#5068a8"/,
+              `cta-background-color="${existingBackgroundColor}"`
+            );
+
             if (existingSelectedComponent) {
-              selectedComponent.replaceWith(ctaComponent);
+              
+              // Listen for the component:add event
+              editorInstance.once('component:add', (component) => {
+                console.log('Editor being called');
+                // Get the newly added component by searching in the wrapper
+                const addedComponent = editorInstance.getWrapper().find(`#id-${cta.CallToActionId}`)[0];
+                if (addedComponent) {
+                  console.log('Added component:', addedComponent);
+                  editorInstance.select(addedComponent);
+                }
+              });
+              selectedComponent.replaceWith(updatedCtaComponent);
             } else {
             }
             return;
@@ -1072,6 +1096,16 @@ class ToolBoxManager {
                   </div>
                 `;
 
+                // Listen for the component:add event
+                editorInstance.once('component:add', (component) => {
+                  console.log('Editor being called');
+                  // Get the newly added component by searching in the wrapper
+                  const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];
+                  if (addedComponent) {
+                    console.log('Added component:', addedComponent);
+                    editorInstance.select(addedComponent);
+                  }
+                });
                 // Remove the current component and replace it
                 this.editorManager.selectedComponent.replaceWith(
                   plainButtonComponent
@@ -1160,6 +1194,15 @@ class ToolBoxManager {
                   </div>
                 `;
 
+                editorInstance.once('component:add', (component) => {
+                  console.log('Editor being called');
+                  // Get the newly added component by searching in the wrapper
+                  const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];
+                  if (addedComponent) {
+                    console.log('Added component:', addedComponent);
+                    editorInstance.select(addedComponent);
+                  }
+                });
                 // Remove the current component and replace it
                 this.editorManager.selectedComponent.replaceWith(
                   imgButtonComponent

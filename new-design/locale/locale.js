@@ -49,6 +49,11 @@ const translations = {
     icon_category_living: "Living",
     click_to_load_template: "Click to load template",
     tile_title: "Title",
+    delete_media_modal_title: "Delete Media",
+    delete_media_modal_message: "Are you sure you want to delete this media file?",
+    failed_to_delete_media: "Failed to delete media file. Please try again.",
+    delete_btn: "Delete",
+    not_authenticated_message: "You are not authenticated. Please login to continue.",
   },
   dutch: {
     navbar_title: "De app gereedschapskist bouwer",
@@ -91,117 +96,129 @@ const translations = {
     please_select_cta_button: "Selecteer alstublieft de Cta-knop",
     publish_confirm_title: "Publicatie Bevestigen",
     publish_confirm_message:
-      "Weet je zeker dat je wilt publiceren? Eenmaal gepubliceerd, worden alle momenteel zichtbare pagina's definitief en zichtbaar voor bewoners. Deze actie kan niet ongedaan worden gemaakt.",
-    nofity_residents_on_publish:
-      "Bewoners informeren over de gemaakte updates.",
+    "Weet je zeker dat je wilt publiceren? Zodra gepubliceerd, worden alle momenteel zichtbare pagina's gefinaliseerd en zichtbaar voor bewoners. Deze actie kan niet ongedaan worden gemaakt.",
+    nofity_residents_on_publish: "Meld bewoners de updates die zijn aangebracht.",
     publish_confirm_button: "Publiceren",
     publish_cancel_button: "Annuleren",
-    enter_title_place_holder: "Titel invoeren",
-    icon_category_general: "Algemeen",
+    enter_title_place_holder: "Voer titel in",
+    icon_category_services: "Diensten",
+    icon_category_general:  "Algemeen",
     icon_category_health: "Gezondheid",
     icon_category_living: "Wonen",
-    icon_category_services: "Services",
     click_to_load_template: "Klik om sjabloon te laden",
     tile_title: "Titel",
+    delete_media_modal_title: "Verwijder media",
+    delete_media_modal_message: "Weet je zeker dat je dit mediabestand wilt verwijderen?",
+    failed_to_delete_media: "Mislukt om mediabestand te verwijderen. Probeer het opnieuw.",
+    delete_btn: "Verwijderen",
+    not_authenticated_message: "Je bent niet geauthenticeerd. Log in om door te gaan.",
+
   },
 };
 
 class Locale {
   constructor(language) {
-    if (!translations[language]) {
-      throw new Error(`Unsupported language: ${language}`);
-    }
-    this.currentLanguage = language;
-    this.defaultLanguage = "english";
+      if (!translations[language]) {
+          throw new Error(`Unsupported language: ${language}`);
+      }
+      this.currentLanguage = language;
+      this.defaultLanguage = "english";
   }
 
   setLanguage() {
-    const elementsToTranslate = [
-      "navbar_title",
-      "navbar_tree_label",
-      "navbar_publish_label",
-      "sidebar_tabs_pages_label",
-      "sidebar_tabs_templates_label",
-      "sidebar_select_action_label",
-      "new_page_submit_label",
-      "template_added_success_message",
-      "theme_applied_success_message",
-      "page_loaded_success_message",
-      "no_tile_selected_error_message",
-      "error_loading_data_message",
-      "failed_to_save_current_page_message",
-      "tile_has_bg_image_error_message",
-      "error_applying_theme_message",
-      "no_icon_selected_error_message",
-      "error_save_message",
-      "accept_popup",
-      "close_popup",
-      "sidebar_mapping_title",
-      "alert_type_success",
-      "alert_type_error",
-      "cancel_btn",
-      "save_btn",
-      "publish_confirm_title",
-      "publish_confirm_message",
-      "nofity_residents_on_publish",
-      "publish_confirm_button",
-      "publish_cancel_button",
-      "enter_title_place_holder",
-    ];
+      const elementsToTranslate = [
+          "navbar_title",
+          "navbar_tree_label",
+          "navbar_publish_label",
+          "sidebar_tabs_pages_label",
+          "sidebar_tabs_templates_label",
+          "sidebar_select_action_label",
+          "new_page_submit_label",
+          "template_added_success_message",
+          "theme_applied_success_message",
+          "page_loaded_success_message",
+          "no_tile_selected_error_message",
+          "error_loading_data_message",
+          "failed_to_save_current_page_message",
+          "tile_has_bg_image_error_message",
+          "error_applying_theme_message",
+          "no_icon_selected_error_message",
+          "error_save_message",
+          "accept_popup",
+          "close_popup",
+          "sidebar_mapping_title",
+          "alert_type_success",
+          "alert_type_error",
+          "cancel_btn",
+          "save_btn",
+          "publish_confirm_title",
+          "publish_confirm_message",
+          "nofity_residents_on_publish",
+          "publish_confirm_button",
+          "publish_cancel_button",
+          "enter_title_place_holder",
+      ];
 
-    elementsToTranslate.forEach((elementId) => {
-      const element = document.getElementById(elementId);
-      if (element) {
-        element.innerText = this.getTranslation(elementId);
-      } else {
-        console.warn(`Element with id '${elementId}' not found`);
-      }
-    });
+      elementsToTranslate.forEach((elementId) => {
+          const element = document.getElementById(elementId);
+          if (element) {
+              element.innerText = this.getTranslation(elementId);
+          } else {
+              console.warn(`Element with id '${elementId}' not found`);
+          }
+      });
   }
 
   getTranslation(key) {
-    // Check if key exists in current language
-    if (translations[this.currentLanguage]?.[key]) {
-      return translations[this.currentLanguage][key];
-    }
+      // Check if key exists in current language
+      if (translations[this.currentLanguage]?.[key]) {
+          return translations[this.currentLanguage][key];
+      }
 
-    // Fallback to default language
-    if (translations[this.defaultLanguage]?.[key]) {
-      console.warn(
-        `Translation missing for key '${key}' in ${this.currentLanguage}, using ${this.defaultLanguage}`
-      );
-      return translations[this.defaultLanguage][key];
-    }
+      // Fallback to default language
+      if (translations[this.defaultLanguage]?.[key]) {
+          console.warn(
+              `Translation missing for key '${key}' in ${this.currentLanguage}, using ${this.defaultLanguage}`
+          );
+          return translations[this.defaultLanguage][key];
+      }
 
-    // Return key as last resort
-    console.error(`Translation key '${key}' not found in any language`);
-    return key;
+      // Return key as last resort
+      console.error(`Translation key '${key}' not found in any language`);
+      return key;
   }
 
   translateUCStrings() {
-    // tile title input field placeholder
-    document.getElementById("tile-title").placeholder = this.getTranslation("enter_title_place_holder");
+      document.getElementById("tile-title").placeholder = this.getTranslation("enter_title_place_holder");
 
-    // Icon categories selection
-    // Icon categories selection
-    const options = [
-        { value: "Services", label: "icon_category_services" },
-        { value: "General", label: "icon_category_general", selected: true },
-        { value: "Health", label: "icon_category_health" },
-        { value: "Living", label: "icon_category_living" },
-    ];
+      const options = [{
+              value: "Services",
+              label: "icon_category_services"
+          },
+          {
+              value: "General",
+              label: "icon_category_general",
+              selected: true
+          },
+          {
+              value: "Health",
+              label: "icon_category_health"
+          },
+          {
+              value: "Living",
+              label: "icon_category_living"
+          },
+      ];
 
-    const selectElement = document.getElementById("theme_icon_category");
-    if (selectElement) {
-        // Generate options with proper translations
-        const optionHTML = options.map(opt => `
-            <option value="${opt.value}" ${opt.selected ? "selected" : ""}>
-                ${this.getTranslation(opt.label)}
-            </option>
-        `).join("");
+      const selectElement = document.getElementById("theme_icon_category");
+      if (selectElement) {
+          const optionHTML = options.map(opt => `
+          <option value="${opt.value}" ${opt.selected ? "selected" : ""}>
+              ${this.getTranslation(opt.label)}
+          </option>
+      `).join("");
 
-        // Inject options into the select element
-        selectElement.innerHTML = optionHTML;
-    }
+          selectElement.innerHTML = optionHTML;
+      }
   }
 }

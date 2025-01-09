@@ -1,20 +1,19 @@
 let currentIndex = 0;
 
 class ChildEditorManager {
-    // child editor manager
-    editors = {};
-    pages = [];
-    theme = [];
-    toolsSection = null;
-    currentEditor = null;
-    currentPageId = null;
+  // child editor manager
+  editors = {};
+  pages = [];
+  theme = [];
+  toolsSection = null;
+  currentEditor = null;
+  currentPageId = null;
 
-    container = document.getElementById("child-container");
+  container = document.getElementById("child-container");
 
-    constructor(dataManager, currentLanguage) {
+    constructor(dataManager) {
         this.dataManager = dataManager;
-        this.currentLanguage = currentLanguage;
-        this.dataManager.getLocationTheme().then((res) => {
+            this.dataManager.getLocationTheme().then((res) => {
             if (this.toolsSection.checkIfNotAuthenticated(res)) {
                 return;
             }
@@ -32,7 +31,10 @@ class ChildEditorManager {
                 this.createChildEditor(homePage);
                 this.currentPageId = homePage.PageId;
             } else {
-                this.toolsSection.displayAlertMessage("No home page found.", "danger");
+                this.toolsSection.displayAlertMessage(
+          "No home page found.",
+          "danger"
+        );
                 return;
             }
         });
@@ -727,7 +729,7 @@ class ChildEditorManager {
             data-gjs-editable="false"
             data-gjs-highlightable="false"
             data-gjs-hoverable="false">
-            ${this.createTemplateHTML()}
+            ${createTemplateHTML()}
         </div>
         `)[0];
 
@@ -1047,9 +1049,7 @@ class ChildEditorManager {
                               data-gjs-editable="false"
                               data-gjs-droppable="false"
                               data-gjs-highlightable="false"
-                              data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
-                                "tile_title"
-                              )}</span>
+                              data-gjs-hoverable="false">Title</span>
                             </div>
                       </div>
                       <button class="action-button delete-button" title="Delete template"

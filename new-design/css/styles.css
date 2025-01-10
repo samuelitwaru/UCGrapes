@@ -9,6 +9,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  margin-top: -20px;
 }
 #tb-body input:focus {
   outline: 1px solid #B4B9BD;
@@ -239,7 +240,7 @@ button#open-mapping {
   max-width: 320px;
   max-height: 680px;
   background-color: #fdfdfd;
-  border-radius: 25px;
+  border-radius: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   position: relative;
   border: #373737 solid 5px;
@@ -523,7 +524,7 @@ h5#current-page-title {
   align-items: center;
   padding: 0.1rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: #ffffff;
   width: fit-content;
   margin: 20px auto;
@@ -563,7 +564,7 @@ h5#current-page-title {
 
 .text-color-palette .color-item:has(input[type="radio"]:checked) {
   border: 1px solid #5f75ae;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: #fff;
 }
 .text-color-palette input[type="radio"] {
@@ -571,7 +572,7 @@ h5#current-page-title {
 }
 .color-palette .color-item:has(input[type="radio"]:checked) {
   border: 1px solid #5f75ae;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: #fff;
 }
 
@@ -584,7 +585,7 @@ h5#current-page-title {
   align-items: center;
   border: 1px solid #ddd;
   padding: 6px;
-  border-radius: 8px;
+  border-radius: 6px;
   width: fit-content;
   background-color: #fff;
 }
@@ -711,7 +712,7 @@ h5#current-page-title {
   display: flex;
   padding: 6px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   background-color: #ffffff;
   width: fit-content;
@@ -730,14 +731,14 @@ h5#current-page-title {
 
 .color-item:hover {
   border: 1px #5f75ae solid;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .text-color-palette {
   display: flex;
   padding: 0.1rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   background-color: #ffffff;
   width: fit-content;
@@ -752,7 +753,7 @@ h5#current-page-title {
   background-color: #e9e9e9;
   margin: 8px 0;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .text-alignment .align-item label {
@@ -765,7 +766,7 @@ h5#current-page-title {
 .text-alignment .align-item:hover label {
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 /* Hide the radio buttons */
@@ -780,7 +781,7 @@ h5#current-page-title {
 /* Apply styles to the label when the associated radio button is checked */
 .text-alignment input[type="radio"]:checked + label {
   border: 1px solid #5f75ae;
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: #fff;
 }
 
@@ -794,6 +795,10 @@ h5#current-page-title {
 }
 
 .sidebar-section .icons-list .icon {
+  display: flex; /* Enables Flexbox */
+  align-items: center; /* Vertical alignment */
+  justify-content: center; /* Horizontal alignment */
+  flex-direction: column; /* Stacks the SVG and the span vertically */
   background-color: #f9f9f9;
   border: 1px solid #7070702b;
   border-radius: 6px;
@@ -801,6 +806,12 @@ h5#current-page-title {
   text-align: center;
   cursor: pointer;
   height: 100%;
+  width: 100%;
+}
+
+.sidebar-section .icons-list .icon svg {
+  width: 32px !important;
+  height: 29px !important;
 }
 
 .icon:hover {
@@ -894,7 +905,7 @@ h5#current-page-title {
 
 .tb-modal-content {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 40px;
   width: 815px;
   min-height: 600px;
@@ -1156,7 +1167,7 @@ h5#current-page-title {
   font-size: 14px;
   padding: 6px;
   border: 1px solid #b4b9bd;
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1168,7 +1179,7 @@ h5#current-page-title {
   top: 50px;
   width: 100%;
   border: 1px solid #b4b9bd;
-  border-radius: 8px;
+  border-radius: 6px;
   margin-top: -12px;
   background-color: white;
   display: none;
@@ -1246,7 +1257,7 @@ h5#current-page-title {
 }
 .search-container input[type="text"] {
   padding: 8px 8px 8px 30px;
-  border-radius: 8px;
+  border-radius: 6px;
   width: 90%;
   border: 1px solid #b4b9bd;
   outline: none;
@@ -1267,7 +1278,7 @@ h5#current-page-title {
   width: 85%;
   padding: 5px;
   border: 1px solid #b4b9bd;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 14px;
 }
 

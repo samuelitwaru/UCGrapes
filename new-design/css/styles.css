@@ -1032,11 +1032,6 @@ h5#current-page-title {
   text-decoration: underline;
 }
 
-.upload-area.drag-over {
-  background-color: rgba(33, 150, 243, 0.05);
-  border-color: #2196f3;
-}
-
 .modal-actions {
   margin-top: 40px;
   display: none;

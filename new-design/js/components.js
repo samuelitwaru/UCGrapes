@@ -850,7 +850,7 @@ class ActionListComponent {
             
             .upload-area.drag-over {
                 background-color: rgba(33, 150, 243, 0.05);
-                border-color: #2196f3;
+                border-color: #222f54;
             }
             
             .upload-text {

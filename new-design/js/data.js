@@ -3,1085 +3,336 @@ let baseURL = window.location.origin;
 
 if (baseURL.startsWith("http://localhost")) baseURL += environment;
 
-let contentPageJson = `
-[
-  {
-    "attributes": {
-      "id": "i1im"
-    },
-    "_undoexc": [
-      "status",
-      "open"
-    ],
-    "components": [
-      {
-        "tagName": "NULL",
-        "type": "comment",
-        "content": " Image Section ",
-        "_undoexc": [
-          "status",
-          "open"
-        ]
-      },
-      {
-        "tagName": "div",
-        "type": "image",
-        "resizable": {
-          "ratioDefault": 1
-        },
-        "attributes": {
-          "id": "itcj",
-          "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImZpbGw6IHJnYmEoMCwwLDAsMC4xNSk7IHRyYW5zZm9ybTogc2NhbGUoMC43NSkiPgogICAgICAgIDxwYXRoIGQ9Ik04LjUgMTMuNWwyLjUgMyAzLjUtNC41IDQuNSA2SDVtMTYgMVY1YTIgMiAwIDAgMC0yLTJINWMtMS4xIDAtMiAuOS0yIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMnoiPjwvcGF0aD4KICAgICAgPC9zdmc+"
-        },
-        "_undoexc": [
-          "status",
-          "open"
-        ],
-        "components": [
-          {
-            "type": "image",
-            "removable": false,
-            "draggable": false,
-            "droppable": false,
-            "resizable": {
-              "ratioDefault": 1
-            },
-            "editable": false,
-            "style": {
-              "width": "100%",
-              "border-radius": "8px"
-            },
-            "attributes": {
-              "src": "path_to_your_image.png",
-              "alt": "Reception Area",
-              "style": "width:100%;border-radius:8px;"
-            },
-            "_undoexc": [
-              "status",
-              "open"
-            ]
-          }
-        ]
-      },
-      {
-        "tagName": "NULL",
-        "type": "comment",
-        "content": " Text Section ",
-        "_undoexc": [
-          "status",
-          "open"
-        ]
-      },
-      {
-        "type": "text",
-        "removable": false,
-        "draggable": false,
-        "editable": false,
-        "attributes": {
-          "id": "ipm7"
-        },
-        "_undoexc": [
-          "status",
-          "open"
-        ],
-        "components": [
-          {
-            "tagName": "p",
-            "type": "text",
-            "attributes": {
-              "id": "i3h9"
-            },
-            "_undoexc": [
-              "status",
-              "open"
-            ],
-            "components": [
-              {
-                "type": "textnode",
-                "content": "Of het nu gaat om technische ondersteuning, informatie over diensten, of algemene vragen, wij zijn er om u te helpen.",
-                "_undoexc": [
-                  "status",
-                  "open"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tagName": "NULL",
-        "type": "comment",
-        "content": " Button Section ",
-        "_undoexc": [
-          "status",
-          "open"
-        ]
-      },
-      {
-        "attributes": {
-          "id": "iemi6"
-        },
-        "_undoexc": [
-          "status",
-          "open"
-        ],
-        "components": [
-          {
-            "attributes": {
-              "id": "ivtnv"
-            },
-            "_undoexc": [
-              "status",
-              "open"
-            ],
-            "components": [
-              {
-                "type": "link",
-                "editable": false,
-                "attributes": {
-                  "href": "tel:your_phone_number",
-                  "id": "ipkwc"
-                },
-                "_undoexc": [
-                  "status",
-                  "open"
-                ],
-                "components": [
-                  {
-                    "attributes": {
-                      "id": "ihftk"
-                    },
-                    "_undoexc": [
-                      "status",
-                      "open"
-                    ],
-                    "components": [
-                      {
-                        "tagName": "i",
-                        "classes": [
-                          "fa",
-                          "fa-phone"
-                        ],
-                        "attributes": {
-                          "id": "iq5of"
-                        },
-                        "_undoexc": [
-                          "status",
-                          "open"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "tagName": "p",
-                    "type": "text",
-                    "attributes": {
-                      "id": "iojxg"
-                    },
-                    "_undoexc": [
-                      "status",
-                      "open"
-                    ],
-                    "components": [
-                      {
-                        "type": "textnode",
-                        "content": "CALL",
-                        "_undoexc": [
-                          "status",
-                          "open"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "attributes": {
-              "id": "i1v0y"
-            },
-            "_undoexc": [
-              "status",
-              "open"
-            ],
-            "components": [
-              {
-                "type": "link",
-                "editable": false,
-                "attributes": {
-                  "href": "mailto:your_email@example.com",
-                  "id": "ifduf"
-                },
-                "_undoexc": [
-                  "status",
-                  "open"
-                ],
-                "components": [
-                  {
-                    "attributes": {
-                      "id": "ie7qn"
-                    },
-                    "_undoexc": [
-                      "status",
-                      "open"
-                    ],
-                    "components": [
-                      {
-                        "tagName": "i",
-                        "classes": [
-                          "fa",
-                          "fa-envelope"
-                        ],
-                        "attributes": {
-                          "id": "iz9g8"
-                        },
-                        "_undoexc": [
-                          "status",
-                          "open"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "tagName": "p",
-                    "type": "text",
-                    "attributes": {
-                      "id": "iw4qw"
-                    },
-                    "_undoexc": [
-                      "status",
-                      "open"
-                    ],
-                    "components": [
-                      {
-                        "type": "textnode",
-                        "content": "MAIL",
-                        "_undoexc": [
-                          "status",
-                          "open"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-]
-`;
-
-let initialPageJson = `
-{
-  "assets": [],
-  "styles": [],
-  "pages": [
-    {
-      "frames": [
-        {
-          "component": {
-            "type": "wrapper",
-            "droppable": false,
-            "stylable": [
-              "background",
-              "background-color",
-              "background-image",
-              "background-repeat",
-              "background-attachment",
-              "background-position",
-              "background-size"
-            ],
-            "resizable": {
-              "handles": "e"
-            },
-            "selectable": false,
-            "_undoexc": [
-              "status",
-              "open"
-            ],
-            "components": [
-              {
-                "type": "template-wrapper",
-                "draggable": false,
-                "droppable": false,
-                "highlightable": false,
-                "selectable": false,
-                "hoverable": false,
-                "classes": [
-                  "frame-container"
-                ],
-                "attributes": {
-                  "id": "frame-container"
-                },
-                "_undoexc": [
-                  "status",
-                  "open"
-                ],
-                "components": [
-                  {
-                    "type": "template-wrapper",
-                    "draggable": false,
-                    "droppable": false,
-                    "highlightable": false,
-                    "selectable": false,
-                    "hoverable": false,
-                    "classes": [
-                      "container-column"
-                    ],
-                    "_undoexc": [
-                      "status",
-                      "open"
-                    ],
-                    "components": [
-                      {
-                        "type": "template-wrapper",
-                        "draggable": false,
-                        "selectable": false,
-                        "classes": [
-                          "container-row"
-                        ],
-                        "_undoexc": [
-                          "status",
-                          "open"
-                        ],
-                        "components": [
-                          {
-                            "type": "template-wrapper",
-                            "droppable": false,
-                            "classes": [
-                              "template-wrapper",
-                              "default-template"
-                            ],
-                            "attributes": {
-                              "tile-text": "Tile",
-                              "tile-text-color": "#000000",
-                              "tile-text-align": "left",
-                              "tile-icon": "icon-name",
-                              "tile-icon-color": "#000000",
-                              "tile-icon-align": "left",
-                              "tile-bg-color": "#ffffff",
-                              "tile-bg-image": "",
-                              "tile-bg-image-opacity": "100",
-                              "tile-action-object": "Page",
-                              "tile-action-object-id": ""
-                            },
-                            "_undoexc": [
-                              "status",
-                              "open"
-                            ],
-                            "components": [
-                              {
-                                "draggable": false,
-                                "droppable": false,
-                                "highlightable": false,
-                                "selectable": false,
-                                "hoverable": false,
-                                "classes": [
-                                  "template-block"
-                                ],
-                                "_undoexc": [
-                                  "status",
-                                  "open"
-                                ],
-                                "components": [
-                                  {
-                                    "draggable": false,
-                                    "droppable": false,
-                                    "highlightable": false,
-                                    "selectable": false,
-                                    "hoverable": false,
-                                    "classes": [
-                                      "tile-icon-section"
-                                    ],
-                                    "_undoexc": [
-                                      "status",
-                                      "open"
-                                    ],
-                                    "components": [
-                                      {
-                                        "tagName": "span",
-                                        "type": "text",
-                                        "draggable": false,
-                                        "highlightable": false,
-                                        "editable": false,
-                                        "selectable": false,
-                                        "hoverable": false,
-                                        "classes": [
-                                          "tile-close-icon",
-                                          "top-right",
-                                          "selected-tile-icon"
-                                        ],
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ],
-                                        "components": [
-                                          {
-                                            "type": "textnode",
-                                            "content": "×",
-                                            "_undoexc": [
-                                              "status",
-                                              "open"
-                                            ]
-                                          }
-                                        ]
-                                      },
-                                      {
-                                        "tagName": "span",
-                                        "type": "text",
-                                        "draggable": false,
-                                        "highlightable": false,
-                                        "editable": false,
-                                        "selectable": false,
-                                        "hoverable": false,
-                                        "classes": [
-                                          "tile-icon"
-                                        ],
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ],
-                                        "components": [
-                                          {
-                                            "type": "textnode",
-                                            "content": "",
-                                            "_undoexc": [
-                                              "status",
-                                              "open"
-                                            ]
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    "draggable": false,
-                                    "droppable": false,
-                                    "highlightable": false,
-                                    "selectable": false,
-                                    "hoverable": false,
-                                    "classes": [
-                                      "tile-title-section"
-                                    ],
-                                    "_undoexc": [
-                                      "status",
-                                      "open"
-                                    ],
-                                    "components": [
-                                      {
-                                        "tagName": "span",
-                                        "type": "text",
-                                        "draggable": false,
-                                        "highlightable": false,
-                                        "editable": false,
-                                        "selectable": false,
-                                        "hoverable": false,
-                                        "classes": [
-                                          "tile-close-icon",
-                                          "top-right",
-                                          "selected-tile-title"
-                                        ],
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ],
-                                        "components": [
-                                          {
-                                            "type": "textnode",
-                                            "content": "×",
-                                            "_undoexc": [
-                                              "status",
-                                              "open"
-                                            ]
-                                          }
-                                        ]
-                                      },
-                                      {
-                                        "tagName": "span",
-                                        "type": "text",
-                                        "draggable": false,
-                                        "highlightable": false,
-                                        "editable": false,
-                                        "selectable": false,
-                                        "hoverable": false,
-                                        "classes": [
-                                          "tile-title"
-                                        ],
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ],
-                                        "components": [
-                                          {
-                                            "type": "textnode",
-                                            "content": "Title",
-                                            "_undoexc": [
-                                              "status",
-                                              "open"
-                                            ]
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              },
-                              {
-                                "tagName": "button",
-                                "draggable": false,
-                                "droppable": false,
-                                "highlightable": false,
-                                "selectable": false,
-                                "hoverable": false,
-                                "classes": [
-                                  "action-button",
-                                  "add-button-bottom"
-                                ],
-                                "attributes": {
-                                  "title": "Add template below"
-                                },
-                                "_undoexc": [
-                                  "status",
-                                  "open"
-                                ],
-                                "components": [
-                                  {
-                                    "type": "svg",
-                                    "draggable": false,
-                                    "droppable": false,
-                                    "highlightable": false,
-                                    "resizable": {
-                                      "ratioDefault": 1
-                                    },
-                                    "selectable": false,
-                                    "hoverable": false,
-                                    "attributes": {
-                                      "xmlns": "http://www.w3.org/2000/svg",
-                                      "width": "16",
-                                      "height": "16",
-                                      "viewBox": "0 0 24 24",
-                                      "fill": "none",
-                                      "stroke": "currentColor",
-                                      "stroke-width": "2",
-                                      "stroke-linecap": "round",
-                                      "stroke-linejoin": "round"
-                                    },
-                                    "_undoexc": [
-                                      "status",
-                                      "open"
-                                    ],
-                                    "components": [
-                                      {
-                                        "tagName": "line",
-                                        "type": "svg-in",
-                                        "draggable": false,
-                                        "droppable": false,
-                                        "highlightable": false,
-                                        "resizable": {
-                                          "ratioDefault": 1
-                                        },
-                                        "attributes": {
-                                          "x1": "12",
-                                          "y1": "5",
-                                          "x2": "12",
-                                          "y2": "19"
-                                        },
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ]
-                                      },
-                                      {
-                                        "tagName": "line",
-                                        "type": "svg-in",
-                                        "draggable": false,
-                                        "droppable": false,
-                                        "highlightable": false,
-                                        "resizable": {
-                                          "ratioDefault": 1
-                                        },
-                                        "attributes": {
-                                          "x1": "5",
-                                          "y1": "12",
-                                          "x2": "19",
-                                          "y2": "12"
-                                        },
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              },
-                              {
-                                "tagName": "button",
-                                "draggable": false,
-                                "droppable": false,
-                                "highlightable": false,
-                                "selectable": false,
-                                "hoverable": false,
-                                "classes": [
-                                  "action-button",
-                                  "add-button-right"
-                                ],
-                                "attributes": {
-                                  "title": "Add template right"
-                                },
-                                "_undoexc": [
-                                  "status",
-                                  "open"
-                                ],
-                                "components": [
-                                  {
-                                    "type": "svg",
-                                    "draggable": false,
-                                    "droppable": false,
-                                    "highlightable": false,
-                                    "resizable": {
-                                      "ratioDefault": 1
-                                    },
-                                    "selectable": false,
-                                    "hoverable": false,
-                                    "attributes": {
-                                      "xmlns": "http://www.w3.org/2000/svg",
-                                      "width": "16",
-                                      "height": "16",
-                                      "viewBox": "0 0 24 24",
-                                      "fill": "none",
-                                      "stroke": "currentColor",
-                                      "stroke-width": "2",
-                                      "stroke-linecap": "round",
-                                      "stroke-linejoin": "round"
-                                    },
-                                    "_undoexc": [
-                                      "status",
-                                      "open"
-                                    ],
-                                    "components": [
-                                      {
-                                        "tagName": "line",
-                                        "type": "svg-in",
-                                        "draggable": false,
-                                        "droppable": false,
-                                        "highlightable": false,
-                                        "resizable": {
-                                          "ratioDefault": 1
-                                        },
-                                        "attributes": {
-                                          "x1": "12",
-                                          "y1": "5",
-                                          "x2": "12",
-                                          "y2": "19"
-                                        },
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ]
-                                      },
-                                      {
-                                        "tagName": "line",
-                                        "type": "svg-in",
-                                        "draggable": false,
-                                        "droppable": false,
-                                        "highlightable": false,
-                                        "resizable": {
-                                          "ratioDefault": 1
-                                        },
-                                        "attributes": {
-                                          "x1": "5",
-                                          "y1": "12",
-                                          "x2": "19",
-                                          "y2": "12"
-                                        },
-                                        "_undoexc": [
-                                          "status",
-                                          "open"
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              },
-                              {
-                                "type": "text",
-                                "draggable": false,
-                                "highlightable": false,
-                                "editable": false,
-                                "selectable": false,
-                                "hoverable": false,
-                                "classes": [
-                                  "resize-handle"
-                                ],
-                                "_undoexc": [
-                                  "status",
-                                  "open"
-                                ],
-                                "components": [
-                                  {
-                                    "type": "textnode",
-                                    "content": "",
-                                    "_undoexc": [
-                                      "status",
-                                      "open"
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "type": "main",
-      "id": "yvNZN2seeDRsRFyl"
-    }
-  ]
-}
-`;
-
 class DataManager {
-    services = [];
-    media = [];
-    selectedTheme = null;
-    constructor(services, media) {
-        this.services = services;
-        this.media = media;
-    }
+  services = [];
+  media = [];
+  selectedTheme = null;
+  constructor(services, media) {
+      this.services = services;
+      this.media = media;
+  }
 
-    getPages() {
-        let self = this;
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/pages/list`,
-                type: "GET",
-                success: function(response) {
-                    self.pages = response;
-                    resolve(self.pages);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+  getPages() {
+      let self = this;
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/pages/list`,
+              type: "GET",
+              success: function(response) {
+                  self.pages = response;
+                  resolve(self.pages);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    getSinglePage(pageId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/singlepage?Pageid=${pageId}`,
-                type: "GET",
-                contentType: "application/json",
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                    reject(error);
-                },
-            });
-        });
-    }
+  getSinglePage(pageId) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/singlepage?Pageid=${pageId}`,
+              type: "GET",
+              contentType: "application/json",
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+                  reject(error);
+              },
+          });
+      });
+  }
 
-    deletePage(pageId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/deletepage?Pageid=${pageId}`,
-                type: "GET",
-                contentType: "application/json",
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                    reject(error);
-                },
-            });
-        });
-    }
+  deletePage(pageId) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/deletepage?Pageid=${pageId}`,
+              type: "GET",
+              contentType: "application/json",
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+                  reject(error);
+              },
+          });
+      });
+  }
 
-    getPagesService() {
-        let self = this;
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/pages/tree`,
-                type: "GET",
-                success: function(response) {
-                    const pages = response;
-                    resolve(pages); 
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                    reject(error); 
-                },
-            });
-        });
-    }
+  getPagesService() {
+      let self = this;
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/pages/tree`,
+              type: "GET",
+              success: function(response) {
+                  const pages = response;
+                  resolve(pages); 
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+                  reject(error); 
+              },
+          });
+      });
+  }
 
-    updatePage(data) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/update-page`, 
-                type: "POST",
-                data: JSON.stringify(data),
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+  updatePage(data) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/update-page`, 
+              type: "POST",
+              data: JSON.stringify(data),
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    updateLocationTheme() {
-        let themeId = this.selectedTheme.id;
+  updateLocationTheme() {
+      let themeId = this.selectedTheme.id;
 
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/update-location-theme`, 
-                type: "POST",
-                data: JSON.stringify({
-                    ThemeId: themeId,
-                }),
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/update-location-theme`, 
+              type: "POST",
+              data: JSON.stringify({
+                  ThemeId: themeId,
+              }),
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    createNewPage(pageName) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/create-page`,
-                type: "POST",
-                contentType: "application/json", 
-                data: JSON.stringify({
-                    PageName: pageName
-                }),
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+  createNewPage(pageName) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/create-page`,
+              type: "POST",
+              contentType: "application/json", 
+              data: JSON.stringify({
+                  PageName: pageName
+              }),
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    addPageChild(childPageId, currentPageId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/add-page-children`, 
-                type: "POST",
-                data: JSON.stringify({
-                    ParentPageId: currentPageId,
-                    ChildPageId: childPageId,
-                }),
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+  addPageChild(childPageId, currentPageId) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/add-page-children`, 
+              type: "POST",
+              data: JSON.stringify({
+                  ParentPageId: currentPageId,
+                  ChildPageId: childPageId,
+              }),
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    uploadFile(fileData, fileName, fileSize, fileType) {
-        return new Promise((resolve, reject) => {
-            if (fileData) {
-                $.ajax({
-                    url: `${baseURL}/api/media/upload`, 
-                    type: "POST",
+  uploadFile(fileData, fileName, fileSize, fileType) {
+      return new Promise((resolve, reject) => {
+          if (fileData) {
+              $.ajax({
+                  url: `${baseURL}/api/media/upload`, 
+                  type: "POST",
 
-                    contentType: "multipart/form-data", 
-                    data: JSON.stringify({
-                        MediaId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        MediaName: fileName,
-                        MediaImageData: fileData,
-                        MediaSize: fileSize,
-                        MediaType: fileType,
-                    }),
-                    success: function(response) {
-                        resolve(response);
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 404) {
-                            console.error("Error 404: Not Found");
-                        } else {
-                            console.error("Error:", status, error);
-                        }
-                    },
-                });
-            } else {
-                alert("Please select a file!");
-            }
-        });
-    }
+                  contentType: "multipart/form-data", 
+                  data: JSON.stringify({
+                      MediaId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                      MediaName: fileName,
+                      MediaImageData: fileData,
+                      MediaSize: fileSize,
+                      MediaType: fileType,
+                  }),
+                  success: function(response) {
+                      resolve(response);
+                  },
+                  error: function(xhr, status, error) {
+                      if (xhr.status === 404) {
+                          console.error("Error 404: Not Found");
+                      } else {
+                          console.error("Error:", status, error);
+                      }
+                  },
+              });
+          } else {
+              alert("Please select a file!");
+          }
+      });
+  }
 
-    deleteMedia(mediaId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/media/delete`,
-                type: "GET",
-                data: {
-                    MediaId: mediaId,
-                },
-                success: function(response) {
+  deleteMedia(mediaId) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/media/delete`,
+              type: "GET",
+              data: {
+                  MediaId: mediaId,
+              },
+              success: function(response) {
 
-                    if (response && response.result === "success") {
-                        resolve({
-                            success: true
-                        });
-                    } else {
-                        resolve({
-                            success: false
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error:", status, error);
-                    reject({
-                        success: false,
-                        error: error
-                    });
-                },
-            });
-        });
-    }
+                  if (response && response.result === "success") {
+                      resolve({
+                          success: true
+                      });
+                  } else {
+                      resolve({
+                          success: false
+                      });
+                  }
+              },
+              error: function(xhr, status, error) {
+                  console.error("AJAX Error:", status, error);
+                  reject({
+                      success: false,
+                      error: error
+                  });
+              },
+          });
+      });
+  }
 
-    getMediaFiles() {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/media/`, 
-                type: "GET",
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+  getMediaFiles() {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/media/`, 
+              type: "GET",
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    createContentPage(pageId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/toolbox/create-content-page`,
-                type: "POST",
-                contentType: "application/json", 
-                data: JSON.stringify({
-                    PageId: pageId
-                }),
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                },
-            });
-        });
-    }
+  createContentPage(pageId) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/toolbox/create-content-page`,
+              type: "POST",
+              contentType: "application/json", 
+              data: JSON.stringify({
+                  PageId: pageId
+              }),
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+              },
+          });
+      });
+  }
 
-    getContentPageData(productServiceId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/productservice?Productserviceid=${productServiceId}`,
-                type: "GET",
-                contentType: "application/json",
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                    reject(error);
-                },
-            });
-        });
-    }
+  getContentPageData(productServiceId) {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/productservice?Productserviceid=${productServiceId}`,
+              type: "GET",
+              contentType: "application/json",
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+                  reject(error);
+              },
+          });
+      });
+  }
 
-    getLocationTheme() {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `${baseURL}/api/location-theme`,
-                type: "GET",
-                contentType: "application/json",
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 404) {
-                        console.error("Error 404: Not Found");
-                    } else {
-                        console.error("Error:", status, error);
-                    }
-                    reject(error);
-                },
-            });
-        });
-    }
+  getLocationTheme() {
+      return new Promise((resolve, reject) => {
+          $.ajax({
+              url: `${baseURL}/api/location-theme`,
+              type: "GET",
+              contentType: "application/json",
+              success: function(response) {
+                  resolve(response);
+              },
+              error: function(xhr, status, error) {
+                  if (xhr.status === 404) {
+                      console.error("Error 404: Not Found");
+                  } else {
+                      console.error("Error:", status, error);
+                  }
+                  reject(error);
+              },
+          });
+      });
+  }
 }
 
 const iconsData = [{
@@ -1172,163 +423,4 @@ const defaultConstraints = `
     data-gjs-hoverable="false"
 `;
 
-const predefinedPages = {
-    "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c": {
-        PageName: "RECEPTION",
-    },
-    "784c2d18-622f-43f3-bde1-7b00035d6a07": {
-        PageName: "INFORMATION LOCATION",
-    },
-    "5e200c35-16fe-4401-93c6-b106d14c89cc": {
-        PageName: "CALENDAR",
-    },
-    "e22b29bc-1982-414a-87cf-71a839806a75": {
-        PageName: "MAIL BOX",
-    },
-};
 
-const predefinedPages1 = {
-    Reception: {
-        assets: [],
-        pages: [{
-            id: "page-id-1",
-            name: "Page 1",
-            component: {
-                type: "wrapper",
-                components: [{
-                        type: "image",
-                        src: "https://staging.comforta.yukon.software/media/receptie-197@3x.png",
-                        style: {
-                            width: "100%",
-                            height: "auto",
-                            display: "block",
-                        },
-                        attributes: {
-                            alt: "Sample Image",
-                        },
-                        selectable: false,
-                    },
-                    {
-                        type: "text",
-                        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                        style: {
-                            margin: "20px auto",
-                            width: "80%",
-                            "text-align": "left",
-                            "font-size": "16px",
-                            "line-height": "1.5",
-                        },
-                        selectable: true,
-                    },
-                ],
-            },
-        }, ],
-        styles: "",
-        css: "",
-        html: "",
-        components: "",
-        stylesheets: [],
-        scripts: [],
-    },
-    Location: {
-        assets: [],
-        pages: [{
-            id: "page-id-1",
-            name: "Page 1",
-            component: {
-                type: "wrapper",
-                components: [{
-                        type: "image",
-                        src: "https://via.placeholder.com/300",
-                        style: {
-                            width: "300px",
-                            height: "auto",
-                            margin: "10px auto",
-                            display: "block",
-                        },
-                        attributes: {
-                            alt: "Sample Image",
-                        },
-                        selectable: false,
-                    },
-                    {
-                        type: "text",
-                        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                        style: {
-                            margin: "20px auto",
-                            width: "80%",
-                            "text-align": "left",
-                            "font-size": "16px",
-                            "line-height": "1.5",
-                        },
-                        selectable: true,
-                    },
-                ],
-            },
-        }, ],
-        styles: "",
-        css: "",
-        html: "",
-        components: "",
-        stylesheets: [],
-        scripts: [],
-    },
-    Calendar: {
-        assets: [],
-        pages: [{
-            id: "page-id-1",
-            name: "Page 1",
-            component: {
-                type: "wrapper",
-                components: [{
-                    type: "image",
-                    src: "https://staging.comforta.yukon.software/media/calendar-page.png",
-                    style: {
-                        width: "100%",
-                        height: "auto",
-                        display: "block",
-                    },
-                    attributes: {
-                        alt: "Sample Image",
-                    },
-                    selectable: false,
-                }, ],
-            },
-        }, ],
-        styles: "",
-        css: "",
-        html: "",
-        components: "",
-        stylesheets: [],
-        scripts: [],
-    },
-    Mailbox: {
-        assets: [],
-        pages: [{
-            id: "page-id-1",
-            name: "Page 1",
-            component: {
-                type: "wrapper",
-                components: [{
-                    type: "image",
-                    src: "https://staging.comforta.yukon.software/media/mailbox.png",
-                    style: {
-                        width: "100%",
-                        height: "auto",
-                        display: "block",
-                    },
-                    attributes: {
-                        alt: "Sample Image",
-                    },
-                    selectable: false,
-                }, ],
-            },
-        }, ],
-        styles: "",
-        css: "",
-        html: "",
-        components: "",
-        stylesheets: [],
-        scripts: [],
-    },
-};

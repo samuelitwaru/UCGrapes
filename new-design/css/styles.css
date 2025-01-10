@@ -20,6 +20,11 @@
   outline: 1px solid #B4B9BD;
   border: 1px solid #B4B9BD;
 }
+/* 
+.tb-form-control option:checked {
+    background: #4a90e2 linear-gradient(0deg, #4a90e2 0%, #4a90e2 100%);
+} */
+
 
 .percentage-wrapper input:focus {
   outline: none !important;
@@ -602,12 +607,16 @@ h5#current-page-title {
 .bg-section .add-image .plus {
   font-size: 14px;
   margin-right: 5px;
-  color: #B4B9BD;
+  color: #333333bb;
 }
 
-.bg-section .add-image .icon {
+.bg-section .add-image .image-icon {
   font-size: 16px;
-  color: #B4B9BD;
+  color: #333333bb;
+}
+
+.bg-section .add-image .image-icon:hover {
+  background-color: none;
 }
 
 .bg-section .percentage-wrapper {

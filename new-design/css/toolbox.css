@@ -52,7 +52,7 @@ button {
 }
 
 .content-frame-container {
-  margin-top: 5px !important;
+  /* margin-top: 5px !important; */
 }
 
 /* Templates section */
@@ -188,6 +188,12 @@ button {
 
 .template-wrapper:hover .action-button {
   opacity: 1;
+}
+
+.content-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .gjs-selected .action-button {

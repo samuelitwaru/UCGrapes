@@ -877,6 +877,7 @@ h5#current-page-title {
   margin-bottom: 20px;
 }
 
+
 .page-template-block-number {
   margin-right: 50px;
   font-size: 16px;
@@ -1024,6 +1025,16 @@ h5#current-page-title {
 
 .file-item:hover .delete-media {
   opacity: 1;
+}
+
+#browseLink {
+  color: #222f54;
+  text-decoration: underline;
+}
+
+.upload-area.drag-over {
+  background-color: rgba(33, 150, 243, 0.05);
+  border-color: #2196f3;
 }
 
 .modal-actions {

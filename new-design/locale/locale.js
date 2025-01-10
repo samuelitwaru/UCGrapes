@@ -58,7 +58,7 @@ const translations = {
       error_during_deleting_media: "An error occurred while deleting the media file.",
       media_deleted_successfully: "Media file deleted successfully.",
       error_creating_page: "An error occurred while creating the page.",
-  
+      invalid_file_type_message: "Invalid file type. Please upload a valid image file.",
     },
     dutch: {
       navbar_title: "De app gereedschapskist bouwer",
@@ -121,6 +121,8 @@ const translations = {
       error_during_deleting_media: "Er is een fout opgetreden bij het verwijderen van het mediabestand.",
       media_deleted_successfully: "Mediabestand succesvol verwijderd.",
       error_creating_page: "Er is een fout opgetreden bij het aanmaken van de pagina.",
+      invalid_file_type_message: "Ongeldig bestandstype. Upload een geldig afbeeldingsbestand."
+
     },
   };
   

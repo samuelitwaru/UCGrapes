@@ -149,6 +149,7 @@ class ChildEditorManager {
         this.toolsSection.unDoReDo(editor);
         
         if (page.PageGJSJson) {
+            
             editor.loadProjectData(JSON.parse(page.PageGJSJson));
 
             if (page.PageIsPredefined) {
@@ -183,6 +184,7 @@ class ChildEditorManager {
 
                         if (img.length > 0) {
                             if (!contentPageData?.ProductServiceImage) {
+                                img[0].remove(); // Hide the image element
                                 console.warn('ProductServiceImage is missing in contentPageData');
                             } else {
                                 try {
@@ -194,13 +196,12 @@ class ChildEditorManager {
                                     console.error('Error updating image:', err);
                                 }
                             }
-                        } else {
-                            console.warn('#product-service-image element not found');
                         }
 
                         // Validate paragraph element
                         if (p.length > 0) {
                             if (!contentPageData?.ProductServiceDescription) {
+                                p[0].remove();
                                 console.warn('ProductServiceDescription is missing in contentPageData');
                             } else {
                                 try {
@@ -237,7 +238,6 @@ class ChildEditorManager {
                     if (this.toolsSection.checkIfNotAuthenticated(res)) {
                         return;
                     }
-
                     const contentPageData = res.SDT_ProductService;
 
                     if (contentPageData) {
@@ -895,6 +895,7 @@ class ChildEditorManager {
                     data-gjs-resizable="false"
                     data-gjs-hoverable="false"
                     style="flex: 1; padding: 0"
+                    class="content-page-wrapper"
                   >
                     <img
                       class="content-page-block"
@@ -910,7 +911,7 @@ class ChildEditorManager {
                       alt="Full-width Image"
                     />
                     <p
-                      style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px"
+                      style="flex: 1; padding: 0; margin: 0; height: auto;"
                       class="content-page-block"
                       data-gjs-draggable="true"
                       data-gjs-selectable="false"

@@ -512,7 +512,6 @@ class ActionListComponent {
         const container = document.createElement("ul");
         container.classList.add("tb-custom-list");
   
-        console.log("Datate", data);
         const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
             a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
         );
@@ -626,7 +625,6 @@ class ActionListComponent {
         this.setupFileManager();
     }
   
-    // File Size Formatting Utility
     formatFileSize(bytes) {
         if (bytes < 1024) return `${bytes} B`;
         if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
@@ -635,7 +633,6 @@ class ActionListComponent {
         return `${Math.round(bytes / 1024 / 1024 / 1024)} GB`;
     }
   
-    // Create Modal Elements
     createModalHeader() {
         const header = document.createElement("div");
         header.className = "tb-modal-header";
@@ -658,9 +655,65 @@ class ActionListComponent {
           <svg xmlns="http://www.w3.org/2000/svg" width="40.999" height="28.865" viewBox="0 0 40.999 28.865">
             <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"/>
           </svg>
-          ${this.currentLanguage.getTranslation("upload_section_text")}
+          <div class="upload-text">
+            ${this.currentLanguage.getTranslation("upload_section_text")}
+          </div>
         `;
+
+        // Add drag and drop event listeners
+        this.setupDragAndDrop(uploadArea);
+
         return uploadArea;
+    }
+
+    setupDragAndDrop(uploadArea) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('drag-over');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('drag-over');
+            });
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const files = Array.from(e.dataTransfer.files);
+            this.handleDroppedFiles(files);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    handleDroppedFiles(files) {
+        const validFiles = files.filter(file => 
+            ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)
+        );
+
+        if (validFiles.length !== files.length) {
+            this.toolBoxManager.displayAlertMessage(
+                `${this.currentLanguage.getTranslation("invalid_file_type_message")}`,
+                "error"
+            );
+        }
+
+        const fileList = document.querySelector('#fileList');
+        if (!fileList) return;
+
+        validFiles.forEach(file => {
+            const imageName = `${Date.now()}-${file.name}`;
+            this.processUploadedFile(file, imageName, fileList);
+        });
     }
   
     createModalActions() {
@@ -781,6 +834,31 @@ class ActionListComponent {
         this.addFileItemClickListeners(modal);
         this.addDeleteMediaListeners(modal);
         this.setupModalInteractions(modal, fileInputField, allUploadedFiles);
+        
+        // Add drag and drop styling
+        const style = document.createElement('style');
+        style.textContent = `
+            .upload-area {
+                position: relative;
+                border: 2px dashed #ccc;
+                border-radius: 8px;
+                padding: 40px 20px;
+                text-align: center;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            .upload-area.drag-over {
+                background-color: rgba(33, 150, 243, 0.05);
+                border-color: #2196f3;
+            }
+            
+            .upload-text {
+                margin-top: 15px;
+                color: #666;
+            }            
+        `;
+        document.head.appendChild(style);
     }
   
     addFileItemClickListeners(modal) {
@@ -839,20 +917,16 @@ class ActionListComponent {
         const cancelBtn = modal.querySelector("#cancelBtn");
         const saveBtn = modal.querySelector("#saveBtn");
   
-        // Upload area click
         uploadArea.onclick = () => fileInputField.click();
   
-        // File input change
         fileInputField.onchange = (event) => {
             this.handleFileInputChange(event, allUploadedFiles, fileList);
         };
   
-        // Close and cancel buttons
         closeButton.onclick = cancelBtn.onclick = () => {
             this.closeModal(modal, fileInputField);
         };
   
-        // Save button
         saveBtn.onclick = () => {
             this.saveSelectedFile(modal, fileInputField);
         };
@@ -1011,7 +1085,7 @@ class ActionListComponent {
                     return;
                 }
   
-                if (res.success === true) {
+                if (res.result === "success") {
                     // Remove the media item from the DOM
                     const mediaItem = document.querySelector(
                         `[data-mediaid="${mediaId}"]`
@@ -1019,7 +1093,11 @@ class ActionListComponent {
                     if (mediaItem) {
                         mediaItem.remove();
                     }
-  
+                    
+                    const modalActions = document.querySelector(".modal-actions");
+                    if (!this.dataManager.media || this.dataManager.media.length === 0) {
+                        modalActions.style.display = "none";
+                    }
                     // Provide feedback to the user
                     this.toolBoxManager.displayAlertMessage(
                         `${this.currentLanguage.getTranslation(
@@ -1027,10 +1105,11 @@ class ActionListComponent {
                         )}`,
                         "success"
                     );
+                    this.checkAndHideModalActions();
                 } else {
                     this.toolBoxManager.displayAlertMessage(
                         `${this.currentLanguage.getTranslation(
-                          "failed_to_delete_media_file"
+                          "failed_to_delete_media"
                         )}`,
                         "error"
                     );
@@ -1075,5 +1154,16 @@ class ActionListComponent {
           </div>
         `;
         return popup;
+    }
+
+    checkAndHideModalActions() {
+        const fileList = document.querySelector("#fileList");
+        const modalActions = document.querySelector(".modal-actions");
+    
+        if (fileList && fileList.children.length === 0) {
+            modalActions.style.display = "none"; 
+        } else {
+            modalActions.style.display = "flex"; 
+        }
     }
   }

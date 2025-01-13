@@ -83,12 +83,12 @@ N.A for now!
 
 ## Screenshots
 Genexus User Control
-![Genexus User Control](\screenshots\UCtoolbox.jpg "Genexus User Control")
+![Genexus User Control](/screenshots/UCtoolbox.jpg "Genexus User Control")
 
-![Genexus User Control](\screenshots\UCtoolbox2.jpg "Genexus User Control")
+![Genexus User Control](/screenshots/UCtoolbox2.jpg "Genexus User Control")
 
 Toolbox at Back office
-![Toolbox at Back office](\screenshots\screenshot1.jpg "Toolbox at Back office")
+![Toolbox at Back office](/screenshots/screenshot1.jpg "Toolbox at Back office")
 
-![Toolbox at Back office](\screenshots\screenshot2.png "Toolbox at Back office")
+![Toolbox at Back office](/screenshots/screenshot2.png "Toolbox at Back office")
 

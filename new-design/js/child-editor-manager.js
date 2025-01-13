@@ -209,7 +209,7 @@ class ChildEditorManager {
                                       <p 
                                         id="product-service-description" 
                                         class="content-page-block" 
-                                        style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px"
+                                        style="flex: 1; padding: 0; margin: 0; height: auto;"
                                       >
                                         ${contentPageData.ProductServiceDescription}
                                       </p>
@@ -334,7 +334,7 @@ class ChildEditorManager {
                                 });
                                 p[0].replaceWith(`
                                 <p
-                                    style="flex: 1; padding: 0; margin: 0; height: auto; margin-bottom: 15px"
+                                    style="flex: 1; padding: 0; margin: 0; height: auto;"
                                     class="content-page-block"
                                     data-gjs-draggable="true"
                                     data-gjs-selectable="false"

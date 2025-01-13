@@ -1158,7 +1158,7 @@ class ToolBoxManager {
                     break;
 
                   case "SiteUrl":
-                    icon = "fas fa-calendar";
+                    icon = "fas fa-link";
                     break;
 
                   case "Form":

@@ -2,7 +2,6 @@
 
 **UCToolbox** is a library designed for the **Comforta** project to customize the appearance of mobile applications. It offers components and functions for managing actions, mapping, media, and seamless communication with the Genexus framework. Built on top of **GrapesJS**, it enables dynamic interaction between the frontend and backend.
 
----
 
 ## Features
 
@@ -11,7 +10,6 @@
 - **Dynamic Themes**: Includes tools for theme selection, tile styling, page creation, and media management.
 - **Localization Support**: Offers localized content for better usability across different regions.
 
----
 
 ## Repository Structure
 
@@ -52,14 +50,12 @@ Includes configuration files for GrapesJS.
 ### 5. `locale`
 Stores localization strings and functions for regional content adaptation.
 
----
 
 ## Getting Started with GrapesJS
 
 UCToolbox is built on **GrapesJS**, a versatile framework for building and managing web templates.  
 Learn more about GrapesJS: [GrapesJS Documentation](https://grapesjs.com/docs).
 
----
 
 ## Usage
 
@@ -69,7 +65,6 @@ Learn more about GrapesJS: [GrapesJS Documentation](https://grapesjs.com/docs).
 4. Update your localhost address in the data.js
 5. Run your Genexus project and navigate to the Application Design page.
 
----
 
 ## Folder Overview
 

@@ -44,10 +44,20 @@ class ChildEditorManager {
         this.currentLanguage = currentLanguage;
     }
 
+    /**
+     * Retrieves the current GrapesJS editor instance.
+     * 
+     * @returns {Object} The current GrapesJS editor instance.
+     */
     getCurrentEditor() {
         return this.currentEditor.editor;
     }
 
+    /**
+     * Sets the current editor by its ID and activates the corresponding frame.
+     * 
+     * @param {string} editorId - The ID of the editor to set as the current editor.
+     */
     setCurrentEditor(editorId) {
         this.currentEditor = this.editors[editorId];
         this.activateFrame(editorId + "-frame");

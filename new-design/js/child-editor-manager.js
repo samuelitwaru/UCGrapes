@@ -138,7 +138,7 @@ class ChildEditorManager {
                     "/Resources/UCGrapes1/new-design/css/toolbox.css",
                     "/Resources/UCGrapes1/new-design/css/child-editor.css",
                 ],
-                scripts: ["/Resources/UCGrapes1/new-design/js/child-editor.js"],
+                // scripts: ["/Resources/UCGrapes1/new-design/js/child-editor.js"],
             },
             baseCss: " ",
             dragMode: "normal",

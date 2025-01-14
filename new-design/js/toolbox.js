@@ -325,21 +325,21 @@ class ToolBoxManager {
   publishPages(isNotifyResidents) {
     const editors = Object.values(this.editorManager.editors);
     if (editors && editors.length) {
-      let saveCount = 0;
-      const totalPages = editors.length;
+      const pageDataList = []; // Array to hold data for all pages
 
-      for (let index = 0; index < editors.length; index++) {
-        const editorData = editors[index];
-        let pageId = editorData.pageId;
-        let editor = editorData.editor;
-        let page = this.dataManager.pages.SDT_PageCollection.find(
+      editors.forEach((editorData) => {
+        const pageId = editorData.pageId;
+        const editor = editorData.editor;
+        const page = this.dataManager.pages.SDT_PageCollection.find(
           (page) => page.PageId == pageId
         );
 
-        let projectData = editor.getProjectData();
-        let htmlData = editor.getHtml();
+        if (!pageId) return;
+
+        const projectData = editor.getProjectData();
+        const htmlData = editor.getHtml();
+        const pageName = page.PageName;
         let jsonData;
-        let pageName = page.PageName;
 
         if (page.PageIsContentPage) {
           jsonData = mapContentToPageData(projectData, page);
@@ -347,32 +347,41 @@ class ToolBoxManager {
           jsonData = mapTemplateToPageData(projectData, page);
         }
 
-        if (pageId) {
-          let data = {
-            PageId: pageId,
-            PageName: pageName,
-            PageJsonContent: JSON.stringify(jsonData),
-            PageGJSHtml: htmlData,
-            PageGJSJson: JSON.stringify(projectData),
-            SDT_Page: jsonData,
-            PageIsPublished: true,
-            IsNotifyResidents: isNotifyResidents,
-          };
+        const data = {
+          PageId: pageId,
+          PageName: pageName,
+          PageJsonContent: JSON.stringify(jsonData),
+          PageGJSHtml: htmlData,
+          PageGJSJson: JSON.stringify(projectData),
+          SDT_Page: jsonData,
+          PageIsPublished: true,
+        };
 
-          this.dataManager.updatePage(data).then((res) => {
+        pageDataList.push(data);
+      });
+
+      if (pageDataList.length) {
+        const payload = {
+          IsNotifyResidents: isNotifyResidents, // Universal field
+          PagesList: pageDataList, // Array of page data
+        };
+
+        // Send all pages with the universal field at once
+        this.dataManager
+          .updatePagesBatch(payload)
+          .then((res) => {
             if (this.checkIfNotAuthenticated(res)) {
               return;
             }
-
-            saveCount++;
-            if (saveCount === totalPages) {
-              this.displayAlertMessage(
-                "All Pages Saved Successfully",
-                "success"
-              );
-            }
+            this.displayAlertMessage("All Pages Saved Successfully", "success");
+          })
+          .catch((error) => {
+            console.error("Error saving pages:", error);
+            this.displayAlertMessage(
+              "An error occurred while saving pages.",
+              "error"
+            );
           });
-        }
       }
     }
   }

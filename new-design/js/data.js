@@ -117,6 +117,25 @@ class DataManager {
     });
   }
 
+  updatePagesBatch(payload) {
+    return new Promise((resolve, reject) => {
+      console.log(payload);
+      $.ajax({
+        url: `${baseURL}/api/toolbox/update-pages-batch`,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (xhr, status, error) {
+          console.error("Error:", status, error);
+          reject(error);
+        },
+      });
+    });
+  }
+
   updateLocationTheme() {
     let themeId = this.selectedTheme.id;
 
@@ -414,3 +433,58 @@ const defaultConstraints = `
     data-gjs-resizable="false"
     data-gjs-hoverable="false"
 `;
+
+/**publishPages(isNotifyResidents) {
+  const editors = Object.values(this.editorManager.editors);
+  if (editors && editors.length) {
+    let saveCount = 0;
+    const totalPages = editors.length;
+
+    for (let index = 0; index < editors.length; index++) {
+      const editorData = editors[index];
+      let pageId = editorData.pageId;
+      let editor = editorData.editor;
+      let page = this.dataManager.pages.SDT_PageCollection.find(
+        (page) => page.PageId == pageId
+      );
+
+      let projectData = editor.getProjectData();
+      let htmlData = editor.getHtml();
+      let jsonData;
+      let pageName = page.PageName;
+
+      if (page.PageIsContentPage) {
+        jsonData = mapContentToPageData(projectData, page);
+      } else {
+        jsonData = mapTemplateToPageData(projectData, page);
+      }
+
+      if (pageId) {
+        let data = {
+          PageId: pageId,
+          PageName: pageName,
+          PageJsonContent: JSON.stringify(jsonData),
+          PageGJSHtml: htmlData,
+          PageGJSJson: JSON.stringify(projectData),
+          SDT_Page: jsonData,
+          PageIsPublished: true,
+          IsNotifyResidents: isNotifyResidents,
+        };
+
+        this.dataManager.updatePage(data).then((res) => {
+          if (this.checkIfNotAuthenticated(res)) {
+            return;
+          }
+
+          saveCount++;
+          if (saveCount === totalPages) {
+            this.displayAlertMessage(
+              "All Pages Saved Successfully",
+              "success"
+            );
+          }
+        });
+      }
+    }
+  }
+} **/

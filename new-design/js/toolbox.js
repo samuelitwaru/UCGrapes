@@ -459,55 +459,145 @@ class ToolBoxManager {
     });
   }
 
+  // listThemesInSelectField() {
+  //   const themeSelect = document.getElementById("theme-select");
+
+  //   themeSelect.innerHTML = "";
+
+  //   this.themes.forEach((theme) => {
+  //     const option = document.createElement("option");
+  //     option.value = theme.name;
+  //     option.textContent = theme.name;
+  //     option.id = theme.id;
+
+  //     // Check if the current theme matches this theme
+  //     if (this.currentTheme && theme.name === this.currentTheme.name) {
+  //       option.selected = true;
+  //     }
+
+  //     themeSelect.appendChild(option);
+  //   });
+
+  //   themeSelect.addEventListener("change", (e) => {
+  // const themeName = e.target.value;
+  // // update location theme
+  // this.dataManager.selectedTheme = this.themes.find(
+  //   (theme) => theme.name === themeName
+  // );
+
+  // this.dataManager.updateLocationTheme().then((res) => {
+  //   if (this.checkIfNotAuthenticated(res)) {
+  //     return;
+  //   }
+
+  //   if (this.setTheme(themeName)) {
+  //     this.themeColorPalette(this.currentTheme.colors);
+
+  //     localStorage.setItem("selectedTheme", themeName);
+
+  //     const message = this.currentLanguage.getTranslation(
+  //       "theme_applied_success_message"
+  //     );
+  //     const status = "success";
+  //     this.displayAlertMessage(message, status);
+  //   } else {
+  //     const message = this.currentLanguage.getTranslation(
+  //       "error_applying_theme_message"
+  //     );
+  //     const status = "error";
+  //     this.displayAlertMessage(message, status);
+  //   }
+  // });
+  //   });
+  // }
+
   listThemesInSelectField() {
-    const themeSelect = document.getElementById("theme-select");
+    const select = document.querySelector(".tb-custom-theme-selection");
+    const button = select.querySelector(".theme-select-button");
+    const selectedValue = button.querySelector(".selected-theme-value");
 
-    themeSelect.innerHTML = "";
-
-    this.themes.forEach((theme) => {
-      const option = document.createElement("option");
-      option.value = theme.name;
-      option.textContent = theme.name;
-      option.id = theme.id;
-
-      // Check if the current theme matches this theme
-      if (this.currentTheme && theme.name === this.currentTheme.name) {
-        option.selected = true;
-      }
-
-      themeSelect.appendChild(option);
+    // Toggle dropdown visibility
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isOpen = optionsList.classList.contains("show");
+      optionsList.classList.toggle("show");
+      button.classList.toggle("open");
+      button.setAttribute("aria-expanded", !isOpen);
     });
 
-    themeSelect.addEventListener("change", (e) => {
-      const themeName = e.target.value;
-      // update location theme
-      this.dataManager.selectedTheme = this.themes.find(
-        (theme) => theme.name === themeName
-      );
+    const optionsList = document.createElement("div");
+    optionsList.classList.add("theme-options-list");
+    optionsList.setAttribute("role", "listbox");
+    optionsList.innerHTML = "";
 
-      this.dataManager.updateLocationTheme().then((res) => {
-        if (this.checkIfNotAuthenticated(res)) {
-          return;
-        }
+    // Populate themes into the dropdown
+    this.themes.forEach((theme, index) => {
+      const option = document.createElement("div");
+      option.classList.add("theme-option");
+      option.setAttribute("role", "option");
+      option.setAttribute("data-value", theme.name);
+      option.textContent = theme.name;
 
-        if (this.setTheme(themeName)) {
-          this.themeColorPalette(this.currentTheme.colors);
+      if (this.currentTheme && theme.name === this.currentTheme.name) {
+        option.classList.add("selected");
+      }
 
-          localStorage.setItem("selectedTheme", themeName);
+      option.addEventListener("click", (e) => {
+        selectedValue.textContent = theme.name;
 
-          const message = this.currentLanguage.getTranslation(
-            "theme_applied_success_message"
-          );
-          const status = "success";
-          this.displayAlertMessage(message, status);
-        } else {
-          const message = this.currentLanguage.getTranslation(
-            "error_applying_theme_message"
-          );
-          const status = "error";
-          this.displayAlertMessage(message, status);
-        }
+        // Mark as selected
+        const allOptions = optionsList.querySelectorAll(".theme-option");
+        allOptions.forEach((opt) => opt.classList.remove("selected"));
+        option.classList.add("selected");
+
+        // Close the dropdown
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+
+        const themeName = theme.name;
+        // update location theme
+        this.dataManager.selectedTheme = this.themes.find(
+          (theme) => theme.name === themeName
+        );
+
+        this.dataManager.updateLocationTheme().then((res) => {
+          if (this.checkIfNotAuthenticated(res)) {
+            return;
+          }
+
+          if (this.setTheme(themeName)) {
+            this.themeColorPalette(this.currentTheme.colors);
+
+            localStorage.setItem("selectedTheme", themeName);
+
+            const message = this.currentLanguage.getTranslation(
+              "theme_applied_success_message"
+            );
+            const status = "success";
+            this.displayAlertMessage(message, status);
+          } else {
+            const message = this.currentLanguage.getTranslation(
+              "error_applying_theme_message"
+            );
+            const status = "error";
+            this.displayAlertMessage(message, status);
+          }
+        });
       });
+
+      // Append option to the options list
+      optionsList.appendChild(option);
+    });
+
+    select.appendChild(optionsList);
+
+    document.addEventListener("click", (e) => {
+      if (!select.contains(e.target)) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
     });
   }
 
@@ -521,10 +611,12 @@ class ToolBoxManager {
 
   setTheme(themeName) {
     const theme = this.themes.find((theme) => theme.name === themeName);
-    document.getElementById("theme-select").value = themeName;
+    const select = document.querySelector(".tb-custom-theme-selection");
+    select.querySelector(".selected-theme-value").textContent = themeName;
     if (!theme) {
       return false;
     }
+    console.log("Theme set to: ", theme)
 
     this.currentTheme = theme;
 
@@ -1298,15 +1390,15 @@ class ToolBoxManager {
 
   loadThemeIcons(themeIconsList) {
     const themeIcons = document.getElementById("icons-list");
-    const themeIconCategory = document.getElementById("theme_icon_category");
 
-    // Set default category
     let selectedCategory = "General";
 
-    // Add event listener for category changes
-    themeIconCategory.addEventListener("change", (e) => {
-      selectedCategory = e.target.value;
-      renderIcons();
+    const categoryOptions = document.querySelectorAll(".category-option");
+    categoryOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        selectedCategory = option.textContent.trim();
+        renderIcons();
+      });
     });
 
     const renderIcons = () => {
@@ -1314,8 +1406,10 @@ class ToolBoxManager {
 
       // Filter icons based on selected category
       const filteredIcons = themeIconsList.filter(
-        (icon) => icon.IconCategory.trim() === selectedCategory.trim()
+        (icon) => icon.IconCategory.trim() === selectedCategory
       );
+
+      console.log(themeIconsList);
 
       if (filteredIcons.length === 0) {
         console.log("No icons found for selected category.");

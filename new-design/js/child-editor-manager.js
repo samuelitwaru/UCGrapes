@@ -485,6 +485,8 @@ class ChildEditorManager {
 
             this.updateUIState();
         });
+
+        editor.Keymaps.keymaster.unbind('backspace');editor.Keymaps.keymaster.unbind('delete');
     }
 
     updateUIState() {

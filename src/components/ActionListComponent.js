@@ -166,25 +166,24 @@ class ActionListComponent {
 
   setupCategoryToggle() {
     const categories = document.querySelectorAll(".category");
-    let self = this;
 
     categories.forEach((category) => {
-      category.addEventListener("toggle", function () {
-        self.selectedObject = category.dataset.category;
-        const searchBox = this.querySelector(".search-container");
-        const icon = this.querySelector("summary i");
-        const isOpen = this.open;
+      category.addEventListener("toggle", () => {
+        this.selectedObject = category.dataset.category;
+        const searchBox = category.querySelector(".search-container");
+        const icon = category.querySelector("summary i");
+        const isOpen = category.open;
 
         if (isOpen) {
           categories.forEach((otherCategory) => {
-            if (otherCategory !== this) {
-              otherCategory.open = false;
-              otherCategory.querySelector(".search-container").style.display =
-                "none";
-              otherCategory
-                .querySelector("summary i")
-                .classList.replace("fa-angle-down", "fa-angle-right");
-            }
+        if (otherCategory !== category) {
+          otherCategory.open = false;
+          otherCategory.querySelector(".search-container").style.display =
+            "none";
+          otherCategory
+            .querySelector("summary i")
+            .classList.replace("fa-angle-down", "fa-angle-right");
+        }
           });
           searchBox.style.display = "block";
           icon.classList.replace("fa-angle-right", "fa-angle-down");
@@ -197,16 +196,16 @@ class ActionListComponent {
   }
 
   setupItemClickListener() {
-    let self = this;
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
 
     document.querySelectorAll(".category-content li").forEach((item) => {
-      item.addEventListener("click", function () {
+      item.addEventListener("click", () => {
         dropdownHeader.textContent = `${
-          this.closest(".category").dataset.category
-        }, ${this.textContent}`;
+          item.closest(".category").dataset.category
+        }, ${item.textContent}`;
 
+        console.log("editor: ", this.editorManager);
         const editor = this.editorManager.getCurrentEditor();
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
@@ -216,25 +215,25 @@ class ActionListComponent {
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
-              this.id
+              item.id
             );
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
-              `${this.closest(".category").dataset.category}, ${
-                this.textContent
+              `${item.closest(".category").dataset.category}, ${
+                item.textContent
               }`
             );
             if (this.selectedObject == "Service/Product Page") {
-              this.createContentPage(this.id);
+              this.createContentPage(item.id);
             }
           }
 
           if (titleComponent) {
-            titleComponent.components(this.textContent);
+            titleComponent.components(item.textContent);
 
             const sidebarInputTitle = document.getElementById("tile-title");
             if (sidebarInputTitle) {
-              sidebarInputTitle.textContent = this.textContent;
+              sidebarInputTitle.textContent = item.textContent;
             }
           }
         }

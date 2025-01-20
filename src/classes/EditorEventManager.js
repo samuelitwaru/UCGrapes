@@ -26,13 +26,19 @@ class EditorEventManager {
     this.loadTheme();
 
     const wrapper = editor.getWrapper();
-    wrapper.view.el.addEventListener("click", (e) => this.handleEditorClick(e, editor));
-    wrapper.view.el.addEventListener("contextmenu", (e) => this.rightClickEventHandler(editor, e));
+    wrapper.view.el.addEventListener("click", (e) =>
+      this.handleEditorClick(e, editor)
+    );
+    wrapper.view.el.addEventListener("contextmenu", (e) =>
+      this.rightClickEventHandler(editor, e)
+    );
   }
 
   loadTheme() {
     this.editorManager.dataManager.getLocationTheme().then((theme) => {
-      this.editorManager.toolsSection.themeManager.setTheme(theme.SDT_LocationTheme.ThemeName);
+      this.editorManager.toolsSection.themeManager.setTheme(
+        theme.SDT_LocationTheme.ThemeName
+      );
     });
   }
 
@@ -40,7 +46,6 @@ class EditorEventManager {
     const editorId = editor.getConfig().container;
     const editorContainerId = `${editorId}-frame`;
 
-    document.querySelector(".cta-button-layout-container").style.display = "none";
     this.editorManager.setCurrentEditor(editorId);
     this.editorManager.currentPageId = $(editorContainerId).data().pageid;
 
@@ -86,7 +91,9 @@ class EditorEventManager {
   }
 
   editorOnSelected(editor) {
-    editor.on("component:selected", (component) => this.handleComponentSelected(component));
+    editor.on("component:selected", (component) =>
+      this.handleComponentSelected(component)
+    );
   }
 
   handleComponentSelected(component) {
@@ -95,13 +102,20 @@ class EditorEventManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     if (this.editorManager.selectedTemplateWrapper) {
-      const tileLabel = this.editorManager.selectedTemplateWrapper.querySelector(".tile-title");
+      const tileLabel =
+        this.editorManager.selectedTemplateWrapper.querySelector(".tile-title");
       if (tileLabel) {
         sidebarInputTitle.value = tileLabel.textContent;
       }
 
-      this.templateManager.removeElementOnClick(".selected-tile-icon", ".tile-icon-section");
-      this.templateManager.removeElementOnClick(".selected-tile-title", ".tile-title-section");
+      this.templateManager.removeElementOnClick(
+        ".selected-tile-icon",
+        ".tile-icon-section"
+      );
+      this.templateManager.removeElementOnClick(
+        ".selected-tile-title",
+        ".tile-title-section"
+      );
     }
 
     this.editorManager.toolsSection.ui.updateTileProperties(
@@ -111,7 +125,12 @@ class EditorEventManager {
 
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page?.PageIsContentPage) {
-      this.editorManager.toolsSection.ui.activateCtaBtnStyles(this.editorManager.selectedComponent);
+      this.editorManager.toolsSection.ui.activateCtaBtnStyles(
+        this.editorManager.selectedComponent
+      );
+    } else {
+      document.querySelector(".cta-button-layout-container").style.display =
+        "none";
     }
 
     this.hideContextMenu();
@@ -120,7 +139,8 @@ class EditorEventManager {
 
   rightClickEventHandler(editor, e) {
     document.querySelectorAll("iframe").forEach((iframe) => {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      const iframeDoc =
+        iframe.contentDocument || iframe.contentWindow?.document;
       if (!iframeDoc) return;
 
       const contextMenu = document.getElementById("contextMenu");
@@ -153,7 +173,9 @@ class EditorEventManager {
 
     const deleteImageButton = document.getElementById("delete-bg-image");
     if (deleteImageButton) {
-      deleteImageButton.addEventListener("click", () => this.deleteBackgroundImage(editor));
+      deleteImageButton.addEventListener("click", () =>
+        this.deleteBackgroundImage(editor)
+      );
     }
   }
 
@@ -187,8 +209,10 @@ class EditorEventManager {
   updateToolsSection() {
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page) {
-      document.querySelector("#content-page-section").style.display = page.PageIsContentPage ? "block" : "none";
-      document.querySelector("#menu-page-section").style.display = page.PageIsContentPage ? "none" : "block";
+      document.querySelector("#content-page-section").style.display =
+        page.PageIsContentPage ? "block" : "none";
+      document.querySelector("#menu-page-section").style.display =
+        page.PageIsContentPage ? "none" : "block";
     }
   }
 
@@ -211,14 +235,22 @@ class EditorEventManager {
     leftNavigator.style.display = "block";
     rightNavigator.style.display = "block";
 
-    const alignment = window.innerWidth <= 1440
-      ? frames.length > 1 ? "flex-start" : "center"
-      : frames.length > 3 ? "flex-start" : "center";
+    const alignment =
+      window.innerWidth <= 1440
+        ? frames.length > 1
+          ? "flex-start"
+          : "center"
+        : frames.length > 3
+        ? "flex-start"
+        : "center";
 
     scrollContainer.style.setProperty("justify-content", alignment);
 
     const scrollBy = (offset) => {
-      scrollContainer.scrollTo({ left: scrollContainer.scrollLeft + offset, behavior: "smooth" });
+      scrollContainer.scrollTo({
+        left: scrollContainer.scrollLeft + offset,
+        behavior: "smooth",
+      });
     };
 
     prevButton.addEventListener("click", () => scrollBy(-200));
@@ -227,7 +259,8 @@ class EditorEventManager {
     const updateButtonVisibility = () => {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
       prevButton.style.display = scrollLeft > 0 ? "block" : "none";
-      nextButton.style.display = scrollLeft + clientWidth < scrollWidth ? "block" : "none";
+      nextButton.style.display =
+        scrollLeft + clientWidth < scrollWidth ? "block" : "none";
     };
 
     updateButtonVisibility();

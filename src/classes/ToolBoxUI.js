@@ -204,6 +204,7 @@ class ToolBoxUI {
   }
 
   renderCtas(callToActions, editorInstance, contentPageCtas) {
+    contentPageCtas.innerHTML = "";
     callToActions.forEach((cta) => {
       const ctaItem = this.createCtaItem(cta);
       this.attachClickHandler(ctaItem, cta, editorInstance);
@@ -252,29 +253,33 @@ class ToolBoxUI {
 
   generateCtaComponent(cta, backgroundColor = "#5068a8") {
     const ctaType = this.getCtaType(cta.CallToActionType);
-    const defaultConstraints =
-      "data-gjs-draggable='false' data-gjs-editable='false' data-gjs-highlightable='false' data-gjs-droppable='false' data-gjs-resizable='false' data-gjs-hoverable='false'";
-
     return `
       <div class="cta-container-child cta-child" 
-        id="id-${cta.CallToActionId}"
-        data-gjs-type="cta-buttons"
-        cta-button-id="${cta.CallToActionId}"
-        ${defaultConstraints}
-        cta-button-label="${cta.CallToActionName}"
-        cta-button-type="${cta.CallToActionType}"
-        cta-button-action="${
-          cta.CallToActionPhone || cta.CallToActionEmail || cta.CallToActionUrl
-        }"
-        cta-background-color="${backgroundColor}"
-      >
-        <div class="cta-button" ${defaultConstraints} style="background-color: ${backgroundColor};">
-          <i class="${ctaType.icon}" ${defaultConstraints}></i>
-          <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
-        </div>
-        <div class="cta-label" ${defaultConstraints}>${
-      cta.CallToActionName
-    }</div>
+            id="id-${cta.CallToActionId}"
+            data-gjs-type="cta-buttons"
+            cta-button-id="${cta.CallToActionId}"
+            data-gjs-draggable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-resizable="false"
+            data-gjs-hoverable="false"
+            cta-button-label="${cta.CallToActionName}"
+            cta-button-type="${cta.CallToActionType}"
+            cta-button-action="${
+              cta.CallToActionPhone ||
+              cta.CallToActionEmail ||
+              cta.CallToActionUrl
+            }"
+            cta-background-color="#5068a8"
+          >
+            <div class="cta-button" ${defaultConstraints} style="background-color: #5068a8;">
+              <i class="${ctaType.icon}" ${defaultConstraints}></i>
+              <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
+            </div>
+            <div class="cta-label" ${defaultConstraints}>${
+          cta.CallToActionName
+        }</div>
       </div>
     `;
   }
@@ -343,11 +348,9 @@ class ToolBoxUI {
 
   // Helper method to check if component is a valid CTA
   isValidCtaComponent(attributes) {
-    return (
-      attributes.hasOwnProperty("cta-button-label") &&
-      attributes.hasOwnProperty("cta-button-type") &&
-      attributes.hasOwnProperty("cta-button-action")
-    );
+    return attributes.hasOwnProperty("cta-button-label") &&
+           attributes.hasOwnProperty("cta-button-type") &&
+           attributes.hasOwnProperty("cta-button-action");
   }
 
   // Extract CTA attributes from component
@@ -358,7 +361,7 @@ class ToolBoxUI {
       ctaName: attributes["cta-button-label"],
       ctaType: attributes["cta-button-type"],
       ctaAction: attributes["cta-button-action"],
-      ctaButtonBgColor: attributes["cta-background-color"],
+      ctaButtonBgColor: attributes["cta-background-color"]
     };
   }
 
@@ -368,14 +371,14 @@ class ToolBoxUI {
       Phone: "fas fa-phone-alt",
       Email: "fas fa-envelope",
       SiteUrl: "fas fa-link",
-      Form: "fas fa-file",
+      Form: "fas fa-file"
     };
     return iconMap[ctaType] || "fas fa-question";
   }
 
+  // Generate common button attributes
   getCommonButtonAttributes(ctaAttributes) {
-    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } =
-      ctaAttributes;
+    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } = ctaAttributes;
     return `
       data-gjs-draggable="false"
       data-gjs-editable="false"
@@ -394,12 +397,11 @@ class ToolBoxUI {
     `;
   }
 
+  // Generate plain button component
   generatePlainButtonComponent(ctaAttributes) {
     const { ctaName, ctaButtonBgColor } = ctaAttributes;
     return `
-      <div class="plain-button-container" ${this.getCommonButtonAttributes(
-        ctaAttributes
-      )}>
+      <div class="plain-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
         <button style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
                 class="plain-button" ${defaultConstraints}>
           <div class="cta-badge" ${defaultConstraints}>
@@ -411,13 +413,12 @@ class ToolBoxUI {
     `;
   }
 
+  // Generate image button component
   generateImageButtonComponent(ctaAttributes) {
     const { ctaName, ctaButtonBgColor, ctaType } = ctaAttributes;
     const icon = this.getCtaTypeIcon(ctaType);
     return `
-      <div class="img-button-container" ${this.getCommonButtonAttributes(
-        ctaAttributes
-      )}>
+      <div class="img-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
         <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
              class="img-button" ${defaultConstraints}>
           <i class="${icon} img-button-icon" ${defaultConstraints}></i>
@@ -431,11 +432,10 @@ class ToolBoxUI {
     `;
   }
 
+  // Handle component replacement
   handleComponentReplacement(editorInstance, ctaId, newComponent) {
     editorInstance.once("component:add", () => {
-      const addedComponent = editorInstance
-        .getWrapper()
-        .find(`#id-${ctaId}`)[0];
+      const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];
       if (addedComponent) {
         editorInstance.select(addedComponent);
       }
@@ -443,10 +443,9 @@ class ToolBoxUI {
     this.manager.editorManager.selectedComponent.replaceWith(newComponent);
   }
 
+  // Handle button click
   handleButtonClick(editorInstance, generateComponent) {
-    const ctaContainer = editorInstance
-      .getWrapper()
-      .find(".cta-button-container")[0];
+    const ctaContainer = editorInstance.getWrapper().find(".cta-button-container")[0];
     if (!ctaContainer) return;
 
     const selectedComponent = this.manager.editorManager.selectedComponent;
@@ -454,39 +453,33 @@ class ToolBoxUI {
 
     const attributes = selectedComponent.getAttributes();
     if (!this.isValidCtaComponent(attributes)) {
-      const message = this.currentLanguage.getTranslation(
-        "please_select_cta_button"
-      );
+      const message = this.currentLanguage.getTranslation("please_select_cta_button");
       this.displayAlertMessage(message, "error");
       return;
     }
 
     const ctaAttributes = this.extractCtaAttributes(selectedComponent);
     const newComponent = generateComponent(ctaAttributes);
-    this.handleComponentReplacement(
-      editorInstance,
-      ctaAttributes.ctaId,
-      newComponent
-    );
+    this.handleComponentReplacement(editorInstance, ctaAttributes.ctaId, newComponent);
   }
 
+  // Setup plain button listener
   setupPlainButtonListener(editorInstance) {
     const plainButton = document.getElementById("plain-button-layout");
     plainButton.onclick = (e) => {
       e.preventDefault();
-      this.handleButtonClick(editorInstance, (attrs) =>
-        this.generatePlainButtonComponent(attrs)
-      );
+      this.handleButtonClick(editorInstance, 
+        (attrs) => this.generatePlainButtonComponent(attrs));
     };
   }
 
+  // Setup image button listener
   setupImageButtonListener(editorInstance) {
     const imgButton = document.getElementById("img-button-layout");
     imgButton.onclick = (e) => {
       e.preventDefault();
-      this.handleButtonClick(editorInstance, (attrs) =>
-        this.generateImageButtonComponent(attrs)
-      );
+      this.handleButtonClick(editorInstance, 
+        (attrs) => this.generateImageButtonComponent(attrs));
     };
   }
 

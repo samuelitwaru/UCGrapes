@@ -232,6 +232,7 @@ class EditorManager {
   }
 
   async updateImage(wrapper, contentPageData) {
+    console.log("updateImage")
     const img = wrapper.find("#product-service-image");
     if (img.length > 0) {
       if (!contentPageData?.ProductServiceImage) {
@@ -255,8 +256,9 @@ class EditorManager {
       if (!contentPageData?.ProductServiceDescription) {
         p[0].remove();
       } else {
+        console.log("updateDescription", contentPageData.ProductServiceDescription)
         try {
-          p[0].textContent = contentPageData.ProductServiceDescription;
+          p[0].components(contentPageData.ProductServiceDescription);
         } catch (err) {
           console.error("Error updating description:", err);
         }

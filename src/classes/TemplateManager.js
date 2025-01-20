@@ -541,27 +541,28 @@ class TemplateManager {
   }
 
   initialContentPageTemplate(contentPageData) {
+    console.log("initialContentPageTemplate", contentPageData);
     return `
-              <div
-                class="content-frame-container test"
-                id="frame-container"
+        <div
+            class="content-frame-container test"
+            id="frame-container"
+            data-gjs-draggable="false"
+            data-gjs-selectable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-hoverable="false"
+        >
+            <div
+                class="container-column"
                 data-gjs-draggable="false"
                 data-gjs-selectable="false"
                 data-gjs-editable="false"
                 data-gjs-highlightable="false"
                 data-gjs-droppable="false"
                 data-gjs-hoverable="false"
-              >
+            >
                 <div
-                  class="container-column"
-                  data-gjs-draggable="false"
-                  data-gjs-selectable="false"
-                  data-gjs-editable="false"
-                  data-gjs-highlightable="false"
-                  data-gjs-droppable="false"
-                  data-gjs-hoverable="false"
-                >
-                  <div
                     class="container-row"
                     data-gjs-draggable="false"
                     data-gjs-selectable="false"
@@ -569,63 +570,68 @@ class TemplateManager {
                     data-gjs-droppable="false"
                     data-gjs-highlightable="true"
                     data-gjs-hoverable="true"
-                  >
+                >
                     <div
-                      class="template-wrapper"
-                      data-gjs-draggable="false"
-                      data-gjs-selectable="false"
-                      data-gjs-editable="false"
-                      data-gjs-droppable="false"
-                      data-gjs-highlightable="true"
-                      data-gjs-hoverable="true"
-                      style="display: flex; width: 100%"
-                    >
-                      <div
+                        class="template-wrapper"
                         data-gjs-draggable="false"
                         data-gjs-selectable="false"
                         data-gjs-editable="false"
-                        data-gjs-highlightable="false"
-                        data-gjs-droppable="true"
-                        data-gjs-resizable="false"
-                        data-gjs-hoverable="false"
-                        style="flex: 1; padding: 0"
-                        class="content-page-wrapper"
-                      >
-                        <img
-                          class="content-page-block"
-                          id="product-service-image"
-                          data-gjs-draggable="true"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-hoverable="false"
-                          src="${contentPageData.ProductServiceImage}"
-                          data-gjs-type="product-service-image"
-                          alt="Full-width Image"
-                        />
-                        <p
-                          style="flex: 1; padding: 0; margin: 0; height: auto;"
-                          class="content-page-block"
-                          data-gjs-draggable="true"
-                          data-gjs-selectable="false"
-                          data-gjs-editable="false"
-                          data-gjs-droppable="false"
-                          data-gjs-highlightable="false"
-                          data-gjs-hoverable="false"
-                          id="product-service-description"
-                          data-gjs-type="product-service-description"
+                        data-gjs-droppable="false"
+                        data-gjs-highlightable="true"
+                        data-gjs-hoverable="true"
+                        style="display: flex; width: 100%"
+                    >
+                        <div
+                            data-gjs-draggable="false"
+                            data-gjs-selectable="false"
+                            data-gjs-editable="false"
+                            data-gjs-highlightable="false"
+                            data-gjs-droppable="true"
+                            data-gjs-resizable="false"
+                            data-gjs-hoverable="false"
+                            style="flex: 1; padding: 0"
+                            class="content-page-wrapper"
                         >
-                        ${contentPageData.ProductServiceDescription}
-                        </p>
-                      </div>
+                            ${contentPageData.ProductServiceImage ? `
+                                <img
+                                    class="content-page-block"
+                                    id="product-service-image"
+                                    data-gjs-draggable="true"
+                                    data-gjs-selectable="false"
+                                    data-gjs-editable="false"
+                                    data-gjs-droppable="false"
+                                    data-gjs-highlightable="false"
+                                    data-gjs-hoverable="false"
+                                    src="${contentPageData.ProductServiceImage}"
+                                    data-gjs-type="product-service-image"
+                                    alt="Full-width Image"
+                                />
+                            ` : ''}
+                            ${contentPageData.ProductServiceDescription ? `
+                                <p
+                                    style="flex: 1; padding: 0; margin: 0; height: auto;"
+                                    class="content-page-block"
+                                    data-gjs-draggable="true"
+                                    data-gjs-selectable="false"
+                                    data-gjs-editable="false"
+                                    data-gjs-droppable="false"
+                                    data-gjs-highlightable="false"
+                                    data-gjs-hoverable="false"
+                                    id="product-service-description"
+                                    data-gjs-type="product-service-description"
+                                >
+                                ${contentPageData.ProductServiceDescription}
+                                </p>
+                            ` : ''}
+                        </div>
                     </div>
-                  </div>
-                  <div class="cta-button-container" ${defaultConstraints}></div>      
                 </div>
-              </div>
-            `;
-  }
+                <div class="cta-button-container" ${defaultConstraints}></div>
+            </div>
+        </div>
+    `;
+}
+
 
   removeElementOnClick(targetSelector, sectionSelector) {
     const closeSection =

@@ -13,19 +13,18 @@
   margin-right: -20px;
 }
 #tb-body input:focus {
-  outline: 1px solid #B4B9BD;
-  border: 1px solid #B4B9BD;
+  outline: 1px solid #b4b9bd;
+  border: 1px solid #b4b9bd;
 }
 
 #tb-body select:focus {
-  outline: 1px solid #B4B9BD;
-  border: 1px solid #B4B9BD;
+  outline: 1px solid #b4b9bd;
+  border: 1px solid #b4b9bd;
 }
 /* 
 .tb-form-control option:checked {
     background: #4a90e2 linear-gradient(0deg, #4a90e2 0%, #4a90e2 100%);
 } */
-
 
 .percentage-wrapper input:focus {
   outline: none !important;
@@ -385,7 +384,7 @@ input:focus {
 }
 
 .theme-select-button::after {
-  content: '';
+  content: "";
   width: 6px;
   height: 6px;
   border-right: 1.5px solid #666;
@@ -405,7 +404,7 @@ input:focus {
   right: 0;
   background: white;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 4px;
   display: none;
   max-height: 200px;
@@ -465,7 +464,7 @@ input:focus {
 }
 
 .category-select-button::after {
-  content: '';
+  content: "";
   width: 6px;
   height: 6px;
   border-right: 1.5px solid #666;
@@ -485,7 +484,7 @@ input:focus {
   right: 0;
   background: white;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: 4px;
   display: none;
   max-height: 200px;
@@ -529,6 +528,25 @@ input:focus {
   justify-content: space-between;
 }
 
+.mapping-sub-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.mapping-sub-title > span {
+  color: #838383;
+}
+
+.mapping-sub-title > span:hover {
+  color: #222f54;
+  cursor: pointer;
+}
+
+.mapping-sub-title #hide-pages {
+  display: none;
+}
+
 .page-form {
   display: flex;
   align-items: center;
@@ -540,7 +558,7 @@ input:focus {
   border: 1px solid #b4b9bd;
   border-radius: 6px;
   outline: none;
-  width: 200px;
+  width: 100%;
   font-size: 14px;
   margin-right: 6px;
 }
@@ -601,6 +619,10 @@ h5#current-page-title {
   flex-direction: row;
   font-size: 16px;
   align-items: center;
+}
+
+.page-list-items {
+  font-size: 14px;
 }
 
 .tb-custom-menu-item .tree-icon {
@@ -1036,7 +1058,6 @@ h5#current-page-title {
   display: flex;
   margin-bottom: 20px;
 }
-
 
 .page-template-block-number {
   margin-right: 50px;

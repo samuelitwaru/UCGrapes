@@ -13,8 +13,50 @@ class MappingComponent {
     init() {
         this.setupEventListeners();
         this.loadPageTree();
+        this.listPagesListener();
     }
   
+    listPagesListener () {
+        const listAllPages = document.getElementById("list-all-pages");
+        listAllPages.addEventListener("click", () => {
+            this.handleListAllPages();
+        });
+    }
+
+    handleListAllPages() {
+        try {
+            this.dataManager.getPages().then((res) => {
+                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+                    return;
+                }
+                
+                const newTree = this.createPageList(res.SDT_PageCollection, true);
+                this.clearMappings();
+                this.treeContainer.appendChild(newTree);
+
+                this.hidePagesList();
+            });
+        } catch (error) {
+            this.displayMessage("Error loading pages", "error");
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    hidePagesList() {
+        const listAllPages = document.getElementById("list-all-pages");
+        listAllPages.style.display = "none";
+
+        const hidePagesList = document.getElementById("hide-pages");
+        hidePagesList.style.display = "block";
+
+        hidePagesList.addEventListener("click", () => {
+            listAllPages.style.display = "block";
+            hidePagesList.style.display = "none";
+            this.loadPageTree();
+        });
+    }
+
     setupEventListeners() {
         const createPageButton = document.getElementById("page-submit");
         const pageInput = document.getElementById("page-title");
@@ -37,7 +79,8 @@ class MappingComponent {
                 if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
                     return;
                 }
-  
+                
+                console.log(res);
                 const newTree = this.createTree(res.SDT_PageStructureCollection, true);
                 this.clearMappings();
                 this.treeContainer.appendChild(newTree);
@@ -87,6 +130,8 @@ class MappingComponent {
                     const newTree = this.createTree(treePages, true);
                     this.treeContainer.appendChild(newTree);
                     this.toolBoxManager.actionList.init();
+
+                    this.displayMessage(`${this.currentLanguage.getTranslation("page_created")}`, "success");
                 });
             });
   
@@ -260,6 +305,90 @@ class MappingComponent {
             container.appendChild(listItem);
         });
   
+        return container;
+    }
+
+    createPageList(data) {
+        const buildListItem = (item) => {
+            const listItem = document.createElement("li");
+            listItem.classList.add("tb-custom-list-item");
+    
+            const menuItem = document.createElement("div");
+            menuItem.classList.add("tb-custom-menu-item");
+            menuItem.classList.add("page-list-items");
+    
+            const toggle = document.createElement("span");
+            toggle.style.textTransform = "capitalize";
+            toggle.classList.add("tb-dropdown-toggle");
+            toggle.setAttribute("role", "button");
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.innerHTML = `<i class="fa-regular fa-file tree-icon"></i><span>&nbsp; ${item.PageName}</span>`;
+    
+            const deleteIcon = document.createElement("i");
+            deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+            deleteIcon.setAttribute("data-id", item.Id);
+    
+            deleteIcon.addEventListener("click", (event) =>
+                handleDelete(event, item.PageId, listItem)
+            );
+    
+            menuItem.appendChild(toggle);
+            if (item.Name !== "Home") {
+                menuItem.appendChild(deleteIcon);
+            }
+            listItem.appendChild(menuItem);
+        
+            // listItem.addEventListener("click", (e) => {
+            //     e.stopPropagation();
+            //     this.handlePageSelection(item);
+            // });
+    
+            return listItem;
+        };
+    
+        const handleDelete = (event, id, elementToRemove) => {
+            event.stopPropagation();
+            const title = "Delete Page";
+            const message = "Are you sure you want to delete this page?";
+            const popup = this.popupModal(title, message);
+            document.body.appendChild(popup);
+            popup.style.display = "flex";
+    
+            const deleteButton = popup.querySelector("#yes_delete");
+            const closeButton = popup.querySelector("#close_popup");
+            const closePopup = popup.querySelector(".close");
+    
+            deleteButton.addEventListener("click", () => {
+                if (this.dataManager.deletePage(id)) {
+                    elementToRemove.remove();
+                    this.displayMessage(`${this.currentLanguage.getTranslation("page_deleted")}`, "success");
+                } else {
+                    this.displayMessage(`${this.currentLanguage.getTranslation("error_while_deleting_page")}`, "error");
+                }
+                popup.remove();
+            });
+    
+            closeButton.addEventListener("click", () => {
+                popup.remove();
+            });
+    
+            closePopup.addEventListener("click", () => {
+                popup.remove();
+            });
+        };
+    
+        const container = document.createElement("ul");
+        container.classList.add("tb-custom-list");
+    
+        const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
+            a.PageName === "Home" ? -1 : b.PageName === "Home" ? 1 : 0
+        );
+    
+        sortedData.forEach((item) => {
+            const listItem = buildListItem(item);
+            container.appendChild(listItem);
+        });
+    
         return container;
     }
   

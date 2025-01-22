@@ -35,7 +35,7 @@ class Locale {
     }
 
     const elementsToTranslate = [
-      "navbar_title",
+      // "navbar_title",
       "navbar_tree_label",
       "navbar_publish_label",
       "sidebar_tabs_pages_label",
@@ -79,13 +79,14 @@ class Locale {
 
   getTranslation(key) {
     if (!this.translations || Object.keys(this.translations).length === 0) {
-      console.warn('Translations not yet loaded');
+      console.warn("Translations not yet loaded");
       return key;
     }
 
-    const translation = this.translations[this.currentLanguage]?.[key] 
-      || this.translations[this.defaultLanguage]?.[key];
-    
+    const translation =
+      this.translations[this.currentLanguage]?.[key] ||
+      this.translations[this.defaultLanguage]?.[key];
+
     if (!translation) {
       console.warn(`Translation missing for key '${key}'`);
       return key;

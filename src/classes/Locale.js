@@ -15,7 +15,7 @@ class Locale {
       const languages = ["english", "dutch"];
       for (const lang of languages) {
         const response = await fetch(
-          `http://localhost:8082/Resources/UCGrapes1/src/i18n/${lang}.json`
+          `${window.location.origin}/Resources/UCGrapes1/src/i18n/${lang}.json`
         );
         if (!response.ok)
           throw new Error(`Failed to load ${lang} translations`);

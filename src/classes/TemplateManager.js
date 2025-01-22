@@ -13,6 +13,7 @@ class TemplateManager {
   }
 
   createTemplateHTML(isDefault = false) {
+    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -25,7 +26,10 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                  ${defaultTileAttrs} 
+                style="background:${tileBgColor}"
+                tile-bgcolor="${tileBgColor}"
+                tile-bgcolor-name="accentColor"
+                ${defaultTileAttrs} 
                  data-gjs-draggable="false"
                  data-gjs-selectable="true"
                  data-gjs-editable="false"
@@ -197,6 +201,7 @@ class TemplateManager {
   }
 
   generateTemplateRow(columns, rowIndex) {
+    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -241,12 +246,14 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%);"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
 
                           <div class="template-block"
+                            tile-bgcolor="${tileBgColor}"
+                            tile-bgcolor-name="accentColor"
                             ${defaultTileAttrs}
                             data-gjs-draggable="false"
                             data-gjs-selectable="true"

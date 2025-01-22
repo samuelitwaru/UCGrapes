@@ -64,9 +64,8 @@ class MappingComponent {
             this.isLoading = true;
             createPageButton.disabled = true;
             pageInput.disabled = true; // Disable input during creation
-  
             // Create the page
-            await this.dataManager.createNewPage(pageTitle).then((res) => {
+            await this.dataManager.createNewPage(pageTitle, this.toolBoxManager.currentTheme).then((res) => {
                 if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
                     return;
                 }
@@ -91,7 +90,7 @@ class MappingComponent {
             });
   
         } catch (error) {
-            this.toolBoxManager.displayMessage(`${this.currentLanguage.getTranslation("error_creating_page")}`, "error");
+            this.displayMessage(`${this.currentLanguage.getTranslation("error_creating_page")}`, "error");
         } finally {
             this.isLoading = false;
             createPageButton.disabled = !pageInput.value.trim();

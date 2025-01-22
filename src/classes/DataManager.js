@@ -1,4 +1,4 @@
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -7,6 +7,7 @@ class DataManager {
     this.media = media;
     this.pages = [];
     this.selectedTheme = null;
+    
   }
 
   // Helper method to handle API calls
@@ -52,10 +53,11 @@ class DataManager {
     return await this.fetchAPI('/api/toolbox/pages/tree');
   }
 
-  async createNewPage(pageName) {
+  async createNewPage(pageName, theme) {
+    let pageJsonContent = generateNewPage(theme)
     return await this.fetchAPI('/api/toolbox/create-page', {
       method: 'POST',
-      body: JSON.stringify({ PageName: pageName }),
+      body: JSON.stringify({ PageName: pageName, PageJsonContent: JSON.stringify(pageJsonContent) }),
     });
   }
 
@@ -93,7 +95,7 @@ class DataManager {
 
   // Theme API methods
   async getLocationTheme() {
-    return await this.fetchAPI('/api/location-theme');
+    return await this.fetchAPI('/api/toolbox/location-theme');
   }
 
   async updateLocationTheme() {

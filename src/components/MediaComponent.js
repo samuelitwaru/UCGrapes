@@ -90,7 +90,7 @@ class MediaComponent {
     );
 
     if (validFiles.length !== files.length) {
-      this.toolBoxManager.displayAlertMessage(
+      this.toolBoxManager.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation("invalid_file_type_message")}`,
         "error"
       );
@@ -198,7 +198,7 @@ class MediaComponent {
 
   handleModalOpen(modal, fileInputField, allUploadedFiles) {
     if (!this.editorManager.selectedComponent) {
-      this.toolBoxManager.displayAlertMessage(
+      this.toolBoxManager.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation(
           "no_tile_selected_error_message"
         )}`,
@@ -496,7 +496,7 @@ class MediaComponent {
             modalActions.style.display = "none";
           }
           // Provide feedback to the user
-          this.toolBoxManager.displayAlertMessage(
+          this.toolBoxManager.ui.displayAlertMessage(
             `${this.currentLanguage.getTranslation(
               "media_deleted_successfully"
             )}`,
@@ -504,7 +504,7 @@ class MediaComponent {
           );
           this.checkAndHideModalActions();
         } else {
-          this.toolBoxManager.displayAlertMessage(
+          this.toolBoxManager.ui.displayAlertMessage(
             `${this.currentLanguage.getTranslation("failed_to_delete_media")}`,
             "error"
           );
@@ -512,7 +512,7 @@ class MediaComponent {
       })
       .catch((error) => {
         console.error("Error deleting media file:", error);
-        this.toolBoxManager.displayAlertMessage(
+        this.toolBoxManager.ui.displayAlertMessage(
           `${this.currentLanguage.getTranslation(
             "error_during_deleting_media"
           )}`,

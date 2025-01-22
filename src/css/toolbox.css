@@ -79,15 +79,15 @@ button {
   position: relative;
   flex: 1 1 30%;
   max-width: 100%;
-  border-radius: 1px;
+  border-radius: 8px;
   min-width: calc(76px - 0.3rem);
-  transition: flex 0.3s ease;
+  /* transition: flex 0.3s ease; */
   box-sizing: border-box;
 }
 
 .template-block {
   border: 2px dashed #4c53577d;
-  border-radius: 1px;
+  border-radius: 8px;
   height: 7rem;
   padding: 1rem;
   background-color: transparent;
@@ -113,7 +113,7 @@ button {
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  /* transition: transform 0.3s ease, background-color 0.3s ease; */
   position: relative;
 }
 
@@ -278,7 +278,11 @@ button {
   visibility: visible;
 }
 
-.tile-title-section,
+.tile-title-section {
+  position: relative;
+  width: -webkit-fill-available;
+}
+
 .tile-icon-section {
   position: relative;
   width: fit-content;

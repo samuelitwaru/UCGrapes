@@ -4,10 +4,6 @@ class PageManager {
     }
   
     loadPageTemplates() {
-      console.log(
-        "this.toolBoxManager.currentLanguage",
-        this.toolBoxManager.currentLanguage.translations
-      );
       const pageTemplates = document.getElementById("page-templates");
       this.toolBoxManager.templates.forEach((template, index) => {
         const blockElement = document.createElement("div");

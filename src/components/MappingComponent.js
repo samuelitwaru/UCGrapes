@@ -344,7 +344,7 @@ class MappingComponent {
     }
   
     displayMessage(message, status) {
-        this.toolBoxManager.displayAlertMessage(message, status);
+        this.toolBoxManager.ui.displayAlertMessage(message, status);
     }
   }
 

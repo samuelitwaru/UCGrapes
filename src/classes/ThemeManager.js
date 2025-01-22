@@ -137,8 +137,6 @@ class ThemeManager {
   }
 
   applyThemeIconsAndColor(themeName) {
-    
-    console.log("Theme set to: ", themeName);
     const editors = Object.values(this.toolBoxManager.editorManager.editors);
 
     if (editors && editors.length) {

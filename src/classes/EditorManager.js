@@ -38,7 +38,7 @@ class EditorManager {
       this.createChildEditor(homePage);
       this.currentPageId = homePage.PageId;
     } else {
-      this.toolsSection.displayAlertMessage(
+      this.toolsSection.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation("no_home_page_found")}`,
         "danger"
       );
@@ -232,7 +232,6 @@ class EditorManager {
   }
 
   async updateImage(wrapper, contentPageData) {
-    console.log("updateImage")
     const img = wrapper.find("#product-service-image");
     if (img.length > 0) {
       if (!contentPageData?.ProductServiceImage) {
@@ -256,7 +255,6 @@ class EditorManager {
       if (!contentPageData?.ProductServiceDescription) {
         p[0].remove();
       } else {
-        console.log("updateDescription", contentPageData.ProductServiceDescription)
         try {
           p[0].components(contentPageData.ProductServiceDescription);
         } catch (err) {

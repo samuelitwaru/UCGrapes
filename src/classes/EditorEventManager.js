@@ -6,6 +6,7 @@ class EditorEventManager {
 
   addEditorEventListeners(editor) {
     this.editorOnLoad(editor);
+    // this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
   }
@@ -43,6 +44,8 @@ class EditorEventManager {
   }
 
   handleEditorClick(e, editor) {
+    document.querySelector(".cta-button-layout-container").style.display =
+        "none";
     const editorId = editor.getConfig().container;
     const editorContainerId = `${editorId}-frame`;
 
@@ -52,14 +55,32 @@ class EditorEventManager {
     this.updateToolsSection();
     this.editorManager.toolsSection.unDoReDo(editor);
 
-    if (e.target.attributes["tile-action-object-id"]) {
-      this.handleTileActionClick(e, editorContainerId);
+    document.querySelector(".cta-button-layout-container").style.display =
+        "none";
+    
+    const ctaBtnSelected = e.target.closest("[cta-buttons]");
+    if (ctaBtnSelected) {
+      this.editorManager.toolsSection.ui.activateCtaBtnStyles(
+        this.editorManager.selectedComponent
+      );
+    }
+
+    const tileElement = e.target.closest("[tile-action-object-id]");
+
+    if (tileElement) {
+      const customEvent = {
+        ...e,
+        target: tileElement,
+      };
+      this.handleTileActionClick(customEvent, editorContainerId);
     }
 
     const button = e.target.closest(".action-button");
     if (button) {
       this.handleActionButtonClick(button, editor);
     }
+    
+    this.hideContextMenu();
   }
 
   handleTileActionClick(e, editorContainerId) {
@@ -96,6 +117,33 @@ class EditorEventManager {
     );
   }
 
+  // editorOnDropped(editor) {
+  //   let isDragging = false;
+
+  //   editor.on("component:drag:start", () => {
+  //     isDragging = true;
+  //   });
+
+  //   editor.on("component:drag:end", (component) => {
+  //     console.log(component.target.getClasses());
+  //     isDragging = false;
+  //     editor.on("component:mount", (component) => {
+  //       // Only handle components added via drag
+  //       if (isDragging) {
+  //         // const mainComponent = component.find(".template-block")[0];
+  //         // if (mainComponent) {
+  //         //   mainComponent.removeClass("gjs-selected")
+  //         //   console.log(mainComponent);
+  //         // }
+  //         console.log(component.getClasses());
+  //         // const allImages = component.findType('tile-wrapper');
+  //         // console.log(allImages[0])
+  //         // editor.select(null);
+  //       }
+  //     });
+  //   });
+  // }
+
   handleComponentSelected(component) {
     this.editorManager.selectedTemplateWrapper = component.getEl();
     this.editorManager.selectedComponent = component;
@@ -128,9 +176,6 @@ class EditorEventManager {
       this.editorManager.toolsSection.ui.activateCtaBtnStyles(
         this.editorManager.selectedComponent
       );
-    } else {
-      document.querySelector(".cta-button-layout-container").style.display =
-        "none";
     }
 
     this.hideContextMenu();

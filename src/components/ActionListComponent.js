@@ -29,10 +29,6 @@ class ActionListComponent {
         options: [],
       },
     ];
-    console.log(
-      "Language: ",
-      this.currentLanguage.getTranslation("category_page")
-    );
     this.init();
   }
 

@@ -177,7 +177,6 @@ class ToolBoxManager {
   }
 
   unDoReDo(editorInstance) {
-    console.log("Editor at undoreo", editorInstance)
     const um = editorInstance.UndoManager;
 
     const undoButton = document.getElementById("undo");

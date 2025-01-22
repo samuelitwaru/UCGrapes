@@ -129,8 +129,9 @@ class EventListenerManager {
   
           if (templateBlock) {
             templateBlock.setStyle({
-              display: "flex",
-              "align-self": "start",
+              // display: "flex",
+              // "align-self": "start",
+              "text-align": "left",
             });
             this.toolBoxManager.setAttributeToSelected("tile-text-align", "left");
           }
@@ -146,8 +147,9 @@ class EventListenerManager {
   
           if (templateBlock) {
             templateBlock.setStyle({
-              display: "flex",
-              "align-self": "center",
+              // display: "flex",
+              // "align-self": "center",
+              "text-align": "center",
             });
             this.toolBoxManager.setAttributeToSelected(
               "tile-text-align",
@@ -166,8 +168,9 @@ class EventListenerManager {
   
           if (templateBlock) {
             templateBlock.setStyle({
-              display: "flex",
-              "align-self": "end",
+              // display: "flex",
+              // "align-self": "end",
+              "text-align": "right",
             });
             this.toolBoxManager.setAttributeToSelected(
               "tile-text-align",

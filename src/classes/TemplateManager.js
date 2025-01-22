@@ -8,7 +8,7 @@ class TemplateManager {
       editable: false,
       highlightable: false,
       droppable: false,
-      hoverable: false
+      hoverable: false,
     };
   }
 
@@ -18,7 +18,7 @@ class TemplateManager {
               isDefault ? "default-template" : ""
             }"        
                   data-gjs-selectable="false"
-                  data-gjs-type="template-wrapper"
+                  data-gjs-type="tile-wrapper"
                   data-gjs-editable="false"
                   data-gjs-highlightable="false"
                   data-gjs-droppable="false"
@@ -242,9 +242,10 @@ class TemplateManager {
       wrappers += `
                 <div class="template-wrapper"
                           style="flex: 0 0 ${columnWidth}%);"
-                          data-gjs-type="template-wrapper"
+                          data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
+
                           <div class="template-block"
                             ${defaultTileAttrs}
                             data-gjs-draggable="false"
@@ -395,6 +396,7 @@ class TemplateManager {
                           data-gjs-selectable="false"
                           data-gjs-editable="false"
                           data-gjs-highlightable="true"
+                          data-gjs-droppable="[data-gjs-type='tile-wrapper']"
                           data-gjs-hoverable="true">
                         ${wrappers}
                     </div>
@@ -411,33 +413,33 @@ class TemplateManager {
     });
 
     this.editorManager.currentEditor.editor.addComponents(`
-                <div class="frame-container"
-                     id="frame-container"
-                     data-gjs-type="template-wrapper"
-                     data-gjs-draggable="false"
-                     data-gjs-selectable="false"
-                     data-gjs-editable="false"
-                     data-gjs-highlightable="false"
-                     data-gjs-droppable="false"
-                     data-gjs-hoverable="false">
-                  <div class="container-column"
-                       data-gjs-type="template-wrapper"
-                       data-gjs-draggable="false"
-                       data-gjs-selectable="false"
-                       data-gjs-editable="false"
-                       data-gjs-highlightable="false"
-                       data-gjs-droppable="false"
-                       data-gjs-hoverable="false">
-                      ${fullTemplate}
-                  </div>
-                </div>
-                `);
+      <div class="frame-container"
+            id="frame-container"
+            data-gjs-type="template-wrapper"
+            data-gjs-draggable="false"
+            data-gjs-selectable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-hoverable="false">
+        <div class="container-column"
+              data-gjs-type="template-wrapper"
+              data-gjs-draggable="false"
+              data-gjs-selectable="false"
+              data-gjs-editable="false"
+              data-gjs-highlightable="false"
+              data-gjs-droppable="false"
+              data-gjs-hoverable="false">
+            ${fullTemplate}
+        </div>
+      </div>
+    `);
 
     const message = this.currentLanguage.getTranslation(
       "template_added_success_message"
     );
     const status = "success";
-    this.editorManager.toolsSection.displayAlertMessage(message, status);
+    this.editorManager.toolsSection.ui.displayAlertMessage(message, status);
   }
 
   deleteTemplate(templateComponent) {
@@ -503,6 +505,7 @@ class TemplateManager {
                 data-gjs-selectable="false"
                 data-gjs-editable="false"
                 data-gjs-highlightable="false"
+                data-gjs-droppable="[data-gjs-type='tile-wrapper']"
                 data-gjs-hoverable="false">
                 ${this.createTemplateHTML()}
             </div>
@@ -586,13 +589,15 @@ class TemplateManager {
                             data-gjs-selectable="false"
                             data-gjs-editable="false"
                             data-gjs-highlightable="false"
-                            data-gjs-droppable="true"
+                            data-gjs-droppable="[data-gjs-type='product-service-description'], [data-gjs-type='product-service-image']"
                             data-gjs-resizable="false"
                             data-gjs-hoverable="false"
                             style="flex: 1; padding: 0"
                             class="content-page-wrapper"
                         >
-                            ${contentPageData.ProductServiceImage ? `
+                            ${
+                              contentPageData.ProductServiceImage
+                                ? `
                                 <img
                                     class="content-page-block"
                                     id="product-service-image"
@@ -606,8 +611,12 @@ class TemplateManager {
                                     data-gjs-type="product-service-image"
                                     alt="Full-width Image"
                                 />
-                            ` : ''}
-                            ${contentPageData.ProductServiceDescription ? `
+                            `
+                                : ""
+                            }
+                            ${
+                              contentPageData.ProductServiceDescription
+                                ? `
                                 <p
                                     style="flex: 1; padding: 0; margin: 0; height: auto;"
                                     class="content-page-block"
@@ -622,7 +631,9 @@ class TemplateManager {
                                 >
                                 ${contentPageData.ProductServiceDescription}
                                 </p>
-                            ` : ''}
+                            `
+                                : ""
+                            }
                         </div>
                     </div>
                 </div>
@@ -630,8 +641,7 @@ class TemplateManager {
             </div>
         </div>
     `;
-}
-
+  }
 
   removeElementOnClick(targetSelector, sectionSelector) {
     const closeSection =

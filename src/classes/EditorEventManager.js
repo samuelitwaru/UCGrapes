@@ -6,7 +6,7 @@ class EditorEventManager {
 
   addEditorEventListeners(editor) {
     this.editorOnLoad(editor);
-    // this.editorOnDropped(editor);
+    this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
   }
@@ -45,7 +45,7 @@ class EditorEventManager {
 
   handleEditorClick(e, editor) {
     document.querySelector(".cta-button-layout-container").style.display =
-        "none";
+      "none";
     const editorId = editor.getConfig().container;
     const editorContainerId = `${editorId}-frame`;
 
@@ -56,8 +56,8 @@ class EditorEventManager {
     this.editorManager.toolsSection.unDoReDo(editor);
 
     document.querySelector(".cta-button-layout-container").style.display =
-        "none";
-    
+      "none";
+
     const ctaBtnSelected = e.target.closest("[cta-buttons]");
     if (ctaBtnSelected) {
       this.editorManager.toolsSection.ui.activateCtaBtnStyles(
@@ -79,7 +79,7 @@ class EditorEventManager {
     if (button) {
       this.handleActionButtonClick(button, editor);
     }
-    
+
     this.hideContextMenu();
   }
 
@@ -117,32 +117,38 @@ class EditorEventManager {
     );
   }
 
-  // editorOnDropped(editor) {
-  //   let isDragging = false;
+  editorOnDropped(editor) {
+    // // let isDragging = false;
 
-  //   editor.on("component:drag:start", () => {
-  //     isDragging = true;
-  //   });
+    // // editor.on("component:drag:start", (component) => {
+    // //   isDragging = true;
+    // // });
 
-  //   editor.on("component:drag:end", (component) => {
-  //     console.log(component.target.getClasses());
-  //     isDragging = false;
-  //     editor.on("component:mount", (component) => {
-  //       // Only handle components added via drag
-  //       if (isDragging) {
-  //         // const mainComponent = component.find(".template-block")[0];
-  //         // if (mainComponent) {
-  //         //   mainComponent.removeClass("gjs-selected")
-  //         //   console.log(mainComponent);
-  //         // }
-  //         console.log(component.getClasses());
-  //         // const allImages = component.findType('tile-wrapper');
-  //         // console.log(allImages[0])
-  //         // editor.select(null);
-  //       }
-  //     });
-  //   });
-  // }
+    // // editor.on("component:drag:end", (component) => {
+    // //   const tileComponents = component.target.find(".template-blocks");
+
+    // //   if (tileComponents.length) {
+    // //     console.log("Tile Components", tileComponents);
+    // //   }
+    // //   isDragging = false;
+    // //   editor.on("component:mount", (model) => {
+    // //     // Only handle components added via drag
+    // //     if (isDragging) {
+    // //       console.log(model.getName());
+    // //         if(model.getName() == "Tile-wrapper"){
+    // //           console.log("Tile-wrapper added", model.getClasses());
+    // //           model.removeClass("gjs-selected");
+    // //         }
+    // //     }
+    // //   });
+    // // });
+    // editor.on("component:drag:start", (component) => {
+    //   const el = component.parent.getEl();
+    //   if (el) {
+    //     el.style.cursor = "grab";
+    //   }
+    // });
+  }
 
   handleComponentSelected(component) {
     this.editorManager.selectedTemplateWrapper = component.getEl();
@@ -208,6 +214,8 @@ class EditorEventManager {
 
     event.preventDefault();
 
+    console.log("hasImage", block.style);
+
     const iframeRect = iframe.getBoundingClientRect();
     contextMenu.style.position = "fixed";
     contextMenu.style.left = `${event.clientX + iframeRect.left}px`;
@@ -221,6 +229,14 @@ class EditorEventManager {
       deleteImageButton.addEventListener("click", () =>
         this.deleteBackgroundImage(editor)
       );
+    }
+  }
+
+  hideContextMenu() {
+    const contextMenu = document.getElementById("contextMenu");
+    if (contextMenu) {
+      contextMenu.style.display = "none";
+      window.currentBlock = null;
     }
   }
 
@@ -258,14 +274,6 @@ class EditorEventManager {
         page.PageIsContentPage ? "block" : "none";
       document.querySelector("#menu-page-section").style.display =
         page.PageIsContentPage ? "none" : "block";
-    }
-  }
-
-  hideContextMenu() {
-    const contextMenu = document.getElementById("contextMenu");
-    if (contextMenu) {
-      contextMenu.style.display = "none";
-      window.currentBlock = null;
     }
   }
 

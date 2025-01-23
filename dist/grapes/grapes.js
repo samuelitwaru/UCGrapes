@@ -19955,7 +19955,7 @@
                           },
                           b = function (e, n, r) {
                             u.forEach(function (t) {
-                              return t.set("status", "selected");
+                              return t.set("status", ""); // I made custom change here to stop a component from being selected after dragging. changed from 'selected'.
                             }),
                               t.select(u),
                               c.emitUpdate(),

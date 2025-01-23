@@ -180,8 +180,11 @@ class EditorManager {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
 
-      if (page.PageIsPredefined && (page.PageName === "Location" || page.PageName === "Reception")) {
+      if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
+      }
+      else if (page.PageIsPredefined && page.PageName === "Reception") {
+        editor.loadProjectData(pageData);
       } else if (page.PageIsContentPage) {
         editor.loadProjectData(pageData);
         await this.handleContentPage(editor, page);

@@ -237,7 +237,7 @@ class EventListenerManager {
               "right"
             );
           }
-        }
+        } 
       });
     }
   

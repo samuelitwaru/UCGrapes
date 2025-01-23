@@ -433,8 +433,8 @@ class MediaComponent {
         "background-image": `url(${this.selectedFile.MediaUrl})`,
         "background-size": "cover",
         "background-position": "center",
+        "background-blend-mode": "overlay",
       });
-
       this.toolBoxManager.setAttributeToSelected(
         "tile-bg-image-url",
         this.selectedFile.MediaUrl

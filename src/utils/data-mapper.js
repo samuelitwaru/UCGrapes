@@ -110,13 +110,12 @@ function mapContentToPageData(templateData, page) {
       Content: [],
       Cta: [],
   };
-
-
+  
   // Find image and text content
   components.forEach((component) => {
 
       const topComponents = component.components?.[0]?.components?.[0]?.components || []
-
+      console.log(topComponents)
       for (let index = 0; index < topComponents.length; index++) {
           const component = topComponents[index];
           if (component?.tagName === "img") {

@@ -103,7 +103,6 @@ class ToolBoxManager {
         const htmlData = editor.getHtml();
         const pageName = page.PageName;
         let jsonData;
-
         if (page.PageIsContentPage) {
           jsonData = mapContentToPageData(projectData, page);
         } else {

@@ -72,10 +72,20 @@ class EditorManager {
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
 
     this.editorEventManager.addEditorEventListeners(editor);
-
     this.loadEditorContent(editor, page);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
+    this.updatePageContent(editor, page)
+  }
+
+  updatePageContent(editor, page){
+    this.dataManager.pages.SDT_PageCollection.map(p=>{
+      if (p.PageId === page.PageId) {
+        let projectData = editor.getProjectData()
+        p.PageGJSJson = JSON.stringify(projectData)
+        return p
+      } 
+    })
   }
 
   setupEditorContainer(page) {

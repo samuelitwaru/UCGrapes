@@ -68,7 +68,7 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      this.updateTileTitle(e.target.value);
+      this.updateTileTitle(e.target.value.toUpperCase());
     });
   }
 

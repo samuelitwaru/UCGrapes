@@ -36,13 +36,15 @@ function mapTemplateToPageData(templateData, page) {
           Col: [],
       };
       // Find and map templates to columns
+      console.log(page.PageName, rowComponent.components)
+
       const templates =
           rowComponent.components?.filter(
               (comp) =>
-              comp.type === "tile-wrapper" &&
+              (comp.type === "template-wrapper" || comp.type === "tile-wrapper") &&
               !comp.classes?.includes("container-row")
           ) || [];
-
+      console.log(page.PageName, templates)
   
       row.Col = templates.map((templateComponent) => {
           // Map column

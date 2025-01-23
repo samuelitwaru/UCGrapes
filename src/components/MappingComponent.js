@@ -14,6 +14,10 @@ class MappingComponent {
         this.setupEventListeners();
         //this.loadPageTree();
         this.listPagesListener();
+        this.homePage = this.dataManager.pages.SDT_PageCollection.find(page=>page.PageName=="Home")
+        if (this.homePage) {
+            this.createPageTree(this.homePage.PageId, "tree-container")
+        }
     }
   
     listPagesListener () {

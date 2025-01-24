@@ -88,7 +88,9 @@ class ToolBoxManager {
   publishPages(isNotifyResidents) {
     const editors = Object.values(this.editorManager.editors);
     if (editors && editors.length) {
-      const pageDataList = this.preparePageDataList(editors);
+      // const pageDataList = this.preparePageDataList(editors);
+      const pageDataList = this.dataManager.pages.SDT_PageCollection
+      console.log(pageDataList)
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
       }

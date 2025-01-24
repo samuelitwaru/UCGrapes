@@ -57,9 +57,8 @@ class MappingComponent {
         hidePagesList.addEventListener("click", () => {
             listAllPages.style.display = "block";
             hidePagesList.style.display = "none";
-            this.loadPageTree();
+            this.init()
         });
-        this.createPageTree('34f798f2-7b6c-4a8f-bdea-d14273b5a678', "tree-container");
     }
 
     getPage(pageId) {
@@ -85,7 +84,7 @@ class MappingComponent {
                             let pageId = templateBlock.attributes["tile-action-object-id"]
                             let page = this.getPage(pageId)
                             if (page) {
-                                childPages.push({Id: pageId, Name:page.PageName})
+                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage})
                             }
                         }
                     })
@@ -208,7 +207,8 @@ class MappingComponent {
             toggle.classList.add("tb-dropdown-toggle");
             toggle.setAttribute("role", "button");
             toggle.setAttribute("aria-expanded", "false");
-            toggle.innerHTML = `<i class="fa fa-caret-right tree-icon"></i><span>${item.Name}</span>`;
+            const icon = item.IsContentPage ? 'fa-file' : 'fa-caret-right tree-icon'
+            toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
   
             const deleteIcon = document.createElement("i");
             deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
@@ -245,21 +245,6 @@ class MappingComponent {
                 e.stopPropagation();
                 this.handlePageSelection(item);
                 this.createPageTree(item.Id, `child-div-${item.Id}`)
-                return
-                // Close all dropdowns if this item has no children
-                if (!item.Children) {
-                    document
-                        .querySelectorAll(".tb-dropdown.active")
-                        .forEach((dropdown) => {
-                            dropdown.classList.remove("active");
-                            dropdown
-                                .querySelector(".tb-dropdown-toggle")
-                                .setAttribute("aria-expanded", "false");
-                            dropdown
-                                .querySelector(".tb-custom-menu-item")
-                                .classList.remove("active-tree-item");
-                        });
-                }
             });
   
             return listItem;

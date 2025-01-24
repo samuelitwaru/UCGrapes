@@ -4,11 +4,12 @@ class EditorEventManager {
     this.templateManager = templateManager;
   }
 
-  addEditorEventListeners(editor) {
+  addEditorEventListeners(editor, page) {
     this.editorOnLoad(editor);
     this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
+    this.editorOnUpdate(editor, page)
   }
 
   setupKeyboardBindings(editor) {
@@ -115,6 +116,12 @@ class EditorEventManager {
     editor.on("component:selected", (component) =>
       this.handleComponentSelected(component)
     );
+  }
+
+  editorOnUpdate(editor, page) {
+    editor.on('update', () => {
+      this.editorManager.updatePageJSONContent(editor, page)
+    });
   }
 
   editorOnDropped(editor) {

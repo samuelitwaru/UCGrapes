@@ -70,8 +70,7 @@ class EditorManager {
   createChildEditor(page) {
     const editorDetails = this.setupEditorContainer(page);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
-
-    this.editorEventManager.addEditorEventListeners(editor);
+    this.editorEventManager.addEditorEventListeners(editor, page);
     this.loadEditorContent(editor, page);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);

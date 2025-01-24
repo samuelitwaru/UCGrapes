@@ -202,9 +202,10 @@ class ActionListComponent {
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
         }, ${item.textContent}`;
-
-        console.log("editor: ", this.editorManager);
+        
         const editor = this.editorManager.getCurrentEditor();
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
           const currentPageId = localStorage.getItem("pageId");
@@ -220,8 +221,12 @@ class ActionListComponent {
                 item.textContent
               }`
             );
+
             if (this.selectedObject == "Service/Product Page") {
-              this.createContentPage(item.id);
+              this.createContentPage(item.id, editorContainerId);
+            }else{
+              $(editorContainerId).nextAll().remove();
+              this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
             }
           }
 
@@ -266,21 +271,15 @@ class ActionListComponent {
     });
   }
 
-  createContentPage(pageId) {
-    let self = this;
+  createContentPage(pageId, editorContainerId) {
     this.dataManager.createContentPage(pageId).then((res) => {
       if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
         return;
       }
-      this.dataManager.getPages()
-      // this.dataManager.getPagesService().then((res) => {
-      //   const newTree = self.toolBoxManager.mappingComponent.createTree(
-      //     res.SDT_PageStructureCollection,
-      //     true
-      //   );
-      //   self.toolBoxManager.mappingComponent.clearMappings();
-      //   self.toolBoxManager.mappingComponent.treeContainer.appendChild(newTree);
-      // });
+      this.dataManager.getPages().then(res=>{
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
+      })
     });
   }
 }

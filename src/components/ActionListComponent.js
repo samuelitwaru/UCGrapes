@@ -114,6 +114,7 @@ class ActionListComponent {
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
+      optionElement.dataset.category = category.name
       categoryContent.appendChild(optionElement);
     });
 
@@ -197,6 +198,7 @@ class ActionListComponent {
 
     document.querySelectorAll(".category-content li").forEach((item) => {
       item.addEventListener("click", () => {
+        this.selectedObject = item.dataset.category
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
         }, ${item.textContent}`;
@@ -205,7 +207,6 @@ class ActionListComponent {
         const editor = this.editorManager.getCurrentEditor();
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
-
           const currentPageId = localStorage.getItem("pageId");
 
           if (currentPageId !== undefined) {
@@ -271,15 +272,15 @@ class ActionListComponent {
       if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
         return;
       }
-
-      this.dataManager.getPagesService().then((res) => {
-        const newTree = self.toolBoxManager.mappingComponent.createTree(
-          res.SDT_PageStructureCollection,
-          true
-        );
-        self.toolBoxManager.mappingComponent.clearMappings();
-        self.toolBoxManager.mappingComponent.treeContainer.appendChild(newTree);
-      });
+      this.dataManager.getPages()
+      // this.dataManager.getPagesService().then((res) => {
+      //   const newTree = self.toolBoxManager.mappingComponent.createTree(
+      //     res.SDT_PageStructureCollection,
+      //     true
+      //   );
+      //   self.toolBoxManager.mappingComponent.clearMappings();
+      //   self.toolBoxManager.mappingComponent.treeContainer.appendChild(newTree);
+      // });
     });
   }
 }

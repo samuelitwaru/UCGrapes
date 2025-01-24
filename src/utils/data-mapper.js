@@ -36,15 +36,12 @@ function mapTemplateToPageData(templateData, page) {
           Col: [],
       };
       // Find and map templates to columns
-      console.log(page.PageName, rowComponent.components)
-
       const templates =
           rowComponent.components?.filter(
               (comp) =>
               (comp.type === "template-wrapper" || comp.type === "tile-wrapper") &&
               !comp.classes?.includes("container-row")
           ) || [];
-      console.log(page.PageName, templates)
   
       row.Col = templates.map((templateComponent) => {
           // Map column
@@ -73,8 +70,8 @@ function mapTemplateToPageData(templateData, page) {
 
           let tileActionObjectId = attributes["tile-action-object-id"]
           col.Tile = {
-              TileName: titleText,
-              TileText: titleText,
+              TileName: titleText.toUpperCase(),
+              TileText: titleText.toUpperCase(),
               TileTextColor: attributes["tile-text-color"], // Not present in source data
               TileTextAlignment: attributes["tile-text-align"] || "center",
 
@@ -113,9 +110,7 @@ function mapContentToPageData(templateData, page) {
   
   // Find image and text content
   components.forEach((component) => {
-
       const topComponents = component.components?.[0]?.components?.[0]?.components || []
-      console.log(topComponents)
       for (let index = 0; index < topComponents.length; index++) {
           const component = topComponents[index];
           if (component?.tagName === "img") {

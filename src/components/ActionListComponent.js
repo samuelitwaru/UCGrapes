@@ -209,7 +209,7 @@ class ActionListComponent {
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
           const currentPageId = localStorage.getItem("pageId");
-
+          const tileTitle = item.textContent.toUpperCase()
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
@@ -218,7 +218,7 @@ class ActionListComponent {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
               `${item.closest(".category").dataset.category}, ${
-                item.textContent
+                tileTitle
               }`
             );
 
@@ -231,11 +231,11 @@ class ActionListComponent {
           }
 
           if (titleComponent) {
-            titleComponent.components(item.textContent);
+            titleComponent.components(tileTitle);
 
             const sidebarInputTitle = document.getElementById("tile-title");
             if (sidebarInputTitle) {
-              sidebarInputTitle.textContent = item.textContent;
+              sidebarInputTitle.textContent = tileTitle;
             }
           }
         }

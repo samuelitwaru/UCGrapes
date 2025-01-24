@@ -10,9 +10,9 @@ class ToolBoxUI {
         this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.components(inputTitle);
-        this.manager.selectedComponent.addAttributes({
-          "tile-title": inputTitle,
-        });
+        // this.manager.selectedComponent.addAttributes({
+        //   "tile-title": inputTitle,
+        // });
       }
     }
   }

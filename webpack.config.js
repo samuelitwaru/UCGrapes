@@ -1,5 +1,6 @@
 module.exports = {
     mode: 'development', // This is the default mode that doesn’t minify
+    devtool: 'source-map',
     entry: './src/script.js',
     output: {
         path: __dirname + '/dist', // Output folder

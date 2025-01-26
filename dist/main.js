@@ -1,11 +1,3 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -15,7 +7,25 @@
   \******************************/
 /***/ ((module) => {
 
-eval("class Clock {\n    constructor(pageId) {\n      this.pageId = pageId;\n      this.updateTime();\n    }\n  \n    updateTime() {\n      const now = new Date();\n      let hours = now.getHours();\n      const minutes = now.getMinutes().toString().padStart(2, \"0\");\n      const ampm = hours >= 12 ? \"PM\" : \"AM\";\n      hours = hours % 12;\n      hours = hours ? hours : 12; // Adjust hours for 12-hour format\n      const timeString = `${hours}:${minutes} ${ampm}`;\n      document.getElementById(this.pageId).textContent = timeString;\n    }\n  }\n  \nmodule.exports = Clock\n\n//# sourceURL=webpack://ucgrapes/./src/classes/Clock.js?");
+class Clock {
+    constructor(pageId) {
+      this.pageId = pageId;
+      this.updateTime();
+    }
+  
+    updateTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // Adjust hours for 12-hour format
+      const timeString = `${hours}:${minutes} ${ampm}`;
+      document.getElementById(this.pageId).textContent = timeString;
+    }
+  }
+  
+module.exports = Clock
 
 /***/ }),
 
@@ -25,7 +35,153 @@ eval("class Clock {\n    constructor(pageId) {\n      this.pageId = pageId;\n   
   \************************************/
 /***/ ((module) => {
 
-eval("const environment = \"/Comforta_version2DevelopmentNETPostgreSQL\";\nconst baseURL = window.location.origin + (window.location.origin.startsWith(\"http://localhost\") ? environment : \"\");\n\nclass DataManager {\n  constructor(services = [], media = []) {\n    this.services = services;\n    this.media = media;\n    this.pages = [];\n    this.selectedTheme = null;\n    \n  }\n\n  // Helper method to handle API calls\n  async fetchAPI(endpoint, options = {}) {\n    const defaultOptions = {\n      headers: {\n        'Content-Type': 'application/json',\n      },\n    };\n\n    try {\n      const response = await fetch(`${baseURL}${endpoint}`, {\n        ...defaultOptions,\n        ...options,\n      });\n\n      if (!response.ok) {\n        throw new Error(`HTTP error! status: ${response.status}`);\n      }\n\n      return await response.json();\n    } catch (error) {\n      console.error(`API Error (${endpoint}):`, error);\n      throw error;\n    }\n  }\n\n  // Pages API methods\n  async getPages() {\n    this.pages = await this.fetchAPI('/api/toolbox/pages/list');\n    return this.pages;\n  }\n\n  async getSinglePage(pageId) {\n    return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);\n  }\n\n  async deletePage(pageId) {\n    return await this.fetchAPI(`/api/toolbox/deletepage?Pageid=${pageId}`);\n  }\n\n  async getPagesService() {\n    return await this.fetchAPI('/api/toolbox/pages/tree');\n  }\n\n  async createNewPage(pageName, theme) {\n    let pageJsonContent = generateNewPage(theme)\n    return await this.fetchAPI('/api/toolbox/create-page', {\n      method: 'POST',\n      body: JSON.stringify({ PageName: pageName, PageJsonContent: JSON.stringify(pageJsonContent) }),\n    });\n  }\n\n  async updatePage(data) {\n    return await this.fetchAPI('/api/toolbox/update-page', {\n      method: 'POST',\n      body: JSON.stringify(data),\n    });\n  }\n\n  async updatePagesBatch(payload) {\n    return await this.fetchAPI('/api/toolbox/update-pages-batch', {\n      method: 'POST',\n      body: JSON.stringify(payload),\n    });\n  }\n\n  async addPageChild(childPageId, currentPageId) {\n    return await this.fetchAPI('/api/toolbox/add-page-children', {\n      method: 'POST',\n      body: JSON.stringify({\n        ParentPageId: currentPageId,\n        ChildPageId: childPageId,\n      }),\n    });\n  }\n\n  async createContentPage(pageId) {\n    console.log('createContentPage', pageId);\n    return await this.fetchAPI('/api/toolbox/create-content-page', {\n      method: 'POST',\n      body: JSON.stringify({ PageId: pageId }),\n    });\n  }\n\n  // Theme API methods\n  async getLocationTheme() {\n    return await this.fetchAPI('/api/toolbox/location-theme');\n  }\n\n  async updateLocationTheme() {\n    if (!this.selectedTheme?.id) {\n      throw new Error('No theme selected');\n    }\n\n    return await this.fetchAPI('/api/toolbox/update-location-theme', {\n      method: 'POST',\n      body: JSON.stringify({ ThemeId: this.selectedTheme.id }),\n    });\n  }\n\n  // Media API methods\n  async getMediaFiles() {\n    return await this.fetchAPI('/api/media/');\n  }\n\n  async deleteMedia(mediaId) {\n    return await this.fetchAPI(`/api/media/delete?MediaId=${mediaId}`);\n  }\n\n  async uploadFile(fileData, fileName, fileSize, fileType) {\n    if (!fileData) {\n      throw new Error('Please select a file!');\n    }\n\n    return await this.fetchAPI('/api/media/upload', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'multipart/form-data',\n      },\n      body: JSON.stringify({\n        MediaName: fileName,\n        MediaImageData: fileData,\n        MediaSize: fileSize,\n        MediaType: fileType,\n      }),\n    });\n  }\n\n  // Content API methods\n  async getContentPageData(productServiceId) {\n    return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);\n  }\n}\n\nmodule.exports = DataManager\n\n\n//# sourceURL=webpack://ucgrapes/./src/classes/DataManager.js?");
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
+
+class DataManager {
+  constructor(services = [], media = []) {
+    this.services = services;
+    this.media = media;
+    this.pages = [];
+    this.selectedTheme = null;
+    
+  }
+
+  // Helper method to handle API calls
+  async fetchAPI(endpoint, options = {}) {
+    const defaultOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await fetch(`${baseURL}${endpoint}`, {
+        ...defaultOptions,
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(`API Error (${endpoint}):`, error);
+      throw error;
+    }
+  }
+
+  // Pages API methods
+  async getPages() {
+    this.pages = await this.fetchAPI('/api/toolbox/pages/list');
+    return this.pages;
+  }
+
+  async getSinglePage(pageId) {
+    return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
+  }
+
+  async deletePage(pageId) {
+    return await this.fetchAPI(`/api/toolbox/deletepage?Pageid=${pageId}`);
+  }
+
+  async getPagesService() {
+    return await this.fetchAPI('/api/toolbox/pages/tree');
+  }
+
+  async createNewPage(pageName, theme) {
+    let pageJsonContent = generateNewPage(theme)
+    return await this.fetchAPI('/api/toolbox/create-page', {
+      method: 'POST',
+      body: JSON.stringify({ PageName: pageName, PageJsonContent: JSON.stringify(pageJsonContent) }),
+    });
+  }
+
+  async updatePage(data) {
+    return await this.fetchAPI('/api/toolbox/update-page', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updatePagesBatch(payload) {
+    return await this.fetchAPI('/api/toolbox/update-pages-batch', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async addPageChild(childPageId, currentPageId) {
+    return await this.fetchAPI('/api/toolbox/add-page-children', {
+      method: 'POST',
+      body: JSON.stringify({
+        ParentPageId: currentPageId,
+        ChildPageId: childPageId,
+      }),
+    });
+  }
+
+  async createContentPage(pageId) {
+    console.log('createContentPage', pageId);
+    return await this.fetchAPI('/api/toolbox/create-content-page', {
+      method: 'POST',
+      body: JSON.stringify({ PageId: pageId }),
+    });
+  }
+
+  // Theme API methods
+  async getLocationTheme() {
+    return await this.fetchAPI('/api/toolbox/location-theme');
+  }
+
+  async updateLocationTheme() {
+    if (!this.selectedTheme?.id) {
+      throw new Error('No theme selected');
+    }
+
+    return await this.fetchAPI('/api/toolbox/update-location-theme', {
+      method: 'POST',
+      body: JSON.stringify({ ThemeId: this.selectedTheme.id }),
+    });
+  }
+
+  // Media API methods
+  async getMediaFiles() {
+    return await this.fetchAPI('/api/media/');
+  }
+
+  async deleteMedia(mediaId) {
+    return await this.fetchAPI(`/api/media/delete?MediaId=${mediaId}`);
+  }
+
+  async uploadFile(fileData, fileName, fileSize, fileType) {
+    if (!fileData) {
+      throw new Error('Please select a file!');
+    }
+
+    return await this.fetchAPI('/api/media/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: JSON.stringify({
+        MediaName: fileName,
+        MediaImageData: fileData,
+        MediaSize: fileSize,
+        MediaType: fileType,
+      }),
+    });
+  }
+
+  // Content API methods
+  async getContentPageData(productServiceId) {
+    return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);
+  }
+}
+
+module.exports = DataManager
+
 
 /***/ }),
 
@@ -35,7 +191,364 @@ eval("const environment = \"/Comforta_version2DevelopmentNETPostgreSQL\";\nconst
   \**************************************/
 /***/ ((module) => {
 
-eval("class EditorManager {\n  editors = {};\n  pages = [];\n  theme = [];\n  currentEditor = null;\n  currentPageId = null;\n  selectedTemplateWrapper = null;\n  selectedComponent = null;\n  container = document.getElementById(\"child-container\");\n\n  constructor(dataManager, currentLanguage) {\n    this.dataManager = dataManager;\n    this.currentLanguage = currentLanguage;\n    this.templateManager = new TemplateManager(this.currentLanguage, this);\n    this.editorEventManager = new EditorEventManager(\n      this,\n      this.templateManager\n    );\n\n    this.initializeEditorManager();\n  }\n\n  async initializeEditorManager() {\n    const theme = await this.dataManager.getLocationTheme();\n    if (this.toolsSection.checkIfNotAuthenticated(theme)) return;\n    this.theme = theme.SDT_LocationTheme;\n\n    const pagesResponse = await this.dataManager.getPages();\n    if (this.toolsSection.checkIfNotAuthenticated(pagesResponse)) return;\n\n    this.pages = pagesResponse.SDT_PageCollection;\n    this.initializeHomePage();\n  }\n\n  initializeHomePage() {\n    const homePage = this.pages.find((page) => page.PageName == \"Home\");\n    if (homePage) {\n      this.createChildEditor(homePage);\n      this.currentPageId = homePage.PageId;\n    } else {\n      this.toolsSection.ui.displayAlertMessage(\n        `${this.currentLanguage.getTranslation(\"no_home_page_found\")}`,\n        \"danger\"\n      );\n    }\n  }\n\n  getCurrentEditor() {\n    return this.currentEditor.editor;\n  }\n\n  setCurrentEditor(editorId) {\n    const previousEditor = this.editors[this.currentEditor];\n    if (previousEditor) previousEditor.select(null);\n    this.currentEditor = this.editors[editorId];\n    this.activateFrame(editorId + \"-frame\");\n    this.toolsSection.unDoReDo(this.currentEditor.editor);\n  }\n\n  activateFrame(activeFrameClass) {\n    const activeFrame = document.querySelector(activeFrameClass);\n    document.querySelectorAll(\".active-editor\").forEach((frame) => {\n      if (frame !== activeFrame) {\n        frame.classList.remove(\"active-editor\");\n      }\n    });\n    activeFrame.classList.add(\"active-editor\");\n  }\n\n  createChildEditor(page) {\n    const editorDetails = this.setupEditorContainer(page);\n    const editor = this.initializeGrapesEditor(editorDetails.editorId);\n    this.editorEventManager.addEditorEventListeners(editor, page);\n    this.loadEditorContent(editor, page);\n    this.setupEditorLayout(editor, page, editorDetails.containerId);\n    this.finalizeEditorSetup(editor, page, editorDetails);\n  }\n\n\n  setupEditorContainer(page) {\n    const count = this.container.children.length;\n    const editorId = `gjs-${count}`;\n    const containerId = `${editorId}-frame`;\n\n    const editorContainer = document.createElement(\"div\");\n    editorContainer.innerHTML = this.generateEditorHTML(page, editorId);\n    this.configureEditorContainer(editorContainer, containerId, page.PageId);\n\n    return { editorId, containerId };\n  }\n\n  generateEditorHTML(page, editorId) {\n    const appBar = this.shouldShowAppBar(page)\n      ? this.createAppBarHTML(page.PageName)\n      : \"\";\n\n    return `\n      <div class=\"header\">\n          <span id=\"current-time-${page.PageId}\"></span>\n          <span class=\"icons\">\n              <i class=\"fas fa-signal\"></i>\n              <i class=\"fas fa-wifi\"></i>\n              <i class=\"fas fa-battery\"></i>\n          </span>\n      </div>\n      ${appBar}\n      <div id=\"${editorId}\"></div>\n    `;\n  }\n\n  configureEditorContainer(container, containerId, pageId) {\n    container.id = containerId;\n    container.dataset.pageid = pageId;\n    container.classList.add(\"mobile-frame\", \"adding\");\n    this.container.appendChild(container);\n\n    requestAnimationFrame(() => {\n      container.classList.remove(\"adding\");\n    });\n  }\n\n  shouldShowAppBar(page) {\n    return (\n      page.PageIsContentPage ||\n      (page.PageIsPredefined && page.PageName !== \"Home\")\n    );\n  }\n\n  createAppBarHTML(pageName) {\n    return `\n      <div class=\"app-bar\">\n          <button id=\"content-back-button\" class=\"back-button\">\n              <svg class=\"back-arrow\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n                  <path d=\"M19 12H5M5 12L12 19M5 12L12 5\"/>\n                  <path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 12H5M5 12L12 19M5 12L12 5\"/>\n              </svg>\n          </button>\n          <h1 class=\"title\" style=\"text-transform: uppercase\">${pageName}</h1>\n      </div>\n    `;\n  }\n\n  initializeGrapesEditor(editorId) {\n    return grapesjs.init({\n      container: `#${editorId}`,\n      fromElement: true,\n      height: \"100%\",\n      width: \"auto\",\n      canvas: {\n        styles: [\n          \"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css\",\n          \"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css\",\n          \"https://fonts.googleapis.com/css2?family=Lora&family=Merriweather&family=Poppins:wght@400;500&family=Roboto:wght@400;500&display=swap\",\n          \"/Resources/UCGrapes1/src/css/toolbox.css\",\n        ],\n      },\n      baseCss: \" \",\n      dragMode: \"normal\",\n      panels: { defaults: [] },\n      sidebarManager: false,\n      storageManager: false,\n      modal: false,\n      commands: false,\n      hoverable: false,\n      highlightable: false,\n      selectable: false,\n    });\n  }\n\n  updatePageJSONContent(editor, page){\n    const PageGJSJson = editor.getProjectData()\n    this.dataManager.pages.SDT_PageCollection.map(p=>{\n      if (p.PageId == page.PageId) {\n        p.PageGJSJson = JSON.stringify(PageGJSJson)\n      }\n      return p\n    })\n  }\n\n  async loadEditorContent(editor, page) {\n    if (page.PageGJSJson) {\n      await this.loadExistingContent(editor, page);\n    } else if (page.PageIsContentPage) {\n      await this.loadNewContentPage(editor, page);\n    }\n    this.updatePageJSONContent(editor, page)\n  }\n\n  async loadExistingContent(editor, page) {\n    try {\n      const pageData = JSON.parse(page.PageGJSJson);\n\n      if (page.PageIsPredefined && page.PageName === \"Location\") {\n        await this.handleLocationPage(editor, pageData);\n      }\n      else if (page.PageIsPredefined && page.PageName === \"Reception\") {\n        editor.loadProjectData(pageData);\n      } else if (page.PageIsContentPage) {\n        editor.loadProjectData(pageData);\n        await this.handleContentPage(editor, page);\n      } else {\n        editor.loadProjectData(pageData);\n      }\n    } catch (error) {\n      console.error(\"Error loading existing content:\", error);\n    }\n  }\n\n  async handleLocationPage(editor, pageData) {\n    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src =\n      this.dataManager.Location.LocationImage_GXI;\n    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content =\n      this.dataManager.Location.LocationDescription;\n    editor.DomComponents.clear();\n    editor.loadProjectData(pageData);\n  }\n\n  async handleContentPage(editor, page) {\n    try {\n      const res = await this.dataManager.getContentPageData(page.PageId);\n      if (this.toolsSection.checkIfNotAuthenticated(res)) return;\n\n      const contentPageData = res.SDT_ProductService;\n      if (!contentPageData) {\n        console.warn(\"No content page data received\");\n        return;\n      }\n\n      await this.updateContentPageElements(editor, contentPageData);\n    } catch (error) {\n      console.error(\"Error loading content page data:\", error);\n    }\n  }\n\n  async updateContentPageElements(editor, contentPageData) {\n    const wrapper = editor.DomComponents.getWrapper();\n    if (!wrapper) {\n      console.error(\"Wrapper not found in editor\");\n      return;\n    }\n\n    await this.updateImage(wrapper, contentPageData);\n    await this.updateDescription(wrapper, contentPageData);\n    this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);\n  }\n\n  async updateImage(wrapper, contentPageData) {\n    const img = wrapper.find(\"#product-service-image\");\n    if (img.length > 0) {\n      if (!contentPageData?.ProductServiceImage) {\n        img[0].remove();\n      } else {\n        try {\n          img[0].setAttributes({\n            src: contentPageData.ProductServiceImage,\n            alt: \"Product Service Image\",\n          });\n        } catch (err) {\n          console.error(\"Error updating image:\", err);\n        }\n      }\n    }\n  }\n\n  async updateDescription(wrapper, contentPageData) {\n    const p = wrapper.find(\"#product-service-description\");\n    if (p.length > 0) {\n      if (!contentPageData?.ProductServiceDescription) {\n        p[0].remove();\n      } else {\n        try {\n          p[0].components(contentPageData.ProductServiceDescription);\n        } catch (err) {\n          console.error(\"Error updating description:\", err);\n        }\n      }\n    }\n  }\n\n  async loadNewContentPage(editor, page) {\n    try {\n      const res = await this.dataManager.getContentPageData(page.PageId);\n      if (this.toolsSection.checkIfNotAuthenticated(res)) return;\n\n      const contentPageData = res.SDT_ProductService;\n      if (contentPageData) {\n        const projectData =\n          this.templateManager.initialContentPageTemplate(contentPageData);\n        editor.addComponents(projectData)[0];\n        this.toolsSection.ui.pageContentCtas(\n          contentPageData.CallToActions,\n          editor\n        );\n      }\n    } catch (error) {\n      console.error(\"Error fetching content page data:\", error);\n    }\n  }\n\n  setupEditorLayout(editor, page, containerId) {\n    if (this.shouldShowAppBar(page)) {\n      const canvas = editor.Canvas.getElement();\n      if (canvas) {\n        canvas.style.setProperty(\"height\", \"calc(100% - 100px)\", \"important\");\n      }\n      this.backButtonAction(containerId);\n    }\n  }\n\n  finalizeEditorSetup(editor, page, editorDetails) {\n    const editorData = {\n      pageId: page.PageId,\n      editor,\n    };\n    this.editors[`#${editorDetails.editorId}`] = editorData;\n\n    if (page.PageName === \"Home\") {\n      this.setCurrentEditor(`#${editorDetails.editorId}`);\n    }\n\n    const wrapper = editor.getWrapper();\n    wrapper.set({\n      selectable: false,\n      droppable: false,\n      draggable: false,\n      hoverable: false,\n    });\n\n    const navigator = this.editorEventManager.activateNavigators();\n    navigator.updateButtonVisibility();\n    navigator.scrollBy(200);\n    new Clock(`current-time-${page.PageId}`);\n  }\n\n  getPage(pageId) {\n    return this.dataManager.pages.SDT_PageCollection.find(\n      (page) => page.PageId == pageId\n    );\n  }\n\n  backButtonAction(editorContainerId) {\n    const backButton = document.getElementById(\"content-back-button\");\n    if (backButton) {\n      backButton.addEventListener(\"click\", (e) => {\n        e.preventDefault();\n        $(\"#\" + editorContainerId).remove();\n        this.editorEventManager.activateNavigators();\n      });\n    }\n  }\n\n  setToolsSection(toolBox) {\n    this.toolsSection = toolBox;\n  }\n}\n\nmodule.exports = EditorManager\n\n\n//# sourceURL=webpack://ucgrapes/./src/classes/EditorManager.js?");
+class EditorManager {
+  editors = {};
+  pages = [];
+  theme = [];
+  currentEditor = null;
+  currentPageId = null;
+  selectedTemplateWrapper = null;
+  selectedComponent = null;
+  container = document.getElementById("child-container");
+
+  constructor(dataManager, currentLanguage) {
+    this.dataManager = dataManager;
+    this.currentLanguage = currentLanguage;
+    this.templateManager = new TemplateManager(this.currentLanguage, this);
+    this.editorEventManager = new EditorEventManager(
+      this,
+      this.templateManager
+    );
+
+    this.initializeEditorManager();
+  }
+
+  async initializeEditorManager() {
+    const theme = await this.dataManager.getLocationTheme();
+    if (this.toolsSection.checkIfNotAuthenticated(theme)) return;
+    this.theme = theme.SDT_LocationTheme;
+
+    const pagesResponse = await this.dataManager.getPages();
+    if (this.toolsSection.checkIfNotAuthenticated(pagesResponse)) return;
+
+    this.pages = pagesResponse.SDT_PageCollection;
+    this.initializeHomePage();
+  }
+
+  initializeHomePage() {
+    const homePage = this.pages.find((page) => page.PageName == "Home");
+    if (homePage) {
+      this.createChildEditor(homePage);
+      this.currentPageId = homePage.PageId;
+    } else {
+      this.toolsSection.ui.displayAlertMessage(
+        `${this.currentLanguage.getTranslation("no_home_page_found")}`,
+        "danger"
+      );
+    }
+  }
+
+  getCurrentEditor() {
+    return this.currentEditor.editor;
+  }
+
+  setCurrentEditor(editorId) {
+    const previousEditor = this.editors[this.currentEditor];
+    if (previousEditor) previousEditor.select(null);
+    this.currentEditor = this.editors[editorId];
+    this.activateFrame(editorId + "-frame");
+    this.toolsSection.unDoReDo(this.currentEditor.editor);
+  }
+
+  activateFrame(activeFrameClass) {
+    const activeFrame = document.querySelector(activeFrameClass);
+    document.querySelectorAll(".active-editor").forEach((frame) => {
+      if (frame !== activeFrame) {
+        frame.classList.remove("active-editor");
+      }
+    });
+    activeFrame.classList.add("active-editor");
+  }
+
+  createChildEditor(page) {
+    const editorDetails = this.setupEditorContainer(page);
+    const editor = this.initializeGrapesEditor(editorDetails.editorId);
+    this.editorEventManager.addEditorEventListeners(editor, page);
+    this.loadEditorContent(editor, page);
+    this.setupEditorLayout(editor, page, editorDetails.containerId);
+    this.finalizeEditorSetup(editor, page, editorDetails);
+  }
+
+
+  setupEditorContainer(page) {
+    const count = this.container.children.length;
+    const editorId = `gjs-${count}`;
+    const containerId = `${editorId}-frame`;
+
+    const editorContainer = document.createElement("div");
+    editorContainer.innerHTML = this.generateEditorHTML(page, editorId);
+    this.configureEditorContainer(editorContainer, containerId, page.PageId);
+
+    return { editorId, containerId };
+  }
+
+  generateEditorHTML(page, editorId) {
+    const appBar = this.shouldShowAppBar(page)
+      ? this.createAppBarHTML(page.PageName)
+      : "";
+
+    return `
+      <div class="header">
+          <span id="current-time-${page.PageId}"></span>
+          <span class="icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery"></i>
+          </span>
+      </div>
+      ${appBar}
+      <div id="${editorId}"></div>
+    `;
+  }
+
+  configureEditorContainer(container, containerId, pageId) {
+    container.id = containerId;
+    container.dataset.pageid = pageId;
+    container.classList.add("mobile-frame", "adding");
+    this.container.appendChild(container);
+
+    requestAnimationFrame(() => {
+      container.classList.remove("adding");
+    });
+  }
+
+  shouldShowAppBar(page) {
+    return (
+      page.PageIsContentPage ||
+      (page.PageIsPredefined && page.PageName !== "Home")
+    );
+  }
+
+  createAppBarHTML(pageName) {
+    return `
+      <div class="app-bar">
+          <button id="content-back-button" class="back-button">
+              <svg class="back-arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
+                  <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M5 12L12 19M5 12L12 5"/>
+              </svg>
+          </button>
+          <h1 class="title" style="text-transform: uppercase">${pageName}</h1>
+      </div>
+    `;
+  }
+
+  initializeGrapesEditor(editorId) {
+    return grapesjs.init({
+      container: `#${editorId}`,
+      fromElement: true,
+      height: "100%",
+      width: "auto",
+      canvas: {
+        styles: [
+          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
+          "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
+          "https://fonts.googleapis.com/css2?family=Lora&family=Merriweather&family=Poppins:wght@400;500&family=Roboto:wght@400;500&display=swap",
+          "/Resources/UCGrapes1/src/css/toolbox.css",
+        ],
+      },
+      baseCss: " ",
+      dragMode: "normal",
+      panels: { defaults: [] },
+      sidebarManager: false,
+      storageManager: false,
+      modal: false,
+      commands: false,
+      hoverable: false,
+      highlightable: false,
+      selectable: false,
+    });
+  }
+
+  updatePageJSONContent(editor, page){
+    const PageGJSJson = editor.getProjectData()
+    this.dataManager.pages.SDT_PageCollection.map(p=>{
+      if (p.PageId == page.PageId) {
+        p.PageGJSJson = JSON.stringify(PageGJSJson)
+      }
+      return p
+    })
+  }
+
+  async loadEditorContent(editor, page) {
+    if (page.PageGJSJson) {
+      await this.loadExistingContent(editor, page);
+    } else if (page.PageIsContentPage) {
+      await this.loadNewContentPage(editor, page);
+    }
+    this.updatePageJSONContent(editor, page)
+  }
+
+  async loadExistingContent(editor, page) {
+    try {
+      const pageData = JSON.parse(page.PageGJSJson);
+
+      if (page.PageIsPredefined && page.PageName === "Location") {
+        await this.handleLocationPage(editor, pageData);
+      }
+      else if (page.PageIsPredefined && page.PageName === "Reception") {
+        editor.loadProjectData(pageData);
+      } else if (page.PageIsContentPage) {
+        editor.loadProjectData(pageData);
+        await this.handleContentPage(editor, page);
+      } else {
+        editor.loadProjectData(pageData);
+      }
+    } catch (error) {
+      console.error("Error loading existing content:", error);
+    }
+  }
+
+  async handleLocationPage(editor, pageData) {
+    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src =
+      this.dataManager.Location.LocationImage_GXI;
+    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content =
+      this.dataManager.Location.LocationDescription;
+    editor.DomComponents.clear();
+    editor.loadProjectData(pageData);
+  }
+
+  async handleContentPage(editor, page) {
+    try {
+      const res = await this.dataManager.getContentPageData(page.PageId);
+      if (this.toolsSection.checkIfNotAuthenticated(res)) return;
+
+      const contentPageData = res.SDT_ProductService;
+      if (!contentPageData) {
+        console.warn("No content page data received");
+        return;
+      }
+
+      await this.updateContentPageElements(editor, contentPageData);
+    } catch (error) {
+      console.error("Error loading content page data:", error);
+    }
+  }
+
+  async updateContentPageElements(editor, contentPageData) {
+    const wrapper = editor.DomComponents.getWrapper();
+    if (!wrapper) {
+      console.error("Wrapper not found in editor");
+      return;
+    }
+
+    await this.updateImage(wrapper, contentPageData);
+    await this.updateDescription(wrapper, contentPageData);
+    this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
+  }
+
+  async updateImage(wrapper, contentPageData) {
+    const img = wrapper.find("#product-service-image");
+    if (img.length > 0) {
+      if (!contentPageData?.ProductServiceImage) {
+        img[0].remove();
+      } else {
+        try {
+          img[0].setAttributes({
+            src: contentPageData.ProductServiceImage,
+            alt: "Product Service Image",
+          });
+        } catch (err) {
+          console.error("Error updating image:", err);
+        }
+      }
+    }
+  }
+
+  async updateDescription(wrapper, contentPageData) {
+    const p = wrapper.find("#product-service-description");
+    if (p.length > 0) {
+      if (!contentPageData?.ProductServiceDescription) {
+        p[0].remove();
+      } else {
+        try {
+          p[0].components(contentPageData.ProductServiceDescription);
+        } catch (err) {
+          console.error("Error updating description:", err);
+        }
+      }
+    }
+  }
+
+  async loadNewContentPage(editor, page) {
+    try {
+      const res = await this.dataManager.getContentPageData(page.PageId);
+      if (this.toolsSection.checkIfNotAuthenticated(res)) return;
+
+      const contentPageData = res.SDT_ProductService;
+      if (contentPageData) {
+        const projectData =
+          this.templateManager.initialContentPageTemplate(contentPageData);
+        editor.addComponents(projectData)[0];
+        this.toolsSection.ui.pageContentCtas(
+          contentPageData.CallToActions,
+          editor
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching content page data:", error);
+    }
+  }
+
+  setupEditorLayout(editor, page, containerId) {
+    if (this.shouldShowAppBar(page)) {
+      const canvas = editor.Canvas.getElement();
+      if (canvas) {
+        canvas.style.setProperty("height", "calc(100% - 100px)", "important");
+      }
+      this.backButtonAction(containerId);
+    }
+  }
+
+  finalizeEditorSetup(editor, page, editorDetails) {
+    const editorData = {
+      pageId: page.PageId,
+      editor,
+    };
+    this.editors[`#${editorDetails.editorId}`] = editorData;
+
+    if (page.PageName === "Home") {
+      this.setCurrentEditor(`#${editorDetails.editorId}`);
+    }
+
+    const wrapper = editor.getWrapper();
+    wrapper.set({
+      selectable: false,
+      droppable: false,
+      draggable: false,
+      hoverable: false,
+    });
+
+    const navigator = this.editorEventManager.activateNavigators();
+    navigator.updateButtonVisibility();
+    navigator.scrollBy(200);
+    new Clock(`current-time-${page.PageId}`);
+  }
+
+  getPage(pageId) {
+    return this.dataManager.pages.SDT_PageCollection.find(
+      (page) => page.PageId == pageId
+    );
+  }
+
+  backButtonAction(editorContainerId) {
+    const backButton = document.getElementById("content-back-button");
+    if (backButton) {
+      backButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        $("#" + editorContainerId).remove();
+        this.editorEventManager.activateNavigators();
+      });
+    }
+  }
+
+  setToolsSection(toolBox) {
+    this.toolsSection = toolBox;
+  }
+}
+
+module.exports = EditorManager
+
 
 /***/ }),
 
@@ -45,7 +558,307 @@ eval("class EditorManager {\n  editors = {};\n  pages = [];\n  theme = [];\n  cu
   \*********************************************/
 /***/ ((module) => {
 
-eval("class EventListenerManager {\n    constructor(toolBoxManager) {\n      this.toolBoxManager = toolBoxManager;\n    }\n  \n    setupTabListeners() {\n      const tabButtons = document.querySelectorAll(\".tb-tab-button\");\n      const tabContents = document.querySelectorAll(\".tb-tab-content\");\n      tabButtons.forEach((button) => {\n        button.addEventListener(\"click\", (e) => {\n          e.preventDefault();\n          tabButtons.forEach((btn) => btn.classList.remove(\"active\"));\n          tabContents.forEach((content) => (content.style.display = \"none\"));\n  \n          button.classList.add(\"active\");\n          document.querySelector(`#${button.dataset.tab}-content`).style.display =\n            \"block\";\n        });\n      });\n    }\n  \n    setupMappingListeners() {\n      const mappingButton = document.getElementById(\"open-mapping\");\n      const publishButton = document.getElementById(\"publish\");\n      const mappingSection = document.getElementById(\"mapping-section\");\n      const toolsSection = document.getElementById(\"tools-section\");\n  \n      this.toolBoxManager.mappingComponent = new MappingComponent(\n        this.toolBoxManager.dataManager,\n        this.toolBoxManager.editorManager,\n        this.toolBoxManager,\n        this.toolBoxManager.currentLanguage\n      );\n  \n      mappingButton.addEventListener(\"click\", (e) => {\n        e.preventDefault();\n  \n        toolsSection.style.display =\n          toolsSection.style.display === \"none\" ? \"block\" : \"none\";\n  \n        mappingSection.style.display =\n          mappingSection.style.display === \"block\" ? \"none\" : \"block\";\n  \n        this.toolBoxManager.mappingComponent.init();\n      });\n    }\n  \n    setupPublishListeners() {\n      const publishButton = document.getElementById(\"publish\");\n  \n      publishButton.onclick = (e) => {\n        e.preventDefault();\n        const popup = document.createElement(\"div\");\n        popup.className = \"popup-modal\";\n        popup.innerHTML = `\n                <div class=\"popup\">\n                  <div class=\"popup-header\">\n                    <span>${this.toolBoxManager.currentLanguage.getTranslation(\n                      \"publish_confirm_title\"\n                    )}</span>\n                    <button class=\"close\">\n                      <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 21 21\">\n                          <path id=\"Icon_material-close\" data-name=\"Icon material-close\" d=\"M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z\" transform=\"translate(-7.5 -7.5)\" fill=\"#6a747f\" opacity=\"0.54\"/>\n                      </svg>\n                    </button>\n                  </div>\n                  <hr>\n                  <div class=\"popup-body\" id=\"confirmation_modal_message\">\n                  ${this.toolBoxManager.currentLanguage.getTranslation(\n                    \"publish_confirm_message\"\n                  )}\n                    <label for=\"notify_residents\" class=\"notify_residents\">\n                        <input type=\"checkbox\" id=\"notify_residents\" name=\"notify_residents\">\n                        <span>${this.toolBoxManager.currentLanguage.getTranslation(\n                          \"nofity_residents_on_publish\"\n                        )}</span>\n                    </label>\n                  </div>\n                  <div class=\"popup-footer\">\n                    <button id=\"yes_publish\" class=\"tb-btn tb-btn-primary\">\n                    ${this.toolBoxManager.currentLanguage.getTranslation(\n                      \"publish_confirm_button\"\n                    )}\n                    </button>\n                    <button id=\"close_popup\" class=\"tb-btn tb-btn-outline\">\n                    ${this.toolBoxManager.currentLanguage.getTranslation(\n                      \"publish_cancel_button\"\n                    )}\n                    </button>\n                  </div>\n                </div>\n              `;\n  \n        document.body.appendChild(popup);\n        popup.style.display = \"flex\";\n  \n        const publishButton = popup.querySelector(\"#yes_publish\");\n        const closeButton = popup.querySelector(\"#close_popup\");\n        const closePopup = popup.querySelector(\".close\");\n  \n        publishButton.addEventListener(\"click\", () => {\n          const isNotifyResidents =\n            document.getElementById(\"notify_residents\").checked;\n          this.toolBoxManager.publishPages(isNotifyResidents);\n          popup.remove();\n        });\n  \n        closeButton.addEventListener(\"click\", () => {\n          popup.remove();\n        });\n  \n        closePopup.addEventListener(\"click\", () => {\n          popup.remove();\n        });\n      };\n    }\n  \n    setupAlignmentListeners() {\n      const leftAlign = document.getElementById(\"text-align-left\");\n      const centerAlign = document.getElementById(\"text-align-center\");\n      const rightAlign = document.getElementById(\"text-align-right\");\n  \n      leftAlign.addEventListener(\"click\", () => {\n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent.find(\n              \".tile-title-section\"\n            )[0];\n  \n          if (templateBlock) {\n            templateBlock.setStyle({\n              // display: \"flex\",\n              // \"align-self\": \"start\",\n              \"text-align\": \"left\",\n            });\n            this.toolBoxManager.setAttributeToSelected(\"tile-text-align\", \"left\");\n          }\n        }\n      });\n  \n      centerAlign.addEventListener(\"click\", () => {\n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent.find(\n              \".tile-title-section\"\n            )[0];\n  \n          if (templateBlock) {\n            templateBlock.setStyle({\n              // display: \"flex\",\n              // \"align-self\": \"center\",\n              \"text-align\": \"center\",\n            });\n            this.toolBoxManager.setAttributeToSelected(\n              \"tile-text-align\",\n              \"center\"\n            );\n          }\n        }\n      });\n  \n      rightAlign.addEventListener(\"click\", () => {\n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent.find(\n              \".tile-title-section\"\n            )[0];\n  \n          if (templateBlock) {\n            templateBlock.setStyle({\n              // display: \"flex\",\n              // \"align-self\": \"end\",\n              \"text-align\": \"right\",\n            });\n            this.toolBoxManager.setAttributeToSelected(\n              \"tile-text-align\",\n              \"right\"\n            );\n          }\n        }\n      });\n  \n      const iconLeftAlign = document.getElementById(\"icon-align-left\");\n      const iconCenterAlign = document.getElementById(\"icon-align-center\");\n      const iconRightAlign = document.getElementById(\"icon-align-right\");\n  \n      iconLeftAlign.addEventListener(\"click\", () => {\n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent.find(\n              \".tile-icon-section\"\n            )[0];\n          if (templateBlock) {\n            templateBlock.setStyle({\n              display: \"flex\",\n              \"align-self\": \"start\",\n            });\n            this.toolBoxManager.setAttributeToSelected(\"tile-icon-align\", \"left\");\n          }\n        }\n      });\n  \n      iconCenterAlign.addEventListener(\"click\", () => {\n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent.find(\n              \".tile-icon-section\"\n            )[0];\n  \n          if (templateBlock) {\n            templateBlock.setStyle({\n              display: \"flex\",\n              \"align-self\": \"center\",\n            });\n            this.toolBoxManager.setAttributeToSelected(\n              \"tile-icon-align\",\n              \"center\"\n            );\n          }\n        }\n      });\n  \n      iconRightAlign.addEventListener(\"click\", () => {\n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent.find(\n              \".tile-icon-section\"\n            )[0];\n  \n          if (templateBlock) {\n            templateBlock.setStyle({\n              display: \"flex\",\n              \"align-self\": \"end\",\n            });\n            this.toolBoxManager.setAttributeToSelected(\n              \"tile-icon-align\",\n              \"right\"\n            );\n          }\n        } \n      });\n    }\n  \n    setupOpacityListener() {\n      const imageOpacity = document.getElementById(\"bg-opacity\");\n  \n      imageOpacity.addEventListener(\"input\", (event) => {\n        const value = event.target.value;\n  \n        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n          const templateBlock =\n            this.toolBoxManager.editorManager.selectedComponent;\n  \n          if (templateBlock) {\n            const opacity = value / 100;\n            const currentBgImage = templateBlock\n              .getStyle()\n              [\"background-image\"].match(/url\\((.*?)\\)/)[1];\n            templateBlock.addStyle({\n              \"background-image\": `linear-gradient(rgba(255, 255, 255, ${\n                1 - value / 100\n              }), rgba(255, 255, 255, ${\n                1 - value / 100\n              })), url(${currentBgImage})`,\n            });\n          }\n        }\n      });\n    }\n  \n    setupAutoSave() {\n      setInterval(() => {\n        const editors = Object.values(this.toolBoxManager.editorManager.editors);\n  \n        if (!this.toolBoxManager.previousStates) {\n          this.toolBoxManager.previousStates = new Map();\n        }\n        if (editors && editors.length) {\n          for (let index = 0; index < editors.length; index++) {\n            const editorData = editors[index];\n            const editor = editorData.editor;\n            const pageId = editorData.pageId;\n  \n            if (!this.toolBoxManager.previousStates.has(pageId)) {\n              this.toolBoxManager.previousStates.set(pageId, editor.getHtml());\n            }\n  \n            const currentState = editor.getHtml();\n  \n            if (currentState !== this.toolBoxManager.previousStates.get(pageId)) {\n              this.toolBoxManager.autoSavePage(editorData);\n  \n              this.toolBoxManager.previousStates.set(pageId, currentState);\n            }\n          }\n        }\n      }, 10000);\n    }\n  }\n\nmodule.exports = EventListenerManager\n\n//# sourceURL=webpack://ucgrapes/./src/classes/EventListenerManager.js?");
+class EventListenerManager {
+    constructor(toolBoxManager) {
+      this.toolBoxManager = toolBoxManager;
+    }
+  
+    setupTabListeners() {
+      const tabButtons = document.querySelectorAll(".tb-tab-button");
+      const tabContents = document.querySelectorAll(".tb-tab-content");
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          tabButtons.forEach((btn) => btn.classList.remove("active"));
+          tabContents.forEach((content) => (content.style.display = "none"));
+  
+          button.classList.add("active");
+          document.querySelector(`#${button.dataset.tab}-content`).style.display =
+            "block";
+        });
+      });
+    }
+  
+    setupMappingListeners() {
+      const mappingButton = document.getElementById("open-mapping");
+      const publishButton = document.getElementById("publish");
+      const mappingSection = document.getElementById("mapping-section");
+      const toolsSection = document.getElementById("tools-section");
+  
+      this.toolBoxManager.mappingComponent = new MappingComponent(
+        this.toolBoxManager.dataManager,
+        this.toolBoxManager.editorManager,
+        this.toolBoxManager,
+        this.toolBoxManager.currentLanguage
+      );
+  
+      mappingButton.addEventListener("click", (e) => {
+        e.preventDefault();
+  
+        toolsSection.style.display =
+          toolsSection.style.display === "none" ? "block" : "none";
+  
+        mappingSection.style.display =
+          mappingSection.style.display === "block" ? "none" : "block";
+  
+        this.toolBoxManager.mappingComponent.init();
+      });
+    }
+  
+    setupPublishListeners() {
+      const publishButton = document.getElementById("publish");
+  
+      publishButton.onclick = (e) => {
+        e.preventDefault();
+        const popup = document.createElement("div");
+        popup.className = "popup-modal";
+        popup.innerHTML = `
+                <div class="popup">
+                  <div class="popup-header">
+                    <span>${this.toolBoxManager.currentLanguage.getTranslation(
+                      "publish_confirm_title"
+                    )}</span>
+                    <button class="close">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                          <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <hr>
+                  <div class="popup-body" id="confirmation_modal_message">
+                  ${this.toolBoxManager.currentLanguage.getTranslation(
+                    "publish_confirm_message"
+                  )}
+                    <label for="notify_residents" class="notify_residents">
+                        <input type="checkbox" id="notify_residents" name="notify_residents">
+                        <span>${this.toolBoxManager.currentLanguage.getTranslation(
+                          "nofity_residents_on_publish"
+                        )}</span>
+                    </label>
+                  </div>
+                  <div class="popup-footer">
+                    <button id="yes_publish" class="tb-btn tb-btn-primary">
+                    ${this.toolBoxManager.currentLanguage.getTranslation(
+                      "publish_confirm_button"
+                    )}
+                    </button>
+                    <button id="close_popup" class="tb-btn tb-btn-outline">
+                    ${this.toolBoxManager.currentLanguage.getTranslation(
+                      "publish_cancel_button"
+                    )}
+                    </button>
+                  </div>
+                </div>
+              `;
+  
+        document.body.appendChild(popup);
+        popup.style.display = "flex";
+  
+        const publishButton = popup.querySelector("#yes_publish");
+        const closeButton = popup.querySelector("#close_popup");
+        const closePopup = popup.querySelector(".close");
+  
+        publishButton.addEventListener("click", () => {
+          const isNotifyResidents =
+            document.getElementById("notify_residents").checked;
+          this.toolBoxManager.publishPages(isNotifyResidents);
+          popup.remove();
+        });
+  
+        closeButton.addEventListener("click", () => {
+          popup.remove();
+        });
+  
+        closePopup.addEventListener("click", () => {
+          popup.remove();
+        });
+      };
+    }
+  
+    setupAlignmentListeners() {
+      const leftAlign = document.getElementById("text-align-left");
+      const centerAlign = document.getElementById("text-align-center");
+      const rightAlign = document.getElementById("text-align-right");
+  
+      leftAlign.addEventListener("click", () => {
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-title-section"
+            )[0];
+  
+          if (templateBlock) {
+            templateBlock.setStyle({
+              // display: "flex",
+              // "align-self": "start",
+              "text-align": "left",
+            });
+            this.toolBoxManager.setAttributeToSelected("tile-text-align", "left");
+          }
+        }
+      });
+  
+      centerAlign.addEventListener("click", () => {
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-title-section"
+            )[0];
+  
+          if (templateBlock) {
+            templateBlock.setStyle({
+              // display: "flex",
+              // "align-self": "center",
+              "text-align": "center",
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-text-align",
+              "center"
+            );
+          }
+        }
+      });
+  
+      rightAlign.addEventListener("click", () => {
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-title-section"
+            )[0];
+  
+          if (templateBlock) {
+            templateBlock.setStyle({
+              // display: "flex",
+              // "align-self": "end",
+              "text-align": "right",
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-text-align",
+              "right"
+            );
+          }
+        }
+      });
+  
+      const iconLeftAlign = document.getElementById("icon-align-left");
+      const iconCenterAlign = document.getElementById("icon-align-center");
+      const iconRightAlign = document.getElementById("icon-align-right");
+  
+      iconLeftAlign.addEventListener("click", () => {
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-icon-section"
+            )[0];
+          if (templateBlock) {
+            templateBlock.setStyle({
+              display: "flex",
+              "align-self": "start",
+            });
+            this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
+          }
+        }
+      });
+  
+      iconCenterAlign.addEventListener("click", () => {
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-icon-section"
+            )[0];
+  
+          if (templateBlock) {
+            templateBlock.setStyle({
+              display: "flex",
+              "align-self": "center",
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-icon-align",
+              "center"
+            );
+          }
+        }
+      });
+  
+      iconRightAlign.addEventListener("click", () => {
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-icon-section"
+            )[0];
+  
+          if (templateBlock) {
+            templateBlock.setStyle({
+              display: "flex",
+              "align-self": "end",
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-icon-align",
+              "right"
+            );
+          }
+        } 
+      });
+    }
+  
+    setupOpacityListener() {
+      const imageOpacity = document.getElementById("bg-opacity");
+  
+      imageOpacity.addEventListener("input", (event) => {
+        const value = event.target.value;
+  
+        if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+          const templateBlock =
+            this.toolBoxManager.editorManager.selectedComponent;
+  
+          if (templateBlock) {
+            const opacity = value / 100;
+            const currentBgImage = templateBlock
+              .getStyle()
+              ["background-image"].match(/url\((.*?)\)/)[1];
+            templateBlock.addStyle({
+              "background-image": `linear-gradient(rgba(255, 255, 255, ${
+                1 - value / 100
+              }), rgba(255, 255, 255, ${
+                1 - value / 100
+              })), url(${currentBgImage})`,
+            });
+          }
+        }
+      });
+    }
+  
+    setupAutoSave() {
+      setInterval(() => {
+        const editors = Object.values(this.toolBoxManager.editorManager.editors);
+  
+        if (!this.toolBoxManager.previousStates) {
+          this.toolBoxManager.previousStates = new Map();
+        }
+        if (editors && editors.length) {
+          for (let index = 0; index < editors.length; index++) {
+            const editorData = editors[index];
+            const editor = editorData.editor;
+            const pageId = editorData.pageId;
+  
+            if (!this.toolBoxManager.previousStates.has(pageId)) {
+              this.toolBoxManager.previousStates.set(pageId, editor.getHtml());
+            }
+  
+            const currentState = editor.getHtml();
+  
+            if (currentState !== this.toolBoxManager.previousStates.get(pageId)) {
+              this.toolBoxManager.autoSavePage(editorData);
+  
+              this.toolBoxManager.previousStates.set(pageId, currentState);
+            }
+          }
+        }
+      }, 10000);
+    }
+  }
+
+module.exports = EventListenerManager
 
 /***/ }),
 
@@ -55,7 +868,182 @@ eval("class EventListenerManager {\n    constructor(toolBoxManager) {\n      thi
   \*******************************/
 /***/ ((module) => {
 
-eval("class Locale {\n  constructor(language) {\n    this.currentLanguage = language;\n    this.defaultLanguage = \"english\";\n    this.translations = {};\n  }\n\n  async init() {\n    await this.loadTranslations();\n    return this; // Allow chaining\n  }\n\n  async loadTranslations() {\n    try {\n      const languages = [\"english\", \"dutch\"];\n      for (const lang of languages) {\n        const response = await fetch(\n          `${window.location.origin}/Resources/UCGrapes1/src/i18n/${lang}.json`\n        );\n        if (!response.ok)\n          throw new Error(`Failed to load ${lang} translations`);\n        const data = await response.json();\n        this.translations[lang] = data;\n      }\n    } catch (error) {\n      console.error(\"Error loading translations:\", error);\n      throw new Error(`Failed to load translations: ${error.message}`);\n    }\n  }\n\n  async setLanguage(language) {\n    // Wait for translations to be loaded\n    if (Object.keys(this.translations).length === 0) {\n      await this.loadTranslations();\n    }\n\n    const elementsToTranslate = [\n      // \"navbar_title\",\n      \"navbar_tree_label\",\n      \"navbar_publish_label\",\n      \"sidebar_tabs_pages_label\",\n      \"sidebar_tabs_templates_label\",\n      \"sidebar_select_action_label\",\n      \"new_page_submit_label\",\n      \"template_added_success_message\",\n      \"theme_applied_success_message\",\n      \"page_loaded_success_message\",\n      \"no_tile_selected_error_message\",\n      \"error_loading_data_message\",\n      \"failed_to_save_current_page_message\",\n      \"tile_has_bg_image_error_message\",\n      \"error_applying_theme_message\",\n      \"no_icon_selected_error_message\",\n      \"error_save_message\",\n      \"accept_popup\",\n      \"close_popup\",\n      \"sidebar_mapping_title\",\n      \"alert_type_success\",\n      \"alert_type_error\",\n      \"cancel_btn\",\n      \"save_btn\",\n      \"publish_confirm_title\",\n      \"publish_confirm_message\",\n      \"nofity_residents_on_publish\",\n      \"publish_confirm_button\",\n      \"publish_cancel_button\",\n      \"enter_title_place_holder\",\n    ];\n\n    elementsToTranslate.forEach((elementId) => {\n      const element = document.getElementById(elementId);\n      if (element) {\n        element.innerText = this.getTranslation(elementId);\n      } else {\n        console.warn(`Element with id '${elementId}' not found`);\n      }\n    });\n  }\n\n  getTranslation(key) {\n    if (!this.translations || Object.keys(this.translations).length === 0) {\n      console.warn(\"Translations not yet loaded\");\n      return key;\n    }\n\n    const translation =\n      this.translations[this.currentLanguage]?.[key] ||\n      this.translations[this.defaultLanguage]?.[key];\n\n    if (!translation) {\n      console.warn(`Translation missing for key '${key}'`);\n      return key;\n    }\n\n    return translation;\n  }\n\n  translateUCStrings() {\n    document.getElementById(\"tile-title\").placeholder = this.getTranslation(\n      \"enter_title_place_holder\"\n    );\n\n    const options = [\n      {\n        value: \"Services\",\n        label: \"icon_category_services\",\n      },\n      {\n        value: \"General\",\n        label: \"icon_category_general\",\n        selected: true,\n      },\n      {\n        value: \"Health\",\n        label: \"icon_category_health\",\n      },\n      {\n        value: \"Living\",\n        label: \"icon_category_living\",\n      },\n    ];\n\n    const select = document.querySelector(\".tb-custom-category-selection\");\n    const button = select.querySelector(\".category-select-button\");\n    const selectedValue = button.querySelector(\".selected-category-value\");\n\n    // Toggle dropdown visibility\n    button.addEventListener(\"click\", (e) => {\n      e.preventDefault();\n      const isOpen = optionsList.classList.contains(\"show\");\n      optionsList.classList.toggle(\"show\");\n      button.classList.toggle(\"open\");\n      button.setAttribute(\"aria-expanded\", !isOpen);\n    });\n\n    const optionsList = document.createElement(\"div\");\n    optionsList.classList.add(\"category-options-list\");\n    optionsList.setAttribute(\"role\", \"listbox\");\n    optionsList.innerHTML = \"\";\n\n    // Populate themes into the dropdown\n    options.forEach((opt, index) => {\n      const option = document.createElement(\"div\");\n      option.classList.add(\"category-option\");\n      option.setAttribute(\"role\", \"option\");\n      option.setAttribute(\"data-value\", opt.value);\n      option.textContent = this.getTranslation(opt.label);\n      if (opt.selected) {\n        selectedValue.textContent = this.getTranslation(opt.label);\n        option.classList.add(\"selected\");\n      }\n\n      option.addEventListener(\"click\", (e) => {\n        selectedValue.textContent = this.getTranslation(opt.label);\n\n        // Mark as selected\n        const allOptions = optionsList.querySelectorAll(\".category-option\");\n        allOptions.forEach((opt) => opt.classList.remove(\"selected\"));\n        option.classList.add(\"selected\");\n\n        // Close the dropdown\n        optionsList.classList.remove(\"show\");\n        button.classList.remove(\"open\");\n        button.setAttribute(\"aria-expanded\", \"false\");\n      });\n\n      // Append option to the options list\n      optionsList.appendChild(option);\n    });\n\n    select.appendChild(optionsList);\n  }\n}\n\nmodule.exports = Locale\n\n\n//# sourceURL=webpack://ucgrapes/./src/classes/Locale.js?");
+class Locale {
+  constructor(language) {
+    this.currentLanguage = language;
+    this.defaultLanguage = "english";
+    this.translations = {};
+  }
+
+  async init() {
+    await this.loadTranslations();
+    return this; // Allow chaining
+  }
+
+  async loadTranslations() {
+    try {
+      const languages = ["english", "dutch"];
+      for (const lang of languages) {
+        const response = await fetch(
+          `${window.location.origin}/Resources/UCGrapes1/src/i18n/${lang}.json`
+        );
+        if (!response.ok)
+          throw new Error(`Failed to load ${lang} translations`);
+        const data = await response.json();
+        this.translations[lang] = data;
+      }
+    } catch (error) {
+      console.error("Error loading translations:", error);
+      throw new Error(`Failed to load translations: ${error.message}`);
+    }
+  }
+
+  async setLanguage(language) {
+    // Wait for translations to be loaded
+    if (Object.keys(this.translations).length === 0) {
+      await this.loadTranslations();
+    }
+
+    const elementsToTranslate = [
+      // "navbar_title",
+      "navbar_tree_label",
+      "navbar_publish_label",
+      "sidebar_tabs_pages_label",
+      "sidebar_tabs_templates_label",
+      "sidebar_select_action_label",
+      "new_page_submit_label",
+      "template_added_success_message",
+      "theme_applied_success_message",
+      "page_loaded_success_message",
+      "no_tile_selected_error_message",
+      "error_loading_data_message",
+      "failed_to_save_current_page_message",
+      "tile_has_bg_image_error_message",
+      "error_applying_theme_message",
+      "no_icon_selected_error_message",
+      "error_save_message",
+      "accept_popup",
+      "close_popup",
+      "sidebar_mapping_title",
+      "alert_type_success",
+      "alert_type_error",
+      "cancel_btn",
+      "save_btn",
+      "publish_confirm_title",
+      "publish_confirm_message",
+      "nofity_residents_on_publish",
+      "publish_confirm_button",
+      "publish_cancel_button",
+      "enter_title_place_holder",
+    ];
+
+    elementsToTranslate.forEach((elementId) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.innerText = this.getTranslation(elementId);
+      } else {
+        console.warn(`Element with id '${elementId}' not found`);
+      }
+    });
+  }
+
+  getTranslation(key) {
+    if (!this.translations || Object.keys(this.translations).length === 0) {
+      console.warn("Translations not yet loaded");
+      return key;
+    }
+
+    const translation =
+      this.translations[this.currentLanguage]?.[key] ||
+      this.translations[this.defaultLanguage]?.[key];
+
+    if (!translation) {
+      console.warn(`Translation missing for key '${key}'`);
+      return key;
+    }
+
+    return translation;
+  }
+
+  translateUCStrings() {
+    document.getElementById("tile-title").placeholder = this.getTranslation(
+      "enter_title_place_holder"
+    );
+
+    const options = [
+      {
+        value: "Services",
+        label: "icon_category_services",
+      },
+      {
+        value: "General",
+        label: "icon_category_general",
+        selected: true,
+      },
+      {
+        value: "Health",
+        label: "icon_category_health",
+      },
+      {
+        value: "Living",
+        label: "icon_category_living",
+      },
+    ];
+
+    const select = document.querySelector(".tb-custom-category-selection");
+    const button = select.querySelector(".category-select-button");
+    const selectedValue = button.querySelector(".selected-category-value");
+
+    // Toggle dropdown visibility
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isOpen = optionsList.classList.contains("show");
+      optionsList.classList.toggle("show");
+      button.classList.toggle("open");
+      button.setAttribute("aria-expanded", !isOpen);
+    });
+
+    const optionsList = document.createElement("div");
+    optionsList.classList.add("category-options-list");
+    optionsList.setAttribute("role", "listbox");
+    optionsList.innerHTML = "";
+
+    // Populate themes into the dropdown
+    options.forEach((opt, index) => {
+      const option = document.createElement("div");
+      option.classList.add("category-option");
+      option.setAttribute("role", "option");
+      option.setAttribute("data-value", opt.value);
+      option.textContent = this.getTranslation(opt.label);
+      if (opt.selected) {
+        selectedValue.textContent = this.getTranslation(opt.label);
+        option.classList.add("selected");
+      }
+
+      option.addEventListener("click", (e) => {
+        selectedValue.textContent = this.getTranslation(opt.label);
+
+        // Mark as selected
+        const allOptions = optionsList.querySelectorAll(".category-option");
+        allOptions.forEach((opt) => opt.classList.remove("selected"));
+        option.classList.add("selected");
+
+        // Close the dropdown
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      });
+
+      // Append option to the options list
+      optionsList.appendChild(option);
+    });
+
+    select.appendChild(optionsList);
+  }
+}
+
+module.exports = Locale
+
 
 /***/ }),
 
@@ -65,7 +1053,64 @@ eval("class Locale {\n  constructor(language) {\n    this.currentLanguage = lang
   \************************************/
 /***/ ((module) => {
 
-eval("class PageManager {\n    constructor(toolBoxManager) {\n      this.toolBoxManager = toolBoxManager;\n    }\n  \n    loadPageTemplates() {\n      const pageTemplates = document.getElementById(\"page-templates\");\n      this.toolBoxManager.templates.forEach((template, index) => {\n        const blockElement = document.createElement(\"div\");\n  \n        blockElement.className = \"page-template-wrapper\";\n        // Create the number element\n        const numberElement = document.createElement(\"div\");\n        numberElement.className = \"page-template-block-number\";\n        numberElement.textContent = index + 1; // Set the number\n        const templateBlock = document.createElement(\"div\");\n        templateBlock.className = \"page-template-block\";\n        templateBlock.title = this.toolBoxManager.currentLanguage.getTranslation(\n          \"click_to_load_template\"\n        ); //\n        templateBlock.innerHTML = `<div>${template.media}</div>`;\n  \n        blockElement.addEventListener(\"click\", () => {\n          const popup = this.toolBoxManager.popupManager.popupModal();\n          document.body.appendChild(popup);\n          popup.style.display = \"flex\";\n  \n          const closeButton = popup.querySelector(\".close\");\n          closeButton.onclick = () => {\n            popup.style.display = \"none\";\n            document.body.removeChild(popup);\n          };\n  \n          const cancelBtn = popup.querySelector(\"#close_popup\");\n          cancelBtn.onclick = () => {\n            popup.style.display = \"none\";\n            document.body.removeChild(popup);\n          };\n  \n          const acceptBtn = popup.querySelector(\"#accept_popup\");\n          acceptBtn.onclick = () => {\n            popup.style.display = \"none\";\n            document.body.removeChild(popup);\n            this.toolBoxManager.editorManager.templateManager.addFreshTemplate(\n              template.content\n            );\n          };\n        });\n  \n        // Append number and template block to the wrapper\n        blockElement.appendChild(numberElement);\n        blockElement.appendChild(templateBlock);\n        pageTemplates.appendChild(blockElement);\n      });\n    }\n  }\n\nmodule.exports = PageManager\n\n//# sourceURL=webpack://ucgrapes/./src/classes/PageManager.js?");
+class PageManager {
+    constructor(toolBoxManager) {
+      this.toolBoxManager = toolBoxManager;
+    }
+  
+    loadPageTemplates() {
+      const pageTemplates = document.getElementById("page-templates");
+      this.toolBoxManager.templates.forEach((template, index) => {
+        const blockElement = document.createElement("div");
+  
+        blockElement.className = "page-template-wrapper";
+        // Create the number element
+        const numberElement = document.createElement("div");
+        numberElement.className = "page-template-block-number";
+        numberElement.textContent = index + 1; // Set the number
+        const templateBlock = document.createElement("div");
+        templateBlock.className = "page-template-block";
+        templateBlock.title = this.toolBoxManager.currentLanguage.getTranslation(
+          "click_to_load_template"
+        ); //
+        templateBlock.innerHTML = `<div>${template.media}</div>`;
+  
+        blockElement.addEventListener("click", () => {
+          const popup = this.toolBoxManager.popupManager.popupModal();
+          document.body.appendChild(popup);
+          popup.style.display = "flex";
+  
+          const closeButton = popup.querySelector(".close");
+          closeButton.onclick = () => {
+            popup.style.display = "none";
+            document.body.removeChild(popup);
+          };
+  
+          const cancelBtn = popup.querySelector("#close_popup");
+          cancelBtn.onclick = () => {
+            popup.style.display = "none";
+            document.body.removeChild(popup);
+          };
+  
+          const acceptBtn = popup.querySelector("#accept_popup");
+          acceptBtn.onclick = () => {
+            popup.style.display = "none";
+            document.body.removeChild(popup);
+            this.toolBoxManager.editorManager.templateManager.addFreshTemplate(
+              template.content
+            );
+          };
+        });
+  
+        // Append number and template block to the wrapper
+        blockElement.appendChild(numberElement);
+        blockElement.appendChild(templateBlock);
+        pageTemplates.appendChild(blockElement);
+      });
+    }
+  }
+
+module.exports = PageManager
 
 /***/ }),
 
@@ -75,7 +1120,52 @@ eval("class PageManager {\n    constructor(toolBoxManager) {\n      this.toolBox
   \*************************************/
 /***/ ((module) => {
 
-eval("class PopupManager {\n    constructor(toolBoxManager) {\n      this.toolBoxManager = toolBoxManager;\n    }\n  \n    popupModal() {\n      const popup = document.createElement(\"div\");\n      popup.className = \"popup-modal\";\n      popup.innerHTML = `\n            <div class=\"popup\">\n              <div class=\"popup-header\">\n                <span>${this.toolBoxManager.currentLanguage.getTranslation(\n                  \"confirmation_modal_title\"\n                )}</span>\n                <button class=\"close\">\n                  <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 21 21\">\n                      <path id=\"Icon_material-close\" data-name=\"Icon material-close\" d=\"M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z\" transform=\"translate(-7.5 -7.5)\" fill=\"#6a747f\" opacity=\"0.54\"/>\n                  </svg>\n                </button>\n              </div>\n              <hr>\n              <div class=\"popup-body\" id=\"confirmation_modal_message\">\n                ${this.toolBoxManager.currentLanguage.getTranslation(\n                  \"confirmation_modal_message\"\n                )}\n              </div>\n              <div class=\"popup-footer\">\n                <button id=\"accept_popup\" class=\"tb-btn tb-btn-primary\">\n                ${this.toolBoxManager.currentLanguage.getTranslation(\n                  \"accept_popup\"\n                )}\n                </button>\n                <button id=\"close_popup\" class=\"tb-btn tb-btn-outline\">\n                ${this.toolBoxManager.currentLanguage.getTranslation(\n                  \"cancel_btn\"\n                )}\n                </button>\n              </div>\n            </div>\n          `;\n  \n      return popup;\n    }\n  }\n\nmodule.exports = PopupManager\n\n//# sourceURL=webpack://ucgrapes/./src/classes/PopupManager.js?");
+class PopupManager {
+    constructor(toolBoxManager) {
+      this.toolBoxManager = toolBoxManager;
+    }
+  
+    popupModal() {
+      const popup = document.createElement("div");
+      popup.className = "popup-modal";
+      popup.innerHTML = `
+            <div class="popup">
+              <div class="popup-header">
+                <span>${this.toolBoxManager.currentLanguage.getTranslation(
+                  "confirmation_modal_title"
+                )}</span>
+                <button class="close">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                      <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+                  </svg>
+                </button>
+              </div>
+              <hr>
+              <div class="popup-body" id="confirmation_modal_message">
+                ${this.toolBoxManager.currentLanguage.getTranslation(
+                  "confirmation_modal_message"
+                )}
+              </div>
+              <div class="popup-footer">
+                <button id="accept_popup" class="tb-btn tb-btn-primary">
+                ${this.toolBoxManager.currentLanguage.getTranslation(
+                  "accept_popup"
+                )}
+                </button>
+                <button id="close_popup" class="tb-btn tb-btn-outline">
+                ${this.toolBoxManager.currentLanguage.getTranslation(
+                  "cancel_btn"
+                )}
+                </button>
+              </div>
+            </div>
+          `;
+  
+      return popup;
+    }
+  }
+
+module.exports = PopupManager
 
 /***/ }),
 
@@ -85,7 +1175,675 @@ eval("class PopupManager {\n    constructor(toolBoxManager) {\n      this.toolBo
   \****************************************/
 /***/ ((module) => {
 
-eval("class TemplateManager {\n  constructor(currentLanguage, editorManager) {\n    this.currentLanguage = currentLanguage;\n    this.editorManager = editorManager;\n    this.defaultConstraints = {\n      draggable: false,\n      selectable: false,\n      editable: false,\n      highlightable: false,\n      droppable: false,\n      hoverable: false,\n    };\n  }\n\n  createTemplateHTML(isDefault = false) {\n    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor\n    return `\n            <div class=\"template-wrapper ${\n              isDefault ? \"default-template\" : \"\"\n            }\"        \n                  data-gjs-selectable=\"false\"\n                  data-gjs-type=\"tile-wrapper\"\n                  data-gjs-editable=\"false\"\n                  data-gjs-highlightable=\"false\"\n                  data-gjs-droppable=\"false\"\n                  data-gjs-resizable=\"false\"\n                  data-gjs-hoverable=\"false\">\n              <div class=\"template-block\"\n                style=\"background:${tileBgColor}\"\n                tile-bgcolor=\"${tileBgColor}\"\n                tile-bgcolor-name=\"accentColor\"\n                ${defaultTileAttrs} \n                 data-gjs-draggable=\"false\"\n                 data-gjs-selectable=\"true\"\n                 data-gjs-editable=\"false\"\n                 data-gjs-highlightable=\"false\"\n                 data-gjs-droppable=\"false\"\n                 data-gjs-resizable=\"false\"\n                 data-gjs-hoverable=\"false\">\n                \n                 <div class=\"tile-icon-section\"\n                  data-gjs-draggable=\"false\"\n                  data-gjs-selectable=\"false\"\n                  data-gjs-editable=\"false\"\n                  data-gjs-highlightable=\"false\"\n                  data-gjs-droppable=\"false\"\n                  data-gjs-resizable=\"false\"\n                  data-gjs-hoverable=\"false\"\n                  >\n                    <span class=\"tile-close-icon top-right selected-tile-icon\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-resizable=\"false\"\n                      data-gjs-hoverable=\"false\"\n                      >&times;</span>\n                    <span \n                      class=\"tile-icon\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-hoverable=\"false\">\n                    </span>\n                </div>\n                <div class=\"tile-title-section\"\n                  data-gjs-draggable=\"false\"\n                  data-gjs-selectable=\"false\"\n                  data-gjs-editable=\"false\"\n                  data-gjs-highlightable=\"false\"\n                  data-gjs-droppable=\"false\"\n                  data-gjs-resizable=\"false\"\n                  data-gjs-hoverable=\"false\"\n                  >\n                    <span class=\"tile-close-icon top-right selected-tile-title\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-resizable=\"false\"\n                      data-gjs-hoverable=\"false\"\n                      >&times;</span>\n                    <span \n                      class=\"tile-title\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-hoverable=\"false\">${this.currentLanguage.getTranslation(\n                        \"tile_title\"\n                      )}</span>\n                    </div>\n                </div>\n              ${\n                !isDefault\n                  ? `\n                <button class=\"action-button delete-button\" title=\"Delete template\"\n                          data-gjs-draggable=\"false\"\n                          data-gjs-selectable=\"false\"\n                          data-gjs-editable=\"false\"\n                          data-gjs-droppable=\"false\"\n                          data-gjs-highlightable=\"false\"\n                          data-gjs-hoverable=\"false\">\n                  <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n                          data-gjs-draggable=\"false\"\n                          data-gjs-selectable=\"false\"\n                          data-gjs-editable=\"false\"\n                          data-gjs-editable=\"false\"\n                          data-gjs-droppable=\"false\"\n                          data-gjs-highlightable=\"false\"\n                          data-gjs-hoverable=\"false\">\n                    <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\" \n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\"/>\n                  </svg>\n                </button>\n              `\n                  : \"\"\n              }\n              <button class=\"action-button add-button-bottom\" title=\"Add template below\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-hoverable=\"false\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-hoverable=\"false\">\n                  <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\" \n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\"/>\n                  <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\" \n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\"/>\n                </svg>\n              </button>\n              <button class=\"action-button add-button-right\" title=\"Add template right\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-hoverable=\"false\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\">\n                  <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\" \n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\"/>\n                  <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\" \n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\"/>\n                </svg>\n              </button>\n              <div class=\"resize-handle\"\n                      data-gjs-draggable=\"false\"\n                      data-gjs-selectable=\"false\"\n                      data-gjs-editable=\"false\"\n                      data-gjs-highlightable=\"false\"\n                      data-gjs-droppable=\"false\"\n                      data-gjs-hoverable=\"false\">\n              </div>\n            </div>\n          `;\n  }\n\n  generateTemplateRow(columns, rowIndex) {\n    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor\n    let columnWidth = 100 / columns;\n    if (columns === 1) {\n      columnWidth = 100;\n    } else if (columns === 2) {\n      columnWidth = 49;\n    } else if (columns === 3) {\n      columnWidth = 32;\n    }\n\n    let wrappers = \"\";\n\n    for (let i = 0; i < columns; i++) {\n      // Only exclude delete button for first tile of first row\n      const isFirstTileOfFirstRow = rowIndex === 0 && i === 0;\n      const deleteButton = isFirstTileOfFirstRow\n        ? \"\"\n        : `\n                    <button class=\"action-button delete-button\" title=\"Delete template\"\n                        data-gjs-draggable=\"false\"\n                        data-gjs-selectable=\"false\"\n                        data-gjs-editable=\"false\"\n                        data-gjs-droppable=\"false\"\n                        data-gjs-highlightable=\"false\"\n                        data-gjs-hoverable=\"false\">\n                        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n                            data-gjs-draggable=\"false\"\n                            data-gjs-selectable=\"false\"\n                            data-gjs-editable=\"false\"\n                            data-gjs-editable=\"false\"\n                            data-gjs-droppable=\"false\"\n                            data-gjs-highlightable=\"false\"\n                            data-gjs-hoverable=\"false\">\n                            <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\" \n                                data-gjs-draggable=\"false\"\n                                data-gjs-selectable=\"false\"\n                                data-gjs-editable=\"false\"\n                                data-gjs-highlightable=\"false\"\n                                data-gjs-droppable=\"false\"\n                                data-gjs-hoverable=\"false\"/>\n                        </svg>\n                    </button>`;\n\n      wrappers += `\n                <div class=\"template-wrapper\"\n                          style=\"flex: 0 0 ${columnWidth}%); background: ${tileBgColor}\"\n                          data-gjs-type=\"tile-wrapper\"\n                          data-gjs-selectable=\"false\"\n                          data-gjs-droppable=\"false\">\n\n                          <div class=\"template-block\"\n                            tile-bgcolor=\"${tileBgColor}\"\n                            tile-bgcolor-name=\"accentColor\"\n                            ${defaultTileAttrs}\n                            data-gjs-draggable=\"false\"\n                            data-gjs-selectable=\"true\"\n                            data-gjs-editable=\"false\"\n                            data-gjs-highlightable=\"false\"\n                            data-gjs-droppable=\"false\"\n                            data-gjs-resizable=\"false\"\n                            data-gjs-hoverable=\"false\">\n                            \n                            <div class=\"tile-icon-section\"\n                              data-gjs-draggable=\"false\"\n                              data-gjs-selectable=\"false\"\n                              data-gjs-editable=\"false\"\n                              data-gjs-highlightable=\"false\"\n                              data-gjs-droppable=\"false\"\n                              data-gjs-resizable=\"false\"\n                              data-gjs-hoverable=\"false\"\n                              >\n                                <span class=\"tile-close-icon top-right selected-tile-icon\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-resizable=\"false\"\n                                  data-gjs-hoverable=\"false\"\n                                  >&times;</span>\n                                <span \n                                  class=\"tile-icon\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-hoverable=\"false\">\n                                </span>\n                            </div>\n                            <div class=\"tile-title-section\"\n                              data-gjs-draggable=\"false\"\n                              data-gjs-selectable=\"false\"\n                              data-gjs-editable=\"false\"\n                              data-gjs-highlightable=\"false\"\n                              data-gjs-droppable=\"false\"\n                              data-gjs-resizable=\"false\"\n                              data-gjs-hoverable=\"false\"\n                              >\n                                <span class=\"tile-close-icon top-right selected-tile-title\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-resizable=\"false\"\n                                  data-gjs-hoverable=\"false\"\n                                  >&times;</span>\n                                <span \n                                  class=\"tile-title\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-hoverable=\"false\">${this.currentLanguage.getTranslation(\n                                    \"tile_title\"\n                                  )}</span>\n                                </div>\n                          </div>\n                          ${deleteButton}\n                          <button class=\"action-button add-button-bottom\" title=\"Add template below\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-hoverable=\"false\"\n                                  >\n                            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-hoverable=\"false\">\n                              <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\" \n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-hoverable=\"false\"/>\n                              <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\" \n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-hoverable=\"false\"/>\n                            </svg>\n                          </button>\n                          <button class=\"action-button add-button-right\" title=\"Add template right\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-hoverable=\"false\">\n                            <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-hoverable=\"false\">\n                              <line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\" \n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-hoverable=\"false\"/>\n                              <line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\" \n                                  data-gjs-draggable=\"false\"\n                                  data-gjs-selectable=\"false\"\n                                  data-gjs-editable=\"false\"\n                                  data-gjs-highlightable=\"false\"\n                                  data-gjs-droppable=\"false\"\n                                  data-gjs-hoverable=\"false\"/>\n                            </svg>\n                          </button>\n                          <div class=\"resize-handle\"\n                              data-gjs-draggable=\"false\"\n                              data-gjs-selectable=\"false\"\n                              data-gjs-editable=\"false\"\n                              data-gjs-highlightable=\"false\"\n                              data-gjs-droppable=\"false\"\n                              data-gjs-hoverable=\"false\">\n                          </div>\n                      </div>\n                `;\n    }\n    return `\n                      <div class=\"container-row\"\n                          data-gjs-type=\"template-wrapper\"\n                          data-gjs-draggable=\"false\"\n                          data-gjs-selectable=\"false\"\n                          data-gjs-editable=\"false\"\n                          data-gjs-highlightable=\"true\"\n                          data-gjs-droppable=\"[data-gjs-type='tile-wrapper']\"\n                          data-gjs-hoverable=\"true\">\n                        ${wrappers}\n                    </div>\n              `;\n  }\n\n  addFreshTemplate(template) {\n    this.editorManager.currentEditor.editor.DomComponents.clear();\n    let fullTemplate = \"\";\n\n    template.forEach((columns, rowIndex) => {\n      const templateRow = this.generateTemplateRow(columns, rowIndex);\n      fullTemplate += templateRow;\n    });\n\n    this.editorManager.currentEditor.editor.addComponents(`\n      <div class=\"frame-container\"\n            id=\"frame-container\"\n            data-gjs-type=\"template-wrapper\"\n            data-gjs-draggable=\"false\"\n            data-gjs-selectable=\"false\"\n            data-gjs-editable=\"false\"\n            data-gjs-highlightable=\"false\"\n            data-gjs-droppable=\"false\"\n            data-gjs-hoverable=\"false\">\n        <div class=\"container-column\"\n              data-gjs-type=\"template-wrapper\"\n              data-gjs-draggable=\"false\"\n              data-gjs-selectable=\"false\"\n              data-gjs-editable=\"false\"\n              data-gjs-highlightable=\"false\"\n              data-gjs-droppable=\"false\"\n              data-gjs-hoverable=\"false\">\n            ${fullTemplate}\n        </div>\n      </div>\n    `);\n\n    const message = this.currentLanguage.getTranslation(\n      \"template_added_success_message\"\n    );\n    const status = \"success\";\n    this.editorManager.toolsSection.ui.displayAlertMessage(message, status);\n  }\n\n  deleteTemplate(templateComponent) {\n    if (\n      !templateComponent ||\n      templateComponent.getClasses().includes(\"default-template\")\n    )\n      return;\n\n    const containerRow = templateComponent.parent();\n    if (!containerRow) return;\n\n    templateComponent.remove();\n\n    const templates = containerRow.components();\n    const newWidth = 100 / templates.length;\n    templates.forEach((template) => {\n      if (template && template.setStyle) {\n        template.addStyle({\n          width: `${newWidth}%`,\n        });\n      }\n    });\n\n    this.updateRightButtons(containerRow);\n  }\n\n  addTemplateRight(templateComponent, editorInstance) {\n    const containerRow = templateComponent.parent();\n    if (!containerRow || containerRow.components().length >= 3) return;\n    const newComponents = editorInstance.addComponents(\n      this.createTemplateHTML()\n    );\n    const newTemplate = newComponents[0];\n    if (!newTemplate) return;\n\n    const index = templateComponent.index();\n    containerRow.append(newTemplate, {\n      at: index + 1,\n    });\n    const templates = containerRow.components();\n\n    const equalWidth = 100 / templates.length;\n    templates.forEach((template) => {\n      template.addStyle({\n        flex: `0 0 calc(${equalWidth}% - 0.3.5rem)`,\n      });\n    });\n\n    this.updateRightButtons(containerRow);\n  }\n\n  addTemplateBottom(templateComponent, editorInstance) {\n    const currentRow = templateComponent.parent();\n    const containerColumn = currentRow?.parent();\n\n    if (!containerColumn) return;\n\n    const newRow = editorInstance.addComponents(`\n            <div class=\"container-row\"\n                data-gjs-type=\"template-wrapper\"\n                data-gjs-draggable=\"false\"\n                data-gjs-selectable=\"false\"\n                data-gjs-editable=\"false\"\n                data-gjs-highlightable=\"false\"\n                data-gjs-droppable=\"[data-gjs-type='tile-wrapper']\"\n                data-gjs-hoverable=\"false\">\n                ${this.createTemplateHTML()}\n            </div>\n            `)[0];\n\n    const index = currentRow.index();\n    containerColumn.append(newRow, {\n      at: index + 1,\n    });\n  }\n\n  updateRightButtons(containerRow) {\n    if (!containerRow) return;\n\n    const templates = containerRow.components();\n    let totalWidth = 0;\n    templates.forEach((template) => {\n      if (!template || !template.view || !template.view.el) return;\n\n      const rightButton = template.view.el.querySelector(\".add-button-right\");\n      if (!rightButton) return;\n      const rightButtonComponent = template.find(\".add-button-right\")[0];\n\n      if (templates.length >= 3) {\n        rightButton.setAttribute(\"disabled\", \"true\");\n        rightButtonComponent.addStyle({\n          display: \"none\",\n        });\n      } else {\n        rightButton.removeAttribute(\"disabled\");\n        rightButtonComponent.addStyle({\n          display: \"flex\",\n        });\n      }\n    });\n  }\n\n  initialContentPageTemplate(contentPageData) {\n    console.log(\"initialContentPageTemplate\", contentPageData);\n    return `\n        <div\n            class=\"content-frame-container test\"\n            id=\"frame-container\"\n            data-gjs-draggable=\"false\"\n            data-gjs-selectable=\"false\"\n            data-gjs-editable=\"false\"\n            data-gjs-highlightable=\"false\"\n            data-gjs-droppable=\"false\"\n            data-gjs-hoverable=\"false\"\n        >\n            <div\n                class=\"container-column\"\n                data-gjs-draggable=\"false\"\n                data-gjs-selectable=\"false\"\n                data-gjs-editable=\"false\"\n                data-gjs-highlightable=\"false\"\n                data-gjs-droppable=\"false\"\n                data-gjs-hoverable=\"false\"\n            >\n                <div\n                    class=\"container-row\"\n                    data-gjs-draggable=\"false\"\n                    data-gjs-selectable=\"false\"\n                    data-gjs-editable=\"false\"\n                    data-gjs-droppable=\"false\"\n                    data-gjs-highlightable=\"true\"\n                    data-gjs-hoverable=\"true\"\n                >\n                    <div\n                        class=\"template-wrapper\"\n                        data-gjs-draggable=\"false\"\n                        data-gjs-selectable=\"false\"\n                        data-gjs-editable=\"false\"\n                        data-gjs-droppable=\"false\"\n                        data-gjs-highlightable=\"true\"\n                        data-gjs-hoverable=\"true\"\n                        style=\"display: flex; width: 100%\"\n                    >\n                        <div\n                            data-gjs-draggable=\"false\"\n                            data-gjs-selectable=\"false\"\n                            data-gjs-editable=\"false\"\n                            data-gjs-highlightable=\"false\"\n                            data-gjs-droppable=\"[data-gjs-type='product-service-description'], [data-gjs-type='product-service-image']\"\n                            data-gjs-resizable=\"false\"\n                            data-gjs-hoverable=\"false\"\n                            style=\"flex: 1; padding: 0\"\n                            class=\"content-page-wrapper\"\n                        >\n                            ${\n                              contentPageData.ProductServiceImage\n                                ? `\n                                <img\n                                    class=\"content-page-block\"\n                                    id=\"product-service-image\"\n                                    data-gjs-draggable=\"true\"\n                                    data-gjs-selectable=\"false\"\n                                    data-gjs-editable=\"false\"\n                                    data-gjs-droppable=\"false\"\n                                    data-gjs-highlightable=\"false\"\n                                    data-gjs-hoverable=\"false\"\n                                    src=\"${contentPageData.ProductServiceImage}\"\n                                    data-gjs-type=\"product-service-image\"\n                                    alt=\"Full-width Image\"\n                                />\n                            `\n                                : \"\"\n                            }\n                            ${\n                              contentPageData.ProductServiceDescription\n                                ? `\n                                <p\n                                    style=\"flex: 1; padding: 0; margin: 0; height: auto;\"\n                                    class=\"content-page-block\"\n                                    data-gjs-draggable=\"true\"\n                                    data-gjs-selectable=\"false\"\n                                    data-gjs-editable=\"false\"\n                                    data-gjs-droppable=\"false\"\n                                    data-gjs-highlightable=\"false\"\n                                    data-gjs-hoverable=\"false\"\n                                    id=\"product-service-description\"\n                                    data-gjs-type=\"product-service-description\"\n                                >\n                                ${contentPageData.ProductServiceDescription}\n                                </p>\n                            `\n                                : \"\"\n                            }\n                        </div>\n                    </div>\n                </div>\n                <div class=\"cta-button-container\" ${defaultConstraints}></div>\n            </div>\n        </div>\n    `;\n  }\n\n  removeElementOnClick(targetSelector, sectionSelector) {\n    const closeSection =\n      this.editorManager.selectedComponent?.find(targetSelector)[0];\n    if (closeSection) {\n      const closeEl = closeSection.getEl();\n      if (closeEl) {\n        closeEl.onclick = () => {\n          this.editorManager.selectedComponent\n            .find(sectionSelector)[0]\n            .remove();\n        };\n      }\n    }\n  }\n}\n\nmodule.exports = TemplateManager\n\n//# sourceURL=webpack://ucgrapes/./src/classes/TemplateManager.js?");
+class TemplateManager {
+  constructor(currentLanguage, editorManager) {
+    this.currentLanguage = currentLanguage;
+    this.editorManager = editorManager;
+    this.defaultConstraints = {
+      draggable: false,
+      selectable: false,
+      editable: false,
+      highlightable: false,
+      droppable: false,
+      hoverable: false,
+    };
+  }
+
+  createTemplateHTML(isDefault = false) {
+    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor
+    return `
+            <div class="template-wrapper ${
+              isDefault ? "default-template" : ""
+            }"        
+                  data-gjs-selectable="false"
+                  data-gjs-type="tile-wrapper"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-resizable="false"
+                  data-gjs-hoverable="false">
+              <div class="template-block"
+                style="background:${tileBgColor}"
+                tile-bgcolor="${tileBgColor}"
+                tile-bgcolor-name="accentColor"
+                ${defaultTileAttrs} 
+                 data-gjs-draggable="false"
+                 data-gjs-selectable="true"
+                 data-gjs-editable="false"
+                 data-gjs-highlightable="false"
+                 data-gjs-droppable="false"
+                 data-gjs-resizable="false"
+                 data-gjs-hoverable="false">
+                
+                 <div class="tile-icon-section"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-resizable="false"
+                  data-gjs-hoverable="false"
+                  >
+                    <span class="tile-close-icon top-right selected-tile-icon"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-resizable="false"
+                      data-gjs-hoverable="false"
+                      >&times;</span>
+                    <span 
+                      class="tile-icon"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">
+                    </span>
+                </div>
+                <div class="tile-title-section"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="false"
+                  data-gjs-resizable="false"
+                  data-gjs-hoverable="false"
+                  >
+                    <span class="tile-close-icon top-right selected-tile-title"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-resizable="false"
+                      data-gjs-hoverable="false"
+                      >&times;</span>
+                    <span 
+                      class="tile-title"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
+                        "tile_title"
+                      )}</span>
+                    </div>
+                </div>
+              ${
+                !isDefault
+                  ? `
+                <button class="action-button delete-button" title="Delete template"
+                          data-gjs-draggable="false"
+                          data-gjs-selectable="false"
+                          data-gjs-editable="false"
+                          data-gjs-droppable="false"
+                          data-gjs-highlightable="false"
+                          data-gjs-hoverable="false">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          data-gjs-draggable="false"
+                          data-gjs-selectable="false"
+                          data-gjs-editable="false"
+                          data-gjs-editable="false"
+                          data-gjs-droppable="false"
+                          data-gjs-highlightable="false"
+                          data-gjs-hoverable="false">
+                    <line x1="5" y1="12" x2="19" y2="12" 
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false"/>
+                  </svg>
+                </button>
+              `
+                  : ""
+              }
+              <button class="action-button add-button-bottom" title="Add template below"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-editable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">
+                  <line x1="12" y1="5" x2="12" y2="19" 
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false"/>
+                  <line x1="5" y1="12" x2="19" y2="12" 
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false"/>
+                </svg>
+              </button>
+              <button class="action-button add-button-right" title="Add template right"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-hoverable="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false">
+                  <line x1="12" y1="5" x2="12" y2="19" 
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false"/>
+                  <line x1="5" y1="12" x2="19" y2="12" 
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false"/>
+                </svg>
+              </button>
+              <div class="resize-handle"
+                      data-gjs-draggable="false"
+                      data-gjs-selectable="false"
+                      data-gjs-editable="false"
+                      data-gjs-highlightable="false"
+                      data-gjs-droppable="false"
+                      data-gjs-hoverable="false">
+              </div>
+            </div>
+          `;
+  }
+
+  generateTemplateRow(columns, rowIndex) {
+    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor
+    let columnWidth = 100 / columns;
+    if (columns === 1) {
+      columnWidth = 100;
+    } else if (columns === 2) {
+      columnWidth = 49;
+    } else if (columns === 3) {
+      columnWidth = 32;
+    }
+
+    let wrappers = "";
+
+    for (let i = 0; i < columns; i++) {
+      // Only exclude delete button for first tile of first row
+      const isFirstTileOfFirstRow = rowIndex === 0 && i === 0;
+      const deleteButton = isFirstTileOfFirstRow
+        ? ""
+        : `
+                    <button class="action-button delete-button" title="Delete template"
+                        data-gjs-draggable="false"
+                        data-gjs-selectable="false"
+                        data-gjs-editable="false"
+                        data-gjs-droppable="false"
+                        data-gjs-highlightable="false"
+                        data-gjs-hoverable="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            data-gjs-draggable="false"
+                            data-gjs-selectable="false"
+                            data-gjs-editable="false"
+                            data-gjs-editable="false"
+                            data-gjs-droppable="false"
+                            data-gjs-highlightable="false"
+                            data-gjs-hoverable="false">
+                            <line x1="5" y1="12" x2="19" y2="12" 
+                                data-gjs-draggable="false"
+                                data-gjs-selectable="false"
+                                data-gjs-editable="false"
+                                data-gjs-highlightable="false"
+                                data-gjs-droppable="false"
+                                data-gjs-hoverable="false"/>
+                        </svg>
+                    </button>`;
+
+      wrappers += `
+                <div class="template-wrapper"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}"
+                          data-gjs-type="tile-wrapper"
+                          data-gjs-selectable="false"
+                          data-gjs-droppable="false">
+
+                          <div class="template-block"
+                            tile-bgcolor="${tileBgColor}"
+                            tile-bgcolor-name="accentColor"
+                            ${defaultTileAttrs}
+                            data-gjs-draggable="false"
+                            data-gjs-selectable="true"
+                            data-gjs-editable="false"
+                            data-gjs-highlightable="false"
+                            data-gjs-droppable="false"
+                            data-gjs-resizable="false"
+                            data-gjs-hoverable="false">
+                            
+                            <div class="tile-icon-section"
+                              data-gjs-draggable="false"
+                              data-gjs-selectable="false"
+                              data-gjs-editable="false"
+                              data-gjs-highlightable="false"
+                              data-gjs-droppable="false"
+                              data-gjs-resizable="false"
+                              data-gjs-hoverable="false"
+                              >
+                                <span class="tile-close-icon top-right selected-tile-icon"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-resizable="false"
+                                  data-gjs-hoverable="false"
+                                  >&times;</span>
+                                <span 
+                                  class="tile-icon"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-hoverable="false">
+                                </span>
+                            </div>
+                            <div class="tile-title-section"
+                              data-gjs-draggable="false"
+                              data-gjs-selectable="false"
+                              data-gjs-editable="false"
+                              data-gjs-highlightable="false"
+                              data-gjs-droppable="false"
+                              data-gjs-resizable="false"
+                              data-gjs-hoverable="false"
+                              >
+                                <span class="tile-close-icon top-right selected-tile-title"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-resizable="false"
+                                  data-gjs-hoverable="false"
+                                  >&times;</span>
+                                <span 
+                                  class="tile-title"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
+                                    "tile_title"
+                                  )}</span>
+                                </div>
+                          </div>
+                          ${deleteButton}
+                          <button class="action-button add-button-bottom" title="Add template below"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-hoverable="false"
+                                  >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-hoverable="false">
+                              <line x1="12" y1="5" x2="12" y2="19" 
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-hoverable="false"/>
+                              <line x1="5" y1="12" x2="19" y2="12" 
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-hoverable="false"/>
+                            </svg>
+                          </button>
+                          <button class="action-button add-button-right" title="Add template right"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-hoverable="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-hoverable="false">
+                              <line x1="12" y1="5" x2="12" y2="19" 
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-hoverable="false"/>
+                              <line x1="5" y1="12" x2="19" y2="12" 
+                                  data-gjs-draggable="false"
+                                  data-gjs-selectable="false"
+                                  data-gjs-editable="false"
+                                  data-gjs-highlightable="false"
+                                  data-gjs-droppable="false"
+                                  data-gjs-hoverable="false"/>
+                            </svg>
+                          </button>
+                          <div class="resize-handle"
+                              data-gjs-draggable="false"
+                              data-gjs-selectable="false"
+                              data-gjs-editable="false"
+                              data-gjs-highlightable="false"
+                              data-gjs-droppable="false"
+                              data-gjs-hoverable="false">
+                          </div>
+                      </div>
+                `;
+    }
+    return `
+                      <div class="container-row"
+                          data-gjs-type="template-wrapper"
+                          data-gjs-draggable="false"
+                          data-gjs-selectable="false"
+                          data-gjs-editable="false"
+                          data-gjs-highlightable="true"
+                          data-gjs-droppable="[data-gjs-type='tile-wrapper']"
+                          data-gjs-hoverable="true">
+                        ${wrappers}
+                    </div>
+              `;
+  }
+
+  addFreshTemplate(template) {
+    this.editorManager.currentEditor.editor.DomComponents.clear();
+    let fullTemplate = "";
+
+    template.forEach((columns, rowIndex) => {
+      const templateRow = this.generateTemplateRow(columns, rowIndex);
+      fullTemplate += templateRow;
+    });
+
+    this.editorManager.currentEditor.editor.addComponents(`
+      <div class="frame-container"
+            id="frame-container"
+            data-gjs-type="template-wrapper"
+            data-gjs-draggable="false"
+            data-gjs-selectable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-hoverable="false">
+        <div class="container-column"
+              data-gjs-type="template-wrapper"
+              data-gjs-draggable="false"
+              data-gjs-selectable="false"
+              data-gjs-editable="false"
+              data-gjs-highlightable="false"
+              data-gjs-droppable="false"
+              data-gjs-hoverable="false">
+            ${fullTemplate}
+        </div>
+      </div>
+    `);
+
+    const message = this.currentLanguage.getTranslation(
+      "template_added_success_message"
+    );
+    const status = "success";
+    this.editorManager.toolsSection.ui.displayAlertMessage(message, status);
+  }
+
+  deleteTemplate(templateComponent) {
+    if (
+      !templateComponent ||
+      templateComponent.getClasses().includes("default-template")
+    )
+      return;
+
+    const containerRow = templateComponent.parent();
+    if (!containerRow) return;
+
+    templateComponent.remove();
+
+    const templates = containerRow.components();
+    const newWidth = 100 / templates.length;
+    templates.forEach((template) => {
+      if (template && template.setStyle) {
+        template.addStyle({
+          width: `${newWidth}%`,
+        });
+      }
+    });
+
+    this.updateRightButtons(containerRow);
+  }
+
+  addTemplateRight(templateComponent, editorInstance) {
+    const containerRow = templateComponent.parent();
+    if (!containerRow || containerRow.components().length >= 3) return;
+    const newComponents = editorInstance.addComponents(
+      this.createTemplateHTML()
+    );
+    const newTemplate = newComponents[0];
+    if (!newTemplate) return;
+
+    const index = templateComponent.index();
+    containerRow.append(newTemplate, {
+      at: index + 1,
+    });
+    const templates = containerRow.components();
+
+    const equalWidth = 100 / templates.length;
+    templates.forEach((template) => {
+      template.addStyle({
+        flex: `0 0 calc(${equalWidth}% - 0.3.5rem)`,
+      });
+    });
+
+    this.updateRightButtons(containerRow);
+  }
+
+  addTemplateBottom(templateComponent, editorInstance) {
+    const currentRow = templateComponent.parent();
+    const containerColumn = currentRow?.parent();
+
+    if (!containerColumn) return;
+
+    const newRow = editorInstance.addComponents(`
+            <div class="container-row"
+                data-gjs-type="template-wrapper"
+                data-gjs-draggable="false"
+                data-gjs-selectable="false"
+                data-gjs-editable="false"
+                data-gjs-highlightable="false"
+                data-gjs-droppable="[data-gjs-type='tile-wrapper']"
+                data-gjs-hoverable="false">
+                ${this.createTemplateHTML()}
+            </div>
+            `)[0];
+
+    const index = currentRow.index();
+    containerColumn.append(newRow, {
+      at: index + 1,
+    });
+  }
+
+  updateRightButtons(containerRow) {
+    if (!containerRow) return;
+
+    const templates = containerRow.components();
+    let totalWidth = 0;
+    templates.forEach((template) => {
+      if (!template || !template.view || !template.view.el) return;
+
+      const rightButton = template.view.el.querySelector(".add-button-right");
+      if (!rightButton) return;
+      const rightButtonComponent = template.find(".add-button-right")[0];
+
+      if (templates.length >= 3) {
+        rightButton.setAttribute("disabled", "true");
+        rightButtonComponent.addStyle({
+          display: "none",
+        });
+      } else {
+        rightButton.removeAttribute("disabled");
+        rightButtonComponent.addStyle({
+          display: "flex",
+        });
+      }
+    });
+  }
+
+  initialContentPageTemplate(contentPageData) {
+    console.log("initialContentPageTemplate", contentPageData);
+    return `
+        <div
+            class="content-frame-container test"
+            id="frame-container"
+            data-gjs-draggable="false"
+            data-gjs-selectable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-hoverable="false"
+        >
+            <div
+                class="container-column"
+                data-gjs-draggable="false"
+                data-gjs-selectable="false"
+                data-gjs-editable="false"
+                data-gjs-highlightable="false"
+                data-gjs-droppable="false"
+                data-gjs-hoverable="false"
+            >
+                <div
+                    class="container-row"
+                    data-gjs-draggable="false"
+                    data-gjs-selectable="false"
+                    data-gjs-editable="false"
+                    data-gjs-droppable="false"
+                    data-gjs-highlightable="true"
+                    data-gjs-hoverable="true"
+                >
+                    <div
+                        class="template-wrapper"
+                        data-gjs-draggable="false"
+                        data-gjs-selectable="false"
+                        data-gjs-editable="false"
+                        data-gjs-droppable="false"
+                        data-gjs-highlightable="true"
+                        data-gjs-hoverable="true"
+                        style="display: flex; width: 100%"
+                    >
+                        <div
+                            data-gjs-draggable="false"
+                            data-gjs-selectable="false"
+                            data-gjs-editable="false"
+                            data-gjs-highlightable="false"
+                            data-gjs-droppable="[data-gjs-type='product-service-description'], [data-gjs-type='product-service-image']"
+                            data-gjs-resizable="false"
+                            data-gjs-hoverable="false"
+                            style="flex: 1; padding: 0"
+                            class="content-page-wrapper"
+                        >
+                            ${
+                              contentPageData.ProductServiceImage
+                                ? `
+                                <img
+                                    class="content-page-block"
+                                    id="product-service-image"
+                                    data-gjs-draggable="true"
+                                    data-gjs-selectable="false"
+                                    data-gjs-editable="false"
+                                    data-gjs-droppable="false"
+                                    data-gjs-highlightable="false"
+                                    data-gjs-hoverable="false"
+                                    src="${contentPageData.ProductServiceImage}"
+                                    data-gjs-type="product-service-image"
+                                    alt="Full-width Image"
+                                />
+                            `
+                                : ""
+                            }
+                            ${
+                              contentPageData.ProductServiceDescription
+                                ? `
+                                <p
+                                    style="flex: 1; padding: 0; margin: 0; height: auto;"
+                                    class="content-page-block"
+                                    data-gjs-draggable="true"
+                                    data-gjs-selectable="false"
+                                    data-gjs-editable="false"
+                                    data-gjs-droppable="false"
+                                    data-gjs-highlightable="false"
+                                    data-gjs-hoverable="false"
+                                    id="product-service-description"
+                                    data-gjs-type="product-service-description"
+                                >
+                                ${contentPageData.ProductServiceDescription}
+                                </p>
+                            `
+                                : ""
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="cta-button-container" ${defaultConstraints}></div>
+            </div>
+        </div>
+    `;
+  }
+
+  removeElementOnClick(targetSelector, sectionSelector) {
+    const closeSection =
+      this.editorManager.selectedComponent?.find(targetSelector)[0];
+    if (closeSection) {
+      const closeEl = closeSection.getEl();
+      if (closeEl) {
+        closeEl.onclick = () => {
+          this.editorManager.selectedComponent
+            .find(sectionSelector)[0]
+            .remove();
+        };
+      }
+    }
+  }
+}
+
+module.exports = TemplateManager
 
 /***/ }),
 
@@ -95,7 +1853,616 @@ eval("class TemplateManager {\n  constructor(currentLanguage, editorManager) {\n
   \*************************************/
 /***/ ((module) => {
 
-eval("class ThemeManager {\n  constructor(toolBoxManager) {\n    this.toolBoxManager = toolBoxManager;\n  }\n\n  loadTheme() {\n    const savedTheme = localStorage.getItem(\"selectedTheme\");\n    if (savedTheme) {\n      this.setTheme(savedTheme);\n    }\n  }\n\n  setTheme(themeName) {\n    const theme = this.toolBoxManager.themes.find(\n      (theme) => theme.name === themeName\n    );\n    const select = document.querySelector(\".tb-custom-theme-selection\");\n    select.querySelector(\".selected-theme-value\").textContent = themeName;\n    if (!theme) {\n      return false;\n    }\n\n    this.toolBoxManager.currentTheme = theme;\n\n    this.applyTheme();\n\n    this.toolBoxManager.icons = theme.icons.map((icon) => {\n      return {\n        name: icon.IconName,\n        svg: icon.IconSVG,\n        category: icon.IconCategory,\n      };\n    });\n    this.loadThemeIcons(theme.icons);\n\n    this.themeColorPalette(this.toolBoxManager.currentTheme.colors);\n    localStorage.setItem(\"selectedTheme\", themeName);\n\n    this.applyThemeIconsAndColor(themeName);\n\n    return true;\n  }\n\n  applyTheme() {\n    const root = document.documentElement;\n    const iframes = document.querySelectorAll(\".mobile-frame iframe\");\n\n    if (!iframes.length) return;\n\n    root.style.setProperty(\n      \"--primary-color\",\n      this.toolBoxManager.currentTheme.colors.primaryColor\n    );\n    root.style.setProperty(\n      \"--secondary-color\",\n      this.toolBoxManager.currentTheme.colors.secondaryColor\n    );\n    root.style.setProperty(\n      \"--background-color\",\n      this.toolBoxManager.currentTheme.colors.backgroundColor\n    );\n    root.style.setProperty(\n      \"--text-color\",\n      this.toolBoxManager.currentTheme.colors.textColor\n    );\n    root.style.setProperty(\n      \"--button-bg-color\",\n      this.toolBoxManager.currentTheme.colors.buttonBgColor\n    );\n    root.style.setProperty(\n      \"--button-text-color\",\n      this.toolBoxManager.currentTheme.colors.buttonTextColor\n    );\n    root.style.setProperty(\n      \"--card-bg-color\",\n      this.toolBoxManager.currentTheme.colors.cardBgColor\n    );\n    root.style.setProperty(\n      \"--card-text-color\",\n      this.toolBoxManager.currentTheme.colors.cardTextColor\n    );\n    root.style.setProperty(\n      \"--accent-color\",\n      this.toolBoxManager.currentTheme.colors.accentColor\n    );\n    root.style.setProperty(\n      \"--font-family\",\n      this.toolBoxManager.currentTheme.fontFamily\n    );\n\n    iframes.forEach((iframe) => {\n      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;\n\n      if (iframeDoc && iframeDoc.body) {\n        iframeDoc.body.style.setProperty(\n          \"--primary-color\",\n          this.toolBoxManager.currentTheme.colors.primaryColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--secondary-color\",\n          this.toolBoxManager.currentTheme.colors.secondaryColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--background-color\",\n          this.toolBoxManager.currentTheme.colors.backgroundColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--text-color\",\n          this.toolBoxManager.currentTheme.colors.textColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--button-bg-color\",\n          this.toolBoxManager.currentTheme.colors.buttonBgColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--button-text-color\",\n          this.toolBoxManager.currentTheme.colors.buttonTextColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--card-bg-color\",\n          this.toolBoxManager.currentTheme.colors.cardBgColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--card-text-color\",\n          this.toolBoxManager.currentTheme.colors.cardTextColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--accent-color\",\n          this.toolBoxManager.currentTheme.colors.accentColor\n        );\n        iframeDoc.body.style.setProperty(\n          \"--font-family\",\n          this.toolBoxManager.currentTheme.fontFamily\n        );\n      }\n    });\n  }\n\n  applyThemeIconsAndColor(themeName) {\n    const editors = Object.values(this.toolBoxManager.editorManager.editors);\n\n    if (editors && editors.length) {\n      for (let index = 0; index < editors.length; index++) {\n        const editorData = editors[index];\n        if (!editorData || !editorData.editor) {\n          console.error(`Invalid editorData at index ${index}:`, editorData);\n          return;\n        }\n\n        try {\n          let editor = editorData.editor;\n          // Add additional null checks\n          if (!editor || typeof editor.getWrapper !== \"function\") {\n            console.error(`Invalid editor at index ${index}:`, editor);\n            continue;\n          }\n\n          const wrapper = editor.getWrapper();\n\n          const theme = this.toolBoxManager.themes.find(\n            (theme) => theme.name === themeName\n          );\n          const tiles = wrapper.find(\".template-block\");\n\n          tiles.forEach((tile) => {\n            if (!tile) return;\n            // icons change and its color\n            const tileIconName = tile.getAttributes()?.[\"tile-icon\"];\n            if (tileIconName) {\n              const matchingIcon = theme.icons?.find(\n                (icon) => icon.IconName === tileIconName\n              );\n\n              if (matchingIcon) {\n                const tileIconComponent = tile.find(\".tile-icon svg\")?.[0];\n\n                if (tileIconComponent) {\n                  // get current icon color with null checks\n                  const currentIconPath = tileIconComponent.find(\"path\")?.[0];\n                  let currentIconColor = \"#7c8791\"; // default color\n                  if (currentIconPath && currentIconPath.getAttributes()) {\n                    currentIconColor =\n                      currentIconPath.getAttributes()[\"fill\"] ||\n                      currentIconColor;\n                  }\n\n                  let localizedSVG = matchingIcon.IconSVG;\n                  if (localizedSVG) {\n                    localizedSVG = localizedSVG.replace(\n                      /fill=\"[^\"]*\"/g,\n                      `fill=\"${currentIconColor}\"`\n                    );\n                    tileIconComponent.replaceWith(localizedSVG);\n                  }\n                }\n              }\n            }\n\n            const currentTileBgColorName =\n              tile.getAttributes()?.[\"tile-bgcolor-name\"];\n            if (currentTileBgColorName && theme.colors) {\n              const matchingColorCode = theme.colors[currentTileBgColorName];\n\n              if (matchingColorCode) {\n                tile.addAttributes({\n                  \"tile-bgcolor-name\": currentTileBgColorName,\n                  \"tile-bgcolor\": matchingColorCode,\n                });\n\n                tile.addStyle({\n                  \"background-color\": matchingColorCode,\n                });\n              } else {\n                console.warn(\n                  `No matching color found for: ${currentTileBgColorName}`\n                );\n              }\n            }\n          });\n        } catch (error) {\n          console.error(`Error processing editor at index ${index}:`, error);\n        }\n      }\n    }\n\n    const iframes = document.querySelectorAll(\".mobile-frame iframe\");\n\n    if (iframes === null) return;\n\n    iframes.forEach((iframe) => {\n      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;\n      if (iframeDoc && iframeDoc.body) {\n        iframeDoc.body.style.setProperty(\n          \"--font-family\",\n          this.toolBoxManager.currentTheme.fontFamily\n        );\n      }\n    });\n  }\n\n  themeColorPalette(colors) {\n    const colorPaletteContainer = document.getElementById(\n      \"theme-color-palette\"\n    );\n    colorPaletteContainer.innerHTML = \"\";\n\n    const colorEntries = Object.entries(colors);\n\n    colorEntries.forEach(([colorName, colorValue], index) => {\n      const alignItem = document.createElement(\"div\");\n      alignItem.className = \"color-item\";\n      const radioInput = document.createElement(\"input\");\n      radioInput.type = \"radio\";\n      radioInput.id = `color-${colorName}`;\n      radioInput.name = \"theme-color\";\n      radioInput.value = colorName;\n\n      const colorBox = document.createElement(\"label\");\n      colorBox.className = \"color-box\";\n      colorBox.setAttribute(\"for\", `color-${colorName}`);\n      colorBox.style.backgroundColor = colorValue;\n      colorBox.setAttribute(\"data-tile-bgcolor\", colorValue);\n\n      alignItem.appendChild(radioInput);\n      alignItem.appendChild(colorBox);\n\n      colorPaletteContainer.appendChild(alignItem);\n\n      colorBox.onclick = () => {\n        this.toolBoxManager.editorManager.selectedComponent.addStyle({\n          \"background-color\": colorValue,\n        });\n        this.toolBoxManager.setAttributeToSelected(\"tile-bgcolor\", colorValue);\n        this.toolBoxManager.setAttributeToSelected(\n          \"tile-bgcolor-name\",\n          colorName\n        );\n      };\n    });\n  }\n\n  colorPalette() {\n    const textColorPaletteContainer =\n      document.getElementById(\"text-color-palette\");\n    const iconColorPaletteContainer =\n      document.getElementById(\"icon-color-palette\");\n\n    // Fixed color values\n    const colorValues = {\n      color1: \"#ffffff\",\n      color2: \"#333333\",\n    };\n\n    Object.entries(colorValues).forEach(([colorName, colorValue]) => {\n      const alignItem = document.createElement(\"div\");\n      alignItem.className = \"color-item\";\n\n      const radioInput = document.createElement(\"input\");\n      radioInput.type = \"radio\";\n      radioInput.id = `text-color-${colorName}`;\n      radioInput.name = \"text-color\";\n      radioInput.value = colorName;\n\n      const colorBox = document.createElement(\"label\");\n      colorBox.className = \"color-box\";\n      colorBox.setAttribute(\"for\", `text-color-${colorName}`);\n      colorBox.style.backgroundColor = colorValue;\n      colorBox.setAttribute(\"data-tile-text-color\", colorValue);\n\n      alignItem.appendChild(radioInput);\n      alignItem.appendChild(colorBox);\n      textColorPaletteContainer.appendChild(alignItem);\n\n      radioInput.onclick = () => {\n        this.toolBoxManager.editorManager.selectedComponent.addStyle({\n          color: colorValue,\n        });\n        this.toolBoxManager.setAttributeToSelected(\n          \"tile-text-color\",\n          colorValue\n        );\n      };\n    });\n\n    // Create options for icon color palette\n    Object.entries(colorValues).forEach(([colorName, colorValue]) => {\n      const alignItem = document.createElement(\"div\");\n      alignItem.className = \"color-item\";\n\n      const radioInput = document.createElement(\"input\");\n      radioInput.type = \"radio\";\n      radioInput.id = `icon-color-${colorName}`;\n      radioInput.name = \"icon-color\";\n      radioInput.value = colorName;\n\n      const colorBox = document.createElement(\"label\");\n      colorBox.className = \"color-box\";\n      colorBox.setAttribute(\"for\", `icon-color-${colorName}`);\n      colorBox.style.backgroundColor = colorValue;\n      colorBox.setAttribute(\"data-tile-icon-color\", colorValue);\n\n      alignItem.appendChild(radioInput);\n      alignItem.appendChild(colorBox);\n      iconColorPaletteContainer.appendChild(alignItem);\n\n      radioInput.onclick = () => {\n        const svgIcon =\n          this.toolBoxManager.editorManager.selectedComponent.find(\n            \".tile-icon path\"\n          )[0];\n        if (svgIcon) {\n          svgIcon.removeAttributes(\"fill\");\n          svgIcon.addAttributes({\n            fill: colorValue,\n          });\n          this.toolBoxManager.setAttributeToSelected(\n            \"tile-icon-color\",\n            colorValue\n          );\n        } else {\n          const message = this.toolBoxManager.currentLanguage.getTranslation(\n            \"no_icon_selected_error_message\"\n          );\n          this.toolBoxManager.ui.displayAlertMessage(message, \"error\");\n        }\n      };\n    });\n  }\n\n  ctaColorPalette() {\n    const ctaColorPaletteContainer =\n      document.getElementById(\"cta-color-palette\");\n    const colorValues = {\n      color1: \"#4C9155\",\n      color2: \"#5068A8\",\n      color3: \"#EEA622\",\n      color4: \"#FF6C37\",\n    };\n\n    Object.entries(colorValues).forEach(([colorName, colorValue]) => {\n      const colorItem = document.createElement(\"div\");\n      colorItem.className = \"color-item\";\n      const radioInput = document.createElement(\"input\");\n      radioInput.type = \"radio\";\n      radioInput.id = `cta-color-${colorName}`;\n      radioInput.name = \"cta-color\";\n      radioInput.value = colorName;\n\n      const colorBox = document.createElement(\"label\");\n      colorBox.className = \"color-box\";\n      colorBox.setAttribute(\"for\", `cta-color-${colorName}`);\n      colorBox.style.backgroundColor = colorValue;\n      colorBox.setAttribute(\"data-cta-color\", colorValue);\n\n      colorItem.appendChild(radioInput);\n      colorItem.appendChild(colorBox);\n      ctaColorPaletteContainer.appendChild(colorItem);\n\n      radioInput.onclick = () => {\n        if (this.toolBoxManager.editorManager.selectedComponent) {\n          const selectedComponent =\n            this.toolBoxManager.editorManager.selectedComponent;\n\n          // Search for components with either class\n          const componentsWithClass = [\n            ...selectedComponent.find(\".cta-main-button\"),\n            ...selectedComponent.find(\".cta-button\"),\n            ...selectedComponent.find(\".img-button\"),\n            ...selectedComponent.find(\".plain-button\"),\n          ];\n\n          // Get the first matching component\n          const button =\n            componentsWithClass.length > 0 ? componentsWithClass[0] : null;\n\n          if (button) {\n            button.addStyle({\n              \"background-color\": colorValue,\n              \"border-color\": colorValue,\n            });\n          }\n          this.toolBoxManager.setAttributeToSelected(\n            \"cta-background-color\",\n            colorValue\n          );\n        }\n      };\n    });\n  }\n\n  listThemesInSelectField() {\n    const select = document.querySelector(\".tb-custom-theme-selection\");\n    const button = select.querySelector(\".theme-select-button\");\n    const selectedValue = button.querySelector(\".selected-theme-value\");\n\n    // Toggle dropdown visibility\n    button.addEventListener(\"click\", (e) => {\n      e.preventDefault();\n      const isOpen = optionsList.classList.contains(\"show\");\n      optionsList.classList.toggle(\"show\");\n      button.classList.toggle(\"open\");\n      button.setAttribute(\"aria-expanded\", !isOpen);\n    });\n\n    const optionsList = document.createElement(\"div\");\n    optionsList.classList.add(\"theme-options-list\");\n    optionsList.setAttribute(\"role\", \"listbox\");\n    optionsList.innerHTML = \"\";\n\n    // Populate themes into the dropdown\n    this.toolBoxManager.themes.forEach((theme, index) => {\n      const option = document.createElement(\"div\");\n      option.classList.add(\"theme-option\");\n      option.setAttribute(\"role\", \"option\");\n      option.setAttribute(\"data-value\", theme.name);\n      option.textContent = theme.name;\n\n      if (\n        this.toolBoxManager.currentTheme &&\n        theme.name === this.toolBoxManager.currentTheme.name\n      ) {\n        option.classList.add(\"selected\");\n      }\n\n      option.addEventListener(\"click\", (e) => {\n        selectedValue.textContent = theme.name;\n\n        // Mark as selected\n        const allOptions = optionsList.querySelectorAll(\".theme-option\");\n        allOptions.forEach((opt) => opt.classList.remove(\"selected\"));\n        option.classList.add(\"selected\");\n\n        // Close the dropdown\n        optionsList.classList.remove(\"show\");\n        button.classList.remove(\"open\");\n        button.setAttribute(\"aria-expanded\", \"false\");\n\n        const themeName = theme.name;\n        // update location theme\n        this.toolBoxManager.dataManager.selectedTheme =\n          this.toolBoxManager.themes.find((theme) => theme.name === themeName);\n\n        this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {\n          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {\n            return;\n          }\n\n          if (this.setTheme(themeName)) {\n            this.themeColorPalette(this.toolBoxManager.currentTheme.colors);\n\n            localStorage.setItem(\"selectedTheme\", themeName);\n\n            const message = this.toolBoxManager.currentLanguage.getTranslation(\n              \"theme_applied_success_message\"\n            );\n            const status = \"success\";\n            this.toolBoxManager.ui.displayAlertMessage(message, status);\n          } else {\n            const message = this.toolBoxManager.currentLanguage.getTranslation(\n              \"error_applying_theme_message\"\n            );\n            const status = \"error\";\n            this.toolBoxManager.ui.displayAlertMessage(message, status);\n          }\n        });\n      });\n\n      // Append option to the options list\n      optionsList.appendChild(option);\n    });\n\n    select.appendChild(optionsList);\n\n    document.addEventListener(\"click\", (e) => {\n      if (!select.contains(e.target)) {\n        optionsList.classList.remove(\"show\");\n        button.classList.remove(\"open\");\n        button.setAttribute(\"aria-expanded\", \"false\");\n      }\n    });\n  }\n\n  loadThemeIcons(themeIconsList) {\n    const themeIcons = document.getElementById(\"icons-list\");\n\n    let selectedCategory;\n\n    const categoryOptions = document.querySelectorAll(\".category-option\");\n    // selected category is where the category option has a .selected class\n\n    categoryOptions.forEach((option) => {\n      if (option.classList.contains(\"selected\")) {\n        selectedCategory = option.getAttribute(\"data-value\");\n      }\n      option.addEventListener(\"click\", () => {\n        selectedCategory = option.getAttribute(\"data-value\");\n        renderIcons();\n      });\n    });\n\n    const renderIcons = () => {\n      themeIcons.innerHTML = \"\";\n      const filteredIcons = themeIconsList.filter(\n        (icon) => icon.IconCategory.trim() === selectedCategory\n      );\n\n      if (filteredIcons.length === 0) {\n        console.log(\"No icons found for selected category.\");\n      }\n      // Render filtered icons\n      filteredIcons.forEach((icon) => {\n        const iconItem = document.createElement(\"div\");\n        iconItem.classList.add(\"icon\");\n        iconItem.title = icon.IconName;\n\n        const displayName = (() => {\n          const maxChars = 7;\n          const words = icon.IconName.split(\" \");\n\n          if (words.length > 1) {\n            const firstWord = words[0];\n            if (firstWord.length >= maxChars) {\n              return firstWord.slice(0, maxChars) + \"...\";\n            } else {\n              return firstWord;\n            }\n          }\n\n          return icon.IconName.length > maxChars\n            ? icon.IconName.slice(0, maxChars) + \"...\"\n            : icon.IconName;\n        })();\n\n        iconItem.innerHTML = `\n                    ${icon.IconSVG}\n                    <span class=\"icon-title\">${displayName}</span>\n                `;\n\n        iconItem.onclick = () => {\n          if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {\n            const iconComponent =\n              this.toolBoxManager.editorManager.selectedComponent.find(\n                \".tile-icon\"\n              )[0];\n\n            if (iconComponent) {\n              iconComponent.components(icon.IconSVG);\n              this.toolBoxManager.setAttributeToSelected(\n                \"tile-icon\",\n                icon.IconName\n              );\n            }\n          } else {\n            const message = this.toolBoxManager.currentLanguage.getTranslation(\n              \"no_tile_selected_error_message\"\n            );\n            const status = \"error\";\n            this.toolBoxManager.ui.displayAlertMessage(message, status);\n          }\n        };\n\n        themeIcons.appendChild(iconItem);\n      });\n    };\n\n    renderIcons();\n  }\n}\n\nmodule.exports = ThemeManager\n\n//# sourceURL=webpack://ucgrapes/./src/classes/ThemeManager.js?");
+class ThemeManager {
+  constructor(toolBoxManager) {
+    this.toolBoxManager = toolBoxManager;
+  }
+
+  loadTheme() {
+    const savedTheme = localStorage.getItem("selectedTheme");
+    if (savedTheme) {
+      this.setTheme(savedTheme);
+    }
+  }
+
+  setTheme(themeName) {
+    const theme = this.toolBoxManager.themes.find(
+      (theme) => theme.name === themeName
+    );
+    const select = document.querySelector(".tb-custom-theme-selection");
+    select.querySelector(".selected-theme-value").textContent = themeName;
+    if (!theme) {
+      return false;
+    }
+
+    this.toolBoxManager.currentTheme = theme;
+
+    this.applyTheme();
+
+    this.toolBoxManager.icons = theme.icons.map((icon) => {
+      return {
+        name: icon.IconName,
+        svg: icon.IconSVG,
+        category: icon.IconCategory,
+      };
+    });
+    this.loadThemeIcons(theme.icons);
+
+    this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
+    localStorage.setItem("selectedTheme", themeName);
+
+    this.applyThemeIconsAndColor(themeName);
+
+    return true;
+  }
+
+  applyTheme() {
+    const root = document.documentElement;
+    const iframes = document.querySelectorAll(".mobile-frame iframe");
+
+    if (!iframes.length) return;
+
+    root.style.setProperty(
+      "--primary-color",
+      this.toolBoxManager.currentTheme.colors.primaryColor
+    );
+    root.style.setProperty(
+      "--secondary-color",
+      this.toolBoxManager.currentTheme.colors.secondaryColor
+    );
+    root.style.setProperty(
+      "--background-color",
+      this.toolBoxManager.currentTheme.colors.backgroundColor
+    );
+    root.style.setProperty(
+      "--text-color",
+      this.toolBoxManager.currentTheme.colors.textColor
+    );
+    root.style.setProperty(
+      "--button-bg-color",
+      this.toolBoxManager.currentTheme.colors.buttonBgColor
+    );
+    root.style.setProperty(
+      "--button-text-color",
+      this.toolBoxManager.currentTheme.colors.buttonTextColor
+    );
+    root.style.setProperty(
+      "--card-bg-color",
+      this.toolBoxManager.currentTheme.colors.cardBgColor
+    );
+    root.style.setProperty(
+      "--card-text-color",
+      this.toolBoxManager.currentTheme.colors.cardTextColor
+    );
+    root.style.setProperty(
+      "--accent-color",
+      this.toolBoxManager.currentTheme.colors.accentColor
+    );
+    root.style.setProperty(
+      "--font-family",
+      this.toolBoxManager.currentTheme.fontFamily
+    );
+
+    iframes.forEach((iframe) => {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+      if (iframeDoc && iframeDoc.body) {
+        iframeDoc.body.style.setProperty(
+          "--primary-color",
+          this.toolBoxManager.currentTheme.colors.primaryColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--secondary-color",
+          this.toolBoxManager.currentTheme.colors.secondaryColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--background-color",
+          this.toolBoxManager.currentTheme.colors.backgroundColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--text-color",
+          this.toolBoxManager.currentTheme.colors.textColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--button-bg-color",
+          this.toolBoxManager.currentTheme.colors.buttonBgColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--button-text-color",
+          this.toolBoxManager.currentTheme.colors.buttonTextColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--card-bg-color",
+          this.toolBoxManager.currentTheme.colors.cardBgColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--card-text-color",
+          this.toolBoxManager.currentTheme.colors.cardTextColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--accent-color",
+          this.toolBoxManager.currentTheme.colors.accentColor
+        );
+        iframeDoc.body.style.setProperty(
+          "--font-family",
+          this.toolBoxManager.currentTheme.fontFamily
+        );
+      }
+    });
+  }
+
+  applyThemeIconsAndColor(themeName) {
+    const editors = Object.values(this.toolBoxManager.editorManager.editors);
+
+    if (editors && editors.length) {
+      for (let index = 0; index < editors.length; index++) {
+        const editorData = editors[index];
+        if (!editorData || !editorData.editor) {
+          console.error(`Invalid editorData at index ${index}:`, editorData);
+          return;
+        }
+
+        try {
+          let editor = editorData.editor;
+          // Add additional null checks
+          if (!editor || typeof editor.getWrapper !== "function") {
+            console.error(`Invalid editor at index ${index}:`, editor);
+            continue;
+          }
+
+          const wrapper = editor.getWrapper();
+
+          const theme = this.toolBoxManager.themes.find(
+            (theme) => theme.name === themeName
+          );
+          const tiles = wrapper.find(".template-block");
+
+          tiles.forEach((tile) => {
+            if (!tile) return;
+            // icons change and its color
+            const tileIconName = tile.getAttributes()?.["tile-icon"];
+            if (tileIconName) {
+              const matchingIcon = theme.icons?.find(
+                (icon) => icon.IconName === tileIconName
+              );
+
+              if (matchingIcon) {
+                const tileIconComponent = tile.find(".tile-icon svg")?.[0];
+
+                if (tileIconComponent) {
+                  // get current icon color with null checks
+                  const currentIconPath = tileIconComponent.find("path")?.[0];
+                  let currentIconColor = "#7c8791"; // default color
+                  if (currentIconPath && currentIconPath.getAttributes()) {
+                    currentIconColor =
+                      currentIconPath.getAttributes()["fill"] ||
+                      currentIconColor;
+                  }
+
+                  let localizedSVG = matchingIcon.IconSVG;
+                  if (localizedSVG) {
+                    localizedSVG = localizedSVG.replace(
+                      /fill="[^"]*"/g,
+                      `fill="${currentIconColor}"`
+                    );
+                    tileIconComponent.replaceWith(localizedSVG);
+                  }
+                }
+              }
+            }
+
+            const currentTileBgColorName =
+              tile.getAttributes()?.["tile-bgcolor-name"];
+            if (currentTileBgColorName && theme.colors) {
+              const matchingColorCode = theme.colors[currentTileBgColorName];
+
+              if (matchingColorCode) {
+                tile.addAttributes({
+                  "tile-bgcolor-name": currentTileBgColorName,
+                  "tile-bgcolor": matchingColorCode,
+                });
+
+                tile.addStyle({
+                  "background-color": matchingColorCode,
+                });
+              } else {
+                console.warn(
+                  `No matching color found for: ${currentTileBgColorName}`
+                );
+              }
+            }
+          });
+        } catch (error) {
+          console.error(`Error processing editor at index ${index}:`, error);
+        }
+      }
+    }
+
+    const iframes = document.querySelectorAll(".mobile-frame iframe");
+
+    if (iframes === null) return;
+
+    iframes.forEach((iframe) => {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      if (iframeDoc && iframeDoc.body) {
+        iframeDoc.body.style.setProperty(
+          "--font-family",
+          this.toolBoxManager.currentTheme.fontFamily
+        );
+      }
+    });
+  }
+
+  themeColorPalette(colors) {
+    const colorPaletteContainer = document.getElementById(
+      "theme-color-palette"
+    );
+    colorPaletteContainer.innerHTML = "";
+
+    const colorEntries = Object.entries(colors);
+
+    colorEntries.forEach(([colorName, colorValue], index) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `color-${colorName}`;
+      radioInput.name = "theme-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-bgcolor", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+
+      colorPaletteContainer.appendChild(alignItem);
+
+      colorBox.onclick = () => {
+        this.toolBoxManager.editorManager.selectedComponent.addStyle({
+          "background-color": colorValue,
+        });
+        this.toolBoxManager.setAttributeToSelected("tile-bgcolor", colorValue);
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-bgcolor-name",
+          colorName
+        );
+      };
+    });
+  }
+
+  colorPalette() {
+    const textColorPaletteContainer =
+      document.getElementById("text-color-palette");
+    const iconColorPaletteContainer =
+      document.getElementById("icon-color-palette");
+
+    // Fixed color values
+    const colorValues = {
+      color1: "#ffffff",
+      color2: "#333333",
+    };
+
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
+
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `text-color-${colorName}`;
+      radioInput.name = "text-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `text-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-text-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      textColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
+        this.toolBoxManager.editorManager.selectedComponent.addStyle({
+          color: colorValue,
+        });
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-text-color",
+          colorValue
+        );
+      };
+    });
+
+    // Create options for icon color palette
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const alignItem = document.createElement("div");
+      alignItem.className = "color-item";
+
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `icon-color-${colorName}`;
+      radioInput.name = "icon-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `icon-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-tile-icon-color", colorValue);
+
+      alignItem.appendChild(radioInput);
+      alignItem.appendChild(colorBox);
+      iconColorPaletteContainer.appendChild(alignItem);
+
+      radioInput.onclick = () => {
+        const svgIcon =
+          this.toolBoxManager.editorManager.selectedComponent.find(
+            ".tile-icon path"
+          )[0];
+        if (svgIcon) {
+          svgIcon.removeAttributes("fill");
+          svgIcon.addAttributes({
+            fill: colorValue,
+          });
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-icon-color",
+            colorValue
+          );
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_icon_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
+        }
+      };
+    });
+  }
+
+  ctaColorPalette() {
+    const ctaColorPaletteContainer =
+      document.getElementById("cta-color-palette");
+    const colorValues = {
+      color1: "#4C9155",
+      color2: "#5068A8",
+      color3: "#EEA622",
+      color4: "#FF6C37",
+    };
+
+    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
+      const colorItem = document.createElement("div");
+      colorItem.className = "color-item";
+      const radioInput = document.createElement("input");
+      radioInput.type = "radio";
+      radioInput.id = `cta-color-${colorName}`;
+      radioInput.name = "cta-color";
+      radioInput.value = colorName;
+
+      const colorBox = document.createElement("label");
+      colorBox.className = "color-box";
+      colorBox.setAttribute("for", `cta-color-${colorName}`);
+      colorBox.style.backgroundColor = colorValue;
+      colorBox.setAttribute("data-cta-color", colorValue);
+
+      colorItem.appendChild(radioInput);
+      colorItem.appendChild(colorBox);
+      ctaColorPaletteContainer.appendChild(colorItem);
+
+      radioInput.onclick = () => {
+        if (this.toolBoxManager.editorManager.selectedComponent) {
+          const selectedComponent =
+            this.toolBoxManager.editorManager.selectedComponent;
+
+          // Search for components with either class
+          const componentsWithClass = [
+            ...selectedComponent.find(".cta-main-button"),
+            ...selectedComponent.find(".cta-button"),
+            ...selectedComponent.find(".img-button"),
+            ...selectedComponent.find(".plain-button"),
+          ];
+
+          // Get the first matching component
+          const button =
+            componentsWithClass.length > 0 ? componentsWithClass[0] : null;
+
+          if (button) {
+            button.addStyle({
+              "background-color": colorValue,
+              "border-color": colorValue,
+            });
+          }
+          this.toolBoxManager.setAttributeToSelected(
+            "cta-background-color",
+            colorValue
+          );
+        }
+      };
+    });
+  }
+
+  listThemesInSelectField() {
+    const select = document.querySelector(".tb-custom-theme-selection");
+    const button = select.querySelector(".theme-select-button");
+    const selectedValue = button.querySelector(".selected-theme-value");
+
+    // Toggle dropdown visibility
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isOpen = optionsList.classList.contains("show");
+      optionsList.classList.toggle("show");
+      button.classList.toggle("open");
+      button.setAttribute("aria-expanded", !isOpen);
+    });
+
+    const optionsList = document.createElement("div");
+    optionsList.classList.add("theme-options-list");
+    optionsList.setAttribute("role", "listbox");
+    optionsList.innerHTML = "";
+
+    // Populate themes into the dropdown
+    this.toolBoxManager.themes.forEach((theme, index) => {
+      const option = document.createElement("div");
+      option.classList.add("theme-option");
+      option.setAttribute("role", "option");
+      option.setAttribute("data-value", theme.name);
+      option.textContent = theme.name;
+
+      if (
+        this.toolBoxManager.currentTheme &&
+        theme.name === this.toolBoxManager.currentTheme.name
+      ) {
+        option.classList.add("selected");
+      }
+
+      option.addEventListener("click", (e) => {
+        selectedValue.textContent = theme.name;
+
+        // Mark as selected
+        const allOptions = optionsList.querySelectorAll(".theme-option");
+        allOptions.forEach((opt) => opt.classList.remove("selected"));
+        option.classList.add("selected");
+
+        // Close the dropdown
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+
+        const themeName = theme.name;
+        // update location theme
+        this.toolBoxManager.dataManager.selectedTheme =
+          this.toolBoxManager.themes.find((theme) => theme.name === themeName);
+
+        this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
+          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+            return;
+          }
+
+          if (this.setTheme(themeName)) {
+            this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
+
+            localStorage.setItem("selectedTheme", themeName);
+
+            const message = this.toolBoxManager.currentLanguage.getTranslation(
+              "theme_applied_success_message"
+            );
+            const status = "success";
+            this.toolBoxManager.ui.displayAlertMessage(message, status);
+          } else {
+            const message = this.toolBoxManager.currentLanguage.getTranslation(
+              "error_applying_theme_message"
+            );
+            const status = "error";
+            this.toolBoxManager.ui.displayAlertMessage(message, status);
+          }
+        });
+      });
+
+      // Append option to the options list
+      optionsList.appendChild(option);
+    });
+
+    select.appendChild(optionsList);
+
+    document.addEventListener("click", (e) => {
+      if (!select.contains(e.target)) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  loadThemeIcons(themeIconsList) {
+    const themeIcons = document.getElementById("icons-list");
+
+    let selectedCategory;
+
+    const categoryOptions = document.querySelectorAll(".category-option");
+    // selected category is where the category option has a .selected class
+
+    categoryOptions.forEach((option) => {
+      if (option.classList.contains("selected")) {
+        selectedCategory = option.getAttribute("data-value");
+      }
+      option.addEventListener("click", () => {
+        selectedCategory = option.getAttribute("data-value");
+        renderIcons();
+      });
+    });
+
+    const renderIcons = () => {
+      themeIcons.innerHTML = "";
+      const filteredIcons = themeIconsList.filter(
+        (icon) => icon.IconCategory.trim() === selectedCategory
+      );
+
+      if (filteredIcons.length === 0) {
+        console.log("No icons found for selected category.");
+      }
+      // Render filtered icons
+      filteredIcons.forEach((icon) => {
+        const iconItem = document.createElement("div");
+        iconItem.classList.add("icon");
+        iconItem.title = icon.IconName;
+
+        const displayName = (() => {
+          const maxChars = 7;
+          const words = icon.IconName.split(" ");
+
+          if (words.length > 1) {
+            const firstWord = words[0];
+            if (firstWord.length >= maxChars) {
+              return firstWord.slice(0, maxChars) + "...";
+            } else {
+              return firstWord;
+            }
+          }
+
+          return icon.IconName.length > maxChars
+            ? icon.IconName.slice(0, maxChars) + "..."
+            : icon.IconName;
+        })();
+
+        iconItem.innerHTML = `
+                    ${icon.IconSVG}
+                    <span class="icon-title">${displayName}</span>
+                `;
+
+        iconItem.onclick = () => {
+          if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+            const iconComponent =
+              this.toolBoxManager.editorManager.selectedComponent.find(
+                ".tile-icon"
+              )[0];
+
+            if (iconComponent) {
+              iconComponent.components(icon.IconSVG);
+              this.toolBoxManager.setAttributeToSelected(
+                "tile-icon",
+                icon.IconName
+              );
+            }
+          } else {
+            const message = this.toolBoxManager.currentLanguage.getTranslation(
+              "no_tile_selected_error_message"
+            );
+            const status = "error";
+            this.toolBoxManager.ui.displayAlertMessage(message, status);
+          }
+        };
+
+        themeIcons.appendChild(iconItem);
+      });
+    };
+
+    renderIcons();
+  }
+}
+
+module.exports = ThemeManager
 
 /***/ }),
 
@@ -105,7 +2472,529 @@ eval("class ThemeManager {\n  constructor(toolBoxManager) {\n    this.toolBoxMan
   \**********************************/
 /***/ ((module) => {
 
-eval("class ToolBoxUI {\n  constructor(toolBoxManager) {\n    this.manager = toolBoxManager;\n    this.currentLanguage = toolBoxManager.currentLanguage;\n  }\n\n  updateTileTitle(inputTitle) {\n    if (this.manager.editorManager.selectedTemplateWrapper) {\n      const titleComponent =\n        this.manager.editorManager.selectedComponent.find(\".tile-title\")[0];\n      if (titleComponent) {\n        titleComponent.components(inputTitle);\n        // this.manager.selectedComponent.addAttributes({\n        //   \"tile-title\": inputTitle,\n        // });\n      }\n    }\n  }\n\n  displayAlertMessage(message, status) {\n    const alertContainer = document.getElementById(\"alerts-container\");\n    const alertId = Math.random().toString(10);\n    const alertBox = this.alertMessage(message, status, alertId);\n    alertBox.style.display = \"flex\";\n\n    const closeButton = alertBox.querySelector(\".alert-close-btn\");\n    closeButton.addEventListener(\"click\", () => {\n      this.closeAlert(alertId);\n    });\n\n    setTimeout(() => this.closeAlert(alertId), 5000);\n    alertContainer.appendChild(alertBox);\n  }\n\n  alertMessage(message, status, alertId) {\n    const alertBox = document.createElement(\"div\");\n    alertBox.id = alertId;\n    alertBox.classList = `alert ${status == \"success\" ? \"success\" : \"error\"}`;\n    alertBox.innerHTML = `\n        <div class=\"alert-header\">\n          <strong>\n            ${\n              status == \"success\"\n                ? this.currentLanguage.getTranslation(\"alert_type_success\")\n                : this.currentLanguage.getTranslation(\"alert_type_error\")\n            }\n          </strong>\n          <span class=\"alert-close-btn\">✖</span>\n        </div>\n        <p>${message}</p>\n      `;\n    return alertBox;\n  }\n\n  closeAlert(alertId) {\n    const alert = document.getElementById(alertId);\n    if (alert) {\n      alert.style.opacity = 0;\n      setTimeout(() => alert.remove(), 500);\n    }\n  }\n\n  openToastMessage() {\n    const toast = document.createElement(\"div\");\n    toast.id = \"toast\";\n    toast.textContent = \"Your changes are saved\";\n\n    document.body.appendChild(toast);\n\n    setTimeout(() => {\n      toast.style.opacity = \"1\";\n      toast.style.transform = \"translateX(-50%) translateY(0)\";\n    }, 100);\n\n    setTimeout(() => {\n      toast.style.opacity = \"0\";\n      setTimeout(() => {\n        document.body.removeChild(toast);\n      }, 500);\n    }, 3000);\n  }\n\n  updateTileProperties(editor, page) {\n    if (page && page.PageIsContentPage) {\n      this.updateContentPageProperties();\n    } else {\n      this.updateTemplatePageProperties();\n    }\n  }\n\n  updateContentPageProperties() {\n    const currentCtaBgColor =\n      this.manager.editorManager.selectedComponent?.getAttributes()?.[\n        \"cta-background-color\"\n      ];\n    const CtaRadios = document.querySelectorAll(\n      '#cta-color-palette input[type=\"radio\"]'\n    );\n\n    CtaRadios.forEach((radio) => {\n      const colorBox = radio.nextElementSibling;\n      radio.checked =\n        colorBox.getAttribute(\"data-cta-color\").toUpperCase() ===\n        currentCtaBgColor.toUpperCase();\n    });\n  }\n\n  updateTemplatePageProperties() {\n    this.updateAlignmentProperties();\n    this.updateColorProperties();\n    this.updateActionProperties();\n  }\n\n  updateAlignmentProperties() {\n    const alignmentTypes = [\n      { type: \"text\", attribute: \"tile-text-align\" },\n      { type: \"icon\", attribute: \"tile-icon-align\" },\n    ];\n\n    alignmentTypes.forEach(({ type, attribute }) => {\n      const currentAlign =\n        this.manager.editorManager.selectedComponent?.getAttributes()?.[\n          attribute\n        ];\n      [\"left\", \"center\", \"right\"].forEach((align) => {\n        document.getElementById(`${type}-align-${align}`).checked =\n          currentAlign === align;\n      });\n    });\n  }\n\n  updateColorProperties() {\n    const currentTextColor =\n      this.manager.editorManager.selectedComponent?.getAttributes()?.[\n        \"tile-text-color\"\n      ];\n    const textColorRadios = document.querySelectorAll(\n      '.text-color-palette.text-colors .color-item input[type=\"radio\"]'\n    );\n    textColorRadios.forEach((radio) => {\n      const colorBox = radio.nextElementSibling;\n      radio.checked =\n        colorBox.getAttribute(\"data-tile-text-color\") === currentTextColor;\n    });\n\n    // Update icon color\n    const currentIconColor =\n      this.manager.editorManager.selectedComponent?.getAttributes()?.[\n        \"tile-icon-color\"\n      ];\n    const iconColorRadios = document.querySelectorAll(\n      '.text-color-palette.icon-colors .color-item input[type=\"radio\"]'\n    );\n    iconColorRadios.forEach((radio) => {\n      const colorBox = radio.nextElementSibling;\n      radio.checked =\n        colorBox.getAttribute(\"data-tile-icon-color\") === currentIconColor;\n    });\n\n    // Update background color\n    const currentBgColor =\n      this.manager.editorManager.selectedComponent?.getAttributes()?.[\n        \"tile-bgcolor\"\n      ];\n    const radios = document.querySelectorAll(\n      '#theme-color-palette input[type=\"radio\"]'\n    );\n    radios.forEach((radio) => {\n      const colorBox = radio.nextElementSibling;\n      radio.checked =\n        colorBox.getAttribute(\"data-tile-bgcolor\") === currentBgColor;\n    });\n  }\n\n  updateActionProperties() {\n    const currentActionName =\n      this.manager.editorManager.selectedComponent?.getAttributes()?.[\n        \"tile-action-object\"\n      ];\n    const currentActionId =\n      this.manager.editorManager.selectedComponent?.getAttributes()?.[\n        \"tile-action-object-id\"\n      ];\n    const propertySection = document.getElementById(\"selectedOption\");\n    const selectedOptionElement = document.getElementById(currentActionId);\n\n    const allOptions = document.querySelectorAll(\".category-content li\");\n    allOptions.forEach((option) => {\n      option.style.background = \"\";\n    });\n\n    if (currentActionName && currentActionId && selectedOptionElement) {\n      propertySection.textContent = currentActionName;\n      propertySection.innerHTML += ' <i class=\"fa fa-angle-down\"></i>';\n      selectedOptionElement.style.background = \"#f0f0f0\";\n    }\n  }\n\n  pageContentCtas(callToActions, editorInstance) {\n    const contentPageCtas = document.getElementById(\"call-to-actions\");\n    this.renderCtas(callToActions, editorInstance, contentPageCtas);\n    this.setupButtonLayoutListeners(editorInstance);\n    this.setupBadgeClickListener(editorInstance);\n  }\n\n  renderCtas(callToActions, editorInstance, contentPageCtas) {\n    contentPageCtas.innerHTML = \"\";\n    callToActions.forEach((cta) => {\n      const ctaItem = this.createCtaItem(cta);\n      this.attachClickHandler(ctaItem, cta, editorInstance);\n      contentPageCtas.appendChild(ctaItem);\n    });\n  }\n\n  createCtaItem(cta) {\n    const ctaItem = document.createElement(\"div\");\n    ctaItem.classList.add(\"call-to-action-item\");\n    ctaItem.title = cta.CallToActionName;\n\n    const ctaType = this.getCtaType(cta.CallToActionType);\n    ctaItem.innerHTML = `<i class=\"${ctaType.icon}\"></i>`;\n\n    return ctaItem;\n  }\n\n  getCtaType(type) {\n    const ctaTypeMap = {\n      Phone: {\n        icon: \"fas fa-phone-alt\",\n        iconList: \".fas.fa-phone-alt\",\n      },\n      Email: {\n        icon: \"fas fa-envelope\",\n        iconList: \".fas.fa-envelope\",\n      },\n      SiteUrl: {\n        icon: \"fas fa-link\",\n        iconList: \".fas.fa-link\",\n      },\n      Form: {\n        icon: \"fas fa-file\",\n        iconList: \".fas.fa-file\",\n      },\n    };\n\n    return (\n      ctaTypeMap[type] || {\n        icon: \"fas fa-question\",\n        iconList: \".fas.fa-question\",\n      }\n    );\n  }\n\n  generateCtaComponent(cta, backgroundColor = \"#5068a8\") {\n    const ctaType = this.getCtaType(cta.CallToActionType);\n    return `\n      <div class=\"cta-container-child cta-child\" \n            id=\"id-${cta.CallToActionId}\"\n            data-gjs-type=\"cta-buttons\"\n            cta-button-id=\"${cta.CallToActionId}\"\n            data-gjs-draggable=\"false\"\n            data-gjs-editable=\"false\"\n            data-gjs-highlightable=\"false\"\n            data-gjs-droppable=\"false\"\n            data-gjs-resizable=\"false\"\n            data-gjs-hoverable=\"false\"\n            cta-button-label=\"${cta.CallToActionName}\"\n            cta-button-type=\"${cta.CallToActionType}\"\n            cta-button-action=\"${\n              cta.CallToActionPhone ||\n              cta.CallToActionEmail ||\n              cta.CallToActionUrl\n            }\"\n            cta-background-color=\"#5068a8\"\n          >\n            <div class=\"cta-button\" ${defaultConstraints} style=\"background-color: #5068a8;\">\n              <i class=\"${ctaType.icon}\" ${defaultConstraints}></i>\n              <div class=\"cta-badge\" ${defaultConstraints}><i class=\"fa fa-minus\" ${defaultConstraints}></i></div>\n            </div>\n            <div class=\"cta-label\" ${defaultConstraints}>${\n          cta.CallToActionName\n        }</div>\n      </div>\n    `;\n  }\n\n  handleExistingButton(existingButton, cta, selectedComponent, editorInstance) {\n    const existingBackgroundColor =\n      existingButton.getAttributes()[\"cta-background-color\"];\n    const updatedCtaComponent = this.generateCtaComponent(\n      cta,\n      existingBackgroundColor\n    );\n\n    if (\n      selectedComponent.getAttributes()[\"cta-button-id\"] === cta.CallToActionId\n    ) {\n      editorInstance.once(\"component:add\", (component) => {\n        const addedComponent = editorInstance\n          .getWrapper()\n          .find(`#id-${cta.CallToActionId}`)[0];\n        if (addedComponent) {\n          editorInstance.select(addedComponent);\n        }\n      });\n      selectedComponent.replaceWith(updatedCtaComponent);\n    }\n  }\n\n  attachClickHandler(ctaItem, cta, editorInstance) {\n    ctaItem.onclick = (e) => {\n      e.preventDefault();\n      const ctaButton = editorInstance\n        .getWrapper()\n        .find(\".cta-button-container\")[0];\n\n      if (!ctaButton) {\n        console.error(\"CTA Button container not found.\");\n        return;\n      }\n\n      const selectedComponent = this.manager.editorManager.selectedComponent;\n      if (!selectedComponent) {\n        console.error(\"No selected component found.\");\n        return;\n      }\n\n      const existingButton = ctaButton.find(`#id-${cta.CallToActionId}`)?.[0];\n\n      if (existingButton) {\n        this.handleExistingButton(\n          existingButton,\n          cta,\n          selectedComponent,\n          editorInstance\n        );\n        return;\n      }\n\n      ctaButton.append(this.generateCtaComponent(cta));\n    };\n  }\n\n  setupButtonLayoutListeners(editorInstance) {\n    this.setupPlainButtonListener(editorInstance);\n    this.setupImageButtonListener(editorInstance);\n  }\n\n  // Helper method to check if component is a valid CTA\n  isValidCtaComponent(attributes) {\n    return attributes.hasOwnProperty(\"cta-button-label\") &&\n           attributes.hasOwnProperty(\"cta-button-type\") &&\n           attributes.hasOwnProperty(\"cta-button-action\");\n  }\n\n  // Extract CTA attributes from component\n  extractCtaAttributes(component) {\n    const attributes = component.getAttributes();\n    return {\n      ctaId: attributes[\"cta-button-id\"],\n      ctaName: attributes[\"cta-button-label\"],\n      ctaType: attributes[\"cta-button-type\"],\n      ctaAction: attributes[\"cta-button-action\"],\n      ctaButtonBgColor: attributes[\"cta-background-color\"]\n    };\n  }\n\n  // Get icon based on CTA type\n  getCtaTypeIcon(ctaType) {\n    const iconMap = {\n      Phone: \"fas fa-phone-alt\",\n      Email: \"fas fa-envelope\",\n      SiteUrl: \"fas fa-link\",\n      Form: \"fas fa-file\"\n    };\n    return iconMap[ctaType] || \"fas fa-question\";\n  }\n\n  // Generate common button attributes\n  getCommonButtonAttributes(ctaAttributes) {\n    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } = ctaAttributes;\n    return `\n      data-gjs-draggable=\"false\"\n      data-gjs-editable=\"false\"\n      data-gjs-highlightable=\"false\"\n      data-gjs-droppable=\"false\"\n      data-gjs-resizable=\"false\"\n      data-gjs-hoverable=\"false\"\n      data-gjs-type=\"cta-buttons\"\n      id=\"id-${ctaId}\"\n      cta-button-id=\"${ctaId}\"\n      cta-button-label=\"${ctaName}\"\n      cta-button-type=\"${ctaType}\"\n      cta-button-action=\"${ctaAction}\"\n      cta-background-color=\"${ctaButtonBgColor}\"\n      cta-full-width=\"true\"\n    `;\n  }\n\n  // Generate plain button component\n  generatePlainButtonComponent(ctaAttributes) {\n    const { ctaName, ctaButtonBgColor } = ctaAttributes;\n    return `\n      <div class=\"plain-button-container\" ${this.getCommonButtonAttributes(ctaAttributes)}>\n        <button style=\"background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};\" \n                class=\"plain-button\" ${defaultConstraints}>\n          <div class=\"cta-badge\" ${defaultConstraints}>\n            <i class=\"fa fa-minus\" ${defaultConstraints}></i>\n          </div>\n          ${ctaName}\n        </button>\n      </div>\n    `;\n  }\n\n  // Generate image button component\n  generateImageButtonComponent(ctaAttributes) {\n    const { ctaName, ctaButtonBgColor, ctaType } = ctaAttributes;\n    const icon = this.getCtaTypeIcon(ctaType);\n    return `\n      <div class=\"img-button-container\" ${this.getCommonButtonAttributes(ctaAttributes)}>\n        <div style=\"background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};\" \n             class=\"img-button\" ${defaultConstraints}>\n          <i class=\"${icon} img-button-icon\" ${defaultConstraints}></i>\n          <div class=\"cta-badge\" ${defaultConstraints}>\n            <i class=\"fa fa-minus\" ${defaultConstraints}></i>\n          </div>\n          <span class=\"img-button-label\" ${defaultConstraints}>${ctaName}</span>\n          <i class=\"fa fa-angle-right img-button-arrow\" ${defaultConstraints}></i>\n        </div>\n      </div>\n    `;\n  }\n\n  // Handle component replacement\n  handleComponentReplacement(editorInstance, ctaId, newComponent) {\n    editorInstance.once(\"component:add\", () => {\n      const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];\n      if (addedComponent) {\n        editorInstance.select(addedComponent);\n      }\n    });\n    this.manager.editorManager.selectedComponent.replaceWith(newComponent);\n  }\n\n  // Handle button click\n  handleButtonClick(editorInstance, generateComponent) {\n    const ctaContainer = editorInstance.getWrapper().find(\".cta-button-container\")[0];\n    if (!ctaContainer) return;\n\n    const selectedComponent = this.manager.editorManager.selectedComponent;\n    if (!selectedComponent) return;\n\n    const attributes = selectedComponent.getAttributes();\n    if (!this.isValidCtaComponent(attributes)) {\n      const message = this.currentLanguage.getTranslation(\"please_select_cta_button\");\n      this.displayAlertMessage(message, \"error\");\n      return;\n    }\n\n    const ctaAttributes = this.extractCtaAttributes(selectedComponent);\n    const newComponent = generateComponent(ctaAttributes);\n    this.handleComponentReplacement(editorInstance, ctaAttributes.ctaId, newComponent);\n  }\n\n  // Setup plain button listener\n  setupPlainButtonListener(editorInstance) {\n    const plainButton = document.getElementById(\"plain-button-layout\");\n    plainButton.onclick = (e) => {\n      e.preventDefault();\n      this.handleButtonClick(editorInstance, \n        (attrs) => this.generatePlainButtonComponent(attrs));\n    };\n  }\n\n  // Setup image button listener\n  setupImageButtonListener(editorInstance) {\n    const imgButton = document.getElementById(\"img-button-layout\");\n    imgButton.onclick = (e) => {\n      e.preventDefault();\n      this.handleButtonClick(editorInstance, \n        (attrs) => this.generateImageButtonComponent(attrs));\n    };\n  }\n\n  setupBadgeClickListener(editorInstance) {\n    const wrapper = editorInstance.getWrapper();\n    wrapper.view.el.addEventListener(\"click\", (e) => {\n      const badge = e.target.closest(\".cta-badge\");\n      if (!badge) return;\n\n      e.stopPropagation();\n\n      const ctaChild = badge.closest(\n        \".cta-container-child, .plain-button-container, .img-button-container\"\n      );\n      if (ctaChild)\n        if (ctaChild) {\n          // Check if this is the last child in the container\n          const parentContainer = ctaChild.closest(\".cta-button-container\");\n          const childId = ctaChild.getAttribute(\"id\");\n          const component = editorInstance.getWrapper().find(`#${childId}`)[0];\n\n          if (component) {\n            component.remove();\n          }\n        }\n    });\n  }\n\n  activateCtaBtnStyles(selectedCtaComponent) {\n    if (selectedCtaComponent) {\n      const isCtaButtonSelected = selectedCtaComponent.findType(\".cta-buttons\");\n      if (isCtaButtonSelected) {\n          document.querySelector(\".cta-button-layout-container\")\n            .style.display = \"flex\";\n      }\n    }\n  }\n}\n\nmodule.exports = ToolBoxUI\n\n\n//# sourceURL=webpack://ucgrapes/./src/classes/ToolBoxUI.js?");
+class ToolBoxUI {
+  constructor(toolBoxManager) {
+    this.manager = toolBoxManager;
+    this.currentLanguage = toolBoxManager.currentLanguage;
+  }
+
+  updateTileTitle(inputTitle) {
+    if (this.manager.editorManager.selectedTemplateWrapper) {
+      const titleComponent =
+        this.manager.editorManager.selectedComponent.find(".tile-title")[0];
+      if (titleComponent) {
+        titleComponent.components(inputTitle);
+        // this.manager.selectedComponent.addAttributes({
+        //   "tile-title": inputTitle,
+        // });
+      }
+    }
+  }
+
+  displayAlertMessage(message, status) {
+    const alertContainer = document.getElementById("alerts-container");
+    const alertId = Math.random().toString(10);
+    const alertBox = this.alertMessage(message, status, alertId);
+    alertBox.style.display = "flex";
+
+    const closeButton = alertBox.querySelector(".alert-close-btn");
+    closeButton.addEventListener("click", () => {
+      this.closeAlert(alertId);
+    });
+
+    setTimeout(() => this.closeAlert(alertId), 5000);
+    alertContainer.appendChild(alertBox);
+  }
+
+  alertMessage(message, status, alertId) {
+    const alertBox = document.createElement("div");
+    alertBox.id = alertId;
+    alertBox.classList = `alert ${status == "success" ? "success" : "error"}`;
+    alertBox.innerHTML = `
+        <div class="alert-header">
+          <strong>
+            ${
+              status == "success"
+                ? this.currentLanguage.getTranslation("alert_type_success")
+                : this.currentLanguage.getTranslation("alert_type_error")
+            }
+          </strong>
+          <span class="alert-close-btn">✖</span>
+        </div>
+        <p>${message}</p>
+      `;
+    return alertBox;
+  }
+
+  closeAlert(alertId) {
+    const alert = document.getElementById(alertId);
+    if (alert) {
+      alert.style.opacity = 0;
+      setTimeout(() => alert.remove(), 500);
+    }
+  }
+
+  openToastMessage() {
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.textContent = "Your changes are saved";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translateX(-50%) translateY(0)";
+    }, 100);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 500);
+    }, 3000);
+  }
+
+  updateTileProperties(editor, page) {
+    if (page && page.PageIsContentPage) {
+      this.updateContentPageProperties();
+    } else {
+      this.updateTemplatePageProperties();
+    }
+  }
+
+  updateContentPageProperties() {
+    const currentCtaBgColor =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "cta-background-color"
+      ];
+    const CtaRadios = document.querySelectorAll(
+      '#cta-color-palette input[type="radio"]'
+    );
+
+    CtaRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-cta-color").toUpperCase() ===
+        currentCtaBgColor.toUpperCase();
+    });
+  }
+
+  updateTemplatePageProperties() {
+    this.updateAlignmentProperties();
+    this.updateColorProperties();
+    this.updateActionProperties();
+  }
+
+  updateAlignmentProperties() {
+    const alignmentTypes = [
+      { type: "text", attribute: "tile-text-align" },
+      { type: "icon", attribute: "tile-icon-align" },
+    ];
+
+    alignmentTypes.forEach(({ type, attribute }) => {
+      const currentAlign =
+        this.manager.editorManager.selectedComponent?.getAttributes()?.[
+          attribute
+        ];
+      ["left", "center", "right"].forEach((align) => {
+        document.getElementById(`${type}-align-${align}`).checked =
+          currentAlign === align;
+      });
+    });
+  }
+
+  updateColorProperties() {
+    const currentTextColor =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "tile-text-color"
+      ];
+    const textColorRadios = document.querySelectorAll(
+      '.text-color-palette.text-colors .color-item input[type="radio"]'
+    );
+    textColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
+    });
+
+    // Update icon color
+    const currentIconColor =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "tile-icon-color"
+      ];
+    const iconColorRadios = document.querySelectorAll(
+      '.text-color-palette.icon-colors .color-item input[type="radio"]'
+    );
+    iconColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+    });
+
+    // Update background color
+    const currentBgColor =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "tile-bgcolor"
+      ];
+    const radios = document.querySelectorAll(
+      '#theme-color-palette input[type="radio"]'
+    );
+    radios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
+    });
+  }
+
+  updateActionProperties() {
+    const currentActionName =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "tile-action-object"
+      ];
+    const currentActionId =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "tile-action-object-id"
+      ];
+    const propertySection = document.getElementById("selectedOption");
+    const selectedOptionElement = document.getElementById(currentActionId);
+
+    const allOptions = document.querySelectorAll(".category-content li");
+    allOptions.forEach((option) => {
+      option.style.background = "";
+    });
+
+    if (currentActionName && currentActionId && selectedOptionElement) {
+      propertySection.textContent = currentActionName;
+      propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
+      selectedOptionElement.style.background = "#f0f0f0";
+    }
+  }
+
+  pageContentCtas(callToActions, editorInstance) {
+    const contentPageCtas = document.getElementById("call-to-actions");
+    this.renderCtas(callToActions, editorInstance, contentPageCtas);
+    this.setupButtonLayoutListeners(editorInstance);
+    this.setupBadgeClickListener(editorInstance);
+  }
+
+  renderCtas(callToActions, editorInstance, contentPageCtas) {
+    contentPageCtas.innerHTML = "";
+    callToActions.forEach((cta) => {
+      const ctaItem = this.createCtaItem(cta);
+      this.attachClickHandler(ctaItem, cta, editorInstance);
+      contentPageCtas.appendChild(ctaItem);
+    });
+  }
+
+  createCtaItem(cta) {
+    const ctaItem = document.createElement("div");
+    ctaItem.classList.add("call-to-action-item");
+    ctaItem.title = cta.CallToActionName;
+
+    const ctaType = this.getCtaType(cta.CallToActionType);
+    ctaItem.innerHTML = `<i class="${ctaType.icon}"></i>`;
+
+    return ctaItem;
+  }
+
+  getCtaType(type) {
+    const ctaTypeMap = {
+      Phone: {
+        icon: "fas fa-phone-alt",
+        iconList: ".fas.fa-phone-alt",
+      },
+      Email: {
+        icon: "fas fa-envelope",
+        iconList: ".fas.fa-envelope",
+      },
+      SiteUrl: {
+        icon: "fas fa-link",
+        iconList: ".fas.fa-link",
+      },
+      Form: {
+        icon: "fas fa-file",
+        iconList: ".fas.fa-file",
+      },
+    };
+
+    return (
+      ctaTypeMap[type] || {
+        icon: "fas fa-question",
+        iconList: ".fas.fa-question",
+      }
+    );
+  }
+
+  generateCtaComponent(cta, backgroundColor = "#5068a8") {
+    const ctaType = this.getCtaType(cta.CallToActionType);
+    return `
+      <div class="cta-container-child cta-child" 
+            id="id-${cta.CallToActionId}"
+            data-gjs-type="cta-buttons"
+            cta-button-id="${cta.CallToActionId}"
+            data-gjs-draggable="false"
+            data-gjs-editable="false"
+            data-gjs-highlightable="false"
+            data-gjs-droppable="false"
+            data-gjs-resizable="false"
+            data-gjs-hoverable="false"
+            cta-button-label="${cta.CallToActionName}"
+            cta-button-type="${cta.CallToActionType}"
+            cta-button-action="${
+              cta.CallToActionPhone ||
+              cta.CallToActionEmail ||
+              cta.CallToActionUrl
+            }"
+            cta-background-color="#5068a8"
+          >
+            <div class="cta-button" ${defaultConstraints} style="background-color: #5068a8;">
+              <i class="${ctaType.icon}" ${defaultConstraints}></i>
+              <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
+            </div>
+            <div class="cta-label" ${defaultConstraints}>${
+          cta.CallToActionName
+        }</div>
+      </div>
+    `;
+  }
+
+  handleExistingButton(existingButton, cta, selectedComponent, editorInstance) {
+    const existingBackgroundColor =
+      existingButton.getAttributes()["cta-background-color"];
+    const updatedCtaComponent = this.generateCtaComponent(
+      cta,
+      existingBackgroundColor
+    );
+
+    if (
+      selectedComponent.getAttributes()["cta-button-id"] === cta.CallToActionId
+    ) {
+      editorInstance.once("component:add", (component) => {
+        const addedComponent = editorInstance
+          .getWrapper()
+          .find(`#id-${cta.CallToActionId}`)[0];
+        if (addedComponent) {
+          editorInstance.select(addedComponent);
+        }
+      });
+      selectedComponent.replaceWith(updatedCtaComponent);
+    }
+  }
+
+  attachClickHandler(ctaItem, cta, editorInstance) {
+    ctaItem.onclick = (e) => {
+      e.preventDefault();
+      const ctaButton = editorInstance
+        .getWrapper()
+        .find(".cta-button-container")[0];
+
+      if (!ctaButton) {
+        console.error("CTA Button container not found.");
+        return;
+      }
+
+      const selectedComponent = this.manager.editorManager.selectedComponent;
+      if (!selectedComponent) {
+        console.error("No selected component found.");
+        return;
+      }
+
+      const existingButton = ctaButton.find(`#id-${cta.CallToActionId}`)?.[0];
+
+      if (existingButton) {
+        this.handleExistingButton(
+          existingButton,
+          cta,
+          selectedComponent,
+          editorInstance
+        );
+        return;
+      }
+
+      ctaButton.append(this.generateCtaComponent(cta));
+    };
+  }
+
+  setupButtonLayoutListeners(editorInstance) {
+    this.setupPlainButtonListener(editorInstance);
+    this.setupImageButtonListener(editorInstance);
+  }
+
+  // Helper method to check if component is a valid CTA
+  isValidCtaComponent(attributes) {
+    return attributes.hasOwnProperty("cta-button-label") &&
+           attributes.hasOwnProperty("cta-button-type") &&
+           attributes.hasOwnProperty("cta-button-action");
+  }
+
+  // Extract CTA attributes from component
+  extractCtaAttributes(component) {
+    const attributes = component.getAttributes();
+    return {
+      ctaId: attributes["cta-button-id"],
+      ctaName: attributes["cta-button-label"],
+      ctaType: attributes["cta-button-type"],
+      ctaAction: attributes["cta-button-action"],
+      ctaButtonBgColor: attributes["cta-background-color"]
+    };
+  }
+
+  // Get icon based on CTA type
+  getCtaTypeIcon(ctaType) {
+    const iconMap = {
+      Phone: "fas fa-phone-alt",
+      Email: "fas fa-envelope",
+      SiteUrl: "fas fa-link",
+      Form: "fas fa-file"
+    };
+    return iconMap[ctaType] || "fas fa-question";
+  }
+
+  // Generate common button attributes
+  getCommonButtonAttributes(ctaAttributes) {
+    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } = ctaAttributes;
+    return `
+      data-gjs-draggable="false"
+      data-gjs-editable="false"
+      data-gjs-highlightable="false"
+      data-gjs-droppable="false"
+      data-gjs-resizable="false"
+      data-gjs-hoverable="false"
+      data-gjs-type="cta-buttons"
+      id="id-${ctaId}"
+      cta-button-id="${ctaId}"
+      cta-button-label="${ctaName}"
+      cta-button-type="${ctaType}"
+      cta-button-action="${ctaAction}"
+      cta-background-color="${ctaButtonBgColor}"
+      cta-full-width="true"
+    `;
+  }
+
+  // Generate plain button component
+  generatePlainButtonComponent(ctaAttributes) {
+    const { ctaName, ctaButtonBgColor } = ctaAttributes;
+    return `
+      <div class="plain-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
+        <button style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
+                class="plain-button" ${defaultConstraints}>
+          <div class="cta-badge" ${defaultConstraints}>
+            <i class="fa fa-minus" ${defaultConstraints}></i>
+          </div>
+          ${ctaName}
+        </button>
+      </div>
+    `;
+  }
+
+  // Generate image button component
+  generateImageButtonComponent(ctaAttributes) {
+    const { ctaName, ctaButtonBgColor, ctaType } = ctaAttributes;
+    const icon = this.getCtaTypeIcon(ctaType);
+    return `
+      <div class="img-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
+        <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
+             class="img-button" ${defaultConstraints}>
+          <i class="${icon} img-button-icon" ${defaultConstraints}></i>
+          <div class="cta-badge" ${defaultConstraints}>
+            <i class="fa fa-minus" ${defaultConstraints}></i>
+          </div>
+          <span class="img-button-label" ${defaultConstraints}>${ctaName}</span>
+          <i class="fa fa-angle-right img-button-arrow" ${defaultConstraints}></i>
+        </div>
+      </div>
+    `;
+  }
+
+  // Handle component replacement
+  handleComponentReplacement(editorInstance, ctaId, newComponent) {
+    editorInstance.once("component:add", () => {
+      const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];
+      if (addedComponent) {
+        editorInstance.select(addedComponent);
+      }
+    });
+    this.manager.editorManager.selectedComponent.replaceWith(newComponent);
+  }
+
+  // Handle button click
+  handleButtonClick(editorInstance, generateComponent) {
+    const ctaContainer = editorInstance.getWrapper().find(".cta-button-container")[0];
+    if (!ctaContainer) return;
+
+    const selectedComponent = this.manager.editorManager.selectedComponent;
+    if (!selectedComponent) return;
+
+    const attributes = selectedComponent.getAttributes();
+    if (!this.isValidCtaComponent(attributes)) {
+      const message = this.currentLanguage.getTranslation("please_select_cta_button");
+      this.displayAlertMessage(message, "error");
+      return;
+    }
+
+    const ctaAttributes = this.extractCtaAttributes(selectedComponent);
+    const newComponent = generateComponent(ctaAttributes);
+    this.handleComponentReplacement(editorInstance, ctaAttributes.ctaId, newComponent);
+  }
+
+  // Setup plain button listener
+  setupPlainButtonListener(editorInstance) {
+    const plainButton = document.getElementById("plain-button-layout");
+    plainButton.onclick = (e) => {
+      e.preventDefault();
+      this.handleButtonClick(editorInstance, 
+        (attrs) => this.generatePlainButtonComponent(attrs));
+    };
+  }
+
+  // Setup image button listener
+  setupImageButtonListener(editorInstance) {
+    const imgButton = document.getElementById("img-button-layout");
+    imgButton.onclick = (e) => {
+      e.preventDefault();
+      this.handleButtonClick(editorInstance, 
+        (attrs) => this.generateImageButtonComponent(attrs));
+    };
+  }
+
+  setupBadgeClickListener(editorInstance) {
+    const wrapper = editorInstance.getWrapper();
+    wrapper.view.el.addEventListener("click", (e) => {
+      const badge = e.target.closest(".cta-badge");
+      if (!badge) return;
+
+      e.stopPropagation();
+
+      const ctaChild = badge.closest(
+        ".cta-container-child, .plain-button-container, .img-button-container"
+      );
+      if (ctaChild)
+        if (ctaChild) {
+          // Check if this is the last child in the container
+          const parentContainer = ctaChild.closest(".cta-button-container");
+          const childId = ctaChild.getAttribute("id");
+          const component = editorInstance.getWrapper().find(`#${childId}`)[0];
+
+          if (component) {
+            component.remove();
+          }
+        }
+    });
+  }
+
+  activateCtaBtnStyles(selectedCtaComponent) {
+    if (selectedCtaComponent) {
+      const isCtaButtonSelected = selectedCtaComponent.findType(".cta-buttons");
+      if (isCtaButtonSelected) {
+          document.querySelector(".cta-button-layout-container")
+            .style.display = "flex";
+      }
+    }
+  }
+}
+
+module.exports = ToolBoxUI
+
 
 /***/ }),
 
@@ -115,7 +3004,254 @@ eval("class ToolBoxUI {\n  constructor(toolBoxManager) {\n    this.manager = too
   \***************************************/
 /***/ ((module) => {
 
-eval("class ToolBoxManager {\n  constructor(\n    editorManager,\n    dataManager,\n    themes,\n    icons,\n    templates,\n    mapping,\n    media,\n    locale\n  ) {\n    this.editorManager = editorManager;\n    this.dataManager = dataManager;\n    this.themes = themes;\n    this.icons = icons;\n    this.currentTheme = null;\n    this.templates = templates;\n    this.mappingsItems = mapping;\n    this.selectedFile = null;\n    this.media = media;\n    this.currentLanguage = locale;\n    this.ui = new ToolBoxUI(this);\n    this.init(locale.currentLanguage);\n  }\n\n  async init(language) {\n    try {\n      this.currentLanguage = await new Locale(language).init();\n      this.themeManager = new ThemeManager(this);\n      this.eventListenerManager = new EventListenerManager(this);\n      this.popupManager = new PopupManager(this);\n      this.pageManager = new PageManager(this);\n      console.log(\"ToolboxManager initialized\", this.currentLanguage);\n\n      await this.initializeManagers();\n      await this.setupComponents();\n      this.setupEventListeners();\n    } catch (error) {\n      console.error(\"Failed to initialize toolbox:\", error);\n    }\n  }\n\n  async initializeManagers() {\n    await this.dataManager.getPages().then((res) => {\n      if (this.checkIfNotAuthenticated(res)) {\n        return;\n      }\n      localStorage.clear();\n    });\n\n    this.themeManager.loadTheme();\n    this.themeManager.listThemesInSelectField();\n    this.themeManager.colorPalette();\n    this.themeManager.ctaColorPalette();\n    this.pageManager.loadPageTemplates();\n  }\n\n  setupComponents() {\n    this.actionList = new ActionListComponent(\n      this.editorManager,\n      this.dataManager,\n      this.currentLanguage,\n      this\n    );\n\n    this.mediaComponent = new MediaComponent(\n      this.dataManager,\n      this.editorManager,\n      this.currentLanguage,\n      this\n    );\n  }\n\n  setupEventListeners() {\n    this.eventListenerManager.setupTabListeners();\n    this.eventListenerManager.setupMappingListeners();\n    this.eventListenerManager.setupPublishListeners();\n    this.eventListenerManager.setupAlignmentListeners();\n    this.eventListenerManager.setupOpacityListener();\n    this.eventListenerManager.setupAutoSave();\n\n    const sidebarInputTitle = document.getElementById(\"tile-title\");\n    sidebarInputTitle.addEventListener(\"input\", (e) => {\n      this.ui.updateTileTitle(e.target.value);\n    });\n  }\n\n  publishPages(isNotifyResidents) {\n    const editors = Object.values(this.editorManager.editors);\n    if (editors && editors.length) {\n      const pageDataList = this.preparePageDataList(editors);\n      if (pageDataList.length) {\n        this.sendPageUpdateRequest(pageDataList, isNotifyResidents);\n      }\n    }\n  }\n\n  preparePageDataList(editors) {\n    return this.dataManager.pages.SDT_PageCollection.map(page=>{\n      let projectData = JSON.parse(page.PageGJSJson)\n      const jsonData = page.PageIsContentPage\n          ? mapContentToPageData(projectData, page)\n          : mapTemplateToPageData(projectData, page);\n      return {\n        PageId: page.PageId,\n        PageName: page.PageName,\n        PageJsonContent: JSON.stringify(jsonData),\n        PageGJSHtml: page.PageGJSHtml,\n        PageGJSJson: page.PageGJSJson,\n        SDT_Page: jsonData,\n        PageIsPublished: true,\n      };\n    })\n    return editors\n      .map((editorData) => {\n        const pageId = editorData.pageId;\n        const editor = editorData.editor;\n        const page = this.dataManager.pages.SDT_PageCollection.find(\n          (page) => page.PageId == pageId\n        );\n\n        if (!pageId) return null;\n\n        const projectData = editor.getProjectData();\n        const htmlData = editor.getHtml();\n        const pageName = page.PageName;\n        const jsonData = page.PageIsContentPage\n          ? mapContentToPageData(projectData, page)\n          : mapTemplateToPageData(projectData, page);\n\n        return {\n          PageId: pageId,\n          PageName: pageName,\n          PageJsonContent: JSON.stringify(jsonData),\n          PageGJSHtml: htmlData,\n          PageGJSJson: JSON.stringify(projectData),\n          SDT_Page: jsonData,\n          PageIsPublished: true,\n        };\n      })\n      .filter(Boolean);\n  }\n\n  async sendPageUpdateRequest(pageDataList, isNotifyResidents) {\n    const payload = {\n      IsNotifyResidents: isNotifyResidents,\n      PagesList: pageDataList,\n    };\n\n    try {\n      const res = await this.dataManager.updatePagesBatch(payload);\n      if (this.checkIfNotAuthenticated(res)) {\n        return;\n      }\n      this.ui.displayAlertMessage(\"All Pages Saved Successfully\", \"success\");\n    } catch (error) {\n      console.error(\"Error saving pages:\", error);\n      this.ui.displayAlertMessage(\n        \"An error occurred while saving pages.\",\n        \"error\"\n      );\n    }\n  }\n\n  autoSavePage(editorData) {\n    const pageId = editorData.pageId;\n    const editor = editorData.editor;\n    const page = this.dataManager.pages.SDT_PageCollection.find(\n      (page) => page.PageId == pageId\n    );\n\n    if (pageId) {\n      const data = {\n        PageId: pageId,\n        PageName: page.PageName,\n        PageGJSHtml: editor.getHtml(),\n        PageGJSJson: JSON.stringify(editor.getProjectData()),\n      };\n\n      this.dataManager.updatePage(data).then((res) => {\n        if (this.checkIfNotAuthenticated(res)) {\n          return;\n        }\n\n        this.dataManager.getPages().then((pages) => {\n          this.editorManager.pages = pages.SDT_PageCollection;\n        });\n\n        this.ui.openToastMessage();\n      });\n    }\n  }\n\n  unDoReDo(editorInstance) {\n    const um = editorInstance.UndoManager;\n\n    const undoButton = document.getElementById(\"undo\");\n    undoButton.addEventListener(\"click\", (e) => {\n      e.preventDefault();\n      if (editorInstance === this.editorManager.currentEditor.editor && um.hasUndo()) {\n        um.undo();\n      }\n    });\n\n    const redoButton = document.getElementById(\"redo\");\n    redoButton.addEventListener(\"click\", (e) => {\n      e.preventDefault();\n      if (editorInstance === this.editorManager.currentEditor.editor && um.hasRedo()) {\n        um.redo();\n      }\n    });\n  }\n\n  checkIfNotAuthenticated(res) {\n    if (res.error.Status === \"Error\") {\n      console.error(\n        \"Error updating theme. Status:\",\n        res.error.Status,\n        \"Message:\",\n        res.error.Message\n      );\n\n      this.ui.displayAlertMessage(\n        this.currentLanguage.getTranslation(\"not_authenticated_message\"),\n        \"error\"\n      );\n\n      return true;\n    }\n    return false;\n  }\n\n  setAttributeToSelected(attributeName, attributeValue) {\n    if (this.editorManager.selectedComponent) {\n      this.editorManager.selectedComponent.addAttributes({\n        [attributeName]: attributeValue,\n      });\n    } else {\n      this.ui.displayAlertMessage(\n        this.currentLanguage.getTranslation(\"no_tile_selected_error_message\"),\n        \"error\"\n      );\n    }\n  }\n}\n\nmodule.exports = ToolBoxManager\n\n\n//# sourceURL=webpack://ucgrapes/./src/classes/ToolboxManager.js?");
+class ToolBoxManager {
+  constructor(
+    editorManager,
+    dataManager,
+    themes,
+    icons,
+    templates,
+    mapping,
+    media,
+    locale
+  ) {
+    this.editorManager = editorManager;
+    this.dataManager = dataManager;
+    this.themes = themes;
+    this.icons = icons;
+    this.currentTheme = null;
+    this.templates = templates;
+    this.mappingsItems = mapping;
+    this.selectedFile = null;
+    this.media = media;
+    this.currentLanguage = locale;
+    this.ui = new ToolBoxUI(this);
+    this.init(locale.currentLanguage);
+  }
+
+  async init(language) {
+    try {
+      this.currentLanguage = await new Locale(language).init();
+      this.themeManager = new ThemeManager(this);
+      this.eventListenerManager = new EventListenerManager(this);
+      this.popupManager = new PopupManager(this);
+      this.pageManager = new PageManager(this);
+      console.log("ToolboxManager initialized", this.currentLanguage);
+
+      await this.initializeManagers();
+      await this.setupComponents();
+      this.setupEventListeners();
+    } catch (error) {
+      console.error("Failed to initialize toolbox:", error);
+    }
+  }
+
+  async initializeManagers() {
+    await this.dataManager.getPages().then((res) => {
+      if (this.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      localStorage.clear();
+    });
+
+    this.themeManager.loadTheme();
+    this.themeManager.listThemesInSelectField();
+    this.themeManager.colorPalette();
+    this.themeManager.ctaColorPalette();
+    this.pageManager.loadPageTemplates();
+  }
+
+  setupComponents() {
+    this.actionList = new ActionListComponent(
+      this.editorManager,
+      this.dataManager,
+      this.currentLanguage,
+      this
+    );
+
+    this.mediaComponent = new MediaComponent(
+      this.dataManager,
+      this.editorManager,
+      this.currentLanguage,
+      this
+    );
+  }
+
+  setupEventListeners() {
+    this.eventListenerManager.setupTabListeners();
+    this.eventListenerManager.setupMappingListeners();
+    this.eventListenerManager.setupPublishListeners();
+    this.eventListenerManager.setupAlignmentListeners();
+    this.eventListenerManager.setupOpacityListener();
+    this.eventListenerManager.setupAutoSave();
+
+    const sidebarInputTitle = document.getElementById("tile-title");
+    sidebarInputTitle.addEventListener("input", (e) => {
+      this.ui.updateTileTitle(e.target.value);
+    });
+  }
+
+  publishPages(isNotifyResidents) {
+    const editors = Object.values(this.editorManager.editors);
+    if (editors && editors.length) {
+      const pageDataList = this.preparePageDataList(editors);
+      if (pageDataList.length) {
+        this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
+      }
+    }
+  }
+
+  preparePageDataList(editors) {
+    return this.dataManager.pages.SDT_PageCollection.map(page=>{
+      let projectData = JSON.parse(page.PageGJSJson)
+      const jsonData = page.PageIsContentPage
+          ? mapContentToPageData(projectData, page)
+          : mapTemplateToPageData(projectData, page);
+      return {
+        PageId: page.PageId,
+        PageName: page.PageName,
+        PageJsonContent: JSON.stringify(jsonData),
+        PageGJSHtml: page.PageGJSHtml,
+        PageGJSJson: page.PageGJSJson,
+        SDT_Page: jsonData,
+        PageIsPublished: true,
+      };
+    })
+    return editors
+      .map((editorData) => {
+        const pageId = editorData.pageId;
+        const editor = editorData.editor;
+        const page = this.dataManager.pages.SDT_PageCollection.find(
+          (page) => page.PageId == pageId
+        );
+
+        if (!pageId) return null;
+
+        const projectData = editor.getProjectData();
+        const htmlData = editor.getHtml();
+        const pageName = page.PageName;
+        const jsonData = page.PageIsContentPage
+          ? mapContentToPageData(projectData, page)
+          : mapTemplateToPageData(projectData, page);
+
+        return {
+          PageId: pageId,
+          PageName: pageName,
+          PageJsonContent: JSON.stringify(jsonData),
+          PageGJSHtml: htmlData,
+          PageGJSJson: JSON.stringify(projectData),
+          SDT_Page: jsonData,
+          PageIsPublished: true,
+        };
+      })
+      .filter(Boolean);
+  }
+
+  async sendPageUpdateRequest(pageDataList, isNotifyResidents) {
+    const payload = {
+      IsNotifyResidents: isNotifyResidents,
+      PagesList: pageDataList,
+    };
+
+    try {
+      const res = await this.dataManager.updatePagesBatch(payload);
+      if (this.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      this.ui.displayAlertMessage("All Pages Saved Successfully", "success");
+    } catch (error) {
+      console.error("Error saving pages:", error);
+      this.ui.displayAlertMessage(
+        "An error occurred while saving pages.",
+        "error"
+      );
+    }
+  }
+
+  autoSavePage(editorData) {
+    const pageId = editorData.pageId;
+    const editor = editorData.editor;
+    const page = this.dataManager.pages.SDT_PageCollection.find(
+      (page) => page.PageId == pageId
+    );
+
+    if (pageId) {
+      const data = {
+        PageId: pageId,
+        PageName: page.PageName,
+        PageGJSHtml: editor.getHtml(),
+        PageGJSJson: JSON.stringify(editor.getProjectData()),
+      };
+
+      this.dataManager.updatePage(data).then((res) => {
+        if (this.checkIfNotAuthenticated(res)) {
+          return;
+        }
+
+        this.dataManager.getPages().then((pages) => {
+          this.editorManager.pages = pages.SDT_PageCollection;
+        });
+
+        this.ui.openToastMessage();
+      });
+    }
+  }
+
+  unDoReDo(editorInstance) {
+    const um = editorInstance.UndoManager;
+
+    const undoButton = document.getElementById("undo");
+    undoButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (editorInstance === this.editorManager.currentEditor.editor && um.hasUndo()) {
+        um.undo();
+      }
+    });
+
+    const redoButton = document.getElementById("redo");
+    redoButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (editorInstance === this.editorManager.currentEditor.editor && um.hasRedo()) {
+        um.redo();
+      }
+    });
+  }
+
+  checkIfNotAuthenticated(res) {
+    if (res.error.Status === "Error") {
+      console.error(
+        "Error updating theme. Status:",
+        res.error.Status,
+        "Message:",
+        res.error.Message
+      );
+
+      this.ui.displayAlertMessage(
+        this.currentLanguage.getTranslation("not_authenticated_message"),
+        "error"
+      );
+
+      return true;
+    }
+    return false;
+  }
+
+  setAttributeToSelected(attributeName, attributeValue) {
+    if (this.editorManager.selectedComponent) {
+      this.editorManager.selectedComponent.addAttributes({
+        [attributeName]: attributeValue,
+      });
+    } else {
+      this.ui.displayAlertMessage(
+        this.currentLanguage.getTranslation("no_tile_selected_error_message"),
+        "error"
+      );
+    }
+  }
+}
+
+module.exports = ToolBoxManager
+
 
 /***/ }),
 
@@ -125,7 +3261,292 @@ eval("class ToolBoxManager {\n  constructor(\n    editorManager,\n    dataManage
   \***********************************************/
 /***/ (() => {
 
-eval("class ActionListComponent {\n  editorManager = null;\n  dataManager = null;\n  toolBoxManager = null;\n  selectedObject = null;\n  selectedId = null;\n  pageOptions = [];\n\n  constructor(editorManager, dataManager, currentLanguage, toolBoxManager) {\n    this.editorManager = editorManager;\n    this.dataManager = dataManager;\n    this.currentLanguage = currentLanguage;\n    this.toolBoxManager = toolBoxManager;\n\n    this.categoryData = [\n      {\n        name: \"Page\",\n        label: this.currentLanguage.getTranslation(\"category_page\"),\n        options: [],\n      },\n      {\n        name: \"Service/Product Page\",\n        label: this.currentLanguage.getTranslation(\"category_services_or_page\"),\n        options: [],\n      },\n      {\n        name: \"Predefined Page\",\n        label: this.currentLanguage.getTranslation(\"category_predefined_page\"),\n        options: [],\n      },\n    ];\n    this.init();\n  }\n\n  init() {\n    this.dataManager\n      .getPages()\n      .then((res) => {\n        if (this.toolBoxManager.checkIfNotAuthenticated(res)) {\n          return;\n        }\n\n        this.pageOptions = res.SDT_PageCollection.filter(\n          (page) => !page.PageIsContentPage && !page.PageIsPredefined\n        );\n        this.predefinedPageOptions = res.SDT_PageCollection.filter(\n          (page) => page.PageIsPredefined && page.PageName != \"Home\"\n        );\n        this.servicePageOptions = this.dataManager.services.map((service) => {\n          return {\n            PageId: service.ProductServiceId,\n            PageName: service.ProductServiceName,\n          };\n        });\n        this.categoryData.forEach((category) => {\n          if (category.name === \"Page\") {\n            category.options = this.pageOptions;\n          } else if (category.name == \"Service/Product Page\") {\n            category.options = this.servicePageOptions;\n          } else if (category.name == \"Predefined Page\") {\n            category.options = this.predefinedPageOptions;\n          }\n        });\n\n        this.populateDropdownMenu();\n      })\n      .catch((error) => {\n        console.error(\"Error fetching pages:\", error);\n      });\n  }\n\n  mapPageNamesToOptions(pages) {\n    alert(\"ActionListComponent init\");\n    const pageOptions = pages.map((page) => ({\n      PageName: page.Name,\n      PageId: page.Id,\n    }));\n    return pageOptions;\n  }\n\n  populateDropdownMenu() {\n    const dropdownMenu = document.getElementById(\"dropdownMenu\");\n    dropdownMenu.innerHTML = \"\";\n    this.categoryData.forEach((category) => {\n      const categoryElement = this.createCategoryElement(category);\n      dropdownMenu.appendChild(categoryElement);\n    });\n\n    this.setupDropdownHeader();\n    this.setupOutsideClickListener();\n    this.setupCategoryToggle();\n    this.setupItemClickListener();\n    this.setupSearchInputListener();\n  }\n\n  createCategoryElement(category) {\n    const categoryElement = document.createElement(\"details\");\n    categoryElement.classList.add(\"category\");\n    categoryElement.setAttribute(\"data-category\", category.label);\n\n    const summaryElement = document.createElement(\"summary\");\n    summaryElement.innerHTML = `${category.label} <i class=\"fa fa-angle-right\"></i>`;\n    categoryElement.appendChild(summaryElement);\n\n    const searchBox = document.createElement(\"div\");\n    searchBox.classList.add(\"search-container\");\n    searchBox.innerHTML = `<i class=\"fas fa-search search-icon\"></i><input type=\"text\" placeholder=\"Search\" class=\"search-input\" />`;\n    categoryElement.appendChild(searchBox);\n\n    const categoryContent = document.createElement(\"ul\");\n    categoryContent.classList.add(\"category-content\");\n\n    category.options.forEach((option) => {\n      const optionElement = document.createElement(\"li\");\n      optionElement.textContent = option.PageName;\n      optionElement.id = option.PageId;\n      optionElement.dataset.category = category.name\n      categoryContent.appendChild(optionElement);\n    });\n\n    const noRecordsMessage = document.createElement(\"li\");\n    noRecordsMessage.textContent = \"No records found\";\n    noRecordsMessage.classList.add(\"no-records-message\");\n    noRecordsMessage.style.display = \"none\";\n    categoryContent.appendChild(noRecordsMessage);\n\n    categoryElement.appendChild(categoryContent);\n    return categoryElement;\n  }\n\n  setupDropdownHeader() {\n    const dropdownHeader = document.getElementById(\"selectedOption\");\n    const dropdownMenu = document.getElementById(\"dropdownMenu\");\n\n    if (!this.added) {\n      dropdownHeader.removeEventListener(\"click\", (e) => {});\n      dropdownHeader.addEventListener(\"click\", (e) => {\n        dropdownMenu.style.display =\n          dropdownMenu.style.display === \"block\" ? \"none\" : \"block\";\n        dropdownHeader.querySelector(\"i\").classList.toggle(\"fa-angle-up\");\n        dropdownHeader.querySelector(\"i\").classList.toggle(\"fa-angle-down\");\n      });\n    }\n\n    this.added = true;\n  }\n\n  setupOutsideClickListener() {\n    const dropdownHeader = document.getElementById(\"selectedOption\");\n    const dropdownMenu = document.getElementById(\"dropdownMenu\");\n\n    document.addEventListener(\"click\", (event) => {\n      if (\n        !dropdownHeader.contains(event.target) &&\n        !dropdownMenu.contains(event.target)\n      ) {\n        dropdownMenu.style.display = \"none\";\n        dropdownHeader.querySelector(\"i\").classList.remove(\"fa-angle-up\");\n        dropdownHeader.querySelector(\"i\").classList.add(\"fa-angle-down\");\n      }\n    });\n  }\n\n  setupCategoryToggle() {\n    const categories = document.querySelectorAll(\".category\");\n\n    categories.forEach((category) => {\n      category.addEventListener(\"toggle\", () => {\n        this.selectedObject = category.dataset.category;\n        const searchBox = category.querySelector(\".search-container\");\n        const icon = category.querySelector(\"summary i\");\n        const isOpen = category.open;\n\n        if (isOpen) {\n          categories.forEach((otherCategory) => {\n        if (otherCategory !== category) {\n          otherCategory.open = false;\n          otherCategory.querySelector(\".search-container\").style.display =\n            \"none\";\n          otherCategory\n            .querySelector(\"summary i\")\n            .classList.replace(\"fa-angle-down\", \"fa-angle-right\");\n        }\n          });\n          searchBox.style.display = \"block\";\n          icon.classList.replace(\"fa-angle-right\", \"fa-angle-down\");\n        } else {\n          searchBox.style.display = \"none\";\n          icon.classList.replace(\"fa-angle-down\", \"fa-angle-right\");\n        }\n      });\n    });\n  }\n\n  setupItemClickListener() {\n    const dropdownHeader = document.getElementById(\"selectedOption\");\n    const dropdownMenu = document.getElementById(\"dropdownMenu\");\n\n    document.querySelectorAll(\".category-content li\").forEach((item) => {\n      item.addEventListener(\"click\", () => {\n        this.selectedObject = item.dataset.category\n        dropdownHeader.textContent = `${\n          item.closest(\".category\").dataset.category\n        }, ${item.textContent}`;\n        \n        const editor = this.editorManager.getCurrentEditor();\n        const editorId = editor.getConfig().container;\n        const editorContainerId = `${editorId}-frame`;\n        if (editor.getSelected()) {\n          const titleComponent = editor.getSelected().find(\".tile-title\")[0];\n          const currentPageId = localStorage.getItem(\"pageId\");\n          const tileTitle = item.textContent.toUpperCase()\n          if (currentPageId !== undefined) {\n            this.toolBoxManager.setAttributeToSelected(\n              \"tile-action-object-id\",\n              item.id\n            );\n            this.toolBoxManager.setAttributeToSelected(\n              \"tile-action-object\",\n              `${item.closest(\".category\").dataset.category}, ${\n                tileTitle\n              }`\n            );\n\n            if (this.selectedObject == \"Service/Product Page\") {\n              this.createContentPage(item.id, editorContainerId);\n            }else{\n              $(editorContainerId).nextAll().remove();\n              this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))\n            }\n          }\n\n          if (titleComponent) {\n            titleComponent.components(tileTitle);\n\n            const sidebarInputTitle = document.getElementById(\"tile-title\");\n            if (sidebarInputTitle) {\n              sidebarInputTitle.textContent = tileTitle;\n            }\n          }\n        }\n        dropdownHeader.innerHTML += ' <i class=\"fa fa-angle-down\"></i>';\n        dropdownMenu.style.display = \"none\";\n      });\n    });\n  }\n\n  setupSearchInputListener() {\n    document.querySelectorAll(\".search-input\").forEach((input) => {\n      input.addEventListener(\"input\", function () {\n        const filter = this.value.toLowerCase();\n        const items = this.closest(\".category\").querySelectorAll(\n          \".category-content li:not(.no-records-message)\"\n        );\n        let hasVisibleItems = false;\n\n        items.forEach((item) => {\n          if (item.textContent.toLowerCase().includes(filter)) {\n            item.style.display = \"block\";\n            hasVisibleItems = true;\n          } else {\n            item.style.display = \"none\";\n          }\n        });\n\n        const noRecordsMessage = this.closest(\".category\").querySelector(\n          \".no-records-message\"\n        );\n        noRecordsMessage.style.display = hasVisibleItems ? \"none\" : \"block\";\n      });\n    });\n  }\n\n  createContentPage(pageId, editorContainerId) {\n    this.dataManager.createContentPage(pageId).then((res) => {\n      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {\n        return;\n      }\n      this.dataManager.getPages().then(res=>{\n        $(editorContainerId).nextAll().remove();\n        this.editorManager.createChildEditor(this.editorManager.getPage(pageId))\n      })\n    });\n  }\n}\n\n\n//# sourceURL=webpack://ucgrapes/./src/components/ActionListComponent.js?");
+class ActionListComponent {
+  editorManager = null;
+  dataManager = null;
+  toolBoxManager = null;
+  selectedObject = null;
+  selectedId = null;
+  pageOptions = [];
+
+  constructor(editorManager, dataManager, currentLanguage, toolBoxManager) {
+    this.editorManager = editorManager;
+    this.dataManager = dataManager;
+    this.currentLanguage = currentLanguage;
+    this.toolBoxManager = toolBoxManager;
+
+    this.categoryData = [
+      {
+        name: "Page",
+        label: this.currentLanguage.getTranslation("category_page"),
+        options: [],
+      },
+      {
+        name: "Service/Product Page",
+        label: this.currentLanguage.getTranslation("category_services_or_page"),
+        options: [],
+      },
+      {
+        name: "Predefined Page",
+        label: this.currentLanguage.getTranslation("category_predefined_page"),
+        options: [],
+      },
+    ];
+    this.init();
+  }
+
+  init() {
+    this.dataManager
+      .getPages()
+      .then((res) => {
+        if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+          return;
+        }
+
+        this.pageOptions = res.SDT_PageCollection.filter(
+          (page) => !page.PageIsContentPage && !page.PageIsPredefined
+        );
+        this.predefinedPageOptions = res.SDT_PageCollection.filter(
+          (page) => page.PageIsPredefined && page.PageName != "Home"
+        );
+        this.servicePageOptions = this.dataManager.services.map((service) => {
+          return {
+            PageId: service.ProductServiceId,
+            PageName: service.ProductServiceName,
+          };
+        });
+        this.categoryData.forEach((category) => {
+          if (category.name === "Page") {
+            category.options = this.pageOptions;
+          } else if (category.name == "Service/Product Page") {
+            category.options = this.servicePageOptions;
+          } else if (category.name == "Predefined Page") {
+            category.options = this.predefinedPageOptions;
+          }
+        });
+
+        this.populateDropdownMenu();
+      })
+      .catch((error) => {
+        console.error("Error fetching pages:", error);
+      });
+  }
+
+  mapPageNamesToOptions(pages) {
+    alert("ActionListComponent init");
+    const pageOptions = pages.map((page) => ({
+      PageName: page.Name,
+      PageId: page.Id,
+    }));
+    return pageOptions;
+  }
+
+  populateDropdownMenu() {
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    dropdownMenu.innerHTML = "";
+    this.categoryData.forEach((category) => {
+      const categoryElement = this.createCategoryElement(category);
+      dropdownMenu.appendChild(categoryElement);
+    });
+
+    this.setupDropdownHeader();
+    this.setupOutsideClickListener();
+    this.setupCategoryToggle();
+    this.setupItemClickListener();
+    this.setupSearchInputListener();
+  }
+
+  createCategoryElement(category) {
+    const categoryElement = document.createElement("details");
+    categoryElement.classList.add("category");
+    categoryElement.setAttribute("data-category", category.label);
+
+    const summaryElement = document.createElement("summary");
+    summaryElement.innerHTML = `${category.label} <i class="fa fa-angle-right"></i>`;
+    categoryElement.appendChild(summaryElement);
+
+    const searchBox = document.createElement("div");
+    searchBox.classList.add("search-container");
+    searchBox.innerHTML = `<i class="fas fa-search search-icon"></i><input type="text" placeholder="Search" class="search-input" />`;
+    categoryElement.appendChild(searchBox);
+
+    const categoryContent = document.createElement("ul");
+    categoryContent.classList.add("category-content");
+
+    category.options.forEach((option) => {
+      const optionElement = document.createElement("li");
+      optionElement.textContent = option.PageName;
+      optionElement.id = option.PageId;
+      optionElement.dataset.category = category.name
+      categoryContent.appendChild(optionElement);
+    });
+
+    const noRecordsMessage = document.createElement("li");
+    noRecordsMessage.textContent = "No records found";
+    noRecordsMessage.classList.add("no-records-message");
+    noRecordsMessage.style.display = "none";
+    categoryContent.appendChild(noRecordsMessage);
+
+    categoryElement.appendChild(categoryContent);
+    return categoryElement;
+  }
+
+  setupDropdownHeader() {
+    const dropdownHeader = document.getElementById("selectedOption");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    if (!this.added) {
+      dropdownHeader.removeEventListener("click", (e) => {});
+      dropdownHeader.addEventListener("click", (e) => {
+        dropdownMenu.style.display =
+          dropdownMenu.style.display === "block" ? "none" : "block";
+        dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
+        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");
+      });
+    }
+
+    this.added = true;
+  }
+
+  setupOutsideClickListener() {
+    const dropdownHeader = document.getElementById("selectedOption");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    document.addEventListener("click", (event) => {
+      if (
+        !dropdownHeader.contains(event.target) &&
+        !dropdownMenu.contains(event.target)
+      ) {
+        dropdownMenu.style.display = "none";
+        dropdownHeader.querySelector("i").classList.remove("fa-angle-up");
+        dropdownHeader.querySelector("i").classList.add("fa-angle-down");
+      }
+    });
+  }
+
+  setupCategoryToggle() {
+    const categories = document.querySelectorAll(".category");
+
+    categories.forEach((category) => {
+      category.addEventListener("toggle", () => {
+        this.selectedObject = category.dataset.category;
+        const searchBox = category.querySelector(".search-container");
+        const icon = category.querySelector("summary i");
+        const isOpen = category.open;
+
+        if (isOpen) {
+          categories.forEach((otherCategory) => {
+        if (otherCategory !== category) {
+          otherCategory.open = false;
+          otherCategory.querySelector(".search-container").style.display =
+            "none";
+          otherCategory
+            .querySelector("summary i")
+            .classList.replace("fa-angle-down", "fa-angle-right");
+        }
+          });
+          searchBox.style.display = "block";
+          icon.classList.replace("fa-angle-right", "fa-angle-down");
+        } else {
+          searchBox.style.display = "none";
+          icon.classList.replace("fa-angle-down", "fa-angle-right");
+        }
+      });
+    });
+  }
+
+  setupItemClickListener() {
+    const dropdownHeader = document.getElementById("selectedOption");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    document.querySelectorAll(".category-content li").forEach((item) => {
+      item.addEventListener("click", () => {
+        this.selectedObject = item.dataset.category
+        dropdownHeader.textContent = `${
+          item.closest(".category").dataset.category
+        }, ${item.textContent}`;
+        
+        const editor = this.editorManager.getCurrentEditor();
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+        if (editor.getSelected()) {
+          const titleComponent = editor.getSelected().find(".tile-title")[0];
+          const currentPageId = localStorage.getItem("pageId");
+          const tileTitle = item.textContent.toUpperCase()
+          if (currentPageId !== undefined) {
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-action-object-id",
+              item.id
+            );
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-action-object",
+              `${item.closest(".category").dataset.category}, ${
+                tileTitle
+              }`
+            );
+
+            if (this.selectedObject == "Service/Product Page") {
+              this.createContentPage(item.id, editorContainerId);
+            }else{
+              $(editorContainerId).nextAll().remove();
+              this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
+            }
+          }
+
+          if (titleComponent) {
+            titleComponent.components(tileTitle);
+
+            const sidebarInputTitle = document.getElementById("tile-title");
+            if (sidebarInputTitle) {
+              sidebarInputTitle.textContent = tileTitle;
+            }
+          }
+        }
+        dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+        dropdownMenu.style.display = "none";
+      });
+    });
+  }
+
+  setupSearchInputListener() {
+    document.querySelectorAll(".search-input").forEach((input) => {
+      input.addEventListener("input", function () {
+        const filter = this.value.toLowerCase();
+        const items = this.closest(".category").querySelectorAll(
+          ".category-content li:not(.no-records-message)"
+        );
+        let hasVisibleItems = false;
+
+        items.forEach((item) => {
+          if (item.textContent.toLowerCase().includes(filter)) {
+            item.style.display = "block";
+            hasVisibleItems = true;
+          } else {
+            item.style.display = "none";
+          }
+        });
+
+        const noRecordsMessage = this.closest(".category").querySelector(
+          ".no-records-message"
+        );
+        noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
+      });
+    });
+  }
+
+  createContentPage(pageId, editorContainerId) {
+    this.dataManager.createContentPage(pageId).then((res) => {
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      this.dataManager.getPages().then(res=>{
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
+      })
+    });
+  }
+}
+
 
 /***/ }),
 
@@ -135,17 +3556,518 @@ eval("class ActionListComponent {\n  editorManager = null;\n  dataManager = null
   \********************************************/
 /***/ (() => {
 
-eval("class MappingComponent {\n    treeContainer = document.getElementById(\"tree-container\");\n    isLoading = false;\n  \n    constructor(dataManager, editorManager, toolBoxManager, currentLanguage) {\n        this.dataManager = dataManager;\n        this.editorManager = editorManager;\n        this.toolBoxManager = toolBoxManager;\n        this.currentLanguage = currentLanguage;\n        this.boundCreatePage = this.handleCreatePage.bind(this);\n    }\n  \n    init() {\n        this.setupEventListeners();\n        //this.loadPageTree();\n        this.listPagesListener();\n        this.homePage = this.dataManager.pages.SDT_PageCollection.find(page=>page.PageName==\"Home\")\n        if (this.homePage) {\n            this.createPageTree(this.homePage.PageId, \"tree-container\")\n        }\n    }\n  \n    listPagesListener () {\n        const listAllPages = document.getElementById(\"list-all-pages\");\n        listAllPages.addEventListener(\"click\", () => {\n            this.handleListAllPages();\n        });\n    }\n\n    handleListAllPages() {\n        try {\n            this.dataManager.getPages().then((res) => {\n                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {\n                    return;\n                }\n                \n                const newTree = this.createPageList(res.SDT_PageCollection, true);\n                this.clearMappings();\n                this.treeContainer.appendChild(newTree);\n\n                this.hidePagesList();\n            });\n        } catch (error) {\n            this.displayMessage(\"Error loading pages\", \"error\");\n        } finally {\n            this.isLoading = false;\n        }\n    }\n\n    hidePagesList() {\n        const listAllPages = document.getElementById(\"list-all-pages\");\n        listAllPages.style.display = \"none\";\n\n        const hidePagesList = document.getElementById(\"hide-pages\");\n        hidePagesList.style.display = \"block\";\n\n        hidePagesList.addEventListener(\"click\", () => {\n            listAllPages.style.display = \"block\";\n            hidePagesList.style.display = \"none\";\n            this.init()\n        });\n    }\n\n    getPage(pageId) {\n        return this.dataManager.pages.SDT_PageCollection.find((page) => page.PageId == pageId);\n    }\n\n    createPageTree(rootPageId, childDivId){\n        let homePage = this.getPage(rootPageId)\n        let homePageJSON = JSON.parse(homePage.PageGJSJson)\n        const pages = homePageJSON.pages;\n        const containerRows =\n            pages[0].frames[0].component.components[0].components[0].components;\n\n        let childPages = []\n\n        containerRows.forEach(containerRow => {\n            let templateWrappers = containerRow.components\n            if(templateWrappers) {\n                templateWrappers.forEach(templateWrapper => {\n                    let templateBlocks = templateWrapper.components\n                    templateBlocks.forEach(templateBlock => {\n                        if (templateBlock.classes.includes(\"template-block\")) {\n                            let pageId = templateBlock.attributes[\"tile-action-object-id\"]\n                            let page = this.getPage(pageId)\n                            if (page) {\n                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage})\n                            }\n                        }\n                    })\n                })\n            }\n        })\n        const newTree = this.createTree(childPages, true);\n        this.treeContainer = document.getElementById(childDivId)\n        this.clearMappings();\n        this.treeContainer.appendChild(newTree);\n    }\n\n    setupEventListeners() {\n        const createPageButton = document.getElementById(\"page-submit\");\n        const pageInput = document.getElementById(\"page-title\");\n  \n        createPageButton.removeEventListener(\"click\", this.boundCreatePage);\n  \n        pageInput.addEventListener(\"input\", () => {\n            createPageButton.disabled = !pageInput.value.trim() || this.isLoading;\n        });\n  \n        createPageButton.addEventListener(\"click\", this.boundCreatePage);\n    }\n  \n    async loadPageTree() {\n        if (this.isLoading) return;\n  \n        try {\n            this.isLoading = true;\n            this.dataManager.getPagesService().then((res) => {\n                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {\n                    return;\n                }\n                \n                console.log(res);\n                const newTree = this.createTree(res.SDT_PageStructureCollection, true);\n                this.clearMappings();\n                this.treeContainer.appendChild(newTree);\n            });\n        } catch (error) {\n            this.displayMessage(\"Error loading pages\", \"error\");\n        } finally {\n            this.isLoading = false;\n        }\n    }\n  \n    async handleCreatePage(e) {\n        e.preventDefault();\n  \n        if (this.isLoading) return;\n  \n        const pageInput = document.getElementById(\"page-title\");\n        const createPageButton = document.getElementById(\"page-submit\");\n        const pageTitle = pageInput.value.trim();\n  \n        if (!pageTitle) return;\n  \n        try {\n            this.isLoading = true;\n            createPageButton.disabled = true;\n            pageInput.disabled = true; // Disable input during creation\n            // Create the page\n            await this.dataManager.createNewPage(pageTitle, this.toolBoxManager.currentTheme).then((res) => {\n                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {\n                    return;\n                }\n  \n                pageInput.value = \"\";\n  \n                this.clearMappings();\n  \n                this.dataManager.getPagesService().then((res) => {\n  \n                    let treePages = res.SDT_PageStructureCollection.map((page) => {\n                        return {\n                            Id: page.Id,\n                            Name: page.Name\n                        };\n                    });\n  \n                    const newTree = this.createTree(treePages, true);\n                    this.treeContainer.appendChild(newTree);\n                    this.toolBoxManager.actionList.init();\n\n                    this.displayMessage(`${this.currentLanguage.getTranslation(\"page_created\")}`, \"success\");\n                });\n            });\n  \n        } catch (error) {\n            this.displayMessage(`${this.currentLanguage.getTranslation(\"error_creating_page\")}`, \"error\");\n        } finally {\n            this.isLoading = false;\n            createPageButton.disabled = !pageInput.value.trim();\n            pageInput.disabled = false; // Re-enable input\n        }\n    }\n  \n    clearMappings() {\n        while (this.treeContainer.firstChild) {\n            this.treeContainer.removeChild(this.treeContainer.firstChild);\n        }\n    }\n  \n    createTree(data) {\n        const buildListItem = (item) => {\n            const listItem = document.createElement(\"li\");\n            listItem.classList.add(\"tb-custom-list-item\");\n            const childDiv = document.createElement(\"div\")\n            childDiv.classList.add(\"child-div\")\n            childDiv.id = `child-div-${item.Id}`\n            childDiv.style.position = 'relative'\n            childDiv.style.paddingLeft = '20px'\n\n  \n            const menuItem = document.createElement(\"div\");\n            menuItem.classList.add(\"tb-custom-menu-item\");\n  \n            const toggle = document.createElement(\"span\");\n            toggle.classList.add(\"tb-dropdown-toggle\");\n            toggle.setAttribute(\"role\", \"button\");\n            toggle.setAttribute(\"aria-expanded\", \"false\");\n            const icon = item.IsContentPage ? 'fa-file' : 'fa-caret-right tree-icon'\n            toggle.innerHTML = `<i class=\"fa ${icon}\"></i><span>${item.Name}</span>`;\n  \n            const deleteIcon = document.createElement(\"i\");\n            deleteIcon.classList.add(\"fa-regular\", \"fa-trash-can\", \"tb-delete-icon\");\n            deleteIcon.setAttribute(\"data-id\", item.Id);\n  \n            deleteIcon.addEventListener(\"click\", (event) =>\n                handleDelete(event, item.Id, listItem)\n            );\n  \n            menuItem.appendChild(toggle);\n            if (item.Name !== \"Home\") {\n                menuItem.appendChild(deleteIcon);\n            }\n            listItem.appendChild(menuItem);\n            listItem.appendChild(childDiv)\n            if (item.Children) {\n                const dropdownMenu = document.createElement(\"ul\");\n                dropdownMenu.classList.add(\"tb-tree-dropdown-menu\");\n  \n                item.Children.forEach((child) => {\n                    const dropdownItem = buildDropdownItem(child, item);\n                    dropdownMenu.appendChild(dropdownItem);\n                });\n  \n                listItem.appendChild(dropdownMenu);\n                listItem.classList.add(\"tb-dropdown\");\n  \n                listItem.addEventListener(\"click\", (e) =>\n                    toggleDropdown(e, listItem, menuItem)\n                );\n            }\n  \n            listItem.addEventListener(\"click\", (e) => {\n                e.stopPropagation();\n                this.handlePageSelection(item);\n                this.createPageTree(item.Id, `child-div-${item.Id}`)\n            });\n  \n            return listItem;\n        };\n  \n        const buildDropdownItem = (child, parent) => {\n            const dropdownItem = document.createElement(\"li\");\n            dropdownItem.classList.add(\"tb-dropdown-item\");\n            dropdownItem.innerHTML = `<span><i style=\"margin-right: 10px;\" class=\"fa-regular fa-file tree-icon\"></i>${child.Name}</span><i data-id=\"${child.Id}\" class=\"fa-regular fa-trash-can tb-delete-icon\"></i>`;\n  \n            const childDeleteIcon = dropdownItem.querySelector(\".tb-delete-icon\");\n            childDeleteIcon.addEventListener(\"click\", (event) =>\n                handleDelete(event, child.Id, dropdownItem)\n            );\n  \n            dropdownItem.addEventListener(\"click\", (e) => {\n                e.stopPropagation();\n                this.handlePageSelection(child, true, parent);\n            });\n  \n            return dropdownItem;\n        };\n  \n        const handleDelete = (event, id, elementToRemove) => {\n            event.stopPropagation();\n            const title = \"Delete Page\";\n            const message = \"Are you sure you want to delete this page?\";\n            const popup = this.popupModal(title, message);\n            document.body.appendChild(popup);\n            popup.style.display = \"flex\";\n  \n            const deleteButton = popup.querySelector(\"#yes_delete\");\n            const closeButton = popup.querySelector(\"#close_popup\");\n            const closePopup = popup.querySelector(\".close\");\n  \n            deleteButton.addEventListener(\"click\", () => {\n                if (this.dataManager.deletePage(id)) {\n                    elementToRemove.remove();\n                }\n                popup.remove();\n            });\n  \n            closeButton.addEventListener(\"click\", () => {\n                popup.remove();\n            });\n  \n            closePopup.addEventListener(\"click\", () => {\n                popup.remove();\n            });\n        };\n  \n        const toggleDropdown = (event, listItem, menuItem) => {\n            event.stopPropagation();\n  \n            const isActive = listItem.classList.contains(\"active\");\n  \n            document.querySelectorAll(\".tb-dropdown.active\").forEach((dropdown) => {\n                dropdown.classList.remove(\"active\");\n                dropdown\n                    .querySelector(\".tb-dropdown-toggle\")\n                    .setAttribute(\"aria-expanded\", \"false\");\n                dropdown\n                    .querySelector(\".tb-custom-menu-item\")\n                    .classList.remove(\"active-tree-item\");\n            });\n  \n            if (!isActive) {\n                listItem.classList.add(\"active\");\n                menuItem.classList.add(\"active-tree-item\");\n                listItem\n                    .querySelector(\".tb-dropdown-toggle\")\n                    .setAttribute(\"aria-expanded\", \"true\");\n            } else {\n                menuItem.classList.remove(\"active-tree-item\");\n                listItem\n                    .querySelector(\".tb-dropdown-toggle\")\n                    .setAttribute(\"aria-expanded\", \"false\");\n            }\n        };\n  \n        const container = document.createElement(\"ul\");\n        container.classList.add(\"tb-custom-list\");\n  \n        const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>\n            a.Name === \"Home\" ? -1 : b.Name === \"Home\" ? 1 : 0\n        );\n  \n        sortedData.forEach((item) => {\n            const listItem = buildListItem(item);\n            container.appendChild(listItem);\n        });\n  \n        return container;\n    }\n\n    createPageList(data) {\n        const buildListItem = (item) => {\n            const listItem = document.createElement(\"li\");\n            listItem.classList.add(\"tb-custom-list-item\");\n    \n            const menuItem = document.createElement(\"div\");\n            menuItem.classList.add(\"tb-custom-menu-item\");\n            menuItem.classList.add(\"page-list-items\");\n    \n            const toggle = document.createElement(\"span\");\n            toggle.style.textTransform = \"capitalize\";\n            toggle.classList.add(\"tb-dropdown-toggle\");\n            toggle.setAttribute(\"role\", \"button\");\n            toggle.setAttribute(\"aria-expanded\", \"false\");\n            toggle.innerHTML = `<i class=\"fa-regular fa-file tree-icon\"></i><span>&nbsp; ${item.PageName}</span>`;\n    \n            const deleteIcon = document.createElement(\"i\");\n            deleteIcon.classList.add(\"fa-regular\", \"fa-trash-can\", \"tb-delete-icon\");\n            deleteIcon.setAttribute(\"data-id\", item.Id);\n    \n            deleteIcon.addEventListener(\"click\", (event) =>\n                handleDelete(event, item.PageId, listItem)\n            );\n    \n            menuItem.appendChild(toggle);\n            if (item.Name !== \"Home\") {\n                menuItem.appendChild(deleteIcon);\n            }\n            listItem.appendChild(menuItem);\n        \n            // listItem.addEventListener(\"click\", (e) => {\n            //     e.stopPropagation();\n            //     this.handlePageSelection(item);\n            // });\n    \n            return listItem;\n        };\n    \n        const handleDelete = (event, id, elementToRemove) => {\n            event.stopPropagation();\n            const title = \"Delete Page\";\n            const message = \"Are you sure you want to delete this page?\";\n            const popup = this.popupModal(title, message);\n            document.body.appendChild(popup);\n            popup.style.display = \"flex\";\n    \n            const deleteButton = popup.querySelector(\"#yes_delete\");\n            const closeButton = popup.querySelector(\"#close_popup\");\n            const closePopup = popup.querySelector(\".close\");\n    \n            deleteButton.addEventListener(\"click\", () => {\n                if (this.dataManager.deletePage(id)) {\n                    elementToRemove.remove();\n                    this.displayMessage(`${this.currentLanguage.getTranslation(\"page_deleted\")}`, \"success\");\n                } else {\n                    this.displayMessage(`${this.currentLanguage.getTranslation(\"error_while_deleting_page\")}`, \"error\");\n                }\n                popup.remove();\n            });\n    \n            closeButton.addEventListener(\"click\", () => {\n                popup.remove();\n            });\n    \n            closePopup.addEventListener(\"click\", () => {\n                popup.remove();\n            });\n        };\n    \n        const container = document.createElement(\"ul\");\n        container.classList.add(\"tb-custom-list\");\n    \n        const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>\n            a.PageName === \"Home\" ? -1 : b.PageName === \"Home\" ? 1 : 0\n        );\n    \n        sortedData.forEach((item) => {\n            const listItem = buildListItem(item);\n            container.appendChild(listItem);\n        });\n    \n        return container;\n    }\n  \n    popupModal(title, message) {\n        const popup = document.createElement(\"div\");\n        popup.className = \"popup-modal\";\n        popup.innerHTML = `\n          <div class=\"popup\">\n            <div class=\"popup-header\">\n              <span>${title}</span>\n              <button class=\"close\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 21 21\">\n                    <path id=\"Icon_material-close\" data-name=\"Icon material-close\" d=\"M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z\" transform=\"translate(-7.5 -7.5)\" fill=\"#6a747f\" opacity=\"0.54\"/>\n                </svg>\n              </button>\n            </div>\n            <hr>\n            <div class=\"popup-body\" id=\"confirmation_modal_message\">\n              ${message}\n            </div>\n            <div class=\"popup-footer\">\n              <button id=\"yes_delete\" class=\"tb-btn tb-btn-primary\">\n                Delete\n              </button>\n              <button id=\"close_popup\" class=\"tb-btn tb-btn-outline\">\n                Cancel\n              </button>\n            </div>\n          </div>\n        `;\n  \n        return popup;\n    }\n  \n    async handlePageSelection(item, isChild = false, parent = null) {\n        if (this.isLoading) return;\n  \n        try {\n            this.isLoading = true;\n            // Locate the page data\n            const page = this.dataManager.pages.SDT_PageCollection.find(\n                (page) => page.PageId === item.Id\n            );\n            if (!page) throw new Error(`Page with ID ${item.Id} not found`);\n  \n            const editors = Object.values(this.editorManager.editors);\n            const mainEditor = editors[0];\n  \n            if (mainEditor) {\n                const editor = mainEditor.editor;\n                const editorId = editor.getConfig().container;\n                const editorContainerId = `${editorId}-frame`;\n  \n                if (isChild) {\n                    if (parent?.Id) {\n                        const parentEditorId = editors[1].editor.getConfig().container;\n                        document\n                            .querySelector(`${parentEditorId}-frame`)\n                            .nextElementSibling?.remove();\n                        this.editorManager.createChildEditor(page);\n                    }\n                } else {\n                    // Remove extra frames\n                    $(editorContainerId).nextAll().remove();\n                    this.editorManager.createChildEditor(page);\n  \n                }\n            }\n        } catch (error) {\n            this.displayMessage(\"Error loading page\", \"error\");\n        } finally {\n            this.isLoading = false;\n        }\n    }\n  \n    checkActivePage(id) {\n        return localStorage.getItem(\"pageId\") === id;\n    }\n  \n    updateActivePageName() {\n        return this.editorManager.getCurrentPageName();\n    }\n  \n    displayMessage(message, status) {\n        this.toolBoxManager.ui.displayAlertMessage(message, status);\n    }\n  }\n\n\n\n//# sourceURL=webpack://ucgrapes/./src/components/MappingComponent.js?");
+class MappingComponent {
+    treeContainer = document.getElementById("tree-container");
+    isLoading = false;
+  
+    constructor(dataManager, editorManager, toolBoxManager, currentLanguage) {
+        this.dataManager = dataManager;
+        this.editorManager = editorManager;
+        this.toolBoxManager = toolBoxManager;
+        this.currentLanguage = currentLanguage;
+        this.boundCreatePage = this.handleCreatePage.bind(this);
+    }
+  
+    init() {
+        this.setupEventListeners();
+        //this.loadPageTree();
+        this.listPagesListener();
+        this.homePage = this.dataManager.pages.SDT_PageCollection.find(page=>page.PageName=="Home")
+        if (this.homePage) {
+            this.createPageTree(this.homePage.PageId, "tree-container")
+        }
+    }
+  
+    listPagesListener () {
+        const listAllPages = document.getElementById("list-all-pages");
+        listAllPages.addEventListener("click", () => {
+            this.handleListAllPages();
+        });
+    }
 
-/***/ }),
+    handleListAllPages() {
+        try {
+            this.dataManager.getPages().then((res) => {
+                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+                    return;
+                }
+                
+                const newTree = this.createPageList(res.SDT_PageCollection, true);
+                this.clearMappings();
+                this.treeContainer.appendChild(newTree);
 
-/***/ "./src/script.js":
-/*!***********************!*\
-  !*** ./src/script.js ***!
-  \***********************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+                this.hidePagesList();
+            });
+        } catch (error) {
+            this.displayMessage("Error loading pages", "error");
+        } finally {
+            this.isLoading = false;
+        }
+    }
 
-eval("const Clock = __webpack_require__(/*! ../src/classes/Clock */ \"./src/classes/Clock.js\")\nconst Locale = __webpack_require__(/*! ../src/classes/Locale */ \"./src/classes/Locale.js\")\nconst DataManager = __webpack_require__(/*! ../src/classes/DataManager */ \"./src/classes/DataManager.js\")\nconst EditorManager = __webpack_require__(/*! ../src/classes/EditorManager */ \"./src/classes/EditorManager.js\")\nconst TemplateManager = __webpack_require__(/*! ../src/classes/TemplateManager */ \"./src/classes/TemplateManager.js\")\nconst ToolboxManager = __webpack_require__(/*! ../src/classes/ToolboxManager */ \"./src/classes/ToolboxManager.js\")\nconst EventListenerManager = __webpack_require__(/*! ../src/classes/EventListenerManager */ \"./src/classes/EventListenerManager.js\")\nconst PageManager = __webpack_require__(/*! ../src/classes/PageManager */ \"./src/classes/PageManager.js\")\nconst PopupManager = __webpack_require__(/*! ../src/classes/PopupManager */ \"./src/classes/PopupManager.js\")\nconst ThemeManager = __webpack_require__(/*! ../src/classes/ThemeManager */ \"./src/classes/ThemeManager.js\")\nconst ToolBoxUI = __webpack_require__(/*! ../src/classes/ToolBoxUI */ \"./src/classes/ToolBoxUI.js\")\nconst ActionListComponent = __webpack_require__(/*! ../src/components/ActionListComponent */ \"./src/components/ActionListComponent.js\")\nconst MappingComponent = __webpack_require__(/*! ../src/components/MappingComponent */ \"./src/components/MappingComponent.js\")\n__webpack_require__(/*! ../src/utils/defaults */ \"./src/utils/defaults.js\")\n\n\nconsole.log(Locale)\n\n\n//# sourceURL=webpack://ucgrapes/./src/script.js?");
+    hidePagesList() {
+        const listAllPages = document.getElementById("list-all-pages");
+        listAllPages.style.display = "none";
+
+        const hidePagesList = document.getElementById("hide-pages");
+        hidePagesList.style.display = "block";
+
+        hidePagesList.addEventListener("click", () => {
+            listAllPages.style.display = "block";
+            hidePagesList.style.display = "none";
+            this.init()
+        });
+    }
+
+    getPage(pageId) {
+        return this.dataManager.pages.SDT_PageCollection.find((page) => page.PageId == pageId);
+    }
+
+    createPageTree(rootPageId, childDivId){
+        let homePage = this.getPage(rootPageId)
+        let homePageJSON = JSON.parse(homePage.PageGJSJson)
+        const pages = homePageJSON.pages;
+        const containerRows =
+            pages[0].frames[0].component.components[0].components[0].components;
+
+        let childPages = []
+
+        containerRows.forEach(containerRow => {
+            let templateWrappers = containerRow.components
+            if(templateWrappers) {
+                templateWrappers.forEach(templateWrapper => {
+                    let templateBlocks = templateWrapper.components
+                    templateBlocks.forEach(templateBlock => {
+                        if (templateBlock.classes.includes("template-block")) {
+                            let pageId = templateBlock.attributes["tile-action-object-id"]
+                            let page = this.getPage(pageId)
+                            if (page) {
+                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage})
+                            }
+                        }
+                    })
+                })
+            }
+        })
+        const newTree = this.createTree(childPages, true);
+        this.treeContainer = document.getElementById(childDivId)
+        this.clearMappings();
+        this.treeContainer.appendChild(newTree);
+    }
+
+    setupEventListeners() {
+        const createPageButton = document.getElementById("page-submit");
+        const pageInput = document.getElementById("page-title");
+  
+        createPageButton.removeEventListener("click", this.boundCreatePage);
+  
+        pageInput.addEventListener("input", () => {
+            createPageButton.disabled = !pageInput.value.trim() || this.isLoading;
+        });
+  
+        createPageButton.addEventListener("click", this.boundCreatePage);
+    }
+  
+    async loadPageTree() {
+        if (this.isLoading) return;
+  
+        try {
+            this.isLoading = true;
+            this.dataManager.getPagesService().then((res) => {
+                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+                    return;
+                }
+                
+                console.log(res);
+                const newTree = this.createTree(res.SDT_PageStructureCollection, true);
+                this.clearMappings();
+                this.treeContainer.appendChild(newTree);
+            });
+        } catch (error) {
+            this.displayMessage("Error loading pages", "error");
+        } finally {
+            this.isLoading = false;
+        }
+    }
+  
+    async handleCreatePage(e) {
+        e.preventDefault();
+  
+        if (this.isLoading) return;
+  
+        const pageInput = document.getElementById("page-title");
+        const createPageButton = document.getElementById("page-submit");
+        const pageTitle = pageInput.value.trim();
+  
+        if (!pageTitle) return;
+  
+        try {
+            this.isLoading = true;
+            createPageButton.disabled = true;
+            pageInput.disabled = true; // Disable input during creation
+            // Create the page
+            await this.dataManager.createNewPage(pageTitle, this.toolBoxManager.currentTheme).then((res) => {
+                if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+                    return;
+                }
+  
+                pageInput.value = "";
+  
+                this.clearMappings();
+  
+                this.dataManager.getPagesService().then((res) => {
+  
+                    let treePages = res.SDT_PageStructureCollection.map((page) => {
+                        return {
+                            Id: page.Id,
+                            Name: page.Name
+                        };
+                    });
+  
+                    const newTree = this.createTree(treePages, true);
+                    this.treeContainer.appendChild(newTree);
+                    this.toolBoxManager.actionList.init();
+
+                    this.displayMessage(`${this.currentLanguage.getTranslation("page_created")}`, "success");
+                });
+            });
+  
+        } catch (error) {
+            this.displayMessage(`${this.currentLanguage.getTranslation("error_creating_page")}`, "error");
+        } finally {
+            this.isLoading = false;
+            createPageButton.disabled = !pageInput.value.trim();
+            pageInput.disabled = false; // Re-enable input
+        }
+    }
+  
+    clearMappings() {
+        while (this.treeContainer.firstChild) {
+            this.treeContainer.removeChild(this.treeContainer.firstChild);
+        }
+    }
+  
+    createTree(data) {
+        const buildListItem = (item) => {
+            const listItem = document.createElement("li");
+            listItem.classList.add("tb-custom-list-item");
+            const childDiv = document.createElement("div")
+            childDiv.classList.add("child-div")
+            childDiv.id = `child-div-${item.Id}`
+            childDiv.style.position = 'relative'
+            childDiv.style.paddingLeft = '20px'
+
+  
+            const menuItem = document.createElement("div");
+            menuItem.classList.add("tb-custom-menu-item");
+  
+            const toggle = document.createElement("span");
+            toggle.classList.add("tb-dropdown-toggle");
+            toggle.setAttribute("role", "button");
+            toggle.setAttribute("aria-expanded", "false");
+            const icon = item.IsContentPage ? 'fa-file' : 'fa-caret-right tree-icon'
+            toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
+  
+            const deleteIcon = document.createElement("i");
+            deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+            deleteIcon.setAttribute("data-id", item.Id);
+  
+            deleteIcon.addEventListener("click", (event) =>
+                handleDelete(event, item.Id, listItem)
+            );
+  
+            menuItem.appendChild(toggle);
+            if (item.Name !== "Home") {
+                menuItem.appendChild(deleteIcon);
+            }
+            listItem.appendChild(menuItem);
+            listItem.appendChild(childDiv)
+            if (item.Children) {
+                const dropdownMenu = document.createElement("ul");
+                dropdownMenu.classList.add("tb-tree-dropdown-menu");
+  
+                item.Children.forEach((child) => {
+                    const dropdownItem = buildDropdownItem(child, item);
+                    dropdownMenu.appendChild(dropdownItem);
+                });
+  
+                listItem.appendChild(dropdownMenu);
+                listItem.classList.add("tb-dropdown");
+  
+                listItem.addEventListener("click", (e) =>
+                    toggleDropdown(e, listItem, menuItem)
+                );
+            }
+  
+            listItem.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.handlePageSelection(item);
+                this.createPageTree(item.Id, `child-div-${item.Id}`)
+            });
+  
+            return listItem;
+        };
+  
+        const buildDropdownItem = (child, parent) => {
+            const dropdownItem = document.createElement("li");
+            dropdownItem.classList.add("tb-dropdown-item");
+            dropdownItem.innerHTML = `<span><i style="margin-right: 10px;" class="fa-regular fa-file tree-icon"></i>${child.Name}</span><i data-id="${child.Id}" class="fa-regular fa-trash-can tb-delete-icon"></i>`;
+  
+            const childDeleteIcon = dropdownItem.querySelector(".tb-delete-icon");
+            childDeleteIcon.addEventListener("click", (event) =>
+                handleDelete(event, child.Id, dropdownItem)
+            );
+  
+            dropdownItem.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.handlePageSelection(child, true, parent);
+            });
+  
+            return dropdownItem;
+        };
+  
+        const handleDelete = (event, id, elementToRemove) => {
+            event.stopPropagation();
+            const title = "Delete Page";
+            const message = "Are you sure you want to delete this page?";
+            const popup = this.popupModal(title, message);
+            document.body.appendChild(popup);
+            popup.style.display = "flex";
+  
+            const deleteButton = popup.querySelector("#yes_delete");
+            const closeButton = popup.querySelector("#close_popup");
+            const closePopup = popup.querySelector(".close");
+  
+            deleteButton.addEventListener("click", () => {
+                if (this.dataManager.deletePage(id)) {
+                    elementToRemove.remove();
+                }
+                popup.remove();
+            });
+  
+            closeButton.addEventListener("click", () => {
+                popup.remove();
+            });
+  
+            closePopup.addEventListener("click", () => {
+                popup.remove();
+            });
+        };
+  
+        const toggleDropdown = (event, listItem, menuItem) => {
+            event.stopPropagation();
+  
+            const isActive = listItem.classList.contains("active");
+  
+            document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
+                dropdown.classList.remove("active");
+                dropdown
+                    .querySelector(".tb-dropdown-toggle")
+                    .setAttribute("aria-expanded", "false");
+                dropdown
+                    .querySelector(".tb-custom-menu-item")
+                    .classList.remove("active-tree-item");
+            });
+  
+            if (!isActive) {
+                listItem.classList.add("active");
+                menuItem.classList.add("active-tree-item");
+                listItem
+                    .querySelector(".tb-dropdown-toggle")
+                    .setAttribute("aria-expanded", "true");
+            } else {
+                menuItem.classList.remove("active-tree-item");
+                listItem
+                    .querySelector(".tb-dropdown-toggle")
+                    .setAttribute("aria-expanded", "false");
+            }
+        };
+  
+        const container = document.createElement("ul");
+        container.classList.add("tb-custom-list");
+  
+        const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
+            a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
+        );
+  
+        sortedData.forEach((item) => {
+            const listItem = buildListItem(item);
+            container.appendChild(listItem);
+        });
+  
+        return container;
+    }
+
+    createPageList(data) {
+        const buildListItem = (item) => {
+            const listItem = document.createElement("li");
+            listItem.classList.add("tb-custom-list-item");
+    
+            const menuItem = document.createElement("div");
+            menuItem.classList.add("tb-custom-menu-item");
+            menuItem.classList.add("page-list-items");
+    
+            const toggle = document.createElement("span");
+            toggle.style.textTransform = "capitalize";
+            toggle.classList.add("tb-dropdown-toggle");
+            toggle.setAttribute("role", "button");
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.innerHTML = `<i class="fa-regular fa-file tree-icon"></i><span>&nbsp; ${item.PageName}</span>`;
+    
+            const deleteIcon = document.createElement("i");
+            deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+            deleteIcon.setAttribute("data-id", item.Id);
+    
+            deleteIcon.addEventListener("click", (event) =>
+                handleDelete(event, item.PageId, listItem)
+            );
+    
+            menuItem.appendChild(toggle);
+            if (item.Name !== "Home") {
+                menuItem.appendChild(deleteIcon);
+            }
+            listItem.appendChild(menuItem);
+        
+            // listItem.addEventListener("click", (e) => {
+            //     e.stopPropagation();
+            //     this.handlePageSelection(item);
+            // });
+    
+            return listItem;
+        };
+    
+        const handleDelete = (event, id, elementToRemove) => {
+            event.stopPropagation();
+            const title = "Delete Page";
+            const message = "Are you sure you want to delete this page?";
+            const popup = this.popupModal(title, message);
+            document.body.appendChild(popup);
+            popup.style.display = "flex";
+    
+            const deleteButton = popup.querySelector("#yes_delete");
+            const closeButton = popup.querySelector("#close_popup");
+            const closePopup = popup.querySelector(".close");
+    
+            deleteButton.addEventListener("click", () => {
+                if (this.dataManager.deletePage(id)) {
+                    elementToRemove.remove();
+                    this.displayMessage(`${this.currentLanguage.getTranslation("page_deleted")}`, "success");
+                } else {
+                    this.displayMessage(`${this.currentLanguage.getTranslation("error_while_deleting_page")}`, "error");
+                }
+                popup.remove();
+            });
+    
+            closeButton.addEventListener("click", () => {
+                popup.remove();
+            });
+    
+            closePopup.addEventListener("click", () => {
+                popup.remove();
+            });
+        };
+    
+        const container = document.createElement("ul");
+        container.classList.add("tb-custom-list");
+    
+        const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
+            a.PageName === "Home" ? -1 : b.PageName === "Home" ? 1 : 0
+        );
+    
+        sortedData.forEach((item) => {
+            const listItem = buildListItem(item);
+            container.appendChild(listItem);
+        });
+    
+        return container;
+    }
+  
+    popupModal(title, message) {
+        const popup = document.createElement("div");
+        popup.className = "popup-modal";
+        popup.innerHTML = `
+          <div class="popup">
+            <div class="popup-header">
+              <span>${title}</span>
+              <button class="close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+                    <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+                </svg>
+              </button>
+            </div>
+            <hr>
+            <div class="popup-body" id="confirmation_modal_message">
+              ${message}
+            </div>
+            <div class="popup-footer">
+              <button id="yes_delete" class="tb-btn tb-btn-primary">
+                Delete
+              </button>
+              <button id="close_popup" class="tb-btn tb-btn-outline">
+                Cancel
+              </button>
+            </div>
+          </div>
+        `;
+  
+        return popup;
+    }
+  
+    async handlePageSelection(item, isChild = false, parent = null) {
+        if (this.isLoading) return;
+  
+        try {
+            this.isLoading = true;
+            // Locate the page data
+            const page = this.dataManager.pages.SDT_PageCollection.find(
+                (page) => page.PageId === item.Id
+            );
+            if (!page) throw new Error(`Page with ID ${item.Id} not found`);
+  
+            const editors = Object.values(this.editorManager.editors);
+            const mainEditor = editors[0];
+  
+            if (mainEditor) {
+                const editor = mainEditor.editor;
+                const editorId = editor.getConfig().container;
+                const editorContainerId = `${editorId}-frame`;
+  
+                if (isChild) {
+                    if (parent?.Id) {
+                        const parentEditorId = editors[1].editor.getConfig().container;
+                        document
+                            .querySelector(`${parentEditorId}-frame`)
+                            .nextElementSibling?.remove();
+                        this.editorManager.createChildEditor(page);
+                    }
+                } else {
+                    // Remove extra frames
+                    $(editorContainerId).nextAll().remove();
+                    this.editorManager.createChildEditor(page);
+  
+                }
+            }
+        } catch (error) {
+            this.displayMessage("Error loading page", "error");
+        } finally {
+            this.isLoading = false;
+        }
+    }
+  
+    checkActivePage(id) {
+        return localStorage.getItem("pageId") === id;
+    }
+  
+    updateActivePageName() {
+        return this.editorManager.getCurrentPageName();
+    }
+  
+    displayMessage(message, status) {
+        this.toolBoxManager.ui.displayAlertMessage(message, status);
+    }
+  }
+
+
 
 /***/ }),
 
@@ -155,7 +4077,91 @@ eval("const Clock = __webpack_require__(/*! ../src/classes/Clock */ \"./src/clas
   \*******************************/
 /***/ (() => {
 
-eval("const iconsData = [\n    {\n      name: \"Broom\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 32.86 26.791\">\n            <path id=\"Path_942\" data-name=\"Path 942\" d=\"M27.756,3.986a1.217,1.217,0,0,0-1.2,1.234v9.736a2.433,2.433,0,0,0-2.434,2.434v1.217H27.57a1.217,1.217,0,0,0,.4,0h3.459V17.39a2.433,2.433,0,0,0-2.434-2.434V5.22a1.217,1.217,0,0,0-1.236-1.234ZM11.953,4a4.049,4.049,0,0,0-3.6,2.579,3.784,3.784,0,0,0-.663-.145,4.278,4.278,0,0,0-4.26,4.26,4.152,4.152,0,0,0,.062.609H3.434a1.217,1.217,0,1,0,0,2.434H3.6l.825,6.19-3,2.629a1.218,1.218,0,0,0,1.6,1.835l1.79-1.566-.385-2.9,6.729-5.89a1.217,1.217,0,0,1,1.6,1.835L4.808,22.826l.777,5.838A2.437,2.437,0,0,0,8,30.777h7.906a2.434,2.434,0,0,0,2.413-2.113l1.992-14.925h.162a1.217,1.217,0,1,0,0-2.434h-.062a4.152,4.152,0,0,0,.062-.609,4.278,4.278,0,0,0-4.26-4.26,3.784,3.784,0,0,0-.663.145A4.049,4.049,0,0,0,11.953,4Zm0,2.434a1.8,1.8,0,0,1,1.8,1.626,1.217,1.217,0,0,0,1.709.975A1.817,1.817,0,0,1,18.038,10.7a1.858,1.858,0,0,1-.107.609H5.975a1.859,1.859,0,0,1-.107-.609A1.817,1.817,0,0,1,8.445,9.037a1.217,1.217,0,0,0,1.709-.975A1.8,1.8,0,0,1,11.953,6.437Zm12.17,14.6a16.837,16.837,0,0,0-2.434,8.519,1.217,1.217,0,0,0,1.217,1.217h9.736a1.216,1.216,0,0,0,1.21-1.348,16.907,16.907,0,0,0-2.427-8.388h-7.3Z\" transform=\"translate(-1 -3.986)\" fill=\"#7c8791\"/>\n          </svg>\n         `,\n    },\n    {\n      name: \"Car\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 33.969 27.499\">\n            <path id=\"Path_940\" data-name=\"Path 940\" d=\"M33.625,15.208l-2.689-7.7A5.236,5.236,0,0,0,26,4H11.967A5.233,5.233,0,0,0,7.034,7.507l-2.689,7.7A5.247,5.247,0,0,0,2,19.588V28.88a2.613,2.613,0,1,0,5.226,0V27.228s6.9.342,11.758.342,11.758-.342,11.758-.342V28.88a2.613,2.613,0,1,0,5.226,0V19.588A5.248,5.248,0,0,0,33.625,15.208ZM8,12.659,9.5,8.372a2.614,2.614,0,0,1,2.467-1.753H26a2.614,2.614,0,0,1,2.467,1.753l1.5,4.287a.936.936,0,0,1-1.03,1.24,62.318,62.318,0,0,0-9.952-.733,62.318,62.318,0,0,0-9.952.733A.936.936,0,0,1,8,12.659Zm-.124,9.673a1.964,1.964,0,1,1,1.96-1.964A1.963,1.963,0,0,1,7.879,22.332ZM22.9,21.023H15.065a1.309,1.309,0,0,1,0-2.619H22.9a1.309,1.309,0,0,1,0,2.619Zm7.186,1.309a1.964,1.964,0,1,1,1.96-1.964A1.963,1.963,0,0,1,30.09,22.332Z\" transform=\"translate(-2 -4)\" fill=\"#7c8791\"/>\n          </svg>\n  \n         `,\n    },\n    {\n      name: \"Heart\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 31.83 28.479\">\n            <path id=\"Path_941\" data-name=\"Path 941\" d=\"M24.689,3.007a9.543,9.543,0,0,0-6.774,3.3,9.543,9.543,0,0,0-6.774-3.3A8.865,8.865,0,0,0,3.768,6.654C-2.379,14.723,9.259,24.162,12,26.7c1.638,1.516,3.659,3.317,4.865,4.384a1.583,1.583,0,0,0,2.106,0c1.206-1.067,3.228-2.868,4.865-4.384,2.738-2.534,14.377-11.973,8.228-20.041A8.86,8.86,0,0,0,24.689,3.007Z\" transform=\"translate(-2 -3.001)\" fill=\"#7c8791\"/>\n          </svg>\n         `,\n    },\n    {\n      name: \"Home\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 28.752 28.752\">\n            <path id=\"Path_937\" data-name=\"Path 937\" d=\"M17.376,2a1.2,1.2,0,0,0-.838.342L3.47,13.03l-.044.035-.044.037v0A1.2,1.2,0,0,0,4.2,15.178H5.4V28.356a2.4,2.4,0,0,0,2.4,2.4H26.96a2.4,2.4,0,0,0,2.4-2.4V15.178h1.2a1.2,1.2,0,0,0,.817-2.075l-.019-.014q-.039-.036-.082-.068l-1.914-1.565V6.792a1.2,1.2,0,0,0-1.2-1.2h-1.2a1.2,1.2,0,0,0-1.2,1.2V8.516l-7.574-6.2A1.2,1.2,0,0,0,17.376,2ZM20.97,17.574h4.792v9.584H20.97Z\" transform=\"translate(-3 -2)\" fill=\"#7c8791\"/>\n          </svg>\n         `,\n    },\n    {\n      name: \"Health\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 26.214 27.498\">\n            <path id=\"Path_938\" data-name=\"Path 938\" d=\"M26.3,4.75H20.208a4.433,4.433,0,0,0-8.2,0H5.913A2.834,2.834,0,0,0,3,7.5V26.748A2.834,2.834,0,0,0,5.913,29.5H26.3a2.834,2.834,0,0,0,2.913-2.75V7.5A2.834,2.834,0,0,0,26.3,4.75Zm-10.194,0a1.418,1.418,0,0,1,1.456,1.375,1.459,1.459,0,0,1-2.913,0A1.418,1.418,0,0,1,16.107,4.75Zm4.369,15.124H17.564v2.75A1.418,1.418,0,0,1,16.107,24h0a1.418,1.418,0,0,1-1.456-1.375v-2.75H11.738A1.418,1.418,0,0,1,10.282,18.5h0a1.418,1.418,0,0,1,1.456-1.375h2.913v-2.75A1.418,1.418,0,0,1,16.107,13h0a1.418,1.418,0,0,1,1.456,1.375v2.75h2.913A1.418,1.418,0,0,1,21.933,18.5h0A1.418,1.418,0,0,1,20.476,19.874Z\" transform=\"translate(-3 -2)\" fill=\"#7c8791\"/>\n          </svg>\n         `,\n    },\n    {\n      name: \"Foods\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 32.813 27.572\">\n            <path id=\"Path_939\" data-name=\"Path 939\" d=\"M22.959,3.986a.656.656,0,0,0-.646.665V5.964q0,.019,0,.038A5.905,5.905,0,0,0,17.1,11.214H15.75a.656.656,0,0,0-.656.656v4.594H11.933a7.534,7.534,0,0,0,.445-1.969h.091a.656.656,0,1,0,0-1.313H11.9a6.673,6.673,0,0,0,.481-1.969h.091a.656.656,0,1,0,0-1.313H11.9a6.673,6.673,0,0,0,.481-1.969h.091a.656.656,0,1,0,0-1.313H2.625a.656.656,0,1,0,0,1.313h.091A6.674,6.674,0,0,0,3.2,9.9H2.625a.656.656,0,1,0,0,1.313h.091A6.674,6.674,0,0,0,3.2,13.183H2.625a.656.656,0,1,0,0,1.313h.091a7.535,7.535,0,0,0,.445,1.969H.656A.656.656,0,0,0,0,17.12v6.563a3.271,3.271,0,0,0,5.906,1.948,3.251,3.251,0,0,0,5.25,0,3.251,3.251,0,0,0,5.25,0,3.251,3.251,0,0,0,5.25,0,3.251,3.251,0,0,0,5.25,0,3.271,3.271,0,0,0,5.906-1.948V17.12a.656.656,0,0,0-.656-.656H30.844V11.87a.656.656,0,0,0-.656-.656H28.837A5.905,5.905,0,0,0,23.624,6q0-.019,0-.038V4.652a.656.656,0,0,0-.666-.665ZM4.029,7.933h7.037A5.272,5.272,0,0,1,10.473,9.9H4.621A5.272,5.272,0,0,1,4.029,7.933Zm0,3.281h7.037a5.272,5.272,0,0,1-.592,1.969H4.621A5.272,5.272,0,0,1,4.029,11.214Zm12.378,1.313H29.531v3.938H16.406ZM4.029,14.5h7.037a5.272,5.272,0,0,1-.592,1.969H4.621A5.272,5.272,0,0,1,4.029,14.5Zm-1.4,13.729V30.9a.656.656,0,0,0,1.313,0V28.23a4.352,4.352,0,0,1-.656.046A3.64,3.64,0,0,1,2.625,28.224Zm27.562,0a3.64,3.64,0,0,1-.656.053,4.352,4.352,0,0,1-.656-.046V30.9a.656.656,0,0,0,1.313,0Z\" transform=\"translate(0 -3.986)\" fill=\"#7c8791\"/>\n          </svg>\n         `,\n    },\n    {\n      name: \"Laundry\",\n      svg: `\n          <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"25\" viewBox=\"0 0 30.411 28.722\">\n            <path id=\"Path_943\" data-name=\"Path 943\" d=\"M13.236,4a2.053,2.053,0,0,0,0,4.1h2.323l-.32.333-.034.033-2.493,2.58a8.153,8.153,0,0,1-1.539-1.907.674.674,0,0,0-1.158,0c-.021.036-1.94,3.543-5.723,3.73l-.98-6.247a.669.669,0,0,0-.638-.584.652.652,0,0,0-.517.238.7.7,0,0,0-.149.564l1.07,6.83s0,.005,0,.008L5.973,32.147s0,.006,0,.009a.7.7,0,0,0,.071.21l.012.02a.679.679,0,0,0,.137.17l.009.007a.657.657,0,0,0,.186.114l.008,0a.641.641,0,0,0,.227.041H27.778A.641.641,0,0,0,28,32.68l.019-.007a.656.656,0,0,0,.186-.114h0l0-.005a.679.679,0,0,0,.136-.168l.009-.017a.7.7,0,0,0,.075-.22l2.9-18.464s0-.005,0-.008l1.07-6.83a.7.7,0,0,0-.222-.662.644.644,0,0,0-.668-.112.681.681,0,0,0-.413.555l-.98,6.252a6.184,6.184,0,0,1-2.519-.672A4.91,4.91,0,0,0,26.423,7.5L24.262,5.265a4.348,4.348,0,0,0-3.184-1.256L13.238,4Zm0,1.368,7.84.009a3.031,3.031,0,0,1,2.251.855l2.161,2.236a3.493,3.493,0,0,1,0,4.832l-6.758,6.9,0,0a.636.636,0,0,1-.935,0,.685.685,0,0,1-.154-.711l2.573-2.662.009-.009q.024-.024.045-.049a.7.7,0,0,0-.016-.908.645.645,0,0,0-.874-.091l-.005.005-.026.021q-.021.018-.041.037l-.008.008-.01.009-.022.023-2.4,2.383-.009.009a2,2,0,0,0-.292.4l-1.508,1.56a.636.636,0,0,1-.935,0,.69.69,0,0,1,0-.967l4.228-4.374a.682.682,0,0,0,.12-.162h0a.7.7,0,0,0-.094-.793.646.646,0,0,0-.756-.16l-.005,0a.659.659,0,0,0-.161.108l-.037.037L13.191,18.29l-.8.825a.636.636,0,0,1-.935,0,.69.69,0,0,1,0-.967l.567-.586,4.185-4.33a.682.682,0,0,0,.12-.163.7.7,0,0,0-.166-.863.644.644,0,0,0-.85.02l-.005.005-.034.033-4.185,4.329a.636.636,0,0,1-.935,0,.688.688,0,0,1,0-.966L16.14,9.436,17.623,7.9a.7.7,0,0,0,.143-.745.661.661,0,0,0-.61-.422H13.236a.684.684,0,0,1,0-1.368Z\" transform=\"translate(-1.998 -4)\" fill=\"#7c8791\"/>\n          </svg>\n         `,\n    },\n  ];\n  \n  const defaultTileAttrs = `\n    tile-text=\"Tile\"\n    tile-text-color=\"#000000\"\n    tile-text-align=\"left\"\n  \n    tile-icon=\"\"\n    tile-icon-color=\"#000000\"\n    tile-icon-align=\"left\"\n  \n    tile-bg-image=\"\"\n    tile-bg-image-opacity=100\n  \n    tile-action-object=\"Page\"\n    tile-action-object-id=\"\"\n  `;\n  \n  const defaultConstraints = `\n      data-gjs-draggable=\"false\"\n      data-gjs-selectable=\"false\"\n      data-gjs-editable=\"false\"\n      data-gjs-highlightable=\"false\"\n      data-gjs-droppable=\"false\"\n      data-gjs-resizable=\"false\"\n      data-gjs-hoverable=\"false\"\n  `;\n\n//# sourceURL=webpack://ucgrapes/./src/utils/defaults.js?");
+const iconsData = [
+    {
+      name: "Broom",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 32.86 26.791">
+            <path id="Path_942" data-name="Path 942" d="M27.756,3.986a1.217,1.217,0,0,0-1.2,1.234v9.736a2.433,2.433,0,0,0-2.434,2.434v1.217H27.57a1.217,1.217,0,0,0,.4,0h3.459V17.39a2.433,2.433,0,0,0-2.434-2.434V5.22a1.217,1.217,0,0,0-1.236-1.234ZM11.953,4a4.049,4.049,0,0,0-3.6,2.579,3.784,3.784,0,0,0-.663-.145,4.278,4.278,0,0,0-4.26,4.26,4.152,4.152,0,0,0,.062.609H3.434a1.217,1.217,0,1,0,0,2.434H3.6l.825,6.19-3,2.629a1.218,1.218,0,0,0,1.6,1.835l1.79-1.566-.385-2.9,6.729-5.89a1.217,1.217,0,0,1,1.6,1.835L4.808,22.826l.777,5.838A2.437,2.437,0,0,0,8,30.777h7.906a2.434,2.434,0,0,0,2.413-2.113l1.992-14.925h.162a1.217,1.217,0,1,0,0-2.434h-.062a4.152,4.152,0,0,0,.062-.609,4.278,4.278,0,0,0-4.26-4.26,3.784,3.784,0,0,0-.663.145A4.049,4.049,0,0,0,11.953,4Zm0,2.434a1.8,1.8,0,0,1,1.8,1.626,1.217,1.217,0,0,0,1.709.975A1.817,1.817,0,0,1,18.038,10.7a1.858,1.858,0,0,1-.107.609H5.975a1.859,1.859,0,0,1-.107-.609A1.817,1.817,0,0,1,8.445,9.037a1.217,1.217,0,0,0,1.709-.975A1.8,1.8,0,0,1,11.953,6.437Zm12.17,14.6a16.837,16.837,0,0,0-2.434,8.519,1.217,1.217,0,0,0,1.217,1.217h9.736a1.216,1.216,0,0,0,1.21-1.348,16.907,16.907,0,0,0-2.427-8.388h-7.3Z" transform="translate(-1 -3.986)" fill="#7c8791"/>
+          </svg>
+         `,
+    },
+    {
+      name: "Car",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 33.969 27.499">
+            <path id="Path_940" data-name="Path 940" d="M33.625,15.208l-2.689-7.7A5.236,5.236,0,0,0,26,4H11.967A5.233,5.233,0,0,0,7.034,7.507l-2.689,7.7A5.247,5.247,0,0,0,2,19.588V28.88a2.613,2.613,0,1,0,5.226,0V27.228s6.9.342,11.758.342,11.758-.342,11.758-.342V28.88a2.613,2.613,0,1,0,5.226,0V19.588A5.248,5.248,0,0,0,33.625,15.208ZM8,12.659,9.5,8.372a2.614,2.614,0,0,1,2.467-1.753H26a2.614,2.614,0,0,1,2.467,1.753l1.5,4.287a.936.936,0,0,1-1.03,1.24,62.318,62.318,0,0,0-9.952-.733,62.318,62.318,0,0,0-9.952.733A.936.936,0,0,1,8,12.659Zm-.124,9.673a1.964,1.964,0,1,1,1.96-1.964A1.963,1.963,0,0,1,7.879,22.332ZM22.9,21.023H15.065a1.309,1.309,0,0,1,0-2.619H22.9a1.309,1.309,0,0,1,0,2.619Zm7.186,1.309a1.964,1.964,0,1,1,1.96-1.964A1.963,1.963,0,0,1,30.09,22.332Z" transform="translate(-2 -4)" fill="#7c8791"/>
+          </svg>
+  
+         `,
+    },
+    {
+      name: "Heart",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 31.83 28.479">
+            <path id="Path_941" data-name="Path 941" d="M24.689,3.007a9.543,9.543,0,0,0-6.774,3.3,9.543,9.543,0,0,0-6.774-3.3A8.865,8.865,0,0,0,3.768,6.654C-2.379,14.723,9.259,24.162,12,26.7c1.638,1.516,3.659,3.317,4.865,4.384a1.583,1.583,0,0,0,2.106,0c1.206-1.067,3.228-2.868,4.865-4.384,2.738-2.534,14.377-11.973,8.228-20.041A8.86,8.86,0,0,0,24.689,3.007Z" transform="translate(-2 -3.001)" fill="#7c8791"/>
+          </svg>
+         `,
+    },
+    {
+      name: "Home",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 28.752 28.752">
+            <path id="Path_937" data-name="Path 937" d="M17.376,2a1.2,1.2,0,0,0-.838.342L3.47,13.03l-.044.035-.044.037v0A1.2,1.2,0,0,0,4.2,15.178H5.4V28.356a2.4,2.4,0,0,0,2.4,2.4H26.96a2.4,2.4,0,0,0,2.4-2.4V15.178h1.2a1.2,1.2,0,0,0,.817-2.075l-.019-.014q-.039-.036-.082-.068l-1.914-1.565V6.792a1.2,1.2,0,0,0-1.2-1.2h-1.2a1.2,1.2,0,0,0-1.2,1.2V8.516l-7.574-6.2A1.2,1.2,0,0,0,17.376,2ZM20.97,17.574h4.792v9.584H20.97Z" transform="translate(-3 -2)" fill="#7c8791"/>
+          </svg>
+         `,
+    },
+    {
+      name: "Health",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 26.214 27.498">
+            <path id="Path_938" data-name="Path 938" d="M26.3,4.75H20.208a4.433,4.433,0,0,0-8.2,0H5.913A2.834,2.834,0,0,0,3,7.5V26.748A2.834,2.834,0,0,0,5.913,29.5H26.3a2.834,2.834,0,0,0,2.913-2.75V7.5A2.834,2.834,0,0,0,26.3,4.75Zm-10.194,0a1.418,1.418,0,0,1,1.456,1.375,1.459,1.459,0,0,1-2.913,0A1.418,1.418,0,0,1,16.107,4.75Zm4.369,15.124H17.564v2.75A1.418,1.418,0,0,1,16.107,24h0a1.418,1.418,0,0,1-1.456-1.375v-2.75H11.738A1.418,1.418,0,0,1,10.282,18.5h0a1.418,1.418,0,0,1,1.456-1.375h2.913v-2.75A1.418,1.418,0,0,1,16.107,13h0a1.418,1.418,0,0,1,1.456,1.375v2.75h2.913A1.418,1.418,0,0,1,21.933,18.5h0A1.418,1.418,0,0,1,20.476,19.874Z" transform="translate(-3 -2)" fill="#7c8791"/>
+          </svg>
+         `,
+    },
+    {
+      name: "Foods",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 32.813 27.572">
+            <path id="Path_939" data-name="Path 939" d="M22.959,3.986a.656.656,0,0,0-.646.665V5.964q0,.019,0,.038A5.905,5.905,0,0,0,17.1,11.214H15.75a.656.656,0,0,0-.656.656v4.594H11.933a7.534,7.534,0,0,0,.445-1.969h.091a.656.656,0,1,0,0-1.313H11.9a6.673,6.673,0,0,0,.481-1.969h.091a.656.656,0,1,0,0-1.313H11.9a6.673,6.673,0,0,0,.481-1.969h.091a.656.656,0,1,0,0-1.313H2.625a.656.656,0,1,0,0,1.313h.091A6.674,6.674,0,0,0,3.2,9.9H2.625a.656.656,0,1,0,0,1.313h.091A6.674,6.674,0,0,0,3.2,13.183H2.625a.656.656,0,1,0,0,1.313h.091a7.535,7.535,0,0,0,.445,1.969H.656A.656.656,0,0,0,0,17.12v6.563a3.271,3.271,0,0,0,5.906,1.948,3.251,3.251,0,0,0,5.25,0,3.251,3.251,0,0,0,5.25,0,3.251,3.251,0,0,0,5.25,0,3.251,3.251,0,0,0,5.25,0,3.271,3.271,0,0,0,5.906-1.948V17.12a.656.656,0,0,0-.656-.656H30.844V11.87a.656.656,0,0,0-.656-.656H28.837A5.905,5.905,0,0,0,23.624,6q0-.019,0-.038V4.652a.656.656,0,0,0-.666-.665ZM4.029,7.933h7.037A5.272,5.272,0,0,1,10.473,9.9H4.621A5.272,5.272,0,0,1,4.029,7.933Zm0,3.281h7.037a5.272,5.272,0,0,1-.592,1.969H4.621A5.272,5.272,0,0,1,4.029,11.214Zm12.378,1.313H29.531v3.938H16.406ZM4.029,14.5h7.037a5.272,5.272,0,0,1-.592,1.969H4.621A5.272,5.272,0,0,1,4.029,14.5Zm-1.4,13.729V30.9a.656.656,0,0,0,1.313,0V28.23a4.352,4.352,0,0,1-.656.046A3.64,3.64,0,0,1,2.625,28.224Zm27.562,0a3.64,3.64,0,0,1-.656.053,4.352,4.352,0,0,1-.656-.046V30.9a.656.656,0,0,0,1.313,0Z" transform="translate(0 -3.986)" fill="#7c8791"/>
+          </svg>
+         `,
+    },
+    {
+      name: "Laundry",
+      svg: `
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" viewBox="0 0 30.411 28.722">
+            <path id="Path_943" data-name="Path 943" d="M13.236,4a2.053,2.053,0,0,0,0,4.1h2.323l-.32.333-.034.033-2.493,2.58a8.153,8.153,0,0,1-1.539-1.907.674.674,0,0,0-1.158,0c-.021.036-1.94,3.543-5.723,3.73l-.98-6.247a.669.669,0,0,0-.638-.584.652.652,0,0,0-.517.238.7.7,0,0,0-.149.564l1.07,6.83s0,.005,0,.008L5.973,32.147s0,.006,0,.009a.7.7,0,0,0,.071.21l.012.02a.679.679,0,0,0,.137.17l.009.007a.657.657,0,0,0,.186.114l.008,0a.641.641,0,0,0,.227.041H27.778A.641.641,0,0,0,28,32.68l.019-.007a.656.656,0,0,0,.186-.114h0l0-.005a.679.679,0,0,0,.136-.168l.009-.017a.7.7,0,0,0,.075-.22l2.9-18.464s0-.005,0-.008l1.07-6.83a.7.7,0,0,0-.222-.662.644.644,0,0,0-.668-.112.681.681,0,0,0-.413.555l-.98,6.252a6.184,6.184,0,0,1-2.519-.672A4.91,4.91,0,0,0,26.423,7.5L24.262,5.265a4.348,4.348,0,0,0-3.184-1.256L13.238,4Zm0,1.368,7.84.009a3.031,3.031,0,0,1,2.251.855l2.161,2.236a3.493,3.493,0,0,1,0,4.832l-6.758,6.9,0,0a.636.636,0,0,1-.935,0,.685.685,0,0,1-.154-.711l2.573-2.662.009-.009q.024-.024.045-.049a.7.7,0,0,0-.016-.908.645.645,0,0,0-.874-.091l-.005.005-.026.021q-.021.018-.041.037l-.008.008-.01.009-.022.023-2.4,2.383-.009.009a2,2,0,0,0-.292.4l-1.508,1.56a.636.636,0,0,1-.935,0,.69.69,0,0,1,0-.967l4.228-4.374a.682.682,0,0,0,.12-.162h0a.7.7,0,0,0-.094-.793.646.646,0,0,0-.756-.16l-.005,0a.659.659,0,0,0-.161.108l-.037.037L13.191,18.29l-.8.825a.636.636,0,0,1-.935,0,.69.69,0,0,1,0-.967l.567-.586,4.185-4.33a.682.682,0,0,0,.12-.163.7.7,0,0,0-.166-.863.644.644,0,0,0-.85.02l-.005.005-.034.033-4.185,4.329a.636.636,0,0,1-.935,0,.688.688,0,0,1,0-.966L16.14,9.436,17.623,7.9a.7.7,0,0,0,.143-.745.661.661,0,0,0-.61-.422H13.236a.684.684,0,0,1,0-1.368Z" transform="translate(-1.998 -4)" fill="#7c8791"/>
+          </svg>
+         `,
+    },
+  ];
+  
+  const defaultTileAttrs = `
+    tile-text="Tile"
+    tile-text-color="#000000"
+    tile-text-align="left"
+  
+    tile-icon=""
+    tile-icon-color="#000000"
+    tile-icon-align="left"
+  
+    tile-bg-image=""
+    tile-bg-image-opacity=100
+  
+    tile-action-object="Page"
+    tile-action-object-id=""
+  `;
+  
+  const defaultConstraints = `
+      data-gjs-draggable="false"
+      data-gjs-selectable="false"
+      data-gjs-editable="false"
+      data-gjs-highlightable="false"
+      data-gjs-droppable="false"
+      data-gjs-resizable="false"
+      data-gjs-hoverable="false"
+  `;
 
 /***/ })
 
@@ -186,11 +4192,31 @@ eval("const iconsData = [\n    {\n      name: \"Broom\",\n      svg: `\n        
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/script.js");
-/******/ 	
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+/*!***********************!*\
+  !*** ./src/script.js ***!
+  \***********************/
+const Clock = __webpack_require__(/*! ../src/classes/Clock */ "./src/classes/Clock.js")
+const Locale = __webpack_require__(/*! ../src/classes/Locale */ "./src/classes/Locale.js")
+const DataManager = __webpack_require__(/*! ../src/classes/DataManager */ "./src/classes/DataManager.js")
+const EditorManager = __webpack_require__(/*! ../src/classes/EditorManager */ "./src/classes/EditorManager.js")
+const TemplateManager = __webpack_require__(/*! ../src/classes/TemplateManager */ "./src/classes/TemplateManager.js")
+const ToolboxManager = __webpack_require__(/*! ../src/classes/ToolboxManager */ "./src/classes/ToolboxManager.js")
+const EventListenerManager = __webpack_require__(/*! ../src/classes/EventListenerManager */ "./src/classes/EventListenerManager.js")
+const PageManager = __webpack_require__(/*! ../src/classes/PageManager */ "./src/classes/PageManager.js")
+const PopupManager = __webpack_require__(/*! ../src/classes/PopupManager */ "./src/classes/PopupManager.js")
+const ThemeManager = __webpack_require__(/*! ../src/classes/ThemeManager */ "./src/classes/ThemeManager.js")
+const ToolBoxUI = __webpack_require__(/*! ../src/classes/ToolBoxUI */ "./src/classes/ToolBoxUI.js")
+const ActionListComponent = __webpack_require__(/*! ../src/components/ActionListComponent */ "./src/components/ActionListComponent.js")
+const MappingComponent = __webpack_require__(/*! ../src/components/MappingComponent */ "./src/components/MappingComponent.js")
+__webpack_require__(/*! ../src/utils/defaults */ "./src/utils/defaults.js")
+
+
+console.log(Locale)
+
+})();
+
 /******/ })()
 ;
+//# sourceMappingURL=main.js.map

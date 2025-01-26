@@ -1,14 +1,7 @@
-// module.exports = {
-//     entry: './src/script.js',
-
-//     output: {
-//         path: __dirname + './dist/',
-//         filename: 'main.js',
-//         publicPath: '/'
-//     },
-
-//     devServer: {
-//         inline: false,
-//         contentBase: "./dist",
-//     }
-// }
+module.exports = {
+    mode: 'development', // This is the default mode that doesn’t minify
+    optimization: {
+      minimize: false, // Explicitly disable minification
+    },
+    // Your other Webpack settings
+  };

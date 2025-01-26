@@ -14,4 +14,4 @@ const MappingComponent = require("../src/components/MappingComponent")
 require("../src/utils/defaults")
 
 
-console.log(Locale)
+const LocaleClass = Locale

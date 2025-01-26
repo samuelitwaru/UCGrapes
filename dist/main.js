@@ -4213,10 +4213,12 @@ const MappingComponent = __webpack_require__(/*! ../src/components/MappingCompon
 __webpack_require__(/*! ../src/utils/defaults */ "./src/utils/defaults.js")
 
 
-console.log(Locale)
+const LocaleClass = Locale
 
 })();
 
 /******/ })()
 ;
 //# sourceMappingURL=main.js.map
+
+console.log(Locale)

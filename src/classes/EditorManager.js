@@ -353,3 +353,5 @@ class EditorManager {
     this.toolsSection = toolBox;
   }
 }
+
+module.exports = EditorManager

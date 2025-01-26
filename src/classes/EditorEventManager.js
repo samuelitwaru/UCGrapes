@@ -329,3 +329,5 @@ class EditorEventManager {
     return { updateButtonVisibility, scrollBy };
   }
 }
+
+module.exports = EditorEventManager

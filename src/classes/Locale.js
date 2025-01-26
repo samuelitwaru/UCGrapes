@@ -171,3 +171,5 @@ class Locale {
     select.appendChild(optionsList);
   }
 }
+
+module.exports = Locale

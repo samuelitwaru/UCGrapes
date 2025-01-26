@@ -12,3 +12,6 @@ const ToolBoxUI = require("../src/classes/ToolBoxUI")
 const ActionListComponent = require("../src/components/ActionListComponent")
 const MappingComponent = require("../src/components/MappingComponent")
 require("../src/utils/defaults")
+
+
+console.log(Locale)

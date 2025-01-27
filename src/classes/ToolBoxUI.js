@@ -320,10 +320,10 @@ class ToolBoxUI {
       }
 
       const selectedComponent = this.manager.editorManager.selectedComponent;
-      if (!selectedComponent) {
-        console.error("No selected component found.");
-        return;
-      }
+      // if (!selectedComponent) {
+      //   console.error("No selected component found.");
+      //   return;
+      // }
 
       const existingButton = ctaButton.find(`#id-${cta.CallToActionId}`)?.[0];
 

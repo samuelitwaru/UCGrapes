@@ -50,8 +50,13 @@ class EditorManager {
   }
 
   setCurrentEditor(editorId) {
-    const previousEditor = this.editors[this.currentEditor];
-    if (previousEditor) previousEditor.select(null);
+    const previousEditor = this.editors[editorId];
+    
+    if (previousEditor && previousEditor.editor) {
+      this.selectedComponent = null;
+      this.selectedTemplateWrapper = null;
+    }
+    
     this.currentEditor = this.editors[editorId];
     this.activateFrame(editorId + "-frame");
     this.toolsSection.unDoReDo(this.currentEditor.editor);
@@ -130,12 +135,13 @@ class EditorManager {
   createAppBarHTML(pageName) {
     return `
       <div class="app-bar">
-          <button id="content-back-button" class="back-button">
-              <svg class="back-arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
-                  <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M5 12L12 19M5 12L12 5"/>
-              </svg>
-          </button>
+          <svg id="content-back-button" xmlns="http://www.w3.org/2000/svg" id="Group_14" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
+            <g id="Ellipse_6" data-name="Ellipse 6" fill="none" stroke="#262626" stroke-width="1">
+              <circle cx="23.5" cy="23.5" r="23.5" stroke="none"/>
+              <circle cx="23.5" cy="23.5" r="23" fill="none"/>
+            </g>
+            <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
+          </svg>
           <h1 class="title" style="text-transform: uppercase">${pageName}</h1>
       </div>
     `;

@@ -267,14 +267,24 @@ class ThemeManager {
       colorPaletteContainer.appendChild(alignItem);
 
       colorBox.onclick = () => {
-        this.toolBoxManager.editorManager.selectedComponent.addStyle({
-          "background-color": colorValue,
-        });
-        this.toolBoxManager.setAttributeToSelected("tile-bgcolor", colorValue);
-        this.toolBoxManager.setAttributeToSelected(
-          "tile-bgcolor-name",
-          colorName
-        );
+        if (this.toolBoxManager.editorManager.selectedComponent) {
+          this.toolBoxManager.editorManager.selectedComponent.addStyle({
+            "background-color": colorValue,
+          });
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-bgcolor",
+            colorValue
+          );
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-bgcolor-name",
+            colorName
+          );
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
+        }
       };
     });
   }

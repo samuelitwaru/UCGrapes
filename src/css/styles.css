@@ -309,6 +309,12 @@ button#open-mapping {
   justify-content: center;
 }
 
+#content-back-button {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+}
+
 .back-button:hover {
   background-color: #f3f4f6;
 }

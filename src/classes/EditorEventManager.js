@@ -119,14 +119,11 @@ class EditorEventManager {
 
   editorOnDropped(editor) {
     // // let isDragging = false;
-
     // // editor.on("component:drag:start", (component) => {
     // //   isDragging = true;
     // // });
-
     // // editor.on("component:drag:end", (component) => {
     // //   const tileComponents = component.target.find(".template-blocks");
-
     // //   if (tileComponents.length) {
     // //     console.log("Tile Components", tileComponents);
     // //   }
@@ -320,5 +317,29 @@ class EditorEventManager {
     scrollContainer.addEventListener("scroll", updateButtonVisibility);
 
     return { updateButtonVisibility, scrollBy };
+  }
+
+  setupUndoRedoButtons() {
+    // Assuming you have undo and redo buttons in your UI
+    const undoBtn = document.getElementById("undo");
+    const redoBtn = document.getElementById("redo");
+
+    if (!this.editorManager.currentEditor) return;
+
+    const undoRedoManager = new UndoRedoManager(this.editorManager.currentEditor.editor);
+    
+    // Update button states
+    if (undoBtn) {
+      undoBtn.disabled = !undoRedoManager.canUndo();
+      undoBtn.onclick = (e) => {
+        e.preventDefault();
+        undoRedoManager.undo();
+      };
+    }
+
+    if (redoBtn) {
+      redoBtn.disabled = !undoRedoManager.canRedo();
+      redoBtn.onclick = () => undoRedoManager.redo();
+    }
   }
 }

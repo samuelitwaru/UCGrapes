@@ -180,20 +180,39 @@ class ToolBoxManager {
     const um = editorInstance.UndoManager;
 
     const undoButton = document.getElementById("undo");
-    undoButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (editorInstance === this.editorManager.currentEditor.editor && um.hasUndo()) {
-        um.undo();
-      }
-    });
-
     const redoButton = document.getElementById("redo");
-    redoButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (editorInstance === this.editorManager.currentEditor.editor && um.hasRedo()) {
+    // Update button states
+    if (undoButton) {
+      undoButton.disabled = !um.hasUndo();
+      undoButton.onclick = (e) => {
+        e.preventDefault();
+        um.undo();
+        this.editorManager.currentEditor.editor.refresh();
+      };
+    }
+
+    if (redoButton) {
+      redoButton.disabled = !um.hasRedo();
+      redoButton.onclick = (e) => {
+        e.preventDefault();
         um.redo();
-      }
-    });
+        this.editorManager.currentEditor.editor.refresh();
+      };
+    }
+
+    // undoButton.addEventListener("click", (e) => {
+    //   e.preventDefault();
+    //   if (editorInstance === this.editorManager.currentEditor.editor && um.hasUndo()) {
+    //     um.undo();
+    //   }
+    // });
+
+    // redoButton.addEventListener("click", (e) => {
+    //   e.preventDefault();
+    //   if (editorInstance === this.editorManager.currentEditor.editor && um.hasRedo()) {
+    //     um.redo();
+    //   }
+    // });
   }
 
   checkIfNotAuthenticated(res) {

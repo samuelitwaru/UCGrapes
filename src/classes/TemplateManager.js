@@ -537,7 +537,7 @@ class TemplateManager {
       const rightButtonComponent = template.find(".add-button-right")[0];
 
       if (templates.length >= 3) {
-        rightButton.setAttribute("disabled", "true");
+        // rightButton.setAttribute("disabled", "true");
         rightButtonComponent.addStyle({
           display: "none",
         });

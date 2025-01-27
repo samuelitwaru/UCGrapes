@@ -135,6 +135,11 @@ class EventListenerManager {
             });
             this.toolBoxManager.setAttributeToSelected("tile-text-align", "left");
           }
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
       });
   
@@ -156,6 +161,11 @@ class EventListenerManager {
               "center"
             );
           }
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
       });
   
@@ -177,6 +187,11 @@ class EventListenerManager {
               "right"
             );
           }
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
       });
   
@@ -197,6 +212,11 @@ class EventListenerManager {
             });
             this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
           }
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
       });
   
@@ -217,6 +237,11 @@ class EventListenerManager {
               "center"
             );
           }
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
       });
   
@@ -236,8 +261,15 @@ class EventListenerManager {
               "tile-icon-align",
               "right"
             );
+          } else {
+            
           }
-        } 
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
+        }
       });
     }
   

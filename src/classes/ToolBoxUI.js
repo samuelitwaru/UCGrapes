@@ -519,4 +519,3 @@ class ToolBoxUI {
   }
 }
 
-module.exports = ToolBoxUI

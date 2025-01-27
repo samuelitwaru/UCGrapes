@@ -42,5 +42,3 @@ class PopupManager {
       return popup;
     }
   }
-
-module.exports = PopupManager

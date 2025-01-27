@@ -240,7 +240,6 @@ class ToolBoxManager {
   }
 }
 
-module.exports = ToolBoxManager
 
 
 

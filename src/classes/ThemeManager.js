@@ -617,4 +617,3 @@ class ThemeManager {
   }
 }
 
-module.exports = ThemeManager

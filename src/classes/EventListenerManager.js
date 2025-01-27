@@ -329,5 +329,3 @@ class EventListenerManager {
       }, 10000);
     }
   }
-
-module.exports = EventListenerManager

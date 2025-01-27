@@ -35,7 +35,7 @@ class Locale {
     }
 
     const elementsToTranslate = [
-      // "navbar_title",
+      "navbar_title",
       "navbar_tree_label",
       "navbar_publish_label",
       "sidebar_tabs_pages_label",
@@ -171,5 +171,3 @@ class Locale {
     select.appendChild(optionsList);
   }
 }
-
-module.exports = Locale

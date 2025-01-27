@@ -51,7 +51,7 @@ class EditorManager {
 
   setCurrentEditor(editorId) {
     const previousEditor = this.editors[editorId];
-    
+
     if (previousEditor && previousEditor.editor) {
       this.selectedComponent = null;
       this.selectedTemplateWrapper = null;
@@ -359,5 +359,3 @@ class EditorManager {
     this.toolsSection = toolBox;
   }
 }
-
-module.exports = EditorManager

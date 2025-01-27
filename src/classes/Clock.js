@@ -15,5 +15,3 @@ class Clock {
       document.getElementById(this.pageId).textContent = timeString;
     }
   }
-  
-module.exports = Clock

@@ -142,5 +142,3 @@ class DataManager {
     return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);
   }
 }
-
-module.exports = DataManager

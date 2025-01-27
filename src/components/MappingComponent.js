@@ -47,21 +47,6 @@ class MappingComponent {
     }
   
     hidePagesList() {
-      const listAllPages = document.getElementById("list-all-pages");
-      listAllPages.style.display = "none";
-  
-      const hidePagesList = document.getElementById("hide-pages");
-      hidePagesList.style.display = "block";
-  
-      hidePagesList.addEventListener("click", () => {
-        listAllPages.style.display = "block";
-        hidePagesList.style.display = "none";
-        // this.loadPageTree();
-        this.createPageTree(
-          "70a30414-aa01-4604-896d-63982e1d1164",
-          "tree-container"
-        );
-      });
         const listAllPages = document.getElementById("list-all-pages");
         listAllPages.style.display = "none";
 
@@ -71,7 +56,7 @@ class MappingComponent {
         hidePagesList.addEventListener("click", () => {
             listAllPages.style.display = "block";
             hidePagesList.style.display = "none";
-            this.init()
+            this.createPageTree(this.homePage.PageId, "tree-container");
         });
     }
   

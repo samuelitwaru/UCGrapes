@@ -337,23 +337,35 @@ class MediaComponent {
     });
   }
 
-  processUploadedFile(file, imageName, fileList) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.dataManager
-        .uploadFile(e.target.result, imageName, file.size, file.type)
-        .then((response) => {
-          if (this.toolBoxManager.checkIfNotAuthenticated(response)) {
-            return;
-          }
+  async processUploadedFile(file, imageName, fileList) {
+    try {
+      const imageCropper = new ImageCropper(532, 250);
+      const croppedBlob = await imageCropper.cropImage(file);
 
-          if (response.BC_Trn_Media.MediaId) {
-            this.dataManager.media.push(response.BC_Trn_Media);
-            this.displayMediaFile(fileList, response.BC_Trn_Media);
-          }
-        });
-    };
-    reader.readAsDataURL(file);
+      const croppedFile = new File([croppedBlob], file.name, {
+        type: file.type,
+      });
+
+      const dataUrl = imageCropper.getDataURL();
+
+      const response = await this.dataManager.uploadFile(
+        dataUrl,
+        imageName,
+        croppedFile.size,
+        croppedFile.type
+      );
+
+      if (this.toolBoxManager.checkIfNotAuthenticated(response)) {
+        return;
+      }
+
+      if (response.BC_Trn_Media.MediaId) {
+        this.dataManager.media.push(response.BC_Trn_Media);
+        this.displayMediaFile(fileList, response.BC_Trn_Media);
+      }
+    } catch (error) {
+      console.error('Failed to process image:', error);
+    }
   }
 
   displayMediaFile(fileList, file) {

@@ -773,6 +773,11 @@ h5#current-page-title {
   display: none;
 }
 
+.tile-img-section {
+  display: flex;
+  gap: 0.6rem;
+}
+
 .bg-section {
   display: flex;
   align-items: center;
@@ -829,6 +834,57 @@ h5#current-page-title {
   transform: translateY(-50%);
   font-size: 16px;
   color: #303030b5;
+}
+
+.tile-img-container {
+  position: relative;
+  width: 48px;
+  height: 38px;
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #b4b9bd;
+  border-radius: 8px;
+  display: none;
+}
+
+.tile-img-container img {
+  border-radius: 6px;
+  opacity: 0.9;
+}
+
+.tile-img-container:hover img {
+  opacity: 1;
+}
+
+.tile-img-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tile-img-delete-button {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  color: #ccc;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  padding: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.1s ease;
+}
+
+.tile-img-container:hover .tile-img-delete-button {
+  border: 2px solid #3c4c7a;
+  color: #3c4c7a;
 }
 
 .title-style {

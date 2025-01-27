@@ -527,58 +527,34 @@ class TemplateManager {
   updateRightButtons(containerRow) {
     if (!containerRow) return;
 
-    console.log("containerRow", containerRow);
-    const templates = containerRow.components();
-    let totalWidth = 0;
-    templates.forEach((template) => {
-      if (!template || !template.view || !template.view.el) return;
+    // Force a store update after attribute changes
+    const editor = this.editorManager.currentEditor.editor;
+
+    containerRow.components().forEach((template) => {
+      if (!template?.view?.el) return;
 
       const rightButton = template.view.el.querySelector(".add-button-right");
-      if (!rightButton) return;
       const rightButtonComponent = template.find(".add-button-right")[0];
+      if (!rightButton || !rightButtonComponent) return;
 
-      if (templates.length >= 3) {
-        // rightButton.setAttribute("disabled", "true");
-        containerRow.setAttributes(
-          {"data-gjs-droppable": "false"}
-        );
-        rightButtonComponent.addStyle({
-          display: "none",
-        });
-      } else {
-        containerRow.setAttributes(
-          {"data-gjs-droppable": "[data-gjs-type='tile-wrapper']"}
-        );
-        rightButton.removeAttribute("disabled");
-        rightButtonComponent.addStyle({
-          display: "flex",
-        });
-      }
+      const isMaxComponents = containerRow.components().length >= 3;
+
+      // Update droppable state
+      containerRow.set(
+        "droppable",
+        isMaxComponents ? false : "[data-gjs-type='tile-wrapper']"
+      );
+
+      // Update button visibility
+      rightButtonComponent.addStyle({
+        display: isMaxComponents ? "none" : "flex",
+      });
     });
+
+    editor.store().emit("change:component"); 
+    editor.refresh();
+    containerRow.view.render(); 
   }
-
-  // disableDragAndDrop(editorInstance) {
-  //   // chekc in the instance all components with a class 'container-row'
-  //   const containerRows = editorInstance.getContainer().querySelectorAll(
-  //     ".container-row"
-  //   );
-  //   containerRows.forEach((containerRow) => {
-  //     // check if the container row has more than 3 components
-  //     const childrenComponents = containerRow.components();
-  //     if (childrenComponents.length >= 3) {
-  //       containerRow.setAttributes(
-  //         {"data-gjs-droppable": "false"}
-  //       );
-  //     } else {
-  //       containerRow.setAttributes({
-  //         "data-gjs-droppable": "[data-gjs-type='tile-wrapper']"
-  //       })
-  //     }
-  //   });
-
-  //   editorInstance.refresh();
-  // }
-  
 
   initialContentPageTemplate(contentPageData) {
     console.log("initialContentPageTemplate", contentPageData);

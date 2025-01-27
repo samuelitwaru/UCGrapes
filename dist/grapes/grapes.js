@@ -19955,7 +19955,7 @@
                           },
                           b = function (e, n, r) {
                             u.forEach(function (t) {
-                              return t.set("status", "selected");
+                              return t.set("status", ""); //disable select on drag
                             }),
                               t.select(u),
                               c.emitUpdate(),

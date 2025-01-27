@@ -75,13 +75,12 @@ class EditorManager {
   createChildEditor(page) {
     const editorDetails = this.setupEditorContainer(page);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
-
-    this.editorEventManager.addEditorEventListeners(editor);
-
+    this.editorEventManager.addEditorEventListeners(editor, page);
     this.loadEditorContent(editor, page);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
   }
+
 
   setupEditorContainer(page) {
     const count = this.container.children.length;
@@ -174,12 +173,23 @@ class EditorManager {
     });
   }
 
+  updatePageJSONContent(editor, page){
+    const PageGJSJson = editor.getProjectData()
+    this.dataManager.pages.SDT_PageCollection.map(p=>{
+      if (p.PageId == page.PageId) {
+        p.PageGJSJson = JSON.stringify(PageGJSJson)
+      }
+      return p
+    })
+  }
+
   async loadEditorContent(editor, page) {
     if (page.PageGJSJson) {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
     }
+    this.updatePageJSONContent(editor, page)
   }
 
   async loadExistingContent(editor, page) {
@@ -188,6 +198,9 @@ class EditorManager {
 
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
+      }
+      else if (page.PageIsPredefined && page.PageName === "Reception") {
+        editor.loadProjectData(pageData);
       } else if (page.PageIsContentPage) {
         editor.loadProjectData(pageData);
         await this.handleContentPage(editor, page);
@@ -346,3 +359,5 @@ class EditorManager {
     this.toolsSection = toolBox;
   }
 }
+
+module.exports = EditorManager

@@ -54,3 +54,5 @@ class PageManager {
       });
     }
   }
+
+module.exports = PageManager

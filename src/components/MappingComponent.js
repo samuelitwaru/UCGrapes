@@ -11,13 +11,13 @@ class MappingComponent {
     }
   
     init() {
-      this.setupEventListeners();
-      //this.loadPageTree();
-      this.createPageTree(
-        "70a30414-aa01-4604-896d-63982e1d1164",
-        "tree-container"
-      );
-      this.listPagesListener();
+        this.setupEventListeners();
+        //this.loadPageTree();
+        this.listPagesListener();
+        this.homePage = this.dataManager.pages.SDT_PageCollection.find(page=>page.PageName=="Home")
+        if (this.homePage) {
+            this.createPageTree(this.homePage.PageId, "tree-container")
+        }
     }
   
     listPagesListener() {
@@ -62,6 +62,17 @@ class MappingComponent {
           "tree-container"
         );
       });
+        const listAllPages = document.getElementById("list-all-pages");
+        listAllPages.style.display = "none";
+
+        const hidePagesList = document.getElementById("hide-pages");
+        hidePagesList.style.display = "block";
+
+        hidePagesList.addEventListener("click", () => {
+            listAllPages.style.display = "block";
+            hidePagesList.style.display = "none";
+            this.init()
+        });
     }
   
     getPage(pageId) {
@@ -69,37 +80,37 @@ class MappingComponent {
         (page) => page.PageId == pageId
       );
     }
-  
-    createPageTree(rootPageId, childDivId) {
-      let homePage = this.getPage(rootPageId);
-      let homePageJSON = JSON.parse(homePage.PageGJSJson);
-      const pages = homePageJSON.pages;
-      const containerRows =
-        pages[0].frames[0].component.components[0].components[0].components;
-  
-      let childPages = [];
-  
-      containerRows.forEach((containerRow) => {
-        let templateWrappers = containerRow.components;
-        if (templateWrappers) {
-          templateWrappers.forEach((templateWrapper) => {
-            let templateBlocks = templateWrapper.components;
-            templateBlocks.forEach((templateBlock) => {
-              if (templateBlock.classes.includes("template-block")) {
-                let pageId = templateBlock.attributes["tile-action-object-id"];
-                let page = this.getPage(pageId);
-                if (page) {
-                  childPages.push({ Id: pageId, Name: page.PageName });
-                }
-              }
-            });
-          });
-        }
-      });
-      const newTree = this.createTree(childPages, true);
-      this.treeContainer = document.getElementById(childDivId);
-      this.clearMappings();
-      this.treeContainer.appendChild(newTree);
+
+    createPageTree(rootPageId, childDivId){
+        let homePage = this.getPage(rootPageId)
+        let homePageJSON = JSON.parse(homePage.PageGJSJson)
+        const pages = homePageJSON.pages;
+        const containerRows =
+            pages[0].frames[0].component.components[0].components[0].components;
+
+        let childPages = []
+
+        containerRows.forEach(containerRow => {
+            let templateWrappers = containerRow.components
+            if(templateWrappers) {
+                templateWrappers.forEach(templateWrapper => {
+                    let templateBlocks = templateWrapper.components
+                    templateBlocks.forEach(templateBlock => {
+                        if (templateBlock.classes.includes("template-block")) {
+                            let pageId = templateBlock.attributes["tile-action-object-id"]
+                            let page = this.getPage(pageId)
+                            if (page) {
+                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage})
+                            }
+                        }
+                    })
+                })
+            }
+        })
+        const newTree = this.createTree(childPages, true);
+        this.treeContainer = document.getElementById(childDivId)
+        this.clearMappings();
+        this.treeContainer.appendChild(newTree);
     }
   
     setupEventListeners() {
@@ -213,11 +224,12 @@ class MappingComponent {
         const menuItem = document.createElement("div");
         menuItem.classList.add("tb-custom-menu-item");
   
-        const toggle = document.createElement("span");
-        toggle.classList.add("tb-dropdown-toggle");
-        toggle.setAttribute("role", "button");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.innerHTML = `<i class="fa fa-caret-right tree-icon"></i><span>${item.Name}</span>`;
+            const toggle = document.createElement("span");
+            toggle.classList.add("tb-dropdown-toggle");
+            toggle.setAttribute("role", "button");
+            toggle.setAttribute("aria-expanded", "false");
+            const icon = item.IsContentPage ? 'fa-file' : 'fa-caret-right tree-icon'
+            toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
   
         // const deleteIcon = document.createElement("i");
         // deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
@@ -247,12 +259,11 @@ class MappingComponent {
           );
         }
   
-        listItem.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.handlePageSelection(item);
-          this.createPageTree(item.Id, `child-div-${item.Id}`);
-          return;
-        });
+            listItem.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.handlePageSelection(item);
+                this.createPageTree(item.Id, `child-div-${item.Id}`)
+            });
   
         return listItem;
       };

@@ -114,6 +114,7 @@ class ActionListComponent {
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
+      optionElement.dataset.category = category.name
       categoryContent.appendChild(optionElement);
     });
 
@@ -197,17 +198,18 @@ class ActionListComponent {
 
     document.querySelectorAll(".category-content li").forEach((item) => {
       item.addEventListener("click", () => {
+        this.selectedObject = item.dataset.category
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
         }, ${item.textContent}`;
-
-        console.log("editor: ", this.editorManager);
+        
         const editor = this.editorManager.getCurrentEditor();
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
-
           const currentPageId = localStorage.getItem("pageId");
-
+          const tileTitle = item.textContent.toUpperCase()
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
@@ -216,20 +218,24 @@ class ActionListComponent {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
               `${item.closest(".category").dataset.category}, ${
-                item.textContent
+                tileTitle
               }`
             );
+
             if (this.selectedObject == "Service/Product Page") {
-              this.createContentPage(item.id);
+              this.createContentPage(item.id, editorContainerId);
+            }else{
+              $(editorContainerId).nextAll().remove();
+              this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
             }
           }
 
           if (titleComponent) {
-            titleComponent.components(item.textContent);
+            titleComponent.components(tileTitle);
 
             const sidebarInputTitle = document.getElementById("tile-title");
             if (sidebarInputTitle) {
-              sidebarInputTitle.textContent = item.textContent;
+              sidebarInputTitle.textContent = tileTitle;
             }
           }
         }
@@ -265,21 +271,15 @@ class ActionListComponent {
     });
   }
 
-  createContentPage(pageId) {
-    let self = this;
+  createContentPage(pageId, editorContainerId) {
     this.dataManager.createContentPage(pageId).then((res) => {
       if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
         return;
       }
-
-      this.dataManager.getPagesService().then((res) => {
-        const newTree = self.toolBoxManager.mappingComponent.createTree(
-          res.SDT_PageStructureCollection,
-          true
-        );
-        self.toolBoxManager.mappingComponent.clearMappings();
-        self.toolBoxManager.mappingComponent.treeContainer.appendChild(newTree);
-      });
+      this.dataManager.getPages().then(res=>{
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
+      })
     });
   }
 }

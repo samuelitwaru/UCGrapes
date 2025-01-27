@@ -665,3 +665,5 @@ class TemplateManager {
     }
   }
 }
+
+module.exports = TemplateManager

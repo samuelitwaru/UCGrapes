@@ -96,6 +96,21 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
+    return this.dataManager.pages.SDT_PageCollection.map(page=>{
+      let projectData = JSON.parse(page.PageGJSJson)
+      const jsonData = page.PageIsContentPage
+          ? mapContentToPageData(projectData, page)
+          : mapTemplateToPageData(projectData, page);
+      return {
+        PageId: page.PageId,
+        PageName: page.PageName,
+        PageJsonContent: JSON.stringify(jsonData),
+        PageGJSHtml: page.PageGJSHtml,
+        PageGJSJson: page.PageGJSJson,
+        SDT_Page: jsonData,
+        PageIsPublished: true,
+      };
+    })
     return editors
       .map((editorData) => {
         const pageId = editorData.pageId;
@@ -247,3 +262,5 @@ class ToolBoxManager {
     }
   }
 }
+
+module.exports = ToolBoxManager

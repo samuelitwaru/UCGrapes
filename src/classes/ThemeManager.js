@@ -616,3 +616,5 @@ class ThemeManager {
     renderIcons();
   }
 }
+
+module.exports = ThemeManager

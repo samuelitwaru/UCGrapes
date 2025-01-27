@@ -68,7 +68,7 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      this.updateTileTitle(e.target.value);
+      this.updateTileTitle(e.target.value.toUpperCase());
     });
   }
 
@@ -103,7 +103,6 @@ class ToolBoxManager {
         const htmlData = editor.getHtml();
         const pageName = page.PageName;
         let jsonData;
-
         if (page.PageIsContentPage) {
           jsonData = mapContentToPageData(projectData, page);
         } else {
@@ -240,6 +239,8 @@ class ToolBoxManager {
     }
   }
 }
+
+module.exports = ToolBoxManager
 
 
 

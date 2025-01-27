@@ -188,7 +188,7 @@ class ToolBoxUI {
     allOptions.forEach((option) => {
       option.style.background = "";
     });
-
+    propertySection.textContent = "Select Action"
     if (currentActionName && currentActionId && selectedOptionElement) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';

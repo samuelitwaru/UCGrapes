@@ -218,7 +218,7 @@ class ActionListComponent {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
               `${item.closest(".category").dataset.category}, ${
-                tileTitle
+                item.textContent
               }`
             );
 

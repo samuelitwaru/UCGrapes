@@ -33,7 +33,7 @@ class MappingComponent {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
             return;
           }
-  
+          this.treeContainer = document.getElementById("tree-container");
           this.clearMappings();
           const newTree = this.createPageList(res.SDT_PageCollection, true);
           this.treeContainer.appendChild(newTree);
@@ -152,6 +152,7 @@ class MappingComponent {
         await this.dataManager
           .createNewPage(pageTitle, this.toolBoxManager.currentTheme)
           .then((res) => {
+            console.log(JSON.parse(res.result))
             if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
               return;
             }
@@ -160,15 +161,9 @@ class MappingComponent {
   
             this.clearMappings();
   
-            this.dataManager.getPagesService().then((res) => {
-              let treePages = res.SDT_PageStructureCollection.map((page) => {
-                return {
-                  Id: page.Id,
-                  Name: page.Name,
-                };
-              });
-  
-              this.createPageTree('70a30414-aa01-4604-896d-63982e1d1164', "tree-container");
+            this.dataManager.getPages().then((res) => {
+                this.init()
+            //   this.createPageTree('70a30414-aa01-4604-896d-63982e1d1164', "tree-container");
               this.toolBoxManager.actionList.init();
   
               this.displayMessage(

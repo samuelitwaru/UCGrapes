@@ -527,6 +527,7 @@ class TemplateManager {
   updateRightButtons(containerRow) {
     if (!containerRow) return;
 
+    console.log("containerRow", containerRow);
     const templates = containerRow.components();
     let totalWidth = 0;
     templates.forEach((template) => {
@@ -538,10 +539,16 @@ class TemplateManager {
 
       if (templates.length >= 3) {
         // rightButton.setAttribute("disabled", "true");
+        containerRow.setAttributes(
+          {"data-gjs-droppable": "false"}
+        );
         rightButtonComponent.addStyle({
           display: "none",
         });
       } else {
+        containerRow.setAttributes(
+          {"data-gjs-droppable": "[data-gjs-type='tile-wrapper']"}
+        );
         rightButton.removeAttribute("disabled");
         rightButtonComponent.addStyle({
           display: "flex",
@@ -549,6 +556,29 @@ class TemplateManager {
       }
     });
   }
+
+  // disableDragAndDrop(editorInstance) {
+  //   // chekc in the instance all components with a class 'container-row'
+  //   const containerRows = editorInstance.getContainer().querySelectorAll(
+  //     ".container-row"
+  //   );
+  //   containerRows.forEach((containerRow) => {
+  //     // check if the container row has more than 3 components
+  //     const childrenComponents = containerRow.components();
+  //     if (childrenComponents.length >= 3) {
+  //       containerRow.setAttributes(
+  //         {"data-gjs-droppable": "false"}
+  //       );
+  //     } else {
+  //       containerRow.setAttributes({
+  //         "data-gjs-droppable": "[data-gjs-type='tile-wrapper']"
+  //       })
+  //     }
+  //   });
+
+  //   editorInstance.refresh();
+  // }
+  
 
   initialContentPageTemplate(contentPageData) {
     console.log("initialContentPageTemplate", contentPageData);

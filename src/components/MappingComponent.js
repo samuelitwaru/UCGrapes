@@ -152,7 +152,6 @@ class MappingComponent {
         await this.dataManager
           .createNewPage(pageTitle, this.toolBoxManager.currentTheme)
           .then((res) => {
-            console.log(JSON.parse(res.result))
             if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
               return;
             }
@@ -162,8 +161,7 @@ class MappingComponent {
             this.clearMappings();
   
             this.dataManager.getPages().then((res) => {
-                this.init()
-            //   this.createPageTree('70a30414-aa01-4604-896d-63982e1d1164', "tree-container");
+              this.handleListAllPages();
               this.toolBoxManager.actionList.init();
   
               this.displayMessage(

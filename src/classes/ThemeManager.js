@@ -4,10 +4,11 @@ class ThemeManager {
   }
 
   loadTheme() {
-    const savedTheme = localStorage.getItem("selectedTheme");
-    if (savedTheme) {
-      this.setTheme(savedTheme);
-    }
+    this.toolBoxManager.dataManager.getLocationTheme().then((theme) => {
+      this.toolBoxManager.themeManager.setTheme(
+        theme.SDT_LocationTheme.ThemeName
+      );
+    });
   }
 
   setTheme(themeName) {
@@ -243,7 +244,6 @@ class ThemeManager {
       "theme-color-palette"
     );
     colorPaletteContainer.innerHTML = "";
-
     const colorEntries = Object.entries(colors);
 
     colorEntries.forEach(([colorName, colorValue], index) => {

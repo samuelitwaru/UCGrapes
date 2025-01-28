@@ -97,8 +97,6 @@ function mapTemplateToPageData(templateData, page) {
 }
 
 function mapContentToPageData(templateData, page) {
-  console.log(templateData)
-  console.log(page.PageName)
   const pages = templateData.pages;
   const output = {
       PageId: page.PageId,

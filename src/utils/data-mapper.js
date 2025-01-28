@@ -97,72 +97,76 @@ function mapTemplateToPageData(templateData, page) {
 }
 
 function mapContentToPageData(templateData, page) {
+  console.log(templateData)
+  console.log(page.PageName)
   const pages = templateData.pages;
-  const components =
-      pages[0].frames[0].component.components[0].components[0].components;
-
   const output = {
       PageId: page.PageId,
       PageName: page.PageName,
       Content: [],
       Cta: [],
   };
+  if (pages) {
+    const components =
+        pages[0].frames[0].component.components[0].components[0].components;
   
-  // Find image and text content
-  components.forEach((component) => {
-      const topComponents = component.components?.[0]?.components?.[0]?.components || []
-      for (let index = 0; index < topComponents.length; index++) {
-          const component = topComponents[index];
-          if (component?.tagName === "img") {
-
-              const imageUrl = component?.attributes.src.startsWith('http') ? component?.attributes.src : baseURL + '/' + component?.attributes.src
-
-              output.Content.push({
-                  ContentType: "Image",
-                  ContentValue: imageUrl,
-              });
-          }
-
-          if (component?.tagName === "p") {
-              const textContent = component.components?.[0]?.content?.trim();
-              if (textContent) {
-                  output.Content.push({
-                      ContentType: "Description",
-                      ContentValue: textContent,
-                  });
-              }
-          }
-
-      }
-
-      // CTA buttons
-      if (component.classes?.includes("cta-button-container")) {
-          const ctaChildren = component.components || [];
-
-          ctaChildren.forEach((ctaChild) => {
-              const attributes = ctaChild.attributes || {};
-              if (ctaChild.classes?.includes("cta-container-child") || ctaChild.classes?.includes("img-button-container") || ctaChild.classes?.includes("plain-button-container")) {
-                  if (ctaChild.classes?.includes("plain-button-container")) {
-                      attributes["is-full-width"] = true
-                  }
-                  if (ctaChild.classes?.includes("img-button-container")) {
-                      attributes["is-full-width"] = true
-                      attributes["is-image-button"] = true
-                  }
-
-                  output.Cta.push({
-                      CtaId: attributes["cta-button-id"],
-                      CtaType: attributes["cta-button-type"],
-                      CtaLabel: attributes["cta-button-label"] || "Email Us",
-                      CtaAction: attributes["cta-button-action"],
-                      CtaBGColor: attributes["cta-background-color"] || "#EEA622",
-                      IsFullWidth: attributes["is-full-width"] || false,
-                      IsImageButton: attributes["is-image-button"] || false,
-                  });
-              }
-          });
-      }
-  });
+    
+    // Find image and text content
+    components.forEach((component) => {
+        const topComponents = component.components?.[0]?.components?.[0]?.components || []
+        for (let index = 0; index < topComponents.length; index++) {
+            const component = topComponents[index];
+            if (component?.tagName === "img") {
+  
+                const imageUrl = component?.attributes.src.startsWith('http') ? component?.attributes.src : baseURL + '/' + component?.attributes.src
+  
+                output.Content.push({
+                    ContentType: "Image",
+                    ContentValue: imageUrl,
+                });
+            }
+  
+            if (component?.tagName === "p") {
+                const textContent = component.components?.[0]?.content?.trim();
+                if (textContent) {
+                    output.Content.push({
+                        ContentType: "Description",
+                        ContentValue: textContent,
+                    });
+                }
+            }
+  
+        }
+  
+        // CTA buttons
+        if (component.classes?.includes("cta-button-container")) {
+            const ctaChildren = component.components || [];
+  
+            ctaChildren.forEach((ctaChild) => {
+                const attributes = ctaChild.attributes || {};
+                if (ctaChild.classes?.includes("cta-container-child") || ctaChild.classes?.includes("img-button-container") || ctaChild.classes?.includes("plain-button-container")) {
+                    if (ctaChild.classes?.includes("plain-button-container")) {
+                        attributes["is-full-width"] = true
+                    }
+                    if (ctaChild.classes?.includes("img-button-container")) {
+                        attributes["is-full-width"] = true
+                        attributes["is-image-button"] = true
+                    }
+  
+                    output.Cta.push({
+                        CtaId: attributes["cta-button-id"],
+                        CtaType: attributes["cta-button-type"],
+                        CtaLabel: attributes["cta-button-label"] || "Email Us",
+                        CtaAction: attributes["cta-button-action"],
+                        CtaBGColor: attributes["cta-background-color"] || "#EEA622",
+                        IsFullWidth: attributes["is-full-width"] || false,
+                        IsImageButton: attributes["is-image-button"] || false,
+                    });
+                }
+            });
+        }
+    });
+  }
   return output;
 }
 

@@ -431,6 +431,7 @@ class MediaComponent {
       const templateBlock = this.editorManager.selectedComponent;
       templateBlock.addStyle({
         "background-image": `url(${this.selectedFile.MediaUrl})`,
+        "background-color": "",
         "background-size": "cover",
         "background-position": "center",
         "background-blend-mode": "overlay",

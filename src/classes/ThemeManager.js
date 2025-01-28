@@ -270,6 +270,7 @@ class ThemeManager {
         if (this.toolBoxManager.editorManager.selectedComponent) {
           this.toolBoxManager.editorManager.selectedComponent.addStyle({
             "background-color": colorValue,
+            "background-image": "",
           });
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor",

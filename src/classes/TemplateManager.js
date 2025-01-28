@@ -551,7 +551,7 @@ class TemplateManager {
       });
     });
 
-    editor.store().emit("change:component"); 
+    editor.trigger("change:component"); 
     editor.refresh();
     containerRow.view.render(); 
   }

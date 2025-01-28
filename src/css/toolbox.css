@@ -193,7 +193,7 @@ button {
 .content-page-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .gjs-selected .action-button {

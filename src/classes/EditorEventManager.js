@@ -25,7 +25,7 @@ class EditorEventManager {
   }
 
   handleEditorLoad(editor) {
-    this.loadTheme();
+    //this.loadTheme();
 
     const wrapper = editor.getWrapper();
     wrapper.view.el.addEventListener("click", (e) =>
@@ -82,9 +82,8 @@ class EditorEventManager {
   handleTileActionClick(e, editorContainerId) {
     const pageId = e.target.attributes["tile-action-object-id"].value;
     const page = this.editorManager.getPage(pageId);
-
+    $(editorContainerId).nextAll().remove();
     if (page) {
-      $(editorContainerId).nextAll().remove();
       this.editorManager.createChildEditor(page);
     }
   }
@@ -175,7 +174,6 @@ class EditorEventManager {
       this.editorManager.currentEditor.editor,
       this.editorManager.currentPageId
     );
-
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page?.PageIsContentPage) {
       this.editorManager.toolsSection.ui.activateCtaBtnStyles(

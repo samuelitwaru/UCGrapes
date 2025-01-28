@@ -51,11 +51,10 @@ class EditorManager {
 
   setCurrentEditor(editorId) {
     const previousEditor = this.editors[editorId];
-
-    if (previousEditor && previousEditor.editor) {
-      this.selectedComponent = null;
-      this.selectedTemplateWrapper = null;
-    }
+    // if (previousEditor && previousEditor.editor) {
+    //   this.selectedComponent = null;
+    //   this.selectedTemplateWrapper = null;
+    // }
     
     this.currentEditor = this.editors[editorId];
     this.activateFrame(editorId + "-frame");

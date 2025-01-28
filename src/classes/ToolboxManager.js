@@ -41,6 +41,7 @@ class ToolBoxManager {
   }
 
   async initializeManagers() {
+    
     await this.dataManager.getPages().then((res) => {
       if (this.checkIfNotAuthenticated(res)) {
         return;

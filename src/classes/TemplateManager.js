@@ -403,7 +403,7 @@ class TemplateManager {
                           data-gjs-selectable="false"
                           data-gjs-editable="false"
                           data-gjs-highlightable="true"
-                          data-gjs-droppable="[data-gjs-type='tile-wrapper']"
+                          data-gjs-droppable="false"
                           data-gjs-hoverable="true">
                         ${wrappers}
                     </div>
@@ -512,7 +512,7 @@ class TemplateManager {
                 data-gjs-selectable="false"
                 data-gjs-editable="false"
                 data-gjs-highlightable="false"
-                data-gjs-droppable="[data-gjs-type='tile-wrapper']"
+                data-gjs-droppable="false"
                 data-gjs-hoverable="false">
                 ${this.createTemplateHTML()}
             </div>
@@ -525,36 +525,70 @@ class TemplateManager {
   }
 
   updateRightButtons(containerRow) {
-    if (!containerRow) return;
+      if (!containerRow) return;
 
-    // Force a store update after attribute changes
-    const editor = this.editorManager.currentEditor.editor;
+      const templates = containerRow.components();
 
-    containerRow.components().forEach((template) => {
-      if (!template?.view?.el) return;
+      templates.forEach((template) => {
+          if (!template || !template.view || !template.view.el) return;
 
-      const rightButton = template.view.el.querySelector(".add-button-right");
-      const rightButtonComponent = template.find(".add-button-right")[0];
-      if (!rightButton || !rightButtonComponent) return;
+          const rightButton = template.view.el.querySelector(".add-button-right");
+          if (!rightButton) return;
+          const rightButtonComponent = template.find(".add-button-right")[0];
 
-      const isMaxComponents = containerRow.components().length >= 3;
-
-      // Update droppable state
-      containerRow.set(
-        "droppable",
-        isMaxComponents ? false : "[data-gjs-type='tile-wrapper']"
-      );
-
-      // Update button visibility
-      rightButtonComponent.addStyle({
-        display: isMaxComponents ? "none" : "flex",
+          if (templates.length >= 3) {
+              rightButtonComponent.addStyle({
+                  display: "none"
+              });
+          } else {
+              rightButtonComponent.addStyle({
+                  display: "flex"
+              });
+          }
       });
-    });
-
-    editor.trigger("change:component"); 
-    editor.refresh();
-    containerRow.view.render(); 
   }
+
+  // updateRightButtons(containerRow) {
+  //   if (!containerRow) return;
+  
+  //   // Force a store update after attribute changes
+  //   const editor = this.editorManager.currentEditor.editor;
+  
+  //   // Check components length once outside the loop
+  //   const totalComponents = containerRow.components().length;
+  //   const isMaxComponents = totalComponents >= 3;
+  
+  //   // Update container droppable state first
+  //   containerRow.set(
+  //     "droppable",
+  //     isMaxComponents ? false : "false"
+  //   );
+  
+  //   containerRow.components().forEach((template) => {
+  //     if (!template?.view?.el) return;
+  
+  //     const rightButton = template.view.el.querySelector(".add-button-right");
+  //     const rightButtonComponent = template.find(".add-button-right")[0];
+  //     if (!rightButton || !rightButtonComponent) return;
+  
+  //     // Update button visibility
+  //     rightButtonComponent.addStyle({
+  //       display: isMaxComponents ? "none" : "flex",
+  //     });
+  //   });
+  
+  //   // Add visual feedback for droppable state
+  //   if (isMaxComponents) {
+  //     containerRow.addClass('container-max-components');
+  //   } else {
+  //     containerRow.removeClass('container-max-components');
+  //   }
+  
+  //   // Trigger updates
+  //   editor.trigger("change:component"); 
+  //   editor.refresh();
+  //   containerRow.view.render(); 
+  // }
 
   initialContentPageTemplate(contentPageData) {
     console.log("initialContentPageTemplate", contentPageData);

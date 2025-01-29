@@ -238,6 +238,7 @@ function generateNewPage(theme) {
                             "type": "template-wrapper",
                             "draggable": false,
                             "selectable": false,
+                            "droppable":  false,
                             "classes": [
                               "container-row"
                             ],

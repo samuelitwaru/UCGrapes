@@ -181,6 +181,8 @@ class EditorEventManager {
 
     this.editorManager.toolsSection.checkTileBgImage();
 
+    this.activateNavigators();
+
     this.updateUIState();
   }
 

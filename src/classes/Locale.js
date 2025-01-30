@@ -76,23 +76,21 @@ class Locale {
       }
     });
 
-    
   }
 
-  translateTilesTitles(){
+  translateTilesTitles(editor){
+    
     const tileTitlesToTranslate = [
-      "tile-reception", "tile-calendar", "tile-mailbox", 
+      "tile-reception", "tile-calendar", "tile-mailbox", "tile-location",
       "tile-my-care", "tile-my-living", "tile-my-services"
     ]
 
     tileTitlesToTranslate.forEach(elementClass => {
-      const elements = document.getElementsByClassName(elementClass)
-
-      console.log(elementClass, elements)
-      if (elements.length === 1) {
-        const el = elements[0]
-        el.innerText = this.getTranslation(elementClass);
-      }
+      const components = editor.DomComponents.getWrapper().find(`.${elementClass}`);
+      if (components.length) {
+        const newHTML = `<span data-gjs-type="text" class="tile-title ${elementClass}">${this.getTranslation(elementClass)}</span>`
+        components[0].replaceWith(newHTML);
+      } 
     })
   }
 
@@ -110,7 +108,6 @@ class Locale {
       console.warn(`Translation missing for key '${key}'`);
       return key;
     }
-
     return translation;
   }
 

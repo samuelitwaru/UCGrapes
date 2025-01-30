@@ -26,8 +26,8 @@ class EditorEventManager {
 
   handleEditorLoad(editor) {
     this.loadTheme()
-    this.editorManager.toolsSection.currentLanguage.translateTilesTitles()
     const wrapper = editor.getWrapper();
+    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(editor)
     wrapper.view.el.addEventListener("click", (e) =>
       this.handleEditorClick(e, editor)
     );
@@ -62,7 +62,6 @@ class EditorEventManager {
     }
 
     const tileElement = e.target.closest("[tile-action-object-id]");
-
     if (tileElement) {
       const customEvent = {
         ...e,

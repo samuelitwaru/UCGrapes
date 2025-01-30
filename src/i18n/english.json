@@ -60,5 +60,11 @@
   "error_creating_page": "An error occurred while creating the page.",
   "invalid_file_type_message": "Invalid file type. Please upload a valid image file.",
   
-  "tile-reception": "RECEPTIE"
+  "tile-reception": "RECEPTION",
+  "tile-mailbox": "MAILBOX",
+  "tile-location": "LOCATION INFORMATION",
+  "tile-calendar": "CALENDAR",
+  "tile-my-care": "MY CARE",
+  "tile-my-living": "MY LIVING",
+  "tile-my-services": "MY SERVICES"
 }

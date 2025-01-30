@@ -25,8 +25,8 @@ class EditorEventManager {
   }
 
   handleEditorLoad(editor) {
-    //this.loadTheme();
-
+    this.loadTheme()
+    this.editorManager.toolsSection.currentLanguage.translateTilesTitles()
     const wrapper = editor.getWrapper();
     wrapper.view.el.addEventListener("click", (e) =>
       this.handleEditorClick(e, editor)
@@ -37,11 +37,9 @@ class EditorEventManager {
   }
 
   loadTheme() {
-    this.editorManager.dataManager.getLocationTheme().then((theme) => {
-      this.editorManager.toolsSection.themeManager.setTheme(
-        theme.SDT_LocationTheme.ThemeName
-      );
-    });
+    this.editorManager.toolsSection.themeManager.setTheme(
+      this.editorManager.theme.ThemeName
+    );
   }
 
   handleEditorClick(e, editor) {

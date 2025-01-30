@@ -6,8 +6,7 @@ class DataManager {
     this.services = services;
     this.media = media;
     this.pages = [];
-    this.selectedTheme = null;
-    
+    this.selectedTheme = null;    
   }
 
   // Helper method to handle API calls

@@ -270,7 +270,6 @@ class ThemeManager {
         if (this.toolBoxManager.editorManager.selectedComponent) {
           this.toolBoxManager.editorManager.selectedComponent.addStyle({
             "background-color": colorValue,
-            "background-image": "",
           });
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor",
@@ -279,11 +278,6 @@ class ThemeManager {
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor-name",
             colorName
-          );
-          console.log('...')
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-bg-image-url",
-            "",
           );
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(

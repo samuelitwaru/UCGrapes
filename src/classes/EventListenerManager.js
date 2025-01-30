@@ -295,6 +295,9 @@ class EventListenerManager {
                 1 - value / 100
               })), url(${currentBgImage})`,
             });
+            
+            const imageUrl = templateBlock.getStyle()["background-image"].match(/url\((.*?)\)/)[1];
+            console.log("Image URL:", imageUrl);
           }
         }
       });

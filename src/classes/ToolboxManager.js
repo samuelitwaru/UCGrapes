@@ -267,5 +267,45 @@ class ToolBoxManager {
       );
     }
   }
+
+  checkTileBgImage () {
+    if (this.editorManager.selectedTemplateWrapper) {
+      const templateBlock =
+        this.editorManager.selectedComponent;
+
+      if (templateBlock) {
+        const tileImgContainer = document.getElementById("tile-img-container");
+        // first check if templateBlock has a background image
+        if (templateBlock.getStyle()["background-image"]) {
+          const currentBgImage = templateBlock
+          .getStyle()
+          ["background-image"].match(/url\((.*?)\)/)[1];
+
+          if( currentBgImage) {
+            if (tileImgContainer) {
+              const tileImg = tileImgContainer.querySelector("img");
+              if (tileImg) {
+                tileImg.src = currentBgImage;
+                tileImgContainer.style.display = "block";
+
+                const tileBtn = tileImgContainer.querySelector("button");
+                if (tileBtn) {
+                  tileBtn.onclick = (e) => {
+                    e.preventDefault();
+                    const currentStyles = templateBlock.getStyle() || {};
+                    delete currentStyles["background-image"];
+                    templateBlock.setStyle(currentStyles);
+                    tileImgContainer.style.display = "none";
+                  }
+                }
+              }            
+            }
+          }
+        } else {
+          tileImgContainer.style.display = "none";
+        }       
+      }
+    }
+  }
 }
 

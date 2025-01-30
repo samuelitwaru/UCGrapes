@@ -58,5 +58,13 @@
   "error_during_deleting_media": "Er is een fout opgetreden bij het verwijderen van het mediabestand.",
   "media_deleted_successfully": "Mediabestand succesvol verwijderd.",
   "error_creating_page": "Er is een fout opgetreden bij het aanmaken van de pagina.",
-  "invalid_file_type_message": "Ongeldig bestandstype. Upload een geldig afbeeldingsbestand."
+  "invalid_file_type_message": "Ongeldig bestandstype. Upload een geldig afbeeldingsbestand.",
+
+  "tile-reception": "RECEPTIE",
+  "tile-mailbox": "MAILBOX",
+  "tile-location": "INFORMATIE LOCATIE",
+  "tile-calendar": "KALENDER",
+  "tile-my-care": "MIJN ZORG",
+  "tile-my-living": "MIJN WONEN",
+  "tile-my-services": "MIJN DIESTEIN"
 }

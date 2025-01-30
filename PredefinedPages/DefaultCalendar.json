@@ -1,0 +1,33 @@
+{
+    "assets": [],
+    "pages": [
+      {
+        "id": "page-id-1",
+        "name": "Page 1",
+        "component": {
+          "type": "wrapper",
+          "components": [
+            {
+              "type": "image",
+              "src": "https://staging.comforta.yukon.software/media/calendar-page.png",
+              "style": {
+                "width": "100%",
+                "height": "auto",
+                "display": "block"
+              },
+              "attributes": {
+                "alt": "Sample Image"
+              },
+              "selectable": false
+            }
+          ]
+        }
+      }
+    ],
+    "styles": "",
+    "css": "",
+    "html": "",
+    "components": "",
+    "stylesheets": [],
+    "scripts": []
+  }

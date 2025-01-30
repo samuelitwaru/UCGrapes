@@ -83,3 +83,5 @@ const iconsData = [
       data-gjs-resizable="false"
       data-gjs-hoverable="false"
   `;
+
+let globalVar = null

@@ -1,0 +1,35 @@
+{
+  "PageId": "784c2d18-622f-43f3-bde1-7b00035d6a07",
+  "PageName": "Location",
+  "Content": [
+    {
+      "ContentType": "Image",
+      "ContentValue": "{{LocationImage}}"
+    },
+    {
+      "ContentType": "Description",
+      "ContentValue": "{{LocationDescription}}"
+    }
+  ],
+  "Cta": [
+    {
+        "CtaId": "9a8c1583-b2cf-4bd4-a075-8551a1b68610",
+        "CtaType": "Phone",
+        "CtaLabel": "Call Us",
+        "CtaAction": "{{LocationTelephone}}",
+        "CtaBGColor": "#5068a8",
+        "IsFullWidth": false,
+        "IsImageButton": false
+      },
+      {
+        "CtaId": "4af89c2a-073a-40d2-8cf3-2ff381e266cc",
+        "CtaType": "Email",
+        "CtaLabel": "Emal Us",
+        "CtaAction": "{{LocationEmail}}",
+        "CtaBGColor": "#5068a8",
+        "IsFullWidth": false,
+        "IsImageButton": false
+      }
+  ]
+}
+

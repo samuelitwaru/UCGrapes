@@ -55,7 +55,7 @@ class EditorManager {
     //   this.selectedComponent = null;
     //   this.selectedTemplateWrapper = null;
     // }
-    
+
     this.currentEditor = this.editors[editorId];
     this.activateFrame(editorId + "-frame");
     this.toolsSection.unDoReDo(this.currentEditor.editor);
@@ -80,7 +80,6 @@ class EditorManager {
     this.finalizeEditorSetup(editor, page, editorDetails);
   }
 
-
   setupEditorContainer(page) {
     const count = this.container.children.length;
     const editorId = `gjs-${count}`;
@@ -95,7 +94,7 @@ class EditorManager {
 
   generateEditorHTML(page, editorId) {
     const appBar = this.shouldShowAppBar(page)
-      ? this.createAppBarHTML(page.PageName)
+      ? this.createAppBarHTML(page.PageName, page.PageId)
       : "";
 
     return `
@@ -124,16 +123,13 @@ class EditorManager {
   }
 
   shouldShowAppBar(page) {
-    return (
-      page.PageIsContentPage ||
-      (page.PageIsPredefined && page.PageName !== "Home")
-    );
+    return page.PageIsContentPage || page.PageName !== "Home";
   }
 
-  createAppBarHTML(pageName) {
+  createAppBarHTML(pageName, pageId) {
     return `
       <div class="app-bar">
-          <svg id="content-back-button" xmlns="http://www.w3.org/2000/svg" id="Group_14" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
+          <svg id="back-button-${pageId}" class="content-back-button" xmlns="http://www.w3.org/2000/svg" id="Group_14" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
             <g id="Ellipse_6" data-name="Ellipse 6" fill="none" stroke="#262626" stroke-width="1">
               <circle cx="23.5" cy="23.5" r="23.5" stroke="none"/>
               <circle cx="23.5" cy="23.5" r="23" fill="none"/>
@@ -172,14 +168,14 @@ class EditorManager {
     });
   }
 
-  updatePageJSONContent(editor, page){
-    const PageGJSJson = editor.getProjectData()
-    this.dataManager.pages.SDT_PageCollection.map(p=>{
+  updatePageJSONContent(editor, page) {
+    const PageGJSJson = editor.getProjectData();
+    this.dataManager.pages.SDT_PageCollection.map((p) => {
       if (p.PageId == page.PageId) {
-        p.PageGJSJson = JSON.stringify(PageGJSJson)
+        p.PageGJSJson = JSON.stringify(PageGJSJson);
       }
-      return p
-    })
+      return p;
+    });
   }
 
   async loadEditorContent(editor, page) {
@@ -188,7 +184,7 @@ class EditorManager {
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
     }
-    this.updatePageJSONContent(editor, page)
+    this.updatePageJSONContent(editor, page);
   }
 
   async loadExistingContent(editor, page) {
@@ -197,8 +193,7 @@ class EditorManager {
 
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
-      }
-      else if (page.PageIsPredefined && page.PageName === "Reception") {
+      } else if (page.PageIsPredefined && page.PageName === "Reception") {
         editor.loadProjectData(pageData);
       } else if (page.PageIsContentPage) {
         editor.loadProjectData(pageData);
@@ -308,7 +303,7 @@ class EditorManager {
       if (canvas) {
         canvas.style.setProperty("height", "calc(100% - 100px)", "important");
       }
-      this.backButtonAction(containerId);
+      this.backButtonAction(containerId, page.PageId);
     }
   }
 
@@ -343,12 +338,25 @@ class EditorManager {
     );
   }
 
-  backButtonAction(editorContainerId) {
-    const backButton = document.getElementById("content-back-button");
+  backButtonAction(editorContainerId, pageId) {
+    const backButton = document.getElementById(`back-button-${pageId}`);
     if (backButton) {
       backButton.addEventListener("click", (e) => {
         e.preventDefault();
-        $("#" + editorContainerId).remove();
+        const currentContainer = document.getElementById(editorContainerId);
+        if (!currentContainer) return;
+
+        const frameList = currentContainer.parentElement;
+        const allFrames = Array.from(frameList.children);
+
+        const currentIndex = allFrames.indexOf(currentContainer);
+
+        allFrames.forEach((frame, index) => {
+          if (index >= currentIndex) {
+            frame.remove();
+          }
+        });
+
         this.editorEventManager.activateNavigators();
       });
     }

@@ -206,7 +206,7 @@ class MappingComponent {
             toggle.classList.add("tb-dropdown-toggle");
             toggle.setAttribute("role", "button");
             toggle.setAttribute("aria-expanded", "false");
-            const icon = item.IsContentPage ? 'fa-file' : 'fa-caret-right tree-icon'
+            const icon = 'fa-caret-right tree-icon'
             toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
   
         // const deleteIcon = document.createElement("i");

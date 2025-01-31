@@ -180,6 +180,8 @@ class EditorEventManager {
 
     this.editorManager.toolsSection.checkTileBgImage();
 
+    this.activateNavigators();
+
     this.updateUIState();
   }
 
@@ -211,8 +213,8 @@ class EditorEventManager {
     const nextButton = document.getElementById("scroll-right");
     const frames = document.querySelectorAll(".mobile-frame");
 
-    leftNavigator.style.display = "block";
-    rightNavigator.style.display = "block";
+    leftNavigator.style.display = "flex";
+    rightNavigator.style.display = "flex";
 
     const alignment =
       window.innerWidth <= 1440
@@ -237,9 +239,9 @@ class EditorEventManager {
 
     const updateButtonVisibility = () => {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-      prevButton.style.display = scrollLeft > 0 ? "block" : "none";
+      prevButton.style.display = scrollLeft > 0 ? "flex" : "none";
       nextButton.style.display =
-        scrollLeft + clientWidth < scrollWidth ? "block" : "none";
+        scrollLeft + clientWidth < scrollWidth ? "flex" : "none";
     };
 
     updateButtonVisibility();

@@ -207,34 +207,26 @@ button#open-mapping {
   margin: 10px;
 }
 
-.page-navigator-left button,
-.page-navigator-right button {
+span#scroll-left,
+span#scroll-right {
   background-color: white;
+  justify-content: center;
+  align-items: center;
   color: #5068a8;
   border: none;
   padding: 10px 15px;
   cursor: pointer;
   border-radius: 50%;
-  font-size: 16px;
+  font-size: 25px;
   width: 50px;
   height: 50px;
 }
 
-.page-navigator-left g:hover,
-.page-navigator-right g:hover {
-  fill: #222f54;
+span#scroll-left:hover,
+span#scroll-right:hover  {
+  background-color: #222f54;
+  color: #fff;
   cursor: pointer;
-}
-
-.page-navigator-left path:hover,
-.page-navigator-right path:hover {
-  /* fill: #fff; */
-  cursor: pointer;
-}
-
-.page-navigator-left:hover path,
-.page-navigator-right:hover path {
-  fill: #fff;
 }
 
 /* Mobile frame */
@@ -309,7 +301,7 @@ button#open-mapping {
   justify-content: center;
 }
 
-#content-back-button {
+.content-back-button {
   height: 40px;
   width: 40px;
   cursor: pointer;
@@ -838,8 +830,8 @@ h5#current-page-title {
 
 .tile-img-container {
   position: relative;
-  width: 48px;
-  height: 38px;
+  width: 45px;
+  height: 37px;
   background-color: #f0f0f0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #b4b9bd;

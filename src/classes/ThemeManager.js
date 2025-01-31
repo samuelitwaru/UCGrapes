@@ -599,6 +599,7 @@ class ThemeManager {
 
             if (iconComponent) {
               iconComponent.components(icon.IconSVG);
+              console.log(iconComponent)
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName

@@ -70,7 +70,6 @@ class ActionListComponent {
   }
 
   mapPageNamesToOptions(pages) {
-    alert("ActionListComponent init");
     const pageOptions = pages.map((page) => ({
       PageName: page.Name,
       PageId: page.Id,

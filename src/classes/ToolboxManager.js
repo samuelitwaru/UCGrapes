@@ -296,6 +296,10 @@ class ToolBoxManager {
                     delete currentStyles["background-image"];
                     templateBlock.setStyle(currentStyles);
                     tileImgContainer.style.display = "none";
+                    this.setAttributeToSelected(
+                      "tile-bg-image-url",
+                      "",
+                    );
                   }
                 }
               }            

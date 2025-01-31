@@ -444,8 +444,6 @@ class MediaComponent {
       console.log(templateBlock)
       templateBlock.addStyle({
         "background-image": `url(${this.selectedFile.MediaUrl})`,
-        // "background": "",
-        // "background-color": "",
         "background-size": "cover",
         "background-position": "center",
         "background-blend-mode": "overlay",
@@ -453,10 +451,6 @@ class MediaComponent {
       this.toolBoxManager.setAttributeToSelected(
         "tile-bg-image-url",
         this.selectedFile.MediaUrl
-      );
-      this.toolBoxManager.setAttributeToSelected(
-        "tile-bgcolor-name",
-        ""
       );
     }
 

@@ -70,7 +70,6 @@ class ActionListComponent {
   }
 
   mapPageNamesToOptions(pages) {
-    alert("ActionListComponent init");
     const pageOptions = pages.map((page) => ({
       PageName: page.Name,
       PageId: page.Id,
@@ -202,7 +201,7 @@ class ActionListComponent {
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
         }, ${item.textContent}`;
-        
+        const category = item.dataset.category
         const editor = this.editorManager.getCurrentEditor();
         const editorId = editor.getConfig().container;
         const editorContainerId = `${editorId}-frame`;
@@ -217,12 +216,10 @@ class ActionListComponent {
             );
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
-              `${item.closest(".category").dataset.category}, ${
-                item.textContent
-              }`
+              `${category}, ${item.textContent}`
             );
 
-            if (this.selectedObject == "Service/Product Page") {
+            if (category == "Service/Product Page") {
               this.createContentPage(item.id, editorContainerId);
             }else{
               $(editorContainerId).nextAll().remove();

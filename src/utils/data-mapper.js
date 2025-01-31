@@ -139,7 +139,6 @@ function mapContentToPageData(templateData, page) {
         // CTA buttons
         if (component.classes?.includes("cta-button-container")) {
             const ctaChildren = component.components || [];
-  
             ctaChildren.forEach((ctaChild) => {
                 const attributes = ctaChild.attributes || {};
                 if (ctaChild.classes?.includes("cta-container-child") || ctaChild.classes?.includes("img-button-container") || ctaChild.classes?.includes("plain-button-container")) {
@@ -165,6 +164,7 @@ function mapContentToPageData(templateData, page) {
         }
     });
   }
+  console.log(output)
   return output;
 }
 

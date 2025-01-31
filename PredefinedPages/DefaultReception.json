@@ -74,6 +74,9 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
+                                "classes": [
+                                  "content-page-wrapper"
+                                ],
                                 "attributes": { "id": "i2j2" },
                                 "_undoexc": ["status", "open"],
                                 "components": [

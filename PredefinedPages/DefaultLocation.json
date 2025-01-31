@@ -123,6 +123,9 @@
                                 "attributes": {
                                   "id": "i2j2"
                                 },
+                                "classes": [
+                                  "content-page-wrapper"
+                                ],
                                 "_undoexc": [
                                   "status",
                                   "open"

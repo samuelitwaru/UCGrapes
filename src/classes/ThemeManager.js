@@ -279,6 +279,10 @@ class ThemeManager {
             "tile-bgcolor-name",
             colorName
           );
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-bg-image-url",
+            "",
+          );
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"

@@ -117,34 +117,6 @@ class ToolBoxManager {
         PageIsPublished: true,
       };
     })
-    return editors
-      .map((editorData) => {
-        const pageId = editorData.pageId;
-        const editor = editorData.editor;
-        const page = this.dataManager.pages.SDT_PageCollection.find(
-          (page) => page.PageId == pageId
-        );
-
-        if (!pageId) return null;
-
-        const projectData = editor.getProjectData();
-        const htmlData = editor.getHtml();
-        const pageName = page.PageName;
-        const jsonData = page.PageIsContentPage
-          ? mapContentToPageData(projectData, page)
-          : mapTemplateToPageData(projectData, page);
-
-        return {
-          PageId: pageId,
-          PageName: pageName,
-          PageJsonContent: JSON.stringify(jsonData),
-          PageGJSHtml: htmlData,
-          PageGJSJson: JSON.stringify(projectData),
-          SDT_Page: jsonData,
-          PageIsPublished: true,
-        };
-      })
-      .filter(Boolean);
   }
 
   async sendPageUpdateRequest(pageDataList, isNotifyResidents) {
@@ -220,20 +192,6 @@ class ToolBoxManager {
         this.editorManager.currentEditor.editor.refresh();
       };
     }
-
-    // undoButton.addEventListener("click", (e) => {
-    //   e.preventDefault();
-    //   if (editorInstance === this.editorManager.currentEditor.editor && um.hasUndo()) {
-    //     um.undo();
-    //   }
-    // });
-
-    // redoButton.addEventListener("click", (e) => {
-    //   e.preventDefault();
-    //   if (editorInstance === this.editorManager.currentEditor.editor && um.hasRedo()) {
-    //     um.redo();
-    //   }
-    // });
   }
 
   checkIfNotAuthenticated(res) {

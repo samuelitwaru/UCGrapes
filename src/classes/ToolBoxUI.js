@@ -170,6 +170,15 @@ class ToolBoxUI {
       radio.checked =
         colorBox.getAttribute("data-tile-bgcolor") === currentBgColor;
     });
+
+    // opacity
+    const currentTileOpacity =
+      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        "tile-bg-image-opacity"
+      ];
+    
+    const imageOpacity = document.getElementById("bg-opacity");
+    imageOpacity.value = currentTileOpacity;
   }
 
   updateActionProperties() {

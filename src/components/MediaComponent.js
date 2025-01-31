@@ -452,6 +452,7 @@ class MediaComponent {
         "tile-bg-image-url",
         this.selectedFile.MediaUrl
       );
+      this.toolBoxManager.checkTileBgImage();
     }
 
     this.closeModal(modal, fileInputField);

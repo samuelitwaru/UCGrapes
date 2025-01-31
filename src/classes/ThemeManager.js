@@ -22,7 +22,8 @@ class ThemeManager {
     }
 
     this.toolBoxManager.currentTheme = theme;
-
+    console.log("theme", theme);
+    
     this.applyTheme();
 
     this.toolBoxManager.icons = theme.icons.map((icon) => {
@@ -178,7 +179,7 @@ class ThemeManager {
                 if (tileIconComponent) {
                   // get current icon color with null checks
                   const currentIconPath = tileIconComponent.find("path")?.[0];
-                  let currentIconColor = "#7c8791"; // default color
+                  let currentIconColor = "#fff"; // default color
                   if (currentIconPath && currentIconPath.getAttributes()) {
                     currentIconColor =
                       currentIconPath.getAttributes()["fill"] ||
@@ -598,8 +599,11 @@ class ThemeManager {
               )[0];
 
             if (iconComponent) {
-              iconComponent.components(icon.IconSVG);
-              console.log(iconComponent)
+              let iconSvgComponent = icon.IconSVG;
+              iconSvgComponent = iconSvgComponent.replace(/fill="[^"]*"/g, 'fill="white"');
+              
+              iconComponent.components(iconSvgComponent);
+
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName

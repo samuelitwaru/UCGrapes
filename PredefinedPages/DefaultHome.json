@@ -35,7 +35,8 @@
         "background-image": "url(https://staging.comforta.yukon.software/media/receptie-197@3x.png)",
         "background-size": "cover",
         "background-position": "center",
-        "color": "#ffffff"
+        "color": "#ffffff",
+        "background-blend-mode": "overlay"
       }
     },
     {
@@ -45,7 +46,8 @@
         "color": "#ffffff",
         "background-image": "url(https://staging.comforta.yukon.software/media/Calendar.png)",
         "background-size": "cover",
-        "background-position": "center"
+        "background-position": "center",
+        "background-blend-mode": "overlay"
       }
     },
     {
@@ -55,7 +57,8 @@
         "color": "#ffffff",
         "background-image": "url(https://staging.comforta.yukon.software/media/LocationInfo.png)",
         "background-size": "cover",
-        "background-position": "center"
+        "background-position": "center",
+        "background-blend-mode": "overlay"
       }
     },
     {

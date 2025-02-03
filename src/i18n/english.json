@@ -59,7 +59,8 @@
   "media_deleted_successfully": "Media file deleted successfully.",
   "error_creating_page": "An error occurred while creating the page.",
   "invalid_file_type_message": "Invalid file type. Please upload a valid image file.",
-  
+  "templates_only_added_to_menu_pages": "Templates can only be added to menu pages.",
+
   "tile-reception": "RECEPTION",
   "tile-mailbox": "MAILBOX",
   "tile-location": "LOCATION INFORMATION",

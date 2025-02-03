@@ -59,6 +59,7 @@
   "media_deleted_successfully": "Mediabestand succesvol verwijderd.",
   "error_creating_page": "Er is een fout opgetreden bij het aanmaken van de pagina.",
   "invalid_file_type_message": "Ongeldig bestandstype. Upload een geldig afbeeldingsbestand.",
+  "templates_only_added_to_menu_pages": "Sjablonen kunnen alleen aan menupagina's worden toegevoegd.",
 
   "tile-reception": "RECEPTIE",
   "tile-mailbox": "MAILBOX",

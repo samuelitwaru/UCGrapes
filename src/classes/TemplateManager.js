@@ -13,7 +13,8 @@ class TemplateManager {
   }
 
   createTemplateHTML(isDefault = false) {
-    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor
+    let tileBgColor =
+      this.editorManager.toolsSection.currentTheme.colors.accentColor;
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -201,7 +202,8 @@ class TemplateManager {
   }
 
   generateTemplateRow(columns, rowIndex) {
-    let tileBgColor = this.editorManager.toolsSection.currentTheme.colors.accentColor
+    let tileBgColor =
+      this.editorManager.toolsSection.currentTheme.colors.accentColor;
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -411,7 +413,26 @@ class TemplateManager {
   }
 
   addFreshTemplate(template) {
-    this.editorManager.currentEditor.editor.DomComponents.clear();
+    const currentEditor = this.editorManager.currentEditor;
+
+    const page = this.editorManager.getPage(currentEditor.pageId);
+    console.log(page);
+    if (
+      page &&
+      (page.PageIsContentPage ||
+        page.PageName === "Location" ||
+        page.PageName === "Reception" ||
+        page.PageName === "Mailbox" ||
+        page.PageName === "Calendar")
+    ) {
+      const message = this.currentLanguage.getTranslation(
+        "templates_only_added_to_menu_pages"
+      );
+      this.editorManager.toolsSection.ui.displayAlertMessage(message, "error");
+      return;
+    }
+
+    currentEditor.editor.DomComponents.clear();
     let fullTemplate = "";
 
     template.forEach((columns, rowIndex) => {
@@ -419,7 +440,7 @@ class TemplateManager {
       fullTemplate += templateRow;
     });
 
-    this.editorManager.currentEditor.editor.addComponents(`
+    currentEditor.editor.addComponents(`
       <div class="frame-container"
             id="frame-container"
             data-gjs-type="template-wrapper"
@@ -525,69 +546,69 @@ class TemplateManager {
   }
 
   updateRightButtons(containerRow) {
-      if (!containerRow) return;
+    if (!containerRow) return;
 
-      const templates = containerRow.components();
+    const templates = containerRow.components();
 
-      templates.forEach((template) => {
-          if (!template || !template.view || !template.view.el) return;
+    templates.forEach((template) => {
+      if (!template || !template.view || !template.view.el) return;
 
-          const rightButton = template.view.el.querySelector(".add-button-right");
-          if (!rightButton) return;
-          const rightButtonComponent = template.find(".add-button-right")[0];
+      const rightButton = template.view.el.querySelector(".add-button-right");
+      if (!rightButton) return;
+      const rightButtonComponent = template.find(".add-button-right")[0];
 
-          if (templates.length >= 3) {
-              rightButtonComponent.addStyle({
-                  display: "none"
-              });
-          } else {
-              rightButtonComponent.addStyle({
-                  display: "flex"
-              });
-          }
-      });
+      if (templates.length >= 3) {
+        rightButtonComponent.addStyle({
+          display: "none",
+        });
+      } else {
+        rightButtonComponent.addStyle({
+          display: "flex",
+        });
+      }
+    });
   }
 
   // updateRightButtons(containerRow) {
   //   if (!containerRow) return;
-  
+
   //   // Force a store update after attribute changes
   //   const editor = this.editorManager.currentEditor.editor;
-  
+
   //   // Check components length once outside the loop
   //   const totalComponents = containerRow.components().length;
   //   const isMaxComponents = totalComponents >= 3;
-  
+
   //   // Update container droppable state first
   //   containerRow.set(
   //     "droppable",
   //     isMaxComponents ? false : "false"
   //   );
-  
+
   //   containerRow.components().forEach((template) => {
   //     if (!template?.view?.el) return;
-  
+
   //     const rightButton = template.view.el.querySelector(".add-button-right");
   //     const rightButtonComponent = template.find(".add-button-right")[0];
   //     if (!rightButton || !rightButtonComponent) return;
-  
+
   //     // Update button visibility
   //     rightButtonComponent.addStyle({
   //       display: isMaxComponents ? "none" : "flex",
   //     });
   //   });
-  
+
   //   // Add visual feedback for droppable state
   //   if (isMaxComponents) {
   //     containerRow.addClass('container-max-components');
   //   } else {
   //     containerRow.removeClass('container-max-components');
   //   }
-  
+
   //   // Trigger updates
-  //   editor.trigger("change:component"); 
+  //   editor.trigger("change:component");
   //   editor.refresh();
-  //   containerRow.view.render(); 
+  //   containerRow.view.render();
   // }
 
   initialContentPageTemplate(contentPageData) {

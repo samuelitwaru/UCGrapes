@@ -594,7 +594,17 @@ class ThemeManager {
               )[0];
 
             if (iconComponent) {
-              iconComponent.components(icon.IconSVG);
+              const iconSvgComponent = icon.IconSVG;
+    
+              const whiteIconSvg = iconSvgComponent.replace('fill="#7c8791"', 'fill="white"');
+              
+              iconComponent.components(whiteIconSvg);
+
+              this.toolBoxManager.setAttributeToSelected(
+                  "tile-icon",
+                  icon.IconName
+              );
+
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName
@@ -616,4 +626,3 @@ class ThemeManager {
     renderIcons();
   }
 }
-

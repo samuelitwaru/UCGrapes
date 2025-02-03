@@ -22,8 +22,7 @@ class ThemeManager {
     }
 
     this.toolBoxManager.currentTheme = theme;
-    console.log("theme", theme);
-    
+
     this.applyTheme();
 
     this.toolBoxManager.icons = theme.icons.map((icon) => {
@@ -179,7 +178,7 @@ class ThemeManager {
                 if (tileIconComponent) {
                   // get current icon color with null checks
                   const currentIconPath = tileIconComponent.find("path")?.[0];
-                  let currentIconColor = "#fff"; // default color
+                  let currentIconColor = "#7c8791"; // default color
                   if (currentIconPath && currentIconPath.getAttributes()) {
                     currentIconColor =
                       currentIconPath.getAttributes()["fill"] ||
@@ -279,10 +278,6 @@ class ThemeManager {
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor-name",
             colorName
-          );
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-bg-image-url",
-            "",
           );
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -599,11 +594,7 @@ class ThemeManager {
               )[0];
 
             if (iconComponent) {
-              let iconSvgComponent = icon.IconSVG;
-              iconSvgComponent = iconSvgComponent.replace(/fill="[^"]*"/g, 'fill="white"');
-              
-              iconComponent.components(iconSvgComponent);
-
+              iconComponent.components(icon.IconSVG);
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName

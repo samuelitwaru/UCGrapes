@@ -704,7 +704,6 @@ class TemplateManager {
             this.editorManager.toolsSection.setAttributeToSelected("TileText", "")
           }
           if (sectionSelector = '.tile-icon-section') {
-            alert(sectionSelector)
             this.editorManager.toolsSection.setAttributeToSelected("tile-icon", "")
           }
         };

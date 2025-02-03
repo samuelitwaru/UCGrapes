@@ -700,6 +700,13 @@ class TemplateManager {
           this.editorManager.selectedComponent
             .find(sectionSelector)[0]
             .remove();
+          if (sectionSelector = '.tile-title-section') {
+            this.editorManager.toolsSection.setAttributeToSelected("TileText", "")
+          }
+          if (sectionSelector = '.tile-icon-section') {
+            alert(sectionSelector)
+            this.editorManager.toolsSection.setAttributeToSelected("tile-icon", "")
+          }
         };
       }
     }

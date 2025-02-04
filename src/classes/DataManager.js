@@ -1,4 +1,4 @@
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -7,6 +7,7 @@ class DataManager {
     this.media = media;
     this.pages = [];
     this.selectedTheme = null;    
+    this.loadingManager = new LoadingManager(document.getElementById('preloader'));
   }
 
   // Helper method to handle API calls
@@ -18,6 +19,8 @@ class DataManager {
     };
 
     try {
+      this.loadingManager.loading = true;
+
       const response = await fetch(`${baseURL}${endpoint}`, {
         ...defaultOptions,
         ...options,
@@ -31,7 +34,10 @@ class DataManager {
     } catch (error) {
       console.error(`API Error (${endpoint}):`, error);
       throw error;
-    }
+    } finally {
+      // Always set loading to false when done
+      this.loadingManager.loading = false;
+  }
   }
 
   // Pages API methods

@@ -1,23 +1,43 @@
 class LoadingManager {
-    constructor(preloaderElement) {
-        this.preloaderElement = preloaderElement;
-        this._loading = false;
+    constructor(preloaderElement, minDuration = 300) {
+      this.preloaderElement = preloaderElement;
+      this._loading = false;
+      this._startTime = 0;
+      this.minDuration = minDuration; // Minimum duration in milliseconds
+      this.transitionDuration = 200; // Duration of the fade transition
     }
-
+  
     get loading() {
-        return this._loading;
+      return this._loading;
     }
-
+  
     set loading(value) {
-        this._loading = value;
-        this.updatePreloaderVisibility();
+      this._loading = value;
+      if (value) {
+        this._startTime = performance.now();
+        this.showPreloader();
+      } else {
+        this.hidePreloader();
+      }
     }
-
-    updatePreloaderVisibility() {
-        if (this._loading) {
-            this.preloaderElement.style.display = 'flex';
-        } else {
-            this.preloaderElement.style.display = 'none';
-        }
+  
+    showPreloader() {
+      this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+      this.preloaderElement.style.opacity = '1';
     }
-}
+  
+    hidePreloader() {
+      const elapsedTime = performance.now() - this._startTime;
+      if (elapsedTime >= this.minDuration) {
+        this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+        this.preloaderElement.style.opacity = '0';
+        setTimeout(() => {
+          this.preloaderElement.style.display = 'none';
+        }, this.transitionDuration);
+      } else {
+        setTimeout(() => {
+          this.hidePreloader();
+        }, this.minDuration - elapsedTime);
+      }
+    }
+  }

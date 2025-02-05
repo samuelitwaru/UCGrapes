@@ -3,8 +3,8 @@ class LoadingManager {
     this.preloaderElement = preloaderElement;
     this._loading = false;
     this._startTime = 0;
-    this.minDuration = minDuration; // Minimum duration in milliseconds
-    this.transitionDuration = 200; // Duration of the fade transition
+    this.minDuration = minDuration;
+    this.transitionDuration = 200;
   }
 
   get loading() {
@@ -23,8 +23,10 @@ class LoadingManager {
 
   showPreloader() {
     this.preloaderElement.style.display = "flex";
-    this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
-    this.preloaderElement.style.opacity = "1";
+    requestAnimationFrame(() => {
+      this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+      this.preloaderElement.style.opacity = "1";
+    });
   }
 
   hidePreloader() {

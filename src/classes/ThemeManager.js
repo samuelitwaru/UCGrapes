@@ -564,7 +564,7 @@ class ThemeManager {
         iconItem.title = icon.IconName;
 
         const displayName = (() => {
-          const maxChars = 7;
+          const maxChars = 5;
           const words = icon.IconName.split(" ");
 
           if (words.length > 1) {

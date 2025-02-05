@@ -718,13 +718,18 @@ class TemplateManager {
       const closeEl = closeSection.getEl();
       if (closeEl) {
         closeEl.onclick = () => {
-          this.editorManager.selectedComponent
-            .find(sectionSelector)[0]
-            .remove();
-          if (sectionSelector = '.tile-title-section') {
+          // const component = this.editorManager.selectedComponent
+            // .find(sectionSelector)[0]
+          //   .remove();
+          if (sectionSelector === '.tile-title-section') {
+            const component = this.editorManager.selectedComponent.find(".tile-title")[0];
+            component.components("");
             this.editorManager.toolsSection.setAttributeToSelected("TileText", "")
+            $('#tile-title').val('');
           }
-          if (sectionSelector = '.tile-icon-section') {
+          else if (sectionSelector === '.tile-icon-section') {
+            const component = this.editorManager.selectedComponent.find(".tile-icon")[0];
+            component.components("");
             this.editorManager.toolsSection.setAttributeToSelected("tile-icon", "")
           }
         };

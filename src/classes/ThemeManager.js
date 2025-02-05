@@ -594,9 +594,17 @@ class ThemeManager {
               )[0];
 
             if (iconComponent) {
-              // this.changeIconFillColorToWhite(icon.IconSVG);
-              iconComponent.components(this.changeIconFillColorToWhite(icon.IconSVG));
-              // console.log(icon.IconSVG)
+              const iconSvgComponent = icon.IconSVG;
+    
+              const whiteIconSvg = iconSvgComponent.replace('fill="#7c8791"', 'fill="white"');
+              
+              iconComponent.components(whiteIconSvg);
+
+              this.toolBoxManager.setAttributeToSelected(
+                  "tile-icon",
+                  icon.IconName
+              );
+
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName
@@ -617,16 +625,4 @@ class ThemeManager {
 
     renderIcons();
   }
-
-  changeIconFillColorToWhite(iconSVG) {
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(iconSVG, "image/svg+xml");
-    const pathElement = svgDoc.querySelector("path");
-    if (pathElement) {
-      pathElement.setAttribute("fill", "#FFFFFF");
-    }
-    const serializer = new XMLSerializer();
-    return serializer.serializeToString(svgDoc);
-  }
 }
-

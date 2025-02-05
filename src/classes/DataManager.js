@@ -11,38 +11,44 @@ class DataManager {
   }
 
   // Helper method to handle API calls
-  async fetchAPI(endpoint, options = {}) {
+  async fetchAPI(endpoint, options = {}, skipLoading = false) {
     const defaultOptions = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
+  
+    console.log("skip loading is " + skipLoading);
 
     try {
-      this.loadingManager.loading = true;
-
+      if (!skipLoading) {
+        this.loadingManager.loading = true;
+      }
+  
       const response = await fetch(`${baseURL}${endpoint}`, {
         ...defaultOptions,
         ...options,
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       return await response.json();
     } catch (error) {
       console.error(`API Error (${endpoint}):`, error);
       throw error;
     } finally {
-      // Always set loading to false when done
-      this.loadingManager.loading = false;
+      if (!skipLoading) {
+        this.loadingManager.loading = false;
+      }
+    }
   }
-  }
+  
 
   // Pages API methods
   async getPages() {
-    this.pages = await this.fetchAPI('/api/toolbox/pages/list');
+    this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
     return this.pages;
   }
 
@@ -70,7 +76,7 @@ class DataManager {
     return await this.fetchAPI('/api/toolbox/update-page', {
       method: 'POST',
       body: JSON.stringify(data),
-    });
+    }, true); // Pass true to skip loading
   }
 
   async updatePagesBatch(payload) {

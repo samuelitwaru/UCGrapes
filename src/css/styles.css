@@ -1216,10 +1216,9 @@ h5#current-page-title {
 }
 
 .file-item img {
-  height: 75px;
+  height: 65px;
   width: 100px;
   margin-right: 10px;
-  object-fit: contain;
 }
 
 .file-item .file-info {
@@ -1735,6 +1734,7 @@ h5#current-page-title {
 }
 
 .preloader {
+  opacity: 0; /* Add this line */
   position: fixed;
   top: 0;
   left: 0;
@@ -1751,7 +1751,7 @@ h5#current-page-title {
   width: 50px;
   height: 50px;
   border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
+  border-top: 5px solid #222f54;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

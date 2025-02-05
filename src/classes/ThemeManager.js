@@ -322,13 +322,22 @@ class ThemeManager {
       textColorPaletteContainer.appendChild(alignItem);
 
       radioInput.onclick = () => {
-        this.toolBoxManager.editorManager.selectedComponent.addStyle({
-          color: colorValue,
-        });
-        this.toolBoxManager.setAttributeToSelected(
-          "tile-text-color",
-          colorValue
-        );
+        const selectedComponent =
+          this.toolBoxManager.editorManager.selectedComponent;
+        if (selectedComponent) {
+          selectedComponent.addStyle({
+            color: colorValue,
+          });
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-text-color",
+            colorValue
+          );
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
+        }
       };
     });
 
@@ -354,22 +363,29 @@ class ThemeManager {
       iconColorPaletteContainer.appendChild(alignItem);
 
       radioInput.onclick = () => {
-        const svgIcon =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon path"
-          )[0];
-        if (svgIcon) {
-          svgIcon.removeAttributes("fill");
-          svgIcon.addAttributes({
-            fill: colorValue,
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-color",
-            colorValue
-          );
+        const selectedComponent =
+          this.toolBoxManager.editorManager.selectedComponent;
+
+        if (selectedComponent) {
+          const svgIcon = selectedComponent.find(".tile-icon path")[0];
+          if (svgIcon) {
+            svgIcon.removeAttributes("fill");
+            svgIcon.addAttributes({
+              fill: colorValue,
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-icon-color",
+              colorValue
+            );
+          } else {
+            const message = this.toolBoxManager.currentLanguage.getTranslation(
+              "no_icon_selected_error_message"
+            );
+            this.toolBoxManager.ui.displayAlertMessage(message, "error");
+          }
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
-            "no_icon_selected_error_message"
+            "no_tile_selected_error_message"
           );
           this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
@@ -595,11 +611,14 @@ class ThemeManager {
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
-              const whiteIconSvg = iconSvgComponent.replace('fill="#7c8791"', 'fill="white"');
+              const whiteIconSvg = iconSvgComponent.replace(
+                'fill="#7c8791"',
+                'fill="white"'
+              );
               iconComponent.components(whiteIconSvg);
               this.toolBoxManager.setAttributeToSelected(
-                  "tile-icon",
-                  icon.IconName
+                "tile-icon",
+                icon.IconName
               );
 
               this.toolBoxManager.setAttributeToSelected(

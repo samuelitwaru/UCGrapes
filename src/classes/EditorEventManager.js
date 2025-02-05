@@ -9,7 +9,7 @@ class EditorEventManager {
     this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
-    this.editorOnUpdate(editor, page)
+    this.editorOnUpdate(editor, page);
   }
 
   setupKeyboardBindings(editor) {
@@ -25,12 +25,22 @@ class EditorEventManager {
   }
 
   handleEditorLoad(editor) {
-    this.loadTheme()
+    this.loadTheme();
     const wrapper = editor.getWrapper();
-    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(editor)
-    wrapper.view.el.addEventListener("click", (e) =>
-      this.handleEditorClick(e, editor)
+    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
+      editor
     );
+    wrapper.view.el.addEventListener("click", (e) => {
+      const previousSelected = this.editorManager.currentEditor.editor.getSelected();
+      if(previousSelected) {
+        this.editorManager.currentEditor.editor.selectRemove(previousSelected);
+        this.editorManager.selectedComponent = null;
+        this.editorManager.selectedTemplateWrapper = null;
+        console.log(this.editorManager.currentEditor.editor.getSelected());
+      }
+
+      this.handleEditorClick(e, editor);
+    });
   }
 
   loadTheme() {
@@ -110,8 +120,8 @@ class EditorEventManager {
   }
 
   editorOnUpdate(editor, page) {
-    editor.on('update', () => {
-      this.editorManager.updatePageJSONContent(editor, page)
+    editor.on("update", () => {
+      this.editorManager.updatePageJSONContent(editor, page);
     });
   }
 
@@ -257,8 +267,10 @@ class EditorEventManager {
 
     if (!this.editorManager.currentEditor) return;
 
-    const undoRedoManager = new UndoRedoManager(this.editorManager.currentEditor.editor);
-    
+    const undoRedoManager = new UndoRedoManager(
+      this.editorManager.currentEditor.editor
+    );
+
     // Update button states
     if (undoBtn) {
       undoBtn.disabled = !undoRedoManager.canUndo();
@@ -274,4 +286,3 @@ class EditorEventManager {
     }
   }
 }
-

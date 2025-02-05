@@ -154,8 +154,8 @@ class ActionListComponent {
         !dropdownMenu.contains(event.target)
       ) {
         dropdownMenu.style.display = "none";
-        dropdownHeader.querySelector("i").classList.remove("fa-angle-up");
-        dropdownHeader.querySelector("i").classList.add("fa-angle-down");
+        dropdownHeader.querySelector("i")?.classList.remove("fa-angle-up");
+        dropdownHeader.querySelector("i")?.classList.add("fa-angle-down");
       }
     });
   }

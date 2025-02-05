@@ -20,6 +20,7 @@ const files = [
     "components/MediaComponent.js",
     "classes/ImageCropper.js",
     "utils/defaults.js",
+    "utils/helper.js",
 ];
 
 

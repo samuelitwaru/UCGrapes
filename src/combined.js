@@ -210,6 +210,52 @@ class Locale {
 }
 
 
+// Content from classes/LoadingManager.js
+class LoadingManager {
+  constructor(preloaderElement, minDuration = 300) {
+    this.preloaderElement = preloaderElement;
+    this._loading = false;
+    this._startTime = 0;
+    this.minDuration = minDuration; // Minimum duration in milliseconds
+    this.transitionDuration = 200; // Duration of the fade transition
+  }
+
+  get loading() {
+    return this._loading;
+  }
+
+  set loading(value) {
+    this._loading = value;
+    if (value) {
+      this._startTime = performance.now();
+      this.showPreloader();
+    } else {
+      this.hidePreloader();
+    }
+  }
+
+  showPreloader() {
+    this.preloaderElement.style.display = "flex";
+    this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+    this.preloaderElement.style.opacity = "1";
+  }
+
+  hidePreloader() {
+    const elapsedTime = performance.now() - this._startTime;
+    if (elapsedTime >= this.minDuration) {
+      this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+      this.preloaderElement.style.opacity = "0";
+      setTimeout(() => {
+        this.preloaderElement.style.display = "none";
+      }, this.transitionDuration);
+    } else {
+      setTimeout(() => {
+        this.hidePreloader();
+      }, this.minDuration - elapsedTime);
+    }
+  }
+}
+
 // Content from classes/DataManager.js
 const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -219,37 +265,49 @@ class DataManager {
     this.services = services;
     this.media = media;
     this.pages = [];
-    this.selectedTheme = null;    
+    this.selectedTheme = null;
+    this.loadingManager = new LoadingManager(document.getElementById('preloader'));
   }
 
   // Helper method to handle API calls
-  async fetchAPI(endpoint, options = {}) {
+  async fetchAPI(endpoint, options = {}, skipLoading = false) {
     const defaultOptions = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
+  
+    console.log("skip loading is " + skipLoading);
 
     try {
+      if (!skipLoading) {
+        this.loadingManager.loading = true;
+      }
+  
       const response = await fetch(`${baseURL}${endpoint}`, {
         ...defaultOptions,
         ...options,
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       return await response.json();
     } catch (error) {
       console.error(`API Error (${endpoint}):`, error);
       throw error;
+    } finally {
+      if (!skipLoading) {
+        this.loadingManager.loading = false;
+      }
     }
   }
+  
 
   // Pages API methods
   async getPages() {
-    this.pages = await this.fetchAPI('/api/toolbox/pages/list');
+    this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
     return this.pages;
   }
 
@@ -277,7 +335,7 @@ class DataManager {
     return await this.fetchAPI('/api/toolbox/update-page', {
       method: 'POST',
       body: JSON.stringify(data),
-    });
+    }, true); // Pass true to skip loading
   }
 
   async updatePagesBatch(payload) {

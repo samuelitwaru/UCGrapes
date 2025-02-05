@@ -4,6 +4,7 @@ const path = require('path');
 const files = [
     "classes/Clock.js",
     "classes/Locale.js",
+    "classes/LoadingManager.js",
     "classes/DataManager.js",
     "classes/EditorManager.js",
     "classes/EditorEventManager.js",

@@ -1,4 +1,4 @@
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -6,7 +6,7 @@ class DataManager {
     this.services = services;
     this.media = media;
     this.pages = [];
-    this.selectedTheme = null;    
+    this.selectedTheme = null;
     this.loadingManager = new LoadingManager(document.getElementById('preloader'));
   }
 

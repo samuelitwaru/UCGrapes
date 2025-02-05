@@ -595,11 +595,8 @@ class ThemeManager {
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
-    
               const whiteIconSvg = iconSvgComponent.replace('fill="#7c8791"', 'fill="white"');
-              
               iconComponent.components(whiteIconSvg);
-
               this.toolBoxManager.setAttributeToSelected(
                   "tile-icon",
                   icon.IconName

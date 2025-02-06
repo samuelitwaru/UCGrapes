@@ -216,8 +216,8 @@ class LoadingManager {
     this.preloaderElement = preloaderElement;
     this._loading = false;
     this._startTime = 0;
-    this.minDuration = minDuration; // Minimum duration in milliseconds
-    this.transitionDuration = 200; // Duration of the fade transition
+    this.minDuration = minDuration;
+    this.transitionDuration = 200;
   }
 
   get loading() {
@@ -236,8 +236,10 @@ class LoadingManager {
 
   showPreloader() {
     this.preloaderElement.style.display = "flex";
-    this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
-    this.preloaderElement.style.opacity = "1";
+    requestAnimationFrame(() => {
+      this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+      this.preloaderElement.style.opacity = "1";
+    });
   }
 
   hidePreloader() {
@@ -257,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -797,7 +799,7 @@ class EditorEventManager {
     this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
-    this.editorOnUpdate(editor, page)
+    this.editorOnUpdate(editor, page);
   }
 
   setupKeyboardBindings(editor) {
@@ -813,12 +815,22 @@ class EditorEventManager {
   }
 
   handleEditorLoad(editor) {
-    this.loadTheme()
+    this.loadTheme();
     const wrapper = editor.getWrapper();
-    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(editor)
-    wrapper.view.el.addEventListener("click", (e) =>
-      this.handleEditorClick(e, editor)
+    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
+      editor
     );
+    wrapper.view.el.addEventListener("click", (e) => {
+      const previousSelected = this.editorManager.currentEditor.editor.getSelected();
+      if(previousSelected) {
+        this.editorManager.currentEditor.editor.selectRemove(previousSelected);
+        this.editorManager.selectedComponent = null;
+        this.editorManager.selectedTemplateWrapper = null;
+        console.log(this.editorManager.currentEditor.editor.getSelected());
+      }
+
+      this.handleEditorClick(e, editor);
+    });
   }
 
   loadTheme() {
@@ -898,8 +910,8 @@ class EditorEventManager {
   }
 
   editorOnUpdate(editor, page) {
-    editor.on('update', () => {
-      this.editorManager.updatePageJSONContent(editor, page)
+    editor.on("update", () => {
+      this.editorManager.updatePageJSONContent(editor, page);
     });
   }
 
@@ -1045,8 +1057,10 @@ class EditorEventManager {
 
     if (!this.editorManager.currentEditor) return;
 
-    const undoRedoManager = new UndoRedoManager(this.editorManager.currentEditor.editor);
-    
+    const undoRedoManager = new UndoRedoManager(
+      this.editorManager.currentEditor.editor
+    );
+
     // Update button states
     if (undoBtn) {
       undoBtn.disabled = !undoRedoManager.canUndo();
@@ -1062,7 +1076,6 @@ class EditorEventManager {
     }
   }
 }
-
 
 
 // Content from classes/TemplateManager.js
@@ -2852,13 +2865,22 @@ class ThemeManager {
       textColorPaletteContainer.appendChild(alignItem);
 
       radioInput.onclick = () => {
-        this.toolBoxManager.editorManager.selectedComponent.addStyle({
-          color: colorValue,
-        });
-        this.toolBoxManager.setAttributeToSelected(
-          "tile-text-color",
-          colorValue
-        );
+        const selectedComponent =
+          this.toolBoxManager.editorManager.selectedComponent;
+        if (selectedComponent) {
+          selectedComponent.addStyle({
+            color: colorValue,
+          });
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-text-color",
+            colorValue
+          );
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
+        }
       };
     });
 
@@ -2884,22 +2906,29 @@ class ThemeManager {
       iconColorPaletteContainer.appendChild(alignItem);
 
       radioInput.onclick = () => {
-        const svgIcon =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon path"
-          )[0];
-        if (svgIcon) {
-          svgIcon.removeAttributes("fill");
-          svgIcon.addAttributes({
-            fill: colorValue,
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-color",
-            colorValue
-          );
+        const selectedComponent =
+          this.toolBoxManager.editorManager.selectedComponent;
+
+        if (selectedComponent) {
+          const svgIcon = selectedComponent.find(".tile-icon path")[0];
+          if (svgIcon) {
+            svgIcon.removeAttributes("fill");
+            svgIcon.addAttributes({
+              fill: colorValue,
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-icon-color",
+              colorValue
+            );
+          } else {
+            const message = this.toolBoxManager.currentLanguage.getTranslation(
+              "no_icon_selected_error_message"
+            );
+            this.toolBoxManager.ui.displayAlertMessage(message, "error");
+          }
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
-            "no_icon_selected_error_message"
+            "no_tile_selected_error_message"
           );
           this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
@@ -3094,7 +3123,7 @@ class ThemeManager {
         iconItem.title = icon.IconName;
 
         const displayName = (() => {
-          const maxChars = 7;
+          const maxChars = 5;
           const words = icon.IconName.split(" ");
 
           if (words.length > 1) {
@@ -3125,11 +3154,14 @@ class ThemeManager {
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
-              const whiteIconSvg = iconSvgComponent.replace('fill="#7c8791"', 'fill="white"');
+              const whiteIconSvg = iconSvgComponent.replace(
+                'fill="#7c8791"',
+                'fill="white"'
+              );
               iconComponent.components(whiteIconSvg);
               this.toolBoxManager.setAttributeToSelected(
-                  "tile-icon",
-                  icon.IconName
+                "tile-icon",
+                icon.IconName
               );
 
               this.toolBoxManager.setAttributeToSelected(

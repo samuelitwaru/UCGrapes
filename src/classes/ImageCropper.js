@@ -6,19 +6,12 @@ class ImageCropper {
         this.ctx = this.canvas.getContext('2d');
     }
 
-    /**
-     * Crop image from either File or URL
-     * @param {File|string} source - Image file or URL
-     * @returns {Promise<Blob>} - Promise resolving to cropped image blob
-     */
-    async cropImage(source) {
+    async processImage(source) {
         try {
             let img;
             if (typeof source === 'string') {
-                // Handle URL
                 img = await this.loadImageFromURL(source);
             } else if (source instanceof File) {
-                // Handle File object
                 if (!source.type.startsWith('image/')) {
                     throw new Error('File must be an image');
                 }
@@ -28,22 +21,19 @@ class ImageCropper {
                 throw new Error('Source must be either a File or URL string');
             }
 
-            // Get the original file type or default to 'image/jpeg'
-            const fileType = source instanceof File ? source.type : 'image/jpeg';
-            return this.cropAndResize(img, fileType);
+            if (img.width <= this.targetWidth && img.height <= this.targetHeight) {
+                return source instanceof File ? source : this.dataURLToBlob(img.src);
+            }
+            
+            return this.resizeImage(img, source instanceof File ? source.type : 'image/jpeg');
         } catch (error) {
-            throw new Error(`Failed to crop image: ${error.message}`);
+            throw new Error(`Failed to process image: ${error.message}`);
         }
     }
 
-    /**
-     * Load image from URL
-     * @private
-     */
     loadImageFromURL(url) {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            // Handle CORS issues
             img.crossOrigin = 'anonymous';
             img.onload = () => resolve(img);
             img.onerror = () => reject(new Error('Failed to load image from URL'));
@@ -51,10 +41,6 @@ class ImageCropper {
         });
     }
 
-    /**
-     * Read file as Data URL
-     * @private
-     */
     readFileAsDataURL(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -64,10 +50,6 @@ class ImageCropper {
         });
     }
 
-    /**
-     * Load image from Data URL
-     * @private
-     */
     loadImage(dataUrl) {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -77,41 +59,26 @@ class ImageCropper {
         });
     }
 
-    /**
-     * Crop and resize image maintaining aspect ratio
-     * @private
-     */
-    cropAndResize(img, fileType) {
+    resizeImage(img, fileType) {
         this.canvas.width = this.targetWidth;
         this.canvas.height = this.targetHeight;
-
-        const sourceAspect = img.width / img.height;
-        const targetAspect = this.targetWidth / this.targetHeight;
         
-        let sw, sh, sx, sy;
-        if (sourceAspect > targetAspect) {
-            sh = img.height;
-            sw = sh * targetAspect;
-            sy = 0;
-            sx = (img.width - sw) / 2;
-        } else {
-            sw = img.width;
-            sh = sw / targetAspect;
-            sx = 0;
-            sy = (img.height - sh) / 2;
-        }
-
-        this.ctx.drawImage(img, sx, sy, sw, sh, 0, 0, this.targetWidth, this.targetHeight);
-
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(img, 0, 0, this.targetWidth, this.targetHeight);
+        
         return new Promise((resolve) => {
             this.canvas.toBlob((blob) => resolve(blob), fileType);
         });
     }
 
-    /**
-     * Get the cropped image as a Data URL
-     */
-    getDataURL() {
-        return this.canvas.toDataURL();
+    dataURLToBlob(dataURL) {
+        const byteString = atob(dataURL.split(",")[1]);
+        const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0];
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([arrayBuffer], { type: mimeString });
     }
 }

@@ -18,8 +18,6 @@ class DataManager {
       },
     };
   
-    console.log("skip loading is " + skipLoading);
-
     try {
       if (!skipLoading) {
         this.loadingManager.loading = true;

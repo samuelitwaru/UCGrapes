@@ -30,13 +30,13 @@ class EditorEventManager {
     this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
       editor
     );
+
     wrapper.view.el.addEventListener("click", (e) => {
       const previousSelected = this.editorManager.currentEditor.editor.getSelected();
       if(previousSelected) {
         this.editorManager.currentEditor.editor.selectRemove(previousSelected);
         this.editorManager.selectedComponent = null;
         this.editorManager.selectedTemplateWrapper = null;
-        console.log(this.editorManager.currentEditor.editor.getSelected());
       }
 
       this.handleEditorClick(e, editor);
@@ -47,6 +47,8 @@ class EditorEventManager {
     this.editorManager.toolsSection.themeManager.setTheme(
       this.editorManager.theme.ThemeName
     );
+
+    this.editorManager.toolsSection.themeManager.listThemesInSelectField();
   }
 
   handleEditorClick(e, editor) {

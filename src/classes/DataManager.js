@@ -143,7 +143,7 @@ class DataManager {
         MediaSize: fileSize,
         MediaType: fileType,
       }),
-    });
+    }, true);
   }
 
   // Content API methods

@@ -545,7 +545,7 @@ class ToolBoxUI {
 
   activateCtaBtnStyles(selectedCtaComponent) {
     if (selectedCtaComponent) {
-      const isCtaButtonSelected = selectedCtaComponent.findType(".cta-buttons");
+      const isCtaButtonSelected = selectedCtaComponent.findType("cta-buttons");
       if (isCtaButtonSelected) {
         document.querySelector(".cta-button-layout-container").style.display =
           "flex";
@@ -562,6 +562,9 @@ class ToolBoxUI {
       if (noCtaDisplayMessage) {
         noCtaDisplayMessage.style.display = "block";
       }
+
+      document.querySelector(".cta-button-layout-container").style.display =
+          "none";
     }
   }
 }

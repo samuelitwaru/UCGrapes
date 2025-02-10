@@ -644,6 +644,7 @@ class EditorManager {
       }
 
       await this.updateContentPageElements(editor, contentPageData);
+      await this.updateEditorCtaButtons(editor, contentPageData);
     } catch (error) {
       console.error("Error loading content page data:", error);
     }
@@ -692,6 +693,26 @@ class EditorManager {
         }
       }
     }
+  }
+
+  async updateEditorCtaButtons (editor, contentPageData) {
+    const wrapper = editor.DomComponents.getWrapper();
+    const ctaContainer = wrapper.find(".cta-button-container")[0];
+    if (ctaContainer) {
+      console.log("ctaContainer: ", ctaContainer)
+      const ctaButtons = ctaContainer.findType("cta-buttons");
+      if (ctaButtons.length > 0) {
+        console.log("contentPageData: ", ctaButtons);
+        ctaButtons.forEach((ctaButton) => {
+          const ctaButtonId  = ctaButton.getAttributes()?.["cta-button-id"];
+          // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton 
+          if (!contentPageData?.CallToActions?.some((cta) => cta.CallToActionId === ctaButtonId)){
+            ctaButton.remove();
+          }
+        });
+      }
+    }
+    
   }
 
   async loadNewContentPage(editor, page) {
@@ -2520,7 +2541,6 @@ class ThemeManager {
   }
 
   setTheme(themeName) {
-    console.log("Theme name: ",  themeName);
     const theme = this.toolBoxManager.themes.find(
       (theme) => theme.ThemeName === themeName
     );
@@ -3670,7 +3690,7 @@ class ToolBoxUI {
 
   activateCtaBtnStyles(selectedCtaComponent) {
     if (selectedCtaComponent) {
-      const isCtaButtonSelected = selectedCtaComponent.findType(".cta-buttons");
+      const isCtaButtonSelected = selectedCtaComponent.findType("cta-buttons");
       if (isCtaButtonSelected) {
         document.querySelector(".cta-button-layout-container").style.display =
           "flex";
@@ -3687,6 +3707,9 @@ class ToolBoxUI {
       if (noCtaDisplayMessage) {
         noCtaDisplayMessage.style.display = "block";
       }
+
+      document.querySelector(".cta-button-layout-container").style.display =
+          "none";
     }
   }
 }

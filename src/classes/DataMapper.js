@@ -18,7 +18,7 @@ class DataMapper {
           row.components.forEach(tile => {
             outputData.Rows.push(this.getTileData(tile))
           })
-          // outputData.Rows.push(rowTiles)
+          outputData.Rows.push(rowTiles)
         })
 
       console.log(outputData)

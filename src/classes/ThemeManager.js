@@ -622,6 +622,11 @@ class ThemeManager {
                 "tile-icon",
                 icon.IconName
               );
+
+              this.toolBoxManager.setAttributeToSelected(
+                "tile-icon-color",
+                "#ffffff"
+              );
             }
           } else {
             const message = this.toolBoxManager.currentLanguage.getTranslation(

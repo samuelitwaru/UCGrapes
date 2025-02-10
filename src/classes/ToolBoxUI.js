@@ -225,6 +225,8 @@ class ToolBoxUI {
     const ctaItem = document.createElement("div");
     ctaItem.classList.add("call-to-action-item");
     ctaItem.title = cta.CallToActionName;
+    ctaItem.id = cta.CallToActionId;
+    ctaItem.setAttribute("data-cta-id", cta.CallToActionId);
 
     const ctaType = this.getCtaType(cta.CallToActionType);
     ctaItem.innerHTML = `<i class="${ctaType.icon}"></i>`;

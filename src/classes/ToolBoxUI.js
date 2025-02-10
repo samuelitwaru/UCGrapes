@@ -207,10 +207,12 @@ class ToolBoxUI {
 
   pageContentCtas(callToActions, editorInstance) {
     if (callToActions == null || callToActions.length <= 0) {
-      console.log(callToActions);
       this.noCtaSection();
     } else {
       const contentPageCtas = document.getElementById("call-to-actions");
+      document.getElementById("cta-style").style.display = "flex";
+      document.getElementById("no-cta-message").style.display = "none";
+      
       this.renderCtas(callToActions, editorInstance, contentPageCtas);
       this.setupButtonLayoutListeners(editorInstance);
       this.setupBadgeClickListener(editorInstance);
@@ -551,16 +553,15 @@ class ToolBoxUI {
     }
   }
 
-  noCtaSection(page) {
-    const contentPageSection = document.getElementById("content-page-section");
+  noCtaSection() {
+    const contentPageSection = document.getElementById("cta-style");
     if (contentPageSection) {
-      contentPageSection.innerHTML = "";
-      const noCtaMessage = document.createElement("p");
-      noCtaMessage.innerHTML = "No CTA section found for this service.";
-      noCtaMessage.style.color = "#ccc";
-      noCtaMessage.style.textAlign = "center";
-      noCtaMessage.style.fontStyle = "italic";
-      contentPageSection.appendChild(noCtaMessage);
+      contentPageSection.style.display = "none";
+      document.getElementById("call-to-actions").innerHTML = "";
+      const noCtaDisplayMessage = document.getElementById("no-cta-message");
+      if (noCtaDisplayMessage) {
+        noCtaDisplayMessage.style.display = "block";
+      }
     }
   }
 }

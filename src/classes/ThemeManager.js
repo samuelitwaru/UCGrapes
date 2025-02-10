@@ -13,10 +13,12 @@ class ThemeManager {
 
   setTheme(themeName) {
     const theme = this.toolBoxManager.themes.find(
-      (theme) => theme.name === themeName
+      (theme) => theme.ThemeName === themeName
     );
+
     const select = document.querySelector(".tb-custom-theme-selection");
     select.querySelector(".selected-theme-value").textContent = themeName;
+    
     if (!theme) {
       return false;
     }
@@ -25,117 +27,72 @@ class ThemeManager {
 
     this.applyTheme();
 
-    this.toolBoxManager.icons = theme.icons.map((icon) => {
+    this.toolBoxManager.icons = theme.ThemeIcons.map((icon) => {
       return {
         name: icon.IconName,
         svg: icon.IconSVG,
         category: icon.IconCategory,
       };
     });
-    this.loadThemeIcons(theme.icons);
+    this.loadThemeIcons(theme.ThemeIcons);
 
-    this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
+    this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
     localStorage.setItem("selectedTheme", themeName);
 
     this.applyThemeIconsAndColor(themeName);
+    // this.updatePageTitleFontFamily(theme.fontFamily)
 
     this.listThemesInSelectField();
     return true;
   }
 
   applyTheme() {
-    const root = document.documentElement;
     const iframes = document.querySelectorAll(".mobile-frame iframe");
 
     if (!iframes.length) return;
 
-    root.style.setProperty(
-      "--primary-color",
-      this.toolBoxManager.currentTheme.colors.primaryColor
-    );
-    root.style.setProperty(
-      "--secondary-color",
-      this.toolBoxManager.currentTheme.colors.secondaryColor
-    );
-    root.style.setProperty(
-      "--background-color",
-      this.toolBoxManager.currentTheme.colors.backgroundColor
-    );
-    root.style.setProperty(
-      "--text-color",
-      this.toolBoxManager.currentTheme.colors.textColor
-    );
-    root.style.setProperty(
-      "--button-bg-color",
-      this.toolBoxManager.currentTheme.colors.buttonBgColor
-    );
-    root.style.setProperty(
-      "--button-text-color",
-      this.toolBoxManager.currentTheme.colors.buttonTextColor
-    );
-    root.style.setProperty(
-      "--card-bg-color",
-      this.toolBoxManager.currentTheme.colors.cardBgColor
-    );
-    root.style.setProperty(
-      "--card-text-color",
-      this.toolBoxManager.currentTheme.colors.cardTextColor
-    );
-    root.style.setProperty(
-      "--accent-color",
-      this.toolBoxManager.currentTheme.colors.accentColor
-    );
-    root.style.setProperty(
-      "--font-family",
-      this.toolBoxManager.currentTheme.fontFamily
-    );
-
     iframes.forEach((iframe) => {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-      if (iframeDoc && iframeDoc.body) {
-        iframeDoc.body.style.setProperty(
-          "--primary-color",
-          this.toolBoxManager.currentTheme.colors.primaryColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--secondary-color",
-          this.toolBoxManager.currentTheme.colors.secondaryColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--background-color",
-          this.toolBoxManager.currentTheme.colors.backgroundColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--text-color",
-          this.toolBoxManager.currentTheme.colors.textColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--button-bg-color",
-          this.toolBoxManager.currentTheme.colors.buttonBgColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--button-text-color",
-          this.toolBoxManager.currentTheme.colors.buttonTextColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--card-bg-color",
-          this.toolBoxManager.currentTheme.colors.cardBgColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--card-text-color",
-          this.toolBoxManager.currentTheme.colors.cardTextColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--accent-color",
-          this.toolBoxManager.currentTheme.colors.accentColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--font-family",
-          this.toolBoxManager.currentTheme.fontFamily
+      this.updateRootStyle(iframeDoc, "primary-color", this.toolBoxManager.currentTheme.ThemeColors.primaryColor);
+      this.updateRootStyle(iframeDoc, "secondary-color", this.toolBoxManager.currentTheme.ThemeColors.secondaryColor);
+      this.updateRootStyle(iframeDoc, "background-color", this.toolBoxManager.currentTheme.ThemeColors.backgroundColor);
+      this.updateRootStyle(iframeDoc, "text-color", this.toolBoxManager.currentTheme.ThemeColors.textColor);
+      this.updateRootStyle(iframeDoc, "button-bg-color", this.toolBoxManager.currentTheme.ThemeColors.buttonBgColor);
+      this.updateRootStyle(iframeDoc, "button-text-color", this.toolBoxManager.currentTheme.ThemeColors.buttonTextColor);
+      this.updateRootStyle(iframeDoc, "card-bg-color", this.toolBoxManager.currentTheme.ThemeColors.cardBgColor);
+      this.updateRootStyle(iframeDoc, "card-text-color", this.toolBoxManager.currentTheme.ThemeColors.cardTextColor);
+      this.updateRootStyle(iframeDoc, "accent-color", this.toolBoxManager.currentTheme.ThemeColors.accentColor);
+      this.updateRootStyle(iframeDoc, "font-family", this.toolBoxManager.currentTheme.ThemeFontFamily);
+
+      this.updatePageTitleFontFamily(this.toolBoxManager.currentTheme.ThemeFontFamily);
+    });
+  }
+
+  updateRootStyle(iframeDoc, property, value) {
+    const styleTag = iframeDoc.body.querySelector("style");
+
+    if (styleTag) {
+      let styleContent = styleTag.innerHTML;
+
+      // Regular expression to find and update the variable
+      const regex = new RegExp(`(--${property}:\\s*)([^;]+)(;)`);
+
+      if (regex.test(styleContent)) {
+        // Update the existing property
+        styleContent = styleContent.replace(regex, `$1${value}$3`);
+      } else {
+        // If the property does not exist, add it inside :root
+        styleContent = styleContent.replace(
+          /:root\s*{/,
+          `:root {\n  --${property}: ${value};`
         );
       }
-    });
+
+      styleTag.innerHTML = styleContent;
+    } else {
+      console.log("No style tag found");
+    }
   }
 
   applyThemeIconsAndColor(themeName) {
@@ -160,7 +117,7 @@ class ThemeManager {
           const wrapper = editor.getWrapper();
 
           const theme = this.toolBoxManager.themes.find(
-            (theme) => theme.name === themeName
+            (theme) => theme.ThemeName === themeName
           );
           const tiles = wrapper.find(".template-block");
 
@@ -200,8 +157,8 @@ class ThemeManager {
 
             const currentTileBgColorName =
               tile.getAttributes()?.["tile-bgcolor-name"];
-            if (currentTileBgColorName && theme.colors) {
-              const matchingColorCode = theme.colors[currentTileBgColorName];
+            if (currentTileBgColorName && theme.ThemeColors) {
+              const matchingColorCode = theme.ThemeColors[currentTileBgColorName];
 
               if (matchingColorCode) {
                 tile.addAttributes({
@@ -234,7 +191,7 @@ class ThemeManager {
       if (iframeDoc && iframeDoc.body) {
         iframeDoc.body.style.setProperty(
           "--font-family",
-          this.toolBoxManager.currentTheme.fontFamily
+          this.toolBoxManager.currentTheme.ThemeFontFamily
         );
       }
     });
@@ -488,19 +445,19 @@ class ThemeManager {
       const option = document.createElement("div");
       option.classList.add("theme-option");
       option.setAttribute("role", "option");
-      option.setAttribute("data-value", theme.name);
-      option.textContent = theme.name;
+      option.setAttribute("data-value", theme.ThemeName);
+      option.textContent = theme.ThemeName;
 
       if (
         this.toolBoxManager.currentTheme &&
-        theme.name === this.toolBoxManager.currentTheme.name
+        theme.ThemeName === this.toolBoxManager.currentTheme.ThemeName
       ) {
         option.classList.add("selected");
-        selectedValue.textContent = theme.name;
+        selectedValue.textContent = theme.ThemeName;
       }
 
       option.addEventListener("click", () => {
-        selectedValue.textContent = theme.name;
+        selectedValue.textContent = theme.ThemeName;
 
         // Remove 'selected' class from all options and apply to clicked one
         optionsList
@@ -515,15 +472,22 @@ class ThemeManager {
 
         // Update theme selection
         this.toolBoxManager.dataManager.selectedTheme =
-          this.toolBoxManager.themes.find((t) => t.name === theme.name);
+          this.toolBoxManager.themes.find((t) => t.ThemeName === theme.ThemeName);
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
-          if (this.setTheme(theme.name)) {
-            this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
-            localStorage.setItem("selectedTheme", theme.name);
+          console.log("Theme: ", theme);
+
+          if (this.setTheme(theme.ThemeName)) {
+            this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
+            localStorage.setItem("selectedTheme", theme.ThemeName);
             this.toolBoxManager.editorManager.theme = theme;
+
+            console.log("Theme applied: ", theme.ThemeName);
+            console.log("Editor theme: ", this.toolBoxManager.editorManager.theme);
+
+            this.updatePageTitleFontFamily(theme.ThemeFontFamily);
 
             const message = this.toolBoxManager.currentLanguage.getTranslation(
               "theme_applied_success_message"
@@ -540,6 +504,14 @@ class ThemeManager {
 
       // Append option to options list
       optionsList.appendChild(option);
+    });
+  }
+
+  updatePageTitleFontFamily(fontFamily) {
+    const appBars = document.querySelectorAll(".app-bar");
+    appBars.forEach((appBar) => {
+      const h1 = appBar.querySelector("h1");
+      h1.style.fontFamily = fontFamily;
     });
   }
 

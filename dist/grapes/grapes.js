@@ -47474,6 +47474,25 @@
                           "is__grabbing * {\n        cursor: grabbing !important;\n      }\n\n      "
                         )
                         .concat(h.canvasCss || "", "\n      ")
+                        .concat(
+                          h.protectedCss || "", 
+                          "\n\n      /* ===== Root Variables ===== */\n"
+                        )
+                        .concat(
+                          `      :root {
+                                  --primary-color: #3498db;
+                                  --secondary-color: #2ecc71;
+                                  --background-color: #f5f5f5;
+                                  --text-color: #333333;
+                                  --button-bg-color: #3498db;
+                                  --button-text-color: #ffffff; 
+                                  --card-bg-color: #ffffff; 
+                                  --card-text-color: #333333;
+                                  --accent-color: #333333;
+                                  --font-family: "Arial", sans-serif;
+                                }
+                          `
+                        )
                         .concat(h.protectedCss || "", "\n    </style>")
                     );
                     var p = s.getComponent(),

@@ -39,6 +39,7 @@ class ThemeManager {
 
     this.applyThemeIconsAndColor(themeName);
 
+    this.listThemesInSelectField();
     return true;
   }
 
@@ -459,6 +460,20 @@ class ThemeManager {
     const button = select.querySelector(".theme-select-button");
     const selectedValue = button.querySelector(".selected-theme-value");
 
+    // Remove existing options list if it exists
+    let existingOptionsList = select.querySelector(".theme-options-list");
+    if (existingOptionsList) {
+      existingOptionsList.remove();
+    }
+
+    // Create new options list
+    const optionsList = document.createElement("div");
+    optionsList.classList.add("theme-options-list");
+    optionsList.setAttribute("role", "listbox");
+
+    // Append new options list to the select container
+    select.appendChild(optionsList);
+
     // Toggle dropdown visibility
     button.addEventListener("click", (e) => {
       e.preventDefault();
@@ -468,13 +483,8 @@ class ThemeManager {
       button.setAttribute("aria-expanded", !isOpen);
     });
 
-    const optionsList = document.createElement("div");
-    optionsList.classList.add("theme-options-list");
-    optionsList.setAttribute("role", "listbox");
-    optionsList.innerHTML = "";
-
     // Populate themes into the dropdown
-    this.toolBoxManager.themes.forEach((theme, index) => {
+    this.toolBoxManager.themes.forEach((theme) => {
       const option = document.createElement("div");
       option.classList.add("theme-option");
       option.setAttribute("role", "option");
@@ -486,63 +496,50 @@ class ThemeManager {
         theme.name === this.toolBoxManager.currentTheme.name
       ) {
         option.classList.add("selected");
+        selectedValue.textContent = theme.name;
       }
 
-      option.addEventListener("click", (e) => {
+      option.addEventListener("click", () => {
         selectedValue.textContent = theme.name;
 
-        // Mark as selected
-        const allOptions = optionsList.querySelectorAll(".theme-option");
-        allOptions.forEach((opt) => opt.classList.remove("selected"));
+        // Remove 'selected' class from all options and apply to clicked one
+        optionsList
+          .querySelectorAll(".theme-option")
+          .forEach((opt) => opt.classList.remove("selected"));
         option.classList.add("selected");
 
-        // Close the dropdown
+        // Close dropdown
         optionsList.classList.remove("show");
         button.classList.remove("open");
         button.setAttribute("aria-expanded", "false");
 
-        const themeName = theme.name;
-        // update location theme
+        // Update theme selection
         this.toolBoxManager.dataManager.selectedTheme =
-          this.toolBoxManager.themes.find((theme) => theme.name === themeName);
+          this.toolBoxManager.themes.find((t) => t.name === theme.name);
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
-          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-            return;
-          }
+          if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
-          if (this.setTheme(themeName)) {
+          if (this.setTheme(theme.name)) {
             this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
-
-            localStorage.setItem("selectedTheme", themeName);
+            localStorage.setItem("selectedTheme", theme.name);
+            this.toolBoxManager.editorManager.theme = theme;
 
             const message = this.toolBoxManager.currentLanguage.getTranslation(
               "theme_applied_success_message"
             );
-            const status = "success";
-            this.toolBoxManager.ui.displayAlertMessage(message, status);
+            this.toolBoxManager.ui.displayAlertMessage(message, "success");
           } else {
             const message = this.toolBoxManager.currentLanguage.getTranslation(
               "error_applying_theme_message"
             );
-            const status = "error";
-            this.toolBoxManager.ui.displayAlertMessage(message, status);
+            this.toolBoxManager.ui.displayAlertMessage(message, "error");
           }
         });
       });
 
-      // Append option to the options list
+      // Append option to options list
       optionsList.appendChild(option);
-    });
-
-    select.appendChild(optionsList);
-
-    document.addEventListener("click", (e) => {
-      if (!select.contains(e.target)) {
-        optionsList.classList.remove("show");
-        button.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
-      }
     });
   }
 

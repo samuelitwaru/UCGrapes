@@ -30,7 +30,6 @@ class ToolBoxManager {
       this.eventListenerManager = new EventListenerManager(this);
       this.popupManager = new PopupManager(this);
       this.pageManager = new PageManager(this);
-      console.log("ToolboxManager initialized", this.currentLanguage);
 
       await this.initializeManagers();
       await this.setupComponents();
@@ -50,7 +49,7 @@ class ToolBoxManager {
     });
 
     this.themeManager.loadTheme();
-    this.themeManager.listThemesInSelectField();
+    // this.themeManager.listThemesInSelectField();
     this.themeManager.colorPalette();
     this.themeManager.ctaColorPalette();
     this.pageManager.loadPageTemplates();

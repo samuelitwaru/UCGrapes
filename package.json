@@ -41,6 +41,7 @@
     "mime-types": "^2.1.35",
     "neo-async": "^2.6.2",
     "node-releases": "^2.0.19",
+    "nodemon": "^3.1.9",
     "picocolors": "^1.1.1",
     "punycode": "^2.3.1",
     "randombytes": "^2.1.0",

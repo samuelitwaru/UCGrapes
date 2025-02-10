@@ -216,8 +216,8 @@ class LoadingManager {
     this.preloaderElement = preloaderElement;
     this._loading = false;
     this._startTime = 0;
-    this.minDuration = minDuration; // Minimum duration in milliseconds
-    this.transitionDuration = 200; // Duration of the fade transition
+    this.minDuration = minDuration;
+    this.transitionDuration = 200;
   }
 
   get loading() {
@@ -236,8 +236,10 @@ class LoadingManager {
 
   showPreloader() {
     this.preloaderElement.style.display = "flex";
-    this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
-    this.preloaderElement.style.opacity = "1";
+    requestAnimationFrame(() => {
+      this.preloaderElement.style.transition = `opacity ${this.transitionDuration}ms ease-in-out`;
+      this.preloaderElement.style.opacity = "1";
+    });
   }
 
   hidePreloader() {
@@ -257,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -277,8 +279,6 @@ class DataManager {
       },
     };
   
-    console.log("skip loading is " + skipLoading);
-
     try {
       if (!skipLoading) {
         this.loadingManager.loading = true;
@@ -568,7 +568,7 @@ class EditorManager {
         styles: [
           "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
           "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
-          "https://fonts.googleapis.com/css2?family=Lora&family=Merriweather&family=Poppins:wght@400;500&family=Roboto:wght@400;500&display=swap",
+          "https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Roboto:wght@400;500&display=swap",
           "/Resources/UCGrapes1/src/css/toolbox.css",
         ],
       },
@@ -796,7 +796,7 @@ class EditorEventManager {
     this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
-    this.editorOnUpdate(editor, page)
+    this.editorOnUpdate(editor, page);
   }
 
   setupKeyboardBindings(editor) {
@@ -812,18 +812,30 @@ class EditorEventManager {
   }
 
   handleEditorLoad(editor) {
-    this.loadTheme()
+    this.loadTheme();
     const wrapper = editor.getWrapper();
-    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(editor)
-    wrapper.view.el.addEventListener("click", (e) =>
-      this.handleEditorClick(e, editor)
+    this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
+      editor
     );
+
+    wrapper.view.el.addEventListener("click", (e) => {
+      const previousSelected = this.editorManager.currentEditor.editor.getSelected();
+      if(previousSelected) {
+        this.editorManager.currentEditor.editor.selectRemove(previousSelected);
+        this.editorManager.selectedComponent = null;
+        this.editorManager.selectedTemplateWrapper = null;
+      }
+
+      this.handleEditorClick(e, editor);
+    });
   }
 
   loadTheme() {
     this.editorManager.toolsSection.themeManager.setTheme(
       this.editorManager.theme.ThemeName
     );
+
+    this.editorManager.toolsSection.themeManager.listThemesInSelectField();
   }
 
   handleEditorClick(e, editor) {
@@ -897,8 +909,8 @@ class EditorEventManager {
   }
 
   editorOnUpdate(editor, page) {
-    editor.on('update', () => {
-      this.editorManager.updatePageJSONContent(editor, page)
+    editor.on("update", () => {
+      this.editorManager.updatePageJSONContent(editor, page);
     });
   }
 
@@ -1044,8 +1056,10 @@ class EditorEventManager {
 
     if (!this.editorManager.currentEditor) return;
 
-    const undoRedoManager = new UndoRedoManager(this.editorManager.currentEditor.editor);
-    
+    const undoRedoManager = new UndoRedoManager(
+      this.editorManager.currentEditor.editor
+    );
+
     // Update button states
     if (undoBtn) {
       undoBtn.disabled = !undoRedoManager.canUndo();
@@ -1061,7 +1075,6 @@ class EditorEventManager {
     }
   }
 }
-
 
 
 // Content from classes/TemplateManager.js
@@ -1839,7 +1852,6 @@ class ToolBoxManager {
       this.eventListenerManager = new EventListenerManager(this);
       this.popupManager = new PopupManager(this);
       this.pageManager = new PageManager(this);
-      console.log("ToolboxManager initialized", this.currentLanguage);
 
       await this.initializeManagers();
       await this.setupComponents();
@@ -1859,7 +1871,7 @@ class ToolBoxManager {
     });
 
     this.themeManager.loadTheme();
-    this.themeManager.listThemesInSelectField();
+    // this.themeManager.listThemesInSelectField();
     this.themeManager.colorPalette();
     this.themeManager.ctaColorPalette();
     this.pageManager.loadPageTemplates();
@@ -2568,6 +2580,7 @@ class ThemeManager {
 
     this.applyThemeIconsAndColor(themeName);
 
+    this.listThemesInSelectField();
     return true;
   }
 
@@ -2851,13 +2864,22 @@ class ThemeManager {
       textColorPaletteContainer.appendChild(alignItem);
 
       radioInput.onclick = () => {
-        this.toolBoxManager.editorManager.selectedComponent.addStyle({
-          color: colorValue,
-        });
-        this.toolBoxManager.setAttributeToSelected(
-          "tile-text-color",
-          colorValue
-        );
+        const selectedComponent =
+          this.toolBoxManager.editorManager.selectedComponent;
+        if (selectedComponent) {
+          selectedComponent.addStyle({
+            color: colorValue,
+          });
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-text-color",
+            colorValue
+          );
+        } else {
+          const message = this.toolBoxManager.currentLanguage.getTranslation(
+            "no_tile_selected_error_message"
+          );
+          this.toolBoxManager.ui.displayAlertMessage(message, "error");
+        }
       };
     });
 
@@ -2883,22 +2905,29 @@ class ThemeManager {
       iconColorPaletteContainer.appendChild(alignItem);
 
       radioInput.onclick = () => {
-        const svgIcon =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon path"
-          )[0];
-        if (svgIcon) {
-          svgIcon.removeAttributes("fill");
-          svgIcon.addAttributes({
-            fill: colorValue,
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-color",
-            colorValue
-          );
+        const selectedComponent =
+          this.toolBoxManager.editorManager.selectedComponent;
+
+        if (selectedComponent) {
+          const svgIcon = selectedComponent.find(".tile-icon path")[0];
+          if (svgIcon) {
+            svgIcon.removeAttributes("fill");
+            svgIcon.addAttributes({
+              fill: colorValue,
+            });
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-icon-color",
+              colorValue
+            );
+          } else {
+            const message = this.toolBoxManager.currentLanguage.getTranslation(
+              "no_icon_selected_error_message"
+            );
+            this.toolBoxManager.ui.displayAlertMessage(message, "error");
+          }
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
-            "no_icon_selected_error_message"
+            "no_tile_selected_error_message"
           );
           this.toolBoxManager.ui.displayAlertMessage(message, "error");
         }
@@ -2972,6 +3001,20 @@ class ThemeManager {
     const button = select.querySelector(".theme-select-button");
     const selectedValue = button.querySelector(".selected-theme-value");
 
+    // Remove existing options list if it exists
+    let existingOptionsList = select.querySelector(".theme-options-list");
+    if (existingOptionsList) {
+      existingOptionsList.remove();
+    }
+
+    // Create new options list
+    const optionsList = document.createElement("div");
+    optionsList.classList.add("theme-options-list");
+    optionsList.setAttribute("role", "listbox");
+
+    // Append new options list to the select container
+    select.appendChild(optionsList);
+
     // Toggle dropdown visibility
     button.addEventListener("click", (e) => {
       e.preventDefault();
@@ -2981,13 +3024,8 @@ class ThemeManager {
       button.setAttribute("aria-expanded", !isOpen);
     });
 
-    const optionsList = document.createElement("div");
-    optionsList.classList.add("theme-options-list");
-    optionsList.setAttribute("role", "listbox");
-    optionsList.innerHTML = "";
-
     // Populate themes into the dropdown
-    this.toolBoxManager.themes.forEach((theme, index) => {
+    this.toolBoxManager.themes.forEach((theme) => {
       const option = document.createElement("div");
       option.classList.add("theme-option");
       option.setAttribute("role", "option");
@@ -2999,63 +3037,50 @@ class ThemeManager {
         theme.name === this.toolBoxManager.currentTheme.name
       ) {
         option.classList.add("selected");
+        selectedValue.textContent = theme.name;
       }
 
-      option.addEventListener("click", (e) => {
+      option.addEventListener("click", () => {
         selectedValue.textContent = theme.name;
 
-        // Mark as selected
-        const allOptions = optionsList.querySelectorAll(".theme-option");
-        allOptions.forEach((opt) => opt.classList.remove("selected"));
+        // Remove 'selected' class from all options and apply to clicked one
+        optionsList
+          .querySelectorAll(".theme-option")
+          .forEach((opt) => opt.classList.remove("selected"));
         option.classList.add("selected");
 
-        // Close the dropdown
+        // Close dropdown
         optionsList.classList.remove("show");
         button.classList.remove("open");
         button.setAttribute("aria-expanded", "false");
 
-        const themeName = theme.name;
-        // update location theme
+        // Update theme selection
         this.toolBoxManager.dataManager.selectedTheme =
-          this.toolBoxManager.themes.find((theme) => theme.name === themeName);
+          this.toolBoxManager.themes.find((t) => t.name === theme.name);
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
-          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-            return;
-          }
+          if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
-          if (this.setTheme(themeName)) {
+          if (this.setTheme(theme.name)) {
             this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
-
-            localStorage.setItem("selectedTheme", themeName);
+            localStorage.setItem("selectedTheme", theme.name);
+            this.toolBoxManager.editorManager.theme = theme;
 
             const message = this.toolBoxManager.currentLanguage.getTranslation(
               "theme_applied_success_message"
             );
-            const status = "success";
-            this.toolBoxManager.ui.displayAlertMessage(message, status);
+            this.toolBoxManager.ui.displayAlertMessage(message, "success");
           } else {
             const message = this.toolBoxManager.currentLanguage.getTranslation(
               "error_applying_theme_message"
             );
-            const status = "error";
-            this.toolBoxManager.ui.displayAlertMessage(message, status);
+            this.toolBoxManager.ui.displayAlertMessage(message, "error");
           }
         });
       });
 
-      // Append option to the options list
+      // Append option to options list
       optionsList.appendChild(option);
-    });
-
-    select.appendChild(optionsList);
-
-    document.addEventListener("click", (e) => {
-      if (!select.contains(e.target)) {
-        optionsList.classList.remove("show");
-        button.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
-      }
     });
   }
 
@@ -3093,7 +3118,7 @@ class ThemeManager {
         iconItem.title = icon.IconName;
 
         const displayName = (() => {
-          const maxChars = 7;
+          const maxChars = 5;
           const words = icon.IconName.split(" ");
 
           if (words.length > 1) {
@@ -3124,11 +3149,14 @@ class ThemeManager {
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
-              const whiteIconSvg = iconSvgComponent.replace('fill="#7c8791"', 'fill="white"');
+              const whiteIconSvg = iconSvgComponent.replace(
+                'fill="#7c8791"',
+                'fill="white"'
+              );
               iconComponent.components(whiteIconSvg);
               this.toolBoxManager.setAttributeToSelected(
-                  "tile-icon",
-                  icon.IconName
+                "tile-icon",
+                icon.IconName
               );
 
               this.toolBoxManager.setAttributeToSelected(
@@ -4939,19 +4967,25 @@ class MediaComponent {
   async processUploadedFile(file, imageName, fileList) {
     try {
       const imageCropper = new ImageCropper(532, 250);
-      const croppedBlob = await imageCropper.cropImage(file);
+      const resizedBlob = await imageCropper.processImage(file);
 
-      const croppedFile = new File([croppedBlob], file.name, {
+      const resizedFile = new File([resizedBlob], file.name, {
         type: file.type,
       });
 
-      const dataUrl = imageCropper.getDataURL();
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(resizedBlob);
+      });
+
+      const cleanImageName = imageName.replace(/'/g, '');
 
       const response = await this.dataManager.uploadFile(
         dataUrl,
-        imageName,
-        croppedFile.size,
-        croppedFile.type
+        cleanImageName,
+        resizedFile.size,
+        resizedFile.type
       );
 
       if (this.toolBoxManager.checkIfNotAuthenticated(response)) {
@@ -4960,11 +4994,64 @@ class MediaComponent {
 
       if (response.BC_Trn_Media.MediaId) {
         this.dataManager.media.push(response.BC_Trn_Media);
-        this.displayMediaFile(fileList, response.BC_Trn_Media);
+        this.displayMediaFileProgress(fileList, response.BC_Trn_Media);
       }
     } catch (error) {
-      console.error('Failed to process image:', error);
+      console.error("Failed to process image:", error);
     }
+  }
+
+  displayMediaFileProgress(fileList, file) {
+    const fileItem = document.createElement("div");
+    fileItem.className = `file-item ${
+      this.validateFile(file) ? "valid" : "invalid"
+    }`;
+    fileItem.setAttribute("data-mediaid", file.MediaId);
+
+    const removeBeforeFirstHyphen = (str) => str.split("-").slice(1).join("-");
+
+    const isValid = this.validateFile(file);
+    fileItem.innerHTML = `
+          <img src="${
+            file.MediaUrl
+          }" alt="File thumbnail" class="preview-image">
+          <div class="file-info">
+            <div class="file-info-details">
+              <div>
+                <div class="file-name">${removeBeforeFirstHyphen(
+                  file.MediaName
+                )}</div>
+                <div class="file-size">${this.formatFileSize(
+                  file.MediaSize
+                )}</div>
+              </div>
+              <div class="progress-text">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 0%"></div>
+            </div>
+          </div>
+          <span class="status-icon" style="color: ${isValid ? "green" : "red"}">
+            ${isValid ? "" : "⚠"}
+          </span>
+        `;
+    fileList.insertBefore(fileItem, fileList.firstChild);
+
+    let progress = 0;
+    const progressBar = fileItem.querySelector(".progress");
+    const progressText = fileItem.querySelector(".progress-text");
+
+    const interval = setInterval(() => {
+      progress += 10;
+      progressBar.style.width = `${progress}%`;
+      progressText.textContent = `${progress}%`;
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        fileList.removeChild(fileItem);
+        this.displayMediaFile(fileList, file);
+      }
+    }, 300);
   }
 
   displayMediaFile(fileList, file) {
@@ -4982,10 +5069,12 @@ class MediaComponent {
             file.MediaUrl
           }" alt="File thumbnail" class="preview-image">
           <div class="file-info">
-            <div class="file-name">${removeBeforeFirstHyphen(
-              file.MediaName
-            )}</div>
-            <div class="file-size">${this.formatFileSize(file.MediaSize)}</div>
+              <div class="file-name">${removeBeforeFirstHyphen(
+                file.MediaName
+              )}</div>
+              <div class="file-size">${this.formatFileSize(
+                file.MediaSize
+              )}</div>
           </div>
           <span class="status-icon" style="color: ${isValid ? "green" : "red"}">
             ${isValid ? "" : "⚠"}
@@ -5040,17 +5129,25 @@ class MediaComponent {
   saveSelectedFile(modal, fileInputField) {
     if (this.selectedFile) {
       const templateBlock = this.editorManager.selectedComponent;
-      console.log(templateBlock)
-      templateBlock.addStyle({
-        "background-image": `url(${this.selectedFile.MediaUrl})`,
-        "background-size": "cover",
-        "background-position": "center",
-        "background-blend-mode": "overlay",
-      });
+
+      if (this.selectedFile?.MediaUrl) {
+        const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
+        console.log("safeMediaUrl: ", safeMediaUrl);
+        templateBlock.addStyle({
+          "background-image": `url(${safeMediaUrl})`,
+          "background-size": "auto",
+          "background-position": "center",
+          "background-blend-mode": "overlay",
+        });
+      } else {
+        console.error("MediaUrl is missing or undefined", this.selectedFile);
+      }
+
       this.toolBoxManager.setAttributeToSelected(
         "tile-bg-image-url",
         this.selectedFile.MediaUrl
       );
+
       this.toolBoxManager.checkTileBgImage();
     }
 
@@ -5084,7 +5181,7 @@ class MediaComponent {
     // Find and set selected file
     this.selectedFile = this.dataManager.media.find(
       (file) => file.MediaId == fileItem.dataset.mediaid
-    );
+    )
   }
 
   deleteMedia(mediaId) {
@@ -5186,19 +5283,12 @@ class ImageCropper {
         this.ctx = this.canvas.getContext('2d');
     }
 
-    /**
-     * Crop image from either File or URL
-     * @param {File|string} source - Image file or URL
-     * @returns {Promise<Blob>} - Promise resolving to cropped image blob
-     */
-    async cropImage(source) {
+    async processImage(source) {
         try {
             let img;
             if (typeof source === 'string') {
-                // Handle URL
                 img = await this.loadImageFromURL(source);
             } else if (source instanceof File) {
-                // Handle File object
                 if (!source.type.startsWith('image/')) {
                     throw new Error('File must be an image');
                 }
@@ -5208,22 +5298,19 @@ class ImageCropper {
                 throw new Error('Source must be either a File or URL string');
             }
 
-            // Get the original file type or default to 'image/jpeg'
-            const fileType = source instanceof File ? source.type : 'image/jpeg';
-            return this.cropAndResize(img, fileType);
+            if (img.width <= this.targetWidth && img.height <= this.targetHeight) {
+                return source instanceof File ? source : this.dataURLToBlob(img.src);
+            }
+            
+            return this.resizeImage(img, source instanceof File ? source.type : 'image/jpeg');
         } catch (error) {
-            throw new Error(`Failed to crop image: ${error.message}`);
+            throw new Error(`Failed to process image: ${error.message}`);
         }
     }
 
-    /**
-     * Load image from URL
-     * @private
-     */
     loadImageFromURL(url) {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            // Handle CORS issues
             img.crossOrigin = 'anonymous';
             img.onload = () => resolve(img);
             img.onerror = () => reject(new Error('Failed to load image from URL'));
@@ -5231,10 +5318,6 @@ class ImageCropper {
         });
     }
 
-    /**
-     * Read file as Data URL
-     * @private
-     */
     readFileAsDataURL(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -5244,10 +5327,6 @@ class ImageCropper {
         });
     }
 
-    /**
-     * Load image from Data URL
-     * @private
-     */
     loadImage(dataUrl) {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -5257,44 +5336,30 @@ class ImageCropper {
         });
     }
 
-    /**
-     * Crop and resize image maintaining aspect ratio
-     * @private
-     */
-    cropAndResize(img, fileType) {
+    resizeImage(img, fileType) {
         this.canvas.width = this.targetWidth;
         this.canvas.height = this.targetHeight;
-
-        const sourceAspect = img.width / img.height;
-        const targetAspect = this.targetWidth / this.targetHeight;
         
-        let sw, sh, sx, sy;
-        if (sourceAspect > targetAspect) {
-            sh = img.height;
-            sw = sh * targetAspect;
-            sy = 0;
-            sx = (img.width - sw) / 2;
-        } else {
-            sw = img.width;
-            sh = sw / targetAspect;
-            sx = 0;
-            sy = (img.height - sh) / 2;
-        }
-
-        this.ctx.drawImage(img, sx, sy, sw, sh, 0, 0, this.targetWidth, this.targetHeight);
-
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(img, 0, 0, this.targetWidth, this.targetHeight);
+        
         return new Promise((resolve) => {
             this.canvas.toBlob((blob) => resolve(blob), fileType);
         });
     }
 
-    /**
-     * Get the cropped image as a Data URL
-     */
-    getDataURL() {
-        return this.canvas.toDataURL();
+    dataURLToBlob(dataURL) {
+        const byteString = atob(dataURL.split(",")[1]);
+        const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0];
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([arrayBuffer], { type: mimeString });
     }
 }
+
 
 // Content from utils/defaults.js
 const iconsData = [

@@ -340,19 +340,25 @@ class MediaComponent {
   async processUploadedFile(file, imageName, fileList) {
     try {
       const imageCropper = new ImageCropper(532, 250);
-      const croppedBlob = await imageCropper.cropImage(file);
+      const resizedBlob = await imageCropper.processImage(file);
 
-      const croppedFile = new File([croppedBlob], file.name, {
+      const resizedFile = new File([resizedBlob], file.name, {
         type: file.type,
       });
 
-      const dataUrl = imageCropper.getDataURL();
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(resizedBlob);
+      });
+
+      const cleanImageName = imageName.replace(/'/g, '');
 
       const response = await this.dataManager.uploadFile(
         dataUrl,
-        imageName,
-        croppedFile.size,
-        croppedFile.type
+        cleanImageName,
+        resizedFile.size,
+        resizedFile.type
       );
 
       if (this.toolBoxManager.checkIfNotAuthenticated(response)) {
@@ -361,11 +367,64 @@ class MediaComponent {
 
       if (response.BC_Trn_Media.MediaId) {
         this.dataManager.media.push(response.BC_Trn_Media);
-        this.displayMediaFile(fileList, response.BC_Trn_Media);
+        this.displayMediaFileProgress(fileList, response.BC_Trn_Media);
       }
     } catch (error) {
-      console.error('Failed to process image:', error);
+      console.error("Failed to process image:", error);
     }
+  }
+
+  displayMediaFileProgress(fileList, file) {
+    const fileItem = document.createElement("div");
+    fileItem.className = `file-item ${
+      this.validateFile(file) ? "valid" : "invalid"
+    }`;
+    fileItem.setAttribute("data-mediaid", file.MediaId);
+
+    const removeBeforeFirstHyphen = (str) => str.split("-").slice(1).join("-");
+
+    const isValid = this.validateFile(file);
+    fileItem.innerHTML = `
+          <img src="${
+            file.MediaUrl
+          }" alt="File thumbnail" class="preview-image">
+          <div class="file-info">
+            <div class="file-info-details">
+              <div>
+                <div class="file-name">${removeBeforeFirstHyphen(
+                  file.MediaName
+                )}</div>
+                <div class="file-size">${this.formatFileSize(
+                  file.MediaSize
+                )}</div>
+              </div>
+              <div class="progress-text">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 0%"></div>
+            </div>
+          </div>
+          <span class="status-icon" style="color: ${isValid ? "green" : "red"}">
+            ${isValid ? "" : "⚠"}
+          </span>
+        `;
+    fileList.insertBefore(fileItem, fileList.firstChild);
+
+    let progress = 0;
+    const progressBar = fileItem.querySelector(".progress");
+    const progressText = fileItem.querySelector(".progress-text");
+
+    const interval = setInterval(() => {
+      progress += 10;
+      progressBar.style.width = `${progress}%`;
+      progressText.textContent = `${progress}%`;
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        fileList.removeChild(fileItem);
+        this.displayMediaFile(fileList, file);
+      }
+    }, 300);
   }
 
   displayMediaFile(fileList, file) {
@@ -383,10 +442,12 @@ class MediaComponent {
             file.MediaUrl
           }" alt="File thumbnail" class="preview-image">
           <div class="file-info">
-            <div class="file-name">${removeBeforeFirstHyphen(
-              file.MediaName
-            )}</div>
-            <div class="file-size">${this.formatFileSize(file.MediaSize)}</div>
+              <div class="file-name">${removeBeforeFirstHyphen(
+                file.MediaName
+              )}</div>
+              <div class="file-size">${this.formatFileSize(
+                file.MediaSize
+              )}</div>
           </div>
           <span class="status-icon" style="color: ${isValid ? "green" : "red"}">
             ${isValid ? "" : "⚠"}
@@ -441,17 +502,25 @@ class MediaComponent {
   saveSelectedFile(modal, fileInputField) {
     if (this.selectedFile) {
       const templateBlock = this.editorManager.selectedComponent;
-      console.log(templateBlock)
-      templateBlock.addStyle({
-        "background-image": `url(${this.selectedFile.MediaUrl})`,
-        "background-size": "cover",
-        "background-position": "center",
-        "background-blend-mode": "overlay",
-      });
+
+      if (this.selectedFile?.MediaUrl) {
+        const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
+        console.log("safeMediaUrl: ", safeMediaUrl);
+        templateBlock.addStyle({
+          "background-image": `url(${safeMediaUrl})`,
+          "background-size": "auto",
+          "background-position": "center",
+          "background-blend-mode": "overlay",
+        });
+      } else {
+        console.error("MediaUrl is missing or undefined", this.selectedFile);
+      }
+
       this.toolBoxManager.setAttributeToSelected(
         "tile-bg-image-url",
         this.selectedFile.MediaUrl
       );
+
       this.toolBoxManager.checkTileBgImage();
     }
 
@@ -485,7 +554,7 @@ class MediaComponent {
     // Find and set selected file
     this.selectedFile = this.dataManager.media.find(
       (file) => file.MediaId == fileItem.dataset.mediaid
-    );
+    )
   }
 
   deleteMedia(mediaId) {

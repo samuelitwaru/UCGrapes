@@ -176,7 +176,7 @@ class ToolBoxUI {
       this.manager.editorManager.selectedComponent?.getAttributes()?.[
         "tile-bg-image-opacity"
       ];
-    
+
     const imageOpacity = document.getElementById("bg-opacity");
     imageOpacity.value = currentTileOpacity;
   }
@@ -197,7 +197,7 @@ class ToolBoxUI {
     allOptions.forEach((option) => {
       option.style.background = "";
     });
-    propertySection.textContent = "Select Action"
+    propertySection.textContent = "Select Action";
     if (currentActionName && currentActionId && selectedOptionElement) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
@@ -206,10 +206,17 @@ class ToolBoxUI {
   }
 
   pageContentCtas(callToActions, editorInstance) {
-    const contentPageCtas = document.getElementById("call-to-actions");
-    this.renderCtas(callToActions, editorInstance, contentPageCtas);
-    this.setupButtonLayoutListeners(editorInstance);
-    this.setupBadgeClickListener(editorInstance);
+    if (callToActions == null || callToActions.length <= 0) {
+      this.noCtaSection();
+    } else {
+      const contentPageCtas = document.getElementById("call-to-actions");
+      document.getElementById("cta-style").style.display = "flex";
+      document.getElementById("no-cta-message").style.display = "none";
+      
+      this.renderCtas(callToActions, editorInstance, contentPageCtas);
+      this.setupButtonLayoutListeners(editorInstance);
+      this.setupBadgeClickListener(editorInstance);
+    }
   }
 
   renderCtas(callToActions, editorInstance, contentPageCtas) {
@@ -289,8 +296,8 @@ class ToolBoxUI {
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
             <div class="cta-label" ${defaultConstraints}>${
-          cta.CallToActionName
-        }</div>
+      cta.CallToActionName
+    }</div>
       </div>
     `;
   }
@@ -359,9 +366,11 @@ class ToolBoxUI {
 
   // Helper method to check if component is a valid CTA
   isValidCtaComponent(attributes) {
-    return attributes.hasOwnProperty("cta-button-label") &&
-           attributes.hasOwnProperty("cta-button-type") &&
-           attributes.hasOwnProperty("cta-button-action");
+    return (
+      attributes.hasOwnProperty("cta-button-label") &&
+      attributes.hasOwnProperty("cta-button-type") &&
+      attributes.hasOwnProperty("cta-button-action")
+    );
   }
 
   // Extract CTA attributes from component
@@ -372,7 +381,7 @@ class ToolBoxUI {
       ctaName: attributes["cta-button-label"],
       ctaType: attributes["cta-button-type"],
       ctaAction: attributes["cta-button-action"],
-      ctaButtonBgColor: attributes["cta-background-color"]
+      ctaButtonBgColor: attributes["cta-background-color"],
     };
   }
 
@@ -382,14 +391,15 @@ class ToolBoxUI {
       Phone: "fas fa-phone-alt",
       Email: "fas fa-envelope",
       SiteUrl: "fas fa-link",
-      Form: "fas fa-file"
+      Form: "fas fa-file",
     };
     return iconMap[ctaType] || "fas fa-question";
   }
 
   // Generate common button attributes
   getCommonButtonAttributes(ctaAttributes) {
-    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } = ctaAttributes;
+    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } =
+      ctaAttributes;
     return `
       data-gjs-draggable="false"
       data-gjs-editable="false"
@@ -412,7 +422,9 @@ class ToolBoxUI {
   generatePlainButtonComponent(ctaAttributes) {
     const { ctaName, ctaButtonBgColor } = ctaAttributes;
     return `
-      <div class="plain-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
+      <div class="plain-button-container" ${this.getCommonButtonAttributes(
+        ctaAttributes
+      )}>
         <button style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
                 class="plain-button" ${defaultConstraints}>
           <div class="cta-badge" ${defaultConstraints}>
@@ -429,7 +441,9 @@ class ToolBoxUI {
     const { ctaName, ctaButtonBgColor, ctaType } = ctaAttributes;
     const icon = this.getCtaTypeIcon(ctaType);
     return `
-      <div class="img-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
+      <div class="img-button-container" ${this.getCommonButtonAttributes(
+        ctaAttributes
+      )}>
         <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
              class="img-button" ${defaultConstraints}>
           <i class="${icon} img-button-icon" ${defaultConstraints}></i>
@@ -446,7 +460,9 @@ class ToolBoxUI {
   // Handle component replacement
   handleComponentReplacement(editorInstance, ctaId, newComponent) {
     editorInstance.once("component:add", () => {
-      const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];
+      const addedComponent = editorInstance
+        .getWrapper()
+        .find(`#id-${ctaId}`)[0];
       if (addedComponent) {
         editorInstance.select(addedComponent);
       }
@@ -456,7 +472,9 @@ class ToolBoxUI {
 
   // Handle button click
   handleButtonClick(editorInstance, generateComponent) {
-    const ctaContainer = editorInstance.getWrapper().find(".cta-button-container")[0];
+    const ctaContainer = editorInstance
+      .getWrapper()
+      .find(".cta-button-container")[0];
     if (!ctaContainer) return;
 
     const selectedComponent = this.manager.editorManager.selectedComponent;
@@ -464,14 +482,20 @@ class ToolBoxUI {
 
     const attributes = selectedComponent.getAttributes();
     if (!this.isValidCtaComponent(attributes)) {
-      const message = this.currentLanguage.getTranslation("please_select_cta_button");
+      const message = this.currentLanguage.getTranslation(
+        "please_select_cta_button"
+      );
       this.displayAlertMessage(message, "error");
       return;
     }
 
     const ctaAttributes = this.extractCtaAttributes(selectedComponent);
     const newComponent = generateComponent(ctaAttributes);
-    this.handleComponentReplacement(editorInstance, ctaAttributes.ctaId, newComponent);
+    this.handleComponentReplacement(
+      editorInstance,
+      ctaAttributes.ctaId,
+      newComponent
+    );
   }
 
   // Setup plain button listener
@@ -479,8 +503,9 @@ class ToolBoxUI {
     const plainButton = document.getElementById("plain-button-layout");
     plainButton.onclick = (e) => {
       e.preventDefault();
-      this.handleButtonClick(editorInstance, 
-        (attrs) => this.generatePlainButtonComponent(attrs));
+      this.handleButtonClick(editorInstance, (attrs) =>
+        this.generatePlainButtonComponent(attrs)
+      );
     };
   }
 
@@ -489,8 +514,9 @@ class ToolBoxUI {
     const imgButton = document.getElementById("img-button-layout");
     imgButton.onclick = (e) => {
       e.preventDefault();
-      this.handleButtonClick(editorInstance, 
-        (attrs) => this.generateImageButtonComponent(attrs));
+      this.handleButtonClick(editorInstance, (attrs) =>
+        this.generateImageButtonComponent(attrs)
+      );
     };
   }
 
@@ -521,12 +547,26 @@ class ToolBoxUI {
 
   activateCtaBtnStyles(selectedCtaComponent) {
     if (selectedCtaComponent) {
-      const isCtaButtonSelected = selectedCtaComponent.findType(".cta-buttons");
+      const isCtaButtonSelected = selectedCtaComponent.findType("cta-buttons");
       if (isCtaButtonSelected) {
-          document.querySelector(".cta-button-layout-container")
-            .style.display = "flex";
+        document.querySelector(".cta-button-layout-container").style.display =
+          "flex";
       }
     }
   }
-}
 
+  noCtaSection() {
+    const contentPageSection = document.getElementById("cta-style");
+    if (contentPageSection) {
+      contentPageSection.style.display = "none";
+      document.getElementById("call-to-actions").innerHTML = "";
+      const noCtaDisplayMessage = document.getElementById("no-cta-message");
+      if (noCtaDisplayMessage) {
+        noCtaDisplayMessage.style.display = "block";
+      }
+
+      document.querySelector(".cta-button-layout-container").style.display =
+          "none";
+    }
+  }
+}

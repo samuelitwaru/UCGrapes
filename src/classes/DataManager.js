@@ -108,13 +108,13 @@ class DataManager {
   }
 
   async updateLocationTheme() {
-    if (!this.selectedTheme?.id) {
+    if (!this.selectedTheme?.ThemeId) {
       throw new Error('No theme selected');
     }
 
     return await this.fetchAPI('/api/toolbox/update-location-theme', {
       method: 'POST',
-      body: JSON.stringify({ ThemeId: this.selectedTheme.id }),
+      body: JSON.stringify({ ThemeId: this.selectedTheme.ThemeId }),
     });
   }
 
@@ -143,7 +143,7 @@ class DataManager {
         MediaSize: fileSize,
         MediaType: fileType,
       }),
-    });
+    }, true);
   }
 
   // Content API methods

@@ -6,7 +6,6 @@ class EditorEventManager {
 
   addEditorEventListeners(editor, page) {
     this.editorOnLoad(editor);
-    this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
@@ -52,8 +51,6 @@ class EditorEventManager {
   }
 
   handleEditorClick(e, editor) {
-    document.querySelector(".cta-button-layout-container").style.display =
-      "none";
     const editorId = editor.getConfig().container;
     const editorContainerId = `${editorId}-frame`;
 
@@ -62,9 +59,6 @@ class EditorEventManager {
 
     this.updateToolsSection();
     this.editorManager.toolsSection.unDoReDo(editor);
-
-    document.querySelector(".cta-button-layout-container").style.display =
-      "none";
 
     const ctaBtnSelected = e.target.closest("[cta-buttons]");
     if (ctaBtnSelected) {
@@ -127,36 +121,6 @@ class EditorEventManager {
     });
   }
 
-  editorOnDropped(editor) {
-    // // let isDragging = false;
-    // // editor.on("component:drag:start", (component) => {
-    // //   isDragging = true;
-    // // });
-    // // editor.on("component:drag:end", (component) => {
-    // //   const tileComponents = component.target.find(".template-blocks");
-    // //   if (tileComponents.length) {
-    // //     console.log("Tile Components", tileComponents);
-    // //   }
-    // //   isDragging = false;
-    // //   editor.on("component:mount", (model) => {
-    // //     // Only handle components added via drag
-    // //     if (isDragging) {
-    // //       console.log(model.getName());
-    // //         if(model.getName() == "Tile-wrapper"){
-    // //           console.log("Tile-wrapper added", model.getClasses());
-    // //           model.removeClass("gjs-selected");
-    // //         }
-    // //     }
-    // //   });
-    // // });
-    // editor.on("component:drag:start", (component) => {
-    //   const el = component.parent.getEl();
-    //   if (el) {
-    //     el.style.cursor = "grab";
-    //   }
-    // });
-  }
-
   handleComponentSelected(component) {
     this.editorManager.selectedTemplateWrapper = component.getEl();
     this.editorManager.selectedComponent = component;
@@ -216,6 +180,8 @@ class EditorEventManager {
         page.PageIsContentPage ? "none" : "block";
     }
   }
+
+  
 
   activateNavigators() {
     const leftNavigator = document.querySelector(".page-navigator-left");

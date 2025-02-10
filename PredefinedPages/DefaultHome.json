@@ -3,17 +3,17 @@
   "styles": [
     {
       "selectors": ["#is1l"],
-      "style": { "flex": "0 0 100%)", "background": "#554940" }
+      "style": { "flex": "0 0 100%)", "background-color": "#554940" }
     },
     {
       "selectors": ["#iy1c3"],
-      "style": { "flex": "0 0 calc(50% - 0.3.5rem)", "background": "#554940" }
+      "style": { "flex": "0 0 calc(50% - 0.3.5rem)", "background-color": "#554940" }
     },
     {
       "selectors": ["#ildfb"],
       "style": {
         "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)",
-        "background": "#554940"
+        "background-color": "#554940"
       }
     },
     {

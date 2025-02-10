@@ -369,13 +369,13 @@ class DataManager {
   }
 
   async updateLocationTheme() {
-    if (!this.selectedTheme?.id) {
+    if (!this.selectedTheme?.ThemeId) {
       throw new Error('No theme selected');
     }
 
     return await this.fetchAPI('/api/toolbox/update-location-theme', {
       method: 'POST',
-      body: JSON.stringify({ ThemeId: this.selectedTheme.id }),
+      body: JSON.stringify({ ThemeId: this.selectedTheme.ThemeId }),
     });
   }
 
@@ -404,7 +404,7 @@ class DataManager {
         MediaSize: fileSize,
         MediaType: fileType,
       }),
-    });
+    }, true);
   }
 
   // Content API methods
@@ -553,7 +553,7 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 class="title" style="text-transform: uppercase">${pageName}</h1>
+          <h1 class="title" style="text-transform: uppercase;">${pageName}</h1>
       </div>
     `;
   }
@@ -644,6 +644,7 @@ class EditorManager {
       }
 
       await this.updateContentPageElements(editor, contentPageData);
+      await this.updateEditorCtaButtons(editor, contentPageData);
     } catch (error) {
       console.error("Error loading content page data:", error);
     }
@@ -692,6 +693,26 @@ class EditorManager {
         }
       }
     }
+  }
+
+  async updateEditorCtaButtons (editor, contentPageData) {
+    const wrapper = editor.DomComponents.getWrapper();
+    const ctaContainer = wrapper.find(".cta-button-container")[0];
+    if (ctaContainer) {
+      console.log("ctaContainer: ", ctaContainer)
+      const ctaButtons = ctaContainer.findType("cta-buttons");
+      if (ctaButtons.length > 0) {
+        console.log("contentPageData: ", ctaButtons);
+        ctaButtons.forEach((ctaButton) => {
+          const ctaButtonId  = ctaButton.getAttributes()?.["cta-button-id"];
+          // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton 
+          if (!contentPageData?.CallToActions?.some((cta) => cta.CallToActionId === ctaButtonId)){
+            ctaButton.remove();
+          }
+        });
+      }
+    }
+    
   }
 
   async loadNewContentPage(editor, page) {
@@ -793,7 +814,6 @@ class EditorEventManager {
 
   addEditorEventListeners(editor, page) {
     this.editorOnLoad(editor);
-    this.editorOnDropped(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
@@ -839,8 +859,6 @@ class EditorEventManager {
   }
 
   handleEditorClick(e, editor) {
-    document.querySelector(".cta-button-layout-container").style.display =
-      "none";
     const editorId = editor.getConfig().container;
     const editorContainerId = `${editorId}-frame`;
 
@@ -849,9 +867,6 @@ class EditorEventManager {
 
     this.updateToolsSection();
     this.editorManager.toolsSection.unDoReDo(editor);
-
-    document.querySelector(".cta-button-layout-container").style.display =
-      "none";
 
     const ctaBtnSelected = e.target.closest("[cta-buttons]");
     if (ctaBtnSelected) {
@@ -914,36 +929,6 @@ class EditorEventManager {
     });
   }
 
-  editorOnDropped(editor) {
-    // // let isDragging = false;
-    // // editor.on("component:drag:start", (component) => {
-    // //   isDragging = true;
-    // // });
-    // // editor.on("component:drag:end", (component) => {
-    // //   const tileComponents = component.target.find(".template-blocks");
-    // //   if (tileComponents.length) {
-    // //     console.log("Tile Components", tileComponents);
-    // //   }
-    // //   isDragging = false;
-    // //   editor.on("component:mount", (model) => {
-    // //     // Only handle components added via drag
-    // //     if (isDragging) {
-    // //       console.log(model.getName());
-    // //         if(model.getName() == "Tile-wrapper"){
-    // //           console.log("Tile-wrapper added", model.getClasses());
-    // //           model.removeClass("gjs-selected");
-    // //         }
-    // //     }
-    // //   });
-    // // });
-    // editor.on("component:drag:start", (component) => {
-    //   const el = component.parent.getEl();
-    //   if (el) {
-    //     el.style.cursor = "grab";
-    //   }
-    // });
-  }
-
   handleComponentSelected(component) {
     this.editorManager.selectedTemplateWrapper = component.getEl();
     this.editorManager.selectedComponent = component;
@@ -1003,6 +988,8 @@ class EditorEventManager {
         page.PageIsContentPage ? "none" : "block";
     }
   }
+
+  
 
   activateNavigators() {
     const leftNavigator = document.querySelector(".page-navigator-left");
@@ -2554,10 +2541,12 @@ class ThemeManager {
 
   setTheme(themeName) {
     const theme = this.toolBoxManager.themes.find(
-      (theme) => theme.name === themeName
+      (theme) => theme.ThemeName === themeName
     );
+
     const select = document.querySelector(".tb-custom-theme-selection");
     select.querySelector(".selected-theme-value").textContent = themeName;
+    
     if (!theme) {
       return false;
     }
@@ -2566,117 +2555,72 @@ class ThemeManager {
 
     this.applyTheme();
 
-    this.toolBoxManager.icons = theme.icons.map((icon) => {
+    this.toolBoxManager.icons = theme.ThemeIcons.map((icon) => {
       return {
         name: icon.IconName,
         svg: icon.IconSVG,
         category: icon.IconCategory,
       };
     });
-    this.loadThemeIcons(theme.icons);
+    this.loadThemeIcons(theme.ThemeIcons);
 
-    this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
+    this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
     localStorage.setItem("selectedTheme", themeName);
 
     this.applyThemeIconsAndColor(themeName);
+    // this.updatePageTitleFontFamily(theme.fontFamily)
 
     this.listThemesInSelectField();
     return true;
   }
 
   applyTheme() {
-    const root = document.documentElement;
     const iframes = document.querySelectorAll(".mobile-frame iframe");
 
     if (!iframes.length) return;
 
-    root.style.setProperty(
-      "--primary-color",
-      this.toolBoxManager.currentTheme.colors.primaryColor
-    );
-    root.style.setProperty(
-      "--secondary-color",
-      this.toolBoxManager.currentTheme.colors.secondaryColor
-    );
-    root.style.setProperty(
-      "--background-color",
-      this.toolBoxManager.currentTheme.colors.backgroundColor
-    );
-    root.style.setProperty(
-      "--text-color",
-      this.toolBoxManager.currentTheme.colors.textColor
-    );
-    root.style.setProperty(
-      "--button-bg-color",
-      this.toolBoxManager.currentTheme.colors.buttonBgColor
-    );
-    root.style.setProperty(
-      "--button-text-color",
-      this.toolBoxManager.currentTheme.colors.buttonTextColor
-    );
-    root.style.setProperty(
-      "--card-bg-color",
-      this.toolBoxManager.currentTheme.colors.cardBgColor
-    );
-    root.style.setProperty(
-      "--card-text-color",
-      this.toolBoxManager.currentTheme.colors.cardTextColor
-    );
-    root.style.setProperty(
-      "--accent-color",
-      this.toolBoxManager.currentTheme.colors.accentColor
-    );
-    root.style.setProperty(
-      "--font-family",
-      this.toolBoxManager.currentTheme.fontFamily
-    );
-
     iframes.forEach((iframe) => {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-      if (iframeDoc && iframeDoc.body) {
-        iframeDoc.body.style.setProperty(
-          "--primary-color",
-          this.toolBoxManager.currentTheme.colors.primaryColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--secondary-color",
-          this.toolBoxManager.currentTheme.colors.secondaryColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--background-color",
-          this.toolBoxManager.currentTheme.colors.backgroundColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--text-color",
-          this.toolBoxManager.currentTheme.colors.textColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--button-bg-color",
-          this.toolBoxManager.currentTheme.colors.buttonBgColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--button-text-color",
-          this.toolBoxManager.currentTheme.colors.buttonTextColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--card-bg-color",
-          this.toolBoxManager.currentTheme.colors.cardBgColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--card-text-color",
-          this.toolBoxManager.currentTheme.colors.cardTextColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--accent-color",
-          this.toolBoxManager.currentTheme.colors.accentColor
-        );
-        iframeDoc.body.style.setProperty(
-          "--font-family",
-          this.toolBoxManager.currentTheme.fontFamily
+      this.updateRootStyle(iframeDoc, "primary-color", this.toolBoxManager.currentTheme.ThemeColors.primaryColor);
+      this.updateRootStyle(iframeDoc, "secondary-color", this.toolBoxManager.currentTheme.ThemeColors.secondaryColor);
+      this.updateRootStyle(iframeDoc, "background-color", this.toolBoxManager.currentTheme.ThemeColors.backgroundColor);
+      this.updateRootStyle(iframeDoc, "text-color", this.toolBoxManager.currentTheme.ThemeColors.textColor);
+      this.updateRootStyle(iframeDoc, "button-bg-color", this.toolBoxManager.currentTheme.ThemeColors.buttonBgColor);
+      this.updateRootStyle(iframeDoc, "button-text-color", this.toolBoxManager.currentTheme.ThemeColors.buttonTextColor);
+      this.updateRootStyle(iframeDoc, "card-bg-color", this.toolBoxManager.currentTheme.ThemeColors.cardBgColor);
+      this.updateRootStyle(iframeDoc, "card-text-color", this.toolBoxManager.currentTheme.ThemeColors.cardTextColor);
+      this.updateRootStyle(iframeDoc, "accent-color", this.toolBoxManager.currentTheme.ThemeColors.accentColor);
+      this.updateRootStyle(iframeDoc, "font-family", this.toolBoxManager.currentTheme.ThemeFontFamily);
+
+      this.updatePageTitleFontFamily(this.toolBoxManager.currentTheme.ThemeFontFamily);
+    });
+  }
+
+  updateRootStyle(iframeDoc, property, value) {
+    const styleTag = iframeDoc.body.querySelector("style");
+
+    if (styleTag) {
+      let styleContent = styleTag.innerHTML;
+
+      // Regular expression to find and update the variable
+      const regex = new RegExp(`(--${property}:\\s*)([^;]+)(;)`);
+
+      if (regex.test(styleContent)) {
+        // Update the existing property
+        styleContent = styleContent.replace(regex, `$1${value}$3`);
+      } else {
+        // If the property does not exist, add it inside :root
+        styleContent = styleContent.replace(
+          /:root\s*{/,
+          `:root {\n  --${property}: ${value};`
         );
       }
-    });
+
+      styleTag.innerHTML = styleContent;
+    } else {
+      console.log("No style tag found");
+    }
   }
 
   applyThemeIconsAndColor(themeName) {
@@ -2701,7 +2645,7 @@ class ThemeManager {
           const wrapper = editor.getWrapper();
 
           const theme = this.toolBoxManager.themes.find(
-            (theme) => theme.name === themeName
+            (theme) => theme.ThemeName === themeName
           );
           const tiles = wrapper.find(".template-block");
 
@@ -2741,8 +2685,8 @@ class ThemeManager {
 
             const currentTileBgColorName =
               tile.getAttributes()?.["tile-bgcolor-name"];
-            if (currentTileBgColorName && theme.colors) {
-              const matchingColorCode = theme.colors[currentTileBgColorName];
+            if (currentTileBgColorName && theme.ThemeColors) {
+              const matchingColorCode = theme.ThemeColors[currentTileBgColorName];
 
               if (matchingColorCode) {
                 tile.addAttributes({
@@ -2775,7 +2719,7 @@ class ThemeManager {
       if (iframeDoc && iframeDoc.body) {
         iframeDoc.body.style.setProperty(
           "--font-family",
-          this.toolBoxManager.currentTheme.fontFamily
+          this.toolBoxManager.currentTheme.ThemeFontFamily
         );
       }
     });
@@ -3029,19 +2973,19 @@ class ThemeManager {
       const option = document.createElement("div");
       option.classList.add("theme-option");
       option.setAttribute("role", "option");
-      option.setAttribute("data-value", theme.name);
-      option.textContent = theme.name;
+      option.setAttribute("data-value", theme.ThemeName);
+      option.textContent = theme.ThemeName;
 
       if (
         this.toolBoxManager.currentTheme &&
-        theme.name === this.toolBoxManager.currentTheme.name
+        theme.ThemeName === this.toolBoxManager.currentTheme.ThemeName
       ) {
         option.classList.add("selected");
-        selectedValue.textContent = theme.name;
+        selectedValue.textContent = theme.ThemeName;
       }
 
       option.addEventListener("click", () => {
-        selectedValue.textContent = theme.name;
+        selectedValue.textContent = theme.ThemeName;
 
         // Remove 'selected' class from all options and apply to clicked one
         optionsList
@@ -3056,15 +3000,22 @@ class ThemeManager {
 
         // Update theme selection
         this.toolBoxManager.dataManager.selectedTheme =
-          this.toolBoxManager.themes.find((t) => t.name === theme.name);
+          this.toolBoxManager.themes.find((t) => t.ThemeName === theme.ThemeName);
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
-          if (this.setTheme(theme.name)) {
-            this.themeColorPalette(this.toolBoxManager.currentTheme.colors);
-            localStorage.setItem("selectedTheme", theme.name);
+          console.log("Theme: ", theme);
+
+          if (this.setTheme(theme.ThemeName)) {
+            this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
+            localStorage.setItem("selectedTheme", theme.ThemeName);
             this.toolBoxManager.editorManager.theme = theme;
+
+            console.log("Theme applied: ", theme.ThemeName);
+            console.log("Editor theme: ", this.toolBoxManager.editorManager.theme);
+
+            this.updatePageTitleFontFamily(theme.ThemeFontFamily);
 
             const message = this.toolBoxManager.currentLanguage.getTranslation(
               "theme_applied_success_message"
@@ -3081,6 +3032,14 @@ class ThemeManager {
 
       // Append option to options list
       optionsList.appendChild(option);
+    });
+  }
+
+  updatePageTitleFontFamily(fontFamily) {
+    const appBars = document.querySelectorAll(".app-bar");
+    appBars.forEach((appBar) => {
+      const h1 = appBar.querySelector("h1");
+      h1.style.fontFamily = fontFamily;
     });
   }
 
@@ -3366,7 +3325,7 @@ class ToolBoxUI {
       this.manager.editorManager.selectedComponent?.getAttributes()?.[
         "tile-bg-image-opacity"
       ];
-    
+
     const imageOpacity = document.getElementById("bg-opacity");
     imageOpacity.value = currentTileOpacity;
   }
@@ -3387,7 +3346,7 @@ class ToolBoxUI {
     allOptions.forEach((option) => {
       option.style.background = "";
     });
-    propertySection.textContent = "Select Action"
+    propertySection.textContent = "Select Action";
     if (currentActionName && currentActionId && selectedOptionElement) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
@@ -3396,10 +3355,17 @@ class ToolBoxUI {
   }
 
   pageContentCtas(callToActions, editorInstance) {
-    const contentPageCtas = document.getElementById("call-to-actions");
-    this.renderCtas(callToActions, editorInstance, contentPageCtas);
-    this.setupButtonLayoutListeners(editorInstance);
-    this.setupBadgeClickListener(editorInstance);
+    if (callToActions == null || callToActions.length <= 0) {
+      this.noCtaSection();
+    } else {
+      const contentPageCtas = document.getElementById("call-to-actions");
+      document.getElementById("cta-style").style.display = "flex";
+      document.getElementById("no-cta-message").style.display = "none";
+      
+      this.renderCtas(callToActions, editorInstance, contentPageCtas);
+      this.setupButtonLayoutListeners(editorInstance);
+      this.setupBadgeClickListener(editorInstance);
+    }
   }
 
   renderCtas(callToActions, editorInstance, contentPageCtas) {
@@ -3479,8 +3445,8 @@ class ToolBoxUI {
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
             <div class="cta-label" ${defaultConstraints}>${
-          cta.CallToActionName
-        }</div>
+      cta.CallToActionName
+    }</div>
       </div>
     `;
   }
@@ -3549,9 +3515,11 @@ class ToolBoxUI {
 
   // Helper method to check if component is a valid CTA
   isValidCtaComponent(attributes) {
-    return attributes.hasOwnProperty("cta-button-label") &&
-           attributes.hasOwnProperty("cta-button-type") &&
-           attributes.hasOwnProperty("cta-button-action");
+    return (
+      attributes.hasOwnProperty("cta-button-label") &&
+      attributes.hasOwnProperty("cta-button-type") &&
+      attributes.hasOwnProperty("cta-button-action")
+    );
   }
 
   // Extract CTA attributes from component
@@ -3562,7 +3530,7 @@ class ToolBoxUI {
       ctaName: attributes["cta-button-label"],
       ctaType: attributes["cta-button-type"],
       ctaAction: attributes["cta-button-action"],
-      ctaButtonBgColor: attributes["cta-background-color"]
+      ctaButtonBgColor: attributes["cta-background-color"],
     };
   }
 
@@ -3572,14 +3540,15 @@ class ToolBoxUI {
       Phone: "fas fa-phone-alt",
       Email: "fas fa-envelope",
       SiteUrl: "fas fa-link",
-      Form: "fas fa-file"
+      Form: "fas fa-file",
     };
     return iconMap[ctaType] || "fas fa-question";
   }
 
   // Generate common button attributes
   getCommonButtonAttributes(ctaAttributes) {
-    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } = ctaAttributes;
+    const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } =
+      ctaAttributes;
     return `
       data-gjs-draggable="false"
       data-gjs-editable="false"
@@ -3602,7 +3571,9 @@ class ToolBoxUI {
   generatePlainButtonComponent(ctaAttributes) {
     const { ctaName, ctaButtonBgColor } = ctaAttributes;
     return `
-      <div class="plain-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
+      <div class="plain-button-container" ${this.getCommonButtonAttributes(
+        ctaAttributes
+      )}>
         <button style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
                 class="plain-button" ${defaultConstraints}>
           <div class="cta-badge" ${defaultConstraints}>
@@ -3619,7 +3590,9 @@ class ToolBoxUI {
     const { ctaName, ctaButtonBgColor, ctaType } = ctaAttributes;
     const icon = this.getCtaTypeIcon(ctaType);
     return `
-      <div class="img-button-container" ${this.getCommonButtonAttributes(ctaAttributes)}>
+      <div class="img-button-container" ${this.getCommonButtonAttributes(
+        ctaAttributes
+      )}>
         <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
              class="img-button" ${defaultConstraints}>
           <i class="${icon} img-button-icon" ${defaultConstraints}></i>
@@ -3636,7 +3609,9 @@ class ToolBoxUI {
   // Handle component replacement
   handleComponentReplacement(editorInstance, ctaId, newComponent) {
     editorInstance.once("component:add", () => {
-      const addedComponent = editorInstance.getWrapper().find(`#id-${ctaId}`)[0];
+      const addedComponent = editorInstance
+        .getWrapper()
+        .find(`#id-${ctaId}`)[0];
       if (addedComponent) {
         editorInstance.select(addedComponent);
       }
@@ -3646,7 +3621,9 @@ class ToolBoxUI {
 
   // Handle button click
   handleButtonClick(editorInstance, generateComponent) {
-    const ctaContainer = editorInstance.getWrapper().find(".cta-button-container")[0];
+    const ctaContainer = editorInstance
+      .getWrapper()
+      .find(".cta-button-container")[0];
     if (!ctaContainer) return;
 
     const selectedComponent = this.manager.editorManager.selectedComponent;
@@ -3654,14 +3631,20 @@ class ToolBoxUI {
 
     const attributes = selectedComponent.getAttributes();
     if (!this.isValidCtaComponent(attributes)) {
-      const message = this.currentLanguage.getTranslation("please_select_cta_button");
+      const message = this.currentLanguage.getTranslation(
+        "please_select_cta_button"
+      );
       this.displayAlertMessage(message, "error");
       return;
     }
 
     const ctaAttributes = this.extractCtaAttributes(selectedComponent);
     const newComponent = generateComponent(ctaAttributes);
-    this.handleComponentReplacement(editorInstance, ctaAttributes.ctaId, newComponent);
+    this.handleComponentReplacement(
+      editorInstance,
+      ctaAttributes.ctaId,
+      newComponent
+    );
   }
 
   // Setup plain button listener
@@ -3669,8 +3652,9 @@ class ToolBoxUI {
     const plainButton = document.getElementById("plain-button-layout");
     plainButton.onclick = (e) => {
       e.preventDefault();
-      this.handleButtonClick(editorInstance, 
-        (attrs) => this.generatePlainButtonComponent(attrs));
+      this.handleButtonClick(editorInstance, (attrs) =>
+        this.generatePlainButtonComponent(attrs)
+      );
     };
   }
 
@@ -3679,8 +3663,9 @@ class ToolBoxUI {
     const imgButton = document.getElementById("img-button-layout");
     imgButton.onclick = (e) => {
       e.preventDefault();
-      this.handleButtonClick(editorInstance, 
-        (attrs) => this.generateImageButtonComponent(attrs));
+      this.handleButtonClick(editorInstance, (attrs) =>
+        this.generateImageButtonComponent(attrs)
+      );
     };
   }
 
@@ -3711,15 +3696,29 @@ class ToolBoxUI {
 
   activateCtaBtnStyles(selectedCtaComponent) {
     if (selectedCtaComponent) {
-      const isCtaButtonSelected = selectedCtaComponent.findType(".cta-buttons");
+      const isCtaButtonSelected = selectedCtaComponent.findType("cta-buttons");
       if (isCtaButtonSelected) {
-          document.querySelector(".cta-button-layout-container")
-            .style.display = "flex";
+        document.querySelector(".cta-button-layout-container").style.display =
+          "flex";
       }
     }
   }
-}
 
+  noCtaSection() {
+    const contentPageSection = document.getElementById("cta-style");
+    if (contentPageSection) {
+      contentPageSection.style.display = "none";
+      document.getElementById("call-to-actions").innerHTML = "";
+      const noCtaDisplayMessage = document.getElementById("no-cta-message");
+      if (noCtaDisplayMessage) {
+        noCtaDisplayMessage.style.display = "block";
+      }
+
+      document.querySelector(".cta-button-layout-container").style.display =
+          "none";
+    }
+  }
+}
 
 
 // Content from classes/UndoRedoManager.js

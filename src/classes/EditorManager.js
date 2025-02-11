@@ -299,7 +299,6 @@ class EditorManager {
     try {
       const res = await this.dataManager.getContentPageData(page.PageId);
       if (this.toolsSection.checkIfNotAuthenticated(res)) return;
-
       const contentPageData = res.SDT_ProductService;
       if (contentPageData) {
         const projectData =

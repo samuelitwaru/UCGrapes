@@ -259,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -716,7 +716,6 @@ class EditorManager {
     try {
       const res = await this.dataManager.getContentPageData(page.PageId);
       if (this.toolsSection.checkIfNotAuthenticated(res)) return;
-
       const contentPageData = res.SDT_ProductService;
       if (contentPageData) {
         const projectData =
@@ -1919,8 +1918,12 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
+      if (e.target.value.length > 10) {
+        e.target.value = truncateText(e.target.value, 12);
+      }
       this.ui.updateTileTitle(e.target.value);
     });
+
   }
 
   publishPages(isNotifyResidents) {
@@ -3151,6 +3154,11 @@ class ThemeManager {
                 "tile-icon",
                 icon.IconName
               );
+
+              this.toolBoxManager.setAttributeToSelected(
+                "tile-icon-color",
+                "#ffffff"
+              );
             }
           } else {
             const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -3405,6 +3413,8 @@ class ToolBoxUI {
     const ctaItem = document.createElement("div");
     ctaItem.classList.add("call-to-action-item");
     ctaItem.title = cta.CallToActionName;
+    ctaItem.id = cta.CallToActionId;
+    ctaItem.setAttribute("data-cta-id", cta.CallToActionId);
 
     const ctaType = this.getCtaType(cta.CallToActionType);
     ctaItem.innerHTML = `<i class="${ctaType.icon}"></i>`;
@@ -4093,7 +4103,7 @@ class ActionListComponent {
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
           const currentPageId = localStorage.getItem("pageId");
-          const tileTitle = item.textContent.toUpperCase()
+          const tileTitle = truncateText(item.textContent.toUpperCase(), 12);
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
@@ -5493,4 +5503,11 @@ function hexToRgb(hex) {
   
     return `${r}, ${g}, ${b}`;
   }
+
+function truncateText(text, length) {
+    if (text.length > length) {
+      return text.slice(0, length);
+    }
+    return text;
+}
 

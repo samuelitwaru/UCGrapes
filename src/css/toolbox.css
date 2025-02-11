@@ -235,7 +235,7 @@ button {
 
 .tile-icon {
   width: 30px;
-  height: 30px;
+  /* height: 30px; */
   margin-bottom: 0.5rem;
   border: 2px dashed #4c53577d;
   display: flex;

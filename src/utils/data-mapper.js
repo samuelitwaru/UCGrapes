@@ -167,7 +167,6 @@ function mapContentToPageData(templateData, page) {
   return output;
 }
 
-
 function generateNewPage(theme) {
   return {
       "assets": [],

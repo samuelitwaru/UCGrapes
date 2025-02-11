@@ -14,3 +14,10 @@ function hexToRgb(hex) {
   
     return `${r}, ${g}, ${b}`;
   }
+
+function truncateText(text, length) {
+    if (text.length > length) {
+      return text.slice(0, length);
+    }
+    return text;
+}

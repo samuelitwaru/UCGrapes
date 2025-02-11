@@ -1890,8 +1890,12 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
+      if (e.target.value.length > 10) {
+        e.target.value = truncateText(e.target.value, 12);
+      }
       this.ui.updateTileTitle(e.target.value);
     });
+
   }
 
   publishPages(isNotifyResidents) {
@@ -4071,7 +4075,7 @@ class ActionListComponent {
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
           const currentPageId = localStorage.getItem("pageId");
-          const tileTitle = item.textContent.toUpperCase()
+          const tileTitle = truncateText(item.textContent.toUpperCase(), 12);
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
@@ -5471,4 +5475,11 @@ function hexToRgb(hex) {
   
     return `${r}, ${g}, ${b}`;
   }
+
+function truncateText(text, length) {
+    if (text.length > length) {
+      return text.slice(0, length);
+    }
+    return text;
+}
 

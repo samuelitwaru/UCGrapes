@@ -24,6 +24,11 @@ class ActionListComponent {
         options: [],
       },
       {
+        name: "Dynamic Forms",
+        label: this.currentLanguage.getTranslation("category_dynamic_form"),
+        options: [],
+      },
+      {
         name: "Predefined Page",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
@@ -52,11 +57,21 @@ class ActionListComponent {
             PageName: service.ProductServiceName,
           };
         });
+
+        this.dynamicPages = this.dataManager.services.map((service) => {
+          return {
+            PageId: service.ProductServiceId,
+            PageName: service.ProductServiceName,
+          };
+        });
+
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
             category.options = this.pageOptions;
           } else if (category.name == "Service/Product Page") {
             category.options = this.servicePageOptions;
+          } else if (category.name == "Dynamic Forms") {
+            category.options = this.predefinedPageOptions;
           } else if (category.name == "Predefined Page") {
             category.options = this.predefinedPageOptions;
           }

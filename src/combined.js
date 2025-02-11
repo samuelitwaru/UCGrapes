@@ -259,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -3271,7 +3271,7 @@ class ToolBoxUI {
 
   updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "cta-background-color"
       ];
     const CtaRadios = document.querySelectorAll(
@@ -3378,7 +3378,11 @@ class ToolBoxUI {
     allOptions.forEach((option) => {
       option.style.background = "";
     });
-    propertySection.textContent = "Select Action";
+    propertySection.innerHTML = `<span id="sidebar_select_action_label">
+                  ${this.currentLanguage.getTranslation("sidebar_select_action_label")}
+                  </span>
+                  <i class="fa fa-angle-down">
+                  </i>`;
     if (currentActionName && currentActionId && selectedOptionElement) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
@@ -3916,6 +3920,11 @@ class ActionListComponent {
       {
         name: "Service/Product Page",
         label: this.currentLanguage.getTranslation("category_services_or_page"),
+        options: [],
+      },
+      {
+        name: "Dynamic Forms",
+        label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [],
       },
       {

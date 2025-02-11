@@ -14,7 +14,7 @@ class TemplateManager {
 
   createTemplateHTML(isDefault = false) {
     let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.colors.accentColor;
+      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -480,6 +480,20 @@ class TemplateManager {
     const containerRow = templateComponent.parent();
     if (!containerRow) return;
 
+    const tileComponent = templateComponent.find(".template-block")[0];
+    const tileActionActionId = tileComponent.getAttributes()?.["tile-action-object-id"]
+    
+    if (tileActionActionId) {
+      const editors = Object.entries(this.editorManager.editors); 
+    
+      editors.forEach(([key, element]) => {
+        if (element.pageId === tileActionActionId) {
+          const frameId = key.replace('#', '');
+          this.editorManager.removePageOnTileDelete(frameId);
+        }
+      });
+    }
+    
     templateComponent.remove();
 
     const templates = containerRow.components();
@@ -719,18 +733,25 @@ class TemplateManager {
       if (closeEl) {
         closeEl.onclick = () => {
           // const component = this.editorManager.selectedComponent
-            // .find(sectionSelector)[0]
+          // .find(sectionSelector)[0]
           //   .remove();
-          if (sectionSelector === '.tile-title-section') {
-            const component = this.editorManager.selectedComponent.find(".tile-title")[0];
+          if (sectionSelector === ".tile-title-section") {
+            const component =
+              this.editorManager.selectedComponent.find(".tile-title")[0];
             component.components("");
-            this.editorManager.toolsSection.setAttributeToSelected("TileText", "")
-            $('#tile-title').val('');
-          }
-          else if (sectionSelector === '.tile-icon-section') {
-            const component = this.editorManager.selectedComponent.find(".tile-icon")[0];
+            this.editorManager.toolsSection.setAttributeToSelected(
+              "TileText",
+              ""
+            );
+            $("#tile-title").val("");
+          } else if (sectionSelector === ".tile-icon-section") {
+            const component =
+              this.editorManager.selectedComponent.find(".tile-icon")[0];
             component.components("");
-            this.editorManager.toolsSection.setAttributeToSelected("tile-icon", "")
+            this.editorManager.toolsSection.setAttributeToSelected(
+              "tile-icon",
+              ""
+            );
           }
         };
       }

@@ -80,17 +80,17 @@ class ToolBoxUI {
     }, 3000);
   }
 
-  updateTileProperties(editor, page) {
+  updateTileProperties(selectComponent, page) {
     if (page && page.PageIsContentPage) {
-      this.updateContentPageProperties();
+      this.updateContentPageProperties(selectComponent);
     } else {
-      this.updateTemplatePageProperties();
+      this.updateTemplatePageProperties(selectComponent);
     }
   }
 
-  updateContentPageProperties() {
+  updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "cta-background-color"
       ];
     const CtaRadios = document.querySelectorAll(
@@ -105,13 +105,13 @@ class ToolBoxUI {
     });
   }
 
-  updateTemplatePageProperties() {
-    this.updateAlignmentProperties();
-    this.updateColorProperties();
-    this.updateActionProperties();
+  updateTemplatePageProperties(selectComponent) {
+    this.updateAlignmentProperties(selectComponent);
+    this.updateColorProperties(selectComponent);
+    this.updateActionProperties(selectComponent);
   }
 
-  updateAlignmentProperties() {
+  updateAlignmentProperties(selectComponent) {
     const alignmentTypes = [
       { type: "text", attribute: "tile-text-align" },
       { type: "icon", attribute: "tile-icon-align" },
@@ -119,7 +119,7 @@ class ToolBoxUI {
 
     alignmentTypes.forEach(({ type, attribute }) => {
       const currentAlign =
-        this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        selectComponent?.getAttributes()?.[
           attribute
         ];
       ["left", "center", "right"].forEach((align) => {
@@ -129,9 +129,9 @@ class ToolBoxUI {
     });
   }
 
-  updateColorProperties() {
+  updateColorProperties(selectComponent) {
     const currentTextColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-text-color"
       ];
     const textColorRadios = document.querySelectorAll(
@@ -145,7 +145,7 @@ class ToolBoxUI {
 
     // Update icon color
     const currentIconColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-icon-color"
       ];
     const iconColorRadios = document.querySelectorAll(
@@ -159,7 +159,7 @@ class ToolBoxUI {
 
     // Update background color
     const currentBgColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-bgcolor"
       ];
     const radios = document.querySelectorAll(
@@ -173,7 +173,7 @@ class ToolBoxUI {
 
     // opacity
     const currentTileOpacity =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-bg-image-opacity"
       ];
 
@@ -181,13 +181,13 @@ class ToolBoxUI {
     imageOpacity.value = currentTileOpacity;
   }
 
-  updateActionProperties() {
+  updateActionProperties(selectComponent) {
     const currentActionName =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-action-object"
       ];
     const currentActionId =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-action-object-id"
       ];
     const propertySection = document.getElementById("selectedOption");

@@ -467,12 +467,6 @@ class EditorManager {
   }
 
   setCurrentEditor(editorId) {
-    const previousEditor = this.editors[editorId];
-    // if (previousEditor && previousEditor.editor) {
-    //   this.selectedComponent = null;
-    //   this.selectedTemplateWrapper = null;
-    // }
-
     this.currentEditor = this.editors[editorId];
     this.activateFrame(editorId + "-frame");
     this.toolsSection.unDoReDo(this.currentEditor.editor);
@@ -695,24 +689,27 @@ class EditorManager {
     }
   }
 
-  async updateEditorCtaButtons (editor, contentPageData) {
+  async updateEditorCtaButtons(editor, contentPageData) {
     const wrapper = editor.DomComponents.getWrapper();
     const ctaContainer = wrapper.find(".cta-button-container")[0];
     if (ctaContainer) {
-      console.log("ctaContainer: ", ctaContainer)
+      console.log("ctaContainer: ", ctaContainer);
       const ctaButtons = ctaContainer.findType("cta-buttons");
       if (ctaButtons.length > 0) {
         console.log("contentPageData: ", ctaButtons);
         ctaButtons.forEach((ctaButton) => {
-          const ctaButtonId  = ctaButton.getAttributes()?.["cta-button-id"];
-          // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton 
-          if (!contentPageData?.CallToActions?.some((cta) => cta.CallToActionId === ctaButtonId)){
+          const ctaButtonId = ctaButton.getAttributes()?.["cta-button-id"];
+          // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton
+          if (
+            !contentPageData?.CallToActions?.some(
+              (cta) => cta.CallToActionId === ctaButtonId
+            )
+          ) {
             ctaButton.remove();
           }
         });
       }
     }
-    
   }
 
   async loadNewContentPage(editor, page) {
@@ -784,20 +781,31 @@ class EditorManager {
         const currentContainer = document.getElementById(editorContainerId);
         if (!currentContainer) return;
 
-        const frameList = currentContainer.parentElement;
-        const allFrames = Array.from(frameList.children);
-
-        const currentIndex = allFrames.indexOf(currentContainer);
-
-        allFrames.forEach((frame, index) => {
-          if (index >= currentIndex) {
-            frame.remove();
-          }
-        });
-
-        this.editorEventManager.activateNavigators();
+        this.removeFrameContainer(currentContainer);
       });
     }
+  }
+
+  removePageOnTileDelete(editorContainerId) {
+    const currentContainer = document.getElementById(editorContainerId + '-frame');
+    if (!currentContainer) return;
+    
+    this.removeFrameContainer(currentContainer)
+  }
+
+  removeFrameContainer(currentContainer) {
+    const frameList = currentContainer.parentElement;
+    const allFrames = Array.from(frameList.children);
+
+    const currentIndex = allFrames.indexOf(currentContainer);
+
+    allFrames.forEach((frame, index) => {
+      if (index >= currentIndex) {
+        frame.remove();
+      }
+    });
+
+    this.editorEventManager.activateNavigators();
   }
 
   setToolsSection(toolBox) {
@@ -952,16 +960,17 @@ class EditorEventManager {
       );
     }
 
-    this.editorManager.toolsSection.ui.updateTileProperties(
-      this.editorManager.currentEditor.editor,
-      this.editorManager.currentPageId
-    );
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page?.PageIsContentPage) {
       this.editorManager.toolsSection.ui.activateCtaBtnStyles(
         this.editorManager.selectedComponent
       );
     }
+
+    this.editorManager.toolsSection.ui.updateTileProperties(
+      this.editorManager.selectedComponent,
+      page
+    );
 
     this.editorManager.toolsSection.checkTileBgImage();
 
@@ -989,8 +998,6 @@ class EditorEventManager {
         page.PageIsContentPage ? "none" : "block";
     }
   }
-
-  
 
   activateNavigators() {
     const leftNavigator = document.querySelector(".page-navigator-left");
@@ -1082,7 +1089,7 @@ class TemplateManager {
 
   createTemplateHTML(isDefault = false) {
     let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.colors.accentColor;
+      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -1548,6 +1555,20 @@ class TemplateManager {
     const containerRow = templateComponent.parent();
     if (!containerRow) return;
 
+    const tileComponent = templateComponent.find(".template-block")[0];
+    const tileActionActionId = tileComponent.getAttributes()?.["tile-action-object-id"]
+    
+    if (tileActionActionId) {
+      const editors = Object.entries(this.editorManager.editors); 
+    
+      editors.forEach(([key, element]) => {
+        if (element.pageId === tileActionActionId) {
+          const frameId = key.replace('#', '');
+          this.editorManager.removePageOnTileDelete(frameId);
+        }
+      });
+    }
+    
     templateComponent.remove();
 
     const templates = containerRow.components();
@@ -1787,18 +1808,25 @@ class TemplateManager {
       if (closeEl) {
         closeEl.onclick = () => {
           // const component = this.editorManager.selectedComponent
-            // .find(sectionSelector)[0]
+          // .find(sectionSelector)[0]
           //   .remove();
-          if (sectionSelector === '.tile-title-section') {
-            const component = this.editorManager.selectedComponent.find(".tile-title")[0];
+          if (sectionSelector === ".tile-title-section") {
+            const component =
+              this.editorManager.selectedComponent.find(".tile-title")[0];
             component.components("");
-            this.editorManager.toolsSection.setAttributeToSelected("TileText", "")
-            $('#tile-title').val('');
-          }
-          else if (sectionSelector === '.tile-icon-section') {
-            const component = this.editorManager.selectedComponent.find(".tile-icon")[0];
+            this.editorManager.toolsSection.setAttributeToSelected(
+              "TileText",
+              ""
+            );
+            $("#tile-title").val("");
+          } else if (sectionSelector === ".tile-icon-section") {
+            const component =
+              this.editorManager.selectedComponent.find(".tile-icon")[0];
             component.components("");
-            this.editorManager.toolsSection.setAttributeToSelected("tile-icon", "")
+            this.editorManager.toolsSection.setAttributeToSelected(
+              "tile-icon",
+              ""
+            );
           }
         };
       }
@@ -3225,15 +3253,15 @@ class ToolBoxUI {
     }, 3000);
   }
 
-  updateTileProperties(editor, page) {
+  updateTileProperties(selectComponent, page) {
     if (page && page.PageIsContentPage) {
-      this.updateContentPageProperties();
+      this.updateContentPageProperties(selectComponent);
     } else {
-      this.updateTemplatePageProperties();
+      this.updateTemplatePageProperties(selectComponent);
     }
   }
 
-  updateContentPageProperties() {
+  updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
       this.manager.editorManager.selectedComponent?.getAttributes()?.[
         "cta-background-color"
@@ -3250,13 +3278,13 @@ class ToolBoxUI {
     });
   }
 
-  updateTemplatePageProperties() {
-    this.updateAlignmentProperties();
-    this.updateColorProperties();
-    this.updateActionProperties();
+  updateTemplatePageProperties(selectComponent) {
+    this.updateAlignmentProperties(selectComponent);
+    this.updateColorProperties(selectComponent);
+    this.updateActionProperties(selectComponent);
   }
 
-  updateAlignmentProperties() {
+  updateAlignmentProperties(selectComponent) {
     const alignmentTypes = [
       { type: "text", attribute: "tile-text-align" },
       { type: "icon", attribute: "tile-icon-align" },
@@ -3264,7 +3292,7 @@ class ToolBoxUI {
 
     alignmentTypes.forEach(({ type, attribute }) => {
       const currentAlign =
-        this.manager.editorManager.selectedComponent?.getAttributes()?.[
+        selectComponent?.getAttributes()?.[
           attribute
         ];
       ["left", "center", "right"].forEach((align) => {
@@ -3274,9 +3302,9 @@ class ToolBoxUI {
     });
   }
 
-  updateColorProperties() {
+  updateColorProperties(selectComponent) {
     const currentTextColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-text-color"
       ];
     const textColorRadios = document.querySelectorAll(
@@ -3290,7 +3318,7 @@ class ToolBoxUI {
 
     // Update icon color
     const currentIconColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-icon-color"
       ];
     const iconColorRadios = document.querySelectorAll(
@@ -3304,7 +3332,7 @@ class ToolBoxUI {
 
     // Update background color
     const currentBgColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-bgcolor"
       ];
     const radios = document.querySelectorAll(
@@ -3318,7 +3346,7 @@ class ToolBoxUI {
 
     // opacity
     const currentTileOpacity =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-bg-image-opacity"
       ];
 
@@ -3326,13 +3354,13 @@ class ToolBoxUI {
     imageOpacity.value = currentTileOpacity;
   }
 
-  updateActionProperties() {
+  updateActionProperties(selectComponent) {
     const currentActionName =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-action-object"
       ];
     const currentActionId =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "tile-action-object-id"
       ];
     const propertySection = document.getElementById("selectedOption");

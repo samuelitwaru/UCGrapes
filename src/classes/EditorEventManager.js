@@ -143,16 +143,17 @@ class EditorEventManager {
       );
     }
 
-    this.editorManager.toolsSection.ui.updateTileProperties(
-      this.editorManager.currentEditor.editor,
-      this.editorManager.currentPageId
-    );
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page?.PageIsContentPage) {
       this.editorManager.toolsSection.ui.activateCtaBtnStyles(
         this.editorManager.selectedComponent
       );
     }
+
+    this.editorManager.toolsSection.ui.updateTileProperties(
+      this.editorManager.selectedComponent,
+      page
+    );
 
     this.editorManager.toolsSection.checkTileBgImage();
 
@@ -180,8 +181,6 @@ class EditorEventManager {
         page.PageIsContentPage ? "none" : "block";
     }
   }
-
-  
 
   activateNavigators() {
     const leftNavigator = document.querySelector(".page-navigator-left");

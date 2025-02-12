@@ -126,7 +126,7 @@ class ThemeManager {
             // icons change and its color
             const tileIconName = tile.getAttributes()?.["tile-icon"];
             if (tileIconName) {
-              const matchingIcon = theme.icons?.find(
+              const matchingIcon = theme.ThemeIcons?.find(
                 (icon) => icon.IconName === tileIconName
               );
 
@@ -483,9 +483,6 @@ class ThemeManager {
             this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
             localStorage.setItem("selectedTheme", theme.ThemeName);
             this.toolBoxManager.editorManager.theme = theme;
-
-            console.log("Theme applied: ", theme.ThemeName);
-            console.log("Editor theme: ", this.toolBoxManager.editorManager.theme);
 
             this.updatePageTitleFontFamily(theme.ThemeFontFamily);
 

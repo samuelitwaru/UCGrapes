@@ -192,7 +192,7 @@ function generateNewPage(theme) {
                 },
                 "selectable": false,
                 "attributes": {
-                  "theme": `${theme.name}`
+                  "theme": `${theme.ThemeName}`
                 },
                 "_undoexc": [
                   "status",
@@ -273,7 +273,7 @@ function generateNewPage(theme) {
                                       "tile-icon": "icon-name",
                                       "tile-icon-color": "#000000",
                                       "tile-icon-align": "left",
-                                      "tile-bgcolor": `${theme.colors.accentColor}`,
+                                      "tile-bgcolor": `${theme.ThemeColors.accentColor}`,
                                       "tile-bgcolor-name": "accentColor",
                                       "tile-bg-image": "",
                                       "tile-bg-image-opacity": "100",

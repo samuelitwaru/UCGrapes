@@ -1050,8 +1050,9 @@ h5#current-page-title {
   padding: 4px 8px;
   text-align: center;
   cursor: pointer;
-  height: 60px;
-  width: 52px;
+  min-height: 60px;
+  min-width: 52px;
+  width: 100%;
 }
 
 .sidebar-section .icons-list .icon svg {

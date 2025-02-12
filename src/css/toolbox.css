@@ -39,7 +39,8 @@ button {
 }
 
 .frame-container,
-.content-frame-container {
+.content-frame-container,
+.form-frame-container {
   min-height: 100vh;
   padding: 1em;
   display: flex;
@@ -51,8 +52,8 @@ button {
   overflow: hidden;
 }
 
-.content-frame-container {
-  /* margin-top: 5px !important; */
+.form-frame-container {
+  padding: 0.1rem;
 }
 
 /* Templates section */

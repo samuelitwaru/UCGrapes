@@ -58,10 +58,10 @@ class ActionListComponent {
           };
         });
 
-        this.dynamicPages = this.dataManager.services.map((service) => {
+        this.dynamicForms = this.dataManager.forms.map((form) => {
           return {
-            PageId: service.ProductServiceId,
-            PageName: service.ProductServiceName,
+            PageId: form.FormId,
+            PageName: form.ReferenceName,
           };
         });
 
@@ -71,7 +71,7 @@ class ActionListComponent {
           } else if (category.name == "Service/Product Page") {
             category.options = this.servicePageOptions;
           } else if (category.name == "Dynamic Forms") {
-            category.options = this.predefinedPageOptions;
+            category.options = this.dynamicForms;
           } else if (category.name == "Predefined Page") {
             category.options = this.predefinedPageOptions;
           }
@@ -236,6 +236,9 @@ class ActionListComponent {
 
             if (category == "Service/Product Page") {
               this.createContentPage(item.id, editorContainerId);
+            }else if (category == "Dynamic Forms") {
+              $(editorContainerId).nextAll().remove();
+              this.createDynamicFormPage(item.id, item.textContent)
             }else{
               $(editorContainerId).nextAll().remove();
               this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
@@ -291,6 +294,19 @@ class ActionListComponent {
       this.dataManager.getPages().then(res=>{
         $(editorContainerId).nextAll().remove();
         this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
+      })
+    });
+  }
+
+  createDynamicFormPage(formId, formName, editorContainerId) {
+    this.dataManager.createDynamicFormPage(formId, formName).then((res) => {
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      
+      this.dataManager.getPages().then(res=>{
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(this.editorManager.getPage(formId))
       })
     });
   }

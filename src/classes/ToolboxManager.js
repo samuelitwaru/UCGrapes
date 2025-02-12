@@ -199,12 +199,6 @@ class ToolBoxManager {
 
   checkIfNotAuthenticated(res) {
     if (res.error.Status === "Error") {
-      console.error(
-        "Error updating theme. Status:",
-        res.error.Status,
-        "Message:",
-        res.error.Message
-      );
 
       this.ui.displayAlertMessage(
         this.currentLanguage.getTranslation("not_authenticated_message"),

@@ -39,6 +39,12 @@ class ThemeManager {
     this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
     localStorage.setItem("selectedTheme", themeName);
 
+    const page = this.toolBoxManager.editorManager.getPage(this.toolBoxManager.editorManager.currentPageId);
+    this.toolBoxManager.ui.updateTileProperties(
+      this.toolBoxManager.editorManager.selectedComponent,
+      page
+    );
+
     this.applyThemeIconsAndColor(themeName);
     // this.updatePageTitleFontFamily(theme.fontFamily)
 

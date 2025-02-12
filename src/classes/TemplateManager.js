@@ -18,7 +18,7 @@ class TemplateManager {
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
-            }"        
+            }"    draggable="true" ondragstart="drag(event)"
                   data-gjs-selectable="false"
                   data-gjs-type="tile-wrapper"
                   data-gjs-editable="false"
@@ -549,7 +549,8 @@ class TemplateManager {
                 data-gjs-editable="false"
                 data-gjs-highlightable="false"
                 data-gjs-droppable="false"
-                data-gjs-hoverable="false">
+                data-gjs-hoverable="false"
+                ondrop="drop(event)" ondragover="allowDrop(event)">
                 ${this.createTemplateHTML()}
             </div>
             `)[0];

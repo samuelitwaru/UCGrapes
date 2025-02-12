@@ -491,7 +491,6 @@ class EditorManager {
   }
 
   createChildEditor(page) {
-    console.log("Page from createChildEditor: ", page);
     const editorDetails = this.setupEditorContainer(page);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
     this.editorEventManager.addEditorEventListeners(editor, page);
@@ -1108,13 +1107,6 @@ class EditorEventManager {
       this.templateManager.removeElementOnClick(
         ".selected-tile-title",
         ".tile-title-section"
-      );
-    }
-
-    const page = this.editorManager.getPage(this.editorManager.currentPageId);
-    if (page?.PageIsContentPage) {
-      this.editorManager.toolsSection.ui.activateCtaBtnStyles(
-        this.editorManager.selectedComponent
       );
     }
 
@@ -2745,6 +2737,12 @@ class ThemeManager {
 
     this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
     localStorage.setItem("selectedTheme", themeName);
+
+    const page = this.toolBoxManager.editorManager.getPage(this.toolBoxManager.editorManager.currentPageId);
+    this.toolBoxManager.ui.updateTileProperties(
+      this.toolBoxManager.editorManager.selectedComponent,
+      page
+    );
 
     this.applyThemeIconsAndColor(themeName);
     // this.updatePageTitleFontFamily(theme.fontFamily)

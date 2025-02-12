@@ -66,7 +66,6 @@ class EditorManager {
   }
 
   createChildEditor(page) {
-    console.log("Page from createChildEditor: ", page);
     const editorDetails = this.setupEditorContainer(page);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
     this.editorEventManager.addEditorEventListeners(editor, page);

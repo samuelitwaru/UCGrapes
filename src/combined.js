@@ -743,7 +743,6 @@ class EditorManager {
   }
 
   async loadDynamicFormContent(editor, page) {
-    console.log("loadDynamicFormContent", page);
     try {
       editor.DomComponents.clear();
 
@@ -1110,10 +1109,10 @@ class EditorEventManager {
       );
     }
 
-    this.editorManager.toolsSection.ui.updateTileProperties(
-      this.editorManager.selectedComponent,
-      page
-    );
+    // this.editorManager.toolsSection.ui.updateTileProperties(
+    //   this.editorManager.selectedComponent,
+    //   page
+    // );
 
     this.editorManager.toolsSection.checkTileBgImage();
 
@@ -1188,7 +1187,6 @@ class EditorEventManager {
   }
 
   setupUndoRedoButtons() {
-    // Assuming you have undo and redo buttons in your UI
     const undoBtn = document.getElementById("undo");
     const redoBtn = document.getElementById("redo");
 

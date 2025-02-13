@@ -143,10 +143,10 @@ class EditorEventManager {
       );
     }
 
-    this.editorManager.toolsSection.ui.updateTileProperties(
-      this.editorManager.selectedComponent,
-      page
-    );
+    // this.editorManager.toolsSection.ui.updateTileProperties(
+    //   this.editorManager.selectedComponent,
+    //   page
+    // );
 
     this.editorManager.toolsSection.checkTileBgImage();
 

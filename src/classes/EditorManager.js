@@ -318,7 +318,6 @@ class EditorManager {
   }
 
   async loadDynamicFormContent(editor, page) {
-    console.log("loadDynamicFormContent", page);
     try {
       editor.DomComponents.clear();
 

@@ -198,7 +198,11 @@ class ToolBoxUI {
     allOptions.forEach((option) => {
       option.style.background = "";
     });
-    propertySection.textContent = "Select Action";
+    propertySection.innerHTML = `<span id="sidebar_select_action_label">
+                  ${this.currentLanguage.getTranslation("sidebar_select_action_label")}
+                  </span>
+                  <i class="fa fa-angle-down">
+                  </i>`;
     if (currentActionName && currentActionId && selectedOptionElement) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';

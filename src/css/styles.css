@@ -1050,8 +1050,9 @@ h5#current-page-title {
   padding: 4px 8px;
   text-align: center;
   cursor: pointer;
-  height: 60px;
-  width: 52px;
+  min-height: 60px;
+  min-width: 52px;
+  width: 100%;
 }
 
 .sidebar-section .icons-list .icon svg {
@@ -1547,6 +1548,15 @@ h5#current-page-title {
   position: absolute;
   left: 30px;
   top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #666;
+}
+
+.search-container .add-button {
+  position: absolute;
+  left: 193px;
+  top: 19px;
   transform: translateY(-50%);
   font-size: 14px;
   color: #666;

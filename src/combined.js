@@ -263,8 +263,9 @@ const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
-  constructor(services = [], media = []) {
+  constructor(services = [], forms = [], media = []) {
     this.services = services;
+    this.forms = forms;
     this.media = media;
     this.pages = [];
     this.selectedTheme = null;
@@ -308,11 +309,13 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
+    console.log("Pages: ",this.pages);
     return this.pages;
   }
 
   async getServices() {
-    this.services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    const services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }
 
@@ -361,10 +364,16 @@ class DataManager {
   }
 
   async createContentPage(pageId) {
-    console.log('createContentPage', pageId);
     return await this.fetchAPI('/api/toolbox/create-content-page', {
       method: 'POST',
       body: JSON.stringify({ PageId: pageId }),
+    });
+  }
+
+  async createDynamicFormPage(formId, pageName) {
+    return await this.fetchAPI('/api/toolbox/create-dynamic-form-page', {
+      method: 'POST',
+      body: JSON.stringify({ FormId: formId, PageName: pageName }),
     });
   }
 
@@ -420,6 +429,7 @@ class DataManager {
 
 
 // Content from classes/EditorManager.js
+
 class EditorManager {
   editors = {};
   pages = [];
@@ -601,13 +611,18 @@ class EditorManager {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
+    } else if (page.PageIsDynamicForm) {
+      await this.loadDynamicFormContent(editor, page);
     }
+
     this.updatePageJSONContent(editor, page);
   }
 
   async loadExistingContent(editor, page) {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
+
+      console.log("PageData: ", pageData);
 
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
@@ -625,12 +640,27 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src =
-      this.dataManager.Location.LocationImage_GXI;
-    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content =
-      this.dataManager.Location.LocationDescription;
-    editor.DomComponents.clear();
-    editor.loadProjectData(pageData);
+
+    // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
+
+    const locationData = this.dataManager.Location;
+
+    
+    const dataComponents = pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components
+    
+    if (dataComponents.length) {
+      const imgComponent = dataComponents.find((component) => component.attributes.src);
+      const descriptionComponent = dataComponents.find((component) =>  component.type=="product-service-description");
+      if (imgComponent) {
+        imgComponent.attributes.src = locationData.LocationImage_GXI;
+      }
+      if (descriptionComponent) {
+        descriptionComponent.components[0].content = locationData.LocationDescription;
+      }
+      editor.DomComponents.clear();
+      editor.loadProjectData(pageData);
+    }
+    
   }
 
   async handleContentPage(editor, page) {
@@ -738,6 +768,137 @@ class EditorManager {
     }
   }
 
+  async loadDynamicFormContent(editor, page) {
+    try {
+      editor.DomComponents.clear();
+      editor.DomComponents.addType("iframe", {
+        model: {
+          defaults: {
+            tagName: "iframe",
+            void: true,
+            draggable: false,
+            selectable: false,
+            attributes: {
+              frameborder: "0",
+              scrolling: "no",
+              seamless: "seamless",
+              loading: "lazy",
+              sandbox: "allow-scripts allow-same-origin",
+              src: `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
+            },
+            // Define styles separately from attributes
+            style: {
+              width: "100%",
+              height: "300vh",
+              border: "none",
+              overflow: "hidden",
+              '-ms-overflow-style': 'none',
+              'scrollbar-width': 'none',
+            },
+          },
+
+          init() {
+            this.set("tagName", "iframe");
+
+            // Ensure src is set in attributes if not already present
+            const attrs = this.getAttributes();
+            if (!attrs.src) {
+              this.set("attributes", {
+                ...attrs,
+                src: this.defaults.attributes.src,
+              });
+            }
+          },
+
+          isValidUrl(url) {
+            try {
+              new URL(url);
+              return true;
+            } catch {
+              return false;
+            }
+          },
+        },
+
+        view: {
+          tagName: "iframe",
+
+          events: {
+            load: "onLoad",
+            error: "onError",
+          },
+
+          init() {
+            try {
+              this.listenTo(
+                this.model,
+                "change:attributes",
+                this.updateAttributes
+              );
+            } catch (error) {
+              console.error("Error initializing iframe view:", error);
+            }
+          },
+
+          onLoad() {
+            console.log("IFrame loaded successfully");
+          },
+
+          onError() {
+            console.error("Error loading iframe content");
+          },
+
+          updateAttributes() {
+            try {
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.error("Error updating iframe attributes:", error);
+            }
+          },
+
+          render() {
+            try {
+              // Set all attributes except style
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+
+              // Apply styles correctly
+              const styles = this.model.get("style");
+              if (styles) {
+                Object.entries(styles).forEach(([prop, value]) => {
+                  this.el.style[prop] = value;
+                });
+              }
+
+              return this;
+            } catch (error) {
+              console.error("Error rendering iframe:", error);
+              return this;
+            }
+          },
+        },
+      });
+
+      // Add the component to the editor
+      editor.setComponents(`
+        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
+          <iframe></iframe>
+        </div>
+      `);
+    } catch (error) {
+      console.error("Error setting up iframe component:", error.message);
+    }
+  }
+
   setupEditorLayout(editor, page, containerId) {
     if (this.shouldShowAppBar(page)) {
       const canvas = editor.Canvas.getElement();
@@ -793,10 +954,12 @@ class EditorManager {
   }
 
   removePageOnTileDelete(editorContainerId) {
-    const currentContainer = document.getElementById(editorContainerId + '-frame');
+    const currentContainer = document.getElementById(
+      editorContainerId + "-frame"
+    );
     if (!currentContainer) return;
-    
-    this.removeFrameContainer(currentContainer)
+
+    this.removeFrameContainer(currentContainer);
   }
 
   removeFrameContainer(currentContainer) {
@@ -816,6 +979,11 @@ class EditorManager {
 
   setToolsSection(toolBox) {
     this.toolsSection = toolBox;
+  }
+
+  displayDynamicForm(formId, referenceName) {
+    const editor = this.initializeGrapesEditor(`gjs-${formId}`);
+    console.log(editor);
   }
 }
 
@@ -966,17 +1134,10 @@ class EditorEventManager {
       );
     }
 
-    const page = this.editorManager.getPage(this.editorManager.currentPageId);
-    if (page?.PageIsContentPage) {
-      this.editorManager.toolsSection.ui.activateCtaBtnStyles(
-        this.editorManager.selectedComponent
-      );
-    }
-
-    this.editorManager.toolsSection.ui.updateTileProperties(
-      this.editorManager.selectedComponent,
-      page
-    );
+    // this.editorManager.toolsSection.ui.updateTileProperties(
+    //   this.editorManager.selectedComponent,
+    //   page
+    // );
 
     this.editorManager.toolsSection.checkTileBgImage();
 
@@ -1051,7 +1212,6 @@ class EditorEventManager {
   }
 
   setupUndoRedoButtons() {
-    // Assuming you have undo and redo buttons in your UI
     const undoBtn = document.getElementById("undo");
     const redoBtn = document.getElementById("redo");
 
@@ -1284,7 +1444,7 @@ class TemplateManager {
 
   generateTemplateRow(columns, rowIndex) {
     let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.colors.accentColor;
+      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -1504,7 +1664,8 @@ class TemplateManager {
         page.PageName === "Location" ||
         page.PageName === "Reception" ||
         page.PageName === "Mailbox" ||
-        page.PageName === "Calendar")
+        page.PageName === "Calendar" ||
+        page.PageIsDynamicForm)
     ) {
       const message = this.currentLanguage.getTranslation(
         "templates_only_added_to_menu_pages"
@@ -1853,7 +2014,8 @@ class ToolBoxManager {
     templates,
     mapping,
     media,
-    locale
+    locale,
+    newServiceEvent
   ) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
@@ -1867,6 +2029,7 @@ class ToolBoxManager {
     this.currentLanguage = locale;
     this.ui = new ToolBoxUI(this);
     this.init(locale.currentLanguage);
+    this.newServiceEvent = newServiceEvent;
   }
 
   async init(language) {
@@ -2045,12 +2208,6 @@ class ToolBoxManager {
 
   checkIfNotAuthenticated(res) {
     if (res.error.Status === "Error") {
-      console.error(
-        "Error updating theme. Status:",
-        res.error.Status,
-        "Message:",
-        res.error.Message
-      );
 
       this.ui.displayAlertMessage(
         this.currentLanguage.getTranslation("not_authenticated_message"),
@@ -2608,6 +2765,12 @@ class ThemeManager {
     this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
     localStorage.setItem("selectedTheme", themeName);
 
+    const page = this.toolBoxManager.editorManager.getPage(this.toolBoxManager.editorManager.currentPageId);
+    this.toolBoxManager.ui.updateTileProperties(
+      this.toolBoxManager.editorManager.selectedComponent,
+      page
+    );
+
     this.applyThemeIconsAndColor(themeName);
     // this.updatePageTitleFontFamily(theme.fontFamily)
 
@@ -2695,7 +2858,7 @@ class ThemeManager {
             // icons change and its color
             const tileIconName = tile.getAttributes()?.["tile-icon"];
             if (tileIconName) {
-              const matchingIcon = theme.icons?.find(
+              const matchingIcon = theme.ThemeIcons?.find(
                 (icon) => icon.IconName === tileIconName
               );
 
@@ -3053,9 +3216,6 @@ class ThemeManager {
             localStorage.setItem("selectedTheme", theme.ThemeName);
             this.toolBoxManager.editorManager.theme = theme;
 
-            console.log("Theme applied: ", theme.ThemeName);
-            console.log("Editor theme: ", this.toolBoxManager.editorManager.theme);
-
             this.updatePageTitleFontFamily(theme.ThemeFontFamily);
 
             const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -3389,7 +3549,11 @@ class ToolBoxUI {
     allOptions.forEach((option) => {
       option.style.background = "";
     });
-    propertySection.textContent = "Select Action";
+    propertySection.innerHTML = `<span id="sidebar_select_action_label">
+                  ${this.currentLanguage.getTranslation("sidebar_select_action_label")}
+                  </span>
+                  <i class="fa fa-angle-down">
+                  </i>`;
     if (currentActionName && currentActionId && selectedOptionElement) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
@@ -3930,6 +4094,11 @@ class ActionListComponent {
         options: [],
       },
       {
+        name: "Dynamic Forms",
+        label: this.currentLanguage.getTranslation("category_dynamic_form"),
+        options: [],
+      },
+      {
         name: "Predefined Page",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
@@ -3938,44 +4107,47 @@ class ActionListComponent {
     this.init();
   }
 
-  init() {
-    this.dataManager
-      .getPages()
-      .then((res) => {
-        if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-          return;
-        }
-        this.pageOptions = res.SDT_PageCollection.filter(
-          (page) => !page.PageIsContentPage && !page.PageIsPredefined
-        );
-        this.predefinedPageOptions = res.SDT_PageCollection.filter(
-          (page) => page.PageIsPredefined && page.PageName != "Home"
-        );
+  
 
-        this.dataManager.getServices().then((res) => {
-          this.servicePageOptions = this.dataManager.services.map((service) => {
-            return {
-              PageId: service.ProductServiceId,
-              PageName: service.ProductServiceName,
-            };
-          });
-        });
+  async init() {
+    await this.dataManager.getPages();
+    await this.dataManager.getServices();
 
-        this.categoryData.forEach((category) => {
-          if (category.name === "Page") {
-            category.options = this.pageOptions;
-          } else if (category.name == "Service/Product Page") {
-            category.options = this.servicePageOptions;
-          } else if (category.name == "Predefined Page") {
-            category.options = this.predefinedPageOptions;
-          }
-        });
 
-        this.populateDropdownMenu();
-      })
-      .catch((error) => {
-        console.error("Error fetching pages:", error);
-      });
+    this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
+      (page) => !page.PageIsContentPage && !page.PageIsPredefined
+    );
+    this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
+      (page) => page.PageIsPredefined && page.PageName != "Home"
+    );
+
+    this.servicePageOptions = this.dataManager.services.map((service) => {
+      return {
+        PageId: service.ProductServiceId,
+        PageName: service.ProductServiceName,
+      };
+    });
+
+    this.dynamicForms = this.dataManager.forms.map((form) => {
+      return {
+        PageId: form.FormId,
+        PageName: form.ReferenceName,
+      };
+    });
+
+    this.categoryData.forEach((category) => {
+      if (category.name === "Page") {
+        category.options = this.pageOptions;
+      } else if (category.name == "Service/Product Page") {
+        category.options = this.servicePageOptions;
+      } else if (category.name == "Dynamic Forms") {
+        category.options = this.dynamicForms;
+      } else if (category.name == "Predefined Page") {
+        category.options = this.predefinedPageOptions;
+      }
+    });
+
+    this.populateDropdownMenu();
   }
 
   mapPageNamesToOptions(pages) {
@@ -4012,8 +4184,23 @@ class ActionListComponent {
 
     const searchBox = document.createElement("div");
     searchBox.classList.add("search-container");
-    searchBox.innerHTML = `<i class="fas fa-search search-icon"></i><input type="text" placeholder="Search" class="search-input" />`;
+    searchBox.innerHTML = `
+      <i class="fas fa-search search-icon">
+      </i>
+      <input type="text" placeholder="Search" class="search-input" /> 
+      `;
     categoryElement.appendChild(searchBox);
+
+    if (category.name === "Service/Product Page") {
+      const addButton = document.createElement("button");
+      addButton.textContent = "+";
+      addButton.classList.add("add-button");
+      addButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.toolBoxManager.newServiceEvent()
+      });
+      searchBox.appendChild(addButton);
+    }
 
     const categoryContent = document.createElement("ul");
     categoryContent.classList.add("category-content");
@@ -4131,6 +4318,9 @@ class ActionListComponent {
 
             if (category == "Service/Product Page") {
               this.createContentPage(item.id, editorContainerId);
+            }else if (category == "Dynamic Forms") {
+              $(editorContainerId).nextAll().remove();
+              this.createDynamicFormPage(item.id, item.textContent)
             }else{
               $(editorContainerId).nextAll().remove();
               this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
@@ -4187,6 +4377,19 @@ class ActionListComponent {
       this.dataManager.getPages().then(res=>{
         $(editorContainerId).nextAll().remove();
         this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
+      })
+    });
+  }
+
+  createDynamicFormPage(formId, formName, editorContainerId) {
+    this.dataManager.createDynamicFormPage(formId, formName).then((res) => {
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      
+      this.dataManager.getPages().then(res=>{
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(this.editorManager.getPage(formId))
       })
     });
   }

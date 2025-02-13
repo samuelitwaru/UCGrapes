@@ -203,7 +203,7 @@ class TemplateManager {
 
   generateTemplateRow(columns, rowIndex) {
     let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.colors.accentColor;
+      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -423,7 +423,8 @@ class TemplateManager {
         page.PageName === "Location" ||
         page.PageName === "Reception" ||
         page.PageName === "Mailbox" ||
-        page.PageName === "Calendar")
+        page.PageName === "Calendar" ||
+        page.PageIsDynamicForm)
     ) {
       const message = this.currentLanguage.getTranslation(
         "templates_only_added_to_menu_pages"

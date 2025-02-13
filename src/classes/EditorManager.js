@@ -1,3 +1,4 @@
+
 class EditorManager {
   editors = {};
   pages = [];
@@ -179,13 +180,18 @@ class EditorManager {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
+    } else if (page.PageIsDynamicForm) {
+      await this.loadDynamicFormContent(editor, page);
     }
+
     this.updatePageJSONContent(editor, page);
   }
 
   async loadExistingContent(editor, page) {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
+
+      console.log("PageData: ", pageData);
 
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
@@ -203,12 +209,27 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src =
-      this.dataManager.Location.LocationImage_GXI;
-    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content =
-      this.dataManager.Location.LocationDescription;
-    editor.DomComponents.clear();
-    editor.loadProjectData(pageData);
+
+    // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
+
+    const locationData = this.dataManager.Location;
+
+    
+    const dataComponents = pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components
+    
+    if (dataComponents.length) {
+      const imgComponent = dataComponents.find((component) => component.attributes.src);
+      const descriptionComponent = dataComponents.find((component) =>  component.type=="product-service-description");
+      if (imgComponent) {
+        imgComponent.attributes.src = locationData.LocationImage_GXI;
+      }
+      if (descriptionComponent) {
+        descriptionComponent.components[0].content = locationData.LocationDescription;
+      }
+      editor.DomComponents.clear();
+      editor.loadProjectData(pageData);
+    }
+    
   }
 
   async handleContentPage(editor, page) {
@@ -316,6 +337,137 @@ class EditorManager {
     }
   }
 
+  async loadDynamicFormContent(editor, page) {
+    try {
+      editor.DomComponents.clear();
+      editor.DomComponents.addType("iframe", {
+        model: {
+          defaults: {
+            tagName: "iframe",
+            void: true,
+            draggable: false,
+            selectable: false,
+            attributes: {
+              frameborder: "0",
+              scrolling: "no",
+              seamless: "seamless",
+              loading: "lazy",
+              sandbox: "allow-scripts allow-same-origin",
+              src: `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
+            },
+            // Define styles separately from attributes
+            style: {
+              width: "100%",
+              height: "300vh",
+              border: "none",
+              overflow: "hidden",
+              '-ms-overflow-style': 'none',
+              'scrollbar-width': 'none',
+            },
+          },
+
+          init() {
+            this.set("tagName", "iframe");
+
+            // Ensure src is set in attributes if not already present
+            const attrs = this.getAttributes();
+            if (!attrs.src) {
+              this.set("attributes", {
+                ...attrs,
+                src: this.defaults.attributes.src,
+              });
+            }
+          },
+
+          isValidUrl(url) {
+            try {
+              new URL(url);
+              return true;
+            } catch {
+              return false;
+            }
+          },
+        },
+
+        view: {
+          tagName: "iframe",
+
+          events: {
+            load: "onLoad",
+            error: "onError",
+          },
+
+          init() {
+            try {
+              this.listenTo(
+                this.model,
+                "change:attributes",
+                this.updateAttributes
+              );
+            } catch (error) {
+              console.error("Error initializing iframe view:", error);
+            }
+          },
+
+          onLoad() {
+            console.log("IFrame loaded successfully");
+          },
+
+          onError() {
+            console.error("Error loading iframe content");
+          },
+
+          updateAttributes() {
+            try {
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.error("Error updating iframe attributes:", error);
+            }
+          },
+
+          render() {
+            try {
+              // Set all attributes except style
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+
+              // Apply styles correctly
+              const styles = this.model.get("style");
+              if (styles) {
+                Object.entries(styles).forEach(([prop, value]) => {
+                  this.el.style[prop] = value;
+                });
+              }
+
+              return this;
+            } catch (error) {
+              console.error("Error rendering iframe:", error);
+              return this;
+            }
+          },
+        },
+      });
+
+      // Add the component to the editor
+      editor.setComponents(`
+        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
+          <iframe></iframe>
+        </div>
+      `);
+    } catch (error) {
+      console.error("Error setting up iframe component:", error.message);
+    }
+  }
+
   setupEditorLayout(editor, page, containerId) {
     if (this.shouldShowAppBar(page)) {
       const canvas = editor.Canvas.getElement();
@@ -371,10 +523,12 @@ class EditorManager {
   }
 
   removePageOnTileDelete(editorContainerId) {
-    const currentContainer = document.getElementById(editorContainerId + '-frame');
+    const currentContainer = document.getElementById(
+      editorContainerId + "-frame"
+    );
     if (!currentContainer) return;
-    
-    this.removeFrameContainer(currentContainer)
+
+    this.removeFrameContainer(currentContainer);
   }
 
   removeFrameContainer(currentContainer) {
@@ -394,5 +548,10 @@ class EditorManager {
 
   setToolsSection(toolBox) {
     this.toolsSection = toolBox;
+  }
+
+  displayDynamicForm(formId, referenceName) {
+    const editor = this.initializeGrapesEditor(`gjs-${formId}`);
+    console.log(editor);
   }
 }

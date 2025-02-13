@@ -7,7 +7,8 @@ class ToolBoxManager {
     templates,
     mapping,
     media,
-    locale
+    locale,
+    newServiceEvent
   ) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
@@ -21,6 +22,7 @@ class ToolBoxManager {
     this.currentLanguage = locale;
     this.ui = new ToolBoxUI(this);
     this.init(locale.currentLanguage);
+    this.newServiceEvent = newServiceEvent;
   }
 
   async init(language) {
@@ -199,12 +201,6 @@ class ToolBoxManager {
 
   checkIfNotAuthenticated(res) {
     if (res.error.Status === "Error") {
-      console.error(
-        "Error updating theme. Status:",
-        res.error.Status,
-        "Message:",
-        res.error.Message
-      );
 
       this.ui.displayAlertMessage(
         this.currentLanguage.getTranslation("not_authenticated_message"),

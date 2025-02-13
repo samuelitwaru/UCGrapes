@@ -2,8 +2,9 @@ const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
-  constructor(services = [], media = []) {
+  constructor(services = [], forms = [], media = []) {
     this.services = services;
+    this.forms = forms;
     this.media = media;
     this.pages = [];
     this.selectedTheme = null;
@@ -47,11 +48,13 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
+    console.log("Pages: ",this.pages);
     return this.pages;
   }
 
   async getServices() {
-    this.services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    const services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }
 
@@ -100,10 +103,16 @@ class DataManager {
   }
 
   async createContentPage(pageId) {
-    console.log('createContentPage', pageId);
     return await this.fetchAPI('/api/toolbox/create-content-page', {
       method: 'POST',
       body: JSON.stringify({ PageId: pageId }),
+    });
+  }
+
+  async createDynamicFormPage(formId, pageName) {
+    return await this.fetchAPI('/api/toolbox/create-dynamic-form-page', {
+      method: 'POST',
+      body: JSON.stringify({ FormId: formId, PageName: pageName }),
     });
   }
 

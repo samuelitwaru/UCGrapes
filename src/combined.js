@@ -311,6 +311,11 @@ class DataManager {
     return this.pages;
   }
 
+  async getServices() {
+    this.services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    return this.services;
+  }
+
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }
@@ -584,6 +589,8 @@ class EditorManager {
     this.dataManager.pages.SDT_PageCollection.map((p) => {
       if (p.PageId == page.PageId) {
         p.PageGJSJson = JSON.stringify(PageGJSJson);
+        console.log("Update event triggered", p.PageName);
+        console.log(PageGJSJson);
       }
       return p;
     });
@@ -1818,6 +1825,7 @@ class TemplateManager {
               ""
             );
             $("#tile-title").val("");
+            component.addStyle({display: "none"});
           } else if (sectionSelector === ".tile-icon-section") {
             const component =
               this.editorManager.selectedComponent.find(".tile-icon")[0];
@@ -1826,6 +1834,7 @@ class TemplateManager {
               "tile-icon",
               ""
             );
+            component.addStyle({display: "none"});
           }
         };
       }
@@ -3134,9 +3143,9 @@ class ThemeManager {
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
             const iconComponent =
-              this.toolBoxManager.editorManager.selectedComponent.find(
-                ".tile-icon"
-              )[0];
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-icon"
+            )[0];
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
@@ -3144,6 +3153,7 @@ class ThemeManager {
                 'fill="#7c8791"',
                 'fill="white"'
               );
+              iconComponent.addStyle({display: "block"});
               iconComponent.components(whiteIconSvg);
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
@@ -3191,6 +3201,7 @@ class ToolBoxUI {
         this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.components(inputTitle);
+        titleComponent.addStyle({ display: "block" });
         // this.manager.selectedComponent.addAttributes({
         //   "tile-title": inputTitle,
         // });
@@ -3271,7 +3282,7 @@ class ToolBoxUI {
 
   updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
-      this.manager.editorManager.selectedComponent?.getAttributes()?.[
+      selectComponent?.getAttributes()?.[
         "cta-background-color"
       ];
     const CtaRadios = document.querySelectorAll(
@@ -3934,19 +3945,22 @@ class ActionListComponent {
         if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
           return;
         }
-
         this.pageOptions = res.SDT_PageCollection.filter(
           (page) => !page.PageIsContentPage && !page.PageIsPredefined
         );
         this.predefinedPageOptions = res.SDT_PageCollection.filter(
           (page) => page.PageIsPredefined && page.PageName != "Home"
         );
-        this.servicePageOptions = this.dataManager.services.map((service) => {
-          return {
-            PageId: service.ProductServiceId,
-            PageName: service.ProductServiceName,
-          };
+
+        this.dataManager.getServices().then((res) => {
+          this.servicePageOptions = this.dataManager.services.map((service) => {
+            return {
+              PageId: service.ProductServiceId,
+              PageName: service.ProductServiceName,
+            };
+          });
         });
+
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
             category.options = this.pageOptions;
@@ -4025,14 +4039,15 @@ class ActionListComponent {
   setupDropdownHeader() {
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
-
+    
     if (!this.added) {
       dropdownHeader.removeEventListener("click", (e) => {});
       dropdownHeader.addEventListener("click", (e) => {
+        this.init();
         dropdownMenu.style.display =
           dropdownMenu.style.display === "block" ? "none" : "block";
         dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
-        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");
+        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");        
       });
     }
 
@@ -4164,7 +4179,8 @@ class ActionListComponent {
   }
 
   createContentPage(pageId, editorContainerId) {
-    this.dataManager.createContentPage(pageId).then((res) => {
+    this.dataManager.createContentPage(pageId)
+    .then((res) => {
       if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
         return;
       }

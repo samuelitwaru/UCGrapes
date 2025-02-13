@@ -1794,3 +1794,8 @@ h5#current-page-title {
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('../fonts/segoeui.ttf') format('truetype');
+}

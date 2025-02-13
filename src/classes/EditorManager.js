@@ -167,6 +167,8 @@ class EditorManager {
     this.dataManager.pages.SDT_PageCollection.map((p) => {
       if (p.PageId == page.PageId) {
         p.PageGJSJson = JSON.stringify(PageGJSJson);
+        console.log("Update event triggered", p.PageName);
+        console.log(PageGJSJson);
       }
       return p;
     });

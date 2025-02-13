@@ -39,19 +39,22 @@ class ActionListComponent {
         if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
           return;
         }
-
         this.pageOptions = res.SDT_PageCollection.filter(
           (page) => !page.PageIsContentPage && !page.PageIsPredefined
         );
         this.predefinedPageOptions = res.SDT_PageCollection.filter(
           (page) => page.PageIsPredefined && page.PageName != "Home"
         );
-        this.servicePageOptions = this.dataManager.services.map((service) => {
-          return {
-            PageId: service.ProductServiceId,
-            PageName: service.ProductServiceName,
-          };
+
+        this.dataManager.getServices().then((res) => {
+          this.servicePageOptions = this.dataManager.services.map((service) => {
+            return {
+              PageId: service.ProductServiceId,
+              PageName: service.ProductServiceName,
+            };
+          });
         });
+
         this.categoryData.forEach((category) => {
           if (category.name === "Page") {
             category.options = this.pageOptions;
@@ -130,14 +133,15 @@ class ActionListComponent {
   setupDropdownHeader() {
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
-
+    
     if (!this.added) {
       dropdownHeader.removeEventListener("click", (e) => {});
       dropdownHeader.addEventListener("click", (e) => {
+        this.init();
         dropdownMenu.style.display =
           dropdownMenu.style.display === "block" ? "none" : "block";
         dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
-        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");
+        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");        
       });
     }
 
@@ -269,7 +273,8 @@ class ActionListComponent {
   }
 
   createContentPage(pageId, editorContainerId) {
-    this.dataManager.createContentPage(pageId).then((res) => {
+    this.dataManager.createContentPage(pageId)
+    .then((res) => {
       if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
         return;
       }

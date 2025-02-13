@@ -50,6 +50,11 @@ class DataManager {
     return this.pages;
   }
 
+  async getServices() {
+    this.services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    return this.services;
+  }
+
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }

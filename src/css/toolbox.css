@@ -235,10 +235,10 @@ button {
 
 .tile-icon {
   width: 30px;
-  /* height: 30px; */
+  height: 30px;
   margin-bottom: 0.5rem;
   border: 2px dashed #4c53577d;
-  display: flex;
+  display: none;
 }
 
 .template-wrapper:hover .tile-icon {
@@ -254,7 +254,7 @@ button {
 .tile-title {
   font-size: 0.8rem;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .tile-close-icon {
@@ -289,6 +289,7 @@ button {
   position: relative;
   width: fit-content;
 }
+
 
 .tile-title-section:hover {
   border: 2px dashed #4c53577d;
@@ -500,4 +501,9 @@ button {
 }
 .gjs-placeholder-int {
   background-color: red;
+}
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('../fonts/segoeui.ttf') format('truetype');
 }

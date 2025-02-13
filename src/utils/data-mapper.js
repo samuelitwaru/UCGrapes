@@ -98,6 +98,8 @@ function mapTemplateToPageData(templateData, page) {
 
 function mapContentToPageData(templateData, page) {
   const pages = templateData.pages;
+  console.log(page.PageName)
+  console.log(templateData)
   const output = {
       PageId: page.PageId,
       PageName: page.PageName,
@@ -164,6 +166,7 @@ function mapContentToPageData(templateData, page) {
         }
     });
   }
+  console.log(output)
   return output;
 }
 

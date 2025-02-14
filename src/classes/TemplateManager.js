@@ -405,7 +405,7 @@ class TemplateManager {
                           data-gjs-selectable="false"
                           data-gjs-editable="false"
                           data-gjs-highlightable="true"
-                          data-gjs-droppable="false"
+                          data-gjs-droppable="[tile-wrapper]"
                           data-gjs-hoverable="true">
                         ${wrappers}
                     </div>
@@ -548,7 +548,7 @@ class TemplateManager {
                 data-gjs-selectable="false"
                 data-gjs-editable="false"
                 data-gjs-highlightable="false"
-                data-gjs-droppable="false"
+                data-gjs-droppable="[tile-wrapper]"
                 data-gjs-hoverable="false">
                 ${this.createTemplateHTML()}
             </div>
@@ -653,7 +653,7 @@ class TemplateManager {
                     data-gjs-draggable="false"
                     data-gjs-selectable="false"
                     data-gjs-editable="false"
-                    data-gjs-droppable="false"
+                    data-gjs-droppable="[tile-wrapper]"
                     data-gjs-highlightable="true"
                     data-gjs-hoverable="true"
                 >

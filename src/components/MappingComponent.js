@@ -321,6 +321,11 @@ class MappingComponent {
   
         const deleteIcon = document.createElement("i");
         deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+        
+        if (item.PageName === "Home") {
+          deleteIcon.style.display = "none";
+        }
+
         deleteIcon.setAttribute("data-id", item.Id);
   
         deleteIcon.addEventListener("click", (event) =>

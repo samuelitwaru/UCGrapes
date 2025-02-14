@@ -1,4 +1,4 @@
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -52,11 +52,12 @@ class DataManager {
     return this.pages;
   }
 
-  async getServices() {
-    const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-    this.services = services.SDT_ProductServiceCollection;
-    return this.services;
-  }
+  // async getServices() {
+  //   const services = await this.fetchAPI('/api/toolbox/services', {}, true);
+  //   this.services = services.SDT_ProductServiceCollection;
+  //   console.log("this.services: ", this.services)
+  //   return this.services;
+  // }
 
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);

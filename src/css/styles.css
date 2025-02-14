@@ -1011,7 +1011,8 @@ h5#current-page-title {
 }
 
 .color-item:hover {
-  border: 1px #5f75ae solid;
+  /* border: 1px #5f75ae solid; */
+  background-color: #e9e9e9;
   border-radius: 6px;
 }
 
@@ -1046,7 +1047,7 @@ h5#current-page-title {
 
 .text-alignment .align-item:hover label {
   background-color: #fff;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   border-radius: 6px;
 }
 
@@ -1574,7 +1575,7 @@ h5#current-page-title {
 .search-container input[type="text"] {
   padding: 8px 8px 8px 30px;
   border-radius: 6px;
-  width: 100%;
+  width: 80%;
   border: 1px solid #b4b9bd;
   outline: none;
   box-sizing: border-box;
@@ -1614,7 +1615,6 @@ button.add-new-service {
   border: none;
   background-color: #222f54;
   color: white;
-  display: none;
 }
 
 button.add-new-service i {

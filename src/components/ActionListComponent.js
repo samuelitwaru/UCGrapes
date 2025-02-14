@@ -41,11 +41,11 @@ class ActionListComponent {
 
   async init() {
     await this.dataManager.getPages();
-    await this.dataManager.getServices();
+    // await this.dataManager.getServices();
 
 
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !page.PageIsContentPage && !page.PageIsPredefined
+      (page) => !page.PageIsContentPage && !page.PageIsPredefined && !page.PageIsDynamicForm
     );
     this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => page.PageIsPredefined && page.PageName != "Home"
@@ -92,14 +92,7 @@ class ActionListComponent {
     const dropdownMenu = document.getElementById("dropdownMenu");
     dropdownMenu.innerHTML = "";
     this.categoryData.forEach((category) => {
-      const categoryElement = this.createCategoryElement(category);
-      
-      if (category.name == "Service/Product Page") {
-        categoryElement.querySelector("#add-new-service").style.display = "block";
-      } else {
-        categoryElement.querySelector("#add-new-service").style.display = "none";
-      }
-      
+      const categoryElement = this.createCategoryElement(category);     
       dropdownMenu.appendChild(categoryElement);
     });
 
@@ -130,8 +123,10 @@ class ActionListComponent {
 
     if (category.name === "Service/Product Page") {
       const addButton = document.createElement("button");
-      addButton.textContent = "+";
-      addButton.classList.add("add-button");
+      addButton.innerHTML = `<i class="fa fa-plus"></i>`;
+
+      addButton.title = "Add New Service";
+      addButton.classList.add("add-new-service");
       addButton.addEventListener("click", (e) => {
         e.preventDefault();
         this.toolBoxManager.newServiceEvent()

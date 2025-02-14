@@ -234,10 +234,12 @@ class ThemeManager {
 
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
-          const currentTileOpacity = this.toolBoxManager.editorManager.selectedComponent
+          const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
+
+          const currentTileOpacity = selectedComponent
                                       .getAttributes()?.["tile-bg-image-opacity"];
 
-          this.toolBoxManager.editorManager.selectedComponent.addStyle({
+          selectedComponent.addStyle({
             "background-color": addOpacityToHex(colorValue, currentTileOpacity),
           });
 
@@ -250,7 +252,7 @@ class ThemeManager {
             "tile-bgcolor-name",
             colorName
           );
-          
+
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"

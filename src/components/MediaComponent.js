@@ -504,7 +504,6 @@ class MediaComponent {
       const templateBlock = this.editorManager.selectedComponent;
 
       if (this.selectedFile?.MediaUrl) {
-        alert()
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
         console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({

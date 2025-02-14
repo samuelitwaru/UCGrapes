@@ -259,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -313,11 +313,12 @@ class DataManager {
     return this.pages;
   }
 
-  async getServices() {
-    const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-    this.services = services.SDT_ProductServiceCollection;
-    return this.services;
-  }
+  // async getServices() {
+  //   const services = await this.fetchAPI('/api/toolbox/services', {}, true);
+  //   this.services = services.SDT_ProductServiceCollection;
+  //   console.log("this.services: ", this.services)
+  //   return this.services;
+  // }
 
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
@@ -1654,7 +1655,7 @@ class TemplateManager {
                           data-gjs-selectable="false"
                           data-gjs-editable="false"
                           data-gjs-highlightable="true"
-                          data-gjs-droppable="false"
+                          data-gjs-droppable="[tile-wrapper]"
                           data-gjs-hoverable="true">
                         ${wrappers}
                     </div>
@@ -1797,7 +1798,7 @@ class TemplateManager {
                 data-gjs-selectable="false"
                 data-gjs-editable="false"
                 data-gjs-highlightable="false"
-                data-gjs-droppable="false"
+                data-gjs-droppable="[tile-wrapper]"
                 data-gjs-hoverable="false">
                 ${this.createTemplateHTML()}
             </div>
@@ -1902,7 +1903,7 @@ class TemplateManager {
                     data-gjs-draggable="false"
                     data-gjs-selectable="false"
                     data-gjs-editable="false"
-                    data-gjs-droppable="false"
+                    data-gjs-droppable="[tile-wrapper]"
                     data-gjs-highlightable="true"
                     data-gjs-hoverable="true"
                 >
@@ -2974,10 +2975,12 @@ class ThemeManager {
 
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
-          const currentTileOpacity = this.toolBoxManager.editorManager.selectedComponent
+          const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
+
+          const currentTileOpacity = selectedComponent
                                       .getAttributes()?.["tile-bg-image-opacity"];
 
-          this.toolBoxManager.editorManager.selectedComponent.addStyle({
+          selectedComponent.addStyle({
             "background-color": addOpacityToHex(colorValue, currentTileOpacity),
           });
 
@@ -2990,7 +2993,7 @@ class ThemeManager {
             "tile-bgcolor-name",
             colorName
           );
-          
+
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"
@@ -4147,11 +4150,11 @@ class ActionListComponent {
 
   async init() {
     await this.dataManager.getPages();
-    await this.dataManager.getServices();
+    // await this.dataManager.getServices();
 
 
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !page.PageIsContentPage && !page.PageIsPredefined
+      (page) => !page.PageIsContentPage && !page.PageIsPredefined && !page.PageIsDynamicForm
     );
     this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => page.PageIsPredefined && page.PageName != "Home"
@@ -4198,14 +4201,7 @@ class ActionListComponent {
     const dropdownMenu = document.getElementById("dropdownMenu");
     dropdownMenu.innerHTML = "";
     this.categoryData.forEach((category) => {
-      const categoryElement = this.createCategoryElement(category);
-      
-      if (category.name == "Service/Product Page") {
-        categoryElement.querySelector("#add-new-service").style.display = "block";
-      } else {
-        categoryElement.querySelector("#add-new-service").style.display = "none";
-      }
-      
+      const categoryElement = this.createCategoryElement(category);     
       dropdownMenu.appendChild(categoryElement);
     });
 
@@ -4227,8 +4223,6 @@ class ActionListComponent {
 
     const searchBox = document.createElement("div");
     searchBox.classList.add("search-container");
-    searchBox.innerHTML = `<div><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search" class="search-input" /></div>
-              <button id="add-new-service" class="add-new-service" title="Add new service"><i class="fa fa-plus"></i></button>`;
     searchBox.innerHTML = `
       <i class="fas fa-search search-icon">
       </i>
@@ -4238,8 +4232,10 @@ class ActionListComponent {
 
     if (category.name === "Service/Product Page") {
       const addButton = document.createElement("button");
-      addButton.textContent = "+";
-      addButton.classList.add("add-button");
+      addButton.innerHTML = `<i class="fa fa-plus"></i>`;
+
+      addButton.title = "Add New Service";
+      addButton.classList.add("add-new-service");
       addButton.addEventListener("click", (e) => {
         e.preventDefault();
         this.toolBoxManager.newServiceEvent()
@@ -4766,6 +4762,11 @@ class MappingComponent {
   
         const deleteIcon = document.createElement("i");
         deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+        
+        if (item.PageName === "Home") {
+          deleteIcon.style.display = "none";
+        }
+
         deleteIcon.setAttribute("data-id", item.Id);
   
         deleteIcon.addEventListener("click", (event) =>
@@ -5432,7 +5433,6 @@ class MediaComponent {
       const templateBlock = this.editorManager.selectedComponent;
 
       if (this.selectedFile?.MediaUrl) {
-        alert()
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
         console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({

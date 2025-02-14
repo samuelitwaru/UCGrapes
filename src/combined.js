@@ -4167,6 +4167,13 @@ class ActionListComponent {
     dropdownMenu.innerHTML = "";
     this.categoryData.forEach((category) => {
       const categoryElement = this.createCategoryElement(category);
+      
+      if (category.name == "Service/Product Page") {
+        categoryElement.querySelector("#add-new-service").style.display = "block";
+      } else {
+        categoryElement.querySelector("#add-new-service").style.display = "none";
+      }
+      
       dropdownMenu.appendChild(categoryElement);
     });
 
@@ -4188,7 +4195,8 @@ class ActionListComponent {
 
     const searchBox = document.createElement("div");
     searchBox.classList.add("search-container");
-    searchBox.innerHTML = `<i class="fas fa-search search-icon"></i><input type="text" placeholder="Search" class="search-input" />`;
+    searchBox.innerHTML = `<div><i class="fas fa-search search-icon"></i><input type="text" placeholder="Search" class="search-input" /></div>
+              <button id="add-new-service" class="add-new-service" title="Add new service"><i class="fa fa-plus"></i></button>`;
     categoryElement.appendChild(searchBox);
 
     const categoryContent = document.createElement("ul");
@@ -4198,7 +4206,8 @@ class ActionListComponent {
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
-      optionElement.dataset.category = category.name
+      optionElement.dataset.category = category.name;
+
       categoryContent.appendChild(optionElement);
     });
 
@@ -4266,7 +4275,7 @@ class ActionListComponent {
             .classList.replace("fa-angle-down", "fa-angle-right");
         }
           });
-          searchBox.style.display = "block";
+          searchBox.style.display = "flex";
           icon.classList.replace("fa-angle-right", "fa-angle-down");
         } else {
           searchBox.style.display = "none";

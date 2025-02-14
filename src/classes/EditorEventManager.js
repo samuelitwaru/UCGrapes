@@ -6,6 +6,7 @@ class EditorEventManager {
 
   addEditorEventListeners(editor, page) {
     this.editorOnLoad(editor);
+    this.editorOnDragDrop(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
@@ -31,8 +32,9 @@ class EditorEventManager {
     );
 
     wrapper.view.el.addEventListener("click", (e) => {
-      const previousSelected = this.editorManager.currentEditor.editor.getSelected();
-      if(previousSelected) {
+      const previousSelected =
+        this.editorManager.currentEditor.editor.getSelected();
+      if (previousSelected) {
         this.editorManager.currentEditor.editor.selectRemove(previousSelected);
         this.editorManager.selectedComponent = null;
         this.editorManager.selectedTemplateWrapper = null;
@@ -118,6 +120,34 @@ class EditorEventManager {
   editorOnUpdate(editor, page) {
     editor.on("update", () => {
       this.editorManager.updatePageJSONContent(editor, page);
+    });
+  }
+
+  editorOnDragDrop(editor) {
+    editor.on("component:add", (model) => {
+      const component = model.get ? model : editor.getSelected();
+      if (!component) return;
+
+      const parent = component.parent();
+      if (!parent) return;
+
+      const parentEl = parent.getEl();
+      if (!parentEl || !parentEl.classList.contains("container-row")) return;
+
+      const tileWrappers = parent.components().filter((comp) => {
+        const type = comp.get("type");
+        return type === "tile-wrapper";
+      });
+
+      if (tileWrappers.length > 3) {
+        component.remove();
+
+        editor.UndoManager.undo();
+      }
+
+      editor.getWrapper().find(".container-row").forEach((component) => {
+        this.templateManager.updateRightButtons(component);
+      });
     });
   }
 

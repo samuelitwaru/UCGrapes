@@ -134,7 +134,7 @@
                     {
                       "type": "template-wrapper",
                       "draggable": false,
-                      "droppable": ["tile-wrapper"],
+                      "droppable": "[data-gjs-type='tile-wrapper']",
                       "selectable": false,
                       "classes": ["container-row"],
                       "_undoexc": ["status", "open"],
@@ -461,7 +461,7 @@
                     {
                       "type": "template-wrapper",
                       "draggable": false,
-                      "droppable": ["tile-wrapper"],
+                      "droppable": "[data-gjs-type='tile-wrapper']",
                       "selectable": false,
                       "classes": ["container-row"],
                       "_undoexc": ["status", "open"],
@@ -1190,7 +1190,7 @@
                     {
                       "type": "template-wrapper",
                       "draggable": false,
-                      "droppable": ["tile-wrapper"],
+                      "droppable": "[data-gjs-type='tile-wrapper']",
                       "highlightable": false,
                       "selectable": false,
                       "hoverable": false,
@@ -1547,7 +1547,7 @@
                     {
                       "type": "template-wrapper",
                       "draggable": false,
-                      "droppable": ["tile-wrapper"],
+                      "droppable": "[data-gjs-type='tile-wrapper']",
                       "selectable": false,
                       "classes": ["container-row"],
                       "_undoexc": ["status", "open"],

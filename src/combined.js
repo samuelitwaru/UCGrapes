@@ -4120,16 +4120,23 @@ class ActionListComponent {
 
 
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !page.PageIsContentPage && !page.PageIsPredefined
+      (page) => {
+        page.PageTileName = page.PageName;
+        return !page.PageIsContentPage && !page.PageIsPredefined
+      }
     );
     this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => page.PageIsPredefined && page.PageName != "Home"
+      (page) => {
+        page.PageTileName = page.PageName;
+        return page.PageIsPredefined && page.PageName != "Home"
+      }
     );
 
     this.servicePageOptions = this.dataManager.services.map((service) => {
       return {
         PageId: service.ProductServiceId,
         PageName: service.ProductServiceName,
+        PageTileName: service.ProductServiceTileName || service.ProductServiceName,
       };
     });
 
@@ -4137,6 +4144,7 @@ class ActionListComponent {
       return {
         PageId: form.FormId,
         PageName: form.ReferenceName,
+        PageTileName: form.ReferenceName,
       };
     });
 
@@ -4153,14 +4161,6 @@ class ActionListComponent {
     });
 
     this.populateDropdownMenu();
-  }
-
-  mapPageNamesToOptions(pages) {
-    const pageOptions = pages.map((page) => ({
-      PageName: page.Name,
-      PageId: page.Id,
-    }));
-    return pageOptions;
   }
 
   populateDropdownMenu() {
@@ -4215,6 +4215,7 @@ class ActionListComponent {
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
       optionElement.dataset.category = category.name
+      optionElement.dataset.tileName = option.PageTileName
       categoryContent.appendChild(optionElement);
     });
 
@@ -4299,6 +4300,7 @@ class ActionListComponent {
 
     document.querySelectorAll(".category-content li").forEach((item) => {
       item.addEventListener("click", () => {
+        console.log(item.dataset)
         this.selectedObject = item.dataset.category
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
@@ -4310,7 +4312,7 @@ class ActionListComponent {
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
           const currentPageId = localStorage.getItem("pageId");
-          const tileTitle = truncateText(item.textContent.toUpperCase(), 12);
+          const tileTitle = truncateText(item.dataset.tileName.toUpperCase(), 12);
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",

@@ -283,23 +283,24 @@ class EventListenerManager {
           this.toolBoxManager.editorManager.selectedComponent;
 
         if (templateBlock) {
-          const opacity = value / 100;
           const currentBgStyle = templateBlock.getStyle()["background-color"];
           let currentBgColor;
-
-          if (currentBgStyle.startsWith("#")) {
-            currentBgColor = hexToRgb(currentBgStyle);
-          } else if (currentBgStyle.startsWith("rgb")) {
-            currentBgColor = currentBgStyle.match(/\d+, \d+, \d+/)[0]; 
+          
+          if (currentBgStyle.length > 7) {
+            currentBgColor = currentBgStyle.substring(0, 7);
           } else {
-            currentBgColor = "255, 255, 255"; 
+            currentBgColor = currentBgStyle;
           }
 
-          console.log("currentBgColor", currentBgColor);
+          const bgColor = addOpacityToHex(currentBgColor, value)
 
           templateBlock.addStyle({
-            "background-color": `rgba(${currentBgColor}, ${opacity})`,
+            "background-color": bgColor,
           });
+
+          templateBlock.addAttributes({
+            "tile-bg-image-opacity": value,
+          })
         }
       }
     });

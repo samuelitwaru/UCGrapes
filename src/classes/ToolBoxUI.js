@@ -106,9 +106,23 @@ class ToolBoxUI {
   }
 
   updateTemplatePageProperties(selectComponent) {
+    this.updateTileOpacityProperties(selectComponent);
     this.updateAlignmentProperties(selectComponent);
     this.updateColorProperties(selectComponent);
     this.updateActionProperties(selectComponent);
+  }
+
+  updateTileOpacityProperties(selectComponent) {
+    const tileOpacity =
+      selectComponent?.getAttributes()?.[
+        "tile-bg-image-opacity"
+      ];
+
+    if (tileOpacity) {
+      document.getElementById("bg-opacity").value = tileOpacity;
+      document.getElementById("valueDisplay").textContent = tileOpacity + ' %'
+    }
+    
   }
 
   updateAlignmentProperties(selectComponent) {

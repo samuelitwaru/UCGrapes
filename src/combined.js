@@ -866,7 +866,7 @@ class EditorManager {
       // Add the component to the editor
       editor.setComponents(`
         <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
-          <iframe></iframe>
+          <iframe ${defaultConstraints}></iframe>
         </div>
       `);
     } catch (error) {
@@ -1109,10 +1109,17 @@ class EditorEventManager {
       );
     }
 
-    // this.editorManager.toolsSection.ui.updateTileProperties(
-    //   this.editorManager.selectedComponent,
-    //   page
-    // );
+    const page = this.editorManager.getPage(this.editorManager.currentPageId);
+    if (page?.PageIsContentPage) {
+      this.editorManager.toolsSection.ui.activateCtaBtnStyles(
+        this.editorManager.selectedComponent
+      );
+    }
+
+    this.editorManager.toolsSection.ui.updateTileProperties(
+      this.editorManager.selectedComponent,
+      page
+    );
 
     this.editorManager.toolsSection.checkTileBgImage();
 
@@ -1187,6 +1194,7 @@ class EditorEventManager {
   }
 
   setupUndoRedoButtons() {
+    // Assuming you have undo and redo buttons in your UI
     const undoBtn = document.getElementById("undo");
     const redoBtn = document.getElementById("redo");
 
@@ -2536,23 +2544,24 @@ class EventListenerManager {
           this.toolBoxManager.editorManager.selectedComponent;
 
         if (templateBlock) {
-          const opacity = value / 100;
           const currentBgStyle = templateBlock.getStyle()["background-color"];
           let currentBgColor;
-
-          if (currentBgStyle.startsWith("#")) {
-            currentBgColor = hexToRgb(currentBgStyle);
-          } else if (currentBgStyle.startsWith("rgb")) {
-            currentBgColor = currentBgStyle.match(/\d+, \d+, \d+/)[0]; 
+          
+          if (currentBgStyle.length > 7) {
+            currentBgColor = currentBgStyle.substring(0, 7);
           } else {
-            currentBgColor = "255, 255, 255"; 
+            currentBgColor = currentBgStyle;
           }
 
-          console.log("currentBgColor", currentBgColor);
+          const bgColor = addOpacityToHex(currentBgColor, value)
 
           templateBlock.addStyle({
-            "background-color": `rgba(${currentBgColor}, ${opacity})`,
+            "background-color": bgColor,
           });
+
+          templateBlock.addAttributes({
+            "tile-bg-image-opacity": value,
+          })
         }
       }
     });
@@ -2869,8 +2878,10 @@ class ThemeManager {
                   "tile-bgcolor": matchingColorCode,
                 });
 
+                const currentTileOpacity = tile.getAttributes()?.["tile-bg-image-opacity"];
+
                 tile.addStyle({
-                  "background-color": matchingColorCode,
+                  "background-color": addOpacityToHex(matchingColorCode, currentTileOpacity),
                 });
               } else {
                 console.warn(
@@ -2929,17 +2940,23 @@ class ThemeManager {
 
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
+          const currentTileOpacity = this.toolBoxManager.editorManager.selectedComponent
+                                      .getAttributes()?.["tile-bg-image-opacity"];
+
           this.toolBoxManager.editorManager.selectedComponent.addStyle({
-            "background-color": colorValue,
+            "background-color": addOpacityToHex(colorValue, currentTileOpacity),
           });
+
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor",
             colorValue
           );
+
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor-name",
             colorName
           );
+          
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"
@@ -3427,9 +3444,23 @@ class ToolBoxUI {
   }
 
   updateTemplatePageProperties(selectComponent) {
+    this.updateTileOpacityProperties(selectComponent);
     this.updateAlignmentProperties(selectComponent);
     this.updateColorProperties(selectComponent);
     this.updateActionProperties(selectComponent);
+  }
+
+  updateTileOpacityProperties(selectComponent) {
+    const tileOpacity =
+      selectComponent?.getAttributes()?.[
+        "tile-bg-image-opacity"
+      ];
+
+    if (tileOpacity) {
+      document.getElementById("bg-opacity").value = tileOpacity;
+      document.getElementById("valueDisplay").textContent = tileOpacity + ' %'
+    }
+    
   }
 
   updateAlignmentProperties(selectComponent) {
@@ -5662,27 +5693,72 @@ const iconsData = [
 let globalVar = null
 
 // Content from utils/helper.js
-function hexToRgb(hex) {
-    hex = hex.replace(/^#/, ""); 
-    let r, g, b;
-  
-    if (hex.length === 3) {
-      r = parseInt(hex[0] + hex[0], 16);
-      g = parseInt(hex[1] + hex[1], 16);
-      b = parseInt(hex[2] + hex[2], 16);
-    } else {
-      r = parseInt(hex.substring(0, 2), 16);
-      g = parseInt(hex.substring(2, 4), 16);
-      b = parseInt(hex.substring(4, 6), 16);
-    }
-  
-    return `${r}, ${g}, ${b}`;
+// function hexToRgb(hex) {
+//   hex = hex.replace(/^#/, "");
+//   let r, g, b;
+
+//   if (hex.length === 3) {
+//     r = parseInt(hex[0] + hex[0], 16);
+//     g = parseInt(hex[1] + hex[1], 16);
+//     b = parseInt(hex[2] + hex[2], 16);
+//   } else {
+//     r = parseInt(hex.substring(0, 2), 16);
+//     g = parseInt(hex.substring(2, 4), 16);
+//     b = parseInt(hex.substring(4, 6), 16);
+//   }
+
+//   return `${r}, ${g}, ${b}`;
+// }
+
+// function rgbaToHex(rgba) {
+//   // Extract the RGBA values using regex
+//   const rgbaMatch = rgba.match(
+//     /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)/
+//   );
+
+//   if (!rgbaMatch) {
+//     throw new Error("Invalid RGBA format");
+//   }
+
+//   // Convert the RGB values to hex
+//   const r = parseInt(rgbaMatch[1]).toString(16).padStart(2, "0");
+//   const g = parseInt(rgbaMatch[2]).toString(16).padStart(2, "0");
+//   const b = parseInt(rgbaMatch[3]).toString(16).padStart(2, "0");
+
+//   // Convert alpha to hex if it exists
+//   let a = "";
+//   if (rgbaMatch[4] !== undefined) {
+//     // Convert alpha from 0-1 to 0-255 and then to hex
+//     a = Math.round(parseFloat(rgbaMatch[4]) * 255)
+//       .toString(16)
+//       .padStart(2, "0");
+//   }
+
+//   return `#${r}${g}${b}${a}`;
+// }
+
+function addOpacityToHex(hexColor, opacityPercent=100) {
+  hexColor = hexColor.replace('#', '');
+  if (!/^[0-9A-Fa-f]{6}$/.test(hexColor)) {
+      throw new Error('Invalid hex color format. Please use 6 digit hex color (e.g., 758a71)');
   }
 
-function truncateText(text, length) {
-    if (text.length > length) {
-      return text.slice(0, length);
-    }
-    return text;
+  if (opacityPercent < 0 || opacityPercent > 100) {
+      throw new Error('Opacity must be between 0 and 100');
+  }
+
+  const opacityDecimal = opacityPercent / 100;
+
+  const alphaHex = Math.round(opacityDecimal * 255).toString(16).padStart(2, '0');
+
+  return `#${hexColor}${alphaHex}`;
 }
+
+function truncateText(text, length) {
+  if (text.length > length) {
+    return text.slice(0, length);
+  }
+  return text;
+}
+
 

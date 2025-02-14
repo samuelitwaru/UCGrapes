@@ -4,7 +4,7 @@
 } */
 #tb-body {
   background-color: #6a747f;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", sans-serif;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -776,7 +776,7 @@ h5#current-page-title {
   border: 1px solid #ddd;
   padding: 6px;
   border-radius: 6px;
-  width: fit-content;
+  width: 85%;
   background-color: #fff;
 }
 
@@ -787,6 +787,42 @@ h5#current-page-title {
   display: flex;
   align-items: center;
   margin-right: 10px;
+}
+
+.bg-section .slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bg-section input[type="range"] {
+  flex-grow: 1;
+  height: 2px;
+  background: #222f54;
+  border-radius: 2px;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.bg-section input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #222f54;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.bg-section input:focus {
+  outline: none !important; 
+  border: none !important;
+}
+
+.bg-section .value-display {
+  color: #333;
+  font-size: 16px;
+  min-width: 48px;
 }
 
 .bg-section .add-image .plus {

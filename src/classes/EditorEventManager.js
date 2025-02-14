@@ -143,10 +143,17 @@ class EditorEventManager {
       );
     }
 
-    // this.editorManager.toolsSection.ui.updateTileProperties(
-    //   this.editorManager.selectedComponent,
-    //   page
-    // );
+    const page = this.editorManager.getPage(this.editorManager.currentPageId);
+    if (page?.PageIsContentPage) {
+      this.editorManager.toolsSection.ui.activateCtaBtnStyles(
+        this.editorManager.selectedComponent
+      );
+    }
+
+    this.editorManager.toolsSection.ui.updateTileProperties(
+      this.editorManager.selectedComponent,
+      page
+    );
 
     this.editorManager.toolsSection.checkTileBgImage();
 
@@ -221,6 +228,7 @@ class EditorEventManager {
   }
 
   setupUndoRedoButtons() {
+    // Assuming you have undo and redo buttons in your UI
     const undoBtn = document.getElementById("undo");
     const redoBtn = document.getElementById("redo");
 

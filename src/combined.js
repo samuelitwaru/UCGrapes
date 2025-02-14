@@ -15,7 +15,7 @@ class Clock {
       const timeString = `${hours}:${minutes} ${ampm}`;
       document.getElementById(this.pageId).textContent = timeString;
     }
-  }
+}
 
 
 // Content from classes/Locale.js
@@ -2102,6 +2102,9 @@ class ToolBoxManager {
     const editors = Object.values(this.editorManager.editors);
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
+
+      console.log(pageDataList)
+
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
       }
@@ -2109,7 +2112,9 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
-    return this.dataManager.pages.SDT_PageCollection.map(page=>{
+    return this.dataManager.pages.SDT_PageCollection
+    .filter(page=>!(page.PageName=="Mailbox" || page.PageName=="Calendar"))
+    .map(page=>{
       let projectData;
       try {
         projectData = JSON.parse(page.PageGJSJson)
@@ -5386,11 +5391,12 @@ class MediaComponent {
       const templateBlock = this.editorManager.selectedComponent;
 
       if (this.selectedFile?.MediaUrl) {
+        alert()
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
         console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({
           "background-image": `url(${safeMediaUrl})`,
-          "background-size": "auto",
+          "background-size": "cover",
           "background-position": "center",
           "background-blend-mode": "overlay",
         });

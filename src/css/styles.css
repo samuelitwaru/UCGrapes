@@ -1555,7 +1555,7 @@ h5#current-page-title {
 
 .search-container .add-button {
   position: absolute;
-  left: 193px;
+  margin-left: -27px;
   top: 19px;
   transform: translateY(-50%);
   font-size: 14px;

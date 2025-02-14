@@ -14,4 +14,4 @@ class Clock {
       const timeString = `${hours}:${minutes} ${ampm}`;
       document.getElementById(this.pageId).textContent = timeString;
     }
-  }
+}

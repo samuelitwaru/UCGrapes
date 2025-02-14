@@ -95,6 +95,9 @@ class ToolBoxManager {
     const editors = Object.values(this.editorManager.editors);
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
+
+      console.log(pageDataList)
+
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
       }
@@ -102,7 +105,9 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
-    return this.dataManager.pages.SDT_PageCollection.map(page=>{
+    return this.dataManager.pages.SDT_PageCollection
+    .filter(page=>!(page.PageName=="Mailbox" || page.PageName=="Calendar"))
+    .map(page=>{
       let projectData;
       try {
         projectData = JSON.parse(page.PageGJSJson)

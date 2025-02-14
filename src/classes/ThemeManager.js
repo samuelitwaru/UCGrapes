@@ -585,9 +585,9 @@ class ThemeManager {
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
             const iconComponent =
-              this.toolBoxManager.editorManager.selectedComponent.find(
-                ".tile-icon"
-              )[0];
+            this.toolBoxManager.editorManager.selectedComponent.find(
+              ".tile-icon"
+            )[0];
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
@@ -595,6 +595,7 @@ class ThemeManager {
                 'fill="#7c8791"',
                 'fill="white"'
               );
+              iconComponent.addStyle({display: "block"});
               iconComponent.components(whiteIconSvg);
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",

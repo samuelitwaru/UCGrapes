@@ -1590,6 +1590,15 @@ h5#current-page-title {
   color: #66666687;
 }
 
+.search-container .add-button {
+  position: absolute;
+  margin-left: -27px;
+  top: 19px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #666;
+}
+
 .search-box input {
   width: 85%;
   padding: 5px;
@@ -1846,4 +1855,9 @@ button.add-new-service i {
   100% {
     transform: rotate(360deg);
   }
+}
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('../fonts/segoeui.ttf') format('truetype');
 }

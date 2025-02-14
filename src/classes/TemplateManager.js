@@ -745,6 +745,7 @@ class TemplateManager {
               ""
             );
             $("#tile-title").val("");
+            component.addStyle({display: "none"});
           } else if (sectionSelector === ".tile-icon-section") {
             const component =
               this.editorManager.selectedComponent.find(".tile-icon")[0];
@@ -753,6 +754,7 @@ class TemplateManager {
               "tile-icon",
               ""
             );
+            component.addStyle({display: "none"});
           }
         };
       }

@@ -1,5 +1,5 @@
 {
-  "PageId": "93adef14-3da0-4712-8862-8a0f858b3dd2",
+  "PageId": "717bf8c3-3c42-4b11-bc7a-fc3dceb8b731",
   "PageName": "Home",
   "Row": [
     {
@@ -11,14 +11,14 @@
             "TileTextColor": "#ffffff",
             "TileTextAlignment": "left",
             "TileIcon": "Curtain",
-            "TileIconColor": "#000000",
+            "TileIconColor": "#ffffff",
             "TileIconAlignment": "left",
-            "TileBGColor": "#d99e80",
+            "TileBGColor": "#788799",
             "TileBGImageUrl": "https://staging.comforta.yukon.software/media/receptie-197@3x.png",
             "TileBGImageOpacity": "100",
             "TileAction": {
               "ObjectType": "Predefined Page, Reception",
-              "ObjectId": "{{ReceptionPageId}}"
+              "ObjectId": "{{LocationPageId}}"
             }
           }
         }
@@ -35,7 +35,7 @@
             "TileIcon": "",
             "TileIconColor": "#000000",
             "TileIconAlignment": "left",
-            "TileBGColor": "#d99e80",
+            "TileBGColor": "#788799",
             "TileBGImageUrl": "https://staging.comforta.yukon.software/media/Calendar.png",
             "TileBGImageOpacity": "100",
             "TileAction": {
@@ -51,9 +51,9 @@
             "TileTextColor": "#ffffff",
             "TileTextAlignment": "left",
             "TileIcon": "Monitor",
-            "TileIconColor": "#000000",
+            "TileIconColor": "#ffffff",
             "TileIconAlignment": "left",
-            "TileBGColor": "#d99e80",
+            "TileBGColor": "#788799",
             "TileBGImageUrl": "",
             "TileBGImageOpacity": "100",
             "TileAction": {
@@ -75,12 +75,12 @@
             "TileIcon": "",
             "TileIconColor": "#000000",
             "TileIconAlignment": "left",
-            "TileBGColor": "#d99e80",
+            "TileBGColor": "#788799",
             "TileBGImageUrl": "https://staging.comforta.yukon.software/media/LocationInfo.png",
             "TileBGImageOpacity": "100",
             "TileAction": {
               "ObjectType": "Predefined Page, Location",
-              "ObjectId": "LocationPageId"
+              "ObjectId": "{{LocationPageId}}"
             }
           }
         }
@@ -97,7 +97,7 @@
             "TileIcon": "",
             "TileIconColor": "#000000",
             "TileIconAlignment": "left",
-            "TileBGColor": "#d99e80",
+            "TileBGColor": "#788799",
             "TileBGImageUrl": "",
             "TileBGImageOpacity": "100",
             "TileAction": { "ObjectType": "Page", "ObjectId": null }
@@ -112,7 +112,7 @@
             "TileIcon": "",
             "TileIconColor": "#000000",
             "TileIconAlignment": "left",
-            "TileBGColor": "#7f3e3a",
+            "TileBGColor": "#535353",
             "TileBGImageUrl": "",
             "TileBGImageOpacity": "100",
             "TileAction": { "ObjectType": "Page", "ObjectId": null }
@@ -127,7 +127,7 @@
             "TileIcon": "",
             "TileIconColor": "#000000",
             "TileIconAlignment": "left",
-            "TileBGColor": "#c8653e",
+            "TileBGColor": "#986b5d",
             "TileBGImageUrl": "",
             "TileBGImageOpacity": "100",
             "TileAction": { "ObjectType": "Page", "ObjectId": null }

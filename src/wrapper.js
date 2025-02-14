@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const UglifyJS = require('uglify-js');
 
 const files = [
     "classes/Clock.js",
@@ -37,7 +38,22 @@ function combineFiles(files, outputFilePath) {
     fs.appendFileSync(outputFilePath, fileContent + '\n\n');
   });
 
+  //minifyFile(outputFilePath);
   console.log(`All files have been combined into ${outputFilePath}`);
+
+}
+
+function minifyFile(filePath) {
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const minifiedContent = UglifyJS.minify(fileContent);
+
+  if (minifiedContent.error) {
+    console.error(`Error minifying ${filePath}:`, minifiedContent.error);
+    return;
+  }
+
+  fs.writeFileSync(filePath, minifiedContent.code, 'utf-8');
+  console.log(`File ${filePath} has been minified.`);
 }
 
 combineFiles(files, outputFilePath);

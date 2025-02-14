@@ -1,3 +1,4 @@
+
 class EditorManager {
   editors = {};
   pages = [];
@@ -167,6 +168,8 @@ class EditorManager {
     this.dataManager.pages.SDT_PageCollection.map((p) => {
       if (p.PageId == page.PageId) {
         p.PageGJSJson = JSON.stringify(PageGJSJson);
+        console.log("Update event triggered", p.PageName);
+        console.log(PageGJSJson);
       }
       return p;
     });
@@ -188,6 +191,8 @@ class EditorManager {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
 
+      console.log("PageData: ", pageData);
+
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
@@ -204,12 +209,27 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[0].attributes.src =
-      this.dataManager.Location.LocationImage_GXI;
-    pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components[1].components[0].content =
-      this.dataManager.Location.LocationDescription;
-    editor.DomComponents.clear();
-    editor.loadProjectData(pageData);
+
+    // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
+
+    const locationData = this.dataManager.Location;
+
+    
+    const dataComponents = pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components
+    
+    if (dataComponents.length) {
+      const imgComponent = dataComponents.find((component) => component.attributes.src);
+      const descriptionComponent = dataComponents.find((component) =>  component.type=="product-service-description");
+      if (imgComponent) {
+        imgComponent.attributes.src = locationData.LocationImage_GXI;
+      }
+      if (descriptionComponent) {
+        descriptionComponent.components[0].content = locationData.LocationDescription;
+      }
+      editor.DomComponents.clear();
+      editor.loadProjectData(pageData);
+    }
+    
   }
 
   async handleContentPage(editor, page) {
@@ -320,7 +340,6 @@ class EditorManager {
   async loadDynamicFormContent(editor, page) {
     try {
       editor.DomComponents.clear();
-
       editor.DomComponents.addType("iframe", {
         model: {
           defaults: {
@@ -334,7 +353,7 @@ class EditorManager {
               seamless: "seamless",
               loading: "lazy",
               sandbox: "allow-scripts allow-same-origin",
-              src: `http://localhost:8082/ComfortaKBDevelopmentNETSQLServer/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
+              src: `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
             },
             // Define styles separately from attributes
             style: {

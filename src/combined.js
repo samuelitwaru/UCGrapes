@@ -4336,6 +4336,7 @@ class ActionListComponent {
 
           if (titleComponent) {
             titleComponent.components(tileTitle);
+            titleComponent.addStyle({ "display": "block" });
 
             const sidebarInputTitle = document.getElementById("tile-title");
             if (sidebarInputTitle) {

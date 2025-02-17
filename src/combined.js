@@ -315,6 +315,7 @@ class DataManager {
 
   async getServices() {
     const services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    console.log(services)
     this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }
@@ -4118,6 +4119,8 @@ class ActionListComponent {
     await this.dataManager.getPages();
     await this.dataManager.getServices();
 
+    console.log(this.dataManager.services.map((service) => service.ProductServiceName))
+
 
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => {
@@ -5394,7 +5397,6 @@ class MediaComponent {
       const templateBlock = this.editorManager.selectedComponent;
 
       if (this.selectedFile?.MediaUrl) {
-        alert()
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
         console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({
@@ -5688,11 +5690,11 @@ const iconsData = [
   
   const defaultTileAttrs = `
     tile-text="Tile"
-    tile-text-color="#000000"
+    tile-text-color="#FFFFFF"
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#000000"
+    tile-icon-color="#FFFFFF"
     tile-icon-align="left"
   
     tile-bg-image=""

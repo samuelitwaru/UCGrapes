@@ -43,6 +43,8 @@ class ActionListComponent {
     await this.dataManager.getPages();
     await this.dataManager.getServices();
 
+    console.log(this.dataManager.services.map((service) => service.ProductServiceName))
+
 
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => {

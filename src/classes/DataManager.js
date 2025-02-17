@@ -54,6 +54,7 @@ class DataManager {
 
   async getServices() {
     const services = await this.fetchAPI('/api/toolbox/services', {}, true);
+    console.log(services)
     this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }

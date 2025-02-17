@@ -172,8 +172,10 @@ class ThemeManager {
                   "tile-bgcolor": matchingColorCode,
                 });
 
+                const currentTileOpacity = tile.getAttributes()?.["tile-bg-image-opacity"];
+
                 tile.addStyle({
-                  "background-color": matchingColorCode,
+                  "background-color": addOpacityToHex(matchingColorCode, currentTileOpacity),
                 });
               } else {
                 console.warn(
@@ -232,17 +234,25 @@ class ThemeManager {
 
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
-          this.toolBoxManager.editorManager.selectedComponent.addStyle({
-            "background-color": colorValue,
+          const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
+
+          const currentTileOpacity = selectedComponent
+                                      .getAttributes()?.["tile-bg-image-opacity"];
+
+          selectedComponent.addStyle({
+            "background-color": addOpacityToHex(colorValue, currentTileOpacity),
           });
+
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor",
             colorValue
           );
+
           this.toolBoxManager.setAttributeToSelected(
             "tile-bgcolor-name",
             colorName
           );
+
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"

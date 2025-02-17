@@ -41,7 +41,7 @@ class ActionListComponent {
 
   async init() {
     await this.dataManager.getPages();
-    await this.dataManager.getServices();
+    // await this.dataManager.getServices();
 
     console.log(this.dataManager.services.map((service) => service.ProductServiceName))
 
@@ -49,7 +49,7 @@ class ActionListComponent {
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => {
         page.PageTileName = page.PageName;
-        return !page.PageIsContentPage && !page.PageIsPredefined
+        return !page.PageIsContentPage && !page.PageIsPredefined && !page.PageIsDynamicForm
       }
     );
     this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
@@ -94,7 +94,7 @@ class ActionListComponent {
     const dropdownMenu = document.getElementById("dropdownMenu");
     dropdownMenu.innerHTML = "";
     this.categoryData.forEach((category) => {
-      const categoryElement = this.createCategoryElement(category);
+      const categoryElement = this.createCategoryElement(category);     
       dropdownMenu.appendChild(categoryElement);
     });
 
@@ -125,8 +125,10 @@ class ActionListComponent {
 
     if (category.name === "Service/Product Page") {
       const addButton = document.createElement("button");
-      addButton.textContent = "+";
-      addButton.classList.add("add-button");
+      addButton.innerHTML = `<i class="fa fa-plus"></i>`;
+
+      addButton.title = "Add New Service";
+      addButton.classList.add("add-new-service");
       addButton.addEventListener("click", (e) => {
         e.preventDefault();
         this.toolBoxManager.newServiceEvent()
@@ -211,7 +213,7 @@ class ActionListComponent {
             .classList.replace("fa-angle-down", "fa-angle-right");
         }
           });
-          searchBox.style.display = "block";
+          searchBox.style.display = "flex";
           icon.classList.replace("fa-angle-right", "fa-angle-down");
         } else {
           searchBox.style.display = "none";

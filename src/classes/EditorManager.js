@@ -460,7 +460,7 @@ class EditorManager {
       // Add the component to the editor
       editor.setComponents(`
         <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
-          <iframe></iframe>
+          <iframe ${defaultConstraints}></iframe>
         </div>
       `);
     } catch (error) {

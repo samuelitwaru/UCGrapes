@@ -265,18 +265,22 @@ class ToolBoxUI {
       Phone: {
         icon: "fas fa-phone-alt",
         iconList: ".fas.fa-phone-alt",
+        iconBgColor: "#4c9155",
       },
       Email: {
         icon: "fas fa-envelope",
         iconList: ".fas.fa-envelope",
+        iconBgColor: "#eea622",
       },
       SiteUrl: {
         icon: "fas fa-link",
         iconList: ".fas.fa-link",
+        iconBgColor: "#ff6c37",
       },
       Form: {
         icon: "fas fa-file",
         iconList: ".fas.fa-file",
+        iconBgColor: "#5068a8",
       },
     };
 
@@ -284,11 +288,12 @@ class ToolBoxUI {
       ctaTypeMap[type] || {
         icon: "fas fa-question",
         iconList: ".fas.fa-question",
+        iconBgColor: "#5068a8",
       }
     );
   }
 
-  generateCtaComponent(cta, backgroundColor = "#5068a8") {
+  generateCtaComponent(cta, backgroundColor) {
     const ctaType = this.getCtaType(cta.CallToActionType);
     return `
       <div class="cta-container-child cta-child" 
@@ -308,9 +313,9 @@ class ToolBoxUI {
               cta.CallToActionEmail ||
               cta.CallToActionUrl
             }"
-            cta-background-color="#5068a8"
+          cta-background-color="${ctaType.iconBgColor}"
           >
-            <div class="cta-button" ${defaultConstraints} style="background-color: #5068a8;">
+            <div class="cta-button" ${defaultConstraints} style="background-color: ${backgroundColor || ctaType.iconBgColor};">
               <i class="${ctaType.icon}" ${defaultConstraints}></i>
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>

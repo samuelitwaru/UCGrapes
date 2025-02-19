@@ -47437,7 +47437,7 @@
                         )
                         .concat(
                           l,
-                          "selected {\n        outline: 2px solid #5d7ba0 !important;\n    border-radius: 4px;\n       outline-offset: -2px;\n     box-shadow: 0 4px 6px -1px rgb(93 123 160 / 32%), 0 2px 4px -1px rgba(0, 0, 0, 0.06);     }\n\n      ."
+                          "selected {\n        outline: 3px dashed #222f54 !important;\n    border-radius: 4px;\n       outline-offset: -2px;\n     box-shadow: 0 4px 6px -1px rgb(93 123 160 / 32%), 0 2px 4px -1px rgba(0, 0, 0, 0.06);     }\n\n      ."
                         )
                         .concat(
                           l,

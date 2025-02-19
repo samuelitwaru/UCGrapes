@@ -270,7 +270,8 @@ function generateNewPage(theme) {
                                     "highlightable": false,
                                     "hoverable": false,
                                     "classes": [
-                                      "template-block"
+                                      "template-block",
+                                      "high-priority-template"
                                     ],
                                     "attributes": {
                                       "tile-text": "Tile",

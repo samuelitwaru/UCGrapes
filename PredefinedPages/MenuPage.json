@@ -1,1 +1,2104 @@
-{"assets":[],"styles":[{"selectors":["#ilrn"],"style":{"flex":"0 0 49%)","background":"#173f5f","width":"100%"}},{"selectors":["#ifm6f"],"style":{"flex":"0 0 calc(50% - 0.3.5rem)","background":"#173f5f"}},{"selectors":["#i4r6b"],"style":{"flex":"0 0 49%)","background":"#173f5f","width":"100%"}},{"selectors":["#i2vb4n"],"style":{"flex":"0 0 calc(33.333333333333336% - 0.3.5rem)","background":"#173f5f"}},{"selectors":["#it15ck"],"style":{"flex":"0 0 calc(33.333333333333336% - 0.3.5rem)","background":"#173f5f"}},{"selectors":["#i4vat"],"style":{"display":"flex"}},{"selectors":["#iv5f"],"style":{"background-color":"#f09605","background-image":"url(https://staging.comforta.yukon.software/media/receptie-197@3x.png)","background-size":"cover","background-position":"center","color":"#ffffff"}},{"selectors":["#iiryl"],"style":{"background-color":"#f09605","color":"#ffffff","background-image":"url(https://staging.comforta.yukon.software/media/Calendar.png)","background-size":"cover","background-position":"center"}},{"selectors":["#i913l"],"style":{"background-color":"#f09605","color":"#ffffff","background-image":"url(https://staging.comforta.yukon.software/media/LocationInfo.png)","background-size":"cover","background-position":"center"}},{"selectors":["#ibj3bv"],"style":{"background-color":"#f09605","color":"#ffffff"}},{"selectors":["#i5xrqj"],"style":{"background-color":"#06394f","color":"#ffffff"}},{"selectors":["#iz2mdk"],"style":{"background":"#173f5f","background-color":"#f09605"}},{"selectors":["#iit8pl"],"style":{"flex":"0 0 calc(50% - 0.3.5rem)"}},{"selectors":["#ijqn5"],"style":{"display":"flex"}},{"selectors":["#iu6wdj"],"style":{"display":"flex"}},{"selectors":["#i3y9x"],"style":{"display":"flex"}},{"selectors":["#igltzf"],"style":{"background":"#173f5f","color":"#ffffff","background-color":"#653993"}},{"selectors":["#ikadpy"],"style":{"flex":"0 0 calc(33.333333333333336% - 0.3.5rem)"}},{"selectors":["#i9n6nx"],"style":{"display":"none"}},{"selectors":["#iy6tu1"],"style":{"display":"none"}},{"selectors":["#iq9j0u"],"style":{"display":"none"}}],"pages":[{"frames":[{"component":{"type":"wrapper","droppable":false,"stylable":["background","background-color","background-image","background-repeat","background-attachment","background-position","background-size"],"resizable":{"handles":"e"},"selectable":false,"hoverable":false,"attributes":{"page-id":"Home","theme":"Modern"},"_undoexc":["status","open"],"components":[{"type":"template-wrapper","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["frame-container"],"attributes":{"id":"frame-container"},"_undoexc":["status","open"],"components":[{"type":"template-wrapper","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["container-column"],"_undoexc":["status","open"],"components":[{"type":"template-wrapper","draggable":false,"droppable":"[data-gjs-type='tile-wrapper']","selectable":false,"classes":["container-row"],"_undoexc":["status","open"],"components":[{"type":"tile-wrapper","droppable":false,"selectable":false,"classes":["template-wrapper"],"attributes":{"id":"ilrn"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#f09605","tile-bgcolor-name":"cardBgColor","tile-text":"Tile","tile-text-color":"#ffffff","tile-text-align":"left","tile-icon":"Curtain","tile-icon-color":"#ffffff","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Predefined Page, Reception","tile-action-object-id":"1e5d1be0-d9ef-4ff7-869d-1b1f3092155c","id":"iv5f","tile-bg-image-url":"https://staging.comforta.yukon.software/media/1737609477356-Receptie.png"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-icon-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-icon"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-icon"],"_undoexc":["status","open"],"components":[{"type":"svg","resizable":{"ratioDefault":1},"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"36.799","height":"25.888","viewBox":"0 0 36.799 25.888"},"_undoexc":["status","open"],"components":[{"tagName":"path","type":"svg-in","resizable":{"ratioDefault":1},"attributes":{"id":"curtain","d":"M113.58,163.333c.264,2.64,1.782,11.88,9.108,13.2h.132a14.791,14.791,0,0,1-3.7-9.108.661.661,0,0,1,.66-.66.71.71,0,0,1,.66.66c0,4.488,3.366,8.25,4.158,9.108h1.65a13.805,13.805,0,0,1-.99-8.052.635.635,0,1,1,1.254.2,12.473,12.473,0,0,0,1.188,7.854h1.782s3.976-9.9,0-13.2S113.58,163.333,113.58,163.333ZM128.5,181.219a11.077,11.077,0,0,0-.462,4.686.707.707,0,0,1-.594.726h-.066a.651.651,0,0,1-.66-.594,13.634,13.634,0,0,1,.4-4.818h-1.452a6.532,6.532,0,0,0-1.848,4.752.661.661,0,0,1-.66.66.71.71,0,0,1-.66-.66,8.432,8.432,0,0,1,1.452-4.752h-1.188a8.714,8.714,0,0,0-3.894,6.534h10.626V181.22Zm-25.608,0H101.7a8.433,8.433,0,0,1,1.452,4.752.71.71,0,0,1-.66.66.661.661,0,0,1-.66-.66,6.681,6.681,0,0,0-1.848-4.752H98.532a13.456,13.456,0,0,1,.4,4.818.651.651,0,0,1-.66.594.624.624,0,0,1-.594-.726,11.254,11.254,0,0,0-.462-4.686h-.99v6.534h10.626a8.685,8.685,0,0,0-3.96-6.534Zm-6.666-17.886c-3.976,3.3,0,13.2,0,13.2H98a12.719,12.719,0,0,0,1.188-7.854.618.618,0,0,1,.528-.726.654.654,0,0,1,.726.528,14.382,14.382,0,0,1-.99,8.052h1.65c.792-.858,4.158-4.554,4.158-9.108a.71.71,0,0,1,.66-.66.661.661,0,0,1,.66.66c0,4.026-2.31,7.392-3.7,9.108h.132c7.392-1.386,8.844-10.56,9.108-13.2C112.128,163.332,100.2,160.033,96.222,163.333Zm6.864,14.52H96.222V179.9h6.93a.312.312,0,0,0,.33-.33v-1.32a.38.38,0,0,0-.4-.4Zm19.536,0a.312.312,0,0,0-.33.33v1.32a.312.312,0,0,0,.33.33h6.93v-2.046h-6.93Z","transform":"translate(-94.455 -161.866)","fill":"#ffffff"},"_undoexc":["status","open"]}]}]}]},{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"RECEPTION","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"i4vat"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n                          ","_undoexc":["status","open"]}]}]}]},{"type":"template-wrapper","draggable":false,"droppable":"[data-gjs-type='tile-wrapper']","selectable":false,"classes":["container-row"],"_undoexc":["status","open"],"components":[{"type":"tile-wrapper","droppable":false,"selectable":false,"classes":["template-wrapper"],"attributes":{"id":"ifm6f"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#f09605","tile-bgcolor-name":"cardBgColor","tile-text":"Tile","tile-text-color":"#ffffff","tile-text-align":"left","tile-icon":"","tile-icon-color":"#000000","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Predefined Page, Calendar","tile-action-object-id":"5e200c35-16fe-4401-93c6-b106d14c89cc","id":"iiryl","tile-bg-image-url":"https://staging.comforta.yukon.software/media/1737609553150-Calendar.png"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"CALENDAR","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"ijqn5"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n                          ","_undoexc":["status","open"]}]}]},{"type":"tile-wrapper","droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["template-wrapper"],"attributes":{"id":"iit8pl"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#f09605","tile-bgcolor-name":"cardBgColor","tile-text":"Tile","tile-text-color":"#000000","tile-text-align":"left","tile-icon":"Monitor","tile-icon-color":"#ffffff","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Predefined Page, Mailbox","tile-action-object-id":"e22b29bc-1982-414a-87cf-71a839806a75","id":"iz2mdk"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-icon-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-icon"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-icon"],"_undoexc":["status","open"],"components":[{"type":"svg","resizable":{"ratioDefault":1},"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"30","height":"28.72","viewBox":"0 0 30 28.72"},"_undoexc":["status","open"],"components":[{"tagName":"path","type":"svg-in","resizable":{"ratioDefault":1},"attributes":{"id":"Path_999","data-name":"Path 999","d":"M22.8,2a.61.61,0,0,0-.431.168L15,9.535,10.631,5.16a.609.609,0,1,0-.863.86l3.769,3.758H3.6A3.6,3.6,0,0,0,0,13.368V27.13a3.6,3.6,0,0,0,3.6,3.59H26.4A3.6,3.6,0,0,0,30,27.13V13.368a3.6,3.6,0,0,0-3.6-3.59H16.462l6.769-6.75A.6.6,0,0,0,22.8,2ZM12.3,12.172c8.672,0,9.9.023,9.9,8.078s-1.312,8.077-9.9,8.077c-8.627,0-9.9-.086-9.9-8.077S3.673,12.172,12.3,12.172ZM25.8,16.36a1.2,1.2,0,1,1-1.2,1.2A1.2,1.2,0,0,1,25.8,16.36Zm0,5.385a1.2,1.2,0,1,1-1.2,1.2A1.2,1.2,0,0,1,25.8,21.745Z","transform":"translate(0 -2)","fill":"#ffffff"},"_undoexc":["status","open"]}]}]}]},{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"MAILBOX","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"iu6wdj"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n              ","_undoexc":["status","open"]}]}]}]},{"type":"template-wrapper","draggable":false,"droppable":"[data-gjs-type='tile-wrapper']","selectable":false,"classes":["container-row"],"_undoexc":["status","open"],"components":[{"type":"tile-wrapper","droppable":false,"selectable":false,"classes":["template-wrapper"],"attributes":{"id":"i4r6b"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#f09605","tile-bgcolor-name":"cardBgColor","tile-text":"Tile","tile-text-color":"#ffffff","tile-text-align":"left","tile-icon":"","tile-icon-color":"#000000","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Predefined Page, Location","tile-action-object-id":"784c2d18-622f-43f3-bde1-7b00035d6a07","id":"i913l","tile-bg-image-url":"https://staging.comforta.yukon.software/media/1737609615966-LocationInfo.png"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-icon-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-icon"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-icon"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n                                ","_undoexc":["status","open"]}]}]},{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"LOCATION","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"i3y9x"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n                          ","_undoexc":["status","open"]}]}]}]},{"type":"template-wrapper","draggable":false,"droppable":"[data-gjs-type='tile-wrapper']","selectable":false,"classes":["container-row"],"_undoexc":["status","open"],"components":[{"type":"tile-wrapper","droppable":false,"selectable":false,"classes":["template-wrapper"],"attributes":{"id":"i2vb4n"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#f09605","tile-bgcolor-name":"cardBgColor","tile-text":"Tile","tile-text-color":"#ffffff","tile-text-align":"left","tile-icon":"","tile-icon-color":"#000000","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Service/Product Page, Hair Cuts","tile-action-object-id":"968727c7-1847-4f5f-8e8a-eb4926310165","id":"ibj3bv"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"Hair Cuts","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"i9n6nx"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n                          ","_undoexc":["status","open"]}]}]},{"type":"tile-wrapper","droppable":false,"selectable":false,"classes":["template-wrapper"],"attributes":{"id":"it15ck"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#06394f","tile-bgcolor-name":"backgroundColor","tile-text":"Tile","tile-text-color":"#ffffff","tile-text-align":"left","tile-icon":"","tile-icon-color":"#000000","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Service/Product Page, Physiotherapy","tile-action-object-id":"47a15f78-b2b9-4fbb-88f1-c529824059c4","id":"i5xrqj"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"Physiotherapy","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"iy6tu1"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n                          ","_undoexc":["status","open"]}]}]},{"type":"tile-wrapper","droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["template-wrapper"],"attributes":{"id":"ikadpy"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"hoverable":false,"classes":["template-block"],"attributes":{"tile-bgcolor":"#653993","tile-bgcolor-name":"accentColor","tile-text":"Tile","tile-text-color":"#ffffff","tile-text-align":"left","tile-icon":"","tile-icon-color":"#000000","tile-icon-align":"left","tile-bg-image":"","tile-bg-image-opacity":"100","tile-action-object":"Page, Services","tile-action-object-id":"adcbc6e8-e8ff-4893-9f19-0ab382b89f5a","id":"igltzf"},"_undoexc":["status","open"],"components":[{"draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["tile-title-section"],"_undoexc":["status","open"],"components":[{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-close-icon","top-right","selected-tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"×","_undoexc":["status","open"]}]},{"tagName":"span","type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["tile-title"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"Services","_undoexc":["status","open"]}]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-bottom"],"attributes":{"title":"Add template below"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"tagName":"button","draggable":false,"droppable":false,"highlightable":false,"selectable":false,"hoverable":false,"classes":["action-button","add-button-right"],"attributes":{"title":"Add template right","id":"iq9j0u"},"_undoexc":["status","open"],"components":[{"type":"svg","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"selectable":false,"hoverable":false,"attributes":{"xmlns":"http://www.w3.org/2000/svg","width":"16","height":"16","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},"_undoexc":["status","open"],"components":[{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"12","y1":"5","x2":"12","y2":"19"},"_undoexc":["status","open"]},{"tagName":"line","type":"svg-in","draggable":false,"droppable":false,"highlightable":false,"resizable":{"ratioDefault":1},"attributes":{"x1":"5","y1":"12","x2":"19","y2":"12"},"_undoexc":["status","open"]}]}]},{"type":"text","draggable":false,"highlightable":false,"editable":false,"selectable":false,"hoverable":false,"classes":["resize-handle"],"_undoexc":["status","open"],"components":[{"type":"textnode","content":"\n              ","_undoexc":["status","open"]}]}]}]}]}]}]}}],"type":"main","id":"M1I3WJbl1jsJyHc2"}]}
+{
+  "assets": [],
+  "styles": [
+    {
+      "selectors": ["#ilrn"],
+      "style": { "flex": "0 0 49%)", "background": "#173f5f", "width": "100%" }
+    },
+    {
+      "selectors": ["#ifm6f"],
+      "style": { "flex": "0 0 calc(50% - 0.3.5rem)", "background": "#173f5f" }
+    },
+    {
+      "selectors": ["#i4r6b"],
+      "style": { "flex": "0 0 49%)", "background": "#173f5f", "width": "100%" }
+    },
+    {
+      "selectors": ["#i2vb4n"],
+      "style": {
+        "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)",
+        "background": "#173f5f"
+      }
+    },
+    {
+      "selectors": ["#it15ck"],
+      "style": {
+        "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)",
+        "background": "#173f5f"
+      }
+    },
+    { "selectors": ["#i4vat"], "style": { "display": "flex" } },
+    {
+      "selectors": ["#iv5f"],
+      "style": {
+        "background-color": "#f09605",
+        "background-image": "url(https://staging.comforta.yukon.software/media/receptie-197@3x.png)",
+        "background-size": "cover",
+        "background-position": "center",
+        "color": "#ffffff"
+      }
+    },
+    {
+      "selectors": ["#iiryl"],
+      "style": {
+        "background-color": "#f09605",
+        "color": "#ffffff",
+        "background-image": "url(https://staging.comforta.yukon.software/media/Calendar.png)",
+        "background-size": "cover",
+        "background-position": "center"
+      }
+    },
+    {
+      "selectors": ["#i913l"],
+      "style": {
+        "background-color": "#f09605",
+        "color": "#ffffff",
+        "background-image": "url(https://staging.comforta.yukon.software/media/LocationInfo.png)",
+        "background-size": "cover",
+        "background-position": "center"
+      }
+    },
+    {
+      "selectors": ["#ibj3bv"],
+      "style": { "background-color": "#f09605", "color": "#ffffff" }
+    },
+    {
+      "selectors": ["#i5xrqj"],
+      "style": { "background-color": "#06394f", "color": "#ffffff" }
+    },
+    {
+      "selectors": ["#iz2mdk"],
+      "style": { "background": "#173f5f", "background-color": "#f09605" }
+    },
+    {
+      "selectors": ["#iit8pl"],
+      "style": { "flex": "0 0 calc(50% - 0.3.5rem)" }
+    },
+    { "selectors": ["#ijqn5"], "style": { "display": "flex" } },
+    { "selectors": ["#iu6wdj"], "style": { "display": "flex" } },
+    { "selectors": ["#i3y9x"], "style": { "display": "flex" } },
+    {
+      "selectors": ["#igltzf"],
+      "style": {
+        "background": "#173f5f",
+        "color": "#ffffff",
+        "background-color": "#653993"
+      }
+    },
+    {
+      "selectors": ["#ikadpy"],
+      "style": { "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)" }
+    },
+    { "selectors": ["#i9n6nx"], "style": { "display": "none" } },
+    { "selectors": ["#iy6tu1"], "style": { "display": "none" } },
+    { "selectors": ["#iq9j0u"], "style": { "display": "none" } }
+  ],
+  "pages": [
+    {
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "droppable": false,
+            "stylable": [
+              "background",
+              "background-color",
+              "background-image",
+              "background-repeat",
+              "background-attachment",
+              "background-position",
+              "background-size"
+            ],
+            "resizable": { "handles": "e" },
+            "selectable": false,
+            "hoverable": false,
+            "attributes": { "page-id": "Home", "theme": "Modern" },
+            "_undoexc": ["status", "open"],
+            "components": [
+              {
+                "type": "template-wrapper",
+                "draggable": false,
+                "droppable": false,
+                "highlightable": false,
+                "selectable": false,
+                "hoverable": false,
+                "classes": ["frame-container"],
+                "attributes": { "id": "frame-container" },
+                "_undoexc": ["status", "open"],
+                "components": [
+                  {
+                    "type": "template-wrapper",
+                    "draggable": false,
+                    "droppable": false,
+                    "highlightable": false,
+                    "selectable": false,
+                    "hoverable": false,
+                    "classes": ["container-column"],
+                    "_undoexc": ["status", "open"],
+                    "components": [
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "selectable": false,
+                        "classes": ["container-row"],
+                        "_undoexc": ["status", "open"],
+                        "components": [
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "selectable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "ilrn" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#f09605",
+                                  "tile-bgcolor-name": "cardBgColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#ffffff",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "Curtain",
+                                  "tile-icon-color": "#ffffff",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Predefined Page, Reception",
+                                  "tile-action-object-id": "1e5d1be0-d9ef-4ff7-869d-1b1f3092155c",
+                                  "id": "iv5f",
+                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/1737609477356-Receptie.png"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-icon-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-icon"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-icon"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "svg",
+                                            "resizable": { "ratioDefault": 1 },
+                                            "attributes": {
+                                              "xmlns": "http://www.w3.org/2000/svg",
+                                              "width": "36.799",
+                                              "height": "25.888",
+                                              "viewBox": "0 0 36.799 25.888"
+                                            },
+                                            "_undoexc": ["status", "open"],
+                                            "components": [
+                                              {
+                                                "tagName": "path",
+                                                "type": "svg-in",
+                                                "resizable": {
+                                                  "ratioDefault": 1
+                                                },
+                                                "attributes": {
+                                                  "id": "curtain",
+                                                  "d": "M113.58,163.333c.264,2.64,1.782,11.88,9.108,13.2h.132a14.791,14.791,0,0,1-3.7-9.108.661.661,0,0,1,.66-.66.71.71,0,0,1,.66.66c0,4.488,3.366,8.25,4.158,9.108h1.65a13.805,13.805,0,0,1-.99-8.052.635.635,0,1,1,1.254.2,12.473,12.473,0,0,0,1.188,7.854h1.782s3.976-9.9,0-13.2S113.58,163.333,113.58,163.333ZM128.5,181.219a11.077,11.077,0,0,0-.462,4.686.707.707,0,0,1-.594.726h-.066a.651.651,0,0,1-.66-.594,13.634,13.634,0,0,1,.4-4.818h-1.452a6.532,6.532,0,0,0-1.848,4.752.661.661,0,0,1-.66.66.71.71,0,0,1-.66-.66,8.432,8.432,0,0,1,1.452-4.752h-1.188a8.714,8.714,0,0,0-3.894,6.534h10.626V181.22Zm-25.608,0H101.7a8.433,8.433,0,0,1,1.452,4.752.71.71,0,0,1-.66.66.661.661,0,0,1-.66-.66,6.681,6.681,0,0,0-1.848-4.752H98.532a13.456,13.456,0,0,1,.4,4.818.651.651,0,0,1-.66.594.624.624,0,0,1-.594-.726,11.254,11.254,0,0,0-.462-4.686h-.99v6.534h10.626a8.685,8.685,0,0,0-3.96-6.534Zm-6.666-17.886c-3.976,3.3,0,13.2,0,13.2H98a12.719,12.719,0,0,0,1.188-7.854.618.618,0,0,1,.528-.726.654.654,0,0,1,.726.528,14.382,14.382,0,0,1-.99,8.052h1.65c.792-.858,4.158-4.554,4.158-9.108a.71.71,0,0,1,.66-.66.661.661,0,0,1,.66.66c0,4.026-2.31,7.392-3.7,9.108h.132c7.392-1.386,8.844-10.56,9.108-13.2C112.128,163.332,100.2,160.033,96.222,163.333Zm6.864,14.52H96.222V179.9h6.93a.312.312,0,0,0,.33-.33v-1.32a.38.38,0,0,0-.4-.4Zm19.536,0a.312.312,0,0,0-.33.33v1.32a.312.312,0,0,0,.33.33h6.93v-2.046h-6.93Z",
+                                                  "transform": "translate(-94.455 -161.866)",
+                                                  "fill": "#ffffff"
+                                                },
+                                                "_undoexc": ["status", "open"]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "RECEPTION",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "i4vat"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n                          ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "selectable": false,
+                        "classes": ["container-row"],
+                        "_undoexc": ["status", "open"],
+                        "components": [
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "selectable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "ifm6f" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#f09605",
+                                  "tile-bgcolor-name": "cardBgColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#ffffff",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "",
+                                  "tile-icon-color": "#000000",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Predefined Page, Calendar",
+                                  "tile-action-object-id": "5e200c35-16fe-4401-93c6-b106d14c89cc",
+                                  "id": "iiryl",
+                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/1737609553150-Calendar.png"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "CALENDAR",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "ijqn5"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n                          ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "highlightable": false,
+                            "selectable": false,
+                            "hoverable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "iit8pl" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#f09605",
+                                  "tile-bgcolor-name": "cardBgColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#000000",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "Monitor",
+                                  "tile-icon-color": "#ffffff",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Predefined Page, Mailbox",
+                                  "tile-action-object-id": "e22b29bc-1982-414a-87cf-71a839806a75",
+                                  "id": "iz2mdk"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-icon-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-icon"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-icon"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "svg",
+                                            "resizable": { "ratioDefault": 1 },
+                                            "attributes": {
+                                              "xmlns": "http://www.w3.org/2000/svg",
+                                              "width": "30",
+                                              "height": "28.72",
+                                              "viewBox": "0 0 30 28.72"
+                                            },
+                                            "_undoexc": ["status", "open"],
+                                            "components": [
+                                              {
+                                                "tagName": "path",
+                                                "type": "svg-in",
+                                                "resizable": {
+                                                  "ratioDefault": 1
+                                                },
+                                                "attributes": {
+                                                  "id": "Path_999",
+                                                  "data-name": "Path 999",
+                                                  "d": "M22.8,2a.61.61,0,0,0-.431.168L15,9.535,10.631,5.16a.609.609,0,1,0-.863.86l3.769,3.758H3.6A3.6,3.6,0,0,0,0,13.368V27.13a3.6,3.6,0,0,0,3.6,3.59H26.4A3.6,3.6,0,0,0,30,27.13V13.368a3.6,3.6,0,0,0-3.6-3.59H16.462l6.769-6.75A.6.6,0,0,0,22.8,2ZM12.3,12.172c8.672,0,9.9.023,9.9,8.078s-1.312,8.077-9.9,8.077c-8.627,0-9.9-.086-9.9-8.077S3.673,12.172,12.3,12.172ZM25.8,16.36a1.2,1.2,0,1,1-1.2,1.2A1.2,1.2,0,0,1,25.8,16.36Zm0,5.385a1.2,1.2,0,1,1-1.2,1.2A1.2,1.2,0,0,1,25.8,21.745Z",
+                                                  "transform": "translate(0 -2)",
+                                                  "fill": "#ffffff"
+                                                },
+                                                "_undoexc": ["status", "open"]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "MAILBOX",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "iu6wdj"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n              ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "selectable": false,
+                        "classes": ["container-row"],
+                        "_undoexc": ["status", "open"],
+                        "components": [
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "selectable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "i4r6b" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#f09605",
+                                  "tile-bgcolor-name": "cardBgColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#ffffff",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "",
+                                  "tile-icon-color": "#000000",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Predefined Page, Location",
+                                  "tile-action-object-id": "784c2d18-622f-43f3-bde1-7b00035d6a07",
+                                  "id": "i913l",
+                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/1737609615966-LocationInfo.png"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-icon-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-icon"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-icon"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "\n                                ",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "LOCATION",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "i3y9x"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n                          ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "selectable": false,
+                        "classes": ["container-row"],
+                        "_undoexc": ["status", "open"],
+                        "components": [
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "selectable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "i2vb4n" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#f09605",
+                                  "tile-bgcolor-name": "cardBgColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#ffffff",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "",
+                                  "tile-icon-color": "#000000",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Service/Product Page, Hair Cuts",
+                                  "tile-action-object-id": "968727c7-1847-4f5f-8e8a-eb4926310165",
+                                  "id": "ibj3bv"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "Hair Cuts",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "i9n6nx"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n                          ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "selectable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "it15ck" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#06394f",
+                                  "tile-bgcolor-name": "backgroundColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#ffffff",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "",
+                                  "tile-icon-color": "#000000",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Service/Product Page, Physiotherapy",
+                                  "tile-action-object-id": "47a15f78-b2b9-4fbb-88f1-c529824059c4",
+                                  "id": "i5xrqj"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "Physiotherapy",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "iy6tu1"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n                          ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "tile-wrapper",
+                            "droppable": false,
+                            "highlightable": false,
+                            "selectable": false,
+                            "hoverable": false,
+                            "classes": ["template-wrapper"],
+                            "attributes": { "id": "ikadpy" },
+                            "_undoexc": ["status", "open"],
+                            "components": [
+                              {
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "hoverable": false,
+                                "classes": ["template-block"],
+                                "attributes": {
+                                  "tile-bgcolor": "#653993",
+                                  "tile-bgcolor-name": "accentColor",
+                                  "tile-text": "Tile",
+                                  "tile-text-color": "#ffffff",
+                                  "tile-text-align": "left",
+                                  "tile-icon": "",
+                                  "tile-icon-color": "#000000",
+                                  "tile-icon-align": "left",
+                                  "tile-bg-image": "",
+                                  "tile-bg-image-opacity": "100",
+                                  "tile-action-object": "Page, Services",
+                                  "tile-action-object-id": "adcbc6e8-e8ff-4893-9f19-0ab382b89f5a",
+                                  "id": "igltzf"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "classes": ["tile-title-section"],
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": [
+                                          "tile-close-icon",
+                                          "top-right",
+                                          "selected-tile-title"
+                                        ],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "×",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "tagName": "span",
+                                        "type": "text",
+                                        "draggable": false,
+                                        "highlightable": false,
+                                        "editable": false,
+                                        "selectable": false,
+                                        "hoverable": false,
+                                        "classes": ["tile-title"],
+                                        "_undoexc": ["status", "open"],
+                                        "components": [
+                                          {
+                                            "type": "textnode",
+                                            "content": "Services",
+                                            "_undoexc": ["status", "open"]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-bottom"
+                                ],
+                                "attributes": { "title": "Add template below" },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "tagName": "button",
+                                "draggable": false,
+                                "droppable": false,
+                                "highlightable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": [
+                                  "action-button",
+                                  "add-button-right"
+                                ],
+                                "attributes": {
+                                  "title": "Add template right",
+                                  "id": "iq9j0u"
+                                },
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "svg",
+                                    "draggable": false,
+                                    "droppable": false,
+                                    "highlightable": false,
+                                    "resizable": { "ratioDefault": 1 },
+                                    "selectable": false,
+                                    "hoverable": false,
+                                    "attributes": {
+                                      "xmlns": "http://www.w3.org/2000/svg",
+                                      "width": "16",
+                                      "height": "16",
+                                      "viewBox": "0 0 24 24",
+                                      "fill": "none",
+                                      "stroke": "currentColor",
+                                      "stroke-width": "2",
+                                      "stroke-linecap": "round",
+                                      "stroke-linejoin": "round"
+                                    },
+                                    "_undoexc": ["status", "open"],
+                                    "components": [
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "12",
+                                          "y1": "5",
+                                          "x2": "12",
+                                          "y2": "19"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      },
+                                      {
+                                        "tagName": "line",
+                                        "type": "svg-in",
+                                        "draggable": false,
+                                        "droppable": false,
+                                        "highlightable": false,
+                                        "resizable": { "ratioDefault": 1 },
+                                        "attributes": {
+                                          "x1": "5",
+                                          "y1": "12",
+                                          "x2": "19",
+                                          "y2": "12"
+                                        },
+                                        "_undoexc": ["status", "open"]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "text",
+                                "draggable": false,
+                                "highlightable": false,
+                                "editable": false,
+                                "selectable": false,
+                                "hoverable": false,
+                                "classes": ["resize-handle"],
+                                "_undoexc": ["status", "open"],
+                                "components": [
+                                  {
+                                    "type": "textnode",
+                                    "content": "\n              ",
+                                    "_undoexc": ["status", "open"]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "type": "main",
+      "id": "M1I3WJbl1jsJyHc2"
+    }
+  ]
+}

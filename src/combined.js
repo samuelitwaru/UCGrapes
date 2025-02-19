@@ -348,6 +348,7 @@ class DataManager {
   }
 
   async updatePagesBatch(payload) {
+    console.log("Payload: ", payload)
     return await this.fetchAPI('/api/toolbox/update-pages-batch', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -576,9 +577,9 @@ class EditorManager {
       width: "auto",
       canvas: {
         styles: [
-          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
           "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
-          "https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Roboto:wght@400;500&display=swap",
+          "/DVelop/Bootstrap/Shared/fontawesome_vlatest/css/all.min.css?202521714271081",
+          "https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap",
           "/Resources/UCGrapes1/src/css/toolbox.css",
         ],
       },
@@ -1762,19 +1763,20 @@ class TemplateManager {
     if (!containerRow) return;
 
     const tileComponent = templateComponent.find(".template-block")[0];
-    const tileActionActionId = tileComponent.getAttributes()?.["tile-action-object-id"]
-    
+    const tileActionActionId =
+      tileComponent.getAttributes()?.["tile-action-object-id"];
+
     if (tileActionActionId) {
-      const editors = Object.entries(this.editorManager.editors); 
-    
+      const editors = Object.entries(this.editorManager.editors);
+
       editors.forEach(([key, element]) => {
         if (element.pageId === tileActionActionId) {
-          const frameId = key.replace('#', '');
+          const frameId = key.replace("#", "");
           this.editorManager.removePageOnTileDelete(frameId);
         }
       });
     }
-    
+
     templateComponent.remove();
 
     const templates = containerRow.components();
@@ -1842,73 +1844,59 @@ class TemplateManager {
 
   updateRightButtons(containerRow) {
     if (!containerRow) return;
-    console.log("updateRightButtons called");
+
+    const styleConfigs = {
+      1: {
+        title: { "letter-spacing": "1.1px", "font-size": "16px" },
+        template: { "justify-content": "start" },
+        rightButton: { display: "flex" },
+        titleSection: { "text-align": "left" },
+      },
+      2: {
+        title: { "letter-spacing": "0.9px", "font-size": "14px" },
+        template: { "justify-content": "start" },
+        rightButton: { display: "flex" },
+        titleSection: { "text-align": "left" },
+      },
+      3: {
+        title: { "letter-spacing": "0.9px", "font-size": "12px" },
+        template: { "justify-content": "center" },
+        rightButton: { display: "none" },
+        titleSection: { "text-align": "center" },
+      },
+    };
 
     const templates = containerRow.components();
+    if (!templates.length || !styleConfigs[templates.length]) return;
+
+    const config = styleConfigs[templates.length];
+
+    const titles = containerRow.find(".tile-title");
+    const templateBlocks = containerRow.find(".template-block");
+    const titleSections = containerRow.find(".tile-title-section");
+
+    titles.forEach((title) => title.addStyle(config.title));
+
+    templateBlocks.forEach((template) => {
+      const templateStyles = { ...config.template };
+      templateStyles.height = template.getClasses()?.includes("high-priority-template")
+        ? "7rem"
+        : "5.5rem";
+      template.addStyle(templateStyles);
+    });
 
     templates.forEach((template) => {
-      if (!template || !template.view || !template.view.el) return;
-
-      const rightButton = template.view.el.querySelector(".add-button-right");
-      if (!rightButton) return;
-      const rightButtonComponent = template.find(".add-button-right")[0];
-
-      if (templates.length >= 3) {
-        rightButtonComponent.addStyle({
-          display: "none",
-        });
-      } else {
-        rightButtonComponent.addStyle({
-          display: "flex",
-        });
-      }
+      if (!template?.view?.el) return;
+      const rightButton = template.find(".add-button-right")[0];
+      if (rightButton) rightButton.addStyle(config.rightButton);
     });
+
+    if (titleSections.length) {
+      titleSections.forEach((section) => section.addStyle(config.titleSection));
+    }
   }
 
-  // updateRightButtons(containerRow) {
-  //   if (!containerRow) return;
-
-  //   // Force a store update after attribute changes
-  //   const editor = this.editorManager.currentEditor.editor;
-
-  //   // Check components length once outside the loop
-  //   const totalComponents = containerRow.components().length;
-  //   const isMaxComponents = totalComponents >= 3;
-
-  //   // Update container droppable state first
-  //   containerRow.set(
-  //     "droppable",
-  //     isMaxComponents ? false : "false"
-  //   );
-
-  //   containerRow.components().forEach((template) => {
-  //     if (!template?.view?.el) return;
-
-  //     const rightButton = template.view.el.querySelector(".add-button-right");
-  //     const rightButtonComponent = template.find(".add-button-right")[0];
-  //     if (!rightButton || !rightButtonComponent) return;
-
-  //     // Update button visibility
-  //     rightButtonComponent.addStyle({
-  //       display: isMaxComponents ? "none" : "flex",
-  //     });
-  //   });
-
-  //   // Add visual feedback for droppable state
-  //   if (isMaxComponents) {
-  //     containerRow.addClass('container-max-components');
-  //   } else {
-  //     containerRow.removeClass('container-max-components');
-  //   }
-
-  //   // Trigger updates
-  //   editor.trigger("change:component");
-  //   editor.refresh();
-  //   containerRow.view.render();
-  // }
-
   initialContentPageTemplate(contentPageData) {
-    console.log("initialContentPageTemplate", contentPageData);
     return `
         <div
             class="content-frame-container test"
@@ -2026,7 +2014,7 @@ class TemplateManager {
               ""
             );
             $("#tile-title").val("");
-            component.addStyle({display: "none"});
+            component.addStyle({ display: "none" });
           } else if (sectionSelector === ".tile-icon-section") {
             const component =
               this.editorManager.selectedComponent.find(".tile-icon")[0];
@@ -2035,7 +2023,7 @@ class TemplateManager {
               "tile-icon",
               ""
             );
-            component.addStyle({display: "none"});
+            component.addStyle({ display: "none" });
           }
         };
       }
@@ -3007,23 +2995,37 @@ class ThemeManager {
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
           const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
-
+          const currentColor = selectedComponent
+                                      .getAttributes()?.["tile-bgcolor"];
           const currentTileOpacity = selectedComponent
                                       .getAttributes()?.["tile-bg-image-opacity"];
 
-          selectedComponent.addStyle({
-            "background-color": addOpacityToHex(colorValue, currentTileOpacity),
-          });
+          if (currentColor === colorValue) {
+            selectedComponent.addStyle({
+              "background-color": "#FFFFFF"
+            });
+      
+            this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);
+            this.toolBoxManager.setAttributeToSelected("tile-bgcolor-name", null);
 
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-bgcolor",
-            colorValue
-          );
+            radioInput.checked = false;
+            alignItem.style.border = "none";
+          }else {
+            selectedComponent.addStyle({
+              "background-color": addOpacityToHex(colorValue, currentTileOpacity),
+            });
 
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-bgcolor-name",
-            colorName
-          );
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bgcolor",
+              colorValue
+            );
+
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bgcolor-name",
+              colorName
+            );
+            alignItem.removeAttribute("style");
+          }
 
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -3351,10 +3353,12 @@ class ThemeManager {
             : icon.IconName;
         })();
 
-        iconItem.innerHTML = `
-                    ${icon.IconSVG}
-                    <span class="icon-title">${displayName}</span>
-                `;
+        // iconItem.innerHTML = `
+        //             ${icon.IconSVG}
+        //             <span class="icon-title">${displayName}</span>
+        //         `;
+        
+        iconItem.innerHTML = `${icon.IconSVG}`;
 
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
@@ -3672,18 +3676,22 @@ class ToolBoxUI {
       Phone: {
         icon: "fas fa-phone-alt",
         iconList: ".fas.fa-phone-alt",
+        iconBgColor: "#4c9155",
       },
       Email: {
         icon: "fas fa-envelope",
         iconList: ".fas.fa-envelope",
+        iconBgColor: "#eea622",
       },
       SiteUrl: {
         icon: "fas fa-link",
         iconList: ".fas.fa-link",
+        iconBgColor: "#ff6c37",
       },
       Form: {
         icon: "fas fa-file",
         iconList: ".fas.fa-file",
+        iconBgColor: "#5068a8",
       },
     };
 
@@ -3691,11 +3699,12 @@ class ToolBoxUI {
       ctaTypeMap[type] || {
         icon: "fas fa-question",
         iconList: ".fas.fa-question",
+        iconBgColor: "#5068a8",
       }
     );
   }
 
-  generateCtaComponent(cta, backgroundColor = "#5068a8") {
+  generateCtaComponent(cta, backgroundColor) {
     const ctaType = this.getCtaType(cta.CallToActionType);
     return `
       <div class="cta-container-child cta-child" 
@@ -3715,9 +3724,9 @@ class ToolBoxUI {
               cta.CallToActionEmail ||
               cta.CallToActionUrl
             }"
-            cta-background-color="#5068a8"
+          cta-background-color="${ctaType.iconBgColor}"
           >
-            <div class="cta-button" ${defaultConstraints} style="background-color: #5068a8;">
+            <div class="cta-button" ${defaultConstraints} style="background-color: ${backgroundColor || ctaType.iconBgColor};">
               <i class="${ctaType.icon}" ${defaultConstraints}></i>
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
@@ -5784,50 +5793,6 @@ const iconsData = [
 let globalVar = null
 
 // Content from utils/helper.js
-// function hexToRgb(hex) {
-//   hex = hex.replace(/^#/, "");
-//   let r, g, b;
-
-//   if (hex.length === 3) {
-//     r = parseInt(hex[0] + hex[0], 16);
-//     g = parseInt(hex[1] + hex[1], 16);
-//     b = parseInt(hex[2] + hex[2], 16);
-//   } else {
-//     r = parseInt(hex.substring(0, 2), 16);
-//     g = parseInt(hex.substring(2, 4), 16);
-//     b = parseInt(hex.substring(4, 6), 16);
-//   }
-
-//   return `${r}, ${g}, ${b}`;
-// }
-
-// function rgbaToHex(rgba) {
-//   // Extract the RGBA values using regex
-//   const rgbaMatch = rgba.match(
-//     /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)/
-//   );
-
-//   if (!rgbaMatch) {
-//     throw new Error("Invalid RGBA format");
-//   }
-
-//   // Convert the RGB values to hex
-//   const r = parseInt(rgbaMatch[1]).toString(16).padStart(2, "0");
-//   const g = parseInt(rgbaMatch[2]).toString(16).padStart(2, "0");
-//   const b = parseInt(rgbaMatch[3]).toString(16).padStart(2, "0");
-
-//   // Convert alpha to hex if it exists
-//   let a = "";
-//   if (rgbaMatch[4] !== undefined) {
-//     // Convert alpha from 0-1 to 0-255 and then to hex
-//     a = Math.round(parseFloat(rgbaMatch[4]) * 255)
-//       .toString(16)
-//       .padStart(2, "0");
-//   }
-
-//   return `#${r}${g}${b}${a}`;
-// }
-
 function addOpacityToHex(hexColor, opacityPercent=100) {
   hexColor = hexColor.replace('#', '');
   if (!/^[0-9A-Fa-f]{6}$/.test(hexColor)) {

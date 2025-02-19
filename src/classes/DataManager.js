@@ -87,7 +87,6 @@ class DataManager {
   }
 
   async updatePagesBatch(payload) {
-    console.log("Payload: ", payload)
     return await this.fetchAPI('/api/toolbox/update-pages-batch', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -160,6 +159,20 @@ class DataManager {
         MediaType: fileType,
       }),
     }, true);
+  }
+
+  async uploadLogo(logoUrl) {
+    return await this.fetchAPI('/api/toolbox/upload/logo', {
+      method: 'POST',
+      body: JSON.stringify({ LogoUrl: logoUrl }),
+    });
+  }
+
+  async uploadProfileImage(profileImageUrl) {
+    return await this.fetchAPI('/api/toolbox/upload/profile', {
+      method: 'POST',
+      body: JSON.stringify({ ProfileImageUrl: profileImageUrl }),
+    });
   }
 
   // Content API methods

@@ -10,6 +10,7 @@ class EditorEventManager {
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
+    this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -145,9 +146,12 @@ class EditorEventManager {
         editor.UndoManager.undo();
       }
 
-      editor.getWrapper().find(".container-row").forEach((component) => {
-        this.templateManager.updateRightButtons(component);
-      });
+      editor
+        .getWrapper()
+        .find(".container-row")
+        .forEach((component) => {
+          this.templateManager.updateRightButtons(component);
+        });
     });
   }
 
@@ -280,6 +284,25 @@ class EditorEventManager {
     if (redoBtn) {
       redoBtn.disabled = !undoRedoManager.canRedo();
       redoBtn.onclick = () => undoRedoManager.redo();
+    }
+  }
+
+  setupAppBarEvents() {
+    const addLogo = document.getElementById("appbar-add-logo");
+    const addProfileImage = document.getElementById("appbar-add-profile");
+    const toolboxManager = this.editorManager.toolsSection;
+    if (addLogo) {
+      addLogo.addEventListener("click", (e) => {
+        e.preventDefault();
+        toolboxManager.openFileManager("logo");
+      });
+    }
+
+    if (addProfileImage) {
+      addProfileImage.addEventListener("click", (e) => {
+        e.preventDefault();
+        toolboxManager.openFileManager("profile-image");
+      });
     }
   }
 }

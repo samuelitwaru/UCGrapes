@@ -1,4 +1,3 @@
-
 class EditorManager {
   editors = {};
   pages = [];
@@ -89,8 +88,8 @@ class EditorManager {
 
   generateEditorHTML(page, editorId) {
     const appBar = this.shouldShowAppBar(page)
-      ? this.createAppBarHTML(page.PageName, page.PageId)
-      : "";
+      ? this.createContentPageAppBar(page.PageName, page.PageId)
+      : this.createHomePageAppBar();
 
     return `
       <div class="header">
@@ -121,7 +120,7 @@ class EditorManager {
     return page.PageIsContentPage || page.PageName !== "Home";
   }
 
-  createAppBarHTML(pageName, pageId) {
+  createContentPageAppBar(pageName, pageId) {
     return `
       <div class="app-bar">
           <svg id="back-button-${pageId}" class="content-back-button" xmlns="http://www.w3.org/2000/svg" id="Group_14" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
@@ -132,6 +131,24 @@ class EditorManager {
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
           <h1 class="title" style="text-transform: uppercase;">${pageName}</h1>
+      </div>
+    `;
+  }
+
+  createHomePageAppBar() {
+    return `
+      <div class="home-app-bar">
+        <div class="logo-added">
+          <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <span id="appbar-edit-logo" class="appbar-edit-logo"><i class="fa fa-pencil"></i></span> 
+        </div>
+
+        <div class="profile-section">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 19.422 21.363">
+            <path id="Path_1327" data-name="Path 1327" d="M15.711,5a6.8,6.8,0,0,0-3.793,12.442A9.739,9.739,0,0,0,6,26.364H7.942a7.769,7.769,0,1,1,15.537,0h1.942A9.739,9.739,0,0,0,19.5,17.442,6.8,6.8,0,0,0,15.711,5Zm0,1.942A4.855,4.855,0,1,1,10.855,11.8,4.841,4.841,0,0,1,15.711,6.942Z" transform="translate(-6 -5)" fill="#fff"/>
+          </svg>
+          <span id="appbar-add-profile" class="appbar-add-profile"><i class="fa fa-plus"></i></span> 
+        </div>
       </div>
     `;
   }
@@ -168,8 +185,6 @@ class EditorManager {
     this.dataManager.pages.SDT_PageCollection.map((p) => {
       if (p.PageId == page.PageId) {
         p.PageGJSJson = JSON.stringify(PageGJSJson);
-        console.log("Update event triggered", p.PageName);
-        console.log(PageGJSJson);
       }
       return p;
     });
@@ -191,8 +206,6 @@ class EditorManager {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
 
-      console.log("PageData: ", pageData);
-
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
@@ -209,27 +222,31 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-
     // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
 
     const locationData = this.dataManager.Location;
 
-    
-    const dataComponents = pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components
-    
+    const dataComponents =
+      pageData.pages[0].frames[0].component.components[0].components[0]
+        .components[0].components[0].components[0].components;
+
     if (dataComponents.length) {
-      const imgComponent = dataComponents.find((component) => component.attributes.src);
-      const descriptionComponent = dataComponents.find((component) =>  component.type=="product-service-description");
+      const imgComponent = dataComponents.find(
+        (component) => component.attributes.src
+      );
+      const descriptionComponent = dataComponents.find(
+        (component) => component.type == "product-service-description"
+      );
       if (imgComponent) {
         imgComponent.attributes.src = locationData.LocationImage_GXI;
       }
       if (descriptionComponent) {
-        descriptionComponent.components[0].content = locationData.LocationDescription;
+        descriptionComponent.components[0].content =
+          locationData.LocationDescription;
       }
       editor.DomComponents.clear();
       editor.loadProjectData(pageData);
     }
-    
   }
 
   async handleContentPage(editor, page) {
@@ -361,8 +378,8 @@ class EditorManager {
               height: "300vh",
               border: "none",
               overflow: "hidden",
-              '-ms-overflow-style': 'none',
-              'scrollbar-width': 'none',
+              "-ms-overflow-style": "none",
+              "scrollbar-width": "none",
             },
           },
 
@@ -470,12 +487,12 @@ class EditorManager {
 
   setupEditorLayout(editor, page, containerId) {
     if (this.shouldShowAppBar(page)) {
-      const canvas = editor.Canvas.getElement();
-      if (canvas) {
-        canvas.style.setProperty("height", "calc(100% - 100px)", "important");
-      }
-      this.backButtonAction(containerId, page.PageId);
     }
+    const canvas = editor.Canvas.getElement();
+    if (canvas) {
+      canvas.style.setProperty("height", "calc(100% - 100px)", "important");
+    }
+    this.backButtonAction(containerId, page.PageId);
   }
 
   finalizeEditorSetup(editor, page, editorDetails) {

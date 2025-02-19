@@ -42,7 +42,6 @@ class ToolBoxManager {
   }
 
   async initializeManagers() {
-    
     await this.dataManager.getPages().then((res) => {
       if (this.checkIfNotAuthenticated(res)) {
         return;
@@ -88,7 +87,6 @@ class ToolBoxManager {
       }
       this.ui.updateTileTitle(e.target.value);
     });
-
   }
 
   publishPages(isNotifyResidents) {
@@ -96,7 +94,7 @@ class ToolBoxManager {
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
 
-      console.log(pageDataList)
+      console.log(pageDataList);
 
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
@@ -105,18 +103,18 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
-    return this.dataManager.pages.SDT_PageCollection
-    .filter(page=>!(page.PageName=="Mailbox" || page.PageName=="Calendar"))
-    .map(page=>{
+    return this.dataManager.pages.SDT_PageCollection.filter(
+      (page) => !(page.PageName == "Mailbox" || page.PageName == "Calendar")
+    ).map((page) => {
       let projectData;
       try {
-        projectData = JSON.parse(page.PageGJSJson)
+        projectData = JSON.parse(page.PageGJSJson);
       } catch (error) {
-        projectData = {}
+        projectData = {};
       }
       const jsonData = page.PageIsContentPage
-          ? mapContentToPageData(projectData, page)
-          : mapTemplateToPageData(projectData, page);
+        ? mapContentToPageData(projectData, page)
+        : mapTemplateToPageData(projectData, page);
       return {
         PageId: page.PageId,
         PageName: page.PageName,
@@ -126,7 +124,7 @@ class ToolBoxManager {
         SDT_Page: jsonData,
         PageIsPublished: true,
       };
-    })
+    });
   }
 
   async sendPageUpdateRequest(pageDataList, isNotifyResidents) {
@@ -206,7 +204,6 @@ class ToolBoxManager {
 
   checkIfNotAuthenticated(res) {
     if (res.error.Status === "Error") {
-
       this.ui.displayAlertMessage(
         this.currentLanguage.getTranslation("not_authenticated_message"),
         "error"
@@ -230,20 +227,19 @@ class ToolBoxManager {
     }
   }
 
-  checkTileBgImage () {
+  checkTileBgImage() {
     if (this.editorManager.selectedTemplateWrapper) {
-      const templateBlock =
-        this.editorManager.selectedComponent;
+      const templateBlock = this.editorManager.selectedComponent;
 
       if (templateBlock) {
         const tileImgContainer = document.getElementById("tile-img-container");
         // first check if templateBlock has a background image
         if (templateBlock.getStyle()["background-image"]) {
           const currentBgImage = templateBlock
-          .getStyle()
-          ["background-image"].match(/url\((.*?)\)/)[1];
+            .getStyle()
+            ["background-image"].match(/url\((.*?)\)/)[1];
 
-          if( currentBgImage) {
+          if (currentBgImage) {
             if (tileImgContainer) {
               const tileImg = tileImgContainer.querySelector("img");
               if (tileImg) {
@@ -258,20 +254,27 @@ class ToolBoxManager {
                     delete currentStyles["background-image"];
                     templateBlock.setStyle(currentStyles);
                     tileImgContainer.style.display = "none";
-                    this.setAttributeToSelected(
-                      "tile-bg-image-url",
-                      "",
-                    );
-                  }
+                    this.setAttributeToSelected("tile-bg-image-url", "");
+                  };
                 }
-              }            
+              }
             }
           }
         } else {
           tileImgContainer.style.display = "none";
-        }       
+        }
       }
     }
   }
-}
 
+  openFileManager(type) {
+    const fileInputField = this.mediaComponent.createFileInputField();
+    const modal = this.mediaComponent.openFileUploadModal();
+
+    let allUploadedFiles = [];
+
+    const isTile = false;
+
+    this.mediaComponent.handleModalOpen(modal, fileInputField, allUploadedFiles, isTile, type);
+  }
+}

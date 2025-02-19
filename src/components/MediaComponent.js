@@ -196,8 +196,8 @@ class MediaComponent {
     return fileInputField;
   }
 
-  handleModalOpen(modal, fileInputField, allUploadedFiles) {
-    if (!this.editorManager.selectedComponent) {
+  handleModalOpen(modal, fileInputField, allUploadedFiles, isTile = true, tile="") {
+    if (isTile && !this.editorManager.selectedComponent) {
       this.toolBoxManager.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation(
           "no_tile_selected_error_message"
@@ -205,6 +205,9 @@ class MediaComponent {
         "error"
       );
       return;
+    } else {
+      this.isTile = isTile;
+      this.type = type;
     }
 
     $(".delete-media").on("click", (e) => {
@@ -319,7 +322,22 @@ class MediaComponent {
     };
 
     saveBtn.onclick = () => {
-      this.saveSelectedFile(modal, fileInputField);
+      if (!this.isTile) {
+        if (this.selectedFile?.MediaUrl) {
+          const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
+          this.closeModal(modal, fileInputField);
+          if (this.type === "logo") {
+            this.changeLogo(safeMediaUrl);
+          } else if (this.type === "profile") {
+            this.changeProfile();
+          }    
+        }
+           
+
+        this.closeModal(modal, fileInputField);
+      } else {
+        this.saveSelectedFile(modal, fileInputField);
+      }
     };
 
     modal.style.display = "flex";
@@ -352,7 +370,7 @@ class MediaComponent {
         reader.readAsDataURL(resizedBlob);
       });
 
-      const cleanImageName = imageName.replace(/'/g, '');
+      const cleanImageName = imageName.replace(/'/g, "");
 
       const response = await this.dataManager.uploadFile(
         dataUrl,
@@ -554,7 +572,7 @@ class MediaComponent {
     // Find and set selected file
     this.selectedFile = this.dataManager.media.find(
       (file) => file.MediaId == fileItem.dataset.mediaid
-    )
+    );
   }
 
   deleteMedia(mediaId) {
@@ -643,5 +661,19 @@ class MediaComponent {
     } else {
       modalActions.style.display = "flex";
     }
+  }
+
+  changeLogo(logoUrl) {
+    this.dataManager.uploadLogo(logoUrl).then((res) => {
+      if (this.checkIfNotAuthenticated(res)) {
+        return;
+      }
+
+      const logo = document.getElementById("toolbox-logo");
+      logo.setAttribute("src", logoUrl);      
+    });
+  }
+
+  changeProfile() {
   }
 }

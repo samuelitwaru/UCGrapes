@@ -319,7 +319,8 @@ span#scroll-right:hover {
 
 .home-app-bar span.appbar-add-logo,
 .home-app-bar span.appbar-add-profile,
-.home-app-bar span.appbar-edit-logo {
+.home-app-bar span.appbar-edit-logo,
+.home-app-bar span.appbar-edit-profile {
   position: absolute;
   right: 48%;
   top: 75px;
@@ -344,7 +345,8 @@ span#scroll-right:hover {
 
 .home-app-bar span.appbar-add-logo:hover,
 .home-app-bar span.appbar-add-profile:hover,
-.home-app-bar span.appbar-edit-logo:hover {
+.home-app-bar span.appbar-edit-logo:hover,
+.home-app-bar span.appbar-edit-profile:hover {
   background-color: #222f54;
   color: white;
   cursor: pointer;
@@ -360,11 +362,24 @@ span#scroll-right:hover {
 
 .logo-added img {
   width: 100%;
+  height: 40px;
+}
+
+.profile-section img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .home-app-bar span.appbar-edit-logo {
   font-size: 8px;
   right: 42%;
+  top: 75px;
+}
+
+.home-app-bar span.appbar-edit-profile {
+  font-size: 8px;
+  right: 4%;
   top: 75px;
 }
 

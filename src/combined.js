@@ -423,14 +423,14 @@ class DataManager {
   }
 
   async uploadLogo(logoUrl) {
-    return await this.fetchAPI('/api/toolbox/upload/logo', {
+    return await this.fetchAPI('/api/media/upload/logo', {
       method: 'POST',
       body: JSON.stringify({ LogoUrl: logoUrl }),
     });
   }
 
   async uploadProfileImage(profileImageUrl) {
-    return await this.fetchAPI('/api/toolbox/upload/profile', {
+    return await this.fetchAPI('/api/media/upload/profile', {
       method: 'POST',
       body: JSON.stringify({ ProfileImageUrl: profileImageUrl }),
     });
@@ -454,9 +454,16 @@ class EditorManager {
   selectedComponent = null;
   container = document.getElementById("child-container");
 
-  constructor(dataManager, currentLanguage) {
+  constructor(
+    dataManager,
+    currentLanguage,
+    LocationLogo,
+    LocationProfileImage
+  ) {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
+    this.LocationLogo = LocationLogo;
+    this.LocationProfileImage = LocationProfileImage;
     this.templateManager = new TemplateManager(this.currentLanguage, this);
     this.editorEventManager = new EditorEventManager(
       this,
@@ -584,16 +591,31 @@ class EditorManager {
   createHomePageAppBar() {
     return `
       <div class="home-app-bar">
-        <div class="logo-added">
+        <div id="add-logo" class="logo-section" style="display: ${this.LocationLogo ? 'none' : 'flex'}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 28.5 20.065">
+            <path id="Path_1329" data-name="Path 1329" d="M17.693,11.025a2.4,2.4,0,0,0-2.285,2.508,2.4,2.4,0,0,0,2.285,2.508,2.4,2.4,0,0,0,2.285-2.508A2.4,2.4,0,0,0,17.693,11.025Zm10.283,7.524-8,10.032-5.713-6.27L8.044,31.09h28.5Z" transform="translate(-8.044 -11.025)" fill="#fff"/>
+          </svg>
+          Logo 
+          <span id="appbar-add-logo" class="appbar-add-logo"><i class="fa fa-plus"></i></span> 
+        </div>
+
+        <div id="added-logo" class="logo-added" style="display: ${!this.LocationLogo ? 'none' : 'flex'}">
           <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
           <span id="appbar-edit-logo" class="appbar-edit-logo"><i class="fa fa-pencil"></i></span> 
         </div>
 
-        <div class="profile-section">
+        <div id="add-profile-image" class="profile-section" style="display: ${this.LocationProfileImage ? 'none' : 'flex'}">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 19.422 21.363">
             <path id="Path_1327" data-name="Path 1327" d="M15.711,5a6.8,6.8,0,0,0-3.793,12.442A9.739,9.739,0,0,0,6,26.364H7.942a7.769,7.769,0,1,1,15.537,0h1.942A9.739,9.739,0,0,0,19.5,17.442,6.8,6.8,0,0,0,15.711,5Zm0,1.942A4.855,4.855,0,1,1,10.855,11.8,4.841,4.841,0,0,1,15.711,6.942Z" transform="translate(-6 -5)" fill="#fff"/>
           </svg>
           <span id="appbar-add-profile" class="appbar-add-profile"><i class="fa fa-plus"></i></span> 
+        </div>
+
+        <div id="profile-image-added" class="profile-section profile-img" style="display: ${!this.LocationProfileImage ? 'none' : 'flex'}">
+          <img id="profile-img" src="${
+            this.LocationProfileImage
+          }" alt="profile" />
+          <span id="appbar-edit-profile" class="appbar-edit-profile"><i class="fa fa-pencil"></i></span>
         </div>
       </div>
     `;
@@ -1311,22 +1333,24 @@ class EditorEventManager {
   }
 
   setupAppBarEvents() {
-    const addLogo = document.getElementById("appbar-add-logo");
-    const addProfileImage = document.getElementById("appbar-add-profile");
-    const toolboxManager = this.editorManager.toolsSection;
-    if (addLogo) {
-      addLogo.addEventListener("click", (e) => {
-        e.preventDefault();
-        toolboxManager.openFileManager("logo");
-      });
-    }
+    const buttonConfigs = [
+      { id: "appbar-add-logo", type: "logo" },
+      { id: "appbar-add-profile", type: "profile-image" },
+      { id: "appbar-edit-logo", type: "logo" },
+      { id: "appbar-edit-profile", type: "profile-image" },
+    ];
 
-    if (addProfileImage) {
-      addProfileImage.addEventListener("click", (e) => {
-        e.preventDefault();
-        toolboxManager.openFileManager("profile-image");
-      });
-    }
+    const toolboxManager = this.editorManager.toolsSection;
+
+    buttonConfigs.forEach(({ id, type }) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener("click", (e) => {
+          e.preventDefault();
+          toolboxManager.openFileManager(type);
+        });
+      }
+    });
   }
 }
 
@@ -2685,6 +2709,10 @@ class EventListenerManager {
 
           templateBlock.addAttributes({
             "tile-bg-image-opacity": value,
+          })
+
+          templateBlock.addAttributes({
+            "tile-bgcolor": bgColor,
           })
         }
       }
@@ -5235,7 +5263,13 @@ class MediaComponent {
     return fileInputField;
   }
 
-  handleModalOpen(modal, fileInputField, allUploadedFiles, isTile = true, tile="") {
+  handleModalOpen(
+    modal,
+    fileInputField,
+    allUploadedFiles,
+    isTile = true,
+    type = ""
+  ) {
     if (isTile && !this.editorManager.selectedComponent) {
       this.toolBoxManager.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation(
@@ -5367,11 +5401,10 @@ class MediaComponent {
           this.closeModal(modal, fileInputField);
           if (this.type === "logo") {
             this.changeLogo(safeMediaUrl);
-          } else if (this.type === "profile") {
-            this.changeProfile();
-          }    
+          } else if (this.type === "profile-image") {
+            this.changeProfile(safeMediaUrl);
+          }
         }
-           
 
         this.closeModal(modal, fileInputField);
       } else {
@@ -5704,16 +5737,38 @@ class MediaComponent {
 
   changeLogo(logoUrl) {
     this.dataManager.uploadLogo(logoUrl).then((res) => {
-      if (this.checkIfNotAuthenticated(res)) {
-        return;
-      }
+      const logoAddedSection = document.getElementById("added-logo");
+      const addLogoSection = document.getElementById("add-logo");
 
-      const logo = document.getElementById("toolbox-logo");
-      logo.setAttribute("src", logoUrl);      
+      if (logoAddedSection && addLogoSection) {
+        logoAddedSection.style.display = "block"; // Show added logo section
+        addLogoSection.style.display = "none"; // Hide add logo section
+
+        const logo = logoAddedSection.querySelector("#toolbox-logo");
+        if (logo) {
+          logo.setAttribute("src", logoUrl);
+        }
+      }
     });
   }
 
-  changeProfile() {
+  changeProfile(profileImageUrl) {
+    this.dataManager.uploadProfileImage(profileImageUrl).then((res) => {
+      const profileAddedSection = document.getElementById(
+        "profile-image-added"
+      );
+      const addProfileSection = document.getElementById("add-profile-image");
+
+      if (profileAddedSection && addProfileSection) {
+        profileAddedSection.style.display = "block"; // Show added profile section
+        addProfileSection.style.display = "none"; // Hide add profile section
+
+        const profileImg = profileAddedSection.querySelector("#profile-img");
+        if (profileImg) {
+          profileImg.setAttribute("src", profileImageUrl);
+        }
+      }
+    });
   }
 }
 

@@ -301,6 +301,10 @@ class EventListenerManager {
           templateBlock.addAttributes({
             "tile-bg-image-opacity": value,
           })
+
+          templateBlock.addAttributes({
+            "tile-bgcolor": bgColor,
+          })
         }
       }
     });

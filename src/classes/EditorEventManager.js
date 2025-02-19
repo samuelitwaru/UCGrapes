@@ -288,21 +288,23 @@ class EditorEventManager {
   }
 
   setupAppBarEvents() {
-    const addLogo = document.getElementById("appbar-add-logo");
-    const addProfileImage = document.getElementById("appbar-add-profile");
-    const toolboxManager = this.editorManager.toolsSection;
-    if (addLogo) {
-      addLogo.addEventListener("click", (e) => {
-        e.preventDefault();
-        toolboxManager.openFileManager("logo");
-      });
-    }
+    const buttonConfigs = [
+      { id: "appbar-add-logo", type: "logo" },
+      { id: "appbar-add-profile", type: "profile-image" },
+      { id: "appbar-edit-logo", type: "logo" },
+      { id: "appbar-edit-profile", type: "profile-image" },
+    ];
 
-    if (addProfileImage) {
-      addProfileImage.addEventListener("click", (e) => {
-        e.preventDefault();
-        toolboxManager.openFileManager("profile-image");
-      });
-    }
+    const toolboxManager = this.editorManager.toolsSection;
+
+    buttonConfigs.forEach(({ id, type }) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener("click", (e) => {
+          e.preventDefault();
+          toolboxManager.openFileManager(type);
+        });
+      }
+    });
   }
 }

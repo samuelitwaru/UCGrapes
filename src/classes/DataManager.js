@@ -162,14 +162,14 @@ class DataManager {
   }
 
   async uploadLogo(logoUrl) {
-    return await this.fetchAPI('/api/toolbox/upload/logo', {
+    return await this.fetchAPI('/api/media/upload/logo', {
       method: 'POST',
       body: JSON.stringify({ LogoUrl: logoUrl }),
     });
   }
 
   async uploadProfileImage(profileImageUrl) {
-    return await this.fetchAPI('/api/toolbox/upload/profile', {
+    return await this.fetchAPI('/api/media/upload/profile', {
       method: 'POST',
       body: JSON.stringify({ ProfileImageUrl: profileImageUrl }),
     });

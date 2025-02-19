@@ -196,7 +196,13 @@ class MediaComponent {
     return fileInputField;
   }
 
-  handleModalOpen(modal, fileInputField, allUploadedFiles, isTile = true, tile="") {
+  handleModalOpen(
+    modal,
+    fileInputField,
+    allUploadedFiles,
+    isTile = true,
+    type = ""
+  ) {
     if (isTile && !this.editorManager.selectedComponent) {
       this.toolBoxManager.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation(
@@ -328,11 +334,10 @@ class MediaComponent {
           this.closeModal(modal, fileInputField);
           if (this.type === "logo") {
             this.changeLogo(safeMediaUrl);
-          } else if (this.type === "profile") {
-            this.changeProfile();
-          }    
+          } else if (this.type === "profile-image") {
+            this.changeProfile(safeMediaUrl);
+          }
         }
-           
 
         this.closeModal(modal, fileInputField);
       } else {
@@ -665,15 +670,37 @@ class MediaComponent {
 
   changeLogo(logoUrl) {
     this.dataManager.uploadLogo(logoUrl).then((res) => {
-      if (this.checkIfNotAuthenticated(res)) {
-        return;
-      }
+      const logoAddedSection = document.getElementById("added-logo");
+      const addLogoSection = document.getElementById("add-logo");
 
-      const logo = document.getElementById("toolbox-logo");
-      logo.setAttribute("src", logoUrl);      
+      if (logoAddedSection && addLogoSection) {
+        logoAddedSection.style.display = "block"; // Show added logo section
+        addLogoSection.style.display = "none"; // Hide add logo section
+
+        const logo = logoAddedSection.querySelector("#toolbox-logo");
+        if (logo) {
+          logo.setAttribute("src", logoUrl);
+        }
+      }
     });
   }
 
-  changeProfile() {
+  changeProfile(profileImageUrl) {
+    this.dataManager.uploadProfileImage(profileImageUrl).then((res) => {
+      const profileAddedSection = document.getElementById(
+        "profile-image-added"
+      );
+      const addProfileSection = document.getElementById("add-profile-image");
+
+      if (profileAddedSection && addProfileSection) {
+        profileAddedSection.style.display = "block"; // Show added profile section
+        addProfileSection.style.display = "none"; // Hide add profile section
+
+        const profileImg = profileAddedSection.querySelector("#profile-img");
+        if (profileImg) {
+          profileImg.setAttribute("src", profileImageUrl);
+        }
+      }
+    });
   }
 }

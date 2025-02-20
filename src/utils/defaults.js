@@ -60,11 +60,11 @@ const iconsData = [
   
   const defaultTileAttrs = `
     tile-text="Tile"
-    tile-text-color="#FFFFFF"
+    tile-text-color="#ffffff"
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#FFFFFF"
+    tile-icon-color="#ffffff"
     tile-icon-align="left"
   
     tile-bg-image=""

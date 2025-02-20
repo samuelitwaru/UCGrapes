@@ -45,6 +45,8 @@ class EditorEventManager {
   }
 
   loadTheme() {
+    globalVar = this.editorManager.toolsSection
+    console.log('theme',this.editorManager.toolsSection)
     this.editorManager.toolsSection.themeManager.setTheme(
       this.editorManager.theme.ThemeName
     );

@@ -72,6 +72,7 @@ class ActionListComponent {
         PageId: form.FormId,
         PageName: form.ReferenceName,
         PageTileName: form.ReferenceName,
+        FormUrl: form.FormUrl,
       };
     });
 
@@ -143,6 +144,11 @@ class ActionListComponent {
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
+
+      if (category.name === "Dynamic Forms") {
+        optionElement.dataset.objectUrl = option.FormUrl;
+      }
+
       optionElement.dataset.category = category.name
       optionElement.dataset.tileName = option.PageTileName
       categoryContent.appendChild(optionElement);
@@ -188,6 +194,11 @@ class ActionListComponent {
         dropdownMenu.style.display = "none";
         dropdownHeader.querySelector("i")?.classList.remove("fa-angle-up");
         dropdownHeader.querySelector("i")?.classList.add("fa-angle-down");
+        const detailsElements = document.getElementsByClassName('category');
+  
+        Array.from(detailsElements).forEach(details => {
+          details.open = false;
+        });
       }
     });
   }
@@ -229,7 +240,6 @@ class ActionListComponent {
 
     document.querySelectorAll(".category-content li").forEach((item) => {
       item.addEventListener("click", () => {
-        console.log(item.dataset)
         this.selectedObject = item.dataset.category
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
@@ -247,6 +257,14 @@ class ActionListComponent {
               "tile-action-object-id",
               item.id
             );
+
+            if (item.dataset.objectUrl) {
+              this.toolBoxManager.setAttributeToSelected(
+                "tile-action-object-url",
+                item.dataset.objectUrl
+              );
+            }
+           
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
               `${category}, ${item.textContent}`

@@ -259,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -309,7 +309,7 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
-    console.log("Pages: ",this.pages);
+    console.log("Pages: ",this.pages.SDT_PageCollection.find(page=>page.PageName=="Location"));
     return this.pages;
   }
 
@@ -354,6 +354,7 @@ class DataManager {
   }
 
   async updatePagesBatch(payload) {
+    console.log("Payload: ", payload)
     return await this.fetchAPI('/api/toolbox/update-pages-batch', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -1043,6 +1044,8 @@ class EditorEventManager {
   }
 
   loadTheme() {
+    globalVar = this.editorManager.toolsSection
+    console.log('theme',this.editorManager.toolsSection)
     this.editorManager.toolsSection.themeManager.setTheme(
       this.editorManager.theme.ThemeName
     );
@@ -1313,7 +1316,7 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}"
+                style="background-color:${tileBgColor}; color:#FFFFFF"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name="accentColor"
                 ${defaultTileAttrs} 
@@ -1534,7 +1537,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#ffffff"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
@@ -2283,6 +2286,38 @@ class ToolBoxManager {
         }       
       }
     }
+  }
+
+  setServiceToSelectedTile (serviceId) {
+    const categoryName = "Service/Product Page"
+    this.dataManager.getServices().then((services) => {
+      const service = services.find(
+        (service) => service.ProductServiceId == serviceId
+      );
+
+      if (service) {
+        this.editorManager.selectedComponent.addAttributes({
+          "tile-action-object-id": service.ProductServiceId,
+          "tile-action-object": `${categoryName}, ${service.ProductServiceName}`,
+        });
+
+        this.setAttributeToSelected(
+          "tile-action-object-id",
+          serviceId
+        );
+       
+        this.setAttributeToSelected(
+          "tile-action-object",
+          `${categoryName}, ${service.ProductServiceName}`
+        );
+
+        const editor = this.editorManager.getCurrentEditor();
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+        this.actionList.createContentPage(service.ProductServiceId, editorContainerId);
+      }
+    });
+
   }
 }
 
@@ -4176,6 +4211,7 @@ class ActionListComponent {
         PageId: form.FormId,
         PageName: form.ReferenceName,
         PageTileName: form.ReferenceName,
+        FormUrl: form.FormUrl,
       };
     });
 
@@ -4247,6 +4283,11 @@ class ActionListComponent {
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
+
+      if (category.name === "Dynamic Forms") {
+        optionElement.dataset.objectUrl = option.FormUrl;
+      }
+
       optionElement.dataset.category = category.name
       optionElement.dataset.tileName = option.PageTileName
       categoryContent.appendChild(optionElement);
@@ -4292,6 +4333,11 @@ class ActionListComponent {
         dropdownMenu.style.display = "none";
         dropdownHeader.querySelector("i")?.classList.remove("fa-angle-up");
         dropdownHeader.querySelector("i")?.classList.add("fa-angle-down");
+        const detailsElements = document.getElementsByClassName('category');
+  
+        Array.from(detailsElements).forEach(details => {
+          details.open = false;
+        });
       }
     });
   }
@@ -4333,7 +4379,6 @@ class ActionListComponent {
 
     document.querySelectorAll(".category-content li").forEach((item) => {
       item.addEventListener("click", () => {
-        console.log(item.dataset)
         this.selectedObject = item.dataset.category
         dropdownHeader.textContent = `${
           item.closest(".category").dataset.category
@@ -4351,6 +4396,14 @@ class ActionListComponent {
               "tile-action-object-id",
               item.id
             );
+
+            if (item.dataset.objectUrl) {
+              this.toolBoxManager.setAttributeToSelected(
+                "tile-action-object-url",
+                item.dataset.objectUrl
+              );
+            }
+           
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object",
               `${category}, ${item.textContent}`
@@ -5725,11 +5778,11 @@ const iconsData = [
   
   const defaultTileAttrs = `
     tile-text="Tile"
-    tile-text-color="#FFFFFF"
+    tile-text-color="#ffffff"
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#FFFFFF"
+    tile-icon-color="#ffffff"
     tile-icon-align="left"
   
     tile-bg-image=""

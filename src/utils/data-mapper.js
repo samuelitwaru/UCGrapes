@@ -68,9 +68,9 @@ function mapTemplateToPageData(templateData, page) {
           const titleText = titleSpan?.components?.[0]?.content || "";
 
           // Create tile object
-
           let tileActionObjectId = attributes["tile-action-object-id"]
           const tileBG = addOpacityToHex(attributes["tile-bgcolor"], attributes["tile-bg-image-opacity"])
+
           col.Tile = {
               TileName: titleText.toUpperCase(),
               TileText: titleText.toUpperCase(),
@@ -87,9 +87,11 @@ function mapTemplateToPageData(templateData, page) {
 
               TileAction: {
                   ObjectType: attributes['tile-action-object'],
-                  ObjectId: (tileActionObjectId == "") ? null : tileActionObjectId
+                  ObjectId: (tileActionObjectId == "") ? null : tileActionObjectId,
+                  ObjectUrl: attributes['tile-action-object-url'],
               }
-          };
+
+            };
           return col;
       });
 
@@ -101,8 +103,6 @@ function mapTemplateToPageData(templateData, page) {
 function mapContentToPageData(templateData, page) {
   console.log("Publishing page: ", page.PageName);
   const pages = templateData.pages;
-  console.log(page.PageName)
-  console.log(templateData)
   const output = {
       PageId: page.PageId,
       PageName: page.PageName,
@@ -169,7 +169,6 @@ function mapContentToPageData(templateData, page) {
         }
     });
   }
-  console.log(output)
   return output;
 }
 
@@ -272,12 +271,15 @@ function generateNewPage(theme) {
                                     "classes": [
                                       "template-block"
                                     ],
+                                    style: {
+                                      'color': '#ffffff'
+                                    },
                                     "attributes": {
                                       "tile-text": "Tile",
-                                      "tile-text-color": "#000000",
+                                      "tile-text-color": "#ffffff",
                                       "tile-text-align": "left",
                                       "tile-icon": "icon-name",
-                                      "tile-icon-color": "#000000",
+                                      "tile-icon-color": "#ffffff",
                                       "tile-icon-align": "left",
                                       "tile-bgcolor": `${theme.ThemeColors.accentColor}`,
                                       "tile-bgcolor-name": "accentColor",

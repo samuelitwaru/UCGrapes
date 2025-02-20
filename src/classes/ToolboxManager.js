@@ -273,5 +273,37 @@ class ToolBoxManager {
       }
     }
   }
+
+  setServiceToSelectedTile (serviceId) {
+    const categoryName = "Service/Product Page"
+    this.dataManager.getServices().then((services) => {
+      const service = services.find(
+        (service) => service.ProductServiceId == serviceId
+      );
+
+      if (service) {
+        this.editorManager.selectedComponent.addAttributes({
+          "tile-action-object-id": service.ProductServiceId,
+          "tile-action-object": `${categoryName}, ${service.ProductServiceName}`,
+        });
+
+        this.setAttributeToSelected(
+          "tile-action-object-id",
+          serviceId
+        );
+       
+        this.setAttributeToSelected(
+          "tile-action-object",
+          `${categoryName}, ${service.ProductServiceName}`
+        );
+
+        const editor = this.editorManager.getCurrentEditor();
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+        this.actionList.createContentPage(service.ProductServiceId, editorContainerId);
+      }
+    });
+
+  }
 }
 

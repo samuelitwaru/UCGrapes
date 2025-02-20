@@ -27,7 +27,7 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}"
+                style="background-color:${tileBgColor}; color:#FFFFFF"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name="accentColor"
                 ${defaultTileAttrs} 
@@ -248,7 +248,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#ffffff"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">

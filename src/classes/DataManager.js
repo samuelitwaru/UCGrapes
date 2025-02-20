@@ -1,4 +1,4 @@
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -48,7 +48,6 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
-    console.log("Pages: ",this.pages.SDT_PageCollection.find(page=>page.PageName=="Location"));
     return this.pages;
   }
 

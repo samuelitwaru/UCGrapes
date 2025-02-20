@@ -309,6 +309,7 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
+    console.log("Pages: ",this.pages.SDT_PageCollection.find(page=>page.PageName=="Location"));
     return this.pages;
   }
 
@@ -4326,10 +4327,6 @@ class ActionListComponent {
   async init() {
     await this.dataManager.getPages();
     // await this.dataManager.getServices();
-
-    console.log(this.dataManager.services.map((service) => service.ProductServiceName))
-
-
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => {
         page.PageTileName = page.PageName;

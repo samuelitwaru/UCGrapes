@@ -69,7 +69,7 @@ function mapTemplateToPageData(templateData, page) {
 
           // Create tile object
           let tileActionObjectId = attributes["tile-action-object-id"]
-          const tileBG = addOpacityToHex(attributes["tile-bgcolor"], attributes["tile-bg-image-opacity"])
+          const tileBG = attributes["tile-bgcolor"]
 
           col.Tile = {
               TileName: titleText.toUpperCase(),

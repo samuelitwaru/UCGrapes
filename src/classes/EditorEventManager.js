@@ -10,7 +10,7 @@ class EditorEventManager {
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
-    this.setupAppBarEvents();
+    // this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -287,24 +287,24 @@ class EditorEventManager {
     }
   }
 
-  setupAppBarEvents() {
-    const buttonConfigs = [
-      { id: "appbar-add-logo", type: "logo" },
-      { id: "appbar-add-profile", type: "profile-image" },
-      { id: "appbar-edit-logo", type: "logo" },
-      { id: "appbar-edit-profile", type: "profile-image" },
-    ];
+  // setupAppBarEvents() {
+  //   const buttonConfigs = [
+  //     { id: "appbar-add-logo", type: "logo" },
+  //     { id: "appbar-add-profile", type: "profile-image" },
+  //     { id: "appbar-edit-logo", type: "logo" },
+  //     { id: "appbar-edit-profile", type: "profile-image" },
+  //   ];
 
-    const toolboxManager = this.editorManager.toolsSection;
+  //   const toolboxManager = this.editorManager.toolsSection;
 
-    buttonConfigs.forEach(({ id, type }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener("click", (e) => {
-          e.preventDefault();
-          toolboxManager.openFileManager(type);
-        });
-      }
-    });
-  }
+  //   buttonConfigs.forEach(({ id, type }) => {
+  //     const element = document.getElementById(id);
+  //     if (element) {
+  //       element.addEventListener("click", (e) => {
+  //         e.preventDefault();
+  //         toolboxManager.openFileManager(type);
+  //       });
+  //     }
+  //   });
+  // }
 }

@@ -309,6 +309,7 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
+    console.log("Pages: ",this.pages.SDT_PageCollection.find(page=>page.PageName=="Location"));
     return this.pages;
   }
 
@@ -596,31 +597,14 @@ class EditorManager {
   createHomePageAppBar() {
     return `
       <div class="home-app-bar">
-        <div id="add-logo" class="logo-section" style="display: ${this.LocationLogo ? 'none' : 'flex'}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 28.5 20.065">
-            <path id="Path_1329" data-name="Path 1329" d="M17.693,11.025a2.4,2.4,0,0,0-2.285,2.508,2.4,2.4,0,0,0,2.285,2.508,2.4,2.4,0,0,0,2.285-2.508A2.4,2.4,0,0,0,17.693,11.025Zm10.283,7.524-8,10.032-5.713-6.27L8.044,31.09h28.5Z" transform="translate(-8.044 -11.025)" fill="#fff"/>
-          </svg>
-          Logo 
-          <span id="appbar-add-logo" class="appbar-add-logo"><i class="fa fa-plus"></i></span> 
+        <div id="added-logo" class="logo-added" style="display:flex">
+          <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
         </div>
 
-        <div id="added-logo" class="logo-added" style="display: ${!this.LocationLogo ? 'none' : 'flex'}">
-          <img id="toolbox-logo" src="${this.LocationLogo}" alt="logo" /> 
-          <span id="appbar-edit-logo" class="appbar-edit-logo"><i class="fa fa-pencil"></i></span> 
-        </div>
-
-        <div id="add-profile-image" class="profile-section" style="display: ${this.LocationProfileImage ? 'none' : 'flex'}">
+        <div id="add-profile-image" class="profile-section" style="display:flex">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 19.422 21.363">
             <path id="Path_1327" data-name="Path 1327" d="M15.711,5a6.8,6.8,0,0,0-3.793,12.442A9.739,9.739,0,0,0,6,26.364H7.942a7.769,7.769,0,1,1,15.537,0h1.942A9.739,9.739,0,0,0,19.5,17.442,6.8,6.8,0,0,0,15.711,5Zm0,1.942A4.855,4.855,0,1,1,10.855,11.8,4.841,4.841,0,0,1,15.711,6.942Z" transform="translate(-6 -5)" fill="#fff"/>
           </svg>
-          <span id="appbar-add-profile" class="appbar-add-profile"><i class="fa fa-plus"></i></span> 
-        </div>
-
-        <div id="profile-image-added" class="profile-section profile-img" style="display: ${!this.LocationProfileImage ? 'none' : 'flex'}">
-          <img id="profile-img" src="${
-            this.LocationProfileImage
-          }" alt="profile" />
-          <span id="appbar-edit-profile" class="appbar-edit-profile"><i class="fa fa-pencil"></i></span>
         </div>
       </div>
     `;

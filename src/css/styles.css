@@ -356,7 +356,7 @@ span#scroll-right:hover {
   width: 55%;
   height: auto;
   display: flex;
-  border: 1px dashed #bdbdbd;
+  /* border: 1px dashed #bdbdbd; */
   padding-right: 12px;
 }
 

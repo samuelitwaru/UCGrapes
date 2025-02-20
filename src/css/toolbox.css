@@ -321,6 +321,10 @@ button {
   visibility: visible;
 }
 
+.template-block.high-priority-template .tile-title {
+  text-transform: uppercase !important;
+}
+
 .top-left {
   top: -10px;
   left: -10px;

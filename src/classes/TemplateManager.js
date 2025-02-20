@@ -253,7 +253,11 @@ class TemplateManager {
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
 
-                          <div class="template-block"
+                          <div class="template-block ${
+                            isFirstTileOfFirstRow
+                              ? "high-priority-template"
+                              : ""
+                          }"
                             tile-bgcolor="${tileBgColor}"
                             tile-bgcolor-name="accentColor"
                             ${defaultTileAttrs}
@@ -590,6 +594,8 @@ class TemplateManager {
 
     const config = styleConfigs[templates.length];
 
+    const isTemplateOne = templates.length == 1;
+
     const titles = containerRow.find(".tile-title");
     const templateBlocks = containerRow.find(".template-block");
     const titleSections = containerRow.find(".tile-title-section");
@@ -600,21 +606,22 @@ class TemplateManager {
       if (templates.length === 3) {
         let words = title.getEl().innerText.split(" ");
         if (words.length > 1) {
-          title.getEl().innerHTML =
-            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+          const newContent = words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+          title.components(newContent);
         }
       } else {
-        title.getEl().innerHTML = title.getEl().innerText.replace("<br>", "")
+        const newContent = title.getEl().innerText.replace("<br>", "");
+        title.components(newContent);
       }
     });
 
     templateBlocks.forEach((template) => {
-      const templateStyles = { ...config.template };
-      templateStyles.height = template
-        .getClasses()
-        ?.includes("high-priority-template")
-        ? "7rem"
-        : "5.5rem";
+      const isPriority = template.getClasses()?.includes("high-priority-template");
+      const templateStyles = {
+        ...config.template,
+        height: isPriority && isTemplateOne ? "7rem" : "5.5rem",
+        textTransform: isPriority && isTemplateOne ? "uppercase" : "capitalize",
+      };
       template.addStyle(templateStyles);
     });
 

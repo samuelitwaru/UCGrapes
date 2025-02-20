@@ -246,7 +246,7 @@ class ActionListComponent {
         if (editor.getSelected()) {
           const titleComponent = editor.getSelected().find(".tile-title")[0];
           const currentPageId = localStorage.getItem("pageId");
-          const tileTitle = truncateText(item.dataset.tileName.toUpperCase(), 12);
+          const tileTitle = truncateText(item.dataset.tileName, 12);
           if (currentPageId !== undefined) {
             this.toolBoxManager.setAttributeToSelected(
               "tile-action-object-id",
@@ -282,7 +282,8 @@ class ActionListComponent {
 
             const sidebarInputTitle = document.getElementById("tile-title");
             if (sidebarInputTitle) {
-              sidebarInputTitle.textContent = tileTitle;
+              console.log(tileTitle);
+              sidebarInputTitle.value = tileTitle;
             }
           }
         }

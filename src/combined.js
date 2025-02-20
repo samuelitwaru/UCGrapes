@@ -354,7 +354,6 @@ class DataManager {
   }
 
   async updatePagesBatch(payload) {
-    console.log("Payload: ", payload)
     return await this.fetchAPI('/api/toolbox/update-pages-batch', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -429,6 +428,20 @@ class DataManager {
     }, true);
   }
 
+  async uploadLogo(logoUrl) {
+    return await this.fetchAPI('/api/media/upload/logo', {
+      method: 'POST',
+      body: JSON.stringify({ LogoUrl: logoUrl }),
+    });
+  }
+
+  async uploadProfileImage(profileImageUrl) {
+    return await this.fetchAPI('/api/media/upload/profile', {
+      method: 'POST',
+      body: JSON.stringify({ ProfileImageUrl: profileImageUrl }),
+    });
+  }
+
   // Content API methods
   async getContentPageData(productServiceId) {
     return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);
@@ -437,7 +450,6 @@ class DataManager {
 
 
 // Content from classes/EditorManager.js
-
 class EditorManager {
   editors = {};
   pages = [];
@@ -448,9 +460,16 @@ class EditorManager {
   selectedComponent = null;
   container = document.getElementById("child-container");
 
-  constructor(dataManager, currentLanguage) {
+  constructor(
+    dataManager,
+    currentLanguage,
+    LocationLogo,
+    LocationProfileImage
+  ) {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
+    this.LocationLogo = LocationLogo;
+    this.LocationProfileImage = LocationProfileImage;
     this.templateManager = new TemplateManager(this.currentLanguage, this);
     this.editorEventManager = new EditorEventManager(
       this,
@@ -528,8 +547,8 @@ class EditorManager {
 
   generateEditorHTML(page, editorId) {
     const appBar = this.shouldShowAppBar(page)
-      ? this.createAppBarHTML(page.PageName, page.PageId)
-      : "";
+      ? this.createContentPageAppBar(page.PageName, page.PageId)
+      : this.createHomePageAppBar();
 
     return `
       <div class="header">
@@ -560,7 +579,7 @@ class EditorManager {
     return page.PageIsContentPage || page.PageName !== "Home";
   }
 
-  createAppBarHTML(pageName, pageId) {
+  createContentPageAppBar(pageName, pageId) {
     return `
       <div class="app-bar">
           <svg id="back-button-${pageId}" class="content-back-button" xmlns="http://www.w3.org/2000/svg" id="Group_14" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
@@ -571,6 +590,39 @@ class EditorManager {
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
           <h1 class="title" style="text-transform: uppercase;">${pageName}</h1>
+      </div>
+    `;
+  }
+
+  createHomePageAppBar() {
+    return `
+      <div class="home-app-bar">
+        <div id="add-logo" class="logo-section" style="display: ${this.LocationLogo ? 'none' : 'flex'}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 28.5 20.065">
+            <path id="Path_1329" data-name="Path 1329" d="M17.693,11.025a2.4,2.4,0,0,0-2.285,2.508,2.4,2.4,0,0,0,2.285,2.508,2.4,2.4,0,0,0,2.285-2.508A2.4,2.4,0,0,0,17.693,11.025Zm10.283,7.524-8,10.032-5.713-6.27L8.044,31.09h28.5Z" transform="translate(-8.044 -11.025)" fill="#fff"/>
+          </svg>
+          Logo 
+          <span id="appbar-add-logo" class="appbar-add-logo"><i class="fa fa-plus"></i></span> 
+        </div>
+
+        <div id="added-logo" class="logo-added" style="display: ${!this.LocationLogo ? 'none' : 'flex'}">
+          <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <span id="appbar-edit-logo" class="appbar-edit-logo"><i class="fa fa-pencil"></i></span> 
+        </div>
+
+        <div id="add-profile-image" class="profile-section" style="display: ${this.LocationProfileImage ? 'none' : 'flex'}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 19.422 21.363">
+            <path id="Path_1327" data-name="Path 1327" d="M15.711,5a6.8,6.8,0,0,0-3.793,12.442A9.739,9.739,0,0,0,6,26.364H7.942a7.769,7.769,0,1,1,15.537,0h1.942A9.739,9.739,0,0,0,19.5,17.442,6.8,6.8,0,0,0,15.711,5Zm0,1.942A4.855,4.855,0,1,1,10.855,11.8,4.841,4.841,0,0,1,15.711,6.942Z" transform="translate(-6 -5)" fill="#fff"/>
+          </svg>
+          <span id="appbar-add-profile" class="appbar-add-profile"><i class="fa fa-plus"></i></span> 
+        </div>
+
+        <div id="profile-image-added" class="profile-section profile-img" style="display: ${!this.LocationProfileImage ? 'none' : 'flex'}">
+          <img id="profile-img" src="${
+            this.LocationProfileImage
+          }" alt="profile" />
+          <span id="appbar-edit-profile" class="appbar-edit-profile"><i class="fa fa-pencil"></i></span>
+        </div>
       </div>
     `;
   }
@@ -607,8 +659,6 @@ class EditorManager {
     this.dataManager.pages.SDT_PageCollection.map((p) => {
       if (p.PageId == page.PageId) {
         p.PageGJSJson = JSON.stringify(PageGJSJson);
-        console.log("Update event triggered", p.PageName);
-        console.log(PageGJSJson);
       }
       return p;
     });
@@ -630,8 +680,6 @@ class EditorManager {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
 
-      console.log("PageData: ", pageData);
-
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
@@ -648,27 +696,31 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-
     // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
 
     const locationData = this.dataManager.Location;
 
-    
-    const dataComponents = pageData.pages[0].frames[0].component.components[0].components[0].components[0].components[0].components[0].components
-    
+    const dataComponents =
+      pageData.pages[0].frames[0].component.components[0].components[0]
+        .components[0].components[0].components[0].components;
+
     if (dataComponents.length) {
-      const imgComponent = dataComponents.find((component) => component.attributes.src);
-      const descriptionComponent = dataComponents.find((component) =>  component.type=="product-service-description");
+      const imgComponent = dataComponents.find(
+        (component) => component.attributes.src
+      );
+      const descriptionComponent = dataComponents.find(
+        (component) => component.type == "product-service-description"
+      );
       if (imgComponent) {
         imgComponent.attributes.src = locationData.LocationImage_GXI;
       }
       if (descriptionComponent) {
-        descriptionComponent.components[0].content = locationData.LocationDescription;
+        descriptionComponent.components[0].content =
+          locationData.LocationDescription;
       }
       editor.DomComponents.clear();
       editor.loadProjectData(pageData);
     }
-    
   }
 
   async handleContentPage(editor, page) {
@@ -800,8 +852,8 @@ class EditorManager {
               height: "300vh",
               border: "none",
               overflow: "hidden",
-              '-ms-overflow-style': 'none',
-              'scrollbar-width': 'none',
+              "-ms-overflow-style": "none",
+              "scrollbar-width": "none",
             },
           },
 
@@ -909,12 +961,12 @@ class EditorManager {
 
   setupEditorLayout(editor, page, containerId) {
     if (this.shouldShowAppBar(page)) {
-      const canvas = editor.Canvas.getElement();
-      if (canvas) {
-        canvas.style.setProperty("height", "calc(100% - 100px)", "important");
-      }
-      this.backButtonAction(containerId, page.PageId);
     }
+    const canvas = editor.Canvas.getElement();
+    if (canvas) {
+      canvas.style.setProperty("height", "calc(100% - 100px)", "important");
+    }
+    this.backButtonAction(containerId, page.PageId);
   }
 
   finalizeEditorSetup(editor, page, editorDetails) {
@@ -1009,6 +1061,7 @@ class EditorEventManager {
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
+    this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -1044,8 +1097,6 @@ class EditorEventManager {
   }
 
   loadTheme() {
-    globalVar = this.editorManager.toolsSection
-    console.log('theme',this.editorManager.toolsSection)
     this.editorManager.toolsSection.themeManager.setTheme(
       this.editorManager.theme.ThemeName
     );
@@ -1146,9 +1197,12 @@ class EditorEventManager {
         editor.UndoManager.undo();
       }
 
-      editor.getWrapper().find(".container-row").forEach((component) => {
-        this.templateManager.updateRightButtons(component);
-      });
+      editor
+        .getWrapper()
+        .find(".container-row")
+        .forEach((component) => {
+          this.templateManager.updateRightButtons(component);
+        });
     });
   }
 
@@ -1282,6 +1336,27 @@ class EditorEventManager {
       redoBtn.disabled = !undoRedoManager.canRedo();
       redoBtn.onclick = () => undoRedoManager.redo();
     }
+  }
+
+  setupAppBarEvents() {
+    const buttonConfigs = [
+      { id: "appbar-add-logo", type: "logo" },
+      { id: "appbar-add-profile", type: "profile-image" },
+      { id: "appbar-edit-logo", type: "logo" },
+      { id: "appbar-edit-profile", type: "profile-image" },
+    ];
+
+    const toolboxManager = this.editorManager.toolsSection;
+
+    buttonConfigs.forEach(({ id, type }) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener("click", (e) => {
+          e.preventDefault();
+          toolboxManager.openFileManager(type);
+        });
+      }
+    });
   }
 }
 
@@ -1883,11 +1958,25 @@ class TemplateManager {
     const templateBlocks = containerRow.find(".template-block");
     const titleSections = containerRow.find(".tile-title-section");
 
-    titles.forEach((title) => title.addStyle(config.title));
+    titles.forEach((title) => {
+      title.addStyle(config.title);
+
+      if (templates.length === 3) {
+        let words = title.getEl().innerText.split(" ");
+        if (words.length > 1) {
+          title.getEl().innerHTML =
+            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+        }
+      } else {
+        title.getEl().innerHTML = title.getEl().innerText.replace("<br>", "")
+      }
+    });
 
     templateBlocks.forEach((template) => {
       const templateStyles = { ...config.template };
-      templateStyles.height = template.getClasses()?.includes("high-priority-template")
+      templateStyles.height = template
+        .getClasses()
+        ?.includes("high-priority-template")
         ? "7rem"
         : "5.5rem";
       template.addStyle(templateStyles);
@@ -2085,7 +2174,6 @@ class ToolBoxManager {
   }
 
   async initializeManagers() {
-    
     await this.dataManager.getPages().then((res) => {
       if (this.checkIfNotAuthenticated(res)) {
         return;
@@ -2131,7 +2219,6 @@ class ToolBoxManager {
       }
       this.ui.updateTileTitle(e.target.value);
     });
-
   }
 
   publishPages(isNotifyResidents) {
@@ -2139,7 +2226,7 @@ class ToolBoxManager {
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
 
-      console.log(pageDataList)
+      console.log(pageDataList);
 
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
@@ -2148,18 +2235,18 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
-    return this.dataManager.pages.SDT_PageCollection
-    .filter(page=>!(page.PageName=="Mailbox" || page.PageName=="Calendar"))
-    .map(page=>{
+    return this.dataManager.pages.SDT_PageCollection.filter(
+      (page) => !(page.PageName == "Mailbox" || page.PageName == "Calendar")
+    ).map((page) => {
       let projectData;
       try {
-        projectData = JSON.parse(page.PageGJSJson)
+        projectData = JSON.parse(page.PageGJSJson);
       } catch (error) {
-        projectData = {}
+        projectData = {};
       }
       const jsonData = page.PageIsContentPage
-          ? mapContentToPageData(projectData, page)
-          : mapTemplateToPageData(projectData, page);
+        ? mapContentToPageData(projectData, page)
+        : mapTemplateToPageData(projectData, page);
       return {
         PageId: page.PageId,
         PageName: page.PageName,
@@ -2169,7 +2256,7 @@ class ToolBoxManager {
         SDT_Page: jsonData,
         PageIsPublished: true,
       };
-    })
+    });
   }
 
   async sendPageUpdateRequest(pageDataList, isNotifyResidents) {
@@ -2249,7 +2336,6 @@ class ToolBoxManager {
 
   checkIfNotAuthenticated(res) {
     if (res.error.Status === "Error") {
-
       this.ui.displayAlertMessage(
         this.currentLanguage.getTranslation("not_authenticated_message"),
         "error"
@@ -2273,20 +2359,19 @@ class ToolBoxManager {
     }
   }
 
-  checkTileBgImage () {
+  checkTileBgImage() {
     if (this.editorManager.selectedTemplateWrapper) {
-      const templateBlock =
-        this.editorManager.selectedComponent;
+      const templateBlock = this.editorManager.selectedComponent;
 
       if (templateBlock) {
         const tileImgContainer = document.getElementById("tile-img-container");
         // first check if templateBlock has a background image
         if (templateBlock.getStyle()["background-image"]) {
           const currentBgImage = templateBlock
-          .getStyle()
-          ["background-image"].match(/url\((.*?)\)/)[1];
+            .getStyle()
+            ["background-image"].match(/url\((.*?)\)/)[1];
 
-          if( currentBgImage) {
+          if (currentBgImage) {
             if (tileImgContainer) {
               const tileImg = tileImgContainer.querySelector("img");
               if (tileImg) {
@@ -2301,18 +2386,15 @@ class ToolBoxManager {
                     delete currentStyles["background-image"];
                     templateBlock.setStyle(currentStyles);
                     tileImgContainer.style.display = "none";
-                    this.setAttributeToSelected(
-                      "tile-bg-image-url",
-                      "",
-                    );
-                  }
+                    this.setAttributeToSelected("tile-bg-image-url", "");
+                  };
                 }
-              }            
+              }
             }
           }
         } else {
           tileImgContainer.style.display = "none";
-        }       
+        }
       }
     }
   }
@@ -2348,8 +2430,18 @@ class ToolBoxManager {
     });
 
   }
-}
 
+  openFileManager(type) {
+    const fileInputField = this.mediaComponent.createFileInputField();
+    const modal = this.mediaComponent.openFileUploadModal();
+
+    let allUploadedFiles = [];
+
+    const isTile = false;
+
+    this.mediaComponent.handleModalOpen(modal, fileInputField, allUploadedFiles, isTile, type);
+  }
+}
 
 
 // Content from classes/EventListenerManager.js
@@ -2655,6 +2747,10 @@ class EventListenerManager {
 
           templateBlock.addAttributes({
             "tile-bg-image-opacity": value,
+          })
+
+          templateBlock.addAttributes({
+            "tile-bgcolor": bgColor,
           })
         }
       }
@@ -5227,8 +5323,14 @@ class MediaComponent {
     return fileInputField;
   }
 
-  handleModalOpen(modal, fileInputField, allUploadedFiles) {
-    if (!this.editorManager.selectedComponent) {
+  handleModalOpen(
+    modal,
+    fileInputField,
+    allUploadedFiles,
+    isTile = true,
+    type = ""
+  ) {
+    if (isTile && !this.editorManager.selectedComponent) {
       this.toolBoxManager.ui.displayAlertMessage(
         `${this.currentLanguage.getTranslation(
           "no_tile_selected_error_message"
@@ -5236,6 +5338,9 @@ class MediaComponent {
         "error"
       );
       return;
+    } else {
+      this.isTile = isTile;
+      this.type = type;
     }
 
     $(".delete-media").on("click", (e) => {
@@ -5350,7 +5455,21 @@ class MediaComponent {
     };
 
     saveBtn.onclick = () => {
-      this.saveSelectedFile(modal, fileInputField);
+      if (!this.isTile) {
+        if (this.selectedFile?.MediaUrl) {
+          const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
+          this.closeModal(modal, fileInputField);
+          if (this.type === "logo") {
+            this.changeLogo(safeMediaUrl);
+          } else if (this.type === "profile-image") {
+            this.changeProfile(safeMediaUrl);
+          }
+        }
+
+        this.closeModal(modal, fileInputField);
+      } else {
+        this.saveSelectedFile(modal, fileInputField);
+      }
     };
 
     modal.style.display = "flex";
@@ -5383,7 +5502,7 @@ class MediaComponent {
         reader.readAsDataURL(resizedBlob);
       });
 
-      const cleanImageName = imageName.replace(/'/g, '');
+      const cleanImageName = imageName.replace(/'/g, "");
 
       const response = await this.dataManager.uploadFile(
         dataUrl,
@@ -5585,7 +5704,7 @@ class MediaComponent {
     // Find and set selected file
     this.selectedFile = this.dataManager.media.find(
       (file) => file.MediaId == fileItem.dataset.mediaid
-    )
+    );
   }
 
   deleteMedia(mediaId) {
@@ -5674,6 +5793,42 @@ class MediaComponent {
     } else {
       modalActions.style.display = "flex";
     }
+  }
+
+  changeLogo(logoUrl) {
+    this.dataManager.uploadLogo(logoUrl).then((res) => {
+      const logoAddedSection = document.getElementById("added-logo");
+      const addLogoSection = document.getElementById("add-logo");
+
+      if (logoAddedSection && addLogoSection) {
+        logoAddedSection.style.display = "block"; // Show added logo section
+        addLogoSection.style.display = "none"; // Hide add logo section
+
+        const logo = logoAddedSection.querySelector("#toolbox-logo");
+        if (logo) {
+          logo.setAttribute("src", logoUrl);
+        }
+      }
+    });
+  }
+
+  changeProfile(profileImageUrl) {
+    this.dataManager.uploadProfileImage(profileImageUrl).then((res) => {
+      const profileAddedSection = document.getElementById(
+        "profile-image-added"
+      );
+      const addProfileSection = document.getElementById("add-profile-image");
+
+      if (profileAddedSection && addProfileSection) {
+        profileAddedSection.style.display = "block"; // Show added profile section
+        addProfileSection.style.display = "none"; // Hide add profile section
+
+        const profileImg = profileAddedSection.querySelector("#profile-img");
+        if (profileImg) {
+          profileImg.setAttribute("src", profileImageUrl);
+        }
+      }
+    });
   }
 }
 

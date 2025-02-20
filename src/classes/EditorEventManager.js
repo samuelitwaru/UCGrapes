@@ -10,6 +10,7 @@ class EditorEventManager {
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
+    this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -45,8 +46,6 @@ class EditorEventManager {
   }
 
   loadTheme() {
-    globalVar = this.editorManager.toolsSection
-    console.log('theme',this.editorManager.toolsSection)
     this.editorManager.toolsSection.themeManager.setTheme(
       this.editorManager.theme.ThemeName
     );
@@ -147,9 +146,12 @@ class EditorEventManager {
         editor.UndoManager.undo();
       }
 
-      editor.getWrapper().find(".container-row").forEach((component) => {
-        this.templateManager.updateRightButtons(component);
-      });
+      editor
+        .getWrapper()
+        .find(".container-row")
+        .forEach((component) => {
+          this.templateManager.updateRightButtons(component);
+        });
     });
   }
 
@@ -283,5 +285,26 @@ class EditorEventManager {
       redoBtn.disabled = !undoRedoManager.canRedo();
       redoBtn.onclick = () => undoRedoManager.redo();
     }
+  }
+
+  setupAppBarEvents() {
+    const buttonConfigs = [
+      { id: "appbar-add-logo", type: "logo" },
+      { id: "appbar-add-profile", type: "profile-image" },
+      { id: "appbar-edit-logo", type: "logo" },
+      { id: "appbar-edit-profile", type: "profile-image" },
+    ];
+
+    const toolboxManager = this.editorManager.toolsSection;
+
+    buttonConfigs.forEach(({ id, type }) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener("click", (e) => {
+          e.preventDefault();
+          toolboxManager.openFileManager(type);
+        });
+      }
+    });
   }
 }

@@ -594,11 +594,25 @@ class TemplateManager {
     const templateBlocks = containerRow.find(".template-block");
     const titleSections = containerRow.find(".tile-title-section");
 
-    titles.forEach((title) => title.addStyle(config.title));
+    titles.forEach((title) => {
+      title.addStyle(config.title);
+
+      if (templates.length === 3) {
+        let words = title.getEl().innerText.split(" ");
+        if (words.length > 1) {
+          title.getEl().innerHTML =
+            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+        }
+      } else {
+        title.getEl().innerHTML = title.getEl().innerText.replace("<br>", "")
+      }
+    });
 
     templateBlocks.forEach((template) => {
       const templateStyles = { ...config.template };
-      templateStyles.height = template.getClasses()?.includes("high-priority-template")
+      templateStyles.height = template
+        .getClasses()
+        ?.includes("high-priority-template")
         ? "7rem"
         : "5.5rem";
       template.addStyle(templateStyles);

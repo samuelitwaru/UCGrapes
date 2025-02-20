@@ -309,7 +309,6 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
-    console.log("Pages: ",this.pages.SDT_PageCollection.find(page=>page.PageName=="Location"));
     return this.pages;
   }
 
@@ -1044,7 +1043,7 @@ class EditorEventManager {
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
-    this.setupAppBarEvents();
+    // this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -1321,26 +1320,26 @@ class EditorEventManager {
     }
   }
 
-  setupAppBarEvents() {
-    const buttonConfigs = [
-      { id: "appbar-add-logo", type: "logo" },
-      { id: "appbar-add-profile", type: "profile-image" },
-      { id: "appbar-edit-logo", type: "logo" },
-      { id: "appbar-edit-profile", type: "profile-image" },
-    ];
+  // setupAppBarEvents() {
+  //   const buttonConfigs = [
+  //     { id: "appbar-add-logo", type: "logo" },
+  //     { id: "appbar-add-profile", type: "profile-image" },
+  //     { id: "appbar-edit-logo", type: "logo" },
+  //     { id: "appbar-edit-profile", type: "profile-image" },
+  //   ];
 
-    const toolboxManager = this.editorManager.toolsSection;
+  //   const toolboxManager = this.editorManager.toolsSection;
 
-    buttonConfigs.forEach(({ id, type }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener("click", (e) => {
-          e.preventDefault();
-          toolboxManager.openFileManager(type);
-        });
-      }
-    });
-  }
+  //   buttonConfigs.forEach(({ id, type }) => {
+  //     const element = document.getElementById(id);
+  //     if (element) {
+  //       element.addEventListener("click", (e) => {
+  //         e.preventDefault();
+  //         toolboxManager.openFileManager(type);
+  //       });
+  //     }
+  //   });
+  // }
 }
 
 
@@ -4332,7 +4331,6 @@ class ActionListComponent {
     });
 
     this.dynamicForms = this.dataManager.forms.map((form) => {
-      console.log('form', form)
       return {
         PageId: form.FormId,
         PageName: form.ReferenceName,

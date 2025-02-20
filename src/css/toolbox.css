@@ -298,7 +298,7 @@ button {
   cursor: pointer;
 }
 
-.tile-icon-section:hover .tile-close-icon {
+.gjs-selected .tile-icon-section:hover .tile-close-icon {
   opacity: 1;
   visibility: visible;
 }

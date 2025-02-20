@@ -154,7 +154,7 @@ class EditorManager {
         </div>
 
         <div id="added-logo" class="logo-added" style="display: ${!this.LocationLogo ? 'none' : 'flex'}">
-          <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <img id="toolbox-logo" src="${this.LocationLogo}" alt="logo" /> 
           <span id="appbar-edit-logo" class="appbar-edit-logo"><i class="fa fa-pencil"></i></span> 
         </div>
 

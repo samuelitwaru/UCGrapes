@@ -235,23 +235,37 @@ class ThemeManager {
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
           const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
-
+          const currentColor = selectedComponent
+                                      .getAttributes()?.["tile-bgcolor"];
           const currentTileOpacity = selectedComponent
                                       .getAttributes()?.["tile-bg-image-opacity"];
 
-          selectedComponent.addStyle({
-            "background-color": addOpacityToHex(colorValue, currentTileOpacity),
-          });
+          if (currentColor === colorValue) {
+            selectedComponent.addStyle({
+              "background-color": "#FFFFFF"
+            });
+      
+            this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);
+            this.toolBoxManager.setAttributeToSelected("tile-bgcolor-name", null);
 
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-bgcolor",
-            colorValue
-          );
+            radioInput.checked = false;
+            alignItem.style.border = "none";
+          }else {
+            selectedComponent.addStyle({
+              "background-color": addOpacityToHex(colorValue, currentTileOpacity),
+            });
 
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-bgcolor-name",
-            colorName
-          );
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bgcolor",
+              colorValue
+            );
+
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bgcolor-name",
+              colorName
+            );
+            alignItem.removeAttribute("style");
+          }
 
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -579,10 +593,12 @@ class ThemeManager {
             : icon.IconName;
         })();
 
-        iconItem.innerHTML = `
-                    ${icon.IconSVG}
-                    <span class="icon-title">${displayName}</span>
-                `;
+        // iconItem.innerHTML = `
+        //             ${icon.IconSVG}
+        //             <span class="icon-title">${displayName}</span>
+        //         `;
+        
+        iconItem.innerHTML = `${icon.IconSVG}`;
 
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {

@@ -319,9 +319,12 @@ span#scroll-right:hover {
 
 .app-bar .title {
   font-size: 18px;
-  font-weight: 700;
   color: #1f2937;
   margin: 0;
+  text-transform: uppercase;
+  font-family: Roboto;
+  letter-spacing: 1.1px;
+  font-weight: 500;
 }
 
 /* Input field */
@@ -1858,6 +1861,6 @@ button.add-new-service i {
 }
 
 @font-face {
-  font-family: 'Segoe UI';
-  src: url('../fonts/segoeui.ttf') format('truetype');
+  font-family: "Segoe UI";
+  src: url("../fonts/segoeui.ttf") format("truetype");
 }

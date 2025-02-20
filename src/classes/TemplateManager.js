@@ -482,19 +482,20 @@ class TemplateManager {
     if (!containerRow) return;
 
     const tileComponent = templateComponent.find(".template-block")[0];
-    const tileActionActionId = tileComponent.getAttributes()?.["tile-action-object-id"]
-    
+    const tileActionActionId =
+      tileComponent.getAttributes()?.["tile-action-object-id"];
+
     if (tileActionActionId) {
-      const editors = Object.entries(this.editorManager.editors); 
-    
+      const editors = Object.entries(this.editorManager.editors);
+
       editors.forEach(([key, element]) => {
         if (element.pageId === tileActionActionId) {
-          const frameId = key.replace('#', '');
+          const frameId = key.replace("#", "");
           this.editorManager.removePageOnTileDelete(frameId);
         }
       });
     }
-    
+
     templateComponent.remove();
 
     const templates = containerRow.components();
@@ -563,30 +564,58 @@ class TemplateManager {
   updateRightButtons(containerRow) {
     if (!containerRow) return;
 
+    const styleConfigs = {
+      1: {
+        title: { "letter-spacing": "1.1px", "font-size": "16px" },
+        template: { "justify-content": "start" },
+        rightButton: { display: "flex" },
+        titleSection: { "text-align": "left" },
+      },
+      2: {
+        title: { "letter-spacing": "0.9px", "font-size": "14px" },
+        template: { "justify-content": "start" },
+        rightButton: { display: "flex" },
+        titleSection: { "text-align": "left" },
+      },
+      3: {
+        title: { "letter-spacing": "0.9px", "font-size": "12px" },
+        template: { "justify-content": "center" },
+        rightButton: { display: "none" },
+        titleSection: { "text-align": "center" },
+      },
+    };
+
     const templates = containerRow.components();
+    if (!templates.length || !styleConfigs[templates.length]) return;
+
+    const config = styleConfigs[templates.length];
+
+    const titles = containerRow.find(".tile-title");
+    const templateBlocks = containerRow.find(".template-block");
+    const titleSections = containerRow.find(".tile-title-section");
+
+    titles.forEach((title) => title.addStyle(config.title));
+
+    templateBlocks.forEach((template) => {
+      const templateStyles = { ...config.template };
+      templateStyles.height = template.getClasses()?.includes("high-priority-template")
+        ? "7rem"
+        : "5.5rem";
+      template.addStyle(templateStyles);
+    });
 
     templates.forEach((template) => {
-      if (!template || !template.view || !template.view.el) return;
-
-      const rightButton = template.view.el.querySelector(".add-button-right");
-      if (!rightButton) return;
-      const rightButtonComponent = template.find(".add-button-right")[0];
-
-      if (templates.length >= 3) {
-        rightButtonComponent.addStyle({
-          display: "none",
-        });
-      } else {
-        rightButtonComponent.addStyle({
-          display: "flex",
-        });
-      }
+      if (!template?.view?.el) return;
+      const rightButton = template.find(".add-button-right")[0];
+      if (rightButton) rightButton.addStyle(config.rightButton);
     });
+
+    if (titleSections.length) {
+      titleSections.forEach((section) => section.addStyle(config.titleSection));
+    }
   }
 
-
   initialContentPageTemplate(contentPageData) {
-    console.log("initialContentPageTemplate", contentPageData);
     return `
         <div
             class="content-frame-container test"
@@ -704,7 +733,7 @@ class TemplateManager {
               ""
             );
             $("#tile-title").val("");
-            component.addStyle({display: "none"});
+            component.addStyle({ display: "none" });
           } else if (sectionSelector === ".tile-icon-section") {
             const component =
               this.editorManager.selectedComponent.find(".tile-icon")[0];
@@ -713,7 +742,7 @@ class TemplateManager {
               "tile-icon",
               ""
             );
-            component.addStyle({display: "none"});
+            component.addStyle({ display: "none" });
           }
         };
       }

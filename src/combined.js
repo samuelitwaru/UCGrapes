@@ -259,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -4326,10 +4326,6 @@ class ActionListComponent {
   async init() {
     await this.dataManager.getPages();
     // await this.dataManager.getServices();
-
-    console.log(this.dataManager.services.map((service) => service.ProductServiceName))
-
-
     this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
       (page) => {
         page.PageTileName = page.PageName;
@@ -4352,6 +4348,7 @@ class ActionListComponent {
     });
 
     this.dynamicForms = this.dataManager.forms.map((form) => {
+      console.log('form', form)
       return {
         PageId: form.FormId,
         PageName: form.ReferenceName,
@@ -4479,7 +4476,6 @@ class ActionListComponent {
         dropdownHeader.querySelector("i")?.classList.remove("fa-angle-up");
         dropdownHeader.querySelector("i")?.classList.add("fa-angle-down");
         const detailsElements = document.getElementsByClassName('category');
-  
         Array.from(detailsElements).forEach(details => {
           details.open = false;
         });

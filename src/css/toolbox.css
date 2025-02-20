@@ -306,7 +306,6 @@ button {
 .tile-title-section {
   position: relative;
   width: -webkit-fill-available;
-  overflow: clip;
 }
 
 .tile-icon-section {

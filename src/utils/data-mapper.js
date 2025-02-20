@@ -72,8 +72,8 @@ function mapTemplateToPageData(templateData, page) {
           const tileBG = attributes["tile-bgcolor"]
 
           col.Tile = {
-              TileName: titleText.toUpperCase(),
-              TileText: titleText.toUpperCase(),
+              TileName: titleText,
+              TileText: titleText,
               TileTextColor: attributes["tile-text-color"], // Not present in source data
               TileTextAlignment: attributes["tile-text-align"] || "center",
 

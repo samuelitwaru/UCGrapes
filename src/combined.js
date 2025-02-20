@@ -1044,7 +1044,7 @@ class EditorEventManager {
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
     this.editorOnUpdate(editor, page);
-    this.setupAppBarEvents();
+    // this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -1321,26 +1321,26 @@ class EditorEventManager {
     }
   }
 
-  setupAppBarEvents() {
-    const buttonConfigs = [
-      { id: "appbar-add-logo", type: "logo" },
-      { id: "appbar-add-profile", type: "profile-image" },
-      { id: "appbar-edit-logo", type: "logo" },
-      { id: "appbar-edit-profile", type: "profile-image" },
-    ];
+  // setupAppBarEvents() {
+  //   const buttonConfigs = [
+  //     { id: "appbar-add-logo", type: "logo" },
+  //     { id: "appbar-add-profile", type: "profile-image" },
+  //     { id: "appbar-edit-logo", type: "logo" },
+  //     { id: "appbar-edit-profile", type: "profile-image" },
+  //   ];
 
-    const toolboxManager = this.editorManager.toolsSection;
+  //   const toolboxManager = this.editorManager.toolsSection;
 
-    buttonConfigs.forEach(({ id, type }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener("click", (e) => {
-          e.preventDefault();
-          toolboxManager.openFileManager(type);
-        });
-      }
-    });
-  }
+  //   buttonConfigs.forEach(({ id, type }) => {
+  //     const element = document.getElementById(id);
+  //     if (element) {
+  //       element.addEventListener("click", (e) => {
+  //         e.preventDefault();
+  //         toolboxManager.openFileManager(type);
+  //       });
+  //     }
+  //   });
+  // }
 }
 
 
@@ -1600,7 +1600,11 @@ class TemplateManager {
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
 
-                          <div class="template-block"
+                          <div class="template-block ${
+                            isFirstTileOfFirstRow
+                              ? "high-priority-template"
+                              : ""
+                          }"
                             tile-bgcolor="${tileBgColor}"
                             tile-bgcolor-name="accentColor"
                             ${defaultTileAttrs}
@@ -1937,6 +1941,14 @@ class TemplateManager {
 
     const config = styleConfigs[templates.length];
 
+    const defaultHeight = templates.length == 1;
+    const hasHighPriority =
+      templates.length > 1 &&
+      templates.some((template) =>
+        template.getClasses()?.includes("high-priority-template")
+      );
+    const templateHeight = hasHighPriority ? "7rem" : defaultHeight;
+
     const titles = containerRow.find(".tile-title");
     const templateBlocks = containerRow.find(".template-block");
     const titleSections = containerRow.find(".tile-title-section");
@@ -1951,17 +1963,16 @@ class TemplateManager {
             words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
         }
       } else {
-        title.getEl().innerHTML = title.getEl().innerText.replace("<br>", "")
+        title.getEl().innerHTML = title.getEl().innerText.replace("<br>", "");
       }
     });
 
     templateBlocks.forEach((template) => {
-      const templateStyles = { ...config.template };
-      templateStyles.height = template
-        .getClasses()
-        ?.includes("high-priority-template")
-        ? "7rem"
-        : "5.5rem";
+      const isPriority = template.getClasses()?.includes("high-priority-template");
+      const templateStyles = {
+        ...config.template,
+        height: isPriority && defaultHeight ? "7rem" : "5.5rem",
+      };
       template.addStyle(templateStyles);
     });
 

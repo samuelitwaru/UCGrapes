@@ -283,7 +283,8 @@ class ActionListComponent {
 
             const sidebarInputTitle = document.getElementById("tile-title");
             if (sidebarInputTitle) {
-              sidebarInputTitle.textContent = tileTitle;
+              console.log(tileTitle);
+              sidebarInputTitle.value = tileTitle;
             }
           }
         }

@@ -594,13 +594,7 @@ class TemplateManager {
 
     const config = styleConfigs[templates.length];
 
-    const defaultHeight = templates.length == 1;
-    const hasHighPriority =
-      templates.length > 1 &&
-      templates.some((template) =>
-        template.getClasses()?.includes("high-priority-template")
-      );
-    const templateHeight = hasHighPriority ? "7rem" : defaultHeight;
+    const isTemplateOne = templates.length == 1;
 
     const titles = containerRow.find(".tile-title");
     const templateBlocks = containerRow.find(".template-block");
@@ -612,11 +606,12 @@ class TemplateManager {
       if (templates.length === 3) {
         let words = title.getEl().innerText.split(" ");
         if (words.length > 1) {
-          title.getEl().innerHTML =
-            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+          const newContent = words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+          title.components(newContent);
         }
       } else {
-        title.getEl().innerHTML = title.getEl().innerText.replace("<br>", "");
+        const newContent = title.getEl().innerText.replace("<br>", "");
+        title.components(newContent);
       }
     });
 
@@ -624,7 +619,8 @@ class TemplateManager {
       const isPriority = template.getClasses()?.includes("high-priority-template");
       const templateStyles = {
         ...config.template,
-        height: isPriority && defaultHeight ? "7rem" : "5.5rem",
+        height: isPriority && isTemplateOne ? "7rem" : "5.5rem",
+        textTransform: isPriority && isTemplateOne ? "uppercase" : "capitalize",
       };
       template.addStyle(templateStyles);
     });

@@ -234,6 +234,7 @@ button {
   cursor: ew-resize;
   display: flex;
   justify-content: center;
+  display: none;
 }
 
 .resize-handle::after {

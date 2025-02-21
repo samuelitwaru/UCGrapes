@@ -259,7 +259,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -309,7 +309,6 @@ class DataManager {
   // Pages API methods
   async getPages() {
     this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
-    console.log("Pages: ",this.pages.SDT_PageCollection.find(page=>page.PageName=="Location"));
     return this.pages;
   }
 
@@ -1953,7 +1952,8 @@ class TemplateManager {
       if (templates.length === 3) {
         let words = title.getEl().innerText.split(" ");
         if (words.length > 1) {
-          const newContent = words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+          const newContent =
+            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
           title.components(newContent);
         }
       } else {
@@ -1963,7 +1963,9 @@ class TemplateManager {
     });
 
     templateBlocks.forEach((template) => {
-      const isPriority = template.getClasses()?.includes("high-priority-template");
+      const isPriority = template
+        .getClasses()
+        ?.includes("high-priority-template");
       const templateStyles = {
         ...config.template,
         height: isPriority && isTemplateOne ? "7rem" : "5.5rem",
@@ -1976,6 +1978,13 @@ class TemplateManager {
       if (!template?.view?.el) return;
       const rightButton = template.find(".add-button-right")[0];
       if (rightButton) rightButton.addStyle(config.rightButton);
+
+      if (templates.length === 3) {
+        template.addAttributes({
+          "tile-icon-align": "center",
+          "tile-text-align": "center",
+        });
+      }
     });
 
     if (titleSections.length) {
@@ -3128,7 +3137,7 @@ class ThemeManager {
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
-              "background-color": "#FFFFFF"
+              "background-color": "transparent"
             });
       
             this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);
@@ -4339,7 +4348,6 @@ class ActionListComponent {
     });
 
     this.dynamicForms = this.dataManager.forms.map((form) => {
-      console.log('form', form)
       return {
         PageId: form.FormId,
         PageName: form.ReferenceName,

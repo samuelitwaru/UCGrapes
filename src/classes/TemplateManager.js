@@ -606,7 +606,8 @@ class TemplateManager {
       if (templates.length === 3) {
         let words = title.getEl().innerText.split(" ");
         if (words.length > 1) {
-          const newContent = words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
+          const newContent =
+            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
           title.components(newContent);
         }
       } else {
@@ -616,7 +617,9 @@ class TemplateManager {
     });
 
     templateBlocks.forEach((template) => {
-      const isPriority = template.getClasses()?.includes("high-priority-template");
+      const isPriority = template
+        .getClasses()
+        ?.includes("high-priority-template");
       const templateStyles = {
         ...config.template,
         height: isPriority && isTemplateOne ? "7rem" : "5.5rem",
@@ -629,6 +632,13 @@ class TemplateManager {
       if (!template?.view?.el) return;
       const rightButton = template.find(".add-button-right")[0];
       if (rightButton) rightButton.addStyle(config.rightButton);
+
+      if (templates.length === 3) {
+        template.addAttributes({
+          "tile-icon-align": "center",
+          "tile-text-align": "center",
+        });
+      }
     });
 
     if (titleSections.length) {

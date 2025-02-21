@@ -242,7 +242,7 @@ class ThemeManager {
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
-              "background-color": "#FFFFFF"
+              "background-color": "transparent"
             });
       
             this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);

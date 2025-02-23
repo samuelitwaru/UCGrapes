@@ -1500,7 +1500,7 @@ h5#current-page-title {
 }
 
 /* alert box */
-.alerts-container {
+.tb-alerts-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -1511,7 +1511,7 @@ h5#current-page-title {
   width: 400px;
 }
 
-.alert {
+.tb-alert {
   padding: 15px;
   border-radius: 4px;
   display: flex;
@@ -1522,28 +1522,28 @@ h5#current-page-title {
   gap: 4px;
 }
 
-.alert.success {
+.tb-alert.success {
   background-color: #dff0d8;
   color: #3f7641;
   border: 1px solid #c0debd;
 }
 
-.alert.error {
+.tb-alert.error {
   background-color: #fbeaea;
   color: #bb2e2e;
   border: 1px solid #f3cdd0;
 }
 
-.alert strong {
+.tb-alert strong {
   margin-right: 5px;
 }
 
-.alert .alert-header {
+.tb-alert .tb-alert-header {
   justify-content: space-between;
   display: flex;
 }
 
-.alert-close-btn {
+.tb-alert-close-btn {
   cursor: pointer;
   top: -10px;
   position: relative;

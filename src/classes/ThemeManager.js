@@ -470,6 +470,14 @@ class ThemeManager {
       button.setAttribute("aria-expanded", !isOpen);
     });
 
+    document.addEventListener("click", (e) => {
+      if (!select.contains(e.target)) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+
     // Populate themes into the dropdown
     this.toolBoxManager.themes.forEach((theme) => {
       const option = document.createElement("div");

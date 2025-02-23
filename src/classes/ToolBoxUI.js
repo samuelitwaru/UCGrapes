@@ -9,22 +9,21 @@ class ToolBoxUI {
       const titleComponent =
         this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
-        titleComponent.components(inputTitle);
+        titleComponent.addAttributes({ "title": inputTitle });
+        titleComponent.components(truncateText(inputTitle, 15));
         titleComponent.addStyle({ display: "block" });
-        // this.manager.selectedComponent.addAttributes({
-        //   "tile-title": inputTitle,
-        // });
+        this.manager.editorManager.getCurrentEditor().trigger("add");
       }
     }
   }
 
   displayAlertMessage(message, status) {
-    const alertContainer = document.getElementById("alerts-container");
+    const alertContainer = document.getElementById("tb-alerts-container");
     const alertId = Math.random().toString(10);
     const alertBox = this.alertMessage(message, status, alertId);
     alertBox.style.display = "flex";
 
-    const closeButton = alertBox.querySelector(".alert-close-btn");
+    const closeButton = alertBox.querySelector(".tb-alert-close-btn");
     closeButton.addEventListener("click", () => {
       this.closeAlert(alertId);
     });
@@ -36,9 +35,9 @@ class ToolBoxUI {
   alertMessage(message, status, alertId) {
     const alertBox = document.createElement("div");
     alertBox.id = alertId;
-    alertBox.classList = `alert ${status == "success" ? "success" : "error"}`;
+    alertBox.classList = `tb-alert ${status == "success" ? "success" : "error"}`;
     alertBox.innerHTML = `
-        <div class="alert-header">
+        <div class="tb-alert-header">
           <strong>
             ${
               status == "success"
@@ -46,7 +45,7 @@ class ToolBoxUI {
                 : this.currentLanguage.getTranslation("alert_type_error")
             }
           </strong>
-          <span class="alert-close-btn">✖</span>
+          <span class="tb-alert-close-btn">✖</span>
         </div>
         <p>${message}</p>
       `;
@@ -217,10 +216,12 @@ class ToolBoxUI {
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
-    if (currentActionName && currentActionId && selectedOptionElement) {
+    if (currentActionName && currentActionId) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
-      selectedOptionElement.style.background = "#f0f0f0";
+      if (selectedOptionElement) {
+        selectedOptionElement.style.background = "#f0f0f0";
+      }
     }
   }
 

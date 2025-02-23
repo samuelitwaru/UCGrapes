@@ -8,6 +8,7 @@ class ActionListComponent {
     this.selectedId = null;
     this.pageOptions = [];
     this.added = false;
+    this.formErrors = 0;
 
     this.categoryData = [
       {
@@ -125,17 +126,35 @@ class ActionListComponent {
   }
 
   createModal(title, isWebLink = false) {
+    const selectedTile = this.editorManager.getCurrentEditor().getSelected();
+    console.log(
+      "isWebLink",
+      isWebLink
+    );
+    let label = selectedTile.getAttributes()?.["tile-action-object"];
+    label = label.replace("Web Link, ", "");
+
+    const url = selectedTile.getAttributes()?.["tile-action-object-url"];
+
+    console.log(
+      "label",
+      label,
+      "url",
+      url
+    );
     const fields = isWebLink
       ? [
           {
             id: "link_url",
             label: "Link Url",
             placeholder: "https://www.example.com",
+            value: isWebLink ? url || "" : "",
           },
           {
             id: "link_label",
             label: "Link Label",
-            placeholder: "open Website",
+            placeholder: "Open Website",
+            value: isWebLink ? (url !== undefined ? label : "") : "", // Fixed here
           },
         ]
       : [
@@ -143,6 +162,7 @@ class ActionListComponent {
             id: "page_title",
             label: "Page Title",
             placeholder: "New page title",
+            value: "",
           },
         ];
 
@@ -163,18 +183,21 @@ class ActionListComponent {
           ${fields
             .map(
               (field) => `
-            <div class="form-field ${field !== fields[0] ? "mt-2" : ""}">
+            <div class="form-field"style="${
+              field !== fields[0] ? "margin-top: 10px" : ""
+            }">
               <label for="${field.id}">${field.label}</label>
               <input required class="tb-form-control" type="text" id="${
                 field.id
-              }" placeholder="${field.placeholder}" />
+              }" placeholder="${field.placeholder}" value="${field.value}"/>
+              <span class="error-message" style="color: red; font-size: 12px; display: none; margin-top: 5px; font-weight: 300">Error message</span>
             </div>
           `
             )
             .join("")}
         </div>
         <div class="popup-footer">
-          <button id="submit_link" class="tb-btn tb-btn-primary">Save</button>
+          <button id="submit_link" submit class="tb-btn tb-btn-primary">Save</button>
           <button id="close_web_url_popup" class="tb-btn tb-btn-outline">Cancel</button>
         </div>
       </div>
@@ -208,36 +231,83 @@ class ActionListComponent {
 
   handleModalSave(popup) {
     try {
+      // Run validation first
+      if (!this.validateModalForm()) {
+        return; // Stop if validation fails
+      }
+
       const isWebLink = popup.querySelector("#link_url") !== null;
       const dropdownHeader = document.getElementById("selectedOption");
       const dropdownMenu = document.getElementById("dropdownMenu");
 
       if (isWebLink) {
-        const linkUrl = document.getElementById("link_url")?.value;
-        const linkLabel = document.getElementById("link_label")?.value;
-        if (linkUrl && linkLabel) {
-          this.createWebLinkPage(linkUrl, linkLabel);
-        }
+        const linkUrl = document.getElementById("link_url")?.value.trim();
+        const linkLabel = document.getElementById("link_label")?.value.trim();
+
+        this.createWebLinkPage(linkUrl, linkLabel);
       } else {
-        const pageTitle = document.getElementById("page_title")?.value;
-        if (pageTitle) {
-          this.updateSelectedComponent(pageTitle);
-        }
+        const pageTitle = document.getElementById("page_title")?.value.trim();
+        this.updateSelectedComponent(pageTitle);
       }
 
+      // If dropdown elements exist, update UI
       if (dropdownHeader && dropdownMenu) {
-        console.log("dropdownHeader");
         dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
         dropdownMenu.style.display = "none";
       }
+
+      // Close the popup after successful save
       popup.remove();
     } catch (error) {
       console.error("Error handling modal save:", error);
     }
   }
 
-  async createWebLinkPage(linkUrl, linkLabel) {
+  validateModalForm() {
+    this.formErrors = 0; // Reset error count
 
+    document
+      .querySelectorAll(".popup-body .tb-form-control")
+      .forEach((field) => {
+        const errorField = field.nextElementSibling;
+        errorField.style.display = "none"; // Hide previous error messages
+        errorField.textContent = "";
+
+        // Check for required fields
+        if (field.value.trim() === "") {
+          errorField.textContent = "This field is required";
+          errorField.style.display = "block";
+          this.formErrors++;
+        }
+
+        // Validate Link URL
+        if (field.id === "link_url" && field.value.trim() !== "") {
+          const urlPattern = /^https:\/\/.+/; // Must start with https://
+          if (!urlPattern.test(field.value.trim())) {
+            errorField.textContent = "Enter a valid URL starting with https://";
+            errorField.style.display = "block";
+            this.formErrors++;
+          }
+        }
+
+        // Validate Page Title
+        if (field.id === "page_title" && field.value.trim() === "") {
+          errorField.textContent = "Enter a valid page title";
+          errorField.style.display = "block";
+          this.formErrors++;
+        }
+
+        if (field.id === "page_title" && field.value.length < 3) {
+          errorField.textContent = "Page title must be at least 3 characters long";
+          errorField.style.display = "block";
+          this.formErrors++;
+        }
+      });
+
+    return this.formErrors === 0;
+  }
+
+  async createWebLinkPage(linkUrl, linkLabel) {
     const editor = this.editorManager.getCurrentEditor();
     try {
       const res = await this.dataManager.getPages();
@@ -276,19 +346,20 @@ class ActionListComponent {
         );
 
         $(editorContainerId).nextAll().remove();
-        this.editorManager.createChildEditor(page, linkUrl);
+        this.editorManager.createChildEditor(page, linkUrl, linkLabel);
 
         if (titleComponent) {
+          titleComponent.addAttributes({ title: linkLabel });
           titleComponent.components(tileTitle);
           titleComponent.addStyle({ display: "block" });
 
           const sidebarInputTitle = document.getElementById("tile-title");
           if (sidebarInputTitle) {
             sidebarInputTitle.value = tileTitle;
+            sidebarInputTitle.title = tileTitle;
           }
         }
       }
-      
     } catch (error) {
       console.error("Error creating web link page:", error);
     }
@@ -341,12 +412,14 @@ class ActionListComponent {
         });
 
       if (titleComponent) {
+        titleComponent.addAttributes({ title: title });
         titleComponent.components(tileTitle);
         titleComponent.addStyle({ display: "block" });
 
         const sidebarInputTitle = document.getElementById("tile-title");
         if (sidebarInputTitle) {
           sidebarInputTitle.value = tileTitle;
+          sidebarInputTitle.title = tileTitle;
         }
       }
       // dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
@@ -627,12 +700,14 @@ class ActionListComponent {
       }
 
       if (titleComponent) {
+        titleComponent.addAttributes({ title: item.dataset.tileName });
         titleComponent.components(tileTitle);
         titleComponent.addStyle({ display: "block" });
 
         const sidebarInputTitle = document.getElementById("tile-title");
         if (sidebarInputTitle) {
           sidebarInputTitle.value = tileTitle;
+          sidebarInputTitle.title = tileTitle;
         }
       }
     } catch (error) {

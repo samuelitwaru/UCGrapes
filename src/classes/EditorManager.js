@@ -72,8 +72,8 @@ class EditorManager {
     activeFrame.classList.add("active-editor");
   }
 
-  createChildEditor(page, linkUrl="") {
-    const editorDetails = this.setupEditorContainer(page);
+  createChildEditor(page, linkUrl = "", linkLabel = "") {
+    const editorDetails = this.setupEditorContainer(page, linkLabel);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
     this.editorEventManager.addEditorEventListeners(editor, page);
     this.loadEditorContent(editor, page, linkUrl);
@@ -81,31 +81,31 @@ class EditorManager {
     this.finalizeEditorSetup(editor, page, editorDetails);
   }
 
-  createWebLinkChildEditor(page, linkUrl) {
-    console.log("category, reached here")
-    const editorDetails = this.setupEditorContainer(page);
-    const editor = this.initializeGrapesEditor(editorDetails.editorId);
-    this.editorEventManager.addEditorEventListeners(editor, page);
-    this.loadEditorContent(editor, page, linkUrl);
-    this.setupEditorLayout(editor, page, editorDetails.containerId);
-    this.finalizeEditorSetup(editor, page, editorDetails);
-  }
-
-  setupEditorContainer(page) {
+  setupEditorContainer(page, linkLabel) {
     const count = this.container.children.length;
     const editorId = `gjs-${count}`;
     const containerId = `${editorId}-frame`;
 
     const editorContainer = document.createElement("div");
-    editorContainer.innerHTML = this.generateEditorHTML(page, editorId);
+    editorContainer.innerHTML = this.generateEditorHTML(
+      page,
+      editorId,
+      linkLabel
+    );
     this.configureEditorContainer(editorContainer, containerId, page.PageId);
 
     return { editorId, containerId };
   }
 
-  generateEditorHTML(page, editorId) {
+  generateEditorHTML(page, editorId, linkLabel) {
+    let pageTitle = "";
+    if (page.PageIsWebLinkPage) {
+      pageTitle = linkLabel;
+    } else {
+      pageTitle = page.PageName;
+    }
     const appBar = this.shouldShowAppBar(page)
-      ? this.createContentPageAppBar(page.PageName, page.PageId)
+      ? this.createContentPageAppBar(pageTitle, page.PageId)
       : this.createHomePageAppBar();
 
     return `
@@ -147,7 +147,9 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 class="title" style="text-transform: uppercase;">${pageName.length > 20 ? pageName.substring(0, 20) + "..." : pageName}</h1>
+          <h1 class="title" title=${pageName} style="text-transform: uppercase;">${
+      pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
+    }</h1>
       </div>
     `;
   }
@@ -206,7 +208,9 @@ class EditorManager {
   }
 
   async loadEditorContent(editor, page, linkUrl) {
-    if (page.PageGJSJson) {
+    editor.DomComponents.clear();
+    if (page.PageGJSJson && !page.PageIsWebLinkPage) {
+      console.log("page", page);
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
@@ -502,133 +506,143 @@ class EditorManager {
   }
 
   async loadWebLinkContent(editor, linkUrl) {
-    console.log("Loading web link content:", linkUrl);
     try {
       editor.DomComponents.clear();
-      editor.DomComponents.addType("iframe", {
+  
+      // Define custom 'object' component
+      editor.DomComponents.addType("object", {
+        isComponent: el => el.tagName === 'OBJECT',
+        
         model: {
           defaults: {
-            tagName: "iframe",
-            void: true,
-            draggable: false,
-            selectable: false,
+            tagName: 'object',
+            draggable: true,
+            droppable: false,
             attributes: {
-              frameborder: "0",
-              seamless: "seamless",
-              loading: "lazy",
-              sandbox: "allow-scripts allow-same-origin",
-              src: `${linkUrl}`,
+              width: '100%',
+              height: '300vh'
             },
-            // Define styles separately from attributes
-            style: {
-              width: "100%",
-              height: "300vh",
-              border: "none",
-              overflow: "hidden",
-              "-ms-overflow-style": "none",
-              "scrollbar-width": "none",
-            },
-          },
-
-          init() {
-            this.set("tagName", "iframe");
-
-            // Ensure src is set in attributes if not already present
-            const attrs = this.getAttributes();
-            if (!attrs.src) {
-              this.set("attributes", {
-                ...attrs,
-                src: this.defaults.attributes.src,
-              });
-            }
-          },
-
-          isValidUrl(url) {
-            try {
-              new URL(url);
-              return true;
-            } catch {
-              return false;
-            }
-          },
-        },
-
-        view: {
-          tagName: "iframe",
-
-          events: {
-            load: "onLoad",
-            error: "onError",
-          },
-
-          init() {
-            try {
-              this.listenTo(
-                this.model,
-                "change:attributes",
-                this.updateAttributes
-              );
-            } catch (error) {
-              console.error("Error initializing iframe view:", error);
-            }
-          },
-
-          onLoad() {
-            console.log("IFrame loaded successfully");
-          },
-
-          onError() {
-            console.error("Error loading iframe content");
-          },
-
-          updateAttributes() {
-            try {
-              const attributes = this.model.getAttributes();
-              Object.entries(attributes).forEach(([key, value]) => {
-                if (key !== "style") {
-                  this.el.setAttribute(key, value);
-                }
-              });
-            } catch (error) {
-              console.error("Error updating iframe attributes:", error);
-            }
-          },
-
-          render() {
-            try {
-              // Set all attributes except style
-              const attributes = this.model.getAttributes();
-              Object.entries(attributes).forEach(([key, value]) => {
-                if (key !== "style") {
-                  this.el.setAttribute(key, value);
-                }
-              });
-
-              // Apply styles correctly
-              const styles = this.model.get("style");
-              if (styles) {
-                Object.entries(styles).forEach(([prop, value]) => {
-                  this.el.style[prop] = value;
-                });
+            styles: `
+              .form-frame-container {
+                overflow-x: hidden;
+                overflow-y: auto;
+                position: relative;
+                min-height: 300px;
               }
-
-              return this;
-            } catch (error) {
-              console.error("Error rendering iframe:", error);
-              return this;
-            }
-          },
+  
+              /* Preloader styles */
+              .preloader-wrapper {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+              }
+  
+              .preloader {
+                width: 32px;
+                height: 32px;
+                background-image: url('/Resources/UCGrapes1/src/images/spinner.gif');
+                background-size: contain;
+                background-repeat: no-repeat;
+              }
+  
+              /* Custom scrollbar styles */
+              .form-frame-container::-webkit-scrollbar {
+                width: 6px;
+                height: 0;
+              }
+  
+              .form-frame-container::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+              }
+  
+              .form-frame-container::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 3px;
+              }
+  
+              .form-frame-container::-webkit-scrollbar-thumb:hover {
+                background: #555;
+              }
+  
+              /* Firefox scrollbar styles */
+              .form-frame-container {
+                scrollbar-width: thin;
+                scrollbar-color: #888 #f1f1f1;
+              }
+              .fallback-message {
+                margin-bottom: 10px;
+                color: #666;
+              }
+            `
+          }
         },
+  
+        view: {
+          onRender({ el, model }) {
+            const fallbackMessage = model.get('attributes').fallbackMessage || 'Content cannot be displayed';
+            
+            const fallbackContent = `
+              <div class="fallback-content">
+                <p class="fallback-message">${fallbackMessage}</p>
+                <a href="${model.get('attributes').data}" 
+                   target="_blank" 
+                   class="fallback-link">
+                  Open in New Window
+                </a>
+              </div>
+            `;
+  
+            el.insertAdjacentHTML('beforeend', fallbackContent);
+  
+            el.addEventListener('load', () => {
+              // Hide preloader and fallback on successful load
+              const container = el.closest('.form-frame-container');
+              const preloaderWrapper = container.querySelector('.preloader-wrapper');
+              if (preloaderWrapper) preloaderWrapper.style.display = 'none';
+              
+              const fallback = el.querySelector('.fallback-content');
+              if (fallback) {}fallback.style.display = 'none';
+              console.log('Object content loaded');
+            });
+  
+            el.addEventListener('error', (e) => {
+              // Hide preloader and show fallback on error
+              const container = el.closest('.form-frame-container');
+              const preloaderWrapper = container.querySelector('.preloader-wrapper');
+              if (preloaderWrapper) preloaderWrapper.style.display = 'none';
+              
+              const fallback = el.querySelector('.fallback-content');
+              if (fallback) {
+                fallback.style.display = 'flex';
+                fallback.style.flexDirection = 'column';
+                fallback.style.justifyContent = 'start';
+              }
+              console.error('Error loading object content:', e);
+            });
+          }
+        }
       });
-
-      // Add the component to the editor
+  
+      // Add the component to the editor with preloader in a wrapper
       editor.setComponents(`
-        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
-          <iframe ${defaultConstraints}></iframe>
+        <div class="form-frame-container" id="frame-container">
+          <div class="preloader-wrapper">
+            <div class="preloader"></div>
+          </div>
+          <object 
+            data="${linkUrl}"
+            type="text/html"
+            width="100%"
+            height="800px"
+            fallbackMessage="Unable to load the content. Please try opening it in a new window.">
+          </object>
         </div>
       `);
     } catch (error) {
-      console.error("Error setting up iframe component:", error.message);
+      console.error("Error setting up object component:", error.message);
     }
   }
 
@@ -712,10 +726,5 @@ class EditorManager {
 
   setToolsSection(toolBox) {
     this.toolsSection = toolBox;
-  }
-
-  displayDynamicForm(formId, referenceName) {
-    const editor = this.initializeGrapesEditor(`gjs-${formId}`);
-    console.log(editor);
   }
 }

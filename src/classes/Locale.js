@@ -183,7 +183,7 @@ class Locale {
       }
     
       option.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevent the document click handler from being triggered
+        e.stopPropagation(); 
         selectedValue.textContent = this.getTranslation(opt.label);
     
         // Mark as selected

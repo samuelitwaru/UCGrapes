@@ -601,6 +601,7 @@ class TemplateManager {
     const titleSections = containerRow.find(".tile-title-section");
 
     titles.forEach((title) => {
+      console.log("Title: ", title.getEl());
       title.addStyle(config.title);
 
       if (templates.length === 3) {

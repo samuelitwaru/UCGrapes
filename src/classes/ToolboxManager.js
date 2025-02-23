@@ -82,8 +82,8 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      if (e.target.value.length > 10) {
-        e.target.value = truncateText(e.target.value, 12);
+      if (e.target.value.length > 30) {
+        e.target.value = truncateText(e.target.value, 35);
       }
       this.ui.updateTileTitle(e.target.value);
     });

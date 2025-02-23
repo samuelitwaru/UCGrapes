@@ -88,10 +88,17 @@ class EditorEventManager {
   handleTileActionClick(e, editorContainerId) {
     const pageId = e.target.attributes["tile-action-object-id"]?.value;
     const pageUrl = e.target.attributes["tile-action-object-url"]?.value;
+    const pageLinkLabel = e.target.attributes["tile-action-object"]?.value;
+    
+    let linkLabel = ""
+    if (pageLinkLabel) {
+      linkLabel = pageLinkLabel.replace("Web Link, ", "");
+    }
+    
     const page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
     if (page) {
-      this.editorManager.createChildEditor(page, pageUrl);
+      this.editorManager.createChildEditor(page, pageUrl, linkLabel);
     }
   }
 
@@ -165,7 +172,7 @@ class EditorEventManager {
       const tileLabel =
         this.editorManager.selectedTemplateWrapper.querySelector(".tile-title");
       if (tileLabel) {
-        sidebarInputTitle.value = tileLabel.textContent;
+        sidebarInputTitle.value = tileLabel.title;
       }
 
       this.templateManager.removeElementOnClick(

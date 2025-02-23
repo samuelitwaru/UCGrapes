@@ -4547,7 +4547,9 @@ class ActionListComponent {
         })
       );
 
-      this.dynamicForms = (this.dataManager.forms || []).map((form) => ({
+    this.dynamicForms = this.dataManager.forms.map((form) => {
+      console.log('form', form)
+      return {
         PageId: form.FormId,
         PageName: form.ReferenceName,
         PageTileName: form.ReferenceName,

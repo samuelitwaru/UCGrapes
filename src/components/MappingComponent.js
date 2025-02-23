@@ -127,7 +127,6 @@ class MappingComponent {
           return;
         }
 
-        console.log(res);
         const newTree = this.createTree(res.SDT_PageStructureCollection, true);
         this.clearMappings();
         this.treeContainer.appendChild(newTree);

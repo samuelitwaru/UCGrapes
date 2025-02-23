@@ -420,7 +420,6 @@ class TemplateManager {
     const currentEditor = this.editorManager.currentEditor;
 
     const page = this.editorManager.getPage(currentEditor.pageId);
-    console.log(page);
     if (
       page &&
       (page.PageIsContentPage ||
@@ -601,21 +600,30 @@ class TemplateManager {
     const titleSections = containerRow.find(".tile-title-section");
 
     titles.forEach((title) => {
-      console.log("Title: ", title.getEl());
       title.addStyle(config.title);
-
+    
+      let tileTitle = title.getEl().getAttribute("title") || title.getEl().innerText; // Get title safely
+      let words = tileTitle.split(" "); 
+    
+      words = words.map(word => word.length > 6 ? word.substring(0, 6) : word);
+    
       if (templates.length === 3) {
-        let words = title.getEl().innerText.split(" ");
-        if (words.length > 1) {
-          const newContent =
-            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
-          title.components(newContent);
-        }
+        tileTitle = words.slice(0, 2).join(" ").substring(0, 13).trim();
       } else {
-        const newContent = title.getEl().innerText.replace("<br>", "");
-        title.components(newContent);
+        tileTitle = tileTitle.replace(/<br>/g, ""); // Remove <br>
       }
+    
+      if (templates.length === 2) {
+        tileTitle = truncateText(tileTitle, 13);
+      }
+    
+      if (templates.length === 1) {
+        tileTitle = truncateText(tileTitle, 24);
+      }    
+
+      title.components(tileTitle);
     });
+    
 
     templateBlocks.forEach((template) => {
       const isPriority = template

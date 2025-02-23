@@ -674,7 +674,6 @@ class EditorManager {
   async loadEditorContent(editor, page, linkUrl) {
     editor.DomComponents.clear();
     if (page.PageGJSJson && !page.PageIsWebLinkPage) {
-      console.log("page", page);
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
@@ -801,10 +800,8 @@ class EditorManager {
     const wrapper = editor.DomComponents.getWrapper();
     const ctaContainer = wrapper.find(".cta-button-container")[0];
     if (ctaContainer) {
-      console.log("ctaContainer: ", ctaContainer);
       const ctaButtons = ctaContainer.findType("cta-buttons");
       if (ctaButtons.length > 0) {
-        console.log("contentPageData: ", ctaButtons);
         ctaButtons.forEach((ctaButton) => {
           const ctaButtonId = ctaButton.getAttributes()?.["cta-button-id"];
           // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton
@@ -972,19 +969,19 @@ class EditorManager {
   async loadWebLinkContent(editor, linkUrl) {
     try {
       editor.DomComponents.clear();
-  
+
       // Define custom 'object' component
       editor.DomComponents.addType("object", {
-        isComponent: el => el.tagName === 'OBJECT',
-        
+        isComponent: (el) => el.tagName === "OBJECT",
+
         model: {
           defaults: {
-            tagName: 'object',
+            tagName: "object",
             draggable: true,
             droppable: false,
             attributes: {
-              width: '100%',
-              height: '300vh'
+              width: "100%",
+              height: "300vh",
             },
             styles: `
               .form-frame-container {
@@ -1040,56 +1037,62 @@ class EditorManager {
                 margin-bottom: 10px;
                 color: #666;
               }
-            `
-          }
+            `,
+          },
         },
-  
+
         view: {
           onRender({ el, model }) {
-            const fallbackMessage = model.get('attributes').fallbackMessage || 'Content cannot be displayed';
-            
+            const fallbackMessage =
+              model.get("attributes").fallbackMessage ||
+              "Content cannot be displayed";
+
             const fallbackContent = `
               <div class="fallback-content">
                 <p class="fallback-message">${fallbackMessage}</p>
-                <a href="${model.get('attributes').data}" 
+                <a href="${model.get("attributes").data}" 
                    target="_blank" 
                    class="fallback-link">
                   Open in New Window
                 </a>
               </div>
             `;
-  
-            el.insertAdjacentHTML('beforeend', fallbackContent);
-  
-            el.addEventListener('load', () => {
+
+            el.insertAdjacentHTML("beforeend", fallbackContent);
+
+            el.addEventListener("load", () => {
               // Hide preloader and fallback on successful load
-              const container = el.closest('.form-frame-container');
-              const preloaderWrapper = container.querySelector('.preloader-wrapper');
-              if (preloaderWrapper) preloaderWrapper.style.display = 'none';
-              
-              const fallback = el.querySelector('.fallback-content');
-              if (fallback) {}fallback.style.display = 'none';
-              console.log('Object content loaded');
-            });
-  
-            el.addEventListener('error', (e) => {
-              // Hide preloader and show fallback on error
-              const container = el.closest('.form-frame-container');
-              const preloaderWrapper = container.querySelector('.preloader-wrapper');
-              if (preloaderWrapper) preloaderWrapper.style.display = 'none';
-              
-              const fallback = el.querySelector('.fallback-content');
+              const container = el.closest(".form-frame-container");
+              const preloaderWrapper =
+                container.querySelector(".preloader-wrapper");
+              if (preloaderWrapper) preloaderWrapper.style.display = "none";
+
+              const fallback = el.querySelector(".fallback-content");
               if (fallback) {
-                fallback.style.display = 'flex';
-                fallback.style.flexDirection = 'column';
-                fallback.style.justifyContent = 'start';
               }
-              console.error('Error loading object content:', e);
+              fallback.style.display = "none";
+              console.log("Object content loaded");
             });
-          }
-        }
+
+            el.addEventListener("error", (e) => {
+              // Hide preloader and show fallback on error
+              const container = el.closest(".form-frame-container");
+              const preloaderWrapper =
+                container.querySelector(".preloader-wrapper");
+              if (preloaderWrapper) preloaderWrapper.style.display = "none";
+
+              const fallback = el.querySelector(".fallback-content");
+              if (fallback) {
+                fallback.style.display = "flex";
+                fallback.style.flexDirection = "column";
+                fallback.style.justifyContent = "start";
+              }
+              console.error("Error loading object content:", e);
+            });
+          },
+        },
       });
-  
+
       // Add the component to the editor with preloader in a wrapper
       editor.setComponents(`
         <div class="form-frame-container" id="frame-container">
@@ -1130,8 +1133,17 @@ class EditorManager {
     if (page.PageName === "Home") {
       this.setCurrentEditor(`#${editorDetails.editorId}`);
     }
-
     const wrapper = editor.getWrapper();
+
+    // add title attribute to tile-title component
+    const titles = wrapper.find(".tile-title");
+    titles.forEach((title) => {
+      if (!title.getAttributes()?.["title"]) {
+        // Set the title attribute if it doesn't exist
+        title.addAttributes({"title": title.getEl().textContent});
+      }
+    });
+
     wrapper.set({
       selectable: false,
       droppable: false,
@@ -1206,8 +1218,6 @@ class EditorEventManager {
     this.editorOnDragDrop(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
-    this.editorOnUpdate(editor, page);
-    // this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -1286,12 +1296,12 @@ class EditorEventManager {
     const pageId = e.target.attributes["tile-action-object-id"]?.value;
     const pageUrl = e.target.attributes["tile-action-object-url"]?.value;
     const pageLinkLabel = e.target.attributes["tile-action-object"]?.value;
-    
-    let linkLabel = ""
+
+    let linkLabel = "";
     if (pageLinkLabel) {
       linkLabel = pageLinkLabel.replace("Web Link, ", "");
     }
-    
+
     const page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
     if (page) {
@@ -1323,9 +1333,23 @@ class EditorEventManager {
     );
   }
 
-  editorOnUpdate(editor, page) {
-    editor.on("update", () => {
-      this.editorManager.updatePageJSONContent(editor, page);
+  editorOnUpdate(editor) {
+    editor.on("component:update", (updatedComponent) => {
+      const templateRow = updatedComponent.getEl().closest(".container-row");
+      if (templateRow) {
+        const templateRowId = templateRow.getAttribute("id");
+
+        const wrapper = editor.getWrapper();
+        const component = wrapper.find(`#${templateRowId}`)[0];
+        
+        if (component) {
+          this.templateManager.updateRightButtons(component);
+        } else {
+          console.log("Component corresponding to container-row not found");
+        }
+      } else {
+        console.log("No container-row found");
+      }
     });
   }
 
@@ -1938,7 +1962,6 @@ class TemplateManager {
     const currentEditor = this.editorManager.currentEditor;
 
     const page = this.editorManager.getPage(currentEditor.pageId);
-    console.log(page);
     if (
       page &&
       (page.PageIsContentPage ||
@@ -2119,21 +2142,30 @@ class TemplateManager {
     const titleSections = containerRow.find(".tile-title-section");
 
     titles.forEach((title) => {
-      console.log("Title: ", title.getEl());
       title.addStyle(config.title);
-
+    
+      let tileTitle = title.getEl().getAttribute("title") || title.getEl().innerText; // Get title safely
+      let words = tileTitle.split(" "); 
+    
+      words = words.map(word => word.length > 6 ? word.substring(0, 6) : word);
+    
       if (templates.length === 3) {
-        let words = title.getEl().innerText.split(" ");
-        if (words.length > 1) {
-          const newContent =
-            words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
-          title.components(newContent);
-        }
+        tileTitle = words.slice(0, 2).join(" ").substring(0, 13).trim();
       } else {
-        const newContent = title.getEl().innerText.replace("<br>", "");
-        title.components(newContent);
+        tileTitle = tileTitle.replace(/<br>/g, ""); // Remove <br>
       }
+    
+      if (templates.length === 2) {
+        tileTitle = truncateText(tileTitle, 13);
+      }
+    
+      if (templates.length === 1) {
+        tileTitle = truncateText(tileTitle, 24);
+      }    
+
+      title.components(tileTitle);
     });
+    
 
     templateBlocks.forEach((template) => {
       const isPriority = template
@@ -2397,8 +2429,6 @@ class ToolBoxManager {
     const editors = Object.values(this.editorManager.editors);
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
-
-      console.log(pageDataList);
 
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
@@ -3583,8 +3613,6 @@ class ThemeManager {
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
-          console.log("Theme: ", theme);
-
           if (this.setTheme(theme.ThemeName)) {
             this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
             localStorage.setItem("selectedTheme", theme.ThemeName);
@@ -3736,10 +3764,13 @@ class ToolBoxUI {
       const titleComponent =
         this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
-        titleComponent.addAttributes({ "title": inputTitle });
-        titleComponent.components(truncateText(inputTitle, 15));
+        titleComponent.addAttributes({ title: inputTitle });
+        // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        this.manager.editorManager.getCurrentEditor().trigger("add");
+        this.manager.editorManager.editorEventManager.editorOnUpdate(
+          this.manager.editorManager.getCurrentEditor(),
+        );
+        
       }
     }
   }
@@ -3762,7 +3793,9 @@ class ToolBoxUI {
   alertMessage(message, status, alertId) {
     const alertBox = document.createElement("div");
     alertBox.id = alertId;
-    alertBox.classList = `tb-alert ${status == "success" ? "success" : "error"}`;
+    alertBox.classList = `tb-alert ${
+      status == "success" ? "success" : "error"
+    }`;
     alertBox.innerHTML = `
         <div class="tb-alert-header">
           <strong>
@@ -3817,9 +3850,7 @@ class ToolBoxUI {
 
   updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
-      selectComponent?.getAttributes()?.[
-        "cta-background-color"
-      ];
+      selectComponent?.getAttributes()?.["cta-background-color"];
     const CtaRadios = document.querySelectorAll(
       '#cta-color-palette input[type="radio"]'
     );
@@ -3841,15 +3872,12 @@ class ToolBoxUI {
 
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
-      selectComponent?.getAttributes()?.[
-        "tile-bg-image-opacity"
-      ];
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
 
     if (tileOpacity) {
       document.getElementById("bg-opacity").value = tileOpacity;
-      document.getElementById("valueDisplay").textContent = tileOpacity + ' %'
+      document.getElementById("valueDisplay").textContent = tileOpacity + " %";
     }
-    
   }
 
   updateAlignmentProperties(selectComponent) {
@@ -3859,10 +3887,7 @@ class ToolBoxUI {
     ];
 
     alignmentTypes.forEach(({ type, attribute }) => {
-      const currentAlign =
-        selectComponent?.getAttributes()?.[
-          attribute
-        ];
+      const currentAlign = selectComponent?.getAttributes()?.[attribute];
       ["left", "center", "right"].forEach((align) => {
         document.getElementById(`${type}-align-${align}`).checked =
           currentAlign === align;
@@ -3872,9 +3897,7 @@ class ToolBoxUI {
 
   updateColorProperties(selectComponent) {
     const currentTextColor =
-      selectComponent?.getAttributes()?.[
-        "tile-text-color"
-      ];
+      selectComponent?.getAttributes()?.["tile-text-color"];
     const textColorRadios = document.querySelectorAll(
       '.text-color-palette.text-colors .color-item input[type="radio"]'
     );
@@ -3886,9 +3909,7 @@ class ToolBoxUI {
 
     // Update icon color
     const currentIconColor =
-      selectComponent?.getAttributes()?.[
-        "tile-icon-color"
-      ];
+      selectComponent?.getAttributes()?.["tile-icon-color"];
     const iconColorRadios = document.querySelectorAll(
       '.text-color-palette.icon-colors .color-item input[type="radio"]'
     );
@@ -3899,10 +3920,7 @@ class ToolBoxUI {
     });
 
     // Update background color
-    const currentBgColor =
-      selectComponent?.getAttributes()?.[
-        "tile-bgcolor"
-      ];
+    const currentBgColor = selectComponent?.getAttributes()?.["tile-bgcolor"];
     const radios = document.querySelectorAll(
       '#theme-color-palette input[type="radio"]'
     );
@@ -3914,9 +3932,7 @@ class ToolBoxUI {
 
     // opacity
     const currentTileOpacity =
-      selectComponent?.getAttributes()?.[
-        "tile-bg-image-opacity"
-      ];
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
 
     const imageOpacity = document.getElementById("bg-opacity");
     imageOpacity.value = currentTileOpacity;
@@ -3924,13 +3940,9 @@ class ToolBoxUI {
 
   updateActionProperties(selectComponent) {
     const currentActionName =
-      selectComponent?.getAttributes()?.[
-        "tile-action-object"
-      ];
+      selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
-      selectComponent?.getAttributes()?.[
-        "tile-action-object-id"
-      ];
+      selectComponent?.getAttributes()?.["tile-action-object-id"];
     const propertySection = document.getElementById("selectedOption");
     const selectedOptionElement = document.getElementById(currentActionId);
 
@@ -3939,7 +3951,9 @@ class ToolBoxUI {
       option.style.background = "";
     });
     propertySection.innerHTML = `<span id="sidebar_select_action_label">
-                  ${this.currentLanguage.getTranslation("sidebar_select_action_label")}
+                  ${this.currentLanguage.getTranslation(
+                    "sidebar_select_action_label"
+                  )}
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
@@ -3959,7 +3973,7 @@ class ToolBoxUI {
       const contentPageCtas = document.getElementById("call-to-actions");
       document.getElementById("cta-style").style.display = "flex";
       document.getElementById("no-cta-message").style.display = "none";
-      
+
       this.renderCtas(callToActions, editorInstance, contentPageCtas);
       this.setupButtonLayoutListeners(editorInstance);
       this.setupBadgeClickListener(editorInstance);
@@ -4043,7 +4057,9 @@ class ToolBoxUI {
             }"
           cta-background-color="${ctaType.iconBgColor}"
           >
-            <div class="cta-button" ${defaultConstraints} style="background-color: ${backgroundColor || ctaType.iconBgColor};">
+            <div class="cta-button" ${defaultConstraints} style="background-color: ${
+      backgroundColor || ctaType.iconBgColor
+    };">
               <i class="${ctaType.icon}" ${defaultConstraints}></i>
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
@@ -4318,7 +4334,7 @@ class ToolBoxUI {
       }
 
       document.querySelector(".cta-button-layout-container").style.display =
-          "none";
+        "none";
     }
   }
 }
@@ -4348,12 +4364,8 @@ class UndoRedoManager {
     }
 
     captureState() {
-        console.log('Capturing state...');
         // Get current project data
         const currentState = this.editor.getProjectData();
-        console.log('former state: ', this.currentState);
-        console.log('current state: ', currentState);
-        console.log('Captured project data:', this.editor.getProjectData());
 
         // Prevent duplicate state captures
         if (this.areStatesEqual(currentState, this.currentState)) return;
@@ -4547,9 +4559,7 @@ class ActionListComponent {
         })
       );
 
-    this.dynamicForms = this.dataManager.forms.map((form) => {
-      console.log('form', form)
-      return {
+      this.dynamicForms = (this.dataManager.forms || []).map((form) => ({
         PageId: form.FormId,
         PageName: form.ReferenceName,
         PageTileName: form.ReferenceName,
@@ -4595,21 +4605,11 @@ class ActionListComponent {
 
   createModal(title, isWebLink = false) {
     const selectedTile = this.editorManager.getCurrentEditor().getSelected();
-    console.log(
-      "isWebLink",
-      isWebLink
-    );
     let label = selectedTile.getAttributes()?.["tile-action-object"];
     label = label.replace("Web Link, ", "");
 
     const url = selectedTile.getAttributes()?.["tile-action-object-url"];
 
-    console.log(
-      "label",
-      label,
-      "url",
-      url
-    );
     const fields = isWebLink
       ? [
           {
@@ -4785,7 +4785,8 @@ class ActionListComponent {
       if (editor.getSelected()) {
         const titleComponent = editor.getSelected().find(".tile-title")[0];
 
-        const tileTitle = truncateText(linkLabel, 12);
+        // const tileTitle = truncateText(linkLabel, 12);
+        tileTitle = linkLabel;
 
         const page = res.SDT_PageCollection.find(
           (page) => page.PageName === "Web Link"
@@ -4840,7 +4841,8 @@ class ActionListComponent {
       if (!selected) return;
 
       const titleComponent = selected.find(".tile-title")[0];
-      const tileTitle = this.truncateText(title, 12);
+      // const tileTitle = this.truncateText(title, 12);
+      const tileTitle = title;
       const editorId = editor.getConfig().container;
       const editorContainerId = `${editorId}-frame`;
       await this.dataManager
@@ -5119,7 +5121,6 @@ class ActionListComponent {
             const selected = editor.getSelected();
 
             if (selected && editorContainerId) {
-              console.log("selected");
               await this.handleItemSelection(item, category, editorContainerId);
             }
 
@@ -5139,7 +5140,8 @@ class ActionListComponent {
     try {
       const selected = this.editorManager.getCurrentEditor().getSelected();
       const titleComponent = selected.find(".tile-title")[0];
-      const tileTitle = this.truncateText(item.dataset.tileName, 12);
+      // const tileTitle = this.truncateText(item.dataset.tileName, 12);
+      const tileTitle = item.dataset.tileName;
 
       if (selected) {
         this.toolBoxManager.setAttributeToSelected(
@@ -5186,7 +5188,6 @@ class ActionListComponent {
   async handlePageCreation(category, itemId, editorContainerId, itemText) {
     try {
       $(editorContainerId).nextAll().remove();
-      console.log("editorContainerId");
       switch (category) {
         case "Service/Product Page":
           await this.createContentPage(itemId, editorContainerId);
@@ -5396,7 +5397,6 @@ class MappingComponent {
           return;
         }
 
-        console.log(res);
         const newTree = this.createTree(res.SDT_PageStructureCollection, true);
         this.clearMappings();
         this.treeContainer.appendChild(newTree);
@@ -6291,7 +6291,6 @@ class MediaComponent {
 
       if (this.selectedFile?.MediaUrl) {
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
-        console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({
           "background-image": `url(${safeMediaUrl})`,
           "background-size": "cover",
@@ -6670,4 +6669,49 @@ function truncateText(text, length) {
   return text;
 }
 
+function processTileTitles(projectData) {
+  // Helper function to recursively process components
+  function processComponent(component) {
+    // Check if this is an array of components
+    if (Array.isArray(component)) {
+      component.forEach(processComponent);
+      return;
+    }
+    
+    // If not an object or doesn't have components, return
+    if (!component || typeof component !== 'object') {
+      return;
+    }
+
+    // Check if this is a tile-title component
+    if (component.classes && component.classes.includes('tile-title')) {
+      // Check if title attribute exists
+      if (!component.attributes || !component.attributes.title) {
+        // Find the content in the components array
+        const textNode = component.components?.find(comp => comp.type === 'textnode');
+        if (textNode && textNode.content) {
+          // Create attributes object if it doesn't exist
+          if (!component.attributes) {
+            component.attributes = {};
+          }
+          // Add the content as title attribute
+          component.attributes.title = textNode.content;
+        }
+      }
+    }
+
+    // Recursively process nested components
+    if (component.components) {
+      processComponent(component.components);
+    }
+  }
+
+  // Create a deep copy of the project data to avoid modifying the original
+  const updatedData = JSON.parse(JSON.stringify(projectData));
+  
+  // Process the entire project data
+  processComponent(updatedData);
+  
+  return updatedData;
+}
 

@@ -210,7 +210,6 @@ class EditorManager {
   async loadEditorContent(editor, page, linkUrl) {
     editor.DomComponents.clear();
     if (page.PageGJSJson && !page.PageIsWebLinkPage) {
-      console.log("page", page);
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
@@ -337,10 +336,8 @@ class EditorManager {
     const wrapper = editor.DomComponents.getWrapper();
     const ctaContainer = wrapper.find(".cta-button-container")[0];
     if (ctaContainer) {
-      console.log("ctaContainer: ", ctaContainer);
       const ctaButtons = ctaContainer.findType("cta-buttons");
       if (ctaButtons.length > 0) {
-        console.log("contentPageData: ", ctaButtons);
         ctaButtons.forEach((ctaButton) => {
           const ctaButtonId = ctaButton.getAttributes()?.["cta-button-id"];
           // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton
@@ -508,19 +505,19 @@ class EditorManager {
   async loadWebLinkContent(editor, linkUrl) {
     try {
       editor.DomComponents.clear();
-  
+
       // Define custom 'object' component
       editor.DomComponents.addType("object", {
-        isComponent: el => el.tagName === 'OBJECT',
-        
+        isComponent: (el) => el.tagName === "OBJECT",
+
         model: {
           defaults: {
-            tagName: 'object',
+            tagName: "object",
             draggable: true,
             droppable: false,
             attributes: {
-              width: '100%',
-              height: '300vh'
+              width: "100%",
+              height: "300vh",
             },
             styles: `
               .form-frame-container {
@@ -576,56 +573,62 @@ class EditorManager {
                 margin-bottom: 10px;
                 color: #666;
               }
-            `
-          }
+            `,
+          },
         },
-  
+
         view: {
           onRender({ el, model }) {
-            const fallbackMessage = model.get('attributes').fallbackMessage || 'Content cannot be displayed';
-            
+            const fallbackMessage =
+              model.get("attributes").fallbackMessage ||
+              "Content cannot be displayed";
+
             const fallbackContent = `
               <div class="fallback-content">
                 <p class="fallback-message">${fallbackMessage}</p>
-                <a href="${model.get('attributes').data}" 
+                <a href="${model.get("attributes").data}" 
                    target="_blank" 
                    class="fallback-link">
                   Open in New Window
                 </a>
               </div>
             `;
-  
-            el.insertAdjacentHTML('beforeend', fallbackContent);
-  
-            el.addEventListener('load', () => {
+
+            el.insertAdjacentHTML("beforeend", fallbackContent);
+
+            el.addEventListener("load", () => {
               // Hide preloader and fallback on successful load
-              const container = el.closest('.form-frame-container');
-              const preloaderWrapper = container.querySelector('.preloader-wrapper');
-              if (preloaderWrapper) preloaderWrapper.style.display = 'none';
-              
-              const fallback = el.querySelector('.fallback-content');
-              if (fallback) {}fallback.style.display = 'none';
-              console.log('Object content loaded');
-            });
-  
-            el.addEventListener('error', (e) => {
-              // Hide preloader and show fallback on error
-              const container = el.closest('.form-frame-container');
-              const preloaderWrapper = container.querySelector('.preloader-wrapper');
-              if (preloaderWrapper) preloaderWrapper.style.display = 'none';
-              
-              const fallback = el.querySelector('.fallback-content');
+              const container = el.closest(".form-frame-container");
+              const preloaderWrapper =
+                container.querySelector(".preloader-wrapper");
+              if (preloaderWrapper) preloaderWrapper.style.display = "none";
+
+              const fallback = el.querySelector(".fallback-content");
               if (fallback) {
-                fallback.style.display = 'flex';
-                fallback.style.flexDirection = 'column';
-                fallback.style.justifyContent = 'start';
               }
-              console.error('Error loading object content:', e);
+              fallback.style.display = "none";
+              console.log("Object content loaded");
             });
-          }
-        }
+
+            el.addEventListener("error", (e) => {
+              // Hide preloader and show fallback on error
+              const container = el.closest(".form-frame-container");
+              const preloaderWrapper =
+                container.querySelector(".preloader-wrapper");
+              if (preloaderWrapper) preloaderWrapper.style.display = "none";
+
+              const fallback = el.querySelector(".fallback-content");
+              if (fallback) {
+                fallback.style.display = "flex";
+                fallback.style.flexDirection = "column";
+                fallback.style.justifyContent = "start";
+              }
+              console.error("Error loading object content:", e);
+            });
+          },
+        },
       });
-  
+
       // Add the component to the editor with preloader in a wrapper
       editor.setComponents(`
         <div class="form-frame-container" id="frame-container">
@@ -666,8 +669,17 @@ class EditorManager {
     if (page.PageName === "Home") {
       this.setCurrentEditor(`#${editorDetails.editorId}`);
     }
-
     const wrapper = editor.getWrapper();
+
+    // add title attribute to tile-title component
+    const titles = wrapper.find(".tile-title");
+    titles.forEach((title) => {
+      if (!title.getAttributes()?.["title"]) {
+        // Set the title attribute if it doesn't exist
+        title.addAttributes({"title": title.getEl().textContent});
+      }
+    });
+
     wrapper.set({
       selectable: false,
       droppable: false,

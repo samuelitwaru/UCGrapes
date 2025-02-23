@@ -515,8 +515,6 @@ class ThemeManager {
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
-          console.log("Theme: ", theme);
-
           if (this.setTheme(theme.ThemeName)) {
             this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
             localStorage.setItem("selectedTheme", theme.ThemeName);

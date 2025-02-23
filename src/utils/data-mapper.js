@@ -1,5 +1,4 @@
 function mapTemplateToPageData(templateData, page) {
-  console.log("Publishing page: ", page.PageName);
   // Create the base page structure
   const pageData = {
       PageId: page.PageId,
@@ -101,7 +100,6 @@ function mapTemplateToPageData(templateData, page) {
 }
 
 function mapContentToPageData(templateData, page) {
-  console.log("Publishing page: ", page.PageName);
   const pages = templateData.pages;
   const output = {
       PageId: page.PageId,

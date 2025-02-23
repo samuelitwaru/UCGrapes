@@ -127,21 +127,11 @@ class ActionListComponent {
 
   createModal(title, isWebLink = false) {
     const selectedTile = this.editorManager.getCurrentEditor().getSelected();
-    console.log(
-      "isWebLink",
-      isWebLink
-    );
     let label = selectedTile.getAttributes()?.["tile-action-object"];
     label = label.replace("Web Link, ", "");
 
     const url = selectedTile.getAttributes()?.["tile-action-object-url"];
 
-    console.log(
-      "label",
-      label,
-      "url",
-      url
-    );
     const fields = isWebLink
       ? [
           {
@@ -317,7 +307,8 @@ class ActionListComponent {
       if (editor.getSelected()) {
         const titleComponent = editor.getSelected().find(".tile-title")[0];
 
-        const tileTitle = truncateText(linkLabel, 12);
+        // const tileTitle = truncateText(linkLabel, 12);
+        tileTitle = linkLabel;
 
         const page = res.SDT_PageCollection.find(
           (page) => page.PageName === "Web Link"
@@ -372,7 +363,8 @@ class ActionListComponent {
       if (!selected) return;
 
       const titleComponent = selected.find(".tile-title")[0];
-      const tileTitle = this.truncateText(title, 12);
+      // const tileTitle = this.truncateText(title, 12);
+      const tileTitle = title;
       const editorId = editor.getConfig().container;
       const editorContainerId = `${editorId}-frame`;
       await this.dataManager
@@ -651,7 +643,6 @@ class ActionListComponent {
             const selected = editor.getSelected();
 
             if (selected && editorContainerId) {
-              console.log("selected");
               await this.handleItemSelection(item, category, editorContainerId);
             }
 
@@ -671,7 +662,8 @@ class ActionListComponent {
     try {
       const selected = this.editorManager.getCurrentEditor().getSelected();
       const titleComponent = selected.find(".tile-title")[0];
-      const tileTitle = this.truncateText(item.dataset.tileName, 12);
+      // const tileTitle = this.truncateText(item.dataset.tileName, 12);
+      const tileTitle = item.dataset.tileName;
 
       if (selected) {
         this.toolBoxManager.setAttributeToSelected(
@@ -718,7 +710,6 @@ class ActionListComponent {
   async handlePageCreation(category, itemId, editorContainerId, itemText) {
     try {
       $(editorContainerId).nextAll().remove();
-      console.log("editorContainerId");
       switch (category) {
         case "Service/Product Page":
           await this.createContentPage(itemId, editorContainerId);

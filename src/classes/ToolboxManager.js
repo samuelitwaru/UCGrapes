@@ -94,8 +94,6 @@ class ToolBoxManager {
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
 
-      console.log(pageDataList);
-
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
       }

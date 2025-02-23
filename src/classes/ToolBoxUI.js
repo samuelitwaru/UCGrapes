@@ -9,10 +9,13 @@ class ToolBoxUI {
       const titleComponent =
         this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
-        titleComponent.addAttributes({ "title": inputTitle });
-        titleComponent.components(truncateText(inputTitle, 15));
+        titleComponent.addAttributes({ title: inputTitle });
+        // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        this.manager.editorManager.getCurrentEditor().trigger("add");
+        this.manager.editorManager.editorEventManager.editorOnUpdate(
+          this.manager.editorManager.getCurrentEditor(),
+        );
+        
       }
     }
   }
@@ -35,7 +38,9 @@ class ToolBoxUI {
   alertMessage(message, status, alertId) {
     const alertBox = document.createElement("div");
     alertBox.id = alertId;
-    alertBox.classList = `tb-alert ${status == "success" ? "success" : "error"}`;
+    alertBox.classList = `tb-alert ${
+      status == "success" ? "success" : "error"
+    }`;
     alertBox.innerHTML = `
         <div class="tb-alert-header">
           <strong>
@@ -90,9 +95,7 @@ class ToolBoxUI {
 
   updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
-      selectComponent?.getAttributes()?.[
-        "cta-background-color"
-      ];
+      selectComponent?.getAttributes()?.["cta-background-color"];
     const CtaRadios = document.querySelectorAll(
       '#cta-color-palette input[type="radio"]'
     );
@@ -114,15 +117,12 @@ class ToolBoxUI {
 
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
-      selectComponent?.getAttributes()?.[
-        "tile-bg-image-opacity"
-      ];
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
 
     if (tileOpacity) {
       document.getElementById("bg-opacity").value = tileOpacity;
-      document.getElementById("valueDisplay").textContent = tileOpacity + ' %'
+      document.getElementById("valueDisplay").textContent = tileOpacity + " %";
     }
-    
   }
 
   updateAlignmentProperties(selectComponent) {
@@ -132,10 +132,7 @@ class ToolBoxUI {
     ];
 
     alignmentTypes.forEach(({ type, attribute }) => {
-      const currentAlign =
-        selectComponent?.getAttributes()?.[
-          attribute
-        ];
+      const currentAlign = selectComponent?.getAttributes()?.[attribute];
       ["left", "center", "right"].forEach((align) => {
         document.getElementById(`${type}-align-${align}`).checked =
           currentAlign === align;
@@ -145,9 +142,7 @@ class ToolBoxUI {
 
   updateColorProperties(selectComponent) {
     const currentTextColor =
-      selectComponent?.getAttributes()?.[
-        "tile-text-color"
-      ];
+      selectComponent?.getAttributes()?.["tile-text-color"];
     const textColorRadios = document.querySelectorAll(
       '.text-color-palette.text-colors .color-item input[type="radio"]'
     );
@@ -159,9 +154,7 @@ class ToolBoxUI {
 
     // Update icon color
     const currentIconColor =
-      selectComponent?.getAttributes()?.[
-        "tile-icon-color"
-      ];
+      selectComponent?.getAttributes()?.["tile-icon-color"];
     const iconColorRadios = document.querySelectorAll(
       '.text-color-palette.icon-colors .color-item input[type="radio"]'
     );
@@ -172,10 +165,7 @@ class ToolBoxUI {
     });
 
     // Update background color
-    const currentBgColor =
-      selectComponent?.getAttributes()?.[
-        "tile-bgcolor"
-      ];
+    const currentBgColor = selectComponent?.getAttributes()?.["tile-bgcolor"];
     const radios = document.querySelectorAll(
       '#theme-color-palette input[type="radio"]'
     );
@@ -187,9 +177,7 @@ class ToolBoxUI {
 
     // opacity
     const currentTileOpacity =
-      selectComponent?.getAttributes()?.[
-        "tile-bg-image-opacity"
-      ];
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
 
     const imageOpacity = document.getElementById("bg-opacity");
     imageOpacity.value = currentTileOpacity;
@@ -197,13 +185,9 @@ class ToolBoxUI {
 
   updateActionProperties(selectComponent) {
     const currentActionName =
-      selectComponent?.getAttributes()?.[
-        "tile-action-object"
-      ];
+      selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
-      selectComponent?.getAttributes()?.[
-        "tile-action-object-id"
-      ];
+      selectComponent?.getAttributes()?.["tile-action-object-id"];
     const propertySection = document.getElementById("selectedOption");
     const selectedOptionElement = document.getElementById(currentActionId);
 
@@ -212,7 +196,9 @@ class ToolBoxUI {
       option.style.background = "";
     });
     propertySection.innerHTML = `<span id="sidebar_select_action_label">
-                  ${this.currentLanguage.getTranslation("sidebar_select_action_label")}
+                  ${this.currentLanguage.getTranslation(
+                    "sidebar_select_action_label"
+                  )}
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
@@ -232,7 +218,7 @@ class ToolBoxUI {
       const contentPageCtas = document.getElementById("call-to-actions");
       document.getElementById("cta-style").style.display = "flex";
       document.getElementById("no-cta-message").style.display = "none";
-      
+
       this.renderCtas(callToActions, editorInstance, contentPageCtas);
       this.setupButtonLayoutListeners(editorInstance);
       this.setupBadgeClickListener(editorInstance);
@@ -316,7 +302,9 @@ class ToolBoxUI {
             }"
           cta-background-color="${ctaType.iconBgColor}"
           >
-            <div class="cta-button" ${defaultConstraints} style="background-color: ${backgroundColor || ctaType.iconBgColor};">
+            <div class="cta-button" ${defaultConstraints} style="background-color: ${
+      backgroundColor || ctaType.iconBgColor
+    };">
               <i class="${ctaType.icon}" ${defaultConstraints}></i>
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
@@ -591,7 +579,7 @@ class ToolBoxUI {
       }
 
       document.querySelector(".cta-button-layout-container").style.display =
-          "none";
+        "none";
     }
   }
 }

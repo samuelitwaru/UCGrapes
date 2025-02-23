@@ -206,6 +206,7 @@
                             "type": "tile-wrapper",
                             "droppable": false,
                             "selectable": false,
+                            "draggable": false,
                             "classes": ["template-wrapper"],
                             "attributes": { "id": "is1l" },
                             "_undoexc": ["status", "open"],

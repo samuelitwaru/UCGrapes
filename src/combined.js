@@ -161,20 +161,36 @@ class Locale {
     const button = select.querySelector(".category-select-button");
     const selectedValue = button.querySelector(".selected-category-value");
 
+    const closeDropdown = () => {
+      optionsList.classList.remove("show");
+      button.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    };
+    
+    // Handle outside clicks
+    document.addEventListener("click", (e) => {
+      const isClickInside = select.contains(e.target);
+      
+      if (!isClickInside) {
+        closeDropdown();
+      }
+    });
+    
     // Toggle dropdown visibility
     button.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation(); // Prevent the document click handler from immediately closing the dropdown
       const isOpen = optionsList.classList.contains("show");
       optionsList.classList.toggle("show");
       button.classList.toggle("open");
       button.setAttribute("aria-expanded", !isOpen);
     });
-
+    
     const optionsList = document.createElement("div");
     optionsList.classList.add("category-options-list");
     optionsList.setAttribute("role", "listbox");
     optionsList.innerHTML = "";
-
+    
     // Populate themes into the dropdown
     options.forEach((opt, index) => {
       const option = document.createElement("div");
@@ -186,26 +202,30 @@ class Locale {
         selectedValue.textContent = this.getTranslation(opt.label);
         option.classList.add("selected");
       }
-
+    
       option.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent the document click handler from being triggered
         selectedValue.textContent = this.getTranslation(opt.label);
-
+    
         // Mark as selected
         const allOptions = optionsList.querySelectorAll(".category-option");
         allOptions.forEach((opt) => opt.classList.remove("selected"));
         option.classList.add("selected");
-
+    
         // Close the dropdown
-        optionsList.classList.remove("show");
-        button.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
+        closeDropdown();
       });
-
+    
       // Append option to the options list
       optionsList.appendChild(option);
     });
-
+    
     select.appendChild(optionsList);
+    
+    // Cleanup function to remove event listeners when needed
+    const cleanup = () => {
+      document.removeEventListener("click", closeDropdown);
+    };
   }
 }
 
@@ -314,16 +334,9 @@ class DataManager {
 
   async getServices() {
     const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-    console.log(services)
     this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }
-  // async getServices() {
-  //   const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-  //   this.services = services.SDT_ProductServiceCollection;
-  //   console.log("this.services: ", this.services)
-  //   return this.services;
-  // }
 
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
@@ -523,11 +536,21 @@ class EditorManager {
     activeFrame.classList.add("active-editor");
   }
 
-  createChildEditor(page) {
+  createChildEditor(page, linkUrl="") {
     const editorDetails = this.setupEditorContainer(page);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
     this.editorEventManager.addEditorEventListeners(editor, page);
-    this.loadEditorContent(editor, page);
+    this.loadEditorContent(editor, page, linkUrl);
+    this.setupEditorLayout(editor, page, editorDetails.containerId);
+    this.finalizeEditorSetup(editor, page, editorDetails);
+  }
+
+  createWebLinkChildEditor(page, linkUrl) {
+    console.log("category, reached here")
+    const editorDetails = this.setupEditorContainer(page);
+    const editor = this.initializeGrapesEditor(editorDetails.editorId);
+    this.editorEventManager.addEditorEventListeners(editor, page);
+    this.loadEditorContent(editor, page, linkUrl);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
   }
@@ -588,7 +611,7 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 class="title" style="text-transform: uppercase;">${pageName}</h1>
+          <h1 class="title" style="text-transform: uppercase;">${pageName.length > 20 ? pageName.substring(0, 20) + "..." : pageName}</h1>
       </div>
     `;
   }
@@ -646,13 +669,15 @@ class EditorManager {
     });
   }
 
-  async loadEditorContent(editor, page) {
+  async loadEditorContent(editor, page, linkUrl) {
     if (page.PageGJSJson) {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
     } else if (page.PageIsDynamicForm) {
       await this.loadDynamicFormContent(editor, page);
+    } else if (page.PageIsWebLinkPage) {
+      await this.loadWebLinkContent(editor, linkUrl);
     }
 
     this.updatePageJSONContent(editor, page);
@@ -822,11 +847,141 @@ class EditorManager {
             selectable: false,
             attributes: {
               frameborder: "0",
-              scrolling: "no",
               seamless: "seamless",
               loading: "lazy",
               sandbox: "allow-scripts allow-same-origin",
               src: `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
+            },
+            // Define styles separately from attributes
+            style: {
+              width: "100%",
+              height: "300vh",
+              border: "none",
+              overflow: "hidden",
+              "-ms-overflow-style": "none",
+              "scrollbar-width": "none",
+            },
+          },
+
+          init() {
+            this.set("tagName", "iframe");
+
+            // Ensure src is set in attributes if not already present
+            const attrs = this.getAttributes();
+            if (!attrs.src) {
+              this.set("attributes", {
+                ...attrs,
+                src: this.defaults.attributes.src,
+              });
+            }
+          },
+
+          isValidUrl(url) {
+            try {
+              new URL(url);
+              return true;
+            } catch {
+              return false;
+            }
+          },
+        },
+
+        view: {
+          tagName: "iframe",
+
+          events: {
+            load: "onLoad",
+            error: "onError",
+          },
+
+          init() {
+            try {
+              this.listenTo(
+                this.model,
+                "change:attributes",
+                this.updateAttributes
+              );
+            } catch (error) {
+              console.error("Error initializing iframe view:", error);
+            }
+          },
+
+          onLoad() {
+            console.log("IFrame loaded successfully");
+          },
+
+          onError() {
+            console.error("Error loading iframe content");
+          },
+
+          updateAttributes() {
+            try {
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.error("Error updating iframe attributes:", error);
+            }
+          },
+
+          render() {
+            try {
+              // Set all attributes except style
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+
+              // Apply styles correctly
+              const styles = this.model.get("style");
+              if (styles) {
+                Object.entries(styles).forEach(([prop, value]) => {
+                  this.el.style[prop] = value;
+                });
+              }
+
+              return this;
+            } catch (error) {
+              console.error("Error rendering iframe:", error);
+              return this;
+            }
+          },
+        },
+      });
+
+      // Add the component to the editor
+      editor.setComponents(`
+        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
+          <iframe ${defaultConstraints}></iframe>
+        </div>
+      `);
+    } catch (error) {
+      console.error("Error setting up iframe component:", error.message);
+    }
+  }
+
+  async loadWebLinkContent(editor, linkUrl) {
+    console.log("Loading web link content:", linkUrl);
+    try {
+      editor.DomComponents.clear();
+      editor.DomComponents.addType("iframe", {
+        model: {
+          defaults: {
+            tagName: "iframe",
+            void: true,
+            draggable: false,
+            selectable: false,
+            attributes: {
+              frameborder: "0",
+              seamless: "seamless",
+              loading: "lazy",
+              sandbox: "allow-scripts allow-same-origin",
+              src: `${linkUrl}`,
             },
             // Define styles separately from attributes
             style: {
@@ -1119,11 +1274,12 @@ class EditorEventManager {
   }
 
   handleTileActionClick(e, editorContainerId) {
-    const pageId = e.target.attributes["tile-action-object-id"].value;
+    const pageId = e.target.attributes["tile-action-object-id"]?.value;
+    const pageUrl = e.target.attributes["tile-action-object-url"]?.value;
     const page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
     if (page) {
-      this.editorManager.createChildEditor(page);
+      this.editorManager.createChildEditor(page, pageUrl);
     }
   }
 
@@ -4283,29 +4439,30 @@ class UndoRedoManager {
 
 // Content from components/ActionListComponent.js
 class ActionListComponent {
-  editorManager = null;
-  dataManager = null;
-  toolBoxManager = null;
-  selectedObject = null;
-  selectedId = null;
-  pageOptions = [];
-
   constructor(editorManager, dataManager, currentLanguage, toolBoxManager) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
+    this.selectedObject = null;
+    this.selectedId = null;
+    this.pageOptions = [];
+    this.added = false;
 
     this.categoryData = [
       {
         name: "Page",
         label: this.currentLanguage.getTranslation("category_page"),
         options: [],
+        canAdd: true,
+        addAction: () => this.showModal(this.createNewPageModal()),
       },
       {
         name: "Service/Product Page",
         label: this.currentLanguage.getTranslation("category_services_or_page"),
         options: [],
+        canAdd: true,
+        addAction: () => this.toolBoxManager.newServiceEvent(),
       },
       {
         name: "Dynamic Forms",
@@ -4317,73 +4474,350 @@ class ActionListComponent {
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },
+      {
+        name: "Web Link",
+        label: this.currentLanguage.getTranslation("category_link"),
+        options: [],
+        isWebLink: true,
+        addAction: () =>
+          this.showModal(this.createWebLinkModal("Add Web Link")),
+      },
     ];
+
     this.init();
   }
 
-  
-
   async init() {
-    await this.dataManager.getPages();
-    // await this.dataManager.getServices();
-    this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => {
-        page.PageTileName = page.PageName;
-        return !page.PageIsContentPage && !page.PageIsPredefined && !page.PageIsDynamicForm
-      }
-    );
-    this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => {
-        page.PageTileName = page.PageName;
-        return page.PageIsPredefined && page.PageName != "Home"
-      }
-    );
+    try {
+      await this.dataManager.getPages();
+      await this.populateCategories();
+      this.populateDropdownMenu();
+    } catch (error) {
+      console.error("Error initializing ActionListComponent:", error);
+    }
+  }
 
-    this.servicePageOptions = this.dataManager.services.map((service) => {
-      return {
-        PageId: service.ProductServiceId,
-        PageName: service.ProductServiceName,
-        PageTileName: service.ProductServiceTileName || service.ProductServiceName,
-      };
-    });
+  async populateCategories() {
+    try {
+      this.pageOptions = this.filterPages(
+        (page) =>
+          !page.PageIsContentPage &&
+          !page.PageIsPredefined &&
+          !page.PageIsDynamicForm &&
+          !page.PageIsWebLinkPage
+      );
 
-    this.dynamicForms = this.dataManager.forms.map((form) => {
-      return {
+      this.predefinedPageOptions = this.filterPages(
+        (page) => page.PageIsPredefined && page.PageName != "Home"
+      );
+
+      this.servicePageOptions = (this.dataManager.services || []).map(
+        (service) => ({
+          PageId: service.ProductServiceId,
+          PageName: service.ProductServiceName,
+          PageTileName:
+            service.ProductServiceTileName || service.ProductServiceName,
+        })
+      );
+
+      this.dynamicForms = (this.dataManager.forms || []).map((form) => ({
         PageId: form.FormId,
         PageName: form.ReferenceName,
         PageTileName: form.ReferenceName,
         FormUrl: form.FormUrl,
+      }));
+
+      const categoryMap = {
+        Page: this.pageOptions,
+        "Service/Product Page": this.servicePageOptions,
+        "Dynamic Forms": this.dynamicForms,
+        "Predefined Page": this.predefinedPageOptions,
       };
-    });
 
-    this.categoryData.forEach((category) => {
-      if (category.name === "Page") {
-        category.options = this.pageOptions;
-      } else if (category.name == "Service/Product Page") {
-        category.options = this.servicePageOptions;
-      } else if (category.name == "Dynamic Forms") {
-        category.options = this.dynamicForms;
-      } else if (category.name == "Predefined Page") {
-        category.options = this.predefinedPageOptions;
+      this.categoryData.forEach((category) => {
+        category.options = categoryMap[category.name] || [];
+      });
+    } catch (error) {
+      console.error("Error populating categories:", error);
+    }
+  }
+
+  filterPages(filterFn) {
+    if (!this.dataManager.pages?.SDT_PageCollection) {
+      console.warn("Page collection is not available");
+      return [];
+    }
+    return this.dataManager.pages.SDT_PageCollection.filter((page) => {
+      if (page) {
+        page.PageTileName = page.PageName;
+        return filterFn(page);
       }
+      return false;
     });
+  }
 
-    this.populateDropdownMenu();
+  createWebLinkModal(title) {
+    return this.createModal(title, true);
+  }
+
+  createNewPageModal() {
+    return this.createModal("Create new page", false);
+  }
+
+  createModal(title, isWebLink = false) {
+    const fields = isWebLink
+      ? [
+          {
+            id: "link_url",
+            label: "Link Url",
+            placeholder: "https://www.example.com",
+          },
+          {
+            id: "link_label",
+            label: "Link Label",
+            placeholder: "open Website",
+          },
+        ]
+      : [
+          {
+            id: "page_title",
+            label: "Page Title",
+            placeholder: "New page title",
+          },
+        ];
+
+    const popup = document.createElement("div");
+    popup.className = "popup-modal-link";
+    popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>${title}</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+              <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          ${fields
+            .map(
+              (field) => `
+            <div class="form-field ${field !== fields[0] ? "mt-2" : ""}">
+              <label for="${field.id}">${field.label}</label>
+              <input required class="tb-form-control" type="text" id="${
+                field.id
+              }" placeholder="${field.placeholder}" />
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+        <div class="popup-footer">
+          <button id="submit_link" class="tb-btn tb-btn-primary">Save</button>
+          <button id="close_web_url_popup" class="tb-btn tb-btn-outline">Cancel</button>
+        </div>
+      </div>
+    `;
+
+    return popup;
+  }
+
+  showModal(popup) {
+    try {
+      document.body.appendChild(popup);
+      popup.style.display = "flex";
+
+      const closeButton = popup.querySelector("#close_web_url_popup");
+      const closeX = popup.querySelector(".close");
+      const saveButton = popup.querySelector("#submit_link");
+
+      const removePopup = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        popup.remove();
+      };
+
+      closeButton?.addEventListener("click", removePopup);
+      closeX?.addEventListener("click", removePopup);
+      saveButton?.addEventListener("click", () => this.handleModalSave(popup));
+    } catch (error) {
+      console.error("Error showing modal:", error);
+    }
+  }
+
+  handleModalSave(popup) {
+    try {
+      const isWebLink = popup.querySelector("#link_url") !== null;
+      const dropdownHeader = document.getElementById("selectedOption");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+
+      if (isWebLink) {
+        const linkUrl = document.getElementById("link_url")?.value;
+        const linkLabel = document.getElementById("link_label")?.value;
+        if (linkUrl && linkLabel) {
+          this.createWebLinkPage(linkUrl, linkLabel);
+        }
+      } else {
+        const pageTitle = document.getElementById("page_title")?.value;
+        if (pageTitle) {
+          this.updateSelectedComponent(pageTitle);
+        }
+      }
+
+      if (dropdownHeader && dropdownMenu) {
+        console.log("dropdownHeader");
+        dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+        dropdownMenu.style.display = "none";
+      }
+      popup.remove();
+    } catch (error) {
+      console.error("Error handling modal save:", error);
+    }
+  }
+
+  async createWebLinkPage(linkUrl, linkLabel) {
+
+    const editor = this.editorManager.getCurrentEditor();
+    try {
+      const res = await this.dataManager.getPages();
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      if (editor.getSelected()) {
+        const titleComponent = editor.getSelected().find(".tile-title")[0];
+
+        const tileTitle = truncateText(linkLabel, 12);
+
+        const page = res.SDT_PageCollection.find(
+          (page) => page.PageName === "Web Link"
+        );
+        if (!page) {
+          console.warn("Web Link page not found");
+          return;
+        }
+
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-id",
+          `${page.PageId}`
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-url",
+          linkUrl
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object",
+          `Web Link, ${linkLabel}`
+        );
+
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(page, linkUrl);
+
+        if (titleComponent) {
+          titleComponent.components(tileTitle);
+          titleComponent.addStyle({ display: "block" });
+
+          const sidebarInputTitle = document.getElementById("tile-title");
+          if (sidebarInputTitle) {
+            sidebarInputTitle.value = tileTitle;
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error("Error creating web link page:", error);
+    }
+  }
+
+  async updateSelectedComponent(title, url = null) {
+    try {
+      const editor = this.editorManager.getCurrentEditor();
+      const selected = editor.getSelected();
+      if (!selected) return;
+
+      const titleComponent = selected.find(".tile-title")[0];
+      const tileTitle = this.truncateText(title, 12);
+      const editorId = editor.getConfig().container;
+      const editorContainerId = `${editorId}-frame`;
+      await this.dataManager
+        .createNewPage(title, this.toolBoxManager.currentTheme)
+        .then((res) => {
+          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+            return;
+          }
+
+          const result = JSON.parse(res.result);
+          const pageId = result.Trn_PageId;
+          const pageName = result.Trn_PageName;
+
+          this.dataManager.getPages().then((res) => {
+            this.toolBoxManager.actionList.init();
+
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-action-object-id",
+              pageId
+            );
+
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-action-object",
+              `Page, ${pageName}`
+            );
+
+            $(editorContainerId).nextAll().remove();
+            this.editorManager.createChildEditor(
+              this.editorManager.getPage(pageId)
+            );
+
+            // this.toolBoxManager.ui.displayMessage(
+            //   `${this.currentLanguage.getTranslation("page_created")}`,
+            //   "success"
+            // );
+          });
+        });
+
+      if (titleComponent) {
+        titleComponent.components(tileTitle);
+        titleComponent.addStyle({ display: "block" });
+
+        const sidebarInputTitle = document.getElementById("tile-title");
+        if (sidebarInputTitle) {
+          sidebarInputTitle.value = tileTitle;
+        }
+      }
+      // dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+      // dropdownMenu.style.display = "none";
+    } catch (error) {
+      console.error("Error updating selected component:", error);
+    }
+  }
+
+  truncateText(text, maxLength) {
+    if (!text) return "";
+    return text.length > maxLength
+      ? text.substring(0, maxLength - 3) + "..."
+      : text;
   }
 
   populateDropdownMenu() {
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    dropdownMenu.innerHTML = "";
-    this.categoryData.forEach((category) => {
-      const categoryElement = this.createCategoryElement(category);     
-      dropdownMenu.appendChild(categoryElement);
-    });
+    try {
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      if (!dropdownMenu) return;
 
-    this.setupDropdownHeader();
-    this.setupOutsideClickListener();
-    this.setupCategoryToggle();
-    this.setupItemClickListener();
-    this.setupSearchInputListener();
+      dropdownMenu.innerHTML = "";
+      this.categoryData.forEach((category) => {
+        const categoryElement = this.createCategoryElement(category);
+        dropdownMenu.appendChild(categoryElement);
+      });
+
+      this.setupEventListeners();
+    } catch (error) {
+      console.error("Error populating dropdown menu:", error);
+    }
   }
 
   createCategoryElement(category) {
@@ -4392,35 +4826,55 @@ class ActionListComponent {
     categoryElement.setAttribute("data-category", category.label);
 
     const summaryElement = document.createElement("summary");
-    summaryElement.innerHTML = `${category.label} <i class="fa fa-angle-right"></i>`;
+    summaryElement.innerHTML = `${category.label}${
+      category.isWebLink ? "" : ' <i class="fa fa-angle-right"></i>'
+    }`;
     categoryElement.appendChild(summaryElement);
 
+    if (!category.isWebLink) {
+      this.appendSearchBox(categoryElement, category);
+      this.appendCategoryContent(categoryElement, category);
+    } else {
+      categoryElement.addEventListener("click", (e) => {
+        e.preventDefault();
+        category.addAction();
+      });
+    }
+
+    return categoryElement;
+  }
+
+  appendSearchBox(categoryElement, category) {
     const searchBox = document.createElement("div");
     searchBox.classList.add("search-container");
     searchBox.innerHTML = `
-      <i class="fas fa-search search-icon">
-      </i>
-      <input type="text" placeholder="Search" class="search-input" /> 
-      `;
-    categoryElement.appendChild(searchBox);
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Search" class="search-input" />
+    `;
 
-    if (category.name === "Service/Product Page") {
+    if (category.canAdd) {
       const addButton = document.createElement("button");
-      addButton.innerHTML = `<i class="fa fa-plus"></i>`;
-
-      addButton.title = "Add New Service";
+      addButton.innerHTML = '<i class="fa fa-plus"></i>';
+      addButton.title = `Add New ${category.name}`;
       addButton.classList.add("add-new-service");
       addButton.addEventListener("click", (e) => {
         e.preventDefault();
-        this.toolBoxManager.newServiceEvent()
+        e.stopPropagation();
+        category.addAction();
       });
       searchBox.appendChild(addButton);
     }
 
+    categoryElement.appendChild(searchBox);
+  }
+
+  appendCategoryContent(categoryElement, category) {
     const categoryContent = document.createElement("ul");
     categoryContent.classList.add("category-content");
 
     category.options.forEach((option) => {
+      if (!option) return;
+
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
@@ -4429,8 +4883,8 @@ class ActionListComponent {
         optionElement.dataset.objectUrl = option.FormUrl;
       }
 
-      optionElement.dataset.category = category.name
-      optionElement.dataset.tileName = option.PageTileName
+      optionElement.dataset.category = category.name;
+      optionElement.dataset.tileName = option.PageTileName;
       categoryContent.appendChild(optionElement);
     });
 
@@ -4441,21 +4895,32 @@ class ActionListComponent {
     categoryContent.appendChild(noRecordsMessage);
 
     categoryElement.appendChild(categoryContent);
-    return categoryElement;
+  }
+
+  setupEventListeners() {
+    this.setupDropdownHeader();
+    this.setupOutsideClickListener();
+    this.setupCategoryToggle();
+    this.setupItemClickListener();
+    this.setupSearchInputListener();
   }
 
   setupDropdownHeader() {
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
-    
+
+    if (!dropdownHeader || !dropdownMenu) return;
+
     if (!this.added) {
-      dropdownHeader.removeEventListener("click", (e) => {});
-      dropdownHeader.addEventListener("click", (e) => {
+      dropdownHeader.addEventListener("click", () => {
         this.init();
         dropdownMenu.style.display =
           dropdownMenu.style.display === "block" ? "none" : "block";
-        dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
-        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");        
+        const icon = dropdownHeader.querySelector("i");
+        if (icon) {
+          icon.classList.toggle("fa-angle-up");
+          icon.classList.toggle("fa-angle-down");
+        }
       });
     }
 
@@ -4466,16 +4931,20 @@ class ActionListComponent {
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
 
+    if (!dropdownHeader || !dropdownMenu) return;
+
     document.addEventListener("click", (event) => {
       if (
         !dropdownHeader.contains(event.target) &&
         !dropdownMenu.contains(event.target)
       ) {
         dropdownMenu.style.display = "none";
-        dropdownHeader.querySelector("i")?.classList.remove("fa-angle-up");
-        dropdownHeader.querySelector("i")?.classList.add("fa-angle-down");
-        const detailsElements = document.getElementsByClassName('category');
-        Array.from(detailsElements).forEach(details => {
+        const icon = dropdownHeader.querySelector("i");
+        if (icon) {
+          icon.classList.remove("fa-angle-up");
+          icon.classList.add("fa-angle-down");
+        }
+        document.querySelectorAll(".category").forEach((details) => {
           details.open = false;
         });
       }
@@ -4483,149 +4952,212 @@ class ActionListComponent {
   }
 
   setupCategoryToggle() {
-    const categories = document.querySelectorAll(".category");
+    document.querySelectorAll(".category").forEach((category) => {
+      if (
+        category.dataset.category !==
+        this.currentLanguage.getTranslation("category_link")
+      ) {
+        category.addEventListener("toggle", () => {
+          this.selectedObject = category.dataset.category;
+          const searchBox = category.querySelector(".search-container");
+          const icon = category.querySelector("summary i");
+          const isOpen = category.open;
 
-    categories.forEach((category) => {
-      category.addEventListener("toggle", () => {
-        this.selectedObject = category.dataset.category;
-        const searchBox = category.querySelector(".search-container");
-        const icon = category.querySelector("summary i");
-        const isOpen = category.open;
-
-        if (isOpen) {
-          categories.forEach((otherCategory) => {
-        if (otherCategory !== category) {
-          otherCategory.open = false;
-          otherCategory.querySelector(".search-container").style.display =
-            "none";
-          otherCategory
-            .querySelector("summary i")
-            .classList.replace("fa-angle-down", "fa-angle-right");
-        }
+          document.querySelectorAll(".category").forEach((otherCategory) => {
+            if (otherCategory !== category) {
+              otherCategory.open = false;
+              const otherSearchBox =
+                otherCategory.querySelector(".search-container");
+              if (otherSearchBox) {
+                otherSearchBox.style.display = "none";
+              }
+              const otherIcon = otherCategory.querySelector("summary i");
+              if (otherIcon) {
+                otherIcon.classList.replace("fa-angle-down", "fa-angle-right");
+              }
+            }
           });
-          searchBox.style.display = "flex";
-          icon.classList.replace("fa-angle-right", "fa-angle-down");
-        } else {
-          searchBox.style.display = "none";
-          icon.classList.replace("fa-angle-down", "fa-angle-right");
-        }
-      });
+
+          if (searchBox && icon) {
+            searchBox.style.display = isOpen ? "flex" : "none";
+            icon.classList.replace(
+              isOpen ? "fa-angle-right" : "fa-angle-down",
+              isOpen ? "fa-angle-down" : "fa-angle-right"
+            );
+          }
+        });
+      }
     });
   }
 
   setupItemClickListener() {
-    const dropdownHeader = document.getElementById("selectedOption");
-    const dropdownMenu = document.getElementById("dropdownMenu");
+    try {
+      const dropdownHeader = document.getElementById("selectedOption");
+      const dropdownMenu = document.getElementById("dropdownMenu");
 
-    document.querySelectorAll(".category-content li").forEach((item) => {
-      item.addEventListener("click", () => {
-        this.selectedObject = item.dataset.category
-        dropdownHeader.textContent = `${
-          item.closest(".category").dataset.category
-        }, ${item.textContent}`;
-        const category = item.dataset.category
-        const editor = this.editorManager.getCurrentEditor();
-        const editorId = editor.getConfig().container;
-        const editorContainerId = `${editorId}-frame`;
-        if (editor.getSelected()) {
-          const titleComponent = editor.getSelected().find(".tile-title")[0];
-          const currentPageId = localStorage.getItem("pageId");
-          const tileTitle = truncateText(item.dataset.tileName, 12);
-          if (currentPageId !== undefined) {
-            this.toolBoxManager.setAttributeToSelected(
-              "tile-action-object-id",
-              item.id
-            );
+      if (!dropdownHeader || !dropdownMenu) return;
 
-            if (item.dataset.objectUrl) {
-              this.toolBoxManager.setAttributeToSelected(
-                "tile-action-object-url",
-                item.dataset.objectUrl
-              );
+      document.querySelectorAll(".category-content li").forEach((item) => {
+        if (item.classList.contains("no-records-message")) return;
+
+        item.addEventListener("click", async () => {
+          try {
+            const category = item.dataset.category;
+            const categoryElement = item.closest(".category");
+
+            if (!category || !categoryElement) return;
+
+            this.selectedObject = category;
+            dropdownHeader.textContent = `${categoryElement.dataset.category}, ${item.textContent}`;
+
+            const editor = this.editorManager.getCurrentEditor();
+            if (!editor) return;
+
+            const editorId = editor.getConfig().container;
+            const editorContainerId = `${editorId}-frame`;
+            const selected = editor.getSelected();
+
+            if (selected && editorContainerId) {
+              console.log("selected");
+              await this.handleItemSelection(item, category, editorContainerId);
             }
-           
-            this.toolBoxManager.setAttributeToSelected(
-              "tile-action-object",
-              `${category}, ${item.textContent}`
-            );
 
-            if (category == "Service/Product Page") {
-              this.createContentPage(item.id, editorContainerId);
-            }else if (category == "Dynamic Forms") {
-              $(editorContainerId).nextAll().remove();
-              this.createDynamicFormPage(item.id, item.textContent)
-            }else{
-              $(editorContainerId).nextAll().remove();
-              this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
-            }
+            dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+            dropdownMenu.style.display = "none";
+          } catch (error) {
+            console.error("Error in item click handler:", error);
           }
-
-          if (titleComponent) {
-            titleComponent.components(tileTitle);
-            titleComponent.addStyle({ "display": "block" });
-
-            const sidebarInputTitle = document.getElementById("tile-title");
-            if (sidebarInputTitle) {
-              console.log(tileTitle);
-              sidebarInputTitle.value = tileTitle;
-            }
-          }
-        }
-        dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
-        dropdownMenu.style.display = "none";
+        });
       });
-    });
+    } catch (error) {
+      console.error("Error setting up item click listener:", error);
+    }
+  }
+
+  async handleItemSelection(item, category, editorContainerId) {
+    try {
+      const selected = this.editorManager.getCurrentEditor().getSelected();
+      const titleComponent = selected.find(".tile-title")[0];
+      const tileTitle = this.truncateText(item.dataset.tileName, 12);
+
+      if (selected) {
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-id",
+          item.id
+        );
+
+        if (item.dataset.objectUrl) {
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-action-object-url",
+            item.dataset.objectUrl
+          );
+        }
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object",
+          `${category}, ${item.textContent}`
+        );
+
+        await this.handlePageCreation(
+          category,
+          item.id,
+          editorContainerId,
+          item.textContent
+        );
+      }
+
+      if (titleComponent) {
+        titleComponent.components(tileTitle);
+        titleComponent.addStyle({ display: "block" });
+
+        const sidebarInputTitle = document.getElementById("tile-title");
+        if (sidebarInputTitle) {
+          sidebarInputTitle.value = tileTitle;
+        }
+      }
+    } catch (error) {
+      console.error("Error handling item selection:", error);
+    }
+  }
+
+  async handlePageCreation(category, itemId, editorContainerId, itemText) {
+    try {
+      $(editorContainerId).nextAll().remove();
+      console.log("editorContainerId");
+      switch (category) {
+        case "Service/Product Page":
+          await this.createContentPage(itemId, editorContainerId);
+          break;
+        case "Dynamic Forms":
+          await this.createDynamicFormPage(itemId, itemText, editorContainerId);
+          break;
+        default:
+          this.editorManager.createChildEditor(
+            this.editorManager.getPage(itemId)
+          );
+      }
+    } catch (error) {
+      console.error("Error handling page creation:", error);
+    }
+  }
+
+  async createContentPage(pageId, editorContainerId) {
+    try {
+      const res = await this.dataManager.createContentPage(pageId);
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+
+      await this.dataManager.getPages();
+      $(editorContainerId).nextAll().remove();
+      this.editorManager.createChildEditor(this.editorManager.getPage(pageId));
+    } catch (error) {
+      console.error("Error creating content page:", error);
+    }
+  }
+
+  async createDynamicFormPage(formId, formName, editorContainerId) {
+    try {
+      const res = await this.dataManager.createDynamicFormPage(
+        formId,
+        formName
+      );
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+
+      await this.dataManager.getPages();
+      $(editorContainerId).nextAll().remove();
+      this.editorManager.createChildEditor(this.editorManager.getPage(formId));
+    } catch (error) {
+      console.error("Error creating dynamic form page:", error);
+    }
   }
 
   setupSearchInputListener() {
     document.querySelectorAll(".search-input").forEach((input) => {
       input.addEventListener("input", function () {
         const filter = this.value.toLowerCase();
-        const items = this.closest(".category").querySelectorAll(
+        const category = this.closest(".category");
+        if (!category) return;
+
+        const items = category.querySelectorAll(
           ".category-content li:not(.no-records-message)"
         );
+        const noRecordsMessage = category.querySelector(".no-records-message");
+
         let hasVisibleItems = false;
 
         items.forEach((item) => {
-          if (item.textContent.toLowerCase().includes(filter)) {
-            item.style.display = "block";
-            hasVisibleItems = true;
-          } else {
-            item.style.display = "none";
-          }
+          const isVisible = item.textContent.toLowerCase().includes(filter);
+          item.style.display = isVisible ? "block" : "none";
+          if (isVisible) hasVisibleItems = true;
         });
 
-        const noRecordsMessage = this.closest(".category").querySelector(
-          ".no-records-message"
-        );
-        noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
+        if (noRecordsMessage) {
+          noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
+        }
       });
-    });
-  }
-
-  createContentPage(pageId, editorContainerId) {
-    this.dataManager.createContentPage(pageId)
-    .then((res) => {
-      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-        return;
-      }
-      this.dataManager.getPages().then(res=>{
-        $(editorContainerId).nextAll().remove();
-        this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
-      })
-    });
-  }
-
-  createDynamicFormPage(formId, formName, editorContainerId) {
-    this.dataManager.createDynamicFormPage(formId, formName).then((res) => {
-      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-        return;
-      }
-      
-      this.dataManager.getPages().then(res=>{
-        $(editorContainerId).nextAll().remove();
-        this.editorManager.createChildEditor(this.editorManager.getPage(formId))
-      })
     });
   }
 }

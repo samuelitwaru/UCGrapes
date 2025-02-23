@@ -86,11 +86,12 @@ class EditorEventManager {
   }
 
   handleTileActionClick(e, editorContainerId) {
-    const pageId = e.target.attributes["tile-action-object-id"].value;
+    const pageId = e.target.attributes["tile-action-object-id"]?.value;
+    const pageUrl = e.target.attributes["tile-action-object-url"]?.value;
     const page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
     if (page) {
-      this.editorManager.createChildEditor(page);
+      this.editorManager.createChildEditor(page, pageUrl);
     }
   }
 

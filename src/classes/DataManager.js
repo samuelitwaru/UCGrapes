@@ -53,16 +53,9 @@ class DataManager {
 
   async getServices() {
     const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-    console.log(services)
     this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }
-  // async getServices() {
-  //   const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-  //   this.services = services.SDT_ProductServiceCollection;
-  //   console.log("this.services: ", this.services)
-  //   return this.services;
-  // }
 
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);

@@ -216,6 +216,12 @@ button {
   gap: 1rem;
 }
 
+#product-service-image {
+  max-height: 156px;
+  object-fit: cover;
+  display: block;
+}
+
 .gjs-selected .action-button {
   opacity: 1;
 }
@@ -504,6 +510,9 @@ button {
 @media (max-width: 1440px) {
   .cta-button-container {
     gap: 0;
+  }
+  .cta-container-child {
+    margin-right: 0.5rem;
   }
 }
 

@@ -140,20 +140,36 @@ class Locale {
     const button = select.querySelector(".category-select-button");
     const selectedValue = button.querySelector(".selected-category-value");
 
+    const closeDropdown = () => {
+      optionsList.classList.remove("show");
+      button.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    };
+    
+    // Handle outside clicks
+    document.addEventListener("click", (e) => {
+      const isClickInside = select.contains(e.target);
+      
+      if (!isClickInside) {
+        closeDropdown();
+      }
+    });
+    
     // Toggle dropdown visibility
     button.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation(); // Prevent the document click handler from immediately closing the dropdown
       const isOpen = optionsList.classList.contains("show");
       optionsList.classList.toggle("show");
       button.classList.toggle("open");
       button.setAttribute("aria-expanded", !isOpen);
     });
-
+    
     const optionsList = document.createElement("div");
     optionsList.classList.add("category-options-list");
     optionsList.setAttribute("role", "listbox");
     optionsList.innerHTML = "";
-
+    
     // Populate themes into the dropdown
     options.forEach((opt, index) => {
       const option = document.createElement("div");
@@ -165,25 +181,29 @@ class Locale {
         selectedValue.textContent = this.getTranslation(opt.label);
         option.classList.add("selected");
       }
-
+    
       option.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent the document click handler from being triggered
         selectedValue.textContent = this.getTranslation(opt.label);
-
+    
         // Mark as selected
         const allOptions = optionsList.querySelectorAll(".category-option");
         allOptions.forEach((opt) => opt.classList.remove("selected"));
         option.classList.add("selected");
-
+    
         // Close the dropdown
-        optionsList.classList.remove("show");
-        button.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
+        closeDropdown();
       });
-
+    
       // Append option to the options list
       optionsList.appendChild(option);
     });
-
+    
     select.appendChild(optionsList);
+    
+    // Cleanup function to remove event listeners when needed
+    const cleanup = () => {
+      document.removeEventListener("click", closeDropdown);
+    };
   }
 }

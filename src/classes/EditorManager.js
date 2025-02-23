@@ -72,11 +72,21 @@ class EditorManager {
     activeFrame.classList.add("active-editor");
   }
 
-  createChildEditor(page) {
+  createChildEditor(page, linkUrl="") {
     const editorDetails = this.setupEditorContainer(page);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
     this.editorEventManager.addEditorEventListeners(editor, page);
-    this.loadEditorContent(editor, page);
+    this.loadEditorContent(editor, page, linkUrl);
+    this.setupEditorLayout(editor, page, editorDetails.containerId);
+    this.finalizeEditorSetup(editor, page, editorDetails);
+  }
+
+  createWebLinkChildEditor(page, linkUrl) {
+    console.log("category, reached here")
+    const editorDetails = this.setupEditorContainer(page);
+    const editor = this.initializeGrapesEditor(editorDetails.editorId);
+    this.editorEventManager.addEditorEventListeners(editor, page);
+    this.loadEditorContent(editor, page, linkUrl);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
   }
@@ -137,7 +147,7 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 class="title" style="text-transform: uppercase;">${pageName}</h1>
+          <h1 class="title" style="text-transform: uppercase;">${pageName.length > 20 ? pageName.substring(0, 20) + "..." : pageName}</h1>
       </div>
     `;
   }
@@ -195,13 +205,15 @@ class EditorManager {
     });
   }
 
-  async loadEditorContent(editor, page) {
+  async loadEditorContent(editor, page, linkUrl) {
     if (page.PageGJSJson) {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
     } else if (page.PageIsDynamicForm) {
       await this.loadDynamicFormContent(editor, page);
+    } else if (page.PageIsWebLinkPage) {
+      await this.loadWebLinkContent(editor, linkUrl);
     }
 
     this.updatePageJSONContent(editor, page);
@@ -371,11 +383,141 @@ class EditorManager {
             selectable: false,
             attributes: {
               frameborder: "0",
-              scrolling: "no",
               seamless: "seamless",
               loading: "lazy",
               sandbox: "allow-scripts allow-same-origin",
               src: `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
+            },
+            // Define styles separately from attributes
+            style: {
+              width: "100%",
+              height: "300vh",
+              border: "none",
+              overflow: "hidden",
+              "-ms-overflow-style": "none",
+              "scrollbar-width": "none",
+            },
+          },
+
+          init() {
+            this.set("tagName", "iframe");
+
+            // Ensure src is set in attributes if not already present
+            const attrs = this.getAttributes();
+            if (!attrs.src) {
+              this.set("attributes", {
+                ...attrs,
+                src: this.defaults.attributes.src,
+              });
+            }
+          },
+
+          isValidUrl(url) {
+            try {
+              new URL(url);
+              return true;
+            } catch {
+              return false;
+            }
+          },
+        },
+
+        view: {
+          tagName: "iframe",
+
+          events: {
+            load: "onLoad",
+            error: "onError",
+          },
+
+          init() {
+            try {
+              this.listenTo(
+                this.model,
+                "change:attributes",
+                this.updateAttributes
+              );
+            } catch (error) {
+              console.error("Error initializing iframe view:", error);
+            }
+          },
+
+          onLoad() {
+            console.log("IFrame loaded successfully");
+          },
+
+          onError() {
+            console.error("Error loading iframe content");
+          },
+
+          updateAttributes() {
+            try {
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+            } catch (error) {
+              console.error("Error updating iframe attributes:", error);
+            }
+          },
+
+          render() {
+            try {
+              // Set all attributes except style
+              const attributes = this.model.getAttributes();
+              Object.entries(attributes).forEach(([key, value]) => {
+                if (key !== "style") {
+                  this.el.setAttribute(key, value);
+                }
+              });
+
+              // Apply styles correctly
+              const styles = this.model.get("style");
+              if (styles) {
+                Object.entries(styles).forEach(([prop, value]) => {
+                  this.el.style[prop] = value;
+                });
+              }
+
+              return this;
+            } catch (error) {
+              console.error("Error rendering iframe:", error);
+              return this;
+            }
+          },
+        },
+      });
+
+      // Add the component to the editor
+      editor.setComponents(`
+        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
+          <iframe ${defaultConstraints}></iframe>
+        </div>
+      `);
+    } catch (error) {
+      console.error("Error setting up iframe component:", error.message);
+    }
+  }
+
+  async loadWebLinkContent(editor, linkUrl) {
+    console.log("Loading web link content:", linkUrl);
+    try {
+      editor.DomComponents.clear();
+      editor.DomComponents.addType("iframe", {
+        model: {
+          defaults: {
+            tagName: "iframe",
+            void: true,
+            draggable: false,
+            selectable: false,
+            attributes: {
+              frameborder: "0",
+              seamless: "seamless",
+              loading: "lazy",
+              sandbox: "allow-scripts allow-same-origin",
+              src: `${linkUrl}`,
             },
             // Define styles separately from attributes
             style: {

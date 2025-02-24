@@ -341,7 +341,6 @@ class EditorManager {
       if (ctaButtons.length > 0) {
         ctaButtons.forEach((ctaButton) => {
           const ctaButtonId = ctaButton.getAttributes()?.["cta-button-id"];
-          // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton
           if (
             !contentPageData?.CallToActions?.some(
               (cta) => cta.CallToActionId === ctaButtonId
@@ -350,6 +349,16 @@ class EditorManager {
             ctaButton.remove();
           }
         });
+      }
+
+      const ctaRoundButtons = ctaContainer.find(".cta-container-child");
+
+      if (ctaRoundButtons.length > 0) {
+        ctaRoundButtons.forEach(button => {
+          const windowWidth = window.innerWidth;
+          button.getEl().style.marginRight = windowWidth <= 1440 ? "0.5rem" : "1.1rem";
+        })
+        
       }
     }
   }

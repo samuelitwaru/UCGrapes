@@ -169,7 +169,7 @@ class EditorEventManager {
           console.log("Component corresponding to container-row not found");
         }
       } else {
-        console.log("No container-row found");
+        // console.log("No container-row found");
       }
     });
   }

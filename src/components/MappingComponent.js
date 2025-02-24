@@ -116,7 +116,6 @@ class MappingComponent {
     createPageButton.addEventListener("click", this.boundCreatePage);
   }
 
-
   async handleCreatePage(e) {
     e.preventDefault();
 
@@ -213,24 +212,24 @@ class MappingComponent {
           toggleDropdown(e, listItem, menuItem)
         );
       }
-      
+
       if (item.Name === "Web Link") {
         listItem.style.display = "none";
       }
 
       listItem.addEventListener("click", (e) => {
         e.stopPropagation();
-        let pages = [item.Id]
-        let liElement = listItem
-        
+        let pages = [item.Id];
+        let liElement = listItem;
+
         while (liElement) {
-          let parentLiElement = liElement.parentElement.parentElement.parentElement
+          let parentLiElement =
+            liElement.parentElement.parentElement.parentElement;
           if (parentLiElement instanceof HTMLLIElement) {
-            pages.unshift(liElement.dataset.parentPageId)
-            liElement = parentLiElement
-          }
-          else {
-            liElement = null
+            pages.unshift(liElement.dataset.parentPageId);
+            liElement = parentLiElement;
+          } else {
+            liElement = null;
           }
         }
         this.handlePageSelection(item, pages);
@@ -321,7 +320,6 @@ class MappingComponent {
         deleteIcon.style.display = "none";
       }
 
-
       deleteIcon.setAttribute("data-id", item.Id);
 
       deleteIcon.addEventListener("click", (event) =>
@@ -358,8 +356,25 @@ class MappingComponent {
       const closePopup = popup.querySelector(".close");
 
       deleteButton.addEventListener("click", () => {
+        const editors = Object.values(this.editorManager.editors);
+
+        // Find the editor where pageId matches id
+        const targetEditor = editors.find((editor) => editor.pageId === id);
+        
         if (this.dataManager.deletePage(id)) {
           elementToRemove.remove();
+
+          if (targetEditor) {
+            const editorId = targetEditor.editor.getConfig().container;
+            const editorContainerId = `${editorId}`;
+            this.editorManager.removePageOnTileDelete(editorContainerId.replace("#", ""));
+          }
+
+          this.dataManager.getPages().then((res) => {
+            this.handleListAllPages();
+            this.toolBoxManager.actionList.init();
+          });
+
           this.displayMessage(
             `${this.currentLanguage.getTranslation("page_deleted")}`,
             "success"
@@ -460,14 +475,13 @@ class MappingComponent {
         } else {
           // Remove extra frames
           $(editorContainerId).nextAll().remove();
-          pages.forEach(pageId => {
-            const page = this.getPage(pageId)
+          pages.forEach((pageId) => {
+            const page = this.getPage(pageId);
             this.editorManager.createChildEditor(page);
-          })
+          });
         }
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("Error selecting page:", error);
       this.displayMessage("Error loading page", "error");
     } finally {

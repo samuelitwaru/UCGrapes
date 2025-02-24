@@ -448,10 +448,6 @@ span#scroll-right:hover {
   margin-right: 10px;
 }
 
-input:focus {
-  border-color: #222f54; /* Changes border color when focused */
-}
-
 .theme-selection {
   min-width: 200px;
   margin-right: 10px;

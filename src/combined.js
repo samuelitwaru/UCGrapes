@@ -1136,20 +1136,6 @@ class EditorManager {
     }
     const wrapper = editor.getWrapper();
 
-    // add title attribute to tile-title component
-    const titles = wrapper.find(".tile-title");
-    titles.forEach((title) => {
-      if (!title.getAttributes()?.["title"]) {
-        // Set the title attribute if it doesn't exist
-        title.addAttributes({"title": title.getEl().textContent});
-      }
-    });
-
-    const rowContainers = wrapper.find(".container-row");
-    rowContainers.forEach((rowContainer) => {
-      this.templateManager.updateRightButtons(rowContainer);
-    });
-
     wrapper.set({
       selectable: false,
       droppable: false,
@@ -1263,9 +1249,7 @@ class EditorEventManager {
     
     const titles = editor.DomComponents.getWrapper().find(".tile-title");
     titles.forEach((title) => {
-      console.log("title", title);
       if (!title.getAttributes()?.["title"]) {
-        // Set the title attribute if it doesn't exist
         title.addAttributes({"title": title.getEl().textContent});
       }
     });
@@ -5419,8 +5403,9 @@ class MappingComponent {
     let homePage = this.getPage(rootPageId);
     let homePageJSON = JSON.parse(homePage.PageGJSJson);
     const pages = homePageJSON.pages;
+    if (!pages[0].frames) return;
     const containerRows =
-      pages[0].frames[0].component.components[0].components[0].components;
+      pages[0]?.frames[0]?.component.components[0].components[0].components;
 
     let childPages = [];
 

@@ -242,7 +242,7 @@ class ThemeManager {
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
-              "background-color": "#FFFFFF"
+              "background-color": "transparent"
             });
       
             this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);
@@ -470,6 +470,14 @@ class ThemeManager {
       button.setAttribute("aria-expanded", !isOpen);
     });
 
+    document.addEventListener("click", (e) => {
+      if (!select.contains(e.target)) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+
     // Populate themes into the dropdown
     this.toolBoxManager.themes.forEach((theme) => {
       const option = document.createElement("div");
@@ -506,8 +514,6 @@ class ThemeManager {
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
-
-          console.log("Theme: ", theme);
 
           if (this.setTheme(theme.ThemeName)) {
             this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);

@@ -21,12 +21,8 @@ class UndoRedoManager {
     }
 
     captureState() {
-        console.log('Capturing state...');
         // Get current project data
         const currentState = this.editor.getProjectData();
-        console.log('former state: ', this.currentState);
-        console.log('current state: ', currentState);
-        console.log('Captured project data:', this.editor.getProjectData());
 
         // Prevent duplicate state captures
         if (this.areStatesEqual(currentState, this.currentState)) return;

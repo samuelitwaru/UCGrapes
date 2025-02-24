@@ -420,7 +420,6 @@ class TemplateManager {
     const currentEditor = this.editorManager.currentEditor;
 
     const page = this.editorManager.getPage(currentEditor.pageId);
-    console.log(page);
     if (
       page &&
       (page.PageIsContentPage ||
@@ -567,7 +566,7 @@ class TemplateManager {
 
   updateRightButtons(containerRow) {
     if (!containerRow) return;
-
+  
     const styleConfigs = {
       1: {
         title: { "letter-spacing": "1.1px", "font-size": "16px" },
@@ -588,53 +587,92 @@ class TemplateManager {
         titleSection: { "text-align": "center" },
       },
     };
-
+  
     const templates = containerRow.components();
     if (!templates.length || !styleConfigs[templates.length]) return;
 
+    const screenWidth = window.innerWidth;
+  
     const config = styleConfigs[templates.length];
-
+  
     const isTemplateOne = templates.length == 1;
-
+  
     const titles = containerRow.find(".tile-title");
     const templateBlocks = containerRow.find(".template-block");
     const titleSections = containerRow.find(".tile-title-section");
-
+  
     titles.forEach((title) => {
       title.addStyle(config.title);
-
+  
+      let tileTitle =
+        title.getEl().getAttribute("title") || title.getEl().innerText;
       if (templates.length === 3) {
-        let words = title.getEl().innerText.split(" ");
-        if (words.length > 1) {
-          const newContent = words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
-          title.components(newContent);
+        let words = tileTitle.split(" ");
+        if (words.length > 2) {
+          tileTitle = words.slice(0, 2).join(" ");
+        }
+  
+        if (tileTitle.length > 13) {
+          tileTitle = tileTitle.substring(0, 13).trim();
+        }
+  
+        let truncatedWords = tileTitle.split(" ");
+        if (truncatedWords.length > 1) {
+          tileTitle =
+            truncatedWords.slice(0, 1).join(" ") + "<br>" + truncatedWords[1];
         }
       } else {
-        const newContent = title.getEl().innerText.replace("<br>", "");
-        title.components(newContent);
+        tileTitle = tileTitle.replace("<br>", "");
       }
+  
+      if (templates.length === 2) {
+        tileTitle = truncateText(tileTitle, screenWidth <= 1440 ? 11 : 13);
+      }
+  
+      if (templates.length === 1) {
+        tileTitle = truncateText(tileTitle, screenWidth <= 1440 ? 20 : 24);
+      }
+  
+      title.components(tileTitle);
     });
-
+  
     templateBlocks.forEach((template) => {
-      const isPriority = template.getClasses()?.includes("high-priority-template");
+      const isPriority = template
+        .getClasses()
+        ?.includes("high-priority-template");
+      
+      // Check the screen width and adjust heights accordingly
+      
+      const templateHeight = screenWidth <= 1440 ? 
+        (isPriority && isTemplateOne ? "6.0rem" : "4.5em") : 
+        (isPriority && isTemplateOne ? "7rem" : "5.5rem");
+  
       const templateStyles = {
         ...config.template,
-        height: isPriority && isTemplateOne ? "7rem" : "5.5rem",
+        height: templateHeight,
         textTransform: isPriority && isTemplateOne ? "uppercase" : "capitalize",
       };
       template.addStyle(templateStyles);
     });
-
+  
     templates.forEach((template) => {
       if (!template?.view?.el) return;
       const rightButton = template.find(".add-button-right")[0];
       if (rightButton) rightButton.addStyle(config.rightButton);
+  
+      if (templates.length === 3) {
+        template.addAttributes({
+          "tile-icon-align": "center",
+          "tile-text-align": "center",
+        });
+      }
     });
-
+  
     if (titleSections.length) {
       titleSections.forEach((section) => section.addStyle(config.titleSection));
     }
   }
+  
 
   initialContentPageTemplate(contentPageData) {
     return `

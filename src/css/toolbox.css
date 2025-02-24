@@ -49,9 +49,8 @@ button {
   width: 100%;
   background-color: #fdfdfd;
   box-sizing: border-box;
-  overflow-y: auto; /* Adds vertical scrolling */
-  /* scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1; */
+  overflow-y: auto; 
+  overflow-x: hidden;
 }
 
 .frame-container::-webkit-scrollbar,
@@ -74,17 +73,49 @@ button {
   padding: 0.1rem;
 }
 
+.form-frame-container object {
+  display: block;
+  min-height: 100%;
+  border: none;
+  max-width: 100%;
+}
+
+.form-frame-container .fallback-content {
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  min-height: 100vh;
+  text-align: center;
+  background-color: rgb(245, 245, 245);
+  border: none;
+  display: none;
+}
+
+.form-frame-container .fallback-link {
+  display: inline-block;
+  padding: 0;
+  color: rgb(34, 47, 84);
+  text-decoration-line: underline;
+  border: none;
+  transition-behavior: normal;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+  transition-property: background-color;
+}
+
 /* Templates section */
 .container-column {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.5rem;
   width: 100%;
 }
 
 .container-row {
   display: flex;
-  gap: 0.7rem;
+  gap: 0.5rem;
   width: 100%;
   flex-wrap: nowrap;
   box-sizing: border-box; /* Ensure no wrapping */
@@ -216,6 +247,12 @@ button {
   gap: 1rem;
 }
 
+#product-service-image {
+  max-height: 156px;
+  object-fit: cover;
+  display: block;
+}
+
 .gjs-selected .action-button {
   opacity: 1;
 }
@@ -234,6 +271,7 @@ button {
   cursor: ew-resize;
   display: flex;
   justify-content: center;
+  display: none;
 }
 
 .resize-handle::after {
@@ -503,6 +541,9 @@ button {
 @media (max-width: 1440px) {
   .cta-button-container {
     gap: 0;
+  }
+  .cta-container-child {
+    margin-right: 0.5rem;
   }
 }
 

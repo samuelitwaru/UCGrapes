@@ -528,7 +528,6 @@ class MediaComponent {
 
       if (this.selectedFile?.MediaUrl) {
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
-        console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({
           "background-image": `url(${safeMediaUrl})`,
           "background-size": "cover",

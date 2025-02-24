@@ -161,20 +161,36 @@ class Locale {
     const button = select.querySelector(".category-select-button");
     const selectedValue = button.querySelector(".selected-category-value");
 
+    const closeDropdown = () => {
+      optionsList.classList.remove("show");
+      button.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    };
+    
+    // Handle outside clicks
+    document.addEventListener("click", (e) => {
+      const isClickInside = select.contains(e.target);
+      
+      if (!isClickInside) {
+        closeDropdown();
+      }
+    });
+    
     // Toggle dropdown visibility
     button.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation(); // Prevent the document click handler from immediately closing the dropdown
       const isOpen = optionsList.classList.contains("show");
       optionsList.classList.toggle("show");
       button.classList.toggle("open");
       button.setAttribute("aria-expanded", !isOpen);
     });
-
+    
     const optionsList = document.createElement("div");
     optionsList.classList.add("category-options-list");
     optionsList.setAttribute("role", "listbox");
     optionsList.innerHTML = "";
-
+    
     // Populate themes into the dropdown
     options.forEach((opt, index) => {
       const option = document.createElement("div");
@@ -186,26 +202,30 @@ class Locale {
         selectedValue.textContent = this.getTranslation(opt.label);
         option.classList.add("selected");
       }
-
+    
       option.addEventListener("click", (e) => {
+        e.stopPropagation(); 
         selectedValue.textContent = this.getTranslation(opt.label);
-
+    
         // Mark as selected
         const allOptions = optionsList.querySelectorAll(".category-option");
         allOptions.forEach((opt) => opt.classList.remove("selected"));
         option.classList.add("selected");
-
+    
         // Close the dropdown
-        optionsList.classList.remove("show");
-        button.classList.remove("open");
-        button.setAttribute("aria-expanded", "false");
+        closeDropdown();
       });
-
+    
       // Append option to the options list
       optionsList.appendChild(option);
     });
-
+    
     select.appendChild(optionsList);
+    
+    // Cleanup function to remove event listeners when needed
+    const cleanup = () => {
+      document.removeEventListener("click", closeDropdown);
+    };
   }
 }
 
@@ -314,16 +334,9 @@ class DataManager {
 
   async getServices() {
     const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-    console.log(services)
     this.services = services.SDT_ProductServiceCollection;
     return this.services;
   }
-  // async getServices() {
-  //   const services = await this.fetchAPI('/api/toolbox/services', {}, true);
-  //   this.services = services.SDT_ProductServiceCollection;
-  //   console.log("this.services: ", this.services)
-  //   return this.services;
-  // }
 
   async getSinglePage(pageId) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
@@ -523,31 +536,41 @@ class EditorManager {
     activeFrame.classList.add("active-editor");
   }
 
-  createChildEditor(page) {
-    const editorDetails = this.setupEditorContainer(page);
+  createChildEditor(page, linkUrl = "", linkLabel = "") {
+    const editorDetails = this.setupEditorContainer(page, linkLabel);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
     this.editorEventManager.addEditorEventListeners(editor, page);
-    this.loadEditorContent(editor, page);
+    this.loadEditorContent(editor, page, linkUrl);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
     return editor
   }
 
-  setupEditorContainer(page) {
+  setupEditorContainer(page, linkLabel) {
     const count = this.container.children.length;
     const editorId = `gjs-${count}`;
     const containerId = `${editorId}-frame`;
 
     const editorContainer = document.createElement("div");
-    editorContainer.innerHTML = this.generateEditorHTML(page, editorId);
+    editorContainer.innerHTML = this.generateEditorHTML(
+      page,
+      editorId,
+      linkLabel
+    );
     this.configureEditorContainer(editorContainer, containerId, page.PageId);
 
     return { editorId, containerId };
   }
 
-  generateEditorHTML(page, editorId) {
+  generateEditorHTML(page, editorId, linkLabel) {
+    let pageTitle = "";
+    if (page.PageIsWebLinkPage) {
+      pageTitle = linkLabel;
+    } else {
+      pageTitle = page.PageName;
+    }
     const appBar = this.shouldShowAppBar(page)
-      ? this.createContentPageAppBar(page.PageName, page.PageId)
+      ? this.createContentPageAppBar(pageTitle, page.PageId)
       : this.createHomePageAppBar();
 
     return `
@@ -589,7 +612,9 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 class="title" style="text-transform: uppercase;">${pageName}</h1>
+          <h1 class="title" title=${pageName} style="text-transform: uppercase;">${
+      pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
+    }</h1>
       </div>
     `;
   }
@@ -598,7 +623,7 @@ class EditorManager {
     return `
       <div class="home-app-bar">
         <div id="added-logo" class="logo-added" style="display:flex">
-          <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
         </div>
 
         <div id="add-profile-image" class="profile-section" style="display:flex">
@@ -647,13 +672,16 @@ class EditorManager {
     });
   }
 
-  async loadEditorContent(editor, page) {
-    if (page.PageGJSJson) {
+  async loadEditorContent(editor, page, linkUrl) {
+    editor.DomComponents.clear();
+    if (page.PageGJSJson && !page.PageIsWebLinkPage) {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
     } else if (page.PageIsDynamicForm) {
       await this.loadDynamicFormContent(editor, page);
+    } else if (page.PageIsWebLinkPage) {
+      await this.loadWebLinkContent(editor, linkUrl);
     }
 
     this.updatePageJSONContent(editor, page);
@@ -773,10 +801,8 @@ class EditorManager {
     const wrapper = editor.DomComponents.getWrapper();
     const ctaContainer = wrapper.find(".cta-button-container")[0];
     if (ctaContainer) {
-      console.log("ctaContainer: ", ctaContainer);
       const ctaButtons = ctaContainer.findType("cta-buttons");
       if (ctaButtons.length > 0) {
-        console.log("contentPageData: ", ctaButtons);
         ctaButtons.forEach((ctaButton) => {
           const ctaButtonId = ctaButton.getAttributes()?.["cta-button-id"];
           // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton
@@ -823,7 +849,6 @@ class EditorManager {
             selectable: false,
             attributes: {
               frameborder: "0",
-              scrolling: "no",
               seamless: "seamless",
               loading: "lazy",
               sandbox: "allow-scripts allow-same-origin",
@@ -942,6 +967,153 @@ class EditorManager {
     }
   }
 
+  async loadWebLinkContent(editor, linkUrl) {
+    try {
+      editor.DomComponents.clear();
+
+      // Define custom 'object' component
+      editor.DomComponents.addType("object", {
+        isComponent: (el) => el.tagName === "OBJECT",
+
+        model: {
+          defaults: {
+            tagName: "object",
+            draggable: true,
+            droppable: false,
+            attributes: {
+              width: "100%",
+              height: "300vh",
+            },
+            styles: `
+              .form-frame-container {
+                overflow-x: hidden;
+                overflow-y: auto;
+                position: relative;
+                min-height: 300px;
+              }
+  
+              /* Preloader styles */
+              .preloader-wrapper {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+              }
+  
+              .preloader {
+                width: 32px;
+                height: 32px;
+                background-image: url('/Resources/UCGrapes1/src/images/spinner.gif');
+                background-size: contain;
+                background-repeat: no-repeat;
+              }
+  
+              /* Custom scrollbar styles */
+              .form-frame-container::-webkit-scrollbar {
+                width: 6px;
+                height: 0;
+              }
+  
+              .form-frame-container::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+              }
+  
+              .form-frame-container::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 3px;
+              }
+  
+              .form-frame-container::-webkit-scrollbar-thumb:hover {
+                background: #555;
+              }
+  
+              /* Firefox scrollbar styles */
+              .form-frame-container {
+                scrollbar-width: thin;
+                scrollbar-color: #888 #f1f1f1;
+              }
+              .fallback-message {
+                margin-bottom: 10px;
+                color: #666;
+              }
+            `,
+          },
+        },
+
+        view: {
+          onRender({ el, model }) {
+            const fallbackMessage =
+              model.get("attributes").fallbackMessage ||
+              "Content cannot be displayed";
+
+            const fallbackContent = `
+              <div class="fallback-content">
+                <p class="fallback-message">${fallbackMessage}</p>
+                <a href="${model.get("attributes").data}" 
+                   target="_blank" 
+                   class="fallback-link">
+                  Open in New Window
+                </a>
+              </div>
+            `;
+
+            el.insertAdjacentHTML("beforeend", fallbackContent);
+
+            el.addEventListener("load", () => {
+              // Hide preloader and fallback on successful load
+              const container = el.closest(".form-frame-container");
+              const preloaderWrapper =
+                container.querySelector(".preloader-wrapper");
+              if (preloaderWrapper) preloaderWrapper.style.display = "none";
+
+              const fallback = el.querySelector(".fallback-content");
+              if (fallback) {
+              }
+              fallback.style.display = "none";
+              console.log("Object content loaded");
+            });
+
+            el.addEventListener("error", (e) => {
+              // Hide preloader and show fallback on error
+              const container = el.closest(".form-frame-container");
+              const preloaderWrapper =
+                container.querySelector(".preloader-wrapper");
+              if (preloaderWrapper) preloaderWrapper.style.display = "none";
+
+              const fallback = el.querySelector(".fallback-content");
+              if (fallback) {
+                fallback.style.display = "flex";
+                fallback.style.flexDirection = "column";
+                fallback.style.justifyContent = "start";
+              }
+              console.error("Error loading object content:", e);
+            });
+          },
+        },
+      });
+
+      // Add the component to the editor with preloader in a wrapper
+      editor.setComponents(`
+        <div class="form-frame-container" id="frame-container">
+          <div class="preloader-wrapper">
+            <div class="preloader"></div>
+          </div>
+          <object 
+            data="${linkUrl}"
+            type="text/html"
+            width="100%"
+            height="800px"
+            fallbackMessage="Unable to load the content. Please try opening it in a new window.">
+          </object>
+        </div>
+      `);
+    } catch (error) {
+      console.error("Error setting up object component:", error.message);
+    }
+  }
+
   setupEditorLayout(editor, page, containerId) {
     if (this.shouldShowAppBar(page)) {
     }
@@ -962,8 +1134,22 @@ class EditorManager {
     if (page.PageName === "Home") {
       this.setCurrentEditor(`#${editorDetails.editorId}`);
     }
-
     const wrapper = editor.getWrapper();
+
+    // add title attribute to tile-title component
+    const titles = wrapper.find(".tile-title");
+    titles.forEach((title) => {
+      if (!title.getAttributes()?.["title"]) {
+        // Set the title attribute if it doesn't exist
+        title.addAttributes({"title": title.getEl().textContent});
+      }
+    });
+
+    const rowContainers = wrapper.find(".container-row");
+    rowContainers.forEach((rowContainer) => {
+      this.templateManager.updateRightButtons(rowContainer);
+    });
+
     wrapper.set({
       selectable: false,
       droppable: false,
@@ -1023,11 +1209,6 @@ class EditorManager {
   setToolsSection(toolBox) {
     this.toolsSection = toolBox;
   }
-
-  displayDynamicForm(formId, referenceName) {
-    const editor = this.initializeGrapesEditor(`gjs-${formId}`);
-    console.log(editor);
-  }
 }
 
 
@@ -1043,8 +1224,6 @@ class EditorEventManager {
     this.editorOnDragDrop(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
-    this.editorOnUpdate(editor, page);
-    // this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -1120,11 +1299,19 @@ class EditorEventManager {
   }
 
   handleTileActionClick(e, editorContainerId) {
-    const pageId = e.target.attributes["tile-action-object-id"].value;
+    const pageId = e.target.attributes["tile-action-object-id"]?.value;
+    const pageUrl = e.target.attributes["tile-action-object-url"]?.value;
+    const pageLinkLabel = e.target.attributes["tile-action-object"]?.value;
+
+    let linkLabel = "";
+    if (pageLinkLabel) {
+      linkLabel = pageLinkLabel.replace("Web Link, ", "");
+    }
+
     const page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
     if (page) {
-      this.editorManager.createChildEditor(page);
+      this.editorManager.createChildEditor(page, pageUrl, linkLabel);
     }
   }
 
@@ -1166,9 +1353,23 @@ class EditorEventManager {
     });
   }
 
-  editorOnUpdate(editor, page) {
-    editor.on("update", () => {
-      this.editorManager.updatePageJSONContent(editor, page);
+  editorOnUpdate(editor) {
+    editor.on("component:update", (updatedComponent) => {
+      const templateRow = updatedComponent.getEl().closest(".container-row");
+      if (templateRow) {
+        const templateRowId = templateRow.getAttribute("id");
+
+        const wrapper = editor.getWrapper();
+        const component = wrapper.find(`#${templateRowId}`)[0];
+        
+        if (component) {
+          this.templateManager.updateRightButtons(component);
+        } else {
+          console.log("Component corresponding to container-row not found");
+        }
+      } else {
+        console.log("No container-row found");
+      }
     });
   }
 
@@ -1212,7 +1413,7 @@ class EditorEventManager {
       const tileLabel =
         this.editorManager.selectedTemplateWrapper.querySelector(".tile-title");
       if (tileLabel) {
-        sidebarInputTitle.value = tileLabel.textContent;
+        sidebarInputTitle.value = tileLabel.title;
       }
 
       this.templateManager.removeElementOnClick(
@@ -1781,7 +1982,6 @@ class TemplateManager {
     const currentEditor = this.editorManager.currentEditor;
 
     const page = this.editorManager.getPage(currentEditor.pageId);
-    console.log(page);
     if (
       page &&
       (page.PageIsContentPage ||
@@ -1928,7 +2128,7 @@ class TemplateManager {
 
   updateRightButtons(containerRow) {
     if (!containerRow) return;
-
+  
     const styleConfigs = {
       1: {
         title: { "letter-spacing": "1.1px", "font-size": "16px" },
@@ -1949,53 +2149,92 @@ class TemplateManager {
         titleSection: { "text-align": "center" },
       },
     };
-
+  
     const templates = containerRow.components();
     if (!templates.length || !styleConfigs[templates.length]) return;
 
+    const screenWidth = window.innerWidth;
+  
     const config = styleConfigs[templates.length];
-
+  
     const isTemplateOne = templates.length == 1;
-
+  
     const titles = containerRow.find(".tile-title");
     const templateBlocks = containerRow.find(".template-block");
     const titleSections = containerRow.find(".tile-title-section");
-
+  
     titles.forEach((title) => {
       title.addStyle(config.title);
-
+  
+      let tileTitle =
+        title.getEl().getAttribute("title") || title.getEl().innerText;
       if (templates.length === 3) {
-        let words = title.getEl().innerText.split(" ");
-        if (words.length > 1) {
-          const newContent = words.slice(0, -1).join(" ") + "<br>" + words[words.length - 1];
-          title.components(newContent);
+        let words = tileTitle.split(" ");
+        if (words.length > 2) {
+          tileTitle = words.slice(0, 2).join(" ");
+        }
+  
+        if (tileTitle.length > 13) {
+          tileTitle = tileTitle.substring(0, 13).trim();
+        }
+  
+        let truncatedWords = tileTitle.split(" ");
+        if (truncatedWords.length > 1) {
+          tileTitle =
+            truncatedWords.slice(0, 1).join(" ") + "<br>" + truncatedWords[1];
         }
       } else {
-        const newContent = title.getEl().innerText.replace("<br>", "");
-        title.components(newContent);
+        tileTitle = tileTitle.replace("<br>", "");
       }
+  
+      if (templates.length === 2) {
+        tileTitle = truncateText(tileTitle, screenWidth <= 1440 ? 11 : 13);
+      }
+  
+      if (templates.length === 1) {
+        tileTitle = truncateText(tileTitle, screenWidth <= 1440 ? 20 : 24);
+      }
+  
+      title.components(tileTitle);
     });
-
+  
     templateBlocks.forEach((template) => {
-      const isPriority = template.getClasses()?.includes("high-priority-template");
+      const isPriority = template
+        .getClasses()
+        ?.includes("high-priority-template");
+      
+      // Check the screen width and adjust heights accordingly
+      
+      const templateHeight = screenWidth <= 1440 ? 
+        (isPriority && isTemplateOne ? "6.0rem" : "4.5em") : 
+        (isPriority && isTemplateOne ? "7rem" : "5.5rem");
+  
       const templateStyles = {
         ...config.template,
-        height: isPriority && isTemplateOne ? "7rem" : "5.5rem",
+        height: templateHeight,
         textTransform: isPriority && isTemplateOne ? "uppercase" : "capitalize",
       };
       template.addStyle(templateStyles);
     });
-
+  
     templates.forEach((template) => {
       if (!template?.view?.el) return;
       const rightButton = template.find(".add-button-right")[0];
       if (rightButton) rightButton.addStyle(config.rightButton);
+  
+      if (templates.length === 3) {
+        template.addAttributes({
+          "tile-icon-align": "center",
+          "tile-text-align": "center",
+        });
+      }
     });
-
+  
     if (titleSections.length) {
       titleSections.forEach((section) => section.addStyle(config.titleSection));
     }
   }
+  
 
   initialContentPageTemplate(contentPageData) {
     return `
@@ -2218,8 +2457,8 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      if (e.target.value.length > 12) {
-        e.target.value = truncateText(e.target.value, 12);
+      if (e.target.value.length > 30) {
+        e.target.value = truncateText(e.target.value, 35);
       }
       this.ui.updateTileTitle(e.target.value);
     });
@@ -2229,8 +2468,6 @@ class ToolBoxManager {
     const editors = Object.values(this.editorManager.editors);
     if (editors && editors.length) {
       const pageDataList = this.preparePageDataList(editors);
-
-      console.log(pageDataList);
 
       if (pageDataList.length) {
         this.sendPageUpdateRequest(pageDataList, isNotifyResidents);
@@ -3143,7 +3380,7 @@ class ThemeManager {
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
-              "background-color": "#FFFFFF"
+              "background-color": "transparent"
             });
       
             this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);
@@ -3371,6 +3608,14 @@ class ThemeManager {
       button.setAttribute("aria-expanded", !isOpen);
     });
 
+    document.addEventListener("click", (e) => {
+      if (!select.contains(e.target)) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+
     // Populate themes into the dropdown
     this.toolBoxManager.themes.forEach((theme) => {
       const option = document.createElement("div");
@@ -3407,8 +3652,6 @@ class ThemeManager {
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
-
-          console.log("Theme: ", theme);
 
           if (this.setTheme(theme.ThemeName)) {
             this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
@@ -3576,22 +3819,24 @@ class ToolBoxUI {
       const titleComponent =
         this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
-        titleComponent.components(inputTitle);
+        titleComponent.addAttributes({ title: inputTitle });
+        // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        // this.manager.selectedComponent.addAttributes({
-        //   "tile-title": inputTitle,
-        // });
+        this.manager.editorManager.editorEventManager.editorOnUpdate(
+          this.manager.editorManager.getCurrentEditor(),
+        );
+        
       }
     }
   }
 
   displayAlertMessage(message, status) {
-    const alertContainer = document.getElementById("alerts-container");
+    const alertContainer = document.getElementById("tb-alerts-container");
     const alertId = Math.random().toString(10);
     const alertBox = this.alertMessage(message, status, alertId);
     alertBox.style.display = "flex";
 
-    const closeButton = alertBox.querySelector(".alert-close-btn");
+    const closeButton = alertBox.querySelector(".tb-alert-close-btn");
     closeButton.addEventListener("click", () => {
       this.closeAlert(alertId);
     });
@@ -3603,9 +3848,11 @@ class ToolBoxUI {
   alertMessage(message, status, alertId) {
     const alertBox = document.createElement("div");
     alertBox.id = alertId;
-    alertBox.classList = `alert ${status == "success" ? "success" : "error"}`;
+    alertBox.classList = `tb-alert ${
+      status == "success" ? "success" : "error"
+    }`;
     alertBox.innerHTML = `
-        <div class="alert-header">
+        <div class="tb-alert-header">
           <strong>
             ${
               status == "success"
@@ -3613,7 +3860,7 @@ class ToolBoxUI {
                 : this.currentLanguage.getTranslation("alert_type_error")
             }
           </strong>
-          <span class="alert-close-btn">✖</span>
+          <span class="tb-alert-close-btn">✖</span>
         </div>
         <p>${message}</p>
       `;
@@ -3658,9 +3905,7 @@ class ToolBoxUI {
 
   updateContentPageProperties(selectComponent) {
     const currentCtaBgColor =
-      selectComponent?.getAttributes()?.[
-        "cta-background-color"
-      ];
+      selectComponent?.getAttributes()?.["cta-background-color"];
     const CtaRadios = document.querySelectorAll(
       '#cta-color-palette input[type="radio"]'
     );
@@ -3682,15 +3927,12 @@ class ToolBoxUI {
 
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
-      selectComponent?.getAttributes()?.[
-        "tile-bg-image-opacity"
-      ];
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
 
     if (tileOpacity) {
       document.getElementById("bg-opacity").value = tileOpacity;
-      document.getElementById("valueDisplay").textContent = tileOpacity + ' %'
+      document.getElementById("valueDisplay").textContent = tileOpacity + " %";
     }
-    
   }
 
   updateAlignmentProperties(selectComponent) {
@@ -3700,10 +3942,7 @@ class ToolBoxUI {
     ];
 
     alignmentTypes.forEach(({ type, attribute }) => {
-      const currentAlign =
-        selectComponent?.getAttributes()?.[
-          attribute
-        ];
+      const currentAlign = selectComponent?.getAttributes()?.[attribute];
       ["left", "center", "right"].forEach((align) => {
         document.getElementById(`${type}-align-${align}`).checked =
           currentAlign === align;
@@ -3713,9 +3952,7 @@ class ToolBoxUI {
 
   updateColorProperties(selectComponent) {
     const currentTextColor =
-      selectComponent?.getAttributes()?.[
-        "tile-text-color"
-      ];
+      selectComponent?.getAttributes()?.["tile-text-color"];
     const textColorRadios = document.querySelectorAll(
       '.text-color-palette.text-colors .color-item input[type="radio"]'
     );
@@ -3727,9 +3964,7 @@ class ToolBoxUI {
 
     // Update icon color
     const currentIconColor =
-      selectComponent?.getAttributes()?.[
-        "tile-icon-color"
-      ];
+      selectComponent?.getAttributes()?.["tile-icon-color"];
     const iconColorRadios = document.querySelectorAll(
       '.text-color-palette.icon-colors .color-item input[type="radio"]'
     );
@@ -3740,10 +3975,7 @@ class ToolBoxUI {
     });
 
     // Update background color
-    const currentBgColor =
-      selectComponent?.getAttributes()?.[
-        "tile-bgcolor"
-      ];
+    const currentBgColor = selectComponent?.getAttributes()?.["tile-bgcolor"];
     const radios = document.querySelectorAll(
       '#theme-color-palette input[type="radio"]'
     );
@@ -3755,9 +3987,7 @@ class ToolBoxUI {
 
     // opacity
     const currentTileOpacity =
-      selectComponent?.getAttributes()?.[
-        "tile-bg-image-opacity"
-      ];
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
 
     const imageOpacity = document.getElementById("bg-opacity");
     imageOpacity.value = currentTileOpacity;
@@ -3765,13 +3995,9 @@ class ToolBoxUI {
 
   updateActionProperties(selectComponent) {
     const currentActionName =
-      selectComponent?.getAttributes()?.[
-        "tile-action-object"
-      ];
+      selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
-      selectComponent?.getAttributes()?.[
-        "tile-action-object-id"
-      ];
+      selectComponent?.getAttributes()?.["tile-action-object-id"];
     const propertySection = document.getElementById("selectedOption");
     const selectedOptionElement = document.getElementById(currentActionId);
 
@@ -3780,14 +4006,18 @@ class ToolBoxUI {
       option.style.background = "";
     });
     propertySection.innerHTML = `<span id="sidebar_select_action_label">
-                  ${this.currentLanguage.getTranslation("sidebar_select_action_label")}
+                  ${this.currentLanguage.getTranslation(
+                    "sidebar_select_action_label"
+                  )}
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
-    if (currentActionName && currentActionId && selectedOptionElement) {
+    if (currentActionName && currentActionId) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
-      selectedOptionElement.style.background = "#f0f0f0";
+      if (selectedOptionElement) {
+        selectedOptionElement.style.background = "#f0f0f0";
+      }
     }
   }
 
@@ -3798,7 +4028,7 @@ class ToolBoxUI {
       const contentPageCtas = document.getElementById("call-to-actions");
       document.getElementById("cta-style").style.display = "flex";
       document.getElementById("no-cta-message").style.display = "none";
-      
+
       this.renderCtas(callToActions, editorInstance, contentPageCtas);
       this.setupButtonLayoutListeners(editorInstance);
       this.setupBadgeClickListener(editorInstance);
@@ -3882,7 +4112,9 @@ class ToolBoxUI {
             }"
           cta-background-color="${ctaType.iconBgColor}"
           >
-            <div class="cta-button" ${defaultConstraints} style="background-color: ${backgroundColor || ctaType.iconBgColor};">
+            <div class="cta-button" ${defaultConstraints} style="background-color: ${
+      backgroundColor || ctaType.iconBgColor
+    };">
               <i class="${ctaType.icon}" ${defaultConstraints}></i>
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
@@ -4157,7 +4389,7 @@ class ToolBoxUI {
       }
 
       document.querySelector(".cta-button-layout-container").style.display =
-          "none";
+        "none";
     }
   }
 }
@@ -4187,12 +4419,8 @@ class UndoRedoManager {
     }
 
     captureState() {
-        console.log('Capturing state...');
         // Get current project data
         const currentState = this.editor.getProjectData();
-        console.log('former state: ', this.currentState);
-        console.log('current state: ', currentState);
-        console.log('Captured project data:', this.editor.getProjectData());
 
         // Prevent duplicate state captures
         if (this.areStatesEqual(currentState, this.currentState)) return;
@@ -4304,18 +4532,16 @@ class UndoRedoManager {
 
 // Content from components/ActionListComponent.js
 class ActionListComponent {
-  editorManager = null;
-  dataManager = null;
-  toolBoxManager = null;
-  selectedObject = null;
-  selectedId = null;
-  pageOptions = [];
-
   constructor(editorManager, dataManager, currentLanguage, toolBoxManager) {
     this.editorManager = editorManager;
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
     this.toolBoxManager = toolBoxManager;
+    this.selectedObject = null;
+    this.selectedId = null;
+    this.pageOptions = [];
+    this.added = false;
+    this.formErrors = 0;
 
     this.categoryData = [
       {
@@ -4323,12 +4549,16 @@ class ActionListComponent {
         displayName: "Page",
         label: this.currentLanguage.getTranslation("category_page"),
         options: [],
+        canAdd: true,
+        addAction: () => this.showModal(this.createNewPageModal()),
       },
       {
         name: "Service/Product Page",
         displayName: "Service Page",
         label: this.currentLanguage.getTranslation("category_services_or_page"),
         options: [],
+        canAdd: true,
+        addAction: () => this.toolBoxManager.newServiceEvent(),
       },
       {
         name: "Dynamic Forms",
@@ -4342,73 +4572,415 @@ class ActionListComponent {
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },
+      {
+        name: "Web Link",
+        displayName: "Web Link",
+        label: this.currentLanguage.getTranslation("category_link"),
+        options: [],
+        isWebLink: true,
+        addAction: () =>
+          this.showModal(this.createWebLinkModal("Add Web Link")),
+      },
     ];
+
     this.init();
   }
 
-  
-
   async init() {
-    await this.dataManager.getPages();
-    // await this.dataManager.getServices();
-    this.pageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => {
-        page.PageTileName = page.PageName;
-        return !page.PageIsContentPage && !page.PageIsPredefined && !page.PageIsDynamicForm
-      }
-    );
-    this.predefinedPageOptions = this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => {
-        page.PageTileName = page.PageName;
-        return page.PageIsPredefined && page.PageName != "Home"
-      }
-    );
+    try {
+      await this.dataManager.getPages();
+      await this.populateCategories();
+      this.populateDropdownMenu();
+    } catch (error) {
+      console.error("Error initializing ActionListComponent:", error);
+    }
+  }
 
-    this.servicePageOptions = this.dataManager.services.map((service) => {
-      return {
-        PageId: service.ProductServiceId,
-        PageName: service.ProductServiceName,
-        PageTileName: service.ProductServiceTileName || service.ProductServiceName,
-      };
-    });
+  async populateCategories() {
+    try {
+      this.pageOptions = this.filterPages(
+        (page) =>
+          !page.PageIsContentPage &&
+          !page.PageIsPredefined &&
+          !page.PageIsDynamicForm &&
+          !page.PageIsWebLinkPage
+      );
 
-    this.dynamicForms = this.dataManager.forms.map((form) => {
-      return {
+      this.predefinedPageOptions = this.filterPages(
+        (page) => page.PageIsPredefined && page.PageName != "Home"
+      );
+
+      this.servicePageOptions = (this.dataManager.services || []).map(
+        (service) => ({
+          PageId: service.ProductServiceId,
+          PageName: service.ProductServiceName,
+          PageTileName:
+            service.ProductServiceTileName || service.ProductServiceName,
+        })
+      );
+
+      this.dynamicForms = (this.dataManager.forms || []).map((form) => ({
         PageId: form.FormId,
         PageName: form.ReferenceName,
         PageTileName: form.ReferenceName,
         FormUrl: form.FormUrl,
+      }));
+
+      const categoryMap = {
+        Page: this.pageOptions,
+        "Service/Product Page": this.servicePageOptions,
+        "Dynamic Forms": this.dynamicForms,
+        "Predefined Page": this.predefinedPageOptions,
       };
-    });
 
-    this.categoryData.forEach((category) => {
-      if (category.name === "Page") {
-        category.options = this.pageOptions;
-      } else if (category.name == "Service/Product Page") {
-        category.options = this.servicePageOptions;
-      } else if (category.name == "Dynamic Forms") {
-        category.options = this.dynamicForms;
-      } else if (category.name == "Predefined Page") {
-        category.options = this.predefinedPageOptions;
+      this.categoryData.forEach((category) => {
+        category.options = categoryMap[category.name] || [];
+      });
+    } catch (error) {
+      console.error("Error populating categories:", error);
+    }
+  }
+
+  filterPages(filterFn) {
+    if (!this.dataManager.pages?.SDT_PageCollection) {
+      console.warn("Page collection is not available");
+      return [];
+    }
+    return this.dataManager.pages.SDT_PageCollection.filter((page) => {
+      if (page) {
+        page.PageTileName = page.PageName;
+        return filterFn(page);
       }
+      return false;
     });
+  }
 
-    this.populateDropdownMenu();
+  createWebLinkModal(title) {
+    return this.createModal(title, true);
+  }
+
+  createNewPageModal() {
+    return this.createModal("Create new page", false);
+  }
+
+  createModal(title, isWebLink = false) {
+    const selectedTile = this.editorManager.getCurrentEditor().getSelected();
+    let label = selectedTile.getAttributes()?.["tile-action-object"];
+    label = label.replace("Web Link, ", "");
+
+    const url = selectedTile.getAttributes()?.["tile-action-object-url"];
+
+    const fields = isWebLink
+      ? [
+          {
+            id: "link_url",
+            label: "Link Url",
+            placeholder: "https://www.example.com",
+            value: isWebLink ? url || "" : "",
+          },
+          {
+            id: "link_label",
+            label: "Link Label",
+            placeholder: "Open Website",
+            value: isWebLink ? (url !== undefined ? label : "") : "", // Fixed here
+          },
+        ]
+      : [
+          {
+            id: "page_title",
+            label: "Page Title",
+            placeholder: "New page title",
+            value: "",
+          },
+        ];
+
+    const popup = document.createElement("div");
+    popup.className = "popup-modal-link";
+    popup.innerHTML = `
+      <div class="popup">
+        <div class="popup-header">
+          <span>${title}</span>
+          <button class="close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 21 21">
+              <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"/>
+            </svg>
+          </button>
+        </div>
+        <hr>
+        <div class="popup-body" id="confirmation_modal_message">
+          ${fields
+            .map(
+              (field) => `
+            <div class="form-field"style="${
+              field !== fields[0] ? "margin-top: 10px" : ""
+            }">
+              <label for="${field.id}">${field.label}</label>
+              <input required class="tb-form-control" type="text" id="${
+                field.id
+              }" placeholder="${field.placeholder}" value="${field.value}"/>
+              <span class="error-message" style="color: red; font-size: 12px; display: none; margin-top: 5px; font-weight: 300">Error message</span>
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+        <div class="popup-footer">
+          <button id="submit_link" submit class="tb-btn tb-btn-primary">Save</button>
+          <button id="close_web_url_popup" class="tb-btn tb-btn-outline">Cancel</button>
+        </div>
+      </div>
+    `;
+
+    return popup;
+  }
+
+  showModal(popup) {
+    try {
+      document.body.appendChild(popup);
+      popup.style.display = "flex";
+
+      const closeButton = popup.querySelector("#close_web_url_popup");
+      const closeX = popup.querySelector(".close");
+      const saveButton = popup.querySelector("#submit_link");
+
+      const removePopup = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        popup.remove();
+      };
+
+      closeButton?.addEventListener("click", removePopup);
+      closeX?.addEventListener("click", removePopup);
+      saveButton?.addEventListener("click", () => this.handleModalSave(popup));
+    } catch (error) {
+      console.error("Error showing modal:", error);
+    }
+  }
+
+  handleModalSave(popup) {
+    try {
+      // Run validation first
+      if (!this.validateModalForm()) {
+        return; // Stop if validation fails
+      }
+
+      const isWebLink = popup.querySelector("#link_url") !== null;
+      const dropdownHeader = document.getElementById("selectedOption");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+
+      if (isWebLink) {
+        const linkUrl = document.getElementById("link_url")?.value.trim();
+        const linkLabel = document.getElementById("link_label")?.value.trim();
+
+        this.createWebLinkPage(linkUrl, linkLabel);
+      } else {
+        const pageTitle = document.getElementById("page_title")?.value.trim();
+        this.updateSelectedComponent(pageTitle);
+      }
+
+      // If dropdown elements exist, update UI
+      if (dropdownHeader && dropdownMenu) {
+        dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+        dropdownMenu.style.display = "none";
+      }
+
+      // Close the popup after successful save
+      popup.remove();
+    } catch (error) {
+      console.error("Error handling modal save:", error);
+    }
+  }
+
+  validateModalForm() {
+    this.formErrors = 0; // Reset error count
+
+    document
+      .querySelectorAll(".popup-body .tb-form-control")
+      .forEach((field) => {
+        const errorField = field.nextElementSibling;
+        errorField.style.display = "none"; // Hide previous error messages
+        errorField.textContent = "";
+
+        // Check for required fields
+        if (field.value.trim() === "") {
+          errorField.textContent = "This field is required";
+          errorField.style.display = "block";
+          this.formErrors++;
+        }
+
+        // Validate Link URL
+        if (field.id === "link_url" && field.value.trim() !== "") {
+          const urlPattern = /^https:\/\/.+/; // Must start with https://
+          if (!urlPattern.test(field.value.trim())) {
+            errorField.textContent = "Enter a valid URL starting with https://";
+            errorField.style.display = "block";
+            this.formErrors++;
+          }
+        }
+
+        // Validate Page Title
+        if (field.id === "page_title" && field.value.trim() === "") {
+          errorField.textContent = "Enter a valid page title";
+          errorField.style.display = "block";
+          this.formErrors++;
+        }
+
+        if (field.id === "page_title" && field.value.length < 3) {
+          errorField.textContent = "Page title must be at least 3 characters long";
+          errorField.style.display = "block";
+          this.formErrors++;
+        }
+      });
+
+    return this.formErrors === 0;
+  }
+
+  async createWebLinkPage(linkUrl, linkLabel) {
+    const editor = this.editorManager.getCurrentEditor();
+    try {
+      const res = await this.dataManager.getPages();
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+      if (editor.getSelected()) {
+        const titleComponent = editor.getSelected().find(".tile-title")[0];
+
+        // const tileTitle = truncateText(linkLabel, 12);
+        const tileTitle = linkLabel;
+
+        const page = res.SDT_PageCollection.find(
+          (page) => page.PageName === "Web Link"
+        );
+        if (!page) {
+          console.warn("Web Link page not found");
+          return;
+        }
+
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-id",
+          `${page.PageId}`
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-url",
+          linkUrl
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object",
+          `Web Link, ${linkLabel}`
+        );
+
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(page, linkUrl, linkLabel);
+
+        if (titleComponent) {
+          titleComponent.addAttributes({ title: linkLabel });
+          titleComponent.components(tileTitle);
+          titleComponent.addStyle({ display: "block" });
+
+          const sidebarInputTitle = document.getElementById("tile-title");
+          if (sidebarInputTitle) {
+            sidebarInputTitle.value = tileTitle;
+            sidebarInputTitle.title = tileTitle;
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error creating web link page:", error);
+    }
+  }
+
+  async updateSelectedComponent(title, url = null) {
+    try {
+      const editor = this.editorManager.getCurrentEditor();
+      const selected = editor.getSelected();
+      if (!selected) return;
+
+      const titleComponent = selected.find(".tile-title")[0];
+      // const tileTitle = this.truncateText(title, 12);
+      const tileTitle = title;
+      const editorId = editor.getConfig().container;
+      const editorContainerId = `${editorId}-frame`;
+      await this.dataManager
+        .createNewPage(title, this.toolBoxManager.currentTheme)
+        .then((res) => {
+          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+            return;
+          }
+
+          const result = JSON.parse(res.result);
+          const pageId = result.Trn_PageId;
+          const pageName = result.Trn_PageName;
+
+          this.dataManager.getPages().then((res) => {
+            this.toolBoxManager.actionList.init();
+
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-action-object-id",
+              pageId
+            );
+
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-action-object",
+              `Page, ${pageName}`
+            );
+
+            $(editorContainerId).nextAll().remove();
+            this.editorManager.createChildEditor(
+              this.editorManager.getPage(pageId)
+            );
+
+            // this.toolBoxManager.ui.displayMessage(
+            //   `${this.currentLanguage.getTranslation("page_created")}`,
+            //   "success"
+            // );
+          });
+        });
+
+      if (titleComponent) {
+        titleComponent.addAttributes({ title: title });
+        titleComponent.components(tileTitle);
+        titleComponent.addStyle({ display: "block" });
+
+        const sidebarInputTitle = document.getElementById("tile-title");
+        if (sidebarInputTitle) {
+          sidebarInputTitle.value = tileTitle;
+          sidebarInputTitle.title = tileTitle;
+        }
+      }
+      // dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+      // dropdownMenu.style.display = "none";
+    } catch (error) {
+      console.error("Error updating selected component:", error);
+    }
+  }
+
+  truncateText(text, maxLength) {
+    if (!text) return "";
+    return text.length > maxLength
+      ? text.substring(0, maxLength - 3) + "..."
+      : text;
   }
 
   populateDropdownMenu() {
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    dropdownMenu.innerHTML = "";
-    this.categoryData.forEach((category) => {
-      const categoryElement = this.createCategoryElement(category);     
-      dropdownMenu.appendChild(categoryElement);
-    });
+    try {
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      if (!dropdownMenu) return;
 
-    this.setupDropdownHeader();
-    this.setupOutsideClickListener();
-    this.setupCategoryToggle();
-    this.setupItemClickListener();
-    this.setupSearchInputListener();
+      dropdownMenu.innerHTML = "";
+      this.categoryData.forEach((category) => {
+        const categoryElement = this.createCategoryElement(category);
+        dropdownMenu.appendChild(categoryElement);
+      });
+
+      this.setupEventListeners();
+    } catch (error) {
+      console.error("Error populating dropdown menu:", error);
+    }
   }
 
   createCategoryElement(category) {
@@ -4417,35 +4989,55 @@ class ActionListComponent {
     categoryElement.setAttribute("data-category", category.label);
 
     const summaryElement = document.createElement("summary");
-    summaryElement.innerHTML = `${category.displayName} <i class="fa fa-angle-right"></i>`;
+    summaryElement.innerHTML = `${category.label}${
+      category.isWebLink ? "" : ' <i class="fa fa-angle-right"></i>'
+    }`;
     categoryElement.appendChild(summaryElement);
 
+    if (!category.isWebLink) {
+      this.appendSearchBox(categoryElement, category);
+      this.appendCategoryContent(categoryElement, category);
+    } else {
+      categoryElement.addEventListener("click", (e) => {
+        e.preventDefault();
+        category.addAction();
+      });
+    }
+
+    return categoryElement;
+  }
+
+  appendSearchBox(categoryElement, category) {
     const searchBox = document.createElement("div");
     searchBox.classList.add("search-container");
     searchBox.innerHTML = `
-      <i class="fas fa-search search-icon">
-      </i>
-      <input type="text" placeholder="Search" class="search-input" /> 
-      `;
-    categoryElement.appendChild(searchBox);
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Search" class="search-input" />
+    `;
 
-    if (category.name === "Service/Product Page") {
+    if (category.canAdd) {
       const addButton = document.createElement("button");
-      addButton.innerHTML = `<i class="fa fa-plus"></i>`;
-
-      addButton.title = "Add New Service";
+      addButton.innerHTML = '<i class="fa fa-plus"></i>';
+      addButton.title = `Add New ${category.name}`;
       addButton.classList.add("add-new-service");
       addButton.addEventListener("click", (e) => {
         e.preventDefault();
-        this.toolBoxManager.newServiceEvent()
+        e.stopPropagation();
+        category.addAction();
       });
       searchBox.appendChild(addButton);
     }
 
+    categoryElement.appendChild(searchBox);
+  }
+
+  appendCategoryContent(categoryElement, category) {
     const categoryContent = document.createElement("ul");
     categoryContent.classList.add("category-content");
 
     category.options.forEach((option) => {
+      if (!option) return;
+
       const optionElement = document.createElement("li");
       optionElement.textContent = option.PageName;
       optionElement.id = option.PageId;
@@ -4454,8 +5046,8 @@ class ActionListComponent {
         optionElement.dataset.objectUrl = option.FormUrl;
       }
 
-      optionElement.dataset.category = category.name
-      optionElement.dataset.tileName = option.PageTileName
+      optionElement.dataset.category = category.name;
+      optionElement.dataset.tileName = option.PageTileName;
       categoryContent.appendChild(optionElement);
     });
 
@@ -4466,21 +5058,32 @@ class ActionListComponent {
     categoryContent.appendChild(noRecordsMessage);
 
     categoryElement.appendChild(categoryContent);
-    return categoryElement;
+  }
+
+  setupEventListeners() {
+    this.setupDropdownHeader();
+    this.setupOutsideClickListener();
+    this.setupCategoryToggle();
+    this.setupItemClickListener();
+    this.setupSearchInputListener();
   }
 
   setupDropdownHeader() {
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
-    
+
+    if (!dropdownHeader || !dropdownMenu) return;
+
     if (!this.added) {
-      dropdownHeader.removeEventListener("click", (e) => {});
-      dropdownHeader.addEventListener("click", (e) => {
+      dropdownHeader.addEventListener("click", () => {
         this.init();
         dropdownMenu.style.display =
           dropdownMenu.style.display === "block" ? "none" : "block";
-        dropdownHeader.querySelector("i").classList.toggle("fa-angle-up");
-        dropdownHeader.querySelector("i").classList.toggle("fa-angle-down");        
+        const icon = dropdownHeader.querySelector("i");
+        if (icon) {
+          icon.classList.toggle("fa-angle-up");
+          icon.classList.toggle("fa-angle-down");
+        }
       });
     }
 
@@ -4491,16 +5094,20 @@ class ActionListComponent {
     const dropdownHeader = document.getElementById("selectedOption");
     const dropdownMenu = document.getElementById("dropdownMenu");
 
+    if (!dropdownHeader || !dropdownMenu) return;
+
     document.addEventListener("click", (event) => {
       if (
         !dropdownHeader.contains(event.target) &&
         !dropdownMenu.contains(event.target)
       ) {
         dropdownMenu.style.display = "none";
-        dropdownHeader.querySelector("i")?.classList.remove("fa-angle-up");
-        dropdownHeader.querySelector("i")?.classList.add("fa-angle-down");
-        const detailsElements = document.getElementsByClassName('category');
-        Array.from(detailsElements).forEach(details => {
+        const icon = dropdownHeader.querySelector("i");
+        if (icon) {
+          icon.classList.remove("fa-angle-up");
+          icon.classList.add("fa-angle-down");
+        }
+        document.querySelectorAll(".category").forEach((details) => {
           details.open = false;
         });
       }
@@ -4508,151 +5115,213 @@ class ActionListComponent {
   }
 
   setupCategoryToggle() {
-    const categories = document.querySelectorAll(".category");
+    document.querySelectorAll(".category").forEach((category) => {
+      if (
+        category.dataset.category !==
+        this.currentLanguage.getTranslation("category_link")
+      ) {
+        category.addEventListener("toggle", () => {
+          this.selectedObject = category.dataset.category;
+          const searchBox = category.querySelector(".search-container");
+          const icon = category.querySelector("summary i");
+          const isOpen = category.open;
 
-    categories.forEach((category) => {
-      category.addEventListener("toggle", () => {
-        this.selectedObject = category.dataset.category;
-        const searchBox = category.querySelector(".search-container");
-        const icon = category.querySelector("summary i");
-        const isOpen = category.open;
-
-        if (isOpen) {
-          categories.forEach((otherCategory) => {
-        if (otherCategory !== category) {
-          // otherCategory.open = false;
-          otherCategory.removeAttribute("open");
-          console.log(otherCategory)
-          otherCategory.querySelector(".search-container").style.display =
-            "none";
-          otherCategory
-            .querySelector("summary i")
-            .classList.replace("fa-angle-down", "fa-angle-right");
-        }
+          document.querySelectorAll(".category").forEach((otherCategory) => {
+            if (otherCategory !== category) {
+              otherCategory.open = false;
+              const otherSearchBox =
+                otherCategory.querySelector(".search-container");
+              if (otherSearchBox) {
+                otherSearchBox.style.display = "none";
+              }
+              const otherIcon = otherCategory.querySelector("summary i");
+              if (otherIcon) {
+                otherIcon.classList.replace("fa-angle-down", "fa-angle-right");
+              }
+            }
           });
-          searchBox.style.display = "flex";
-          icon.classList.replace("fa-angle-right", "fa-angle-down");
-        } else {
-          searchBox.style.display = "none";
-          icon.classList.replace("fa-angle-down", "fa-angle-right");
-        }
-      });
+
+          if (searchBox && icon) {
+            searchBox.style.display = isOpen ? "flex" : "none";
+            icon.classList.replace(
+              isOpen ? "fa-angle-right" : "fa-angle-down",
+              isOpen ? "fa-angle-down" : "fa-angle-right"
+            );
+          }
+        });
+      }
     });
   }
 
   setupItemClickListener() {
-    const dropdownHeader = document.getElementById("selectedOption");
-    const dropdownMenu = document.getElementById("dropdownMenu");
+    try {
+      const dropdownHeader = document.getElementById("selectedOption");
+      const dropdownMenu = document.getElementById("dropdownMenu");
 
-    document.querySelectorAll(".category-content li").forEach((item) => {
-      item.addEventListener("click", () => {
-        this.selectedObject = item.dataset.category
-        dropdownHeader.textContent = `${
-          item.closest(".category").dataset.category
-        }, ${item.textContent}`;
-        const category = item.dataset.category
-        const editor = this.editorManager.getCurrentEditor();
-        const editorId = editor.getConfig().container;
-        const editorContainerId = `${editorId}-frame`;
-        if (editor.getSelected()) {
-          const titleComponent = editor.getSelected().find(".tile-title")[0];
-          const currentPageId = localStorage.getItem("pageId");
-          const tileTitle = truncateText(item.dataset.tileName, 12);
-          if (currentPageId !== undefined) {
-            this.toolBoxManager.setAttributeToSelected(
-              "tile-action-object-id",
-              item.id
-            );
+      if (!dropdownHeader || !dropdownMenu) return;
 
-            if (item.dataset.objectUrl) {
-              this.toolBoxManager.setAttributeToSelected(
-                "tile-action-object-url",
-                item.dataset.objectUrl
-              );
+      document.querySelectorAll(".category-content li").forEach((item) => {
+        if (item.classList.contains("no-records-message")) return;
+
+        item.addEventListener("click", async () => {
+          try {
+            const category = item.dataset.category;
+            const categoryElement = item.closest(".category");
+
+            if (!category || !categoryElement) return;
+
+            this.selectedObject = category;
+            dropdownHeader.textContent = `${categoryElement.dataset.category}, ${item.textContent}`;
+
+            const editor = this.editorManager.getCurrentEditor();
+            if (!editor) return;
+
+            const editorId = editor.getConfig().container;
+            const editorContainerId = `${editorId}-frame`;
+            const selected = editor.getSelected();
+
+            if (selected && editorContainerId) {
+              await this.handleItemSelection(item, category, editorContainerId);
             }
-           
-            this.toolBoxManager.setAttributeToSelected(
-              "tile-action-object",
-              `${category}, ${item.textContent}`
-            );
 
-            if (category == "Service/Product Page") {
-              this.createContentPage(item.id, editorContainerId);
-            }else if (category == "Dynamic Forms") {
-              $(editorContainerId).nextAll().remove();
-              this.createDynamicFormPage(item.id, item.textContent)
-            }else{
-              $(editorContainerId).nextAll().remove();
-              this.editorManager.createChildEditor((this.editorManager.getPage(item.id)))
-            }
+            dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
+            dropdownMenu.style.display = "none";
+          } catch (error) {
+            console.error("Error in item click handler:", error);
           }
-
-          if (titleComponent) {
-            titleComponent.components(tileTitle);
-            titleComponent.addStyle({ "display": "block" });
-
-            const sidebarInputTitle = document.getElementById("tile-title");
-            if (sidebarInputTitle) {
-              console.log(tileTitle);
-              sidebarInputTitle.value = tileTitle;
-            }
-          }
-        }
-        dropdownHeader.innerHTML += ' <i class="fa fa-angle-down"></i>';
-        dropdownMenu.style.display = "none";
+        });
       });
-    });
+    } catch (error) {
+      console.error("Error setting up item click listener:", error);
+    }
+  }
+
+  async handleItemSelection(item, category, editorContainerId) {
+    try {
+      const selected = this.editorManager.getCurrentEditor().getSelected();
+      const titleComponent = selected.find(".tile-title")[0];
+      // const tileTitle = this.truncateText(item.dataset.tileName, 12);
+      const tileTitle = item.dataset.tileName;
+
+      if (selected) {
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-id",
+          item.id
+        );
+
+        if (item.dataset.objectUrl) {
+          this.toolBoxManager.setAttributeToSelected(
+            "tile-action-object-url",
+            item.dataset.objectUrl
+          );
+        }
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object",
+          `${category}, ${item.textContent}`
+        );
+
+        await this.handlePageCreation(
+          category,
+          item.id,
+          editorContainerId,
+          item.textContent
+        );
+      }
+
+      if (titleComponent) {
+        titleComponent.addAttributes({ title: item.dataset.tileName });
+        titleComponent.components(tileTitle);
+        titleComponent.addStyle({ display: "block" });
+
+        const sidebarInputTitle = document.getElementById("tile-title");
+        if (sidebarInputTitle) {
+          sidebarInputTitle.value = tileTitle;
+          sidebarInputTitle.title = tileTitle;
+        }
+      }
+    } catch (error) {
+      console.error("Error handling item selection:", error);
+    }
+  }
+
+  async handlePageCreation(category, itemId, editorContainerId, itemText) {
+    try {
+      $(editorContainerId).nextAll().remove();
+      switch (category) {
+        case "Service/Product Page":
+          await this.createContentPage(itemId, editorContainerId);
+          break;
+        case "Dynamic Forms":
+          await this.createDynamicFormPage(itemId, itemText, editorContainerId);
+          break;
+        default:
+          this.editorManager.createChildEditor(
+            this.editorManager.getPage(itemId)
+          );
+      }
+    } catch (error) {
+      console.error("Error handling page creation:", error);
+    }
+  }
+
+  async createContentPage(pageId, editorContainerId) {
+    try {
+      const res = await this.dataManager.createContentPage(pageId);
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+
+      await this.dataManager.getPages();
+      $(editorContainerId).nextAll().remove();
+      this.editorManager.createChildEditor(this.editorManager.getPage(pageId));
+    } catch (error) {
+      console.error("Error creating content page:", error);
+    }
+  }
+
+  async createDynamicFormPage(formId, formName, editorContainerId) {
+    try {
+      const res = await this.dataManager.createDynamicFormPage(
+        formId,
+        formName
+      );
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+
+      await this.dataManager.getPages();
+      $(editorContainerId).nextAll().remove();
+      this.editorManager.createChildEditor(this.editorManager.getPage(formId));
+    } catch (error) {
+      console.error("Error creating dynamic form page:", error);
+    }
   }
 
   setupSearchInputListener() {
     document.querySelectorAll(".search-input").forEach((input) => {
       input.addEventListener("input", function () {
         const filter = this.value.toLowerCase();
-        const items = this.closest(".category").querySelectorAll(
+        const category = this.closest(".category");
+        if (!category) return;
+
+        const items = category.querySelectorAll(
           ".category-content li:not(.no-records-message)"
         );
+        const noRecordsMessage = category.querySelector(".no-records-message");
+
         let hasVisibleItems = false;
 
         items.forEach((item) => {
-          if (item.textContent.toLowerCase().includes(filter)) {
-            item.style.display = "block";
-            hasVisibleItems = true;
-          } else {
-            item.style.display = "none";
-          }
+          const isVisible = item.textContent.toLowerCase().includes(filter);
+          item.style.display = isVisible ? "block" : "none";
+          if (isVisible) hasVisibleItems = true;
         });
 
-        const noRecordsMessage = this.closest(".category").querySelector(
-          ".no-records-message"
-        );
-        noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
+        if (noRecordsMessage) {
+          noRecordsMessage.style.display = hasVisibleItems ? "none" : "block";
+        }
       });
-    });
-  }
-
-  createContentPage(pageId, editorContainerId) {
-    this.dataManager.createContentPage(pageId)
-    .then((res) => {
-      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-        return;
-      }
-      this.dataManager.getPages().then(res=>{
-        $(editorContainerId).nextAll().remove();
-        this.editorManager.createChildEditor(this.editorManager.getPage(pageId))
-      })
-    });
-  }
-
-  createDynamicFormPage(formId, formName, editorContainerId) {
-    this.dataManager.createDynamicFormPage(formId, formName).then((res) => {
-      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-        return;
-      }
-      
-      this.dataManager.getPages().then(res=>{
-        $(editorContainerId).nextAll().remove();
-        this.editorManager.createChildEditor(this.editorManager.getPage(formId))
-      })
     });
   }
 }
@@ -4660,397 +5329,410 @@ class ActionListComponent {
 
 // Content from components/MappingComponent.js
 class MappingComponent {
-    treeContainer = document.getElementById("tree-container");
-    isLoading = false;
-  
-    constructor(dataManager, editorManager, toolBoxManager, currentLanguage) {
-      this.dataManager = dataManager;
-      this.editorManager = editorManager;
-      this.toolBoxManager = toolBoxManager;
-      this.currentLanguage = currentLanguage;
-      this.boundCreatePage = this.handleCreatePage.bind(this);
+  treeContainer = document.getElementById("tree-container");
+  isLoading = false;
+
+  constructor(dataManager, editorManager, toolBoxManager, currentLanguage) {
+    this.dataManager = dataManager;
+    this.editorManager = editorManager;
+    this.toolBoxManager = toolBoxManager;
+    this.currentLanguage = currentLanguage;
+    this.boundCreatePage = this.handleCreatePage.bind(this);
+  }
+
+  init() {
+    this.setupEventListeners();
+    this.listPagesListener();
+    this.homePage = this.dataManager.pages.SDT_PageCollection.find(
+      (page) => page.PageName == "Home"
+    );
+    if (this.homePage) {
+      this.createPageTree(this.homePage.PageId, "tree-container");
     }
-  
-    init() {
-        this.setupEventListeners();
-        this.listPagesListener();
-        this.homePage = this.dataManager.pages.SDT_PageCollection.find(page=>page.PageName=="Home")
-        if (this.homePage) {
-            this.createPageTree(this.homePage.PageId, "tree-container")
+  }
+
+  listPagesListener() {
+    const listAllPages = document.getElementById("list-all-pages");
+    listAllPages.addEventListener("click", () => {
+      this.handleListAllPages();
+    });
+  }
+
+  handleListAllPages() {
+    try {
+      this.dataManager.getPages().then((res) => {
+        if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+          return;
         }
-    }
-  
-    listPagesListener() {
-      const listAllPages = document.getElementById("list-all-pages");
-      listAllPages.addEventListener("click", () => {
-        this.handleListAllPages();
+        this.treeContainer = document.getElementById("tree-container");
+        this.clearMappings();
+        const newTree = this.createPageList(res.SDT_PageCollection, true);
+        this.treeContainer.appendChild(newTree);
+        this.hidePagesList();
       });
+    } catch (error) {
+      this.displayMessage("Error loading pages", "error");
+    } finally {
+      this.isLoading = false;
     }
-  
-    handleListAllPages() {
-      try {
-        this.dataManager.getPages().then((res) => {
+  }
+
+  hidePagesList() {
+    const listAllPages = document.getElementById("list-all-pages");
+    listAllPages.style.display = "none";
+
+    const hidePagesList = document.getElementById("hide-pages");
+    hidePagesList.style.display = "block";
+
+    hidePagesList.addEventListener("click", () => {
+      listAllPages.style.display = "block";
+      hidePagesList.style.display = "none";
+      this.createPageTree(this.homePage.PageId, "tree-container");
+    });
+  }
+
+  getPage(pageId) {
+    return this.dataManager.pages.SDT_PageCollection.find(
+      (page) => page.PageId == pageId
+    );
+  }
+
+  createPageTree(rootPageId, childDivId) {
+    let homePage = this.getPage(rootPageId);
+    let homePageJSON = JSON.parse(homePage.PageGJSJson);
+    const pages = homePageJSON.pages;
+    const containerRows =
+      pages[0].frames[0].component.components[0].components[0].components;
+
+    let childPages = [];
+
+    containerRows.forEach((containerRow) => {
+      let templateWrappers = containerRow.components;
+      if (templateWrappers) {
+        templateWrappers.forEach((templateWrapper) => {
+          let templateBlocks = templateWrapper.components;
+          templateBlocks.forEach((templateBlock) => {
+            if (templateBlock.classes.includes("template-block")) {
+              let pageId = templateBlock.attributes["tile-action-object-id"];
+              let page = this.getPage(pageId);
+              if (page) {
+                childPages.push({
+                  Id: pageId,
+                  Name: page.PageName,
+                  IsContentPage: page.PageIsContentPage,
+                });
+              }
+            }
+          });
+        });
+      }
+    });
+    const newTree = this.createTree(rootPageId, childPages, true);
+    this.treeContainer = document.getElementById(childDivId);
+    this.clearMappings();
+    this.treeContainer.appendChild(newTree);
+  }
+
+  setupEventListeners() {
+    const createPageButton = document.getElementById("page-submit");
+    const pageInput = document.getElementById("page-title");
+
+    createPageButton.removeEventListener("click", this.boundCreatePage);
+
+    pageInput.addEventListener("input", () => {
+      createPageButton.disabled = !pageInput.value.trim() || this.isLoading;
+    });
+
+    createPageButton.addEventListener("click", this.boundCreatePage);
+  }
+
+
+  async handleCreatePage(e) {
+    e.preventDefault();
+
+    if (this.isLoading) return;
+
+    const pageInput = document.getElementById("page-title");
+    const createPageButton = document.getElementById("page-submit");
+    const pageTitle = pageInput.value.trim();
+
+    if (!pageTitle) return;
+
+    try {
+      this.isLoading = true;
+      createPageButton.disabled = true;
+      pageInput.disabled = true; // Disable input during creation
+      // Create the page
+      await this.dataManager
+        .createNewPage(pageTitle, this.toolBoxManager.currentTheme)
+        .then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
             return;
           }
-          this.treeContainer = document.getElementById("tree-container");
+
+          pageInput.value = "";
+
           this.clearMappings();
-          const newTree = this.createPageList(res.SDT_PageCollection, true);
-          this.treeContainer.appendChild(newTree);
-          this.hidePagesList();
-        });
-      } catch (error) {
-        this.displayMessage("Error loading pages", "error");
-      } finally {
-        this.isLoading = false;
-      }
-    }
-  
-    hidePagesList() {
-        const listAllPages = document.getElementById("list-all-pages");
-        listAllPages.style.display = "none";
 
-        const hidePagesList = document.getElementById("hide-pages");
-        hidePagesList.style.display = "block";
+          this.dataManager.getPages().then((res) => {
+            this.handleListAllPages();
+            this.toolBoxManager.actionList.init();
 
-        hidePagesList.addEventListener("click", () => {
-            listAllPages.style.display = "block";
-            hidePagesList.style.display = "none";
-            this.createPageTree(this.homePage.PageId, "tree-container");
-        });
-    }
-  
-    getPage(pageId) {
-      return this.dataManager.pages.SDT_PageCollection.find(
-        (page) => page.PageId == pageId
-      );
-    }
-
-    createPageTree(rootPageId, childDivId){
-        let homePage = this.getPage(rootPageId)
-        let homePageJSON = JSON.parse(homePage.PageGJSJson)
-        const pages = homePageJSON.pages;
-        const containerRows =
-            pages[0].frames[0].component.components[0].components[0].components;
-
-        let childPages = []
-
-        containerRows.forEach(containerRow => {
-            let templateWrappers = containerRow.components
-            if(templateWrappers) {
-                templateWrappers.forEach(templateWrapper => {
-                    let templateBlocks = templateWrapper.components
-                    templateBlocks.forEach(templateBlock => {
-                        if (templateBlock.classes.includes("template-block")) {
-                            let pageId = templateBlock.attributes["tile-action-object-id"]
-                            let tileId = templateBlock.attributes["id"]
-                            let page = this.getPage(pageId)
-                            if (page) {
-                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage, tileId:tileId})
-                            }
-                        }
-                    })
-                })
-            }
-        })
-        const newTree = this.createTree(rootPageId, childPages, true);
-        this.treeContainer = document.getElementById(childDivId)
-        this.clearMappings();
-        this.treeContainer.appendChild(newTree);
-    }
-  
-    setupEventListeners() {
-      const createPageButton = document.getElementById("page-submit");
-      const pageInput = document.getElementById("page-title");
-  
-      createPageButton.removeEventListener("click", this.boundCreatePage);
-  
-      pageInput.addEventListener("input", () => {
-        createPageButton.disabled = !pageInput.value.trim() || this.isLoading;
-      });
-  
-      createPageButton.addEventListener("click", this.boundCreatePage);
-    }
-  
-    async handleCreatePage(e) {
-      e.preventDefault();
-  
-      if (this.isLoading) return;
-  
-      const pageInput = document.getElementById("page-title");
-      const createPageButton = document.getElementById("page-submit");
-      const pageTitle = pageInput.value.trim();
-  
-      if (!pageTitle) return;
-  
-      try {
-        this.isLoading = true;
-        createPageButton.disabled = true;
-        pageInput.disabled = true; // Disable input during creation
-        // Create the page
-        await this.dataManager
-          .createNewPage(pageTitle, this.toolBoxManager.currentTheme)
-          .then((res) => {
-            if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-              return;
-            }
-  
-            pageInput.value = "";
-  
-            this.clearMappings();
-  
-            this.dataManager.getPages().then((res) => {
-              this.handleListAllPages();
-              this.toolBoxManager.actionList.init();
-  
-              this.displayMessage(
-                `${this.currentLanguage.getTranslation("page_created")}`,
-                "success"
-              );
-            });
-          });
-      } catch (error) {
-        this.displayMessage(
-          `${this.currentLanguage.getTranslation("error_creating_page")}`,
-          "error"
-        );
-      } finally {
-        this.isLoading = false;
-        createPageButton.disabled = !pageInput.value.trim();
-        pageInput.disabled = false; // Re-enable input
-      }
-    }
-  
-    clearMappings() {
-      while (this.treeContainer.firstChild) {
-        this.treeContainer.removeChild(this.treeContainer.firstChild);
-      }
-    }
-  
-    createTree(rootPageId, data) {
-      console.log("Creating tree with data:", data);
-      const buildListItem = (item) => {
-        const listItem = document.createElement("li");
-        listItem.classList.add("tb-custom-list-item");
-        listItem.dataset.parentPageId = rootPageId;
-        const childDiv = document.createElement("div");
-        childDiv.classList.add("child-div");
-        childDiv.id = `child-div-${item.Id}`;
-        childDiv.style.position = "relative";
-        childDiv.style.paddingLeft = "20px";
-  
-        const menuItem = document.createElement("div");
-        menuItem.classList.add("tb-custom-menu-item");
-  
-        const toggle = document.createElement("span");
-        toggle.classList.add("tb-dropdown-toggle");
-        toggle.setAttribute("role", "button");
-        toggle.setAttribute("aria-expanded", "false");
-        const icon = 'fa-caret-right tree-icon'
-        toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
-  
-        menuItem.appendChild(toggle);
-        listItem.appendChild(menuItem);
-        listItem.appendChild(childDiv);
-        if (item.Children) {
-          const dropdownMenu = document.createElement("ul");
-          dropdownMenu.classList.add("tb-tree-dropdown-menu");
-  
-          item.Children.forEach((child) => {
-            const dropdownItem = buildDropdownItem(child, item);
-            dropdownMenu.appendChild(dropdownItem);
-          });
-  
-          listItem.appendChild(dropdownMenu);
-          listItem.classList.add("tb-dropdown");
-  
-          listItem.addEventListener("click", (e) =>
-            toggleDropdown(e, listItem, menuItem)
-          );
-        }
-  
-        listItem.addEventListener("click", (e) => {
-          e.stopPropagation();
-
-          let pages = [item.Id]
-          let liElement = listItem
-          while (liElement) {
-            let parentLiElement = liElement.parentElement.parentElement.parentElement
-            if (parentLiElement instanceof HTMLLIElement) {
-              pages.unshift(liElement.dataset.parentPageId)
-              liElement = parentLiElement
-            }
-            else {
-              liElement = null
-            }
-          }
-          this.handlePageSelection(item, pages);
-          let tileId = listItem.dataset.tileId
-          let tile = document.getElementById(tileId)
-          this.createPageTree(item.Id, `child-div-${item.Id}`)
-        });
-  
-        return listItem;
-      };
-  
-      const buildDropdownItem = (child, parent) => {
-        const dropdownItem = document.createElement("li");
-        dropdownItem.classList.add("tb-dropdown-item");
-        dropdownItem.innerHTML = `<span><i style="margin-right: 10px;" class="fa-regular fa-file tree-icon"></i>${child.Name}</span>`;
-  
-        dropdownItem.addEventListener("click", (e) => {
-          e.stopPropagation();
-          this.handlePageSelection(child, true, parent);
-        });
-  
-        return dropdownItem;
-      };
-  
-      const toggleDropdown = (event, listItem, menuItem) => {
-        event.stopPropagation();
-  
-        const isActive = listItem.classList.contains("active");
-  
-        document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
-          dropdown.classList.remove("active");
-          dropdown
-            .querySelector(".tb-dropdown-toggle")
-            .setAttribute("aria-expanded", "false");
-          dropdown
-            .querySelector(".tb-custom-menu-item")
-            .classList.remove("active-tree-item");
-        });
-  
-        if (!isActive) {
-          listItem.classList.add("active");
-          menuItem.classList.add("active-tree-item");
-          listItem
-            .querySelector(".tb-dropdown-toggle")
-            .setAttribute("aria-expanded", "true");
-        } else {
-          menuItem.classList.remove("active-tree-item");
-          listItem
-            .querySelector(".tb-dropdown-toggle")
-            .setAttribute("aria-expanded", "false");
-        }
-      };
-  
-      const container = document.createElement("ul");
-      container.classList.add("tb-custom-list");
-  
-      const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
-        a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
-      );
-  
-      sortedData.forEach((item) => {
-        const listItem = buildListItem(item);
-        container.appendChild(listItem);
-      });
-  
-      return container;
-    }
-  
-    createPageList(data) {
-      const buildListItem = (item) => {
-        const listItem = document.createElement("li");
-        listItem.classList.add("tb-custom-list-item");
-  
-        const menuItem = document.createElement("div");
-        menuItem.classList.add("tb-custom-menu-item");
-        menuItem.classList.add("page-list-items");
-  
-        const toggle = document.createElement("span");
-        toggle.style.textTransform = "capitalize";
-        toggle.classList.add("tb-dropdown-toggle");
-        toggle.setAttribute("role", "button");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.innerHTML = `<i class="fa-regular fa-file tree-icon"></i><span>&nbsp; ${item.PageName}</span>`;
-  
-        const deleteIcon = document.createElement("i");
-        deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
-        
-        if (item.PageName === "Home") {
-          deleteIcon.style.display = "none";
-        }
-
-        deleteIcon.setAttribute("data-id", item.Id);
-  
-        deleteIcon.addEventListener("click", (event) =>
-          handleDelete(event, item.PageId, listItem)
-        );
-  
-        menuItem.appendChild(toggle);
-        if (item.Name !== "Home") {
-          menuItem.appendChild(deleteIcon);
-        }
-        listItem.appendChild(menuItem);
-  
-        // listItem.addEventListener("click", (e) => {
-        //     e.stopPropagation();
-        //     this.handlePageSelection(item);
-        // });
-  
-        return listItem;
-      };
-  
-      const handleDelete = (event, id, elementToRemove) => {
-        event.stopPropagation();
-        const title = "Delete Page";
-        const message = "Are you sure you want to delete this page?";
-        const popup = this.popupModal(title, message);
-        document.body.appendChild(popup);
-        popup.style.display = "flex";
-  
-        const deleteButton = popup.querySelector("#yes_delete");
-        const closeButton = popup.querySelector("#close_popup");
-        const closePopup = popup.querySelector(".close");
-  
-        deleteButton.addEventListener("click", () => {
-          if (this.dataManager.deletePage(id)) {
-            elementToRemove.remove();
             this.displayMessage(
-              `${this.currentLanguage.getTranslation("page_deleted")}`,
+              `${this.currentLanguage.getTranslation("page_created")}`,
               "success"
             );
-          } else {
-            this.displayMessage(
-              `${this.currentLanguage.getTranslation(
-                "error_while_deleting_page"
-              )}`,
-              "error"
-            );
-          }
-          popup.remove();
+          });
         });
-  
-        closeButton.addEventListener("click", () => {
-          popup.remove();
-        });
-  
-        closePopup.addEventListener("click", () => {
-          popup.remove();
-        });
-      };
-  
-      const container = document.createElement("ul");
-      container.classList.add("tb-custom-list");
-  
-      const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
-        a.PageName === "Home" ? -1 : b.PageName === "Home" ? 1 : 0
+    } catch (error) {
+      this.displayMessage(
+        `${this.currentLanguage.getTranslation("error_creating_page")}`,
+        "error"
       );
-  
-      sortedData.forEach((item) => {
-        const listItem = buildListItem(item);
-        container.appendChild(listItem);
-      });
-  
-      return container;
+    } finally {
+      this.isLoading = false;
+      createPageButton.disabled = !pageInput.value.trim();
+      pageInput.disabled = false; // Re-enable input
     }
-  
-    popupModal(title, message) {
-      const popup = document.createElement("div");
-      popup.className = "popup-modal";
-      popup.innerHTML = `
+  }
+
+  clearMappings() {
+    while (this.treeContainer.firstChild) {
+      this.treeContainer.removeChild(this.treeContainer.firstChild);
+    }
+  }
+
+  createTree(rootPageId, data) {
+    const buildListItem = (item) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("tb-custom-list-item");
+      listItem.dataset.parentPageId = rootPageId;
+      const childDiv = document.createElement("div");
+      childDiv.classList.add("child-div");
+      childDiv.id = `child-div-${item.Id}`;
+      childDiv.style.position = "relative";
+      childDiv.style.paddingLeft = "20px";
+
+      const menuItem = document.createElement("div");
+      menuItem.classList.add("tb-custom-menu-item");
+
+      const toggle = document.createElement("span");
+      toggle.classList.add("tb-dropdown-toggle");
+      toggle.setAttribute("role", "button");
+      toggle.setAttribute("aria-expanded", "false");
+      const icon = "fa-caret-right tree-icon";
+      toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
+
+      menuItem.appendChild(toggle);
+      listItem.appendChild(menuItem);
+      listItem.appendChild(childDiv);
+
+      if (item.Children) {
+        const dropdownMenu = document.createElement("ul");
+        dropdownMenu.classList.add("tb-tree-dropdown-menu");
+
+        item.Children.forEach((child) => {
+          const dropdownItem = buildDropdownItem(child, item);
+          dropdownMenu.appendChild(dropdownItem);
+        });
+
+        listItem.appendChild(dropdownMenu);
+        listItem.classList.add("tb-dropdown");
+
+        listItem.addEventListener("click", (e) =>
+          toggleDropdown(e, listItem, menuItem)
+        );
+      }
+      
+      if (item.Name === "Web Link") {
+        listItem.style.display = "none";
+      }
+
+      listItem.addEventListener("click", (e) => {
+        e.stopPropagation();
+        let pages = [item.Id]
+        let liElement = listItem
+        
+        while (liElement) {
+          let parentLiElement = liElement.parentElement.parentElement.parentElement
+          if (parentLiElement instanceof HTMLLIElement) {
+            pages.unshift(liElement.dataset.parentPageId)
+            liElement = parentLiElement
+          }
+          else {
+            liElement = null
+          }
+        }
+        this.handlePageSelection(item, pages);
+        // this.handlePageSelection(item);
+        this.createPageTree(item.Id, `child-div-${item.Id}`);
+      });
+
+      return listItem;
+    };
+
+    const buildDropdownItem = (child, parent) => {
+      const dropdownItem = document.createElement("li");
+      dropdownItem.classList.add("tb-dropdown-item");
+      dropdownItem.innerHTML = `<span><i style="margin-right: 10px;" class="fa-regular fa-file tree-icon"></i>${child.Name}</span>`;
+
+      dropdownItem.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.handlePageSelection(child, true, parent);
+      });
+
+      return dropdownItem;
+    };
+
+    const toggleDropdown = (event, listItem, menuItem) => {
+      event.stopPropagation();
+
+      const isActive = listItem.classList.contains("active");
+
+      document.querySelectorAll(".tb-dropdown.active").forEach((dropdown) => {
+        dropdown.classList.remove("active");
+        dropdown
+          .querySelector(".tb-dropdown-toggle")
+          .setAttribute("aria-expanded", "false");
+        dropdown
+          .querySelector(".tb-custom-menu-item")
+          .classList.remove("active-tree-item");
+      });
+
+      if (!isActive) {
+        listItem.classList.add("active");
+        menuItem.classList.add("active-tree-item");
+        listItem
+          .querySelector(".tb-dropdown-toggle")
+          .setAttribute("aria-expanded", "true");
+      } else {
+        menuItem.classList.remove("active-tree-item");
+        listItem
+          .querySelector(".tb-dropdown-toggle")
+          .setAttribute("aria-expanded", "false");
+      }
+    };
+
+    const container = document.createElement("ul");
+    container.classList.add("tb-custom-list");
+
+    const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
+      a.Name === "Home" ? -1 : b.Name === "Home" ? 1 : 0
+    );
+
+    sortedData.forEach((item) => {
+      const listItem = buildListItem(item);
+      container.appendChild(listItem);
+    });
+
+    return container;
+  }
+
+  createPageList(data) {
+    const buildListItem = (item) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("tb-custom-list-item");
+
+      const menuItem = document.createElement("div");
+      menuItem.classList.add("tb-custom-menu-item");
+      menuItem.classList.add("page-list-items");
+
+      const toggle = document.createElement("span");
+      toggle.style.textTransform = "capitalize";
+      toggle.classList.add("tb-dropdown-toggle");
+      toggle.setAttribute("role", "button");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = `<i class="fa-regular fa-file tree-icon"></i><span>&nbsp; ${item.PageName}</span>`;
+
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
+
+      if (item.PageName === "Home" || item.PageName === "Web Link") {
+        deleteIcon.style.display = "none";
+      }
+
+
+      deleteIcon.setAttribute("data-id", item.Id);
+
+      deleteIcon.addEventListener("click", (event) =>
+        handleDelete(event, item.PageId, listItem)
+      );
+
+      menuItem.appendChild(toggle);
+      if (item.PageName === "Web Link") {
+        menuItem.style.display = "none";
+      }
+      if (item.Name !== "Home") {
+        menuItem.appendChild(deleteIcon);
+      }
+      listItem.appendChild(menuItem);
+
+      // listItem.addEventListener("click", (e) => {
+      //     e.stopPropagation();
+      //     this.handlePageSelection(item);
+      // });
+
+      return listItem;
+    };
+
+    const handleDelete = (event, id, elementToRemove) => {
+      event.stopPropagation();
+      const title = "Delete Page";
+      const message = "Are you sure you want to delete this page?";
+      const popup = this.popupModal(title, message);
+      document.body.appendChild(popup);
+      popup.style.display = "flex";
+
+      const deleteButton = popup.querySelector("#yes_delete");
+      const closeButton = popup.querySelector("#close_popup");
+      const closePopup = popup.querySelector(".close");
+
+      deleteButton.addEventListener("click", () => {
+        if (this.dataManager.deletePage(id)) {
+          elementToRemove.remove();
+          this.displayMessage(
+            `${this.currentLanguage.getTranslation("page_deleted")}`,
+            "success"
+          );
+        } else {
+          this.displayMessage(
+            `${this.currentLanguage.getTranslation(
+              "error_while_deleting_page"
+            )}`,
+            "error"
+          );
+        }
+        popup.remove();
+      });
+
+      closeButton.addEventListener("click", () => {
+        popup.remove();
+      });
+
+      closePopup.addEventListener("click", () => {
+        popup.remove();
+      });
+    };
+
+    const container = document.createElement("ul");
+    container.classList.add("tb-custom-list");
+
+    const sortedData = JSON.parse(JSON.stringify(data)).sort((a, b) =>
+      a.PageName === "Home" ? -1 : b.PageName === "Home" ? 1 : 0
+    );
+
+    sortedData.forEach((item) => {
+      const listItem = buildListItem(item);
+      container.appendChild(listItem);
+    });
+
+    return container;
+  }
+
+  popupModal(title, message) {
+    const popup = document.createElement("div");
+    popup.className = "popup-modal";
+    popup.innerHTML = `
             <div class="popup">
               <div class="popup-header">
                 <span>${title}</span>
@@ -5074,70 +5756,67 @@ class MappingComponent {
               </div>
             </div>
           `;
-  
-      return popup;
-    }
-  
-    async handlePageSelection(item, pages, isChild = false, parent = null) {
-      if (this.isLoading) return;
-  
-      try {
-        this.isLoading = true;
-        // Locate the page data
-        const page = this.dataManager.pages.SDT_PageCollection.find(
-          (page) => page.PageId === item.Id
-        );
-        if (!page) throw new Error(`Page with ID ${item.Id} not found`);
-  
-        const editors = Object.values(this.editorManager.editors);
-        const mainEditor = editors[0];
 
-        if (mainEditor) {
-          const editor = mainEditor.editor;
-          const editorId = editor.getConfig().container;
-          const editorContainerId = `${editorId}-frame`;
-  
-          if (isChild) {
-            if (parent?.Id) {
-              const parentEditorId = editors[1].editor.getConfig().container;
-              document
-                .querySelector(`${parentEditorId}-frame`)
-                .nextElementSibling?.remove();
-              this.editorManager.createChildEditor(page);
-            }
-          } else {
-            // Remove extra frames
-            $(editorContainerId).nextAll().remove();
-            // $('#child-container').empty();
-            console.log('>>>>', pages)
-            pages.forEach(pageId => {
-              const page = this.getPage(pageId)
-              this.editorManager.createChildEditor(page);
-            })
-            // this.editorManager.createChildEditor(page);
-            // console.log('>>>>>', this.editorManager.editors)
+    return popup;
+  }
+
+  async handlePageSelection(item, pages, isChild = false, parent = null) {
+    if (this.isLoading) return;
+
+    try {
+      this.isLoading = true;
+      // Locate the page data
+      const page = this.dataManager.pages.SDT_PageCollection.find(
+        (page) => page.PageId === item.Id
+      );
+      if (!page) throw new Error(`Page with ID ${item.Id} not found`);
+
+      const editors = Object.values(this.editorManager.editors);
+      const mainEditor = editors[0];
+
+      if (mainEditor) {
+        const editor = mainEditor.editor;
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+
+        if (isChild) {
+          if (parent?.Id) {
+            const parentEditorId = editors[1].editor.getConfig().container;
+            document
+              .querySelector(`${parentEditorId}-frame`)
+              .nextElementSibling?.remove();
+            this.editorManager.createChildEditor(page);
           }
+        } else {
+          // Remove extra frames
+          $(editorContainerId).nextAll().remove();
+          pages.forEach(pageId => {
+            const page = this.getPage(pageId)
+            this.editorManager.createChildEditor(page);
+          })
         }
-      } catch (error) {
-        this.displayMessage("Error loading page", "error");
-      } finally {
-        this.isLoading = false;
       }
-    }
-  
-    checkActivePage(id) {
-      return localStorage.getItem("pageId") === id;
-    }
-  
-    updateActivePageName() {
-      return this.editorManager.getCurrentPageName();
-    }
-  
-    displayMessage(message, status) {
-      this.toolBoxManager.ui.displayAlertMessage(message, status);
+    } 
+    catch (error) {
+      console.error("Error selecting page:", error);
+      this.displayMessage("Error loading page", "error");
+    } finally {
+      this.isLoading = false;
     }
   }
-  
+
+  checkActivePage(id) {
+    return localStorage.getItem("pageId") === id;
+  }
+
+  updateActivePageName() {
+    return this.editorManager.getCurrentPageName();
+  }
+
+  displayMessage(message, status) {
+    this.toolBoxManager.ui.displayAlertMessage(message, status);
+  }
+}
 
 // Content from components/MediaComponent.js
 class MediaComponent {
@@ -5670,7 +6349,6 @@ class MediaComponent {
 
       if (this.selectedFile?.MediaUrl) {
         const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
-        console.log("safeMediaUrl: ", safeMediaUrl);
         templateBlock.addStyle({
           "background-image": `url(${safeMediaUrl})`,
           "background-size": "cover",
@@ -6049,4 +6727,49 @@ function truncateText(text, length) {
   return text;
 }
 
+function processTileTitles(projectData) {
+  // Helper function to recursively process components
+  function processComponent(component) {
+    // Check if this is an array of components
+    if (Array.isArray(component)) {
+      component.forEach(processComponent);
+      return;
+    }
+    
+    // If not an object or doesn't have components, return
+    if (!component || typeof component !== 'object') {
+      return;
+    }
+
+    // Check if this is a tile-title component
+    if (component.classes && component.classes.includes('tile-title')) {
+      // Check if title attribute exists
+      if (!component.attributes || !component.attributes.title) {
+        // Find the content in the components array
+        const textNode = component.components?.find(comp => comp.type === 'textnode');
+        if (textNode && textNode.content) {
+          // Create attributes object if it doesn't exist
+          if (!component.attributes) {
+            component.attributes = {};
+          }
+          // Add the content as title attribute
+          component.attributes.title = textNode.content;
+        }
+      }
+    }
+
+    // Recursively process nested components
+    if (component.components) {
+      processComponent(component.components);
+    }
+  }
+
+  // Create a deep copy of the project data to avoid modifying the original
+  const updatedData = JSON.parse(JSON.stringify(projectData));
+  
+  // Process the entire project data
+  processComponent(updatedData);
+  
+  return updatedData;
+}
 

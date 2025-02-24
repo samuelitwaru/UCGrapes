@@ -9,8 +9,6 @@ class EditorEventManager {
     this.editorOnDragDrop(editor);
     this.editorOnSelected(editor);
     this.setupKeyboardBindings(editor);
-    this.editorOnUpdate(editor, page);
-    // this.setupAppBarEvents();
   }
 
   setupKeyboardBindings(editor) {
@@ -86,11 +84,19 @@ class EditorEventManager {
   }
 
   handleTileActionClick(e, editorContainerId) {
-    const pageId = e.target.attributes["tile-action-object-id"].value;
+    const pageId = e.target.attributes["tile-action-object-id"]?.value;
+    const pageUrl = e.target.attributes["tile-action-object-url"]?.value;
+    const pageLinkLabel = e.target.attributes["tile-action-object"]?.value;
+
+    let linkLabel = "";
+    if (pageLinkLabel) {
+      linkLabel = pageLinkLabel.replace("Web Link, ", "");
+    }
+
     const page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
     if (page) {
-      this.editorManager.createChildEditor(page);
+      this.editorManager.createChildEditor(page, pageUrl, linkLabel);
     }
   }
 
@@ -132,9 +138,23 @@ class EditorEventManager {
     });
   }
 
-  editorOnUpdate(editor, page) {
-    editor.on("update", () => {
-      this.editorManager.updatePageJSONContent(editor, page);
+  editorOnUpdate(editor) {
+    editor.on("component:update", (updatedComponent) => {
+      const templateRow = updatedComponent.getEl().closest(".container-row");
+      if (templateRow) {
+        const templateRowId = templateRow.getAttribute("id");
+
+        const wrapper = editor.getWrapper();
+        const component = wrapper.find(`#${templateRowId}`)[0];
+        
+        if (component) {
+          this.templateManager.updateRightButtons(component);
+        } else {
+          console.log("Component corresponding to container-row not found");
+        }
+      } else {
+        console.log("No container-row found");
+      }
     });
   }
 
@@ -178,7 +198,7 @@ class EditorEventManager {
       const tileLabel =
         this.editorManager.selectedTemplateWrapper.querySelector(".tile-title");
       if (tileLabel) {
-        sidebarInputTitle.value = tileLabel.textContent;
+        sidebarInputTitle.value = tileLabel.title;
       }
 
       this.templateManager.removeElementOnClick(

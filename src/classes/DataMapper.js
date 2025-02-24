@@ -21,7 +21,6 @@ class DataMapper {
           outputData.Rows.push(rowTiles)
         })
 
-      console.log(outputData)
     }
 
     getStyle(id, styleName) {
@@ -77,7 +76,6 @@ class DataMapper {
       let tileTextSection = tile.components[0].components.find(comp => comp.classes.includes('tile-title-section'))
       if (tileTextSection) {
         let tileText = tileTextSection.components.find(comp=>comp.classes.includes('tile-title')).components[0].content
-        console.log(tileText)
         return tileText
       }
       return ""
@@ -2648,5 +2646,3 @@ let tile = {
     }
   ]
 }
-
-console.log(dm.getTiles())

@@ -534,6 +534,21 @@ class ThemeManager {
     });
   }
 
+  closeDropdowns() {
+    const dropdowns = document.querySelectorAll(".tb-custom-theme-selection");
+
+    dropdowns.forEach((dropdown) => {
+      const button = dropdown.querySelector(".theme-select-button");
+      const optionsList = dropdown.querySelector(".theme-options-list");
+
+      if (optionsList.classList.contains("show")) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
   updatePageTitleFontFamily(fontFamily) {
     const appBars = document.querySelectorAll(".app-bar");
     appBars.forEach((appBar) => {

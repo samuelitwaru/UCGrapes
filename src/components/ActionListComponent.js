@@ -15,21 +15,25 @@ class ActionListComponent {
     this.categoryData = [
       {
         name: "Page",
+        displayName: "Page",
         label: this.currentLanguage.getTranslation("category_page"),
         options: [],
       },
       {
         name: "Service/Product Page",
+        displayName: "Service Page",
         label: this.currentLanguage.getTranslation("category_services_or_page"),
         options: [],
       },
       {
         name: "Dynamic Forms",
+        displayName: "Dynamic Forms",
         label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [],
       },
       {
         name: "Predefined Page",
+        displayName: "Module",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },
@@ -108,7 +112,7 @@ class ActionListComponent {
     categoryElement.setAttribute("data-category", category.label);
 
     const summaryElement = document.createElement("summary");
-    summaryElement.innerHTML = `${category.label} <i class="fa fa-angle-right"></i>`;
+    summaryElement.innerHTML = `${category.displayName} <i class="fa fa-angle-right"></i>`;
     categoryElement.appendChild(summaryElement);
 
     const searchBox = document.createElement("div");
@@ -211,7 +215,9 @@ class ActionListComponent {
         if (isOpen) {
           categories.forEach((otherCategory) => {
         if (otherCategory !== category) {
-          otherCategory.open = false;
+          // otherCategory.open = false;
+          otherCategory.removeAttribute("open");
+          console.log(otherCategory)
           otherCategory.querySelector(".search-container").style.display =
             "none";
           otherCategory

@@ -116,6 +116,20 @@ class EditorEventManager {
     editor.on("component:selected", (component) =>
       this.handleComponentSelected(component)
     );
+    this.editorOnComponentAdd(editor)
+  }
+
+  editorOnComponentAdd(editor) {
+    editor.on('component:mount', (model) => {
+      if (model.get('type') === 'svg') {
+        model.set({selectable:false})
+      }
+      if(model.get('type') === 'tile-wrapper') {
+        model.addStyle({'background':'#00000000'})
+        // const tileMapper = new TileMapper(model.components().first())
+        // tileMapper.setTileAttributes()
+      }
+    });
   }
 
   editorOnUpdate(editor, page) {

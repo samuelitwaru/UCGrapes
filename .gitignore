@@ -2,3 +2,5 @@ custom.html
 node_modules
 test.html
 range.html
+src/combined.js
+src/combined.js.map

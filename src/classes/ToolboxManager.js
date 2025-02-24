@@ -82,7 +82,7 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      if (e.target.value.length > 10) {
+      if (e.target.value.length > 12) {
         e.target.value = truncateText(e.target.value, 12);
       }
       this.ui.updateTileTitle(e.target.value);
@@ -103,8 +103,9 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
+    let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !(page.PageName == "Mailbox" || page.PageName == "Calendar")
+      (page) => !(skipPages.includes(page.PageName))
     ).map((page) => {
       let projectData;
       try {

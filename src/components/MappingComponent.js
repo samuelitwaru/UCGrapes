@@ -12,7 +12,6 @@ class MappingComponent {
   
     init() {
         this.setupEventListeners();
-        //this.loadPageTree();
         this.listPagesListener();
         this.homePage = this.dataManager.pages.SDT_PageCollection.find(page=>page.PageName=="Home")
         if (this.homePage) {
@@ -83,16 +82,17 @@ class MappingComponent {
                     templateBlocks.forEach(templateBlock => {
                         if (templateBlock.classes.includes("template-block")) {
                             let pageId = templateBlock.attributes["tile-action-object-id"]
+                            let tileId = templateBlock.attributes["id"]
                             let page = this.getPage(pageId)
                             if (page) {
-                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage})
+                                childPages.push({Id: pageId, Name:page.PageName, IsContentPage:page.PageIsContentPage, tileId:tileId})
                             }
                         }
                     })
                 })
             }
         })
-        const newTree = this.createTree(childPages, true);
+        const newTree = this.createTree(rootPageId, childPages, true);
         this.treeContainer = document.getElementById(childDivId)
         this.clearMappings();
         this.treeContainer.appendChild(newTree);
@@ -109,28 +109,6 @@ class MappingComponent {
       });
   
       createPageButton.addEventListener("click", this.boundCreatePage);
-    }
-  
-    async loadPageTree() {
-      if (this.isLoading) return;
-  
-      try {
-        this.isLoading = true;
-        this.dataManager.getPagesService().then((res) => {
-          if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-            return;
-          }
-  
-          console.log(res);
-          const newTree = this.createTree(res.SDT_PageStructureCollection, true);
-          this.clearMappings();
-          this.treeContainer.appendChild(newTree);
-        });
-      } catch (error) {
-        this.displayMessage("Error loading pages", "error");
-      } finally {
-        this.isLoading = false;
-      }
     }
   
     async handleCreatePage(e) {
@@ -188,11 +166,12 @@ class MappingComponent {
       }
     }
   
-    createTree(data) {
+    createTree(rootPageId, data) {
       console.log("Creating tree with data:", data);
       const buildListItem = (item) => {
         const listItem = document.createElement("li");
         listItem.classList.add("tb-custom-list-item");
+        listItem.dataset.parentPageId = rootPageId;
         const childDiv = document.createElement("div");
         childDiv.classList.add("child-div");
         childDiv.id = `child-div-${item.Id}`;
@@ -202,20 +181,12 @@ class MappingComponent {
         const menuItem = document.createElement("div");
         menuItem.classList.add("tb-custom-menu-item");
   
-            const toggle = document.createElement("span");
-            toggle.classList.add("tb-dropdown-toggle");
-            toggle.setAttribute("role", "button");
-            toggle.setAttribute("aria-expanded", "false");
-            const icon = 'fa-caret-right tree-icon'
-            toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
-  
-        // const deleteIcon = document.createElement("i");
-        // deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
-        // deleteIcon.setAttribute("data-id", item.Id);
-  
-        // deleteIcon.addEventListener("click", (event) =>
-        //   handleDelete(event, item.Id, listItem)
-        // );
+        const toggle = document.createElement("span");
+        toggle.classList.add("tb-dropdown-toggle");
+        toggle.setAttribute("role", "button");
+        toggle.setAttribute("aria-expanded", "false");
+        const icon = 'fa-caret-right tree-icon'
+        toggle.innerHTML = `<i class="fa ${icon}"></i><span>${item.Name}</span>`;
   
         menuItem.appendChild(toggle);
         listItem.appendChild(menuItem);
@@ -237,11 +208,26 @@ class MappingComponent {
           );
         }
   
-            listItem.addEventListener("click", (e) => {
-                e.stopPropagation();
-                this.handlePageSelection(item);
-                this.createPageTree(item.Id, `child-div-${item.Id}`)
-            });
+        listItem.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          let pages = [item.Id]
+          let liElement = listItem
+          while (liElement) {
+            let parentLiElement = liElement.parentElement.parentElement.parentElement
+            if (parentLiElement instanceof HTMLLIElement) {
+              pages.unshift(liElement.dataset.parentPageId)
+              liElement = parentLiElement
+            }
+            else {
+              liElement = null
+            }
+          }
+          this.handlePageSelection(item, pages);
+          let tileId = listItem.dataset.tileId
+          let tile = document.getElementById(tileId)
+          this.createPageTree(item.Id, `child-div-${item.Id}`)
+        });
   
         return listItem;
       };
@@ -431,7 +417,7 @@ class MappingComponent {
       return popup;
     }
   
-    async handlePageSelection(item, isChild = false, parent = null) {
+    async handlePageSelection(item, pages, isChild = false, parent = null) {
       if (this.isLoading) return;
   
       try {
@@ -444,7 +430,7 @@ class MappingComponent {
   
         const editors = Object.values(this.editorManager.editors);
         const mainEditor = editors[0];
-  
+
         if (mainEditor) {
           const editor = mainEditor.editor;
           const editorId = editor.getConfig().container;
@@ -461,7 +447,14 @@ class MappingComponent {
           } else {
             // Remove extra frames
             $(editorContainerId).nextAll().remove();
-            this.editorManager.createChildEditor(page);
+            // $('#child-container').empty();
+            console.log('>>>>', pages)
+            pages.forEach(pageId => {
+              const page = this.getPage(pageId)
+              this.editorManager.createChildEditor(page);
+            })
+            // this.editorManager.createChildEditor(page);
+            // console.log('>>>>>', this.editorManager.editors)
           }
         }
       } catch (error) {

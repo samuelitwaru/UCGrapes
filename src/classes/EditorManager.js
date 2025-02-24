@@ -158,7 +158,7 @@ class EditorManager {
     return `
       <div class="home-app-bar">
         <div id="added-logo" class="logo-added" style="display:flex">
-          <img id="toolbox-logo" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
         </div>
 
         <div id="add-profile-image" class="profile-section" style="display:flex">
@@ -678,6 +678,12 @@ class EditorManager {
         // Set the title attribute if it doesn't exist
         title.addAttributes({"title": title.getEl().textContent});
       }
+    });
+
+    const rowContainers = wrapper.find(".container-row");
+    rowContainers.forEach((rowContainer) => {
+      console.log("rowContainer", rowContainer)
+      this.templateManager.updateRightButtons(rowContainer);
     });
 
     wrapper.set({

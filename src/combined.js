@@ -279,7 +279,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -805,7 +805,6 @@ class EditorManager {
       if (ctaButtons.length > 0) {
         ctaButtons.forEach((ctaButton) => {
           const ctaButtonId = ctaButton.getAttributes()?.["cta-button-id"];
-          // ensure that the ctaButtonId is is present in the contentPageData.CallToActions array check by CallToActionId, if not console log the ctaButton
           if (
             !contentPageData?.CallToActions?.some(
               (cta) => cta.CallToActionId === ctaButtonId
@@ -814,6 +813,16 @@ class EditorManager {
             ctaButton.remove();
           }
         });
+      }
+
+      const ctaRoundButtons = ctaContainer.find(".cta-container-child");
+
+      if (ctaRoundButtons.length > 0) {
+        ctaRoundButtons.forEach(button => {
+          const windowWidth = window.innerWidth;
+          button.getEl().style.marginRight = windowWidth <= 1440 ? "0.5rem" : "1.1rem";
+        })
+        
       }
     }
   }
@@ -1370,7 +1379,7 @@ class EditorEventManager {
           console.log("Component corresponding to container-row not found");
         }
       } else {
-        console.log("No container-row found");
+        // console.log("No container-row found");
       }
     });
   }
@@ -3825,9 +3834,8 @@ class ToolBoxUI {
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
         this.manager.editorManager.editorEventManager.editorOnUpdate(
-          this.manager.editorManager.getCurrentEditor(),
+          this.manager.editorManager.getCurrentEditor()
         );
-        
       }
     }
   }
@@ -3912,12 +3920,14 @@ class ToolBoxUI {
       '#cta-color-palette input[type="radio"]'
     );
 
-    CtaRadios.forEach((radio) => {
-      const colorBox = radio.nextElementSibling;
-      radio.checked =
-        colorBox.getAttribute("data-cta-color").toUpperCase() ===
-        currentCtaBgColor.toUpperCase();
-    });
+    if (currentCtaBgColor) {
+      CtaRadios.forEach((radio) => {
+        const colorBox = radio.nextElementSibling;
+        radio.checked =
+          colorBox.getAttribute("data-cta-color").toUpperCase() ===
+          currentCtaBgColor.toUpperCase();
+      });
+    }
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -4094,6 +4104,7 @@ class ToolBoxUI {
 
   generateCtaComponent(cta, backgroundColor) {
     const ctaType = this.getCtaType(cta.CallToActionType);
+    const windowWidth = window.innerWidth;
     return `
       <div class="cta-container-child cta-child" 
             id="id-${cta.CallToActionId}"
@@ -4113,6 +4124,7 @@ class ToolBoxUI {
               cta.CallToActionUrl
             }"
           cta-background-color="${ctaType.iconBgColor}"
+          style="margin-right: ${windowWidth <= 1440 ? "0.5rem" : "1.1rem"}"
           >
             <div class="cta-button" ${defaultConstraints} style="background-color: ${
       backgroundColor || ctaType.iconBgColor
@@ -5449,7 +5461,6 @@ class MappingComponent {
     createPageButton.addEventListener("click", this.boundCreatePage);
   }
 
-
   async handleCreatePage(e) {
     e.preventDefault();
 
@@ -5546,24 +5557,24 @@ class MappingComponent {
           toggleDropdown(e, listItem, menuItem)
         );
       }
-      
+
       if (item.Name === "Web Link") {
         listItem.style.display = "none";
       }
 
       listItem.addEventListener("click", (e) => {
         e.stopPropagation();
-        let pages = [item.Id]
-        let liElement = listItem
-        
+        let pages = [item.Id];
+        let liElement = listItem;
+
         while (liElement) {
-          let parentLiElement = liElement.parentElement.parentElement.parentElement
+          let parentLiElement =
+            liElement.parentElement.parentElement.parentElement;
           if (parentLiElement instanceof HTMLLIElement) {
-            pages.unshift(liElement.dataset.parentPageId)
-            liElement = parentLiElement
-          }
-          else {
-            liElement = null
+            pages.unshift(liElement.dataset.parentPageId);
+            liElement = parentLiElement;
+          } else {
+            liElement = null;
           }
         }
         this.handlePageSelection(item, pages);
@@ -5654,7 +5665,6 @@ class MappingComponent {
         deleteIcon.style.display = "none";
       }
 
-
       deleteIcon.setAttribute("data-id", item.Id);
 
       deleteIcon.addEventListener("click", (event) =>
@@ -5691,8 +5701,25 @@ class MappingComponent {
       const closePopup = popup.querySelector(".close");
 
       deleteButton.addEventListener("click", () => {
+        const editors = Object.values(this.editorManager.editors);
+
+        // Find the editor where pageId matches id
+        const targetEditor = editors.find((editor) => editor.pageId === id);
+        
         if (this.dataManager.deletePage(id)) {
           elementToRemove.remove();
+
+          if (targetEditor) {
+            const editorId = targetEditor.editor.getConfig().container;
+            const editorContainerId = `${editorId}`;
+            this.editorManager.removePageOnTileDelete(editorContainerId.replace("#", ""));
+          }
+
+          this.dataManager.getPages().then((res) => {
+            this.handleListAllPages();
+            this.toolBoxManager.actionList.init();
+          });
+
           this.displayMessage(
             `${this.currentLanguage.getTranslation("page_deleted")}`,
             "success"
@@ -5793,14 +5820,13 @@ class MappingComponent {
         } else {
           // Remove extra frames
           $(editorContainerId).nextAll().remove();
-          pages.forEach(pageId => {
-            const page = this.getPage(pageId)
+          pages.forEach((pageId) => {
+            const page = this.getPage(pageId);
             this.editorManager.createChildEditor(page);
-          })
+          });
         }
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("Error selecting page:", error);
       this.displayMessage("Error loading page", "error");
     } finally {
@@ -5820,6 +5846,7 @@ class MappingComponent {
     this.toolBoxManager.ui.displayAlertMessage(message, status);
   }
 }
+
 
 // Content from components/MediaComponent.js
 class MediaComponent {

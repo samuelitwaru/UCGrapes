@@ -13,9 +13,8 @@ class ToolBoxUI {
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
         this.manager.editorManager.editorEventManager.editorOnUpdate(
-          this.manager.editorManager.getCurrentEditor(),
+          this.manager.editorManager.getCurrentEditor()
         );
-        
       }
     }
   }
@@ -100,12 +99,14 @@ class ToolBoxUI {
       '#cta-color-palette input[type="radio"]'
     );
 
-    CtaRadios.forEach((radio) => {
-      const colorBox = radio.nextElementSibling;
-      radio.checked =
-        colorBox.getAttribute("data-cta-color").toUpperCase() ===
-        currentCtaBgColor.toUpperCase();
-    });
+    if (currentCtaBgColor) {
+      CtaRadios.forEach((radio) => {
+        const colorBox = radio.nextElementSibling;
+        radio.checked =
+          colorBox.getAttribute("data-cta-color").toUpperCase() ===
+          currentCtaBgColor.toUpperCase();
+      });
+    }
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -282,6 +283,7 @@ class ToolBoxUI {
 
   generateCtaComponent(cta, backgroundColor) {
     const ctaType = this.getCtaType(cta.CallToActionType);
+    const windowWidth = window.innerWidth;
     return `
       <div class="cta-container-child cta-child" 
             id="id-${cta.CallToActionId}"
@@ -301,6 +303,7 @@ class ToolBoxUI {
               cta.CallToActionUrl
             }"
           cta-background-color="${ctaType.iconBgColor}"
+          style="margin-right: ${windowWidth <= 1440 ? "0.5rem" : "1.1rem"}"
           >
             <div class="cta-button" ${defaultConstraints} style="background-color: ${
       backgroundColor || ctaType.iconBgColor

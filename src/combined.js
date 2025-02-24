@@ -279,7 +279,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -543,6 +543,7 @@ class EditorManager {
     this.loadEditorContent(editor, page, linkUrl);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
+    return editor
   }
 
   setupEditorContainer(page, linkLabel) {
@@ -1135,6 +1136,20 @@ class EditorManager {
     }
     const wrapper = editor.getWrapper();
 
+    // add title attribute to tile-title component
+    const titles = wrapper.find(".tile-title");
+    titles.forEach((title) => {
+      if (!title.getAttributes()?.["title"]) {
+        // Set the title attribute if it doesn't exist
+        title.addAttributes({"title": title.getEl().textContent});
+      }
+    });
+
+    const rowContainers = wrapper.find(".container-row");
+    rowContainers.forEach((rowContainer) => {
+      this.templateManager.updateRightButtons(rowContainer);
+    });
+
     wrapper.set({
       selectable: false,
       droppable: false,
@@ -1340,6 +1355,20 @@ class EditorEventManager {
     editor.on("component:selected", (component) =>
       this.handleComponentSelected(component)
     );
+    this.editorOnComponentAdd(editor)
+  }
+
+  editorOnComponentAdd(editor) {
+    editor.on('component:mount', (model) => {
+      if (model.get('type') === 'svg') {
+        model.set({selectable:false})
+      }
+      if(model.get('type') === 'tile-wrapper') {
+        model.addStyle({'background':'#00000000'})
+        // const tileMapper = new TileMapper(model.components().first())
+        // tileMapper.setTileAttributes()
+      }
+    });
   }
 
   editorOnUpdate(editor) {
@@ -2465,8 +2494,9 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
+    let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !(page.PageName == "Mailbox" || page.PageName == "Calendar")
+      (page) => !(skipPages.includes(page.PageName))
     ).map((page) => {
       let projectData;
       try {
@@ -3666,6 +3696,21 @@ class ThemeManager {
     });
   }
 
+  closeDropdowns() {
+    const dropdowns = document.querySelectorAll(".tb-custom-theme-selection");
+
+    dropdowns.forEach((dropdown) => {
+      const button = dropdown.querySelector(".theme-select-button");
+      const optionsList = dropdown.querySelector(".theme-options-list");
+
+      if (optionsList.classList.contains("show")) {
+        optionsList.classList.remove("show");
+        button.classList.remove("open");
+        button.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
   updatePageTitleFontFamily(fontFamily) {
     const appBars = document.querySelectorAll(".app-bar");
     appBars.forEach((appBar) => {
@@ -4519,6 +4564,7 @@ class ActionListComponent {
     this.categoryData = [
       {
         name: "Page",
+        displayName: "Page",
         label: this.currentLanguage.getTranslation("category_page"),
         options: [],
         canAdd: true,
@@ -4526,6 +4572,7 @@ class ActionListComponent {
       },
       {
         name: "Service/Product Page",
+        displayName: "Service Page",
         label: this.currentLanguage.getTranslation("category_services_or_page"),
         options: [],
         canAdd: true,
@@ -4533,16 +4580,19 @@ class ActionListComponent {
       },
       {
         name: "Dynamic Forms",
+        displayName: "Dynamic Forms",
         label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [],
       },
       {
         name: "Predefined Page",
+        displayName: "Module",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },
       {
         name: "Web Link",
+        displayName: "Web Link",
         label: this.currentLanguage.getTranslation("category_link"),
         options: [],
         isWebLink: true,
@@ -4814,7 +4864,7 @@ class ActionListComponent {
         const titleComponent = editor.getSelected().find(".tile-title")[0];
 
         // const tileTitle = truncateText(linkLabel, 12);
-        tileTitle = linkLabel;
+        const tileTitle = linkLabel;
 
         const page = res.SDT_PageCollection.find(
           (page) => page.PageName === "Web Link"
@@ -5310,7 +5360,6 @@ class MappingComponent {
 
   init() {
     this.setupEventListeners();
-    //this.loadPageTree();
     this.listPagesListener();
     this.homePage = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageName == "Home"
@@ -5396,7 +5445,7 @@ class MappingComponent {
         });
       }
     });
-    const newTree = this.createTree(childPages, true);
+    const newTree = this.createTree(rootPageId, childPages, true);
     this.treeContainer = document.getElementById(childDivId);
     this.clearMappings();
     this.treeContainer.appendChild(newTree);
@@ -5415,26 +5464,6 @@ class MappingComponent {
     createPageButton.addEventListener("click", this.boundCreatePage);
   }
 
-  async loadPageTree() {
-    if (this.isLoading) return;
-
-    try {
-      this.isLoading = true;
-      this.dataManager.getPagesService().then((res) => {
-        if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-          return;
-        }
-
-        const newTree = this.createTree(res.SDT_PageStructureCollection, true);
-        this.clearMappings();
-        this.treeContainer.appendChild(newTree);
-      });
-    } catch (error) {
-      this.displayMessage("Error loading pages", "error");
-    } finally {
-      this.isLoading = false;
-    }
-  }
 
   async handleCreatePage(e) {
     e.preventDefault();
@@ -5491,10 +5520,11 @@ class MappingComponent {
     }
   }
 
-  createTree(data) {
+  createTree(rootPageId, data) {
     const buildListItem = (item) => {
       const listItem = document.createElement("li");
       listItem.classList.add("tb-custom-list-item");
+      listItem.dataset.parentPageId = rootPageId;
       const childDiv = document.createElement("div");
       childDiv.classList.add("child-div");
       childDiv.id = `child-div-${item.Id}`;
@@ -5538,7 +5568,21 @@ class MappingComponent {
 
       listItem.addEventListener("click", (e) => {
         e.stopPropagation();
-        this.handlePageSelection(item);
+        let pages = [item.Id]
+        let liElement = listItem
+        
+        while (liElement) {
+          let parentLiElement = liElement.parentElement.parentElement.parentElement
+          if (parentLiElement instanceof HTMLLIElement) {
+            pages.unshift(liElement.dataset.parentPageId)
+            liElement = parentLiElement
+          }
+          else {
+            liElement = null
+          }
+        }
+        this.handlePageSelection(item, pages);
+        // this.handlePageSelection(item);
         this.createPageTree(item.Id, `child-div-${item.Id}`);
       });
 
@@ -5734,7 +5778,7 @@ class MappingComponent {
     return popup;
   }
 
-  async handlePageSelection(item, isChild = false, parent = null) {
+  async handlePageSelection(item, pages, isChild = false, parent = null) {
     if (this.isLoading) return;
 
     try {
@@ -5764,10 +5808,15 @@ class MappingComponent {
         } else {
           // Remove extra frames
           $(editorContainerId).nextAll().remove();
-          this.editorManager.createChildEditor(page);
+          pages.forEach(pageId => {
+            const page = this.getPage(pageId)
+            this.editorManager.createChildEditor(page);
+          })
         }
       }
-    } catch (error) {
+    } 
+    catch (error) {
+      console.error("Error selecting page:", error);
       this.displayMessage("Error loading page", "error");
     } finally {
       this.isLoading = false;
@@ -5786,7 +5835,6 @@ class MappingComponent {
     this.toolBoxManager.ui.displayAlertMessage(message, status);
   }
 }
-
 
 // Content from components/MediaComponent.js
 class MediaComponent {

@@ -57,7 +57,7 @@
             "TileBGImageUrl": "",
             "TileBGImageOpacity": "100",
             "TileAction": {
-              "ObjectType": "Predefined Page, Mailbox",
+              "ObjectType": "Predefined Page, My Activity",
               "ObjectId": "{{MailboxPageId}}"
             }
           }

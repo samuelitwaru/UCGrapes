@@ -12,7 +12,6 @@ class MappingComponent {
 
   init() {
     this.setupEventListeners();
-    //this.loadPageTree();
     this.listPagesListener();
     this.homePage = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageName == "Home"
@@ -98,7 +97,7 @@ class MappingComponent {
         });
       }
     });
-    const newTree = this.createTree(childPages, true);
+    const newTree = this.createTree(rootPageId, childPages, true);
     this.treeContainer = document.getElementById(childDivId);
     this.clearMappings();
     this.treeContainer.appendChild(newTree);
@@ -117,26 +116,6 @@ class MappingComponent {
     createPageButton.addEventListener("click", this.boundCreatePage);
   }
 
-  async loadPageTree() {
-    if (this.isLoading) return;
-
-    try {
-      this.isLoading = true;
-      this.dataManager.getPagesService().then((res) => {
-        if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
-          return;
-        }
-
-        const newTree = this.createTree(res.SDT_PageStructureCollection, true);
-        this.clearMappings();
-        this.treeContainer.appendChild(newTree);
-      });
-    } catch (error) {
-      this.displayMessage("Error loading pages", "error");
-    } finally {
-      this.isLoading = false;
-    }
-  }
 
   async handleCreatePage(e) {
     e.preventDefault();
@@ -193,10 +172,11 @@ class MappingComponent {
     }
   }
 
-  createTree(data) {
+  createTree(rootPageId, data) {
     const buildListItem = (item) => {
       const listItem = document.createElement("li");
       listItem.classList.add("tb-custom-list-item");
+      listItem.dataset.parentPageId = rootPageId;
       const childDiv = document.createElement("div");
       childDiv.classList.add("child-div");
       childDiv.id = `child-div-${item.Id}`;
@@ -240,7 +220,21 @@ class MappingComponent {
 
       listItem.addEventListener("click", (e) => {
         e.stopPropagation();
-        this.handlePageSelection(item);
+        let pages = [item.Id]
+        let liElement = listItem
+        
+        while (liElement) {
+          let parentLiElement = liElement.parentElement.parentElement.parentElement
+          if (parentLiElement instanceof HTMLLIElement) {
+            pages.unshift(liElement.dataset.parentPageId)
+            liElement = parentLiElement
+          }
+          else {
+            liElement = null
+          }
+        }
+        this.handlePageSelection(item, pages);
+        // this.handlePageSelection(item);
         this.createPageTree(item.Id, `child-div-${item.Id}`);
       });
 
@@ -436,7 +430,7 @@ class MappingComponent {
     return popup;
   }
 
-  async handlePageSelection(item, isChild = false, parent = null) {
+  async handlePageSelection(item, pages, isChild = false, parent = null) {
     if (this.isLoading) return;
 
     try {
@@ -466,10 +460,15 @@ class MappingComponent {
         } else {
           // Remove extra frames
           $(editorContainerId).nextAll().remove();
-          this.editorManager.createChildEditor(page);
+          pages.forEach(pageId => {
+            const page = this.getPage(pageId)
+            this.editorManager.createChildEditor(page);
+          })
         }
       }
-    } catch (error) {
+    } 
+    catch (error) {
+      console.error("Error selecting page:", error);
       this.displayMessage("Error loading page", "error");
     } finally {
       this.isLoading = false;

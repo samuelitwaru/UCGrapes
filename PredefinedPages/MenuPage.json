@@ -744,7 +744,7 @@
                                   "tile-icon-align": "left",
                                   "tile-bg-image": "",
                                   "tile-bg-image-opacity": "100",
-                                  "tile-action-object": "Predefined Page, Mailbox",
+                                  "tile-action-object": "Predefined Page, My Activity",
                                   "tile-action-object-id": "e22b29bc-1982-414a-87cf-71a839806a75",
                                   "id": "iz2mdk"
                                 },
@@ -868,7 +868,7 @@
                                         "components": [
                                           {
                                             "type": "textnode",
-                                            "content": "MAILBOX",
+                                            "content": "MY ACTIVITY",
                                             "_undoexc": ["status", "open"]
                                           }
                                         ]

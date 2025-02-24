@@ -13,6 +13,7 @@ class ActionListComponent {
     this.categoryData = [
       {
         name: "Page",
+        displayName: "Page",
         label: this.currentLanguage.getTranslation("category_page"),
         options: [],
         canAdd: true,
@@ -20,6 +21,7 @@ class ActionListComponent {
       },
       {
         name: "Service/Product Page",
+        displayName: "Service Page",
         label: this.currentLanguage.getTranslation("category_services_or_page"),
         options: [],
         canAdd: true,
@@ -27,16 +29,19 @@ class ActionListComponent {
       },
       {
         name: "Dynamic Forms",
+        displayName: "Dynamic Forms",
         label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [],
       },
       {
         name: "Predefined Page",
+        displayName: "Module",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },
       {
         name: "Web Link",
+        displayName: "Web Link",
         label: this.currentLanguage.getTranslation("category_link"),
         options: [],
         isWebLink: true,
@@ -308,7 +313,7 @@ class ActionListComponent {
         const titleComponent = editor.getSelected().find(".tile-title")[0];
 
         // const tileTitle = truncateText(linkLabel, 12);
-        tileTitle = linkLabel;
+        const tileTitle = linkLabel;
 
         const page = res.SDT_PageCollection.find(
           (page) => page.PageName === "Web Link"

@@ -79,6 +79,7 @@ class EditorManager {
     this.loadEditorContent(editor, page, linkUrl);
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
+    return editor
   }
 
   setupEditorContainer(page, linkLabel) {

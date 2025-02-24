@@ -101,8 +101,9 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
+    let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !(page.PageName == "Mailbox" || page.PageName == "Calendar")
+      (page) => !(skipPages.includes(page.PageName))
     ).map((page) => {
       let projectData;
       try {

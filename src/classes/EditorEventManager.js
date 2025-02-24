@@ -26,6 +26,7 @@ class EditorEventManager {
   handleEditorLoad(editor) {
     this.loadTheme();
     const wrapper = editor.getWrapper();
+    this.updateEditorAfterLoad(editor);
     this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
       editor
     );
@@ -40,6 +41,21 @@ class EditorEventManager {
       }
 
       this.handleEditorClick(e, editor);
+    });
+  }
+
+  updateEditorAfterLoad(editor) {
+    
+    const titles = editor.DomComponents.getWrapper().find(".tile-title");
+    titles.forEach((title) => {
+      if (!title.getAttributes()?.["title"]) {
+        title.addAttributes({"title": title.getEl().textContent});
+      }
+    });
+
+    const rowContainers = editor.DomComponents.getWrapper().find(".container-row");
+    rowContainers.forEach((rowContainer) => {
+      this.templateManager.updateRightButtons(rowContainer);
     });
   }
 

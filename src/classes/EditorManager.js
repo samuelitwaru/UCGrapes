@@ -671,21 +671,6 @@ class EditorManager {
     }
     const wrapper = editor.getWrapper();
 
-    // add title attribute to tile-title component
-    const titles = wrapper.find(".tile-title");
-    titles.forEach((title) => {
-      if (!title.getAttributes()?.["title"]) {
-        // Set the title attribute if it doesn't exist
-        title.addAttributes({"title": title.getEl().textContent});
-      }
-    });
-
-    const rowContainers = wrapper.find(".container-row");
-    rowContainers.forEach((rowContainer) => {
-      console.log("rowContainer", rowContainer)
-      this.templateManager.updateRightButtons(rowContainer);
-    });
-
     wrapper.set({
       selectable: false,
       droppable: false,

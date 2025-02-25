@@ -49,7 +49,7 @@ button {
   width: 100%;
   background-color: #fdfdfd;
   box-sizing: border-box;
-  overflow-y: auto; 
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
@@ -339,11 +339,12 @@ button {
 .gjs-selected .tile-icon-section:hover .tile-close-icon {
   opacity: 1;
   visibility: visible;
+  color: #222f54;
 }
 
 .tile-title-section {
   position: relative;
-  width: -webkit-fill-available;
+  width: fit-content;
 }
 
 .tile-icon-section {
@@ -354,9 +355,10 @@ button {
 .tile-title-section:hover {
   border: 2px dashed #4c53577d;
 }
-.tile-title-section:hover .tile-close-icon {
+.gjs-selected .tile-title-section:hover .tile-close-icon {
   opacity: 1;
   visibility: visible;
+  color: #222f54;
 }
 
 .template-block.high-priority-template .tile-title {

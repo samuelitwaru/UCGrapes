@@ -82,10 +82,22 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      if (e.target.value.length > 30) {
-        e.target.value = truncateText(e.target.value, 35);
+      let inputValue = e.target.value;
+
+      if (inputValue.length > 30) {
+        inputValue = truncateText(inputValue, 35);
+        e.target.value = inputValue; 
       }
-      this.ui.updateTileTitle(e.target.value);
+
+      if (inputValue.trim() === "") {
+        const titleComponent =
+        this.editorManager.selectedComponent.find(".tile-title")[0];
+        if (titleComponent) {
+          titleComponent.getEl().innerHTML = "";
+        }
+      }
+
+      this.ui.updateTileTitle(inputValue);
     });
   }
 
@@ -103,7 +115,7 @@ class ToolBoxManager {
   preparePageDataList(editors) {
     let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !(skipPages.includes(page.PageName))
+      (page) => !skipPages.includes(page.PageName)
     ).map((page) => {
       let projectData;
       try {
@@ -266,8 +278,8 @@ class ToolBoxManager {
     }
   }
 
-  setServiceToSelectedTile (serviceId) {
-    const categoryName = "Service/Product Page"
+  setServiceToSelectedTile(serviceId) {
+    const categoryName = "Service/Product Page";
     this.dataManager.getServices().then((services) => {
       const service = services.find(
         (service) => service.ProductServiceId == serviceId
@@ -279,11 +291,8 @@ class ToolBoxManager {
           "tile-action-object": `${categoryName}, ${service.ProductServiceName}`,
         });
 
-        this.setAttributeToSelected(
-          "tile-action-object-id",
-          serviceId
-        );
-       
+        this.setAttributeToSelected("tile-action-object-id", serviceId);
+
         this.setAttributeToSelected(
           "tile-action-object",
           `${categoryName}, ${service.ProductServiceName}`
@@ -292,10 +301,12 @@ class ToolBoxManager {
         const editor = this.editorManager.getCurrentEditor();
         const editorId = editor.getConfig().container;
         const editorContainerId = `${editorId}-frame`;
-        this.actionList.createContentPage(service.ProductServiceId, editorContainerId);
+        this.actionList.createContentPage(
+          service.ProductServiceId,
+          editorContainerId
+        );
       }
     });
-
   }
 
   openFileManager(type) {
@@ -306,6 +317,12 @@ class ToolBoxManager {
 
     const isTile = false;
 
-    this.mediaComponent.handleModalOpen(modal, fileInputField, allUploadedFiles, isTile, type);
+    this.mediaComponent.handleModalOpen(
+      modal,
+      fileInputField,
+      allUploadedFiles,
+      isTile,
+      type
+    );
   }
 }

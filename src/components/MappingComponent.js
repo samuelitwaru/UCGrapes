@@ -13,6 +13,8 @@ class MappingComponent {
   init() {
     this.setupEventListeners();
     this.listPagesListener();
+    document.getElementById("list-all-pages").style.display = "block";
+    document.getElementById("hide-pages").style.display = "none";
     this.homePage = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageName == "Home"
     );

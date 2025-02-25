@@ -10,6 +10,7 @@ const files = [
     "classes/EditorManager.js",
     "classes/EditorEventManager.js",
     "classes/TemplateManager.js",
+    "classes/TemplateUpdate.js",
     "classes/ToolboxManager.js",
     "classes/EventListenerManager.js",
     "classes/PageManager.js",

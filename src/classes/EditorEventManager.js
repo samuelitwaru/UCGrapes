@@ -51,12 +51,26 @@ class EditorEventManager {
       if (!title.getAttributes()?.["title"]) {
         title.addAttributes({"title": title.getEl().textContent});
       }
+
+      if (!title.getAttributes()?.["is-hidden"]) {
+        console.log("Hello world");
+        title.addAttributes({"is-hidden": "false"}); 
+      }
+    });
+
+    const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
+    tileIcons.forEach((icon) => {
+      if (!icon.getAttributes()?.["is-hidden"]) {
+        console.log("Hello world");
+        icon.addAttributes({"is-hidden": "true"}); 
+      }
     });
 
     const rowContainers = editor.DomComponents.getWrapper().find(".container-row");
     rowContainers.forEach((rowContainer) => {
-      this.templateManager.updateRightButtons(rowContainer);
+      this.templateManager.templateUpdate.updateRightButtons(rowContainer);
     });
+
   }
 
   loadTheme() {
@@ -154,26 +168,6 @@ class EditorEventManager {
     });
   }
 
-  editorOnUpdate(editor) {
-    editor.on("component:update", (updatedComponent) => {
-      const templateRow = updatedComponent.getEl().closest(".container-row");
-      if (templateRow) {
-        const templateRowId = templateRow.getAttribute("id");
-
-        const wrapper = editor.getWrapper();
-        const component = wrapper.find(`#${templateRowId}`)[0];
-        
-        if (component) {
-          this.templateManager.updateRightButtons(component);
-        } else {
-          console.log("Component corresponding to container-row not found");
-        }
-      } else {
-        // console.log("No container-row found");
-      }
-    });
-  }
-
   editorOnDragDrop(editor) {
     editor.on("component:add", (model) => {
       const component = model.get ? model : editor.getSelected();
@@ -200,7 +194,7 @@ class EditorEventManager {
         .getWrapper()
         .find(".container-row")
         .forEach((component) => {
-          this.templateManager.updateRightButtons(component);
+          this.templateManager.templateUpdate.updateRightButtons(component);
         });
     });
   }

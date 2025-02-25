@@ -116,24 +116,20 @@ class EventListenerManager {
   }
 
   setupAlignmentListeners() {
-    const leftAlign = document.getElementById("text-align-left");
-    const centerAlign = document.getElementById("text-align-center");
-    const rightAlign = document.getElementById("text-align-right");
+    const leftAlign = document.getElementById("tile-left");
+    const centerAlign = document.getElementById("tile-center");
 
     leftAlign.addEventListener("click", () => {
       if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
         const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-title-section"
-          )[0];
+          this.toolBoxManager.editorManager.selectedComponent;
 
         if (templateBlock) {
-          templateBlock.setStyle({
-            // display: "flex",
-            // "align-self": "start",
-            "text-align": "left",
+          templateBlock.addStyle({
+            "align-items": "start",
+            "justify-content": "start",
           });
-          this.toolBoxManager.setAttributeToSelected("tile-text-align", "left");
+          this.toolBoxManager.setAttributeToSelected("tile-align", "left");
         }
       } else {
         const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -144,20 +140,20 @@ class EventListenerManager {
     });
 
     centerAlign.addEventListener("click", () => {
+      console.log("center align clicked");
       if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
         const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-title-section"
-          )[0];
-
+          this.toolBoxManager.editorManager.selectedComponent;
+          console.log("first if statement");
         if (templateBlock) {
-          templateBlock.setStyle({
-            // display: "flex",
-            // "align-self": "center",
-            "text-align": "center",
+          console.log("first if statement");
+          templateBlock.addStyle({
+            "align-items": "center",
+            "justify-content": "center",
           });
+
           this.toolBoxManager.setAttributeToSelected(
-            "tile-text-align",
+            "tile-align",
             "center"
           );
         }
@@ -169,107 +165,56 @@ class EventListenerManager {
       }
     });
 
-    rightAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-title-section"
-          )[0];
+    // const iconLeftAlign = document.getElementById("icon-align-left");
+    // const iconRightAlign = document.getElementById("icon-align-right");
 
-        if (templateBlock) {
-          templateBlock.setStyle({
-            // display: "flex",
-            // "align-self": "end",
-            "text-align": "right",
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-text-align",
-            "right"
-          );
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
+    // iconLeftAlign.addEventListener("click", () => {
+    //   if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+    //     const templateBlock =
+    //       this.toolBoxManager.editorManager.selectedComponent.find(
+    //         ".tile-icon-section"
+    //       )[0];
+    //     if (templateBlock) {
+    //       templateBlock.setStyle({
+    //         display: "flex",
+    //         "align-self": "start",
+    //       });
+    //       this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
+    //     }
+    //   } else {
+    //     const message = this.toolBoxManager.currentLanguage.getTranslation(
+    //       "no_tile_selected_error_message"
+    //     );
+    //     this.toolBoxManager.ui.displayAlertMessage(message, "error");
+    //   }
+    // });
 
-    const iconLeftAlign = document.getElementById("icon-align-left");
-    const iconCenterAlign = document.getElementById("icon-align-center");
-    const iconRightAlign = document.getElementById("icon-align-right");
 
-    iconLeftAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon-section"
-          )[0];
-        if (templateBlock) {
-          templateBlock.setStyle({
-            display: "flex",
-            "align-self": "start",
-          });
-          this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
+    // iconRightAlign.addEventListener("click", () => {
+    //   if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+    //     const templateBlock =
+    //       this.toolBoxManager.editorManager.selectedComponent.find(
+    //         ".tile-icon-section"
+    //       )[0];
 
-    iconCenterAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon-section"
-          )[0];
-
-        if (templateBlock) {
-          templateBlock.setStyle({
-            display: "flex",
-            "align-self": "center",
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-align",
-            "center"
-          );
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
-
-    iconRightAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon-section"
-          )[0];
-
-        if (templateBlock) {
-          templateBlock.setStyle({
-            display: "flex",
-            "align-self": "end",
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-align",
-            "right"
-          );
-        } else {
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
+    //     if (templateBlock) {
+    //       templateBlock.setStyle({
+    //         display: "flex",
+    //         "align-self": "end",
+    //       });
+    //       this.toolBoxManager.setAttributeToSelected(
+    //         "tile-icon-align",
+    //         "right"
+    //       );
+    //     } else {
+    //     }
+    //   } else {
+    //     const message = this.toolBoxManager.currentLanguage.getTranslation(
+    //       "no_tile_selected_error_message"
+    //     );
+    //     this.toolBoxManager.ui.displayAlertMessage(message, "error");
+    //   }
+    // });
   }
 
   setupOpacityListener() {

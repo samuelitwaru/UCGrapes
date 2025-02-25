@@ -1261,12 +1261,26 @@ class EditorEventManager {
       if (!title.getAttributes()?.["title"]) {
         title.addAttributes({"title": title.getEl().textContent});
       }
+
+      if (!title.getAttributes()?.["is-hidden"]) {
+        console.log("Hello world");
+        title.addAttributes({"is-hidden": "false"}); 
+      }
+    });
+
+    const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
+    tileIcons.forEach((icon) => {
+      if (!icon.getAttributes()?.["is-hidden"]) {
+        console.log("Hello world");
+        icon.addAttributes({"is-hidden": "true"}); 
+      }
     });
 
     const rowContainers = editor.DomComponents.getWrapper().find(".container-row");
     rowContainers.forEach((rowContainer) => {
-      this.templateManager.updateRightButtons(rowContainer);
+      this.templateManager.templateUpdate.updateRightButtons(rowContainer);
     });
+
   }
 
   loadTheme() {
@@ -1364,26 +1378,6 @@ class EditorEventManager {
     });
   }
 
-  editorOnUpdate(editor) {
-    editor.on("component:update", (updatedComponent) => {
-      const templateRow = updatedComponent.getEl().closest(".container-row");
-      if (templateRow) {
-        const templateRowId = templateRow.getAttribute("id");
-
-        const wrapper = editor.getWrapper();
-        const component = wrapper.find(`#${templateRowId}`)[0];
-        
-        if (component) {
-          this.templateManager.updateRightButtons(component);
-        } else {
-          console.log("Component corresponding to container-row not found");
-        }
-      } else {
-        // console.log("No container-row found");
-      }
-    });
-  }
-
   editorOnDragDrop(editor) {
     editor.on("component:add", (model) => {
       const component = model.get ? model : editor.getSelected();
@@ -1410,7 +1404,7 @@ class EditorEventManager {
         .getWrapper()
         .find(".container-row")
         .forEach((component) => {
-          this.templateManager.updateRightButtons(component);
+          this.templateManager.templateUpdate.updateRightButtons(component);
         });
     });
   }
@@ -1583,6 +1577,7 @@ class TemplateManager {
       droppable: false,
       hoverable: false,
     };
+    this.templateUpdate = new TemplateUpdate(this);
   }
 
   createTemplateHTML(isDefault = false) {
@@ -1632,6 +1627,7 @@ class TemplateManager {
                       >&times;</span>
                     <span 
                       class="tile-icon"
+                      is-hidden = "true"
                       data-gjs-draggable="false"
                       data-gjs-selectable="false"
                       data-gjs-editable="false"
@@ -1660,6 +1656,7 @@ class TemplateManager {
                       >&times;</span>
                     <span 
                       class="tile-title"
+                      is-hidden = "false"
                       data-gjs-draggable="false"
                       data-gjs-selectable="false"
                       data-gjs-editable="false"
@@ -1862,6 +1859,7 @@ class TemplateManager {
                                   >&times;</span>
                                 <span 
                                   class="tile-icon"
+                                  is-hidden = "true"
                                   data-gjs-draggable="false"
                                   data-gjs-selectable="false"
                                   data-gjs-editable="false"
@@ -1890,6 +1888,7 @@ class TemplateManager {
                                   >&times;</span>
                                 <span 
                                   class="tile-title"
+                                  is-hidden = "false"
                                   data-gjs-draggable="false"
                                   data-gjs-selectable="false"
                                   data-gjs-editable="false"
@@ -2084,7 +2083,7 @@ class TemplateManager {
       }
     });
 
-    this.updateRightButtons(containerRow);
+    this.templateUpdate.updateRightButtons(containerRow);
   }
 
   addTemplateRight(templateComponent, editorInstance) {
@@ -2109,7 +2108,7 @@ class TemplateManager {
       });
     });
 
-    this.updateRightButtons(containerRow);
+    this.templateUpdate.updateRightButtons(containerRow);
   }
 
   addTemplateBottom(templateComponent, editorInstance) {
@@ -2136,116 +2135,6 @@ class TemplateManager {
       at: index + 1,
     });
   }
-
-  updateRightButtons(containerRow) {
-    if (!containerRow) return;
-  
-    const styleConfigs = {
-      1: {
-        title: { "letter-spacing": "1.1px", "font-size": "16px" },
-        template: { "justify-content": "start" },
-        rightButton: { display: "flex" },
-        titleSection: { "text-align": "left" },
-      },
-      2: {
-        title: { "letter-spacing": "0.9px", "font-size": "14px" },
-        template: { "justify-content": "start" },
-        rightButton: { display: "flex" },
-        titleSection: { "text-align": "left" },
-      },
-      3: {
-        title: { "letter-spacing": "0.9px", "font-size": "12px" },
-        template: { "justify-content": "center" },
-        rightButton: { display: "none" },
-        titleSection: { "text-align": "center" },
-      },
-    };
-  
-    const templates = containerRow.components();
-    if (!templates.length || !styleConfigs[templates.length]) return;
-
-    const screenWidth = window.innerWidth;
-  
-    const config = styleConfigs[templates.length];
-  
-    const isTemplateOne = templates.length == 1;
-  
-    const titles = containerRow.find(".tile-title");
-    const templateBlocks = containerRow.find(".template-block");
-    const titleSections = containerRow.find(".tile-title-section");
-  
-    titles.forEach((title) => {
-      title.addStyle(config.title);
-  
-      let tileTitle =
-        title.getEl().getAttribute("title") || title.getEl().innerText;
-      if (templates.length === 3) {
-        let words = tileTitle.split(" ");
-        if (words.length > 2) {
-          tileTitle = words.slice(0, 2).join(" ");
-        }
-  
-        if (tileTitle.length > 13) {
-          tileTitle = tileTitle.substring(0, 13).trim();
-        }
-  
-        let truncatedWords = tileTitle.split(" ");
-        if (truncatedWords.length > 1) {
-          tileTitle =
-            truncatedWords.slice(0, 1).join(" ") + "<br>" + truncatedWords[1];
-        }
-      } else {
-        tileTitle = tileTitle.replace("<br>", "");
-      }
-  
-      if (templates.length === 2) {
-        tileTitle = truncateText(tileTitle, screenWidth <= 1440 ? 11 : 13);
-      }
-  
-      if (templates.length === 1) {
-        tileTitle = truncateText(tileTitle, screenWidth <= 1440 ? 20 : 24);
-      }
-  
-      title.components(tileTitle);
-    });
-  
-    templateBlocks.forEach((template) => {
-      const isPriority = template
-        .getClasses()
-        ?.includes("high-priority-template");
-      
-      // Check the screen width and adjust heights accordingly
-      
-      const templateHeight = screenWidth <= 1440 ? 
-        (isPriority && isTemplateOne ? "6.0rem" : "4.5em") : 
-        (isPriority && isTemplateOne ? "7rem" : "5.5rem");
-  
-      const templateStyles = {
-        ...config.template,
-        height: templateHeight,
-        textTransform: isPriority && isTemplateOne ? "uppercase" : "capitalize",
-      };
-      template.addStyle(templateStyles);
-    });
-  
-    templates.forEach((template) => {
-      if (!template?.view?.el) return;
-      const rightButton = template.find(".add-button-right")[0];
-      if (rightButton) rightButton.addStyle(config.rightButton);
-  
-      if (templates.length === 3) {
-        template.addAttributes({
-          "tile-icon-align": "center",
-          "tile-text-align": "center",
-        });
-      }
-    });
-  
-    if (titleSections.length) {
-      titleSections.forEach((section) => section.addStyle(config.titleSection));
-    }
-  }
-  
 
   initialContentPageTemplate(contentPageData) {
     return `
@@ -2351,14 +2240,20 @@ class TemplateManager {
       this.editorManager.selectedComponent?.find(targetSelector)[0];
     if (closeSection) {
       const closeEl = closeSection.getEl();
+      const selectedComponent =
+              this.editorManager.selectedComponent;
       if (closeEl) {
         closeEl.onclick = () => {
-          // const component = this.editorManager.selectedComponent
-          // .find(sectionSelector)[0]
-          //   .remove();
+          if (!this.checkIfTileHasTitleOrIcon(selectedComponent)) {
+            const message = this.currentLanguage.getTranslation(
+              "tile_must_have_title_or_icon"
+            );
+            this.editorManager.toolsSection.ui.displayAlertMessage(message, "error");
+            return;
+          }
           if (sectionSelector === ".tile-title-section") {
             const component =
-              this.editorManager.selectedComponent.find(".tile-title")[0];
+              selectedComponent.find(".tile-title")[0];
             component.components("");
             this.editorManager.toolsSection.setAttributeToSelected(
               "TileText",
@@ -2366,20 +2261,211 @@ class TemplateManager {
             );
             $("#tile-title").val("");
             component.addStyle({ display: "none" });
+            component.addAttributes({"title": ""});
+            component.addAttributes({"is-hidden": "true"});
           } else if (sectionSelector === ".tile-icon-section") {
             const component =
-              this.editorManager.selectedComponent.find(".tile-icon")[0];
+              selectedComponent.find(".tile-icon")[0];
             component.components("");
             this.editorManager.toolsSection.setAttributeToSelected(
               "tile-icon",
               ""
             );
             component.addStyle({ display: "none" });
+            component.addAttributes({"is-hidden": "true"});
           }
         };
       }
     }
   }
+
+  checkIfTileHasTitleOrIcon(selectedComponent) {
+    const isIconHidden = selectedComponent.find(".tile-icon")[0]?.getAttributes()?.["is-hidden"] === "false";
+    const isTitleHidden = selectedComponent.find(".tile-title")[0]?.getAttributes()?.["is-hidden"] === "false";
+    
+    // Return true if both elements are hidden
+    return isIconHidden && isTitleHidden;
+  }
+
+}
+
+
+// Content from classes/TemplateUpdate.js
+class TemplateUpdate {
+  constructor(templateManager) {
+    this.templateManager = templateManager;
+  }
+
+  updateRightButtons(containerRow) {
+    if (!containerRow) return;
+
+    const templates = containerRow.components();
+    if (!templates.length) return;
+
+    const count = templates.length;
+    const styleConfig = this.getStyleConfig(count);
+    if (!styleConfig) return;
+
+    const screenWidth = window.innerWidth;
+    const isTemplateOne = count === 1;
+
+    this.updateTitleElements(containerRow, count, screenWidth, styleConfig);
+    this.updateTemplateElements(
+      containerRow,
+      templates,
+      count,
+      screenWidth,
+      isTemplateOne,
+      styleConfig
+    );
+  }
+
+  getStyleConfig(count) {
+    const styleConfigs = {
+      1: {
+        title: { "letter-spacing": "1.1px", "font-size": "16px" },
+        template: { "justify-content": "start", "align-items": "start" },
+        rightButton: { display: "flex" },
+        titleSection: { "text-align": "left" },
+        attributes: { "tile-align": "left"}
+      },
+      2: {
+        title: { "letter-spacing": "0.9px", "font-size": "14px" },
+        template: { "justify-content": "start", "align-items": "start" },
+        rightButton: { display: "flex" },
+        titleSection: { "text-align": "left" },
+        attributes: { "tile-align": "left"}
+      },
+      3: {
+        title: { "letter-spacing": "0.9px", "font-size": "12px" },
+        template: { "justify-content": "center", "align-items": "center" },
+        rightButton: { display: "none" },
+        titleSection: { "text-align": "center" },
+        attributes: { "tile-align": "center"}
+      },
+    };
+
+    return styleConfigs[count] || null;
+  }
+
+  updateTitleElements(containerRow, count, screenWidth, styleConfig) {
+    // Update titles
+    const titles = containerRow.find(".tile-title");
+    titles.forEach((title) => {
+      title.parent().addStyle({
+        ...styleConfig.title,
+        textAlign: count === 3 ? "center" : "left",
+      });
+      let tileTitle =
+        title.getEl().getAttribute("title") || title.getEl().innerText;
+
+      if (count === 3) {
+        // Format title for three templates
+        let words = tileTitle.split(" ");
+        if (words.length > 2) {
+          tileTitle = words.slice(0, 2).join(" ");
+        }
+
+        if (tileTitle.length > 13) {
+          tileTitle = tileTitle.substring(0, 13).trim() + "..";
+        }
+
+        let truncatedWords = tileTitle.split(" ");
+        if (truncatedWords.length > 1) {
+          tileTitle =
+            truncatedWords.slice(0, 1).join(" ") + "<br>" + truncatedWords[1];
+        }
+
+        title.parent().addStyle({ textAlign: "center" });
+      } else {
+        tileTitle = tileTitle.replace("<br>", "");
+
+        // Handle title length based on template count and screen width
+        if (count === 2) {
+          if (tileTitle.length > (screenWidth <= 1440 ? 11 : 13)) {
+            tileTitle =
+              tileTitle.substring(0, screenWidth <= 1440 ? 11 : 13).trim() +
+              "...";
+          }
+        }
+
+        if (count === 1) {
+          if (tileTitle.length > (screenWidth <= 1440 ? 20 : 24)) {
+            tileTitle =
+              tileTitle.substring(0, screenWidth <= 1440 ? 20 : 24).trim() +
+              "...";
+          }
+        }
+      }
+
+      title.components(tileTitle);
+    });
+
+    // Update title sections
+    const titleSections = containerRow.find(".tile-title-section");
+    if (titleSections.length) {
+      titleSections.forEach((section) =>
+        section.addStyle(styleConfig.titleSection)
+      );
+    }
+  }
+
+  updateTemplateElements(
+    containerRow,
+    templates,
+    count,
+    screenWidth,
+    isTemplateOne,
+    styleConfig
+  ) {
+    // Update template blocks
+    const templateBlocks = containerRow.find(".template-block");
+    templateBlocks.forEach((template) => {
+      const isPriority = template
+        .getClasses()
+        ?.includes("high-priority-template");
+
+      const templateHeight =
+        screenWidth <= 1440
+          ? isPriority && isTemplateOne
+            ? "6.0rem"
+            : "4.5em"
+          : isPriority && isTemplateOne
+          ? "7rem"
+          : "5.5rem";
+
+      const templateStyles = {
+        ...styleConfig.template,
+        height: templateHeight,
+        "text-transform":
+          isPriority && isTemplateOne ? "uppercase" : "capitalize",
+      };
+
+      template.addStyle(templateStyles);
+      template.addAttributes(styleConfig.attributes);
+    });
+
+    // Update right buttons and template attributes
+    templates.forEach((template) => {
+      if (!template?.view?.el) return;
+
+      const rightButton = template.find(".add-button-right")[0];
+      if (rightButton) rightButton.addStyle(styleConfig.rightButton);
+    });
+  }
+
+  //   updateTileIconAndTitle(template) {
+  //     const iconComponentAttribute = template.find(".tile-icon")[0]?.getAttributes();
+  //     const titleComponentAttribute = template.find(".tile-title")[0]?.getAttributes();
+
+  //     if (iconComponentAttribute) {
+  //         console.log(iconComponentAttribute?.["is-hidden"]);
+  //     }
+
+  //     if (titleComponentAttribute) {
+  //         console.log(titleComponentAttribute?.["is-hidden"]);
+  //     }
+  //   }
 }
 
 
@@ -2468,10 +2554,22 @@ class ToolBoxManager {
 
     const sidebarInputTitle = document.getElementById("tile-title");
     sidebarInputTitle.addEventListener("input", (e) => {
-      if (e.target.value.length > 30) {
-        e.target.value = truncateText(e.target.value, 35);
+      let inputValue = e.target.value;
+
+      if (inputValue.length > 30) {
+        inputValue = truncateText(inputValue, 35);
+        e.target.value = inputValue; 
       }
-      this.ui.updateTileTitle(e.target.value);
+
+      if (inputValue.trim() === "") {
+        const titleComponent =
+        this.editorManager.selectedComponent.find(".tile-title")[0];
+        if (titleComponent) {
+          titleComponent.getEl().innerHTML = "";
+        }
+      }
+
+      this.ui.updateTileTitle(inputValue);
     });
   }
 
@@ -2489,7 +2587,7 @@ class ToolBoxManager {
   preparePageDataList(editors) {
     let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
-      (page) => !(skipPages.includes(page.PageName))
+      (page) => !skipPages.includes(page.PageName)
     ).map((page) => {
       let projectData;
       try {
@@ -2652,8 +2750,8 @@ class ToolBoxManager {
     }
   }
 
-  setServiceToSelectedTile (serviceId) {
-    const categoryName = "Service/Product Page"
+  setServiceToSelectedTile(serviceId) {
+    const categoryName = "Service/Product Page";
     this.dataManager.getServices().then((services) => {
       const service = services.find(
         (service) => service.ProductServiceId == serviceId
@@ -2665,11 +2763,8 @@ class ToolBoxManager {
           "tile-action-object": `${categoryName}, ${service.ProductServiceName}`,
         });
 
-        this.setAttributeToSelected(
-          "tile-action-object-id",
-          serviceId
-        );
-       
+        this.setAttributeToSelected("tile-action-object-id", serviceId);
+
         this.setAttributeToSelected(
           "tile-action-object",
           `${categoryName}, ${service.ProductServiceName}`
@@ -2678,10 +2773,12 @@ class ToolBoxManager {
         const editor = this.editorManager.getCurrentEditor();
         const editorId = editor.getConfig().container;
         const editorContainerId = `${editorId}-frame`;
-        this.actionList.createContentPage(service.ProductServiceId, editorContainerId);
+        this.actionList.createContentPage(
+          service.ProductServiceId,
+          editorContainerId
+        );
       }
     });
-
   }
 
   openFileManager(type) {
@@ -2692,7 +2789,13 @@ class ToolBoxManager {
 
     const isTile = false;
 
-    this.mediaComponent.handleModalOpen(modal, fileInputField, allUploadedFiles, isTile, type);
+    this.mediaComponent.handleModalOpen(
+      modal,
+      fileInputField,
+      allUploadedFiles,
+      isTile,
+      type
+    );
   }
 }
 
@@ -2816,24 +2919,20 @@ class EventListenerManager {
   }
 
   setupAlignmentListeners() {
-    const leftAlign = document.getElementById("text-align-left");
-    const centerAlign = document.getElementById("text-align-center");
-    const rightAlign = document.getElementById("text-align-right");
+    const leftAlign = document.getElementById("tile-left");
+    const centerAlign = document.getElementById("tile-center");
 
     leftAlign.addEventListener("click", () => {
       if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
         const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-title-section"
-          )[0];
+          this.toolBoxManager.editorManager.selectedComponent;
 
         if (templateBlock) {
-          templateBlock.setStyle({
-            // display: "flex",
-            // "align-self": "start",
-            "text-align": "left",
+          templateBlock.addStyle({
+            "align-items": "start",
+            "justify-content": "start",
           });
-          this.toolBoxManager.setAttributeToSelected("tile-text-align", "left");
+          this.toolBoxManager.setAttributeToSelected("tile-align", "left");
         }
       } else {
         const message = this.toolBoxManager.currentLanguage.getTranslation(
@@ -2844,20 +2943,20 @@ class EventListenerManager {
     });
 
     centerAlign.addEventListener("click", () => {
+      console.log("center align clicked");
       if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
         const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-title-section"
-          )[0];
-
+          this.toolBoxManager.editorManager.selectedComponent;
+          console.log("first if statement");
         if (templateBlock) {
-          templateBlock.setStyle({
-            // display: "flex",
-            // "align-self": "center",
-            "text-align": "center",
+          console.log("first if statement");
+          templateBlock.addStyle({
+            "align-items": "center",
+            "justify-content": "center",
           });
+
           this.toolBoxManager.setAttributeToSelected(
-            "tile-text-align",
+            "tile-align",
             "center"
           );
         }
@@ -2869,107 +2968,56 @@ class EventListenerManager {
       }
     });
 
-    rightAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-title-section"
-          )[0];
+    // const iconLeftAlign = document.getElementById("icon-align-left");
+    // const iconRightAlign = document.getElementById("icon-align-right");
 
-        if (templateBlock) {
-          templateBlock.setStyle({
-            // display: "flex",
-            // "align-self": "end",
-            "text-align": "right",
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-text-align",
-            "right"
-          );
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
+    // iconLeftAlign.addEventListener("click", () => {
+    //   if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+    //     const templateBlock =
+    //       this.toolBoxManager.editorManager.selectedComponent.find(
+    //         ".tile-icon-section"
+    //       )[0];
+    //     if (templateBlock) {
+    //       templateBlock.setStyle({
+    //         display: "flex",
+    //         "align-self": "start",
+    //       });
+    //       this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
+    //     }
+    //   } else {
+    //     const message = this.toolBoxManager.currentLanguage.getTranslation(
+    //       "no_tile_selected_error_message"
+    //     );
+    //     this.toolBoxManager.ui.displayAlertMessage(message, "error");
+    //   }
+    // });
 
-    const iconLeftAlign = document.getElementById("icon-align-left");
-    const iconCenterAlign = document.getElementById("icon-align-center");
-    const iconRightAlign = document.getElementById("icon-align-right");
 
-    iconLeftAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon-section"
-          )[0];
-        if (templateBlock) {
-          templateBlock.setStyle({
-            display: "flex",
-            "align-self": "start",
-          });
-          this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
+    // iconRightAlign.addEventListener("click", () => {
+    //   if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+    //     const templateBlock =
+    //       this.toolBoxManager.editorManager.selectedComponent.find(
+    //         ".tile-icon-section"
+    //       )[0];
 
-    iconCenterAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon-section"
-          )[0];
-
-        if (templateBlock) {
-          templateBlock.setStyle({
-            display: "flex",
-            "align-self": "center",
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-align",
-            "center"
-          );
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
-
-    iconRightAlign.addEventListener("click", () => {
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-        const templateBlock =
-          this.toolBoxManager.editorManager.selectedComponent.find(
-            ".tile-icon-section"
-          )[0];
-
-        if (templateBlock) {
-          templateBlock.setStyle({
-            display: "flex",
-            "align-self": "end",
-          });
-          this.toolBoxManager.setAttributeToSelected(
-            "tile-icon-align",
-            "right"
-          );
-        } else {
-        }
-      } else {
-        const message = this.toolBoxManager.currentLanguage.getTranslation(
-          "no_tile_selected_error_message"
-        );
-        this.toolBoxManager.ui.displayAlertMessage(message, "error");
-      }
-    });
+    //     if (templateBlock) {
+    //       templateBlock.setStyle({
+    //         display: "flex",
+    //         "align-self": "end",
+    //       });
+    //       this.toolBoxManager.setAttributeToSelected(
+    //         "tile-icon-align",
+    //         "right"
+    //       );
+    //     } else {
+    //     }
+    //   } else {
+    //     const message = this.toolBoxManager.currentLanguage.getTranslation(
+    //       "no_tile_selected_error_message"
+    //     );
+    //     this.toolBoxManager.ui.displayAlertMessage(message, "error");
+    //   }
+    // });
   }
 
   setupOpacityListener() {
@@ -3167,7 +3215,7 @@ class ThemeManager {
 
     const select = document.querySelector(".tb-custom-theme-selection");
     select.querySelector(".selected-theme-value").textContent = themeName;
-    
+
     if (!theme) {
       return false;
     }
@@ -3188,7 +3236,9 @@ class ThemeManager {
     this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
     localStorage.setItem("selectedTheme", themeName);
 
-    const page = this.toolBoxManager.editorManager.getPage(this.toolBoxManager.editorManager.currentPageId);
+    const page = this.toolBoxManager.editorManager.getPage(
+      this.toolBoxManager.editorManager.currentPageId
+    );
     this.toolBoxManager.ui.updateTileProperties(
       this.toolBoxManager.editorManager.selectedComponent,
       page
@@ -3209,18 +3259,60 @@ class ThemeManager {
     iframes.forEach((iframe) => {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-      this.updateRootStyle(iframeDoc, "primary-color", this.toolBoxManager.currentTheme.ThemeColors.primaryColor);
-      this.updateRootStyle(iframeDoc, "secondary-color", this.toolBoxManager.currentTheme.ThemeColors.secondaryColor);
-      this.updateRootStyle(iframeDoc, "background-color", this.toolBoxManager.currentTheme.ThemeColors.backgroundColor);
-      this.updateRootStyle(iframeDoc, "text-color", this.toolBoxManager.currentTheme.ThemeColors.textColor);
-      this.updateRootStyle(iframeDoc, "button-bg-color", this.toolBoxManager.currentTheme.ThemeColors.buttonBgColor);
-      this.updateRootStyle(iframeDoc, "button-text-color", this.toolBoxManager.currentTheme.ThemeColors.buttonTextColor);
-      this.updateRootStyle(iframeDoc, "card-bg-color", this.toolBoxManager.currentTheme.ThemeColors.cardBgColor);
-      this.updateRootStyle(iframeDoc, "card-text-color", this.toolBoxManager.currentTheme.ThemeColors.cardTextColor);
-      this.updateRootStyle(iframeDoc, "accent-color", this.toolBoxManager.currentTheme.ThemeColors.accentColor);
-      this.updateRootStyle(iframeDoc, "font-family", this.toolBoxManager.currentTheme.ThemeFontFamily);
+      this.updateRootStyle(
+        iframeDoc,
+        "primary-color",
+        this.toolBoxManager.currentTheme.ThemeColors.primaryColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "secondary-color",
+        this.toolBoxManager.currentTheme.ThemeColors.secondaryColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "background-color",
+        this.toolBoxManager.currentTheme.ThemeColors.backgroundColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "text-color",
+        this.toolBoxManager.currentTheme.ThemeColors.textColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "button-bg-color",
+        this.toolBoxManager.currentTheme.ThemeColors.buttonBgColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "button-text-color",
+        this.toolBoxManager.currentTheme.ThemeColors.buttonTextColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "card-bg-color",
+        this.toolBoxManager.currentTheme.ThemeColors.cardBgColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "card-text-color",
+        this.toolBoxManager.currentTheme.ThemeColors.cardTextColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "accent-color",
+        this.toolBoxManager.currentTheme.ThemeColors.accentColor
+      );
+      this.updateRootStyle(
+        iframeDoc,
+        "font-family",
+        this.toolBoxManager.currentTheme.ThemeFontFamily
+      );
 
-      this.updatePageTitleFontFamily(this.toolBoxManager.currentTheme.ThemeFontFamily);
+      this.updatePageTitleFontFamily(
+        this.toolBoxManager.currentTheme.ThemeFontFamily
+      );
     });
   }
 
@@ -3313,7 +3405,8 @@ class ThemeManager {
             const currentTileBgColorName =
               tile.getAttributes()?.["tile-bgcolor-name"];
             if (currentTileBgColorName && theme.ThemeColors) {
-              const matchingColorCode = theme.ThemeColors[currentTileBgColorName];
+              const matchingColorCode =
+                theme.ThemeColors[currentTileBgColorName];
 
               if (matchingColorCode) {
                 tile.addAttributes({
@@ -3321,10 +3414,14 @@ class ThemeManager {
                   "tile-bgcolor": matchingColorCode,
                 });
 
-                const currentTileOpacity = tile.getAttributes()?.["tile-bg-image-opacity"];
+                const currentTileOpacity =
+                  tile.getAttributes()?.["tile-bg-image-opacity"];
 
                 tile.addStyle({
-                  "background-color": addOpacityToHex(matchingColorCode, currentTileOpacity),
+                  "background-color": addOpacityToHex(
+                    matchingColorCode,
+                    currentTileOpacity
+                  ),
                 });
               } else {
                 console.warn(
@@ -3383,25 +3480,32 @@ class ThemeManager {
 
       colorBox.onclick = () => {
         if (this.toolBoxManager.editorManager.selectedComponent) {
-          const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
-          const currentColor = selectedComponent
-                                      .getAttributes()?.["tile-bgcolor"];
-          const currentTileOpacity = selectedComponent
-                                      .getAttributes()?.["tile-bg-image-opacity"];
+          const selectedComponent =
+            this.toolBoxManager.editorManager.selectedComponent;
+          const currentColor =
+            selectedComponent.getAttributes()?.["tile-bgcolor"];
+          const currentTileOpacity =
+            selectedComponent.getAttributes()?.["tile-bg-image-opacity"];
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
-              "background-color": "transparent"
+              "background-color": "transparent",
             });
-      
+
             this.toolBoxManager.setAttributeToSelected("tile-bgcolor", null);
-            this.toolBoxManager.setAttributeToSelected("tile-bgcolor-name", null);
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bgcolor-name",
+              null
+            );
 
             radioInput.checked = false;
             alignItem.style.border = "none";
-          }else {
+          } else {
             selectedComponent.addStyle({
-              "background-color": addOpacityToHex(colorValue, currentTileOpacity),
+              "background-color": addOpacityToHex(
+                colorValue,
+                currentTileOpacity
+              ),
             });
 
             this.toolBoxManager.setAttributeToSelected(
@@ -3415,7 +3519,6 @@ class ThemeManager {
             );
             alignItem.removeAttribute("style");
           }
-
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"
@@ -3452,7 +3555,7 @@ class ThemeManager {
       colorBox.className = "color-box";
       colorBox.setAttribute("for", `text-color-${colorName}`);
       colorBox.style.backgroundColor = colorValue;
-      colorBox.setAttribute("data-tile-text-color", colorValue);
+      colorBox.setAttribute("data-tile-color", colorValue);
 
       alignItem.appendChild(radioInput);
       alignItem.appendChild(colorBox);
@@ -3469,41 +3572,7 @@ class ThemeManager {
             "tile-text-color",
             colorValue
           );
-        } else {
-          const message = this.toolBoxManager.currentLanguage.getTranslation(
-            "no_tile_selected_error_message"
-          );
-          this.toolBoxManager.ui.displayAlertMessage(message, "error");
-        }
-      };
-    });
 
-    // Create options for icon color palette
-    Object.entries(colorValues).forEach(([colorName, colorValue]) => {
-      const alignItem = document.createElement("div");
-      alignItem.className = "color-item";
-
-      const radioInput = document.createElement("input");
-      radioInput.type = "radio";
-      radioInput.id = `icon-color-${colorName}`;
-      radioInput.name = "icon-color";
-      radioInput.value = colorName;
-
-      const colorBox = document.createElement("label");
-      colorBox.className = "color-box";
-      colorBox.setAttribute("for", `icon-color-${colorName}`);
-      colorBox.style.backgroundColor = colorValue;
-      colorBox.setAttribute("data-tile-icon-color", colorValue);
-
-      alignItem.appendChild(radioInput);
-      alignItem.appendChild(colorBox);
-      iconColorPaletteContainer.appendChild(alignItem);
-
-      radioInput.onclick = () => {
-        const selectedComponent =
-          this.toolBoxManager.editorManager.selectedComponent;
-
-        if (selectedComponent) {
           const svgIcon = selectedComponent.find(".tile-icon path")[0];
           if (svgIcon) {
             svgIcon.removeAttributes("fill");
@@ -3514,12 +3583,7 @@ class ThemeManager {
               "tile-icon-color",
               colorValue
             );
-          } else {
-            const message = this.toolBoxManager.currentLanguage.getTranslation(
-              "no_icon_selected_error_message"
-            );
-            this.toolBoxManager.ui.displayAlertMessage(message, "error");
-          }
+          } 
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"
@@ -3659,13 +3723,17 @@ class ThemeManager {
 
         // Update theme selection
         this.toolBoxManager.dataManager.selectedTheme =
-          this.toolBoxManager.themes.find((t) => t.ThemeName === theme.ThemeName);
+          this.toolBoxManager.themes.find(
+            (t) => t.ThemeName === theme.ThemeName
+          );
 
         this.toolBoxManager.dataManager.updateLocationTheme().then((res) => {
           if (this.toolBoxManager.checkIfNotAuthenticated(res)) return;
 
           if (this.setTheme(theme.ThemeName)) {
-            this.themeColorPalette(this.toolBoxManager.currentTheme.ThemeColors);
+            this.themeColorPalette(
+              this.toolBoxManager.currentTheme.ThemeColors
+            );
             localStorage.setItem("selectedTheme", theme.ThemeName);
             this.toolBoxManager.editorManager.theme = theme;
 
@@ -3767,15 +3835,15 @@ class ThemeManager {
         //             ${icon.IconSVG}
         //             <span class="icon-title">${displayName}</span>
         //         `;
-        
+
         iconItem.innerHTML = `${icon.IconSVG}`;
 
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
             const iconComponent =
-            this.toolBoxManager.editorManager.selectedComponent.find(
-              ".tile-icon"
-            )[0];
+              this.toolBoxManager.editorManager.selectedComponent.find(
+                ".tile-icon"
+              )[0];
 
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
@@ -3783,7 +3851,8 @@ class ThemeManager {
                 'fill="#7c8791"',
                 'fill="white"'
               );
-              iconComponent.addStyle({display: "block"});
+              iconComponent.addStyle({ display: "block" });
+              iconComponent.addAttributes({ "is-hidden": "false" });
               iconComponent.components(whiteIconSvg);
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
@@ -3826,16 +3895,20 @@ class ToolBoxUI {
   }
 
   updateTileTitle(inputTitle) {
-    if (this.manager.editorManager.selectedTemplateWrapper) {
+    const selectedComponent = this.manager.editorManager.selectedComponent;
+    if (selectedComponent) {
       const titleComponent =
-        this.manager.editorManager.selectedComponent.find(".tile-title")[0];
+      selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.addAttributes({ title: inputTitle });
+        titleComponent.addAttributes({ "is-hidden": "false" });
+
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        this.manager.editorManager.editorEventManager.editorOnUpdate(
-          this.manager.editorManager.getCurrentEditor()
-        );
+        const rowContainer = selectedComponent.closest(".container-row");
+        if (rowContainer) {
+          this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(rowContainer)
+        }
       }
     }
   }
@@ -3928,6 +4001,14 @@ class ToolBoxUI {
           currentCtaBgColor.toUpperCase();
       });
     }
+
+    const ctaSelectedAction = document.getElementById("cta-selected-actions");
+
+    const attributes = selectComponent?.getAttributes();
+    ctaSelectedAction.innerHTML = `
+        <span><strong>Type:</strong> ${attributes?.["cta-button-type"]}</span>
+        <span><strong>Action:</strong> ${attributes?.["cta-button-action"]}</span>
+      `;
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -3948,18 +4029,15 @@ class ToolBoxUI {
   }
 
   updateAlignmentProperties(selectComponent) {
-    const alignmentTypes = [
-      { type: "text", attribute: "tile-text-align" },
-      { type: "icon", attribute: "tile-icon-align" },
-    ];
-
-    alignmentTypes.forEach(({ type, attribute }) => {
-      const currentAlign = selectComponent?.getAttributes()?.[attribute];
-      ["left", "center", "right"].forEach((align) => {
-        document.getElementById(`${type}-align-${align}`).checked =
-          currentAlign === align;
+    const currentAlign = selectComponent?.getAttributes()?.["tile-align"];
+    if (currentAlign) {
+      ["center", "left"].forEach((align) => {
+        const alignElement = document.getElementById(`tile-${align}`);
+        if (alignElement) {
+          alignElement.checked = currentAlign === align;
+        }
       });
-    });
+    }
   }
 
   updateColorProperties(selectComponent) {
@@ -3971,19 +4049,7 @@ class ToolBoxUI {
     textColorRadios.forEach((radio) => {
       const colorBox = radio.nextElementSibling;
       radio.checked =
-        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
-    });
-
-    // Update icon color
-    const currentIconColor =
-      selectComponent?.getAttributes()?.["tile-icon-color"];
-    const iconColorRadios = document.querySelectorAll(
-      '.text-color-palette.icon-colors .color-item input[type="radio"]'
-    );
-    iconColorRadios.forEach((radio) => {
-      const colorBox = radio.nextElementSibling;
-      radio.checked =
-        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+        colorBox.getAttribute("data-tile-color") === currentTextColor;
     });
 
     // Update background color
@@ -5357,6 +5423,8 @@ class MappingComponent {
   init() {
     this.setupEventListeners();
     this.listPagesListener();
+    document.getElementById("list-all-pages").style.display = "block";
+    document.getElementById("hide-pages").style.display = "none";
     this.homePage = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageName == "Home"
     );

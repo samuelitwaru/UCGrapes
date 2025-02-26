@@ -456,7 +456,7 @@ class ActionListComponent {
     categoryElement.setAttribute("data-category", category.label);
 
     const summaryElement = document.createElement("summary");
-    summaryElement.innerHTML = `${category.label}${
+    summaryElement.innerHTML = `${category.displayName}${
       category.isWebLink ? "" : ' <i class="fa fa-angle-right"></i>'
     }`;
     categoryElement.appendChild(summaryElement);

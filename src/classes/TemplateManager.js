@@ -16,6 +16,7 @@ class TemplateManager {
   createTemplateHTML(isDefault = false) {
     let tileBgColor =
       this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
+    tileBgColor = '#ffffff'
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""

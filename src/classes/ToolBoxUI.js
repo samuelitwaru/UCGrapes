@@ -5,21 +5,16 @@ class ToolBoxUI {
   }
 
   updateTileTitle(inputTitle) {
-    const selectedComponent = this.manager.editorManager.selectedComponent;
-    if (selectedComponent) {
-      const titleComponent = selectedComponent.find(".tile-title")[0];
+    if (this.manager.editorManager.selectedTemplateWrapper) {
+      const titleComponent =
+        this.manager.editorManager.selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.addAttributes({ title: inputTitle });
-        titleComponent.addAttributes({ "is-hidden": "false" });
-
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        const rowContainer = selectedComponent.closest(".container-row");
-        if (rowContainer) {
-          this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(
-            rowContainer
-          );
-        }
+        this.manager.editorManager.editorEventManager.editorOnUpdate(
+          this.manager.editorManager.getCurrentEditor()
+        );
       }
     }
   }
@@ -112,14 +107,6 @@ class ToolBoxUI {
           currentCtaBgColor.toUpperCase();
       });
     }
-
-    const ctaSelectedAction = document.getElementById("cta-selected-actions");
-
-    const attributes = selectComponent?.getAttributes();
-    ctaSelectedAction.innerHTML = `
-        <span><strong>Type:</strong> ${attributes?.["cta-button-type"]}</span>
-        <span><strong>Action:</strong> ${attributes?.["cta-button-action"]}</span>
-      `;
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -140,15 +127,18 @@ class ToolBoxUI {
   }
 
   updateAlignmentProperties(selectComponent) {
-    const currentAlign = selectComponent?.getAttributes()?.["tile-align"];
-    if (currentAlign) {
-      ["center", "left"].forEach((align) => {
-        const alignElement = document.getElementById(`tile-${align}`);
-        if (alignElement) {
-          alignElement.checked = currentAlign === align;
-        }
+    const alignmentTypes = [
+      { type: "text", attribute: "tile-text-align" },
+      { type: "icon", attribute: "tile-icon-align" },
+    ];
+
+    alignmentTypes.forEach(({ type, attribute }) => {
+      const currentAlign = selectComponent?.getAttributes()?.[attribute];
+      ["left", "center", "right"].forEach((align) => {
+        document.getElementById(`${type}-align-${align}`).checked =
+          currentAlign === align;
       });
-    }
+    });
   }
 
   updateColorProperties(selectComponent) {
@@ -160,7 +150,19 @@ class ToolBoxUI {
     textColorRadios.forEach((radio) => {
       const colorBox = radio.nextElementSibling;
       radio.checked =
-        colorBox.getAttribute("data-tile-color") === currentTextColor;
+        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
+    });
+
+    // Update icon color
+    const currentIconColor =
+      selectComponent?.getAttributes()?.["tile-icon-color"];
+    const iconColorRadios = document.querySelectorAll(
+      '.text-color-palette.icon-colors .color-item input[type="radio"]'
+    );
+    iconColorRadios.forEach((radio) => {
+      const colorBox = radio.nextElementSibling;
+      radio.checked =
+        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
     });
 
     // Update background color
@@ -187,6 +189,7 @@ class ToolBoxUI {
       selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
       selectComponent?.getAttributes()?.["tile-action-object-id"];
+
     const propertySection = document.getElementById("selectedOption");
     const selectedOptionElement = document.getElementById(currentActionId);
 
@@ -201,7 +204,8 @@ class ToolBoxUI {
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
-    if (currentActionName && currentActionId) {
+    const targetPage = this.manager.dataManager.pages.SDT_PageCollection.find((page) => page.PageId == currentActionId)
+    if (currentActionName && currentActionId && targetPage) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
       if (selectedOptionElement) {

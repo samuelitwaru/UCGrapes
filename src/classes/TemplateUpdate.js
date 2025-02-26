@@ -160,17 +160,4 @@ class TemplateUpdate {
       if (rightButton) rightButton.addStyle(styleConfig.rightButton);
     });
   }
-
-  //   updateTileIconAndTitle(template) {
-  //     const iconComponentAttribute = template.find(".tile-icon")[0]?.getAttributes();
-  //     const titleComponentAttribute = template.find(".tile-title")[0]?.getAttributes();
-
-  //     if (iconComponentAttribute) {
-  //         console.log(iconComponentAttribute?.["is-hidden"]);
-  //     }
-
-  //     if (titleComponentAttribute) {
-  //         console.log(titleComponentAttribute?.["is-hidden"]);
-  //     }
-  //   }
 }

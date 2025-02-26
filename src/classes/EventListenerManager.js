@@ -140,13 +140,10 @@ class EventListenerManager {
     });
 
     centerAlign.addEventListener("click", () => {
-      console.log("center align clicked");
       if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
         const templateBlock =
           this.toolBoxManager.editorManager.selectedComponent;
-          console.log("first if statement");
         if (templateBlock) {
-          console.log("first if statement");
           templateBlock.addStyle({
             "align-items": "center",
             "justify-content": "center",

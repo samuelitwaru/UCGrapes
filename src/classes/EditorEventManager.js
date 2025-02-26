@@ -169,33 +169,28 @@ class EditorEventManager {
   }
 
   editorOnDragDrop(editor) {
-    editor.on("component:add", (model) => {
-      const component = model.get ? model : editor.getSelected();
-      if (!component) return;
+    
+    let startDragComponent;
+    editor.on("component:drag:start", (model) => {
+      startDragComponent =  model.parent;
+    });
 
-      const parent = component.parent();
-      if (!parent) return;
+    editor.on("component:drag:end", (model) => {
 
-      const parentEl = parent.getEl();
+      const parentEl = model.parent.getEl();
       if (!parentEl || !parentEl.classList.contains("container-row")) return;
 
-      const tileWrappers = parent.components().filter((comp) => {
+      const tileWrappers = model.parent.components().filter((comp) => {
         const type = comp.get("type");
         return type === "tile-wrapper";
       });
-
       if (tileWrappers.length > 3) {
-        component.remove();
+        model.target.remove();
 
         editor.UndoManager.undo();
       }
-
-      editor
-        .getWrapper()
-        .find(".container-row")
-        .forEach((component) => {
-          this.templateManager.templateUpdate.updateRightButtons(component);
-        });
+      this.templateManager.templateUpdate.updateRightButtons(model.parent);
+      this.templateManager.templateUpdate.updateRightButtons(startDragComponent);
     });
   }
 

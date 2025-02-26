@@ -849,130 +849,23 @@ class EditorManager {
   async loadDynamicFormContent(editor, page) {
     try {
       editor.DomComponents.clear();
-      editor.DomComponents.addType("iframe", {
-        model: {
-          defaults: {
-            tagName: "iframe",
-            void: true,
-            draggable: false,
-            selectable: false,
-            attributes: {
-              frameborder: "0",
-              seamless: "seamless",
-              loading: "lazy",
-              sandbox: "allow-scripts allow-same-origin",
-              src: `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`,
-            },
-            // Define styles separately from attributes
-            style: {
-              width: "100%",
-              height: "300vh",
-              border: "none",
-              overflow: "hidden",
-              "-ms-overflow-style": "none",
-              "scrollbar-width": "none",
-            },
-          },
-
-          init() {
-            this.set("tagName", "iframe");
-
-            // Ensure src is set in attributes if not already present
-            const attrs = this.getAttributes();
-            if (!attrs.src) {
-              this.set("attributes", {
-                ...attrs,
-                src: this.defaults.attributes.src,
-              });
-            }
-          },
-
-          isValidUrl(url) {
-            try {
-              new URL(url);
-              return true;
-            } catch {
-              return false;
-            }
-          },
-        },
-
-        view: {
-          tagName: "iframe",
-
-          events: {
-            load: "onLoad",
-            error: "onError",
-          },
-
-          init() {
-            try {
-              this.listenTo(
-                this.model,
-                "change:attributes",
-                this.updateAttributes
-              );
-            } catch (error) {
-              console.error("Error initializing iframe view:", error);
-            }
-          },
-
-          onLoad() {
-            console.log("IFrame loaded successfully");
-          },
-
-          onError() {
-            console.error("Error loading iframe content");
-          },
-
-          updateAttributes() {
-            try {
-              const attributes = this.model.getAttributes();
-              Object.entries(attributes).forEach(([key, value]) => {
-                if (key !== "style") {
-                  this.el.setAttribute(key, value);
-                }
-              });
-            } catch (error) {
-              console.error("Error updating iframe attributes:", error);
-            }
-          },
-
-          render() {
-            try {
-              // Set all attributes except style
-              const attributes = this.model.getAttributes();
-              Object.entries(attributes).forEach(([key, value]) => {
-                if (key !== "style") {
-                  this.el.setAttribute(key, value);
-                }
-              });
-
-              // Apply styles correctly
-              const styles = this.model.get("style");
-              if (styles) {
-                Object.entries(styles).forEach(([prop, value]) => {
-                  this.el.style[prop] = value;
-                });
-              }
-
-              return this;
-            } catch (error) {
-              console.error("Error rendering iframe:", error);
-              return this;
-            }
-          },
-        },
-      });
-
-      // Add the component to the editor
+      // Add the component to the editor with preloader in a wrapper
       editor.setComponents(`
         <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
-          <iframe ${defaultConstraints}></iframe>
+          <div class="preloader-wrapper" ${defaultConstraints}>
+            <div class="preloader" ${defaultConstraints}></div>
+          </div>
+          <object 
+            data="${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0"
+            type="text/html"
+            width="100%"
+            height="800px"
+            fallbackMessage="Unable to load the content. Please try opening it in a new window." ${defaultConstraints}>
+          </object>
         </div>
       `);
     } catch (error) {
-      console.error("Error setting up iframe component:", error.message);
+      console.error("Error setting up object component:", error.message);
     }
   }
 
@@ -1379,33 +1272,28 @@ class EditorEventManager {
   }
 
   editorOnDragDrop(editor) {
-    editor.on("component:add", (model) => {
-      const component = model.get ? model : editor.getSelected();
-      if (!component) return;
+    
+    let startDragComponent;
+    editor.on("component:drag:start", (model) => {
+      startDragComponent =  model.parent;
+    });
 
-      const parent = component.parent();
-      if (!parent) return;
+    editor.on("component:drag:end", (model) => {
 
-      const parentEl = parent.getEl();
+      const parentEl = model.parent.getEl();
       if (!parentEl || !parentEl.classList.contains("container-row")) return;
 
-      const tileWrappers = parent.components().filter((comp) => {
+      const tileWrappers = model.parent.components().filter((comp) => {
         const type = comp.get("type");
         return type === "tile-wrapper";
       });
-
       if (tileWrappers.length > 3) {
-        component.remove();
+        model.target.remove();
 
         editor.UndoManager.undo();
       }
-
-      editor
-        .getWrapper()
-        .find(".container-row")
-        .forEach((component) => {
-          this.templateManager.templateUpdate.updateRightButtons(component);
-        });
+      this.templateManager.templateUpdate.updateRightButtons(model.parent);
+      this.templateManager.templateUpdate.updateRightButtons(startDragComponent);
     });
   }
 
@@ -2453,19 +2341,6 @@ class TemplateUpdate {
       if (rightButton) rightButton.addStyle(styleConfig.rightButton);
     });
   }
-
-  //   updateTileIconAndTitle(template) {
-  //     const iconComponentAttribute = template.find(".tile-icon")[0]?.getAttributes();
-  //     const titleComponentAttribute = template.find(".tile-title")[0]?.getAttributes();
-
-  //     if (iconComponentAttribute) {
-  //         console.log(iconComponentAttribute?.["is-hidden"]);
-  //     }
-
-  //     if (titleComponentAttribute) {
-  //         console.log(titleComponentAttribute?.["is-hidden"]);
-  //     }
-  //   }
 }
 
 
@@ -2943,13 +2818,10 @@ class EventListenerManager {
     });
 
     centerAlign.addEventListener("click", () => {
-      console.log("center align clicked");
       if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
         const templateBlock =
           this.toolBoxManager.editorManager.selectedComponent;
-          console.log("first if statement");
         if (templateBlock) {
-          console.log("first if statement");
           templateBlock.addStyle({
             "align-items": "center",
             "justify-content": "center",
@@ -3897,8 +3769,7 @@ class ToolBoxUI {
   updateTileTitle(inputTitle) {
     const selectedComponent = this.manager.editorManager.selectedComponent;
     if (selectedComponent) {
-      const titleComponent =
-      selectedComponent.find(".tile-title")[0];
+      const titleComponent = selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.addAttributes({ title: inputTitle });
         titleComponent.addAttributes({ "is-hidden": "false" });
@@ -3907,7 +3778,9 @@ class ToolBoxUI {
         titleComponent.addStyle({ display: "block" });
         const rowContainer = selectedComponent.closest(".container-row");
         if (rowContainer) {
-          this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(rowContainer)
+          this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(
+            rowContainer
+          );
         }
       }
     }

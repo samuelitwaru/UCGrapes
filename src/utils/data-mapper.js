@@ -170,10 +170,11 @@ function mapTemplateToPageData(templateData, page) {
 
         TileAction: {
           ObjectType: attributes["tile-action-object"],
-          ObjectId: tileActionObjectId == "" ? null : tileActionObjectId,
-          ObjectUrl: attributes["tile-action-object-url"],
+          ObjectId: tileActionObjectId || "00000000-0000-0000-0000-000000000000",
+          ObjectUrl: attributes["tile-action-object-url"] || "",
         },
       };
+      console.log(col.Tile.TileAction);
       return col;
     });
 

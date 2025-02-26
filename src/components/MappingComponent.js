@@ -73,8 +73,9 @@ class MappingComponent {
     let homePage = this.getPage(rootPageId);
     let homePageJSON = JSON.parse(homePage.PageGJSJson);
     const pages = homePageJSON.pages;
+    if (!pages[0].frames) return;
     const containerRows =
-      pages[0].frames[0].component.components[0].components[0].components;
+      pages[0]?.frames[0]?.component.components[0].components[0].components;
 
     let childPages = [];
 

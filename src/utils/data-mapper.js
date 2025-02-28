@@ -149,8 +149,7 @@ function mapTemplateToPageData(templateData, page) {
       const titleSpan = titleSection?.components?.find((comp) =>
         comp.classes?.includes("tile-title")
       );
-      const titleText = titleSpan?.components?.[0]?.content || "";
-
+      const titleText = titleSpan?.attributes?.title || "";
       // Create tile object
       let tileActionObjectId = attributes["tile-action-object-id"];
 
@@ -184,6 +183,7 @@ function mapTemplateToPageData(templateData, page) {
   if (page.PageName == "Home") {
     console.log(pageData);
   }
+  console.log(pageData)
   return pageData;
 }
 

@@ -350,16 +350,9 @@ class EditorManager {
           }
         });
       }
-
-      const ctaRoundButtons = ctaContainer.find(".cta-container-child");
-
-      if (ctaRoundButtons.length > 0) {
-        ctaRoundButtons.forEach(button => {
-          const windowWidth = window.innerWidth;
-          button.getEl().style.marginRight = windowWidth <= 1440 ? "0.5rem" : "1.1rem";
-        })
-        
-      }
+      const windowWidth = window.innerWidth;
+      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.4rem";
+      console.log("ctaContainer");
     }
   }
 

@@ -279,7 +279,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -366,6 +366,7 @@ class DataManager {
   }
 
   async updatePagesBatch(payload) {
+    console.log('Publish:', payload);
     return await this.fetchAPI('/api/toolbox/update-pages-batch', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -814,16 +815,9 @@ class EditorManager {
           }
         });
       }
-
-      const ctaRoundButtons = ctaContainer.find(".cta-container-child");
-
-      if (ctaRoundButtons.length > 0) {
-        ctaRoundButtons.forEach(button => {
-          const windowWidth = window.innerWidth;
-          button.getEl().style.marginRight = windowWidth <= 1440 ? "0.5rem" : "1.1rem";
-        })
-        
-      }
+      const windowWidth = window.innerWidth;
+      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.4rem";
+      console.log("ctaContainer");
     }
   }
 
@@ -1148,32 +1142,43 @@ class EditorEventManager {
   }
 
   updateEditorAfterLoad(editor) {
-    
     const titles = editor.DomComponents.getWrapper().find(".tile-title");
     titles.forEach((title) => {
       if (!title.getAttributes()?.["title"]) {
-        title.addAttributes({"title": title.getEl().textContent});
+        title.addAttributes({ title: title.getEl().textContent });
       }
 
       if (!title.getAttributes()?.["is-hidden"]) {
         console.log("Hello world");
-        title.addAttributes({"is-hidden": "false"}); 
+        title.addAttributes({ "is-hidden": "false" });
       }
     });
 
     const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
     tileIcons.forEach((icon) => {
       if (!icon.getAttributes()?.["is-hidden"]) {
-        console.log("Hello world");
-        icon.addAttributes({"is-hidden": "true"}); 
+        icon.addAttributes({ "is-hidden": "true" });
       }
     });
 
-    const rowContainers = editor.DomComponents.getWrapper().find(".container-row");
-    rowContainers.forEach((rowContainer) => {
-      this.templateManager.templateUpdate.updateRightButtons(rowContainer);
-    });
+    const templateBlocks =
+      editor.DomComponents.getWrapper().find(".template-block");
+    templateBlocks.forEach((block) => {
+      const isPriority = block.getClasses()?.includes("high-priority-template");
+      const screenWidth = window.innerWidth;
 
+      const blockHeight =
+        screenWidth <= 1440
+          ? isPriority
+            ? "6.0rem"
+            : "4.5em"
+          : isPriority
+          ? "7rem"
+          : "5rem";
+      block.addStyle({
+        height: blockHeight,
+      });
+    });
   }
 
   loadTheme() {
@@ -1255,16 +1260,16 @@ class EditorEventManager {
     editor.on("component:selected", (component) =>
       this.handleComponentSelected(component)
     );
-    this.editorOnComponentAdd(editor)
+    this.editorOnComponentAdd(editor);
   }
 
   editorOnComponentAdd(editor) {
-    editor.on('component:mount', (model) => {
-      if (model.get('type') === 'svg') {
-        model.set({selectable:false})
+    editor.on("component:mount", (model) => {
+      if (model.get("type") === "svg") {
+        model.set({ selectable: false });
       }
-      if(model.get('type') === 'tile-wrapper') {
-        model.addStyle({'background':'#00000000'})
+      if (model.get("type") === "tile-wrapper") {
+        model.addStyle({ background: "#00000000" });
         // const tileMapper = new TileMapper(model.components().first())
         // tileMapper.setTileAttributes()
       }
@@ -1272,14 +1277,12 @@ class EditorEventManager {
   }
 
   editorOnDragDrop(editor) {
-    
     let startDragComponent;
     editor.on("component:drag:start", (model) => {
-      startDragComponent =  model.parent;
+      startDragComponent = model.parent;
     });
 
     editor.on("component:drag:end", (model) => {
-
       const parentEl = model.parent.getEl();
       if (!parentEl || !parentEl.classList.contains("container-row")) return;
 
@@ -1293,7 +1296,9 @@ class EditorEventManager {
         editor.UndoManager.undo();
       }
       this.templateManager.templateUpdate.updateRightButtons(model.parent);
-      this.templateManager.templateUpdate.updateRightButtons(startDragComponent);
+      this.templateManager.templateUpdate.updateRightButtons(
+        startDragComponent
+      );
     });
   }
 
@@ -1469,9 +1474,7 @@ class TemplateManager {
   }
 
   createTemplateHTML(isDefault = false) {
-    let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
-    tileBgColor = '#ffffff'
+    let tileBgColor = '#ffffff'
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -1484,9 +1487,9 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}; color:#FFFFFF"
+                style="background-color:${tileBgColor}; color:#333333"
                 tile-bgcolor="${tileBgColor}"
-                tile-bgcolor-name="accentColor"
+                tile-bgcolor-name=""
                 ${defaultTileAttrs} 
                  data-gjs-draggable="false"
                  data-gjs-selectable="true"
@@ -1662,7 +1665,7 @@ class TemplateManager {
 
   generateTemplateRow(columns, rowIndex) {
     let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
+      "#ffffff";
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -1707,7 +1710,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#ffffff"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
@@ -1718,7 +1721,7 @@ class TemplateManager {
                               : ""
                           }"
                             tile-bgcolor="${tileBgColor}"
-                            tile-bgcolor-name="accentColor"
+                            tile-bgcolor-name=""
                             ${defaultTileAttrs}
                             data-gjs-draggable="false"
                             data-gjs-selectable="true"
@@ -2099,7 +2102,7 @@ class TemplateManager {
                               contentPageData.ProductServiceDescription
                                 ? `
                                 <p
-                                    style="flex: 1; padding: 0; margin: 0; height: auto;"
+                                    style="flex: 1; padding: 0; margin: 0; height: auto; white-space: pre-wrap;"
                                     class="content-page-block"
                                     data-gjs-draggable="true"
                                     data-gjs-selectable="false"
@@ -2216,21 +2219,21 @@ class TemplateUpdate {
         template: { "justify-content": "start", "align-items": "start" },
         rightButton: { display: "flex" },
         titleSection: { "text-align": "left" },
-        attributes: { "tile-align": "left"}
+        attributes: { "tile-align": "left" },
       },
       2: {
         title: { "letter-spacing": "0.9px", "font-size": "14px" },
         template: { "justify-content": "start", "align-items": "start" },
         rightButton: { display: "flex" },
         titleSection: { "text-align": "left" },
-        attributes: { "tile-align": "left"}
+        attributes: { "tile-align": "left" },
       },
       3: {
         title: { "letter-spacing": "0.9px", "font-size": "12px" },
         template: { "justify-content": "center", "align-items": "center" },
         rightButton: { display: "none" },
         titleSection: { "text-align": "center" },
-        attributes: { "tile-align": "center"}
+        attributes: { "tile-align": "center" },
       },
     };
 
@@ -2241,9 +2244,9 @@ class TemplateUpdate {
     // Update titles
     const titles = containerRow.find(".tile-title");
     titles.forEach((title) => {
-      title.parent().addStyle({
+      title.addStyle({
         ...styleConfig.title,
-        textAlign: count === 3 ? "center" : "left",
+        "text-align": count === 3 ? "center" : "left",
       });
       let tileTitle =
         title.getEl().getAttribute("title") || title.getEl().innerText;
@@ -2321,7 +2324,7 @@ class TemplateUpdate {
             : "4.5em"
           : isPriority && isTemplateOne
           ? "7rem"
-          : "5.5rem";
+          : "5rem";
 
       const templateStyles = {
         ...styleConfig.template,
@@ -2611,9 +2614,12 @@ class ToolBoxManager {
                     e.preventDefault();
                     const currentStyles = templateBlock.getStyle() || {};
                     delete currentStyles["background-image"];
+                    currentStyles["background-color"] = templateBlock.getAttributes()?.["tile-bgcolor"];
                     templateBlock.setStyle(currentStyles);
                     tileImgContainer.style.display = "none";
                     this.setAttributeToSelected("tile-bg-image-url", "");
+                    this.setAttributeToSelected("tile-bg-image-opacity", 0);
+                    this.ui.updateTileOpacityProperties(templateBlock);
                   };
                 }
               }
@@ -2808,6 +2814,13 @@ class EventListenerManager {
             "align-items": "start",
             "justify-content": "start",
           });
+
+          const tileTitle = templateBlock.find(".tile-title")[0];
+          if (tileTitle) {
+            tileTitle.addStyle({
+              "text-align": "left",
+            })
+          }
           this.toolBoxManager.setAttributeToSelected("tile-align", "left");
         }
       } else {
@@ -2828,6 +2841,13 @@ class EventListenerManager {
             "justify-content": "center",
           });
 
+          const tileTitle = templateBlock.find(".tile-title")[0];
+          if (tileTitle) {
+            tileTitle.addStyle({
+              "text-align": "center",
+            })
+          }
+
           this.toolBoxManager.setAttributeToSelected(
             "tile-align",
             "center"
@@ -2841,90 +2861,29 @@ class EventListenerManager {
       }
     });
 
-    // const iconLeftAlign = document.getElementById("icon-align-left");
-    // const iconRightAlign = document.getElementById("icon-align-right");
-
-    // iconLeftAlign.addEventListener("click", () => {
-    //   if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-    //     const templateBlock =
-    //       this.toolBoxManager.editorManager.selectedComponent.find(
-    //         ".tile-icon-section"
-    //       )[0];
-    //     if (templateBlock) {
-    //       templateBlock.setStyle({
-    //         display: "flex",
-    //         "align-self": "start",
-    //       });
-    //       this.toolBoxManager.setAttributeToSelected("tile-icon-align", "left");
-    //     }
-    //   } else {
-    //     const message = this.toolBoxManager.currentLanguage.getTranslation(
-    //       "no_tile_selected_error_message"
-    //     );
-    //     this.toolBoxManager.ui.displayAlertMessage(message, "error");
-    //   }
-    // });
-
-
-    // iconRightAlign.addEventListener("click", () => {
-    //   if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
-    //     const templateBlock =
-    //       this.toolBoxManager.editorManager.selectedComponent.find(
-    //         ".tile-icon-section"
-    //       )[0];
-
-    //     if (templateBlock) {
-    //       templateBlock.setStyle({
-    //         display: "flex",
-    //         "align-self": "end",
-    //       });
-    //       this.toolBoxManager.setAttributeToSelected(
-    //         "tile-icon-align",
-    //         "right"
-    //       );
-    //     } else {
-    //     }
-    //   } else {
-    //     const message = this.toolBoxManager.currentLanguage.getTranslation(
-    //       "no_tile_selected_error_message"
-    //     );
-    //     this.toolBoxManager.ui.displayAlertMessage(message, "error");
-    //   }
-    // });
   }
 
   setupOpacityListener() {
     const imageOpacity = document.getElementById("bg-opacity");
-
+    
     imageOpacity.addEventListener("input", (event) => {
       const value = event.target.value;
-
-      if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+      const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
+      if (selectedComponent) {
         const templateBlock =
           this.toolBoxManager.editorManager.selectedComponent;
 
         if (templateBlock) {
-          const currentBgStyle = templateBlock.getStyle()["background-color"];
-          let currentBgColor;
-          
-          if (currentBgStyle.length > 7) {
-            currentBgColor = currentBgStyle.substring(0, 7);
-          } else {
-            currentBgColor = currentBgStyle;
-          }
+          const hasBgImage = selectedComponent.getStyle()["background-image"];
 
-          const bgColor = addOpacityToHex(currentBgColor, value)
+          if (!hasBgImage) return;
 
           templateBlock.addStyle({
-            "background-color": bgColor,
+            "background-color": `rgba(0,0,0, ${value / 100})`,
           });
 
           templateBlock.addAttributes({
             "tile-bg-image-opacity": value,
-          })
-
-          templateBlock.addAttributes({
-            "tile-bgcolor": bgColor,
           })
         }
       }
@@ -3277,6 +3236,7 @@ class ThemeManager {
 
             const currentTileBgColorName =
               tile.getAttributes()?.["tile-bgcolor-name"];
+
             if (currentTileBgColorName && theme.ThemeColors) {
               const matchingColorCode =
                 theme.ThemeColors[currentTileBgColorName];
@@ -3287,15 +3247,12 @@ class ThemeManager {
                   "tile-bgcolor": matchingColorCode,
                 });
 
-                const currentTileOpacity =
-                  tile.getAttributes()?.["tile-bg-image-opacity"];
-
-                tile.addStyle({
-                  "background-color": addOpacityToHex(
-                    matchingColorCode,
-                    currentTileOpacity
-                  ),
-                });
+                const tileStyle = tile.getStyle();
+                if (!tileStyle["background-image"]) {
+                  tile.addStyle({
+                    "background-color": matchingColorCode,
+                  });
+                }
               } else {
                 console.warn(
                   `No matching color found for: ${currentTileBgColorName}`
@@ -3357,8 +3314,6 @@ class ThemeManager {
             this.toolBoxManager.editorManager.selectedComponent;
           const currentColor =
             selectedComponent.getAttributes()?.["tile-bgcolor"];
-          const currentTileOpacity =
-            selectedComponent.getAttributes()?.["tile-bg-image-opacity"];
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
@@ -3371,14 +3326,18 @@ class ThemeManager {
               null
             );
 
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bg-image-opacity",
+              0
+            );
+
+            this.toolBoxManager.ui.updateTileOpacityProperties(selectedComponent);
+
             radioInput.checked = false;
             alignItem.style.border = "none";
           } else {
             selectedComponent.addStyle({
-              "background-color": addOpacityToHex(
-                colorValue,
-                currentTileOpacity
-              ),
+              "background-color": colorValue
             });
 
             this.toolBoxManager.setAttributeToSelected(
@@ -3405,8 +3364,6 @@ class ThemeManager {
   colorPalette() {
     const textColorPaletteContainer =
       document.getElementById("text-color-palette");
-    const iconColorPaletteContainer =
-      document.getElementById("icon-color-palette");
 
     // Fixed color values
     const colorValues = {
@@ -3442,7 +3399,7 @@ class ThemeManager {
             color: colorValue,
           });
           this.toolBoxManager.setAttributeToSelected(
-            "tile-text-color",
+            "tile-color",
             colorValue
           );
 
@@ -3456,7 +3413,7 @@ class ThemeManager {
               "tile-icon-color",
               colorValue
             );
-          } 
+          }
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"
@@ -3471,10 +3428,10 @@ class ThemeManager {
     const ctaColorPaletteContainer =
       document.getElementById("cta-color-palette");
     const colorValues = {
-      color1: "#4C9155",
-      color2: "#5068A8",
-      color3: "#EEA622",
-      color4: "#FF6C37",
+      color1: "#2c405a",
+      color2: "#d4a76a",
+      color3: "#b2b997",
+      color4: "#c4a082",
     };
 
     Object.entries(colorValues).forEach(([colorName, colorValue]) => {
@@ -3768,16 +3725,21 @@ class ToolBoxUI {
   }
 
   updateTileTitle(inputTitle) {
-    if (this.manager.editorManager.selectedTemplateWrapper) {
-      const titleComponent =
-        this.manager.editorManager.selectedComponent.find(".tile-title")[0];
+    const selectedComponent = this.manager.editorManager.selectedComponent;
+    if (selectedComponent) {
+      const titleComponent = selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.addAttributes({ title: inputTitle });
+        titleComponent.addAttributes({ "is-hidden": "false" });
+
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        this.manager.editorManager.editorEventManager.editorOnUpdate(
-          this.manager.editorManager.getCurrentEditor()
-        );
+        const rowContainer = selectedComponent.closest(".container-row");
+        if (rowContainer) {
+          this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(
+            rowContainer
+          );
+        }
       }
     }
   }
@@ -3870,6 +3832,14 @@ class ToolBoxUI {
           currentCtaBgColor.toUpperCase();
       });
     }
+
+    const ctaSelectedAction = document.getElementById("cta-selected-actions");
+
+    const attributes = selectComponent?.getAttributes();
+    ctaSelectedAction.innerHTML = `
+        <span><strong>Type:</strong> ${attributes?.["cta-button-type"]}</span>
+        <span><strong>Action:</strong> ${attributes?.["cta-button-action"]}</span>
+      `;
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -3881,27 +3851,21 @@ class ToolBoxUI {
 
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
-      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
-
-    if (tileOpacity) {
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"] || 0;
       document.getElementById("bg-opacity").value = tileOpacity;
       document.getElementById("valueDisplay").textContent = tileOpacity + " %";
-    }
   }
 
   updateAlignmentProperties(selectComponent) {
-    const alignmentTypes = [
-      { type: "text", attribute: "tile-text-align" },
-      { type: "icon", attribute: "tile-icon-align" },
-    ];
-
-    alignmentTypes.forEach(({ type, attribute }) => {
-      const currentAlign = selectComponent?.getAttributes()?.[attribute];
-      ["left", "center", "right"].forEach((align) => {
-        document.getElementById(`${type}-align-${align}`).checked =
-          currentAlign === align;
+    const currentAlign = selectComponent?.getAttributes()?.["tile-align"];
+    if (currentAlign) {
+      ["center", "left"].forEach((align) => {
+        const alignElement = document.getElementById(`tile-${align}`);
+        if (alignElement) {
+          alignElement.checked = currentAlign === align;
+        }
       });
-    });
+    }
   }
 
   updateColorProperties(selectComponent) {
@@ -3913,19 +3877,7 @@ class ToolBoxUI {
     textColorRadios.forEach((radio) => {
       const colorBox = radio.nextElementSibling;
       radio.checked =
-        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
-    });
-
-    // Update icon color
-    const currentIconColor =
-      selectComponent?.getAttributes()?.["tile-icon-color"];
-    const iconColorRadios = document.querySelectorAll(
-      '.text-color-palette.icon-colors .color-item input[type="radio"]'
-    );
-    iconColorRadios.forEach((radio) => {
-      const colorBox = radio.nextElementSibling;
-      radio.checked =
-        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+        colorBox.getAttribute("data-tile-color") === currentTextColor;
     });
 
     // Update background color
@@ -3952,7 +3904,6 @@ class ToolBoxUI {
       selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
       selectComponent?.getAttributes()?.["tile-action-object-id"];
-
     const propertySection = document.getElementById("selectedOption");
     const selectedOptionElement = document.getElementById(currentActionId);
 
@@ -3967,8 +3918,7 @@ class ToolBoxUI {
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
-    const targetPage = this.manager.dataManager.pages.SDT_PageCollection.find((page) => page.PageId == currentActionId)
-    if (currentActionName && currentActionId && targetPage) {
+    if (currentActionName && currentActionId) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
       if (selectedOptionElement) {
@@ -4008,7 +3958,7 @@ class ToolBoxUI {
     ctaItem.setAttribute("data-cta-id", cta.CallToActionId);
 
     const ctaType = this.getCtaType(cta.CallToActionType);
-    ctaItem.innerHTML = `<i class="${ctaType.icon}"></i>`;
+    ctaItem.innerHTML = `${ctaType.icon}`;
 
     return ctaItem;
   }
@@ -4016,24 +3966,32 @@ class ToolBoxUI {
   getCtaType(type) {
     const ctaTypeMap = {
       Phone: {
-        icon: "fas fa-phone-alt",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 49.417 49.418">
+                <path ${defaultConstraints} id="call" d="M29.782,3a2.149,2.149,0,1,0,0,4.3A19.3,19.3,0,0,1,49.119,26.634a2.149,2.149,0,1,0,4.3,0A23.667,23.667,0,0,0,29.782,3ZM12.032,7.305a2.548,2.548,0,0,0-.818.067,8.342,8.342,0,0,0-3.9,2.342C2.775,14.254.366,21.907,17.437,38.98S42.16,53.643,46.7,49.1a8.348,8.348,0,0,0,2.346-3.907,2.524,2.524,0,0,0-1.179-2.786c-2.424-1.418-7.654-4.484-10.08-5.9a2.523,2.523,0,0,0-2.568.012l-4.012,2.392a2.517,2.517,0,0,1-2.845-.168,65.811,65.811,0,0,1-5.711-4.981,65.07,65.07,0,0,1-4.981-5.711A2.512,2.512,0,0,1,17.5,25.2L19.9,21.191a2.533,2.533,0,0,0,.008-2.577L14.012,8.556A2.543,2.543,0,0,0,12.032,7.305Zm17.751,4.289a2.149,2.149,0,1,0,0,4.3A10.709,10.709,0,0,1,40.525,26.634a2.149,2.149,0,1,0,4.3,0A15.072,15.072,0,0,0,29.782,11.594Zm0,8.594a2.149,2.149,0,1,0,0,4.3,2.114,2.114,0,0,1,2.149,2.148,2.149,2.149,0,1,0,4.3,0A6.479,6.479,0,0,0,29.782,20.188Z" transform="translate(-4 -3)" fill="#fff"></path>
+              </svg>`,
         iconList: ".fas.fa-phone-alt",
-        iconBgColor: "#4c9155",
+        iconBgColor: "#2c405a",
       },
       Email: {
-        icon: "fas fa-envelope",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="28" viewBox="0 0 41 32.8">
+            <path ${defaultConstraints} id="Path_1218" data-name="Path 1218" d="M6.1,4A4.068,4.068,0,0,0,2.789,5.7a1.5,1.5,0,0,0,.444,2.126l18,11.219a2.387,2.387,0,0,0,2.531,0L41.691,7.732a1.5,1.5,0,0,0,.384-2.2A4.063,4.063,0,0,0,38.9,4Zm35.907,8.376a.963.963,0,0,0-.508.152L23.765,23.711a2.392,2.392,0,0,1-2.531,0L3.5,12.656a.98.98,0,0,0-1.5.833V32.7a4.1,4.1,0,0,0,4.1,4.1H38.9A4.1,4.1,0,0,0,43,32.7V13.357A.981.981,0,0,0,42.007,12.376Z" transform="translate(-2 -4)" fill="#fff"/>
+          </svg>`,
         iconList: ".fas.fa-envelope",
-        iconBgColor: "#eea622",
+        iconBgColor: "#d4a76a",
       },
       SiteUrl: {
-        icon: "fas fa-link",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 9.552 9.552">
+              <path ${defaultConstraints} id="Path_1213" data-name="Path 1213" d="M11.064,4A2.485,2.485,0,0,0,9.3,4.734l-.585.585A2.488,2.488,0,0,0,7.98,7.084a2.45,2.45,0,0,0,.174.908L8.8,7.346a1.706,1.706,0,0,1,.473-1.468l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.675,1.675,0,0,1,1.194.5,1.7,1.7,0,0,1,0,2.4l-.585.585a1.7,1.7,0,0,1-1.206.5,1.456,1.456,0,0,1-.261-.025L9.559,9.4a2.45,2.45,0,0,0,.908.174,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.506,2.506,0,0,0,11.064,4Zm-.983,2.9L6.9,10.082l.572.572L10.654,7.47Zm-3,1.082a2.485,2.485,0,0,0-1.766.734L4.734,9.3A2.488,2.488,0,0,0,4,11.064a2.506,2.506,0,0,0,2.487,2.487,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.45,2.45,0,0,0,9.4,9.559l-.647.647a1.706,1.706,0,0,1-.473,1.468l-.585.585a1.7,1.7,0,0,1-1.206.5,1.675,1.675,0,0,1-1.194-.5,1.7,1.7,0,0,1,0-2.4l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.457,1.457,0,0,1,.261.025l.647-.647A2.45,2.45,0,0,0,7.084,7.98Z" transform="translate(-4 -4)" fill="#fff"/>
+            </svg>`,
         iconList: ".fas.fa-link",
-        iconBgColor: "#ff6c37",
+        iconBgColor: "#b2b997",
       },
       Form: {
-        icon: "fas fa-file",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 13 16">
+            <path ${defaultConstraints} id="Path_1209" data-name="Path 1209" d="M9.828,4A1.823,1.823,0,0,0,8,5.8V18.2A1.823,1.823,0,0,0,9.828,20h9.344A1.823,1.823,0,0,0,21,18.2V9.8a.6.6,0,0,0-.179-.424l-.006-.006L15.54,4.176A.614.614,0,0,0,15.109,4Zm0,1.2H14.5V8.6a1.823,1.823,0,0,0,1.828,1.8h3.453v7.8a.6.6,0,0,1-.609.6H9.828a.6.6,0,0,1-.609-.6V5.8A.6.6,0,0,1,9.828,5.2Zm5.891.848L18.92,9.2H16.328a.6.6,0,0,1-.609-.6Z" transform="translate(-8 -4)" fill="#fff"/>
+          </svg>`,
         iconList: ".fas.fa-file",
-        iconBgColor: "#5068a8",
+        iconBgColor: "#c4a082",
       },
     };
 
@@ -4041,14 +3999,13 @@ class ToolBoxUI {
       ctaTypeMap[type] || {
         icon: "fas fa-question",
         iconList: ".fas.fa-question",
-        iconBgColor: "#5068a8",
+        iconBgColor: "#c4a082",
       }
     );
   }
 
   generateCtaComponent(cta, backgroundColor) {
     const ctaType = this.getCtaType(cta.CallToActionType);
-    const windowWidth = window.innerWidth;
     return `
       <div class="cta-container-child cta-child" 
             id="id-${cta.CallToActionId}"
@@ -4068,12 +4025,11 @@ class ToolBoxUI {
               cta.CallToActionUrl
             }"
           cta-background-color="${ctaType.iconBgColor}"
-          style="margin-right: ${windowWidth <= 1440 ? "0.5rem" : "1.1rem"}"
           >
             <div class="cta-button" ${defaultConstraints} style="background-color: ${
-      backgroundColor || ctaType.iconBgColor
-    };">
-              <i class="${ctaType.icon}" ${defaultConstraints}></i>
+              backgroundColor || ctaType.iconBgColor
+            };">
+              ${ctaType.icon}
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
             <div class="cta-label" ${defaultConstraints}>${
@@ -4169,10 +4125,18 @@ class ToolBoxUI {
   // Get icon based on CTA type
   getCtaTypeIcon(ctaType) {
     const iconMap = {
-      Phone: "fas fa-phone-alt",
-      Email: "fas fa-envelope",
-      SiteUrl: "fas fa-link",
-      Form: "fas fa-file",
+      Phone: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 49.417 49.418">
+                <path ${defaultConstraints} id="call" d="M29.782,3a2.149,2.149,0,1,0,0,4.3A19.3,19.3,0,0,1,49.119,26.634a2.149,2.149,0,1,0,4.3,0A23.667,23.667,0,0,0,29.782,3ZM12.032,7.305a2.548,2.548,0,0,0-.818.067,8.342,8.342,0,0,0-3.9,2.342C2.775,14.254.366,21.907,17.437,38.98S42.16,53.643,46.7,49.1a8.348,8.348,0,0,0,2.346-3.907,2.524,2.524,0,0,0-1.179-2.786c-2.424-1.418-7.654-4.484-10.08-5.9a2.523,2.523,0,0,0-2.568.012l-4.012,2.392a2.517,2.517,0,0,1-2.845-.168,65.811,65.811,0,0,1-5.711-4.981,65.07,65.07,0,0,1-4.981-5.711A2.512,2.512,0,0,1,17.5,25.2L19.9,21.191a2.533,2.533,0,0,0,.008-2.577L14.012,8.556A2.543,2.543,0,0,0,12.032,7.305Zm17.751,4.289a2.149,2.149,0,1,0,0,4.3A10.709,10.709,0,0,1,40.525,26.634a2.149,2.149,0,1,0,4.3,0A15.072,15.072,0,0,0,29.782,11.594Zm0,8.594a2.149,2.149,0,1,0,0,4.3,2.114,2.114,0,0,1,2.149,2.148,2.149,2.149,0,1,0,4.3,0A6.479,6.479,0,0,0,29.782,20.188Z" transform="translate(-4 -3)" fill="#fff"></path>
+              </svg>`,
+      Email: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="28" viewBox="0 0 41 32.8">
+            <path ${defaultConstraints} id="Path_1218" data-name="Path 1218" d="M6.1,4A4.068,4.068,0,0,0,2.789,5.7a1.5,1.5,0,0,0,.444,2.126l18,11.219a2.387,2.387,0,0,0,2.531,0L41.691,7.732a1.5,1.5,0,0,0,.384-2.2A4.063,4.063,0,0,0,38.9,4Zm35.907,8.376a.963.963,0,0,0-.508.152L23.765,23.711a2.392,2.392,0,0,1-2.531,0L3.5,12.656a.98.98,0,0,0-1.5.833V32.7a4.1,4.1,0,0,0,4.1,4.1H38.9A4.1,4.1,0,0,0,43,32.7V13.357A.981.981,0,0,0,42.007,12.376Z" transform="translate(-2 -4)" fill="#fff"/>
+          </svg>`,
+      SiteUrl: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 9.552 9.552">
+              <path ${defaultConstraints} id="Path_1213" data-name="Path 1213" d="M11.064,4A2.485,2.485,0,0,0,9.3,4.734l-.585.585A2.488,2.488,0,0,0,7.98,7.084a2.45,2.45,0,0,0,.174.908L8.8,7.346a1.706,1.706,0,0,1,.473-1.468l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.675,1.675,0,0,1,1.194.5,1.7,1.7,0,0,1,0,2.4l-.585.585a1.7,1.7,0,0,1-1.206.5,1.456,1.456,0,0,1-.261-.025L9.559,9.4a2.45,2.45,0,0,0,.908.174,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.506,2.506,0,0,0,11.064,4Zm-.983,2.9L6.9,10.082l.572.572L10.654,7.47Zm-3,1.082a2.485,2.485,0,0,0-1.766.734L4.734,9.3A2.488,2.488,0,0,0,4,11.064a2.506,2.506,0,0,0,2.487,2.487,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.45,2.45,0,0,0,9.4,9.559l-.647.647a1.706,1.706,0,0,1-.473,1.468l-.585.585a1.7,1.7,0,0,1-1.206.5,1.675,1.675,0,0,1-1.194-.5,1.7,1.7,0,0,1,0-2.4l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.457,1.457,0,0,1,.261.025l.647-.647A2.45,2.45,0,0,0,7.084,7.98Z" transform="translate(-4 -4)" fill="#fff"/>
+            </svg>`,
+      Form: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 13 16">
+            <path ${defaultConstraints} id="Path_1209" data-name="Path 1209" d="M9.828,4A1.823,1.823,0,0,0,8,5.8V18.2A1.823,1.823,0,0,0,9.828,20h9.344A1.823,1.823,0,0,0,21,18.2V9.8a.6.6,0,0,0-.179-.424l-.006-.006L15.54,4.176A.614.614,0,0,0,15.109,4Zm0,1.2H14.5V8.6a1.823,1.823,0,0,0,1.828,1.8h3.453v7.8a.6.6,0,0,1-.609.6H9.828a.6.6,0,0,1-.609-.6V5.8A.6.6,0,0,1,9.828,5.2Zm5.891.848L18.92,9.2H16.328a.6.6,0,0,1-.609-.6Z" transform="translate(-8 -4)" fill="#fff"/>
+          </svg>`,
     };
     return iconMap[ctaType] || "fas fa-question";
   }
@@ -4227,7 +4191,7 @@ class ToolBoxUI {
       )}>
         <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
              class="img-button" ${defaultConstraints}>
-          <i class="${icon} img-button-icon" ${defaultConstraints}></i>
+          <span class="img-button-icon" ${defaultConstraints}>${icon}</span>
           <div class="cta-badge" ${defaultConstraints}>
             <i class="fa fa-minus" ${defaultConstraints}></i>
           </div>
@@ -4351,7 +4315,6 @@ class ToolBoxUI {
     }
   }
 }
-
 
 // Content from classes/UndoRedoManager.js
 class UndoRedoManager {
@@ -6330,6 +6293,7 @@ class MediaComponent {
           "background-size": "cover",
           "background-position": "center",
           "background-blend-mode": "overlay",
+          "background-color": "",
         });
       } else {
         console.error("MediaUrl is missing or undefined", this.selectedFile);
@@ -6338,6 +6302,11 @@ class MediaComponent {
       this.toolBoxManager.setAttributeToSelected(
         "tile-bg-image-url",
         this.selectedFile.MediaUrl
+      );
+
+      this.toolBoxManager.setAttributeToSelected(
+        "tile-bg-image-opacity",
+        0
       );
 
       this.toolBoxManager.checkTileBgImage();
@@ -6652,15 +6621,16 @@ const iconsData = [
   
   const defaultTileAttrs = `
     tile-text="Tile"
-    tile-text-color="#ffffff"
+    tile-text-color="#333333"
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#ffffff"
+    tile-icon-color="#333333"
     tile-icon-align="left"
+    tile-align="left"
   
     tile-bg-image=""
-    tile-bg-image-opacity=100
+    tile-bg-image-opacity=0
   
     tile-action-object="Page"
     tile-action-object-id=""

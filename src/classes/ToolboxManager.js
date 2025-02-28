@@ -263,9 +263,12 @@ class ToolBoxManager {
                     e.preventDefault();
                     const currentStyles = templateBlock.getStyle() || {};
                     delete currentStyles["background-image"];
+                    currentStyles["background-color"] = templateBlock.getAttributes()?.["tile-bgcolor"];
                     templateBlock.setStyle(currentStyles);
                     tileImgContainer.style.display = "none";
                     this.setAttributeToSelected("tile-bg-image-url", "");
+                    this.setAttributeToSelected("tile-bg-image-opacity", 0);
+                    this.ui.updateTileOpacityProperties(templateBlock);
                   };
                 }
               }

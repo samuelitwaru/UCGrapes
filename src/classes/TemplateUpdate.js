@@ -34,21 +34,21 @@ class TemplateUpdate {
         template: { "justify-content": "start", "align-items": "start" },
         rightButton: { display: "flex" },
         titleSection: { "text-align": "left" },
-        attributes: { "tile-align": "left"}
+        attributes: { "tile-align": "left" },
       },
       2: {
         title: { "letter-spacing": "0.9px", "font-size": "14px" },
         template: { "justify-content": "start", "align-items": "start" },
         rightButton: { display: "flex" },
         titleSection: { "text-align": "left" },
-        attributes: { "tile-align": "left"}
+        attributes: { "tile-align": "left" },
       },
       3: {
         title: { "letter-spacing": "0.9px", "font-size": "12px" },
         template: { "justify-content": "center", "align-items": "center" },
         rightButton: { display: "none" },
         titleSection: { "text-align": "center" },
-        attributes: { "tile-align": "center"}
+        attributes: { "tile-align": "center" },
       },
     };
 
@@ -59,9 +59,9 @@ class TemplateUpdate {
     // Update titles
     const titles = containerRow.find(".tile-title");
     titles.forEach((title) => {
-      title.parent().addStyle({
+      title.addStyle({
         ...styleConfig.title,
-        textAlign: count === 3 ? "center" : "left",
+        "text-align": count === 3 ? "center" : "left",
       });
       let tileTitle =
         title.getEl().getAttribute("title") || title.getEl().innerText;
@@ -139,7 +139,7 @@ class TemplateUpdate {
             : "4.5em"
           : isPriority && isTemplateOne
           ? "7rem"
-          : "5.5rem";
+          : "5rem";
 
       const templateStyles = {
         ...styleConfig.template,

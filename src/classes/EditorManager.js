@@ -12,13 +12,26 @@ class EditorManager {
     dataManager,
     currentLanguage,
     LocationLogo,
-    LocationProfileImage
+    LocationProfileImage, ///
+    themes,
+    iconsData,
+    templates,
+    mapping,
+    mediaCollection,
+    addServiceButtonEvent
   ) {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
     this.LocationLogo = LocationLogo;
-    this.LocationProfileImage = LocationProfileImage;
-    this.templateManager = new TemplateManager(this.currentLanguage, this);
+    this.LocationProfileImage = LocationProfileImage; //
+    this.themes = themes;
+    this.iconsData = iconsData;
+    this.templates = templates;
+    this.mapping = mapping;
+    this.mediaCollection = mediaCollection;
+    this.addServiceButtonEvent = addServiceButtonEvent;
+
+    this.templateManager = new TemplateManager(this.currentLanguage, this); //
     this.editorEventManager = new EditorEventManager(
       this,
       this.templateManager
@@ -28,6 +41,17 @@ class EditorManager {
   }
 
   async initializeEditorManager() {
+    this.toolsSection = new ToolBoxManager(
+      this,
+      this.dataManager,
+      this.themes,
+      this.iconsData,
+      this.templates,
+      this.mapping,
+      this.mediaCollection,
+      this.currentLanguage,
+      this.addServiceButtonEvent
+    );
     const theme = await this.dataManager.getLocationTheme();
     if (this.toolsSection.checkIfNotAuthenticated(theme)) return;
     this.theme = theme.SDT_LocationTheme;
@@ -493,7 +517,6 @@ class EditorManager {
                 fallback.style.flexDirection = "column";
                 fallback.style.justifyContent = "start";
               }
-              console.error("Error loading object content:", e);
             });
           },
         },
@@ -598,7 +621,7 @@ class EditorManager {
     this.editorEventManager.activateNavigators();
   }
 
-  setToolsSection(toolBox) {
-    this.toolsSection = toolBox;
-  }
+  // setToolsSection(toolBox) {
+  //   this.toolsSection = toolBox;
+  // }
 }

@@ -36,6 +36,7 @@ class ToolBoxManager {
       await this.initializeManagers();
       await this.setupComponents();
       this.setupEventListeners();
+      console.log("Toolbox initialized successfully", this.themes);
     } catch (error) {
       console.error("Failed to initialize toolbox:", error);
     }

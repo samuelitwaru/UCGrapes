@@ -2,106 +2,161 @@
   "assets": [],
   "styles": [
     {
-      "selectors": ["#is1l"],
-      "style": { "flex": "0 0 100%)", "background-color": "#554940" }
+      "selectors": [
+        "#is1l"
+      ],
+      "style": {
+        "flex": "0 0 100%)",
+        "background-color": "#554940",
+        "background": "#00000000"
+      }
     },
     {
-      "selectors": ["#iy1c3"],
+      "selectors": [
+        "#iy1c3"
+      ],
       "style": {
         "flex": "0 0 calc(50% - 0.3.5rem)",
-        "background-color": "#554940"
+        "background-color": "#554940",
+        "background": "#00000000"
       }
     },
     {
-      "selectors": ["#ildfb"],
+      "selectors": [
+        "#ildfb"
+      ],
       "style": {
         "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)",
-        "background-color": "#554940"
+        "background-color": "#554940",
+        "background": "#00000000",
+        "width": "50%"
       }
     },
     {
-      "selectors": ["#idbdo"],
+      "selectors": [
+        "#idbdo"
+      ],
       "style": {
-        "background-color": "#758a71ff",
+        "background-color": "#969674",
         "color": "#ffffff",
         "justify-content": "start",
         "height": "5rem"
       }
     },
     {
-      "selectors": ["#iukvi"],
-      "style": { "flex": "0 0 calc(50% - 0.3.5rem)" }
-    },
-    { "selectors": ["#ipouv"], "style": { "display": "flex" } },
-    { "selectors": ["#icsio"], "style": { "display": "flex" } },
-    {
-      "selectors": ["#i0mu2g"],
+      "selectors": [
+        "#iukvi"
+      ],
       "style": {
-        "background-color": "#535353ff",
-        "color": "#ffffff",
-        "justify-content": "center",
-        "height": "5rem"
+        "flex": "0 0 calc(50% - 0.3.5rem)",
+        "background": "#00000000"
       }
     },
     {
-      "selectors": ["#i7kkab"],
-      "style": { "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)" }
-    },
-    { "selectors": ["#ixw9j"], "style": { "display": "none" } },
-    { "selectors": ["#i3vttb"], "style": { "display": "none" } },
-    {
-      "selectors": ["#ietnjg"],
+      "selectors": [
+        "#ipouv"
+      ],
       "style": {
-        "background-color": "#986b5dff",
-        "color": "#ffffff",
-        "justify-content": "center",
-        "height": "5rem"
+        "display": "flex"
       }
     },
     {
-      "selectors": ["#i7eszl"],
-      "style": { "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)" }
+      "selectors": [
+        "#icsio"
+      ],
+      "style": {
+        "display": "flex"
+      }
     },
-    { "selectors": ["#ip5tif"], "style": { "display": "none" } },
     {
-      "selectors": ["#ipif"],
+      "selectors": [
+        "#i0mu2g"
+      ],
+      "style": {
+        "background-color": "#2c405a",
+        "color": "#ffffff",
+        "justify-content": "center",
+        "height": "5rem",
+        "align-items": "center",
+        "text-transform": "capitalize"
+      }
+    },
+    {
+      "selectors": [
+        "#i7kkab"
+      ],
+      "style": {
+        "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)",
+        "background": "#00000000",
+        "width": "50%"
+      }
+    },
+    {
+      "selectors": [
+        "#ixw9j"
+      ],
+      "style": {
+        "display": "none"
+      }
+    },
+    {
+      "selectors": [
+        "#i3vttb"
+      ],
+      "style": {
+        "display": "none"
+      }
+    },
+    {
+      "selectors": [
+        "#ipif"
+      ],
       "style": {
         "background-image": "url(https://staging.comforta.yukon.software/media/receptie-197@3x.png)",
         "background-size": "cover",
         "background-position": "center",
         "background-blend-mode": "overlay",
-        "background-color": "#758a71ff",
+        "background-color": "rgba(0,0,0, 0.5)",
         "color": "#ffffff",
         "justify-content": "start",
         "height": "7rem"
       }
     },
     {
-      "selectors": ["#i2pfx"],
+      "selectors": [
+        "#i2pfx"
+      ],
       "style": {
-        "background-color": "#758a71ff",
+        "background-color": "rgba(0,0,0, 0.5)",
         "color": "#ffffff",
         "background-image": "url(https://staging.comforta.yukon.software/media/Calendar.png)",
         "background-size": "cover",
         "background-position": "center",
         "background-blend-mode": "overlay",
-        "justify-content": "start",
-        "height": "5rem"
+        "justify-content": "center",
+        "height": "5rem",
+        "align-items": "center"
       }
     },
     {
-      "selectors": ["#i3ggh"],
+      "selectors": [
+        "#i3ggh"
+      ],
       "style": {
-        "background-color": "#758a71ff",
+        "background-color": "#969674",
         "color": "#ffffff",
         "justify-content": "center",
-        "height": "5rem"
+        "height": "5rem",
+        "align-items": "center",
+        "text-transform": "capitalize"
       }
     },
     {
-      "selectors": ["#ie1e09"],
+      "selectors": [
+        "#ie1e09"
+      ],
       "style": {
-        "background-color": "#758a71ff",
+        "background-color": "rgba(0,0,0, 0.2)",
         "color": "#ffffff",
         "background-size": "cover",
         "background-position": "center",
@@ -111,45 +166,212 @@
         "height": "5rem"
       }
     },
-    { "selectors": ["#i0bx9"], "style": { "display": "block" } },
-    { "selectors": ["#iyq5"], "style": { "display": "block" } },
     {
-      "selectors": ["#ivoio"],
-      "style": { "letter-spacing": "1.1px", "font-size": "16px" }
-    },
-    { "selectors": ["#isp0f"], "style": { "display": "flex" } },
-    { "selectors": ["#i7n2g"], "style": { "text-align": "left" } },
-    {
-      "selectors": ["#id2n8"],
-      "style": { "letter-spacing": "0.9px", "font-size": "14px" }
+      "selectors": [
+        "#i0bx9"
+      ],
+      "style": {
+        "display": "block"
+      }
     },
     {
-      "selectors": ["#i9g4k"],
-      "style": { "letter-spacing": "0.9px", "font-size": "14px" }
-    },
-    { "selectors": ["#i5i72"], "style": { "text-align": "left" } },
-    { "selectors": ["#izv6y"], "style": { "text-align": "left" } },
-    {
-      "selectors": ["#iclrt"],
-      "style": { "letter-spacing": "1.1px", "font-size": "16px" }
-    },
-    { "selectors": ["#ixaek"], "style": { "display": "flex" } },
-    { "selectors": ["#imqow"], "style": { "text-align": "left" } },
-    {
-      "selectors": ["#i6v82k"],
-      "style": { "letter-spacing": "0.9px", "font-size": "12px" }
+      "selectors": [
+        "#iyq5"
+      ],
+      "style": {
+        "display": "block"
+      }
     },
     {
-      "selectors": ["#inf8r5"],
-      "style": { "letter-spacing": "0.9px", "font-size": "12px" }
+      "selectors": [
+        "#ivoio"
+      ],
+      "style": {
+        "letter-spacing": "1.1px",
+        "font-size": "16px"
+      }
     },
     {
-      "selectors": ["#idxe2e"],
-      "style": { "letter-spacing": "0.9px", "font-size": "12px" }
+      "selectors": [
+        "#isp0f"
+      ],
+      "style": {
+        "display": "flex"
+      }
     },
-    { "selectors": ["#iay23w"], "style": { "text-align": "center" } },
-    { "selectors": ["#icql8g"], "style": { "text-align": "center" } },
-    { "selectors": ["#i9oahl"], "style": { "text-align": "center" } }
+    {
+      "selectors": [
+        "#i7n2g"
+      ],
+      "style": {
+        "text-align": "left"
+      }
+    },
+    {
+      "selectors": [
+        "#id2n8"
+      ],
+      "style": {
+        "letter-spacing": "0.9px",
+        "font-size": "14px",
+        "text-align": "center",
+        "display": "none"
+      }
+    },
+    {
+      "selectors": [
+        "#i9g4k"
+      ],
+      "style": {
+        "letter-spacing": "0.9px",
+        "font-size": "14px"
+      }
+    },
+    {
+      "selectors": [
+        "#i5i72"
+      ],
+      "style": {
+        "text-align": "left"
+      }
+    },
+    {
+      "selectors": [
+        "#izv6y"
+      ],
+      "style": {
+        "text-align": "left"
+      }
+    },
+    {
+      "selectors": [
+        "#iclrt"
+      ],
+      "style": {
+        "letter-spacing": "1.1px",
+        "font-size": "16px"
+      }
+    },
+    {
+      "selectors": [
+        "#ixaek"
+      ],
+      "style": {
+        "display": "flex"
+      }
+    },
+    {
+      "selectors": [
+        "#imqow"
+      ],
+      "style": {
+        "text-align": "left"
+      }
+    },
+    {
+      "selectors": [
+        "#i6v82k"
+      ],
+      "style": {
+        "letter-spacing": "0.9px",
+        "font-size": "12px",
+        "text-align": "center"
+      }
+    },
+    {
+      "selectors": [
+        "#inf8r5"
+      ],
+      "style": {
+        "letter-spacing": "0.9px",
+        "font-size": "12px",
+        "text-align": "center"
+      }
+    },
+    {
+      "selectors": [
+        "#iay23w"
+      ],
+      "style": {
+        "text-align": "center",
+        "textAlign": "center"
+      }
+    },
+    {
+      "selectors": [
+        "#icql8g"
+      ],
+      "style": {
+        "text-align": "center",
+        "textAlign": "center"
+      }
+    },
+    {
+      "selectors": [
+        "#it85p"
+      ],
+      "style": {
+        "background": "#00000000"
+      }
+    },
+    {
+      "selectors": [
+        "#iovpjf"
+      ],
+      "style": {
+        "background-color": "#666e61",
+        "color": "#ffffff",
+        "justify-content": "center",
+        "align-items": "center",
+        "height": "5rem",
+        "text-transform": "capitalize"
+      }
+    },
+    {
+      "selectors": [
+        "#iy76q5"
+      ],
+      "style": {
+        "background": "#00000000",
+        "flex": "0 0 calc(33.333333333333336% - 0.3.5rem)"
+      }
+    },
+    {
+      "selectors": [
+        "#ilhvhq"
+      ],
+      "style": {
+        "letter-spacing": "0.9px",
+        "font-size": "12px",
+        "text-align": "center",
+        "display": "block"
+      }
+    },
+    {
+      "selectors": [
+        "#iegy5l"
+      ],
+      "style": {
+        "textAlign": "center",
+        "text-align": "center"
+      }
+    },
+    {
+      "selectors": [
+        "#imrnli"
+      ],
+      "style": {
+        "display": "none"
+      }
+    },
+    {
+      "selectors": [
+        "#ist81"
+      ],
+      "style": {
+        "display": "block"
+      }
+    }
   ],
   "pages": [
     {
@@ -167,11 +389,18 @@
               "background-position",
               "background-size"
             ],
-            "resizable": { "handles": "e" },
+            "resizable": {
+              "handles": "e"
+            },
             "selectable": false,
             "hoverable": false,
-            "attributes": { "theme": "Minimalistic" },
-            "_undoexc": ["status", "open"],
+            "attributes": {
+              "theme": "Minimalistic"
+            },
+            "_undoexc": [
+              "status",
+              "open"
+            ],
             "components": [
               {
                 "type": "template-wrapper",
@@ -180,9 +409,16 @@
                 "highlightable": false,
                 "selectable": false,
                 "hoverable": false,
-                "classes": ["frame-container"],
-                "attributes": { "id": "frame-container" },
-                "_undoexc": ["status", "open"],
+                "classes": [
+                  "frame-container"
+                ],
+                "attributes": {
+                  "id": "frame-container"
+                },
+                "_undoexc": [
+                  "status",
+                  "open"
+                ],
                 "components": [
                   {
                     "type": "template-wrapper",
@@ -191,25 +427,42 @@
                     "highlightable": false,
                     "selectable": false,
                     "hoverable": false,
-                    "classes": ["container-column"],
-                    "_undoexc": ["status", "open"],
+                    "classes": [
+                      "container-column"
+                    ],
+                    "_undoexc": [
+                      "status",
+                      "open"
+                    ],
                     "components": [
                       {
                         "type": "template-wrapper",
                         "draggable": false,
                         "droppable": "[data-gjs-type='tile-wrapper']",
                         "selectable": false,
-                        "classes": ["container-row"],
-                        "_undoexc": ["status", "open"],
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ],
                         "components": [
                           {
                             "type": "tile-wrapper",
+                            "draggable": false,
                             "droppable": false,
                             "selectable": false,
-                            "draggable": false,
-                            "classes": ["template-wrapper"],
-                            "attributes": { "id": "is1l" },
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "is1l"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
@@ -222,22 +475,25 @@
                                   "high-priority-template"
                                 ],
                                 "attributes": {
-                                  "tile-bgcolor": "#758a71",
+                                  "tile-bgcolor": "#969674",
                                   "tile-bgcolor-name": "cardBgColor",
                                   "tile-text": "Tile",
                                   "tile-text-color": "#ffffff",
                                   "tile-text-align": "left",
-                                  "tile-icon": "Curtain",
+                                  "tile-icon": "Stamp",
                                   "tile-icon-color": "#ffffff",
                                   "tile-icon-align": "left",
                                   "tile-bg-image": "",
-                                  "tile-bg-image-opacity": "100",
+                                  "tile-bg-image-opacity": "50",
                                   "tile-action-object": "Predefined Page, Reception",
-                                  "tile-action-object-id": "{{ReceptionPageId}}",
+                                  "tile-action-object-id": "bd07a815-f287-434f-98c3-3b1b094a15a4",
                                   "id": "ipif",
                                   "tile-bg-image-url": "https://staging.comforta.yukon.software/media/receptie-197@3x.png"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -245,8 +501,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -261,12 +522,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -278,20 +545,34 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "attributes": { "id": "iyq5" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "id": "iyq5",
+                                          "is-hidden": "false"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "svg",
-                                            "resizable": { "ratioDefault": 1 },
+                                            "resizable": {
+                                              "ratioDefault": 1
+                                            },
+                                            "selectable": false,
                                             "attributes": {
                                               "xmlns": "http://www.w3.org/2000/svg",
-                                              "width": "29.668",
-                                              "height": "27.386",
-                                              "viewBox": "0 0 29.668 27.386"
+                                              "width": "29.667",
+                                              "height": "29.667",
+                                              "viewBox": "0 0 29.667 29.667"
                                             },
-                                            "_undoexc": ["status", "open"],
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ],
                                             "components": [
                                               {
                                                 "tagName": "path",
@@ -300,13 +581,14 @@
                                                   "ratioDefault": 1
                                                 },
                                                 "attributes": {
-                                                  "id": "Path_547",
-                                                  "data-name": "Path 547",
-                                                  "d": "M3.141,3a1.141,1.141,0,1,0,0,2.282H30.527a1.141,1.141,0,1,0,0-2.282Zm0,4.564v21.68a1.141,1.141,0,0,0,1.141,1.141H15.693V8.705a1.141,1.141,0,0,1-1.141-1.141H13.411a1.141,1.141,0,0,1-2.282,0H9.988a1.141,1.141,0,0,1-2.282,0H6.564a1.141,1.141,0,1,1-2.282,0Zm15.975,0a1.141,1.141,0,0,1-1.141,1.141v21.68H29.386a1.141,1.141,0,0,0,1.141-1.141V7.564H29.386a1.141,1.141,0,1,1-2.282,0H25.962a1.141,1.141,0,1,1-2.282,0H22.539a1.141,1.141,0,0,1-2.282,0Z",
-                                                  "transform": "translate(-2 -3)",
+                                                  "id": "Receptie",
+                                                  "d": "M14.833,0a3.56,3.56,0,1,0,3.56,3.56A3.564,3.564,0,0,0,14.833,0Zm-1.78,7.713A4.158,4.158,0,0,0,8.9,11.867v1.187H20.767V11.867a4.158,4.158,0,0,0-4.153-4.153Zm11.867,3.56v.593h1.187v-.593Zm.593.593A2.98,2.98,0,0,0,22.6,14.24H.593A.594.594,0,0,0,0,14.833v2.373a.593.593,0,0,0,.593.593h28.48a.592.592,0,0,0,.593-.593V14.833a.593.593,0,0,0-.593-.593h-.649A2.98,2.98,0,0,0,25.513,11.867Zm0,1.187a1.782,1.782,0,0,1,1.669,1.187H23.845A1.782,1.782,0,0,1,25.513,13.053ZM1.187,18.987V29.073a.593.593,0,0,0,.593.593H27.887a.592.592,0,0,0,.593-.593V18.987Z",
                                                   "fill": "white"
                                                 },
-                                                "_undoexc": ["status", "open"]
+                                                "_undoexc": [
+                                                  "status",
+                                                  "open"
+                                                ]
                                               }
                                             ]
                                           }
@@ -320,9 +602,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "i7n2g" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "i7n2g"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -337,12 +626,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -354,14 +649,26 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "ivoio" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "id": "ivoio",
+                                          "title": "RECEPTION",
+                                          "is-hidden": "false"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "RECEPTION",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -380,15 +687,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -402,7 +716,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -410,14 +727,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -425,14 +747,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -453,14 +780,19 @@
                                   "title": "Add template right",
                                   "id": "isp0f"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -474,7 +806,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -482,14 +817,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -497,14 +837,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -517,13 +862,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n                          ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -536,40 +889,59 @@
                         "draggable": false,
                         "droppable": "[data-gjs-type='tile-wrapper']",
                         "selectable": false,
-                        "classes": ["container-row"],
-                        "_undoexc": ["status", "open"],
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ],
                         "components": [
                           {
                             "type": "tile-wrapper",
                             "droppable": false,
                             "selectable": false,
-                            "classes": ["template-wrapper"],
-                            "attributes": { "id": "iy1c3" },
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "iy1c3"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block"],
+                                "classes": [
+                                  "template-block"
+                                ],
                                 "attributes": {
-                                  "tile-bgcolor": "#758a71",
+                                  "tile-bgcolor": "#969674",
                                   "tile-bgcolor-name": "cardBgColor",
                                   "tile-text": "Tile",
                                   "tile-text-color": "#ffffff",
                                   "tile-text-align": "left",
-                                  "tile-icon": "",
-                                  "tile-icon-color": "#000000",
+                                  "tile-icon": "Calendar",
+                                  "tile-icon-color": "#ffffff",
                                   "tile-icon-align": "left",
                                   "tile-bg-image": "",
-                                  "tile-bg-image-opacity": "100",
+                                  "tile-bg-image-opacity": "50",
                                   "tile-action-object": "Predefined Page, Calendar",
-                                  "tile-action-object-id": "{{CalendarPageId}}",
+                                  "tile-action-object-id": "3e21f9f8-0d32-440b-a1b6-f8eee35fcdbb",
                                   "id": "i2pfx",
-                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/Calendar.png"
+                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/Calendar.png",
+                                  "tile-align": "center",
+                                  "TileText": ""
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -577,8 +949,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -593,12 +970,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -610,13 +993,53 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "is-hidden": "false",
+                                          "id": "ist81"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
-                                            "type": "textnode",
-                                            "content": "n                                ",
-                                            "_undoexc": ["status", "open"]
+                                            "type": "svg",
+                                            "resizable": {
+                                              "ratioDefault": 1
+                                            },
+                                            "selectable": false,
+                                            "attributes": {
+                                              "xmlns": "http://www.w3.org/2000/svg",
+                                              "width": "43.8",
+                                              "height": "48.667",
+                                              "viewBox": "0 0 43.8 48.667"
+                                            },
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ],
+                                            "components": [
+                                              {
+                                                "tagName": "path",
+                                                "type": "svg-in",
+                                                "resizable": {
+                                                  "ratioDefault": 1
+                                                },
+                                                "attributes": {
+                                                  "id": "Agenda",
+                                                  "d": "M10.3,1V5.867H7.867A4.881,4.881,0,0,0,3,10.733V44.8a4.881,4.881,0,0,0,4.867,4.867H41.933A4.881,4.881,0,0,0,46.8,44.8V10.733a4.881,4.881,0,0,0-4.867-4.867H39.5V1H34.633V5.867H15.167V1ZM7.867,10.733H41.933V15.6H7.867Zm0,9.733H41.933V44.8H7.867ZM27.333,30.2v9.733h9.733V30.2Z",
+                                                  "transform": "translate(-3 -1)",
+                                                  "fill": "white"
+                                                },
+                                                "_undoexc": [
+                                                  "status",
+                                                  "open"
+                                                ]
+                                              }
+                                            ]
                                           }
                                         ]
                                       }
@@ -628,9 +1051,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "i5i72" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "i5i72"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -645,12 +1075,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -662,15 +1098,17 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "id2n8" },
-                                        "_undoexc": ["status", "open"],
-                                        "components": [
-                                          {
-                                            "type": "textnode",
-                                            "content": "Calendar",
-                                            "_undoexc": ["status", "open"]
-                                          }
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "id": "id2n8",
+                                          "title": "",
+                                          "is-hidden": "true"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
                                         ]
                                       }
                                     ]
@@ -684,16 +1122,26 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["action-button", "delete-button"],
-                                "attributes": { "title": "Delete template" },
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "action-button",
+                                  "delete-button"
+                                ],
+                                "attributes": {
+                                  "title": "Delete template"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -707,7 +1155,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -715,14 +1166,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -739,15 +1195,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -761,7 +1224,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -769,14 +1235,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -784,14 +1255,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -812,14 +1288,19 @@
                                   "title": "Add template right",
                                   "id": "ipouv"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -833,7 +1314,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -841,14 +1325,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -856,14 +1345,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -876,13 +1370,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n                          ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -894,18 +1396,27 @@
                             "highlightable": false,
                             "selectable": false,
                             "hoverable": false,
-                            "classes": ["template-wrapper"],
-                            "attributes": { "id": "iukvi" },
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "iukvi"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block"],
+                                "classes": [
+                                  "template-block"
+                                ],
                                 "attributes": {
-                                  "tile-bgcolor": "#758a71",
+                                  "tile-bgcolor": "#969674",
                                   "tile-bgcolor-name": "cardBgColor",
                                   "tile-text": "Tile",
                                   "tile-text-color": "#ffffff",
@@ -916,10 +1427,13 @@
                                   "tile-bg-image": "",
                                   "tile-bg-image-opacity": "100",
                                   "tile-action-object": "Predefined Page, My Activity",
-                                  "tile-action-object-id": "{{MailboxPageId}}",
+                                  "tile-action-object-id": "87744d37-5a0d-42cb-af7a-baafc774e1bf",
                                   "id": "idbdo"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -927,8 +1441,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -943,12 +1462,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -960,20 +1485,34 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "attributes": { "id": "i0bx9" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "id": "i0bx9",
+                                          "is-hidden": "true"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "svg",
-                                            "resizable": { "ratioDefault": 1 },
+                                            "resizable": {
+                                              "ratioDefault": 1
+                                            },
+                                            "selectable": false,
                                             "attributes": {
                                               "xmlns": "http://www.w3.org/2000/svg",
                                               "width": "32.915",
                                               "height": "27.43",
                                               "viewBox": "0 0 32.915 27.43"
                                             },
-                                            "_undoexc": ["status", "open"],
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ],
                                             "components": [
                                               {
                                                 "tagName": "path",
@@ -988,7 +1527,10 @@
                                                   "transform": "translate(-3 -6)",
                                                   "fill": "white"
                                                 },
-                                                "_undoexc": ["status", "open"]
+                                                "_undoexc": [
+                                                  "status",
+                                                  "open"
+                                                ]
                                               }
                                             ]
                                           }
@@ -1002,9 +1544,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "izv6y" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "izv6y"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -1019,12 +1568,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -1036,14 +1591,26 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "i9g4k" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "id": "i9g4k",
+                                          "title": "My Activity",
+                                          "is-hidden": "false"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "My Activity",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -1058,16 +1625,26 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["action-button", "delete-button"],
-                                "attributes": { "title": "Delete template" },
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "action-button",
+                                  "delete-button"
+                                ],
+                                "attributes": {
+                                  "title": "Delete template"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1081,7 +1658,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1089,14 +1669,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1113,15 +1698,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1135,7 +1727,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1143,14 +1738,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -1158,14 +1758,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1186,14 +1791,19 @@
                                   "title": "Add template right",
                                   "id": "icsio"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1207,7 +1817,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1215,14 +1828,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -1230,14 +1848,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1250,13 +1873,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n              ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -1271,8 +1902,13 @@
                         "highlightable": false,
                         "selectable": false,
                         "hoverable": false,
-                        "classes": ["container-row"],
-                        "_undoexc": ["status", "open"],
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ],
                         "components": [
                           {
                             "type": "tile-wrapper",
@@ -1280,17 +1916,27 @@
                             "highlightable": false,
                             "selectable": false,
                             "hoverable": false,
-                            "classes": ["template-wrapper"],
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "it85p"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block"],
+                                "classes": [
+                                  "template-block"
+                                ],
                                 "attributes": {
-                                  "tile-bgcolor": "#758a71",
+                                  "tile-bgcolor": "#969674",
                                   "tile-bgcolor-name": "cardBgColor",
                                   "tile-text": "Tile",
                                   "tile-text-color": "#ffffff",
@@ -1299,13 +1945,16 @@
                                   "tile-icon-color": "#000000",
                                   "tile-icon-align": "left",
                                   "tile-bg-image": "",
-                                  "tile-bg-image-opacity": "100",
+                                  "tile-bg-image-opacity": "20",
                                   "tile-action-object": "Predefined Page, Location",
-                                  "tile-action-object-id": "{{LocationPageId}}",
+                                  "tile-action-object-id": "aa4439f7-417e-49a6-86fa-1094cd23d3b5",
                                   "id": "ie1e09",
                                   "tile-bg-image-url": "https://staging.comforta.yukon.software/media/LocationInfo.png"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -1313,8 +1962,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -1329,12 +1983,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -1346,13 +2006,24 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "is-hidden": "true"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "n                    ",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -1364,9 +2035,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "imqow" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "imqow"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -1381,12 +2059,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -1398,14 +2082,26 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "iclrt" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "id": "iclrt",
+                                          "title": "Location",
+                                          "is-hidden": "false"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "Location",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -1420,16 +2116,26 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["action-button", "delete-button"],
-                                "attributes": { "title": "Delete template" },
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "action-button",
+                                  "delete-button"
+                                ],
+                                "attributes": {
+                                  "title": "Delete template"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1443,7 +2149,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1451,14 +2160,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1475,15 +2189,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1497,7 +2218,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1505,14 +2229,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -1520,14 +2249,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1548,14 +2282,19 @@
                                   "title": "Add template right",
                                   "id": "ixaek"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1569,7 +2308,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1577,14 +2319,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -1592,14 +2339,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1612,13 +2364,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n              ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -1631,25 +2391,39 @@
                         "draggable": false,
                         "droppable": "[data-gjs-type='tile-wrapper']",
                         "selectable": false,
-                        "classes": ["container-row"],
-                        "_undoexc": ["status", "open"],
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ],
                         "components": [
                           {
                             "type": "tile-wrapper",
                             "droppable": false,
                             "selectable": false,
-                            "classes": ["template-wrapper"],
-                            "attributes": { "id": "ildfb" },
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "ildfb"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block"],
+                                "classes": [
+                                  "template-block"
+                                ],
                                 "attributes": {
-                                  "tile-bgcolor": "#758a71",
+                                  "tile-bgcolor": "#969674",
                                   "tile-bgcolor-name": "cardBgColor",
                                   "tile-text": "Tile",
                                   "tile-text-color": "#ffffff",
@@ -1661,9 +2435,13 @@
                                   "tile-bg-image-opacity": "100",
                                   "tile-action-object": "Page",
                                   "tile-action-object-id": "",
-                                  "id": "i3ggh"
+                                  "id": "i3ggh",
+                                  "tile-align": "center"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -1671,8 +2449,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -1687,12 +2470,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -1704,13 +2493,24 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "is-hidden": "true"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "n                                ",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -1722,9 +2522,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "iay23w" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "iay23w"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -1739,12 +2546,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -1756,14 +2569,42 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "i6v82k" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "id": "i6v82k",
+                                          "title": "My Care",
+                                          "is-hidden": "false"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
-                                            "content": "My Care",
-                                            "_undoexc": ["status", "open"]
+                                            "content": "My",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
+                                          },
+                                          {
+                                            "tagName": "br",
+                                            "void": true,
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
+                                          },
+                                          {
+                                            "type": "textnode",
+                                            "content": "Care",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -1778,16 +2619,26 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["action-button", "delete-button"],
-                                "attributes": { "title": "Delete template" },
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "action-button",
+                                  "delete-button"
+                                ],
+                                "attributes": {
+                                  "title": "Delete template"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1801,7 +2652,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1809,14 +2663,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1833,15 +2692,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1855,7 +2721,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1863,14 +2732,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -1878,14 +2752,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1906,14 +2785,19 @@
                                   "title": "Add template right",
                                   "id": "ixw9j"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -1927,7 +2811,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -1935,14 +2822,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -1950,14 +2842,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -1970,13 +2867,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n                          ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -1988,18 +2893,27 @@
                             "highlightable": false,
                             "selectable": false,
                             "hoverable": false,
-                            "classes": ["template-wrapper"],
-                            "attributes": { "id": "i7kkab" },
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "i7kkab"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block"],
+                                "classes": [
+                                  "template-block"
+                                ],
                                 "attributes": {
-                                  "tile-bgcolor": "#535353",
+                                  "tile-bgcolor": "#2c405a",
                                   "tile-bgcolor-name": "backgroundColor",
                                   "tile-text": "Tile",
                                   "tile-text-color": "#ffffff",
@@ -2011,9 +2925,13 @@
                                   "tile-bg-image-opacity": "100",
                                   "tile-action-object": "Page",
                                   "tile-action-object-id": "",
-                                  "id": "i0mu2g"
+                                  "id": "i0mu2g",
+                                  "tile-align": "center"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -2021,8 +2939,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -2037,12 +2960,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -2054,13 +2983,24 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "is-hidden": "true"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "n                    ",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -2072,9 +3012,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "icql8g" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "icql8g"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -2089,12 +3036,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -2106,14 +3059,42 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "inf8r5" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "id": "inf8r5",
+                                          "title": "My Living",
+                                          "is-hidden": "false"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
-                                            "content": "My Living",
-                                            "_undoexc": ["status", "open"]
+                                            "content": "My",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
+                                          },
+                                          {
+                                            "tagName": "br",
+                                            "void": true,
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
+                                          },
+                                          {
+                                            "type": "textnode",
+                                            "content": "Living",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -2128,16 +3109,26 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["action-button", "delete-button"],
-                                "attributes": { "title": "Delete template" },
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "action-button",
+                                  "delete-button"
+                                ],
+                                "attributes": {
+                                  "title": "Delete template"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -2151,7 +3142,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -2159,14 +3153,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -2183,15 +3182,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -2205,7 +3211,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -2213,14 +3222,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -2228,14 +3242,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -2256,14 +3275,19 @@
                                   "title": "Add template right",
                                   "id": "i3vttb"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -2277,7 +3301,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -2285,14 +3312,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -2300,14 +3332,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -2320,13 +3357,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n              ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -2338,32 +3383,46 @@
                             "highlightable": false,
                             "selectable": false,
                             "hoverable": false,
-                            "classes": ["template-wrapper"],
-                            "attributes": { "id": "i7eszl" },
-                            "_undoexc": ["status", "open"],
+                            "classes": [
+                              "template-wrapper"
+                            ],
+                            "attributes": {
+                              "id": "iy76q5"
+                            },
+                            "_undoexc": [
+                              "status",
+                              "open"
+                            ],
                             "components": [
                               {
                                 "draggable": false,
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block"],
+                                "classes": [
+                                  "template-block"
+                                ],
                                 "attributes": {
-                                  "tile-bgcolor": "#986b5d",
+                                  "tile-bgcolor": "#666e61",
                                   "tile-bgcolor-name": "borderColor",
                                   "tile-text": "Tile",
-                                  "tile-text-color": "#ffffff",
+                                  "tile-text-color": "#333333",
                                   "tile-text-align": "left",
                                   "tile-icon": "",
-                                  "tile-icon-color": "#000000",
+                                  "tile-icon-color": "#333333",
                                   "tile-icon-align": "left",
+                                  "tile-align": "center",
                                   "tile-bg-image": "",
-                                  "tile-bg-image-opacity": "100",
+                                  "tile-bg-image-opacity": "0",
                                   "tile-action-object": "Page",
                                   "tile-action-object-id": "",
-                                  "id": "ietnjg"
+                                  "id": "iovpjf",
+                                  "tile-color": "#ffffff"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "draggable": false,
@@ -2371,8 +3430,13 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-icon-section"],
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-icon-section"
+                                    ],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -2387,12 +3451,18 @@
                                           "top-right",
                                           "selected-tile-icon"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -2404,13 +3474,24 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-icon"],
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-icon"
+                                        ],
+                                        "attributes": {
+                                          "is-hidden": "true"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
-                                            "content": "n                    ",
-                                            "_undoexc": ["status", "open"]
+                                            "content": "\n                    ",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -2422,9 +3503,16 @@
                                     "highlightable": false,
                                     "selectable": false,
                                     "hoverable": false,
-                                    "classes": ["tile-title-section"],
-                                    "attributes": { "id": "i9oahl" },
-                                    "_undoexc": ["status", "open"],
+                                    "classes": [
+                                      "tile-title-section"
+                                    ],
+                                    "attributes": {
+                                      "id": "iegy5l"
+                                    },
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "span",
@@ -2439,12 +3527,18 @@
                                           "top-right",
                                           "selected-tile-title"
                                         ],
-                                        "_undoexc": ["status", "open"],
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
                                             "content": "×",
-                                            "_undoexc": ["status", "open"]
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       },
@@ -2456,14 +3550,42 @@
                                         "editable": false,
                                         "selectable": false,
                                         "hoverable": false,
-                                        "classes": ["tile-title"],
-                                        "attributes": { "id": "idxe2e" },
-                                        "_undoexc": ["status", "open"],
+                                        "classes": [
+                                          "tile-title"
+                                        ],
+                                        "attributes": {
+                                          "is-hidden": "false",
+                                          "id": "ilhvhq",
+                                          "title": "My Services"
+                                        },
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ],
                                         "components": [
                                           {
                                             "type": "textnode",
-                                            "content": "My Services",
-                                            "_undoexc": ["status", "open"]
+                                            "content": "My",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
+                                          },
+                                          {
+                                            "tagName": "br",
+                                            "void": true,
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
+                                          },
+                                          {
+                                            "type": "textnode",
+                                            "content": "Services",
+                                            "_undoexc": [
+                                              "status",
+                                              "open"
+                                            ]
                                           }
                                         ]
                                       }
@@ -2478,16 +3600,26 @@
                                 "highlightable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["action-button", "delete-button"],
-                                "attributes": { "title": "Delete template" },
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "action-button",
+                                  "delete-button"
+                                ],
+                                "attributes": {
+                                  "title": "Delete template"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -2501,7 +3633,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -2509,14 +3644,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -2533,15 +3673,22 @@
                                   "action-button",
                                   "add-button-bottom"
                                 ],
-                                "attributes": { "title": "Add template below" },
-                                "_undoexc": ["status", "open"],
+                                "attributes": {
+                                  "title": "Add template below"
+                                },
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -2555,7 +3702,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -2563,14 +3713,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -2578,14 +3733,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -2604,16 +3764,21 @@
                                 ],
                                 "attributes": {
                                   "title": "Add template right",
-                                  "id": "ip5tif"
+                                  "id": "imrnli"
                                 },
-                                "_undoexc": ["status", "open"],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "svg",
                                     "draggable": false,
                                     "droppable": false,
                                     "highlightable": false,
-                                    "resizable": { "ratioDefault": 1 },
+                                    "resizable": {
+                                      "ratioDefault": 1
+                                    },
                                     "selectable": false,
                                     "hoverable": false,
                                     "attributes": {
@@ -2627,7 +3792,10 @@
                                       "stroke-linecap": "round",
                                       "stroke-linejoin": "round"
                                     },
-                                    "_undoexc": ["status", "open"],
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ],
                                     "components": [
                                       {
                                         "tagName": "line",
@@ -2635,14 +3803,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "12",
                                           "y1": "5",
                                           "x2": "12",
                                           "y2": "19"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       },
                                       {
                                         "tagName": "line",
@@ -2650,14 +3823,19 @@
                                         "draggable": false,
                                         "droppable": false,
                                         "highlightable": false,
-                                        "resizable": { "ratioDefault": 1 },
+                                        "resizable": {
+                                          "ratioDefault": 1
+                                        },
                                         "attributes": {
                                           "x1": "5",
                                           "y1": "12",
                                           "x2": "19",
                                           "y2": "12"
                                         },
-                                        "_undoexc": ["status", "open"]
+                                        "_undoexc": [
+                                          "status",
+                                          "open"
+                                        ]
                                       }
                                     ]
                                   }
@@ -2670,13 +3848,21 @@
                                 "editable": false,
                                 "selectable": false,
                                 "hoverable": false,
-                                "classes": ["resize-handle"],
-                                "_undoexc": ["status", "open"],
+                                "classes": [
+                                  "resize-handle"
+                                ],
+                                "_undoexc": [
+                                  "status",
+                                  "open"
+                                ],
                                 "components": [
                                   {
                                     "type": "textnode",
                                     "content": "\n              ",
-                                    "_undoexc": ["status", "open"]
+                                    "_undoexc": [
+                                      "status",
+                                      "open"
+                                    ]
                                   }
                                 ]
                               }
@@ -2691,8 +3877,28 @@
                         "highlightable": false,
                         "selectable": false,
                         "hoverable": false,
-                        "classes": ["container-row"],
-                        "_undoexc": ["status", "open"]
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "highlightable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ]
                       }
                     ]
                   }

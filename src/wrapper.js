@@ -3,9 +3,9 @@ const path = require('path');
 const UglifyJS = require('uglify-js');
 
 const files = [
-    "classes/Clock.js",
-    "classes/Locale.js",
-    "classes/LoadingManager.js",
+  "classes/Clock.js",
+  "classes/Locale.js",
+  "classes/LoadingManager.js",
     "classes/DataManager.js",
     "classes/EditorManager.js",
     "classes/EditorEventManager.js",
@@ -18,6 +18,7 @@ const files = [
     "classes/ThemeManager.js",
     "classes/ToolBoxUI.js",
     "classes/UndoRedoManager.js",
+    "components/FormPopupModal.js",
     "components/ActionListComponent.js",
     "components/MappingComponent.js",
     "components/MediaComponent.js",

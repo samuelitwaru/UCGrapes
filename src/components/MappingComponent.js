@@ -319,14 +319,26 @@ class MappingComponent {
       const deleteIcon = document.createElement("i");
       deleteIcon.classList.add("fa-regular", "fa-trash-can", "tb-delete-icon");
 
+      const updateIcon = document.createElement("i");
+      updateIcon.classList.add("fa-regular", "fa-edit", "tb-update-icon");
+
       if (item.PageName === "Home" || item.PageName === "Web Link") {
         deleteIcon.style.display = "none";
+        updateIcon.style.display = "none";
       }
 
+      const iconDiv = document.createElement('div')
+      iconDiv.classList.add("tb-menu-icons-container")
+
       deleteIcon.setAttribute("data-id", item.Id);
+      updateIcon.setAttribute("data-id", item.Id);
 
       deleteIcon.addEventListener("click", (event) =>
         handleDelete(event, item.PageId, listItem)
+      );
+
+      updateIcon.addEventListener("click", (event) =>
+       this.handleUpdate(item.PageId)
       );
 
       menuItem.appendChild(toggle);
@@ -334,7 +346,9 @@ class MappingComponent {
         menuItem.style.display = "none";
       }
       if (item.Name !== "Home") {
-        menuItem.appendChild(deleteIcon);
+        iconDiv.append(updateIcon)
+        iconDiv.append(deleteIcon)
+        menuItem.appendChild(iconDiv)
       }
       listItem.appendChild(menuItem);
 
@@ -415,6 +429,41 @@ class MappingComponent {
     });
 
     return container;
+  }
+
+  handleUpdate(PageId) {
+    const page = this.getPage(PageId)
+    if (page) {
+      const htmlBody = `
+      <input required class="tb-form-control" type="text" id="pageName" placeholder="" value="${page.PageName}"/>
+      <small id="error_pageName" style="display:none">Error</small>
+      `
+      const formPopup = new FormPopupModal(
+        "update-page-popup",
+        "Update Page",
+        htmlBody
+      )
+      formPopup.onConfirm = (event) => {
+        const input = document.querySelector(`#update-page-popup #pageName`)
+        const errorLabel = document.querySelector(`#update-page-popup #error_pageName`)
+
+        if (input.value) {
+          page.PageName = input.value
+          console.log(page)
+          this.dataManager.updatePage(page).then(res => {
+            if(res.result) {
+              this.toolBoxManager.ui.displayAlertMessage(res.result, "success");
+              formPopup.closePopup()
+              this.init()
+            }
+          })
+        }else{
+          errorLabel.content = "This field is required"
+          errorLabel.style.display = "block"
+        }
+      }
+      formPopup.show()
+    }
   }
 
   popupModal(title, message) {

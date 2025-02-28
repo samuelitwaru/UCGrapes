@@ -776,7 +776,13 @@ h5#current-page-title {
   transform: rotate(90deg);
 }
 
-.tb-delete-icon {
+.tb-menu-icons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.tb-delete-icon, .tb-update-icon {
   position: relative;
   color: #536baa;
   font-size: 12px;
@@ -788,13 +794,14 @@ h5#current-page-title {
   color: #536baa;
 }
 
-.tb-dropdown-item:hover .tb-delete-icon {
+.tb-dropdown-item:hover .tb-delete-icon, .tb-dropdown-item:hover .tb-update-icon {
   opacity: 1;
 }
 
-.tb-custom-menu-item:hover .tb-delete-icon {
+.tb-custom-menu-item:hover .tb-delete-icon, .tb-custom-menu-item:hover .tb-update-icon {
   opacity: 1;
 }
+
 
 .tb-custom-menu-item.active-tree-item {
   color: #536baa;

@@ -100,7 +100,7 @@ class EditorManager {
 
   generateEditorHTML(page, editorId, linkLabel) {
     let pageTitle = "";
-    if (page.PageIsWebLinkPage) {
+    if (page.PageIsWebLinkPage || page.PageIsDynamicForm) {
       pageTitle = linkLabel;
     } else {
       pageTitle = page.PageName;
@@ -209,14 +209,11 @@ class EditorManager {
   }
 
   async loadEditorContent(editor, page, linkUrl) {
-    editor.DomComponents.clear();
-    if (page.PageGJSJson && !page.PageIsWebLinkPage) {
+    if (page.PageGJSJson && !page.PageIsWebLinkPage && !page.PageIsDynamicForm) {
       await this.loadExistingContent(editor, page);
     } else if (page.PageIsContentPage) {
       await this.loadNewContentPage(editor, page);
-    } else if (page.PageIsDynamicForm) {
-      await this.loadDynamicFormContent(editor, page);
-    } else if (page.PageIsWebLinkPage) {
+    } else if (page.PageIsWebLinkPage || page.PageIsDynamicForm) {
       await this.loadWebLinkContent(editor, linkUrl);
     }
 
@@ -375,29 +372,6 @@ class EditorManager {
     }
   }
 
-  async loadDynamicFormContent(editor, page) {
-    try {
-      editor.DomComponents.clear();
-      // Add the component to the editor with preloader in a wrapper
-      editor.setComponents(`
-        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
-          <div class="preloader-wrapper" ${defaultConstraints}>
-            <div class="preloader" ${defaultConstraints}></div>
-          </div>
-          <object 
-            data="${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${page.WWPFormId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0"
-            type="text/html"
-            width="100%"
-            height="800px"
-            fallbackMessage="Unable to load the content. Please try opening it in a new window." ${defaultConstraints}>
-          </object>
-        </div>
-      `);
-    } catch (error) {
-      console.error("Error setting up object component:", error.message);
-    }
-  }
-
   async loadWebLinkContent(editor, linkUrl) {
     try {
       editor.DomComponents.clear();
@@ -411,6 +385,7 @@ class EditorManager {
             tagName: "object",
             draggable: true,
             droppable: false,
+            selectable: false,
             attributes: {
               width: "100%",
               height: "300vh",
@@ -480,11 +455,11 @@ class EditorManager {
               "Content cannot be displayed";
 
             const fallbackContent = `
-              <div class="fallback-content">
-                <p class="fallback-message">${fallbackMessage}</p>
+              <div class="fallback-content" ${defaultConstraints}>
+                <p class="fallback-message" ${defaultConstraints}>${fallbackMessage}</p>
                 <a href="${model.get("attributes").data}" 
                    target="_blank" 
-                   class="fallback-link">
+                   class="fallback-link" ${defaultConstraints}>
                   Open in New Window
                 </a>
               </div>
@@ -503,7 +478,6 @@ class EditorManager {
               if (fallback) {
               }
               fallback.style.display = "none";
-              console.log("Object content loaded");
             });
 
             el.addEventListener("error", (e) => {
@@ -527,11 +501,12 @@ class EditorManager {
 
       // Add the component to the editor with preloader in a wrapper
       editor.setComponents(`
-        <div class="form-frame-container" id="frame-container">
-          <div class="preloader-wrapper">
-            <div class="preloader"></div>
+        <div class="form-frame-container" id="frame-container" ${defaultConstraints}>
+          <div class="preloader-wrapper" ${defaultConstraints}>
+            <div class="preloader" ${defaultConstraints}></div>
           </div>
           <object 
+          ${defaultConstraints}
             data="${linkUrl}"
             type="text/html"
             width="100%"

@@ -131,7 +131,9 @@ class EditorEventManager {
 
     let linkLabel = "";
     if (pageLinkLabel) {
-      linkLabel = pageLinkLabel.replace("Web Link, ", "");
+      linkLabel = pageLinkLabel
+        .replace("Web Link, ", "")
+        .replace("Dynamic Forms, ", "");
     }
 
     const page = this.editorManager.getPage(pageId);

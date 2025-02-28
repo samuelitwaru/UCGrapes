@@ -238,8 +238,9 @@ class ActionListComponent {
       if (isWebLink) {
         const linkUrl = document.getElementById("link_url")?.value.trim();
         const linkLabel = document.getElementById("link_label")?.value.trim();
+        const pageTitle = "Web Link";
 
-        this.createWebLinkPage(linkUrl, linkLabel);
+        this.createWebLinkOrFormPage(linkUrl, linkLabel, pageTitle);
       } else {
         const pageTitle = document.getElementById("page_title")?.value.trim();
         this.updateSelectedComponent(pageTitle);
@@ -293,7 +294,8 @@ class ActionListComponent {
         }
 
         if (field.id === "page_title" && field.value.length < 3) {
-          errorField.textContent = "Page title must be at least 3 characters long";
+          errorField.textContent =
+            "Page title must be at least 3 characters long";
           errorField.style.display = "block";
           this.formErrors++;
         }
@@ -687,7 +689,6 @@ class ActionListComponent {
           "tile-action-object",
           `${category}, ${item.textContent}`
         );
-
         await this.handlePageCreation(
           category,
           item.id,
@@ -720,7 +721,7 @@ class ActionListComponent {
           await this.createContentPage(itemId, editorContainerId);
           break;
         case "Dynamic Forms":
-          await this.createDynamicFormPage(itemId, itemText, editorContainerId);
+          this.createDynamicFormPage(itemId,itemText);
           break;
         default:
           this.editorManager.createChildEditor(
@@ -747,22 +748,80 @@ class ActionListComponent {
     }
   }
 
-  async createDynamicFormPage(formId, formName, editorContainerId) {
+  async createDynamicFormPage(itemId,formName) {
+    const pageTitle = "Dynamic Forms";
+    const linkUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${itemId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
+
+    this.createWebLinkOrFormPage(linkUrl, formName, pageTitle);
+  }
+
+  async createWebLinkOrFormPage(linkUrl, linkLabel, pageTitle) {
+    console.log("createWebLinkOrFormPage");
+    const editor = this.editorManager.getCurrentEditor();
     try {
-      const res = await this.dataManager.createDynamicFormPage(
-        formId,
-        formName
-      );
+      const res = await this.dataManager.getPages();
       if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
         return;
       }
+      if (editor.getSelected()) {
+        const titleComponent = editor.getSelected().find(".tile-title")[0];
 
-      await this.dataManager.getPages();
-      $(editorContainerId).nextAll().remove();
-      this.editorManager.createChildEditor(this.editorManager.getPage(formId));
+        // const tileTitle = truncateText(linkLabel, 12);
+        const tileTitle = linkLabel;
+
+        const page = res.SDT_PageCollection.find(
+          (page) => page.PageName === pageTitle
+        );
+        if (!page) {
+          console.warn("page not found");
+          return;
+        }
+
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-id",
+          `${page.PageId}`
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object-url",
+          linkUrl
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-object",
+          `${pageTitle}, ${linkLabel}`
+        );
+
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(page, linkUrl, linkLabel);
+
+        if (titleComponent) {
+          titleComponent.addAttributes({ title: linkLabel });
+          titleComponent.components(tileTitle);
+          titleComponent.addStyle({ display: "block" });
+
+          const sidebarInputTitle = document.getElementById("tile-title");
+          if (sidebarInputTitle) {
+            sidebarInputTitle.value = tileTitle;
+            sidebarInputTitle.title = tileTitle;
+          }
+        }
+      }
     } catch (error) {
-      console.error("Error creating dynamic form page:", error);
+      console.error("Error creating web link page:", error);
     }
+  }
+
+  async getPage() {
+    const res = await this.dataManager.getPages();
+      if (this.toolBoxManager.checkIfNotAuthenticated(res)) {
+        return;
+      }
+    
+    return res.SDT_PageCollection;
   }
 
   setupSearchInputListener() {

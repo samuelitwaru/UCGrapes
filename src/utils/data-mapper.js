@@ -16,6 +16,7 @@ class TileMapper {
     "Wash",
     "Wellbeing",
   ];
+  
   constructor(tileComponent) {
     this.component = tileComponent;
   }
@@ -152,18 +153,19 @@ function mapTemplateToPageData(templateData, page) {
 
       // Create tile object
       let tileActionObjectId = attributes["tile-action-object-id"];
-      const tileBG = attributes["tile-bgcolor"];
+
+      let tileBG = attributes["tile-bgcolor"];
+      const tileHasBgImg = attributes["tile-bg-image-url"];
+      if (tileHasBgImg) {
+        tileBG = addOpacityToHex("#000000", attributes["tile-bg-image-opacity"]);
+      }
 
       col.Tile = {
         TileName: titleText,
         TileText: titleText,
-        TileTextColor: attributes["tile-text-color"], // Not present in source data
-        TileTextAlignment: attributes["tile-text-align"] || "center",
-
         TileIcon: attributes["tile-icon"] || "",
-        TileIconColor: attributes["tile-icon-color"] || "",
-        TileIconAlignment: attributes["tile-icon-align"] || "center",
-
+        TileColor: attributes["tile-color"] || "#ffffff", 
+        TileAlignment: attributes["tile-align"] || "left",
         TileBGColor: `${tileBG}` || "",
         TileBGImageUrl: attributes["tile-bg-image-url"] || "",
         TileBGImageOpacity: attributes["tile-bg-image-opacity"] || "",
@@ -174,7 +176,6 @@ function mapTemplateToPageData(templateData, page) {
           ObjectUrl: attributes["tile-action-object-url"] || "",
         },
       };
-      console.log(col.Tile.TileAction);
       return col;
     });
 
@@ -350,7 +351,7 @@ function generateNewPage(theme) {
                                     "tile-bgcolor": `${theme.ThemeColors.accentColor}`,
                                     "tile-bgcolor-name": "accentColor",
                                     "tile-bg-image": "",
-                                    "tile-bg-image-opacity": "100",
+                                    "tile-bg-image-opacity": "0",
                                     "tile-action-object": "Page",
                                     "tile-action-object-id": "",
                                   },

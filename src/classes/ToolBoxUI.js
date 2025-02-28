@@ -5,16 +5,21 @@ class ToolBoxUI {
   }
 
   updateTileTitle(inputTitle) {
-    if (this.manager.editorManager.selectedTemplateWrapper) {
-      const titleComponent =
-        this.manager.editorManager.selectedComponent.find(".tile-title")[0];
+    const selectedComponent = this.manager.editorManager.selectedComponent;
+    if (selectedComponent) {
+      const titleComponent = selectedComponent.find(".tile-title")[0];
       if (titleComponent) {
         titleComponent.addAttributes({ title: inputTitle });
+        titleComponent.addAttributes({ "is-hidden": "false" });
+
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
-        this.manager.editorManager.editorEventManager.editorOnUpdate(
-          this.manager.editorManager.getCurrentEditor()
-        );
+        const rowContainer = selectedComponent.closest(".container-row");
+        if (rowContainer) {
+          this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(
+            rowContainer
+          );
+        }
       }
     }
   }
@@ -107,6 +112,14 @@ class ToolBoxUI {
           currentCtaBgColor.toUpperCase();
       });
     }
+
+    const ctaSelectedAction = document.getElementById("cta-selected-actions");
+
+    const attributes = selectComponent?.getAttributes();
+    ctaSelectedAction.innerHTML = `
+        <span><strong>Type:</strong> ${attributes?.["cta-button-type"]}</span>
+        <span><strong>Action:</strong> ${attributes?.["cta-button-action"]}</span>
+      `;
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -118,27 +131,21 @@ class ToolBoxUI {
 
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
-      selectComponent?.getAttributes()?.["tile-bg-image-opacity"];
-
-    if (tileOpacity) {
+      selectComponent?.getAttributes()?.["tile-bg-image-opacity"] || 0;
       document.getElementById("bg-opacity").value = tileOpacity;
       document.getElementById("valueDisplay").textContent = tileOpacity + " %";
-    }
   }
 
   updateAlignmentProperties(selectComponent) {
-    const alignmentTypes = [
-      { type: "text", attribute: "tile-text-align" },
-      { type: "icon", attribute: "tile-icon-align" },
-    ];
-
-    alignmentTypes.forEach(({ type, attribute }) => {
-      const currentAlign = selectComponent?.getAttributes()?.[attribute];
-      ["left", "center", "right"].forEach((align) => {
-        document.getElementById(`${type}-align-${align}`).checked =
-          currentAlign === align;
+    const currentAlign = selectComponent?.getAttributes()?.["tile-align"];
+    if (currentAlign) {
+      ["center", "left"].forEach((align) => {
+        const alignElement = document.getElementById(`tile-${align}`);
+        if (alignElement) {
+          alignElement.checked = currentAlign === align;
+        }
       });
-    });
+    }
   }
 
   updateColorProperties(selectComponent) {
@@ -150,19 +157,7 @@ class ToolBoxUI {
     textColorRadios.forEach((radio) => {
       const colorBox = radio.nextElementSibling;
       radio.checked =
-        colorBox.getAttribute("data-tile-text-color") === currentTextColor;
-    });
-
-    // Update icon color
-    const currentIconColor =
-      selectComponent?.getAttributes()?.["tile-icon-color"];
-    const iconColorRadios = document.querySelectorAll(
-      '.text-color-palette.icon-colors .color-item input[type="radio"]'
-    );
-    iconColorRadios.forEach((radio) => {
-      const colorBox = radio.nextElementSibling;
-      radio.checked =
-        colorBox.getAttribute("data-tile-icon-color") === currentIconColor;
+        colorBox.getAttribute("data-tile-color") === currentTextColor;
     });
 
     // Update background color
@@ -189,7 +184,6 @@ class ToolBoxUI {
       selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
       selectComponent?.getAttributes()?.["tile-action-object-id"];
-
     const propertySection = document.getElementById("selectedOption");
     const selectedOptionElement = document.getElementById(currentActionId);
 
@@ -204,8 +198,7 @@ class ToolBoxUI {
                   </span>
                   <i class="fa fa-angle-down">
                   </i>`;
-    const targetPage = this.manager.dataManager.pages.SDT_PageCollection.find((page) => page.PageId == currentActionId)
-    if (currentActionName && currentActionId && targetPage) {
+    if (currentActionName && currentActionId) {
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
       if (selectedOptionElement) {
@@ -245,7 +238,7 @@ class ToolBoxUI {
     ctaItem.setAttribute("data-cta-id", cta.CallToActionId);
 
     const ctaType = this.getCtaType(cta.CallToActionType);
-    ctaItem.innerHTML = `<i class="${ctaType.icon}"></i>`;
+    ctaItem.innerHTML = `${ctaType.icon}`;
 
     return ctaItem;
   }
@@ -253,24 +246,32 @@ class ToolBoxUI {
   getCtaType(type) {
     const ctaTypeMap = {
       Phone: {
-        icon: "fas fa-phone-alt",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 49.417 49.418">
+                <path ${defaultConstraints} id="call" d="M29.782,3a2.149,2.149,0,1,0,0,4.3A19.3,19.3,0,0,1,49.119,26.634a2.149,2.149,0,1,0,4.3,0A23.667,23.667,0,0,0,29.782,3ZM12.032,7.305a2.548,2.548,0,0,0-.818.067,8.342,8.342,0,0,0-3.9,2.342C2.775,14.254.366,21.907,17.437,38.98S42.16,53.643,46.7,49.1a8.348,8.348,0,0,0,2.346-3.907,2.524,2.524,0,0,0-1.179-2.786c-2.424-1.418-7.654-4.484-10.08-5.9a2.523,2.523,0,0,0-2.568.012l-4.012,2.392a2.517,2.517,0,0,1-2.845-.168,65.811,65.811,0,0,1-5.711-4.981,65.07,65.07,0,0,1-4.981-5.711A2.512,2.512,0,0,1,17.5,25.2L19.9,21.191a2.533,2.533,0,0,0,.008-2.577L14.012,8.556A2.543,2.543,0,0,0,12.032,7.305Zm17.751,4.289a2.149,2.149,0,1,0,0,4.3A10.709,10.709,0,0,1,40.525,26.634a2.149,2.149,0,1,0,4.3,0A15.072,15.072,0,0,0,29.782,11.594Zm0,8.594a2.149,2.149,0,1,0,0,4.3,2.114,2.114,0,0,1,2.149,2.148,2.149,2.149,0,1,0,4.3,0A6.479,6.479,0,0,0,29.782,20.188Z" transform="translate(-4 -3)" fill="#fff"></path>
+              </svg>`,
         iconList: ".fas.fa-phone-alt",
-        iconBgColor: "#4c9155",
+        iconBgColor: "#2c405a",
       },
       Email: {
-        icon: "fas fa-envelope",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="28" viewBox="0 0 41 32.8">
+            <path ${defaultConstraints} id="Path_1218" data-name="Path 1218" d="M6.1,4A4.068,4.068,0,0,0,2.789,5.7a1.5,1.5,0,0,0,.444,2.126l18,11.219a2.387,2.387,0,0,0,2.531,0L41.691,7.732a1.5,1.5,0,0,0,.384-2.2A4.063,4.063,0,0,0,38.9,4Zm35.907,8.376a.963.963,0,0,0-.508.152L23.765,23.711a2.392,2.392,0,0,1-2.531,0L3.5,12.656a.98.98,0,0,0-1.5.833V32.7a4.1,4.1,0,0,0,4.1,4.1H38.9A4.1,4.1,0,0,0,43,32.7V13.357A.981.981,0,0,0,42.007,12.376Z" transform="translate(-2 -4)" fill="#fff"/>
+          </svg>`,
         iconList: ".fas.fa-envelope",
-        iconBgColor: "#eea622",
+        iconBgColor: "#d4a76a",
       },
       SiteUrl: {
-        icon: "fas fa-link",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 9.552 9.552">
+              <path ${defaultConstraints} id="Path_1213" data-name="Path 1213" d="M11.064,4A2.485,2.485,0,0,0,9.3,4.734l-.585.585A2.488,2.488,0,0,0,7.98,7.084a2.45,2.45,0,0,0,.174.908L8.8,7.346a1.706,1.706,0,0,1,.473-1.468l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.675,1.675,0,0,1,1.194.5,1.7,1.7,0,0,1,0,2.4l-.585.585a1.7,1.7,0,0,1-1.206.5,1.456,1.456,0,0,1-.261-.025L9.559,9.4a2.45,2.45,0,0,0,.908.174,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.506,2.506,0,0,0,11.064,4Zm-.983,2.9L6.9,10.082l.572.572L10.654,7.47Zm-3,1.082a2.485,2.485,0,0,0-1.766.734L4.734,9.3A2.488,2.488,0,0,0,4,11.064a2.506,2.506,0,0,0,2.487,2.487,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.45,2.45,0,0,0,9.4,9.559l-.647.647a1.706,1.706,0,0,1-.473,1.468l-.585.585a1.7,1.7,0,0,1-1.206.5,1.675,1.675,0,0,1-1.194-.5,1.7,1.7,0,0,1,0-2.4l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.457,1.457,0,0,1,.261.025l.647-.647A2.45,2.45,0,0,0,7.084,7.98Z" transform="translate(-4 -4)" fill="#fff"/>
+            </svg>`,
         iconList: ".fas.fa-link",
-        iconBgColor: "#ff6c37",
+        iconBgColor: "#b2b997",
       },
       Form: {
-        icon: "fas fa-file",
+        icon: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 13 16">
+            <path ${defaultConstraints} id="Path_1209" data-name="Path 1209" d="M9.828,4A1.823,1.823,0,0,0,8,5.8V18.2A1.823,1.823,0,0,0,9.828,20h9.344A1.823,1.823,0,0,0,21,18.2V9.8a.6.6,0,0,0-.179-.424l-.006-.006L15.54,4.176A.614.614,0,0,0,15.109,4Zm0,1.2H14.5V8.6a1.823,1.823,0,0,0,1.828,1.8h3.453v7.8a.6.6,0,0,1-.609.6H9.828a.6.6,0,0,1-.609-.6V5.8A.6.6,0,0,1,9.828,5.2Zm5.891.848L18.92,9.2H16.328a.6.6,0,0,1-.609-.6Z" transform="translate(-8 -4)" fill="#fff"/>
+          </svg>`,
         iconList: ".fas.fa-file",
-        iconBgColor: "#5068a8",
+        iconBgColor: "#c4a082",
       },
     };
 
@@ -278,14 +279,13 @@ class ToolBoxUI {
       ctaTypeMap[type] || {
         icon: "fas fa-question",
         iconList: ".fas.fa-question",
-        iconBgColor: "#5068a8",
+        iconBgColor: "#c4a082",
       }
     );
   }
 
   generateCtaComponent(cta, backgroundColor) {
     const ctaType = this.getCtaType(cta.CallToActionType);
-    const windowWidth = window.innerWidth;
     return `
       <div class="cta-container-child cta-child" 
             id="id-${cta.CallToActionId}"
@@ -305,12 +305,11 @@ class ToolBoxUI {
               cta.CallToActionUrl
             }"
           cta-background-color="${ctaType.iconBgColor}"
-          style="margin-right: ${windowWidth <= 1440 ? "0.5rem" : "1.1rem"}"
           >
             <div class="cta-button" ${defaultConstraints} style="background-color: ${
-      backgroundColor || ctaType.iconBgColor
-    };">
-              <i class="${ctaType.icon}" ${defaultConstraints}></i>
+              backgroundColor || ctaType.iconBgColor
+            };">
+              ${ctaType.icon}
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
             <div class="cta-label" ${defaultConstraints}>${
@@ -406,10 +405,18 @@ class ToolBoxUI {
   // Get icon based on CTA type
   getCtaTypeIcon(ctaType) {
     const iconMap = {
-      Phone: "fas fa-phone-alt",
-      Email: "fas fa-envelope",
-      SiteUrl: "fas fa-link",
-      Form: "fas fa-file",
+      Phone: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 49.417 49.418">
+                <path ${defaultConstraints} id="call" d="M29.782,3a2.149,2.149,0,1,0,0,4.3A19.3,19.3,0,0,1,49.119,26.634a2.149,2.149,0,1,0,4.3,0A23.667,23.667,0,0,0,29.782,3ZM12.032,7.305a2.548,2.548,0,0,0-.818.067,8.342,8.342,0,0,0-3.9,2.342C2.775,14.254.366,21.907,17.437,38.98S42.16,53.643,46.7,49.1a8.348,8.348,0,0,0,2.346-3.907,2.524,2.524,0,0,0-1.179-2.786c-2.424-1.418-7.654-4.484-10.08-5.9a2.523,2.523,0,0,0-2.568.012l-4.012,2.392a2.517,2.517,0,0,1-2.845-.168,65.811,65.811,0,0,1-5.711-4.981,65.07,65.07,0,0,1-4.981-5.711A2.512,2.512,0,0,1,17.5,25.2L19.9,21.191a2.533,2.533,0,0,0,.008-2.577L14.012,8.556A2.543,2.543,0,0,0,12.032,7.305Zm17.751,4.289a2.149,2.149,0,1,0,0,4.3A10.709,10.709,0,0,1,40.525,26.634a2.149,2.149,0,1,0,4.3,0A15.072,15.072,0,0,0,29.782,11.594Zm0,8.594a2.149,2.149,0,1,0,0,4.3,2.114,2.114,0,0,1,2.149,2.148,2.149,2.149,0,1,0,4.3,0A6.479,6.479,0,0,0,29.782,20.188Z" transform="translate(-4 -3)" fill="#fff"></path>
+              </svg>`,
+      Email: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="32" height="28" viewBox="0 0 41 32.8">
+            <path ${defaultConstraints} id="Path_1218" data-name="Path 1218" d="M6.1,4A4.068,4.068,0,0,0,2.789,5.7a1.5,1.5,0,0,0,.444,2.126l18,11.219a2.387,2.387,0,0,0,2.531,0L41.691,7.732a1.5,1.5,0,0,0,.384-2.2A4.063,4.063,0,0,0,38.9,4Zm35.907,8.376a.963.963,0,0,0-.508.152L23.765,23.711a2.392,2.392,0,0,1-2.531,0L3.5,12.656a.98.98,0,0,0-1.5.833V32.7a4.1,4.1,0,0,0,4.1,4.1H38.9A4.1,4.1,0,0,0,43,32.7V13.357A.981.981,0,0,0,42.007,12.376Z" transform="translate(-2 -4)" fill="#fff"/>
+          </svg>`,
+      SiteUrl: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 9.552 9.552">
+              <path ${defaultConstraints} id="Path_1213" data-name="Path 1213" d="M11.064,4A2.485,2.485,0,0,0,9.3,4.734l-.585.585A2.488,2.488,0,0,0,7.98,7.084a2.45,2.45,0,0,0,.174.908L8.8,7.346a1.706,1.706,0,0,1,.473-1.468l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.675,1.675,0,0,1,1.194.5,1.7,1.7,0,0,1,0,2.4l-.585.585a1.7,1.7,0,0,1-1.206.5,1.456,1.456,0,0,1-.261-.025L9.559,9.4a2.45,2.45,0,0,0,.908.174,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.506,2.506,0,0,0,11.064,4Zm-.983,2.9L6.9,10.082l.572.572L10.654,7.47Zm-3,1.082a2.485,2.485,0,0,0-1.766.734L4.734,9.3A2.488,2.488,0,0,0,4,11.064a2.506,2.506,0,0,0,2.487,2.487,2.486,2.486,0,0,0,1.766-.734l.585-.585a2.488,2.488,0,0,0,.734-1.766A2.45,2.45,0,0,0,9.4,9.559l-.647.647a1.706,1.706,0,0,1-.473,1.468l-.585.585a1.7,1.7,0,0,1-1.206.5,1.675,1.675,0,0,1-1.194-.5,1.7,1.7,0,0,1,0-2.4l.585-.585a1.7,1.7,0,0,1,1.206-.5,1.457,1.457,0,0,1,.261.025l.647-.647A2.45,2.45,0,0,0,7.084,7.98Z" transform="translate(-4 -4)" fill="#fff"/>
+            </svg>`,
+      Form: `<svg ${defaultConstraints} xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 13 16">
+            <path ${defaultConstraints} id="Path_1209" data-name="Path 1209" d="M9.828,4A1.823,1.823,0,0,0,8,5.8V18.2A1.823,1.823,0,0,0,9.828,20h9.344A1.823,1.823,0,0,0,21,18.2V9.8a.6.6,0,0,0-.179-.424l-.006-.006L15.54,4.176A.614.614,0,0,0,15.109,4Zm0,1.2H14.5V8.6a1.823,1.823,0,0,0,1.828,1.8h3.453v7.8a.6.6,0,0,1-.609.6H9.828a.6.6,0,0,1-.609-.6V5.8A.6.6,0,0,1,9.828,5.2Zm5.891.848L18.92,9.2H16.328a.6.6,0,0,1-.609-.6Z" transform="translate(-8 -4)" fill="#fff"/>
+          </svg>`,
     };
     return iconMap[ctaType] || "fas fa-question";
   }
@@ -464,7 +471,7 @@ class ToolBoxUI {
       )}>
         <div style="background-color: ${ctaButtonBgColor}; border-color: ${ctaButtonBgColor};" 
              class="img-button" ${defaultConstraints}>
-          <i class="${icon} img-button-icon" ${defaultConstraints}></i>
+          <span class="img-button-icon" ${defaultConstraints}>${icon}</span>
           <div class="cta-badge" ${defaultConstraints}>
             <i class="fa fa-minus" ${defaultConstraints}></i>
           </div>

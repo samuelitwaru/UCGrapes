@@ -45,32 +45,43 @@ class EditorEventManager {
   }
 
   updateEditorAfterLoad(editor) {
-    
     const titles = editor.DomComponents.getWrapper().find(".tile-title");
     titles.forEach((title) => {
       if (!title.getAttributes()?.["title"]) {
-        title.addAttributes({"title": title.getEl().textContent});
+        title.addAttributes({ title: title.getEl().textContent });
       }
 
       if (!title.getAttributes()?.["is-hidden"]) {
         console.log("Hello world");
-        title.addAttributes({"is-hidden": "false"}); 
+        title.addAttributes({ "is-hidden": "false" });
       }
     });
 
     const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
     tileIcons.forEach((icon) => {
       if (!icon.getAttributes()?.["is-hidden"]) {
-        console.log("Hello world");
-        icon.addAttributes({"is-hidden": "true"}); 
+        icon.addAttributes({ "is-hidden": "true" });
       }
     });
 
-    const rowContainers = editor.DomComponents.getWrapper().find(".container-row");
-    rowContainers.forEach((rowContainer) => {
-      this.templateManager.templateUpdate.updateRightButtons(rowContainer);
-    });
+    const templateBlocks =
+      editor.DomComponents.getWrapper().find(".template-block");
+    templateBlocks.forEach((block) => {
+      const isPriority = block.getClasses()?.includes("high-priority-template");
+      const screenWidth = window.innerWidth;
 
+      const blockHeight =
+        screenWidth <= 1440
+          ? isPriority
+            ? "6.0rem"
+            : "4.5em"
+          : isPriority
+          ? "7rem"
+          : "5rem";
+      block.addStyle({
+        height: blockHeight,
+      });
+    });
   }
 
   loadTheme() {
@@ -152,16 +163,16 @@ class EditorEventManager {
     editor.on("component:selected", (component) =>
       this.handleComponentSelected(component)
     );
-    this.editorOnComponentAdd(editor)
+    this.editorOnComponentAdd(editor);
   }
 
   editorOnComponentAdd(editor) {
-    editor.on('component:mount', (model) => {
-      if (model.get('type') === 'svg') {
-        model.set({selectable:false})
+    editor.on("component:mount", (model) => {
+      if (model.get("type") === "svg") {
+        model.set({ selectable: false });
       }
-      if(model.get('type') === 'tile-wrapper') {
-        model.addStyle({'background':'#00000000'})
+      if (model.get("type") === "tile-wrapper") {
+        model.addStyle({ background: "#00000000" });
         // const tileMapper = new TileMapper(model.components().first())
         // tileMapper.setTileAttributes()
       }
@@ -169,14 +180,12 @@ class EditorEventManager {
   }
 
   editorOnDragDrop(editor) {
-    
     let startDragComponent;
     editor.on("component:drag:start", (model) => {
-      startDragComponent =  model.parent;
+      startDragComponent = model.parent;
     });
 
     editor.on("component:drag:end", (model) => {
-
       const parentEl = model.parent.getEl();
       if (!parentEl || !parentEl.classList.contains("container-row")) return;
 
@@ -190,7 +199,9 @@ class EditorEventManager {
         editor.UndoManager.undo();
       }
       this.templateManager.templateUpdate.updateRightButtons(model.parent);
-      this.templateManager.templateUpdate.updateRightButtons(startDragComponent);
+      this.templateManager.templateUpdate.updateRightButtons(
+        startDragComponent
+      );
     });
   }
 

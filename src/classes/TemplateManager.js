@@ -14,9 +14,7 @@ class TemplateManager {
   }
 
   createTemplateHTML(isDefault = false) {
-    let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
-    tileBgColor = '#ffffff'
+    let tileBgColor = '#ffffff'
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -29,9 +27,9 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}; color:#FFFFFF"
+                style="background-color:${tileBgColor}; color:#333333"
                 tile-bgcolor="${tileBgColor}"
-                tile-bgcolor-name="accentColor"
+                tile-bgcolor-name=""
                 ${defaultTileAttrs} 
                  data-gjs-draggable="false"
                  data-gjs-selectable="true"
@@ -207,7 +205,7 @@ class TemplateManager {
 
   generateTemplateRow(columns, rowIndex) {
     let tileBgColor =
-      this.editorManager.toolsSection.currentTheme.ThemeColors.accentColor;
+      "#ffffff";
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -252,7 +250,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#ffffff"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
@@ -263,7 +261,7 @@ class TemplateManager {
                               : ""
                           }"
                             tile-bgcolor="${tileBgColor}"
-                            tile-bgcolor-name="accentColor"
+                            tile-bgcolor-name=""
                             ${defaultTileAttrs}
                             data-gjs-draggable="false"
                             data-gjs-selectable="true"
@@ -644,7 +642,7 @@ class TemplateManager {
                               contentPageData.ProductServiceDescription
                                 ? `
                                 <p
-                                    style="flex: 1; padding: 0; margin: 0; height: auto;"
+                                    style="flex: 1; padding: 0; margin: 0; height: auto; white-space: pre-wrap;"
                                     class="content-page-block"
                                     data-gjs-draggable="true"
                                     data-gjs-selectable="false"

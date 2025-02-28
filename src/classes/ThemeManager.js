@@ -207,6 +207,7 @@ class ThemeManager {
 
             const currentTileBgColorName =
               tile.getAttributes()?.["tile-bgcolor-name"];
+
             if (currentTileBgColorName && theme.ThemeColors) {
               const matchingColorCode =
                 theme.ThemeColors[currentTileBgColorName];
@@ -217,15 +218,12 @@ class ThemeManager {
                   "tile-bgcolor": matchingColorCode,
                 });
 
-                const currentTileOpacity =
-                  tile.getAttributes()?.["tile-bg-image-opacity"];
-
-                tile.addStyle({
-                  "background-color": addOpacityToHex(
-                    matchingColorCode,
-                    currentTileOpacity
-                  ),
-                });
+                const tileStyle = tile.getStyle();
+                if (!tileStyle["background-image"]) {
+                  tile.addStyle({
+                    "background-color": matchingColorCode,
+                  });
+                }
               } else {
                 console.warn(
                   `No matching color found for: ${currentTileBgColorName}`
@@ -287,8 +285,6 @@ class ThemeManager {
             this.toolBoxManager.editorManager.selectedComponent;
           const currentColor =
             selectedComponent.getAttributes()?.["tile-bgcolor"];
-          const currentTileOpacity =
-            selectedComponent.getAttributes()?.["tile-bg-image-opacity"];
 
           if (currentColor === colorValue) {
             selectedComponent.addStyle({
@@ -301,14 +297,18 @@ class ThemeManager {
               null
             );
 
+            this.toolBoxManager.setAttributeToSelected(
+              "tile-bg-image-opacity",
+              0
+            );
+
+            this.toolBoxManager.ui.updateTileOpacityProperties(selectedComponent);
+
             radioInput.checked = false;
             alignItem.style.border = "none";
           } else {
             selectedComponent.addStyle({
-              "background-color": addOpacityToHex(
-                colorValue,
-                currentTileOpacity
-              ),
+              "background-color": colorValue
             });
 
             this.toolBoxManager.setAttributeToSelected(
@@ -335,8 +335,6 @@ class ThemeManager {
   colorPalette() {
     const textColorPaletteContainer =
       document.getElementById("text-color-palette");
-    const iconColorPaletteContainer =
-      document.getElementById("icon-color-palette");
 
     // Fixed color values
     const colorValues = {
@@ -372,7 +370,7 @@ class ThemeManager {
             color: colorValue,
           });
           this.toolBoxManager.setAttributeToSelected(
-            "tile-text-color",
+            "tile-color",
             colorValue
           );
 
@@ -386,7 +384,7 @@ class ThemeManager {
               "tile-icon-color",
               colorValue
             );
-          } 
+          }
         } else {
           const message = this.toolBoxManager.currentLanguage.getTranslation(
             "no_tile_selected_error_message"
@@ -401,10 +399,10 @@ class ThemeManager {
     const ctaColorPaletteContainer =
       document.getElementById("cta-color-palette");
     const colorValues = {
-      color1: "#4C9155",
-      color2: "#5068A8",
-      color3: "#EEA622",
-      color4: "#FF6C37",
+      color1: "#2c405a",
+      color2: "#d4a76a",
+      color3: "#b2b997",
+      color4: "#c4a082",
     };
 
     Object.entries(colorValues).forEach(([colorName, colorValue]) => {

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Circular Buttons with Adaptive Spacing</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      margin: 20px;
+      text-align: center;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      /* Initial gap will be set by JavaScript */
+    }
+
+    .circular-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .circular-button:hover {
+      background-color: #2980b9;
+    }
+
+    .controls {
+      margin-top: 40px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .info {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dynamic Circular Buttons</h1>
+    <p>The gap automatically adjusts: 24px for two buttons, 16px for three or more buttons</p>
+    
+    <div class="button-container" id="buttonContainer">
+      <!-- Buttons will be added here dynamically -->
+    </div>
+    
+    <div class="controls">
+      <button onclick="addButton()">Add Button</button>
+      <button onclick="removeButton()">Remove Button</button>
+    </div>
+    
+    <div class="info" id="info">
+      Current buttons: 0
+    </div>
+  </div>
+
+  <script>
+    const buttonContainer = document.getElementById('buttonContainer');
+    const infoElement = document.getElementById('info');
+    let buttonCount = 0;
+    
+    // Function to update the gap based on number of buttons
+    function updateGap() {
+      // Set 24px gap for two buttons, 16px for three or more
+      const gap = buttonCount === 2 ? '24px' : '16px';
+      buttonContainer.style.gap = gap;
+      
+      // Update info text
+      infoElement.textContent = `Current buttons: ${buttonCount} (Gap: ${gap})`;
+    }
+    
+    // Function to add a button
+    function addButton() {
+      buttonCount++;
+      const button = document.createElement('button');
+      button.className = 'circular-button';
+      button.textContent = buttonCount;
+      buttonContainer.appendChild(button);
+      updateGap();
+    }
+    
+    // Function to remove a button
+    function removeButton() {
+      if (buttonCount > 0) {
+        buttonContainer.removeChild(buttonContainer.lastChild);
+        buttonCount--;
+        updateGap();
+      }
+    }
+    
+    // Initialize with two buttons
+    addButton();
+    addButton();
+  </script>
+</body>
+</html>

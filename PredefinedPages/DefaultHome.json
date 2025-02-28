@@ -216,7 +216,11 @@
                                 "droppable": false,
                                 "highlightable": false,
                                 "hoverable": false,
-                                "classes": ["template-block", "default-template", "high-priority-template"],
+                                "classes": [
+                                  "template-block",
+                                  "default-template",
+                                  "high-priority-template"
+                                ],
                                 "attributes": {
                                   "tile-bgcolor": "#758a71",
                                   "tile-bgcolor-name": "cardBgColor",

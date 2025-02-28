@@ -533,6 +533,7 @@ class MediaComponent {
           "background-size": "cover",
           "background-position": "center",
           "background-blend-mode": "overlay",
+          "background-color": "",
         });
       } else {
         console.error("MediaUrl is missing or undefined", this.selectedFile);
@@ -541,6 +542,11 @@ class MediaComponent {
       this.toolBoxManager.setAttributeToSelected(
         "tile-bg-image-url",
         this.selectedFile.MediaUrl
+      );
+
+      this.toolBoxManager.setAttributeToSelected(
+        "tile-bg-image-opacity",
+        0
       );
 
       this.toolBoxManager.checkTileBgImage();

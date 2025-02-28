@@ -2,6 +2,7 @@ class EditorEventManager {
   constructor(editorManager, templateManager) {
     this.editorManager = editorManager;
     this.templateManager = templateManager;
+    
   }
 
   addEditorEventListeners(editor, page) {
@@ -52,7 +53,6 @@ class EditorEventManager {
       }
 
       if (!title.getAttributes()?.["is-hidden"]) {
-        console.log("Hello world");
         title.addAttributes({ "is-hidden": "false" });
       }
     });
@@ -131,7 +131,9 @@ class EditorEventManager {
 
     let linkLabel = "";
     if (pageLinkLabel) {
-      linkLabel = pageLinkLabel.replace("Web Link, ", "");
+      linkLabel = pageLinkLabel
+        .replace("Web Link, ", "")
+        .replace("Dynamic Forms, ", "");
     }
 
     const page = this.editorManager.getPage(pageId);
@@ -244,6 +246,21 @@ class EditorEventManager {
     this.activateNavigators();
 
     this.updateUIState();
+
+    this.activateOpacitySlider(this.editorManager.selectedComponent)
+  }
+
+  activateOpacitySlider(selectedComponent) {
+    const attributes = selectedComponent.getAttributes();
+    const opacityEl = document.getElementById("slider-wrapper");
+    if (attributes?.["tile-bg-image-url"]) {
+      opacityEl.style.display = "flex";
+      const opacityInput = opacityEl.querySelector("#bg-opacity");
+      opacityInput.disabled = false;
+      this.editorManager.toolsSection.ui.updateTileOpacityProperties(selectedComponent);
+    } else {
+      opacityEl.style.display = "none";
+    }
   }
 
   updateUIState() {

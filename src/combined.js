@@ -1432,7 +1432,6 @@ class EditorEventManager {
   constructor(editorManager, templateManager) {
     this.editorManager = editorManager;
     this.templateManager = templateManager;
-    
   }
 
   addEditorEventListeners(editor, page) {
@@ -1500,14 +1499,22 @@ class EditorEventManager {
       const isPriority = block.getClasses()?.includes("high-priority-template");
       const screenWidth = window.innerWidth;
 
+      // Get the parent component
+      const parent = block.closest(".container-row");
+
+      const siblingBlocks = parent.find(".template-block").length;
+      console.log("siblings: ", siblingBlocks);
+      const isAloneInParent = siblingBlocks === 1;
+
       const blockHeight =
         screenWidth <= 1440
-          ? isPriority
-            ? "6.0rem"
-            : "4.5em"
-          : isPriority
-          ? "7rem"
-          : "5rem";
+          ? isPriority && isAloneInParent
+            ? "6.0rem" 
+            : "4.5rem" 
+          : isPriority && isAloneInParent
+          ? "7rem" 
+          : "5rem"; 
+
       block.addStyle({
         height: blockHeight,
       });
@@ -1677,7 +1684,7 @@ class EditorEventManager {
 
     this.updateUIState();
 
-    this.activateOpacitySlider(this.editorManager.selectedComponent)
+    this.activateOpacitySlider(this.editorManager.selectedComponent);
   }
 
   activateOpacitySlider(selectedComponent) {
@@ -1687,7 +1694,9 @@ class EditorEventManager {
       opacityEl.style.display = "flex";
       const opacityInput = opacityEl.querySelector("#bg-opacity");
       opacityInput.disabled = false;
-      this.editorManager.toolsSection.ui.updateTileOpacityProperties(selectedComponent);
+      this.editorManager.toolsSection.ui.updateTileOpacityProperties(
+        selectedComponent
+      );
     } else {
       opacityEl.style.display = "none";
     }
@@ -1821,6 +1830,7 @@ class TemplateManager {
       hoverable: false,
     };
     this.templateUpdate = new TemplateUpdate(this);
+    this.screenWidth = window.innerWidth;
   }
 
   createTemplateHTML(isDefault = false) {
@@ -1837,7 +1847,7 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}; color:#333333"
+                style="background-color:${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name=""
                 ${defaultTileAttrs} 
@@ -2060,7 +2070,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">

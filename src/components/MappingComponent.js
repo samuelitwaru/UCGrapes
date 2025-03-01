@@ -436,7 +436,7 @@ class MappingComponent {
     if (page) {
       const htmlBody = `
       <input required class="tb-form-control" type="text" id="pageName" placeholder="" value="${page.PageName}"/>
-      <small id="error_pageName" style="display:none">Error</small>
+      <small id="error_pageName" style="display:none; color:red"></small>
       `
       const formPopup = new FormPopupModal(
         "update-page-popup",
@@ -448,8 +448,13 @@ class MappingComponent {
         const errorLabel = document.querySelector(`#update-page-popup #error_pageName`)
 
         if (input.value) {
+          const reservedNames = ["Home", "Reception", "Location", "Calendar", "My Activity"]
+          if (reservedNames.includes(input.value)) {
+            errorLabel.innerHTML = "This name is reserved"
+            errorLabel.style.display = "block"
+            return
+          }
           page.PageName = input.value
-          console.log(page)
           this.dataManager.updatePage(page).then(res => {
             if(res.result) {
               this.toolBoxManager.ui.displayAlertMessage(res.result, "success");
@@ -458,7 +463,7 @@ class MappingComponent {
             }
           })
         }else{
-          errorLabel.content = "This field is required"
+          errorLabel.innerHTML = "This field is required"
           errorLabel.style.display = "block"
         }
       }

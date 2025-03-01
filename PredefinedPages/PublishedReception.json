@@ -16,7 +16,7 @@
       "CtaId": "9a8c1583-b2cf-4bd4-a075-8551a1b68610",
       "CtaType": "Phone",
       "CtaLabel": "Call Us",
-      "CtaAction": "+31770894070",
+      "CtaAction": "{{LocationTelephone}}",
       "CtaBGColor": "#5068a8",
       "IsFullWidth": false,
       "IsImageButton": false
@@ -24,8 +24,8 @@
     {
       "CtaId": "4af89c2a-073a-40d2-8cf3-2ff381e266cc",
       "CtaType": "Email",
-      "CtaLabel": "Emal Us",
-      "CtaAction": "info@genexus.ug",
+      "CtaLabel": "Email Us",
+      "CtaAction": "{{LocationEmail}}",
       "CtaBGColor": "#5068a8",
       "IsFullWidth": false,
       "IsImageButton": false

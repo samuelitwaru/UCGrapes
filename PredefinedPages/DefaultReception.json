@@ -240,7 +240,7 @@
                                 "components": [
                                   {
                                     "type": "textnode",
-                                    "content": "Emal Us",
+                                    "content": "Email Us",
                                     "_undoexc": ["status", "open"]
                                   }
                                 ]

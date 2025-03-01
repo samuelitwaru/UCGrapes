@@ -645,12 +645,12 @@ class ThemeManager {
               this.toolBoxManager.editorManager.selectedComponent.find(
                 ".tile-icon"
               )[0];
-
+            let tileTextColor =  this.toolBoxManager.editorManager.selectedComponent.getAttributes()["tile-text-color"] || "#333333"
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
               const whiteIconSvg = iconSvgComponent.replace(
                 'fill="#7c8791"',
-                'fill="white"'
+                `fill="${tileTextColor}"`
               );
               iconComponent.addStyle({ display: "block" });
               iconComponent.addAttributes({ "is-hidden": "false" });

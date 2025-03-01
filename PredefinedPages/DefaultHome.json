@@ -486,7 +486,7 @@
                                   "tile-bg-image": "",
                                   "tile-bg-image-opacity": "50",
                                   "tile-action-object": "Predefined Page, Reception",
-                                  "tile-action-object-id": "bd07a815-f287-434f-98c3-3b1b094a15a4",
+                                  "tile-action-object-id": "{{ReceptionPageId}}",
                                   "id": "ipif",
                                   "tile-bg-image-url": "https://staging.comforta.yukon.software/media/receptie-197@3x.png"
                                 },
@@ -932,7 +932,7 @@
                                   "tile-bg-image": "",
                                   "tile-bg-image-opacity": "50",
                                   "tile-action-object": "Predefined Page, Calendar",
-                                  "tile-action-object-id": "3e21f9f8-0d32-440b-a1b6-f8eee35fcdbb",
+                                  "tile-action-object-id": "{{CalendarPageId}}",
                                   "id": "i2pfx",
                                   "tile-bg-image-url": "https://staging.comforta.yukon.software/media/Calendar.png",
                                   "tile-align": "center",
@@ -1427,7 +1427,7 @@
                                   "tile-bg-image": "",
                                   "tile-bg-image-opacity": "100",
                                   "tile-action-object": "Predefined Page, My Activity",
-                                  "tile-action-object-id": "87744d37-5a0d-42cb-af7a-baafc774e1bf",
+                                  "tile-action-object-id": "{{MailboxPageId}}",
                                   "id": "idbdo"
                                 },
                                 "_undoexc": [
@@ -1947,7 +1947,7 @@
                                   "tile-bg-image": "",
                                   "tile-bg-image-opacity": "20",
                                   "tile-action-object": "Predefined Page, Location",
-                                  "tile-action-object-id": "aa4439f7-417e-49a6-86fa-1094cd23d3b5",
+                                  "tile-action-object-id": "{{LocationPageId}}",
                                   "id": "ie1e09",
                                   "tile-bg-image-url": "https://staging.comforta.yukon.software/media/LocationInfo.png"
                                 },

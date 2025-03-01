@@ -180,7 +180,7 @@ class ToolBoxUI {
   }
 
   updateActionProperties(selectComponent) {
-    const currentActionName =
+    let currentActionName =
       selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
       selectComponent?.getAttributes()?.["tile-action-object-id"];
@@ -199,6 +199,9 @@ class ToolBoxUI {
                   <i class="fa fa-angle-down">
                   </i>`;
     if (currentActionName && currentActionId) {
+      currentActionName = currentActionName
+        .replace("Predefined Page", "Module") // Replace Predefined Page with Module (Temporary Fix)
+        .replace("Service/Product Page", "Service Page"); // Replace Predefined Page with Module (Temporary Fix)
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
       if (selectedOptionElement) {

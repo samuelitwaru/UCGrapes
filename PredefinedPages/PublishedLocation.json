@@ -24,7 +24,7 @@
       {
         "CtaId": "4af89c2a-073a-40d2-8cf3-2ff381e266cc",
         "CtaType": "Email",
-        "CtaLabel": "Emal Us",
+        "CtaLabel": "Email Us",
         "CtaAction": "{{LocationEmail}}",
         "CtaBGColor": "#5068a8",
         "IsFullWidth": false,

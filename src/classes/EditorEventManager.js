@@ -2,7 +2,6 @@ class EditorEventManager {
   constructor(editorManager, templateManager) {
     this.editorManager = editorManager;
     this.templateManager = templateManager;
-    
   }
 
   addEditorEventListeners(editor, page) {
@@ -21,13 +20,15 @@ class EditorEventManager {
   }
 
   editorOnLoad(editor) {
-    editor.on("load", () => this.handleEditorLoad(editor));
+    editor.on("load", () => {
+      this.handleEditorLoad(editor);
+      this.updateEditorAfterLoad(editor);
+    });
   }
 
   handleEditorLoad(editor) {
     this.loadTheme();
     const wrapper = editor.getWrapper();
-    this.updateEditorAfterLoad(editor);
     this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
       editor
     );
@@ -66,20 +67,36 @@ class EditorEventManager {
 
     const templateBlocks =
       editor.DomComponents.getWrapper().find(".template-block");
+
     templateBlocks.forEach((block) => {
       const isPriority = block.getClasses()?.includes("high-priority-template");
       const screenWidth = window.innerWidth;
 
+      const parent = block.closest(".container-row");
+
+      const siblingBlocks = parent.find(".template-block").length;
+      const isAloneInParent = siblingBlocks === 1;
+
       const blockHeight =
         screenWidth <= 1440
-          ? isPriority
+          ? isPriority && isAloneInParent
             ? "6.0rem"
             : "4.5em"
-          : isPriority
+          : isPriority && isAloneInParent
           ? "7rem"
           : "5rem";
-      block.addStyle({
-        height: blockHeight,
+
+      const currentStyles = block.getStyle();
+
+      if (currentStyles["height"]) {
+        delete currentStyles["height"];
+      }
+      
+      delete currentStyles["textTransform"];
+
+      block.setStyle({
+        ...currentStyles,
+        height: blockHeight+" !important",
       });
     });
   }
@@ -247,7 +264,7 @@ class EditorEventManager {
 
     this.updateUIState();
 
-    this.activateOpacitySlider(this.editorManager.selectedComponent)
+    this.activateOpacitySlider(this.editorManager.selectedComponent);
   }
 
   activateOpacitySlider(selectedComponent) {
@@ -257,7 +274,9 @@ class EditorEventManager {
       opacityEl.style.display = "flex";
       const opacityInput = opacityEl.querySelector("#bg-opacity");
       opacityInput.disabled = false;
-      this.editorManager.toolsSection.ui.updateTileOpacityProperties(selectedComponent);
+      this.editorManager.toolsSection.ui.updateTileOpacityProperties(
+        selectedComponent
+      );
     } else {
       opacityEl.style.display = "none";
     }

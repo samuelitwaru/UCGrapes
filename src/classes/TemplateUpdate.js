@@ -141,9 +141,12 @@ class TemplateUpdate {
           ? "7rem"
           : "5rem";
 
+      const previousStyles = template.getStyle();
+      delete previousStyles["height"];
+
       const templateStyles = {
         ...styleConfig.template,
-        height: templateHeight,
+        height: templateHeight + "!important",
         "text-transform":
           isPriority && isTemplateOne ? "uppercase" : "capitalize",
       };

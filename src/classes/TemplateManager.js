@@ -11,6 +11,7 @@ class TemplateManager {
       hoverable: false,
     };
     this.templateUpdate = new TemplateUpdate(this);
+    this.screenWidth = window.innerWidth;
   }
 
   createTemplateHTML(isDefault = false) {
@@ -27,7 +28,7 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}; color:#333333"
+                style="background-color:${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name=""
                 ${defaultTileAttrs} 
@@ -250,7 +251,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333"
+                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">

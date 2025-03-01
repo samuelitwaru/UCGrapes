@@ -20,13 +20,15 @@ class EditorEventManager {
   }
 
   editorOnLoad(editor) {
-    editor.on("load", () => this.handleEditorLoad(editor));
+    editor.on("load", () => {
+      this.handleEditorLoad(editor);
+      this.updateEditorAfterLoad(editor);
+    });
   }
 
   handleEditorLoad(editor) {
     this.loadTheme();
     const wrapper = editor.getWrapper();
-    this.updateEditorAfterLoad(editor);
     this.editorManager.toolsSection.currentLanguage.translateTilesTitles(
       editor
     );
@@ -65,11 +67,11 @@ class EditorEventManager {
 
     const templateBlocks =
       editor.DomComponents.getWrapper().find(".template-block");
+
     templateBlocks.forEach((block) => {
       const isPriority = block.getClasses()?.includes("high-priority-template");
       const screenWidth = window.innerWidth;
 
-      // Get the parent component
       const parent = block.closest(".container-row");
 
       const siblingBlocks = parent.find(".template-block").length;
@@ -78,14 +80,23 @@ class EditorEventManager {
       const blockHeight =
         screenWidth <= 1440
           ? isPriority && isAloneInParent
-            ? "6.0rem" 
-            : "4.5rem" 
+            ? "6.0rem"
+            : "4.5em"
           : isPriority && isAloneInParent
-          ? "7rem" 
-          : "5rem"; 
+          ? "7rem"
+          : "5rem";
 
-      block.addStyle({
-        height: blockHeight,
+      const currentStyles = block.getStyle();
+
+      if (currentStyles["height"]) {
+        delete currentStyles["height"];
+      }
+      
+      delete currentStyles["textTransform"];
+
+      block.setStyle({
+        ...currentStyles,
+        height: blockHeight+" !important",
       });
     });
   }

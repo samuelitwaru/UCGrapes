@@ -1926,6 +1926,9 @@ class TemplateManager {
                       data-gjs-editable="false"
                       data-gjs-droppable="false"
                       data-gjs-highlightable="false"
+                      title="${this.currentLanguage.getTranslation(
+                        "tile_title"
+                      )}"
                       data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
                         "tile_title"
                       )}</span>
@@ -6865,10 +6868,8 @@ const iconsData = [
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#333333"
-    tile-icon-align="left"
+    tile-color="#333333"
     tile-align="left"
-  
     tile-bg-image=""
     tile-bg-image-opacity=0
   

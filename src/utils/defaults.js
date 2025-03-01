@@ -64,10 +64,8 @@ const iconsData = [
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#333333"
-    tile-icon-align="left"
+    tile-color="#333333"
     tile-align="left"
-  
     tile-bg-image=""
     tile-bg-image-opacity=0
   

@@ -2766,9 +2766,6 @@ class EventListenerManager {
       mappingSection.style.display =
         mappingSection.style.display === "block" ? "none" : "block";
 
-      console.log(toolsSection)
-      console.log(mappingSection)
-
       this.toolBoxManager.mappingComponent.init();
     });
   }

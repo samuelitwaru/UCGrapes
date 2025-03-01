@@ -1432,6 +1432,7 @@ class EditorEventManager {
   constructor(editorManager, templateManager) {
     this.editorManager = editorManager;
     this.templateManager = templateManager;
+    
   }
 
   addEditorEventListeners(editor, page) {

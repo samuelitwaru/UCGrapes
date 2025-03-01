@@ -279,7 +279,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -1503,7 +1503,6 @@ class EditorEventManager {
       const parent = block.closest(".container-row");
 
       const siblingBlocks = parent.find(".template-block").length;
-      console.log("siblings: ", siblingBlocks);
       const isAloneInParent = siblingBlocks === 1;
 
       const blockHeight =
@@ -2748,9 +2747,13 @@ class EventListenerManager {
 
       toolsSection.style.display =
         toolsSection.style.display === "none" ? "block" : "none";
-
+        
+      
       mappingSection.style.display =
         mappingSection.style.display === "block" ? "none" : "block";
+
+      console.log(toolsSection)
+      console.log(mappingSection)
 
       this.toolBoxManager.mappingComponent.init();
     });

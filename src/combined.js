@@ -5256,7 +5256,6 @@ class ActionListComponent {
             item.dataset.objectUrl
           );
         }
-
         this.toolBoxManager.setAttributeToSelected(
           "tile-action-object",
           `${category}, ${item.textContent}`
@@ -5265,7 +5264,8 @@ class ActionListComponent {
           category,
           item.id,
           editorContainerId,
-          item.textContent
+          item.textContent,
+          item.dataset.objectUrl
         );
       }
 
@@ -5285,7 +5285,7 @@ class ActionListComponent {
     }
   }
 
-  async handlePageCreation(category, itemId, editorContainerId, itemText) {
+  async handlePageCreation(category, itemId, editorContainerId, itemText, formUrl="") {
     try {
       $(editorContainerId).nextAll().remove();
       switch (category) {
@@ -5293,7 +5293,7 @@ class ActionListComponent {
           await this.createContentPage(itemId, editorContainerId);
           break;
         case "Dynamic Forms":
-          this.createDynamicFormPage(itemId,itemText);
+          this.createDynamicFormPage(itemId,itemText, formUrl);
           break;
         default:
           this.editorManager.createChildEditor(
@@ -5320,15 +5320,14 @@ class ActionListComponent {
     }
   }
 
-  async createDynamicFormPage(itemId,formName) {
+  async createDynamicFormPage(itemId,formName, formUrl) {
     const pageTitle = "Dynamic Forms";
     const linkUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${itemId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
 
-    this.createWebLinkOrFormPage(linkUrl, formName, pageTitle);
+    this.createWebLinkOrFormPage(linkUrl, formName, pageTitle, formUrl);
   }
 
-  async createWebLinkOrFormPage(linkUrl, linkLabel, pageTitle) {
-    console.log("createWebLinkOrFormPage");
+  async createWebLinkOrFormPage(linkUrl, linkLabel, pageTitle, formUrl) {
     const editor = this.editorManager.getCurrentEditor();
     try {
       const res = await this.dataManager.getPages();
@@ -5360,6 +5359,11 @@ class ActionListComponent {
         this.toolBoxManager.setAttributeToSelected(
           "tile-action-object-url",
           linkUrl
+        );
+
+        this.toolBoxManager.setAttributeToSelected(
+          "tile-action-form-url",
+          formUrl
         );
 
         this.toolBoxManager.setAttributeToSelected(

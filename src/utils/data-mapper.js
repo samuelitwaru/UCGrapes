@@ -16,7 +16,7 @@ class TileMapper {
     "Wash",
     "Wellbeing",
   ];
-  
+
   constructor(tileComponent) {
     this.component = tileComponent;
   }
@@ -156,14 +156,22 @@ function mapTemplateToPageData(templateData, page) {
       let tileBG = attributes["tile-bgcolor"];
       const tileHasBgImg = attributes["tile-bg-image-url"];
       if (tileHasBgImg) {
-        tileBG = addOpacityToHex("#000000", attributes["tile-bg-image-opacity"]);
+        tileBG = addOpacityToHex(
+          "#000000",
+          attributes["tile-bg-image-opacity"]
+        );
       }
+      const tileUrlAction = attributes["tile-action-object"]?.includes(
+        "Dynamic Forms"
+      )
+        ? attributes["tile-action-form-url"]
+        : attributes["tile-action-object-url"];
 
       col.Tile = {
         TileName: titleText,
         TileText: titleText,
         TileIcon: attributes["tile-icon"] || "",
-        TileColor: attributes["tile-color"] || "#ffffff", 
+        TileColor: attributes["tile-color"] || "#ffffff",
         TileAlignment: attributes["tile-align"] || "left",
         TileBGColor: `${tileBG}` || "",
         TileBGImageUrl: attributes["tile-bg-image-url"] || "",
@@ -171,8 +179,9 @@ function mapTemplateToPageData(templateData, page) {
 
         TileAction: {
           ObjectType: attributes["tile-action-object"],
-          ObjectId: tileActionObjectId || "00000000-0000-0000-0000-000000000000",
-          ObjectUrl: attributes["tile-action-object-url"] || "",
+          ObjectId:
+            tileActionObjectId || "00000000-0000-0000-0000-000000000000",
+          ObjectUrl: tileUrlAction || "",
         },
       };
       return col;
@@ -183,7 +192,7 @@ function mapTemplateToPageData(templateData, page) {
   if (page.PageName == "Home") {
     console.log(pageData);
   }
-  console.log(pageData)
+  console.log(pageData);
   return pageData;
 }
 

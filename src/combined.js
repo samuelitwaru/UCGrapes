@@ -279,7 +279,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -705,7 +705,7 @@ class ToolBoxManager {
       );
     }
   }
-
+ 
   checkTileBgImage() {
     if (this.editorManager.selectedTemplateWrapper) {
       const templateBlock = this.editorManager.selectedComponent;
@@ -737,6 +737,7 @@ class ToolBoxManager {
                     this.setAttributeToSelected("tile-bg-image-url", "");
                     this.setAttributeToSelected("tile-bg-image-opacity", 0);
                     this.ui.updateTileOpacityProperties(templateBlock);
+                    this.editorManager.editorEventManager.activateOpacitySlider(templateBlock);
                   };
                 }
               }
@@ -820,7 +821,8 @@ class EditorManager {
     templates,
     mapping,
     mediaCollection,
-    addServiceButtonEvent
+    addServiceButtonEvent,
+    organisationLogo
   ) {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
@@ -832,6 +834,7 @@ class EditorManager {
     this.mapping = mapping;
     this.mediaCollection = mediaCollection;
     this.addServiceButtonEvent = addServiceButtonEvent;
+    this.organisationLogo = organisationLogo;
 
     this.templateManager = new TemplateManager(this.currentLanguage, this); //
     this.editorEventManager = new EditorEventManager(
@@ -985,7 +988,7 @@ class EditorManager {
     return `
       <div class="home-app-bar">
         <div id="added-logo" class="logo-added" style="display:flex">
-          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="${this.organisationLogo || '/Resources/UCGrapes1/src/images/logo.png'}" alt="logo" /> 
         </div>
 
         <div id="add-profile-image" class="profile-section" style="display:flex">

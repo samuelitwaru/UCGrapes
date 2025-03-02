@@ -192,8 +192,19 @@ class EditorEventManager {
       }
       if (model.get("type") === "tile-wrapper") {
         model.addStyle({ background: "#00000000" });
-        // const tileMapper = new TileMapper(model.components().first())
-        // tileMapper.setTileAttributes()
+        if (model.find('.template-block').length) {
+          const tileComponent = model.find('.template-block')[0];
+          const tileBGUrl = tileComponent.getAttributes()["tile-bg-image-url"];
+          if (tileBGUrl) {
+            this.editorManager.dataManager.checkImage(tileBGUrl).then(res=>{
+              console.log(res)
+              if (!res) {
+                tileComponent.addAttributes({ "tile-bg-image-url": "" });
+                tileComponent.addStyle({"background-image": ""});
+              }
+            })
+          }
+        }
       }
     });
   }

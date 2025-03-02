@@ -459,6 +459,22 @@ class DataManager {
   async getContentPageData(productServiceId) {
     return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);
   }
+
+  async checkImage(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        if (!response.ok) {
+            console.log(`Image not found: ${url} (Status: ${response.status})`);
+            return false;
+        }
+        console.log(`Image exists: ${url}`);
+        return true;
+    } catch (error) {
+        console.log(`Error checking image: ${error.message}`);
+        return true;
+    }
+  }
+  
 }
 
 
@@ -579,6 +595,13 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
+    // first update the JSON content of each page
+    editors.forEach(editorInfo => {
+      const page = this.dataManager.pages.SDT_PageCollection.find(
+        (page) => page.PageId == editorInfo.pageId);
+      this.editorManager.updatePageJSONContent(editorInfo.editor, page);
+    });
+
     let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
       (page) => !skipPages.includes(page.PageName)
@@ -1624,8 +1647,19 @@ class EditorEventManager {
       }
       if (model.get("type") === "tile-wrapper") {
         model.addStyle({ background: "#00000000" });
-        // const tileMapper = new TileMapper(model.components().first())
-        // tileMapper.setTileAttributes()
+        if (model.find('.template-block').length) {
+          const tileComponent = model.find('.template-block')[0];
+          const tileBGUrl = tileComponent.getAttributes()["tile-bg-image-url"];
+          if (tileBGUrl) {
+            this.editorManager.dataManager.checkImage(tileBGUrl).then(res=>{
+              console.log(res)
+              if (!res) {
+                tileComponent.addAttributes({ "tile-bg-image-url": "" });
+                tileComponent.addStyle({"background-image": ""});
+              }
+            })
+          }
+        }
       }
     });
   }

@@ -549,6 +549,7 @@ class MediaComponent {
         0
       );
 
+      this.editorManager.editorEventManager.activateOpacitySlider(templateBlock);
       this.toolBoxManager.checkTileBgImage();
     }
 

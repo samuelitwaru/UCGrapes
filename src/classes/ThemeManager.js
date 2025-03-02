@@ -641,20 +641,22 @@ class ThemeManager {
 
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+            const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
             const iconComponent =
-              this.toolBoxManager.editorManager.selectedComponent.find(
+            selectedComponent.find(
                 ".tile-icon"
               )[0];
             let tileTextColor =  this.toolBoxManager.editorManager.selectedComponent.getAttributes()["tile-text-color"] || "#333333"
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
-              const whiteIconSvg = iconSvgComponent.replace(
+              const defaultIconColor = selectedComponent.getAttributes()?.["tile-color"];
+              const updatedIconColor = iconSvgComponent.replace(
                 'fill="#7c8791"',
-                `fill="${tileTextColor}"`
+                `fill="${defaultIconColor}"`
               );
               iconComponent.addStyle({ display: "block" });
               iconComponent.addAttributes({ "is-hidden": "false" });
-              iconComponent.components(whiteIconSvg);
+              iconComponent.components(updatedIconColor);
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName
@@ -667,7 +669,7 @@ class ThemeManager {
 
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon-color",
-                "#ffffff"
+                defaultIconColor
               );
             }
           } else {

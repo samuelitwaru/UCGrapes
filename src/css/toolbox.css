@@ -316,6 +316,7 @@ button {
   cursor: default;
   overflow-wrap: anywhere;
   display: block;
+  font-size: 16px;
 }
 
 .tile-close-icon {

@@ -53,15 +53,21 @@ class EditorEventManager {
         title.addAttributes({ title: title.getEl().textContent });
       }
 
-      if (!title.getAttributes()?.["is-hidden"]) {
+      const displayStyle = title.getStyle()?.["display"];
+      if (displayStyle === "none" || displayStyle === undefined) {
+        title.addAttributes({ "is-hidden": "true" });
+      } else {
         title.addAttributes({ "is-hidden": "false" });
       }
     });
 
     const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
     tileIcons.forEach((icon) => {
-      if (!icon.getAttributes()?.["is-hidden"]) {
+      const displayStyle = icon.getStyle()?.["display"];
+      if (displayStyle === "none" || displayStyle === undefined) {
         icon.addAttributes({ "is-hidden": "true" });
+      } else {
+        icon.addAttributes({ "is-hidden": "false" });
       }
     });
 
@@ -139,6 +145,8 @@ class EditorEventManager {
     if (button) {
       this.handleActionButtonClick(button, editor);
     }
+
+    document.getElementById("cta-selected-actions").style.display = "none";
   }
 
   handleTileActionClick(e, editorContainerId) {
@@ -307,9 +315,9 @@ class EditorEventManager {
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page) {
       document.querySelector("#content-page-section").style.display =
-        page.PageIsContentPage ? "block" : "none";
+        (page.PageIsContentPage && !page.PageIsPredefined) ? "block" : "none";
       document.querySelector("#menu-page-section").style.display =
-        page.PageIsContentPage ? "none" : "block";
+        (page.PageIsContentPage && !page.PageIsPredefined) ? "none" : "block";
     }
   }
 

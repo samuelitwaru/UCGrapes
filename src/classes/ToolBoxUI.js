@@ -12,12 +12,14 @@ class ToolBoxUI {
         titleComponent.addAttributes({ title: inputTitle });
         titleComponent.addAttributes({ "is-hidden": "false" });
 
+        const isTitleEditing = true;
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
         const rowContainer = selectedComponent.closest(".container-row");
         if (rowContainer) {
           this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(
-            rowContainer
+            rowContainer,
+            isTitleEditing
           );
         }
       }
@@ -91,13 +93,13 @@ class ToolBoxUI {
 
   updateTileProperties(selectComponent, page) {
     if (page && page.PageIsContentPage) {
-      this.updateContentPageProperties(selectComponent);
+      this.updateContentPageProperties(selectComponent, page);
     } else {
       this.updateTemplatePageProperties(selectComponent);
     }
   }
 
-  updateContentPageProperties(selectComponent) {
+  updateContentPageProperties(selectComponent, page) {
     const currentCtaBgColor =
       selectComponent?.getAttributes()?.["cta-background-color"];
     const CtaRadios = document.querySelectorAll(
@@ -114,12 +116,27 @@ class ToolBoxUI {
     }
 
     const ctaSelectedAction = document.getElementById("cta-selected-actions");
-
+    document.getElementById("cta-selected-actions").style.display = "flex";
     const attributes = selectComponent?.getAttributes();
-    ctaSelectedAction.innerHTML = `
+    if (selectComponent) {
+      const actionUrl = attributes?.["cta-button-action"];
+      let referenceName;
+      if (attributes?.["cta-button-type"] === "Form") {
+        const formLinkParams = new URL(actionUrl).searchParams;
+        referenceName = formLinkParams.get("WWPFormReferenceName");
+      }
+
+      ctaSelectedAction.innerHTML = `
         <span><strong>Type:</strong> ${attributes?.["cta-button-type"]}</span>
-        <span><strong>Action:</strong> ${attributes?.["cta-button-action"]}</span>
+        <span><strong>Action:</strong> ${
+          attributes?.["cta-button-type"] === "Form"
+            ? referenceName
+            : attributes?.["cta-button-action"]
+        }</span>
       `;
+    } else {
+      ctaSelectedAction.innerHTML = "";
+    }
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -132,8 +149,8 @@ class ToolBoxUI {
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
       selectComponent?.getAttributes()?.["tile-bg-image-opacity"] || 0;
-      document.getElementById("bg-opacity").value = tileOpacity;
-      document.getElementById("valueDisplay").textContent = tileOpacity + " %";
+    document.getElementById("bg-opacity").value = tileOpacity;
+    document.getElementById("valueDisplay").textContent = tileOpacity + " %";
   }
 
   updateAlignmentProperties(selectComponent) {
@@ -149,8 +166,7 @@ class ToolBoxUI {
   }
 
   updateColorProperties(selectComponent) {
-    const currentTextColor =
-      selectComponent?.getAttributes()?.["tile-text-color"];
+    const currentTextColor = selectComponent?.getAttributes()?.["tile-color"];
     const textColorRadios = document.querySelectorAll(
       '.text-color-palette.text-colors .color-item input[type="radio"]'
     );
@@ -310,8 +326,8 @@ class ToolBoxUI {
           cta-background-color="${ctaType.iconBgColor}"
           >
             <div class="cta-button" ${defaultConstraints} style="background-color: ${
-              backgroundColor || ctaType.iconBgColor
-            };">
+      backgroundColor || ctaType.iconBgColor
+    };">
               ${ctaType.icon}
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>

@@ -566,7 +566,7 @@ class ToolBoxManager {
     sidebarInputTitle.addEventListener("input", (e) => {
       let inputValue = e.target.value;
 
-      if (inputValue.length > 30) {
+      if (inputValue.length > 35) {
         inputValue = truncateText(inputValue, 35);
         e.target.value = inputValue; 
       }
@@ -1508,15 +1508,21 @@ class EditorEventManager {
         title.addAttributes({ title: title.getEl().textContent });
       }
 
-      if (!title.getAttributes()?.["is-hidden"]) {
+      const displayStyle = title.getStyle()?.["display"];
+      if (displayStyle === "none" || displayStyle === undefined) {
+        title.addAttributes({ "is-hidden": "true" });
+      } else {
         title.addAttributes({ "is-hidden": "false" });
       }
     });
 
     const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
     tileIcons.forEach((icon) => {
-      if (!icon.getAttributes()?.["is-hidden"]) {
+      const displayStyle = icon.getStyle()?.["display"];
+      if (displayStyle === "none" || displayStyle === undefined) {
         icon.addAttributes({ "is-hidden": "true" });
+      } else {
+        icon.addAttributes({ "is-hidden": "false" });
       }
     });
 
@@ -1594,6 +1600,8 @@ class EditorEventManager {
     if (button) {
       this.handleActionButtonClick(button, editor);
     }
+
+    document.getElementById("cta-selected-actions").style.display = "none";
   }
 
   handleTileActionClick(e, editorContainerId) {
@@ -1762,9 +1770,9 @@ class EditorEventManager {
     const page = this.editorManager.getPage(this.editorManager.currentPageId);
     if (page) {
       document.querySelector("#content-page-section").style.display =
-        page.PageIsContentPage ? "block" : "none";
+        (page.PageIsContentPage && !page.PageIsPredefined) ? "block" : "none";
       document.querySelector("#menu-page-section").style.display =
-        page.PageIsContentPage ? "none" : "block";
+        (page.PageIsContentPage && !page.PageIsPredefined) ? "none" : "block";
     }
   }
 
@@ -1896,6 +1904,8 @@ class TemplateManager {
                 style="background-color:${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name=""
+                tile-color="#333333"
+
                 ${defaultTileAttrs} 
                  data-gjs-draggable="false"
                  data-gjs-selectable="true"
@@ -2597,7 +2607,7 @@ class TemplateUpdate {
     this.templateManager = templateManager;
   }
 
-  updateRightButtons(containerRow) {
+  updateRightButtons(containerRow, isTitleEditing = false) {
     if (!containerRow) return;
 
     const templates = containerRow.components();
@@ -2610,14 +2620,15 @@ class TemplateUpdate {
     const screenWidth = window.innerWidth;
     const isTemplateOne = count === 1;
 
-    this.updateTitleElements(containerRow, count, screenWidth, styleConfig);
+    this.updateTitleElements(containerRow, count, screenWidth, styleConfig, isTitleEditing);
     this.updateTemplateElements(
       containerRow,
       templates,
       count,
       screenWidth,
       isTemplateOne,
-      styleConfig
+      styleConfig,
+      isTitleEditing
     );
   }
 
@@ -2638,7 +2649,7 @@ class TemplateUpdate {
         attributes: { "tile-align": "left" },
       },
       3: {
-        title: { "letter-spacing": "0.9px", "font-size": "12px" },
+        title: { "letter-spacing": "0.9px", "font-size": "11.5px" },
         template: { "justify-content": "center", "align-items": "center" },
         rightButton: { display: "none" },
         titleSection: { "text-align": "center" },
@@ -2649,14 +2660,17 @@ class TemplateUpdate {
     return styleConfigs[count] || null;
   }
 
-  updateTitleElements(containerRow, count, screenWidth, styleConfig) {
+  updateTitleElements(containerRow, count, screenWidth, styleConfig, isTitleEditing) {
     // Update titles
     const titles = containerRow.find(".tile-title");
     titles.forEach((title) => {
-      title.addStyle({
-        ...styleConfig.title,
-        "text-align": count === 3 ? "center" : "left",
-      });
+      if (!isTitleEditing) {
+        title.addStyle({
+          ...styleConfig.title,
+          "text-align": (count === 3) ? "center" : "left",
+        });
+      }
+
       let tileTitle =
         title.getEl().getAttribute("title") || title.getEl().innerText;
 
@@ -2677,7 +2691,7 @@ class TemplateUpdate {
             truncatedWords.slice(0, 1).join(" ") + "<br>" + truncatedWords[1];
         }
 
-        title.parent().addStyle({ textAlign: "center" });
+        title.parent().addStyle({ "text-align": "center" });
       } else {
         tileTitle = tileTitle.replace("<br>", "");
 
@@ -2717,8 +2731,13 @@ class TemplateUpdate {
     count,
     screenWidth,
     isTemplateOne,
-    styleConfig
+    styleConfig,
+    isTitleEditing
   ) {
+    if (isTitleEditing) {
+      return;
+    }
+
     // Update template blocks
     const templateBlocks = containerRow.find(".template-block");
     templateBlocks.forEach((template) => {
@@ -3749,20 +3768,22 @@ class ThemeManager {
 
         iconItem.onclick = () => {
           if (this.toolBoxManager.editorManager.selectedTemplateWrapper) {
+            const selectedComponent = this.toolBoxManager.editorManager.selectedComponent;
             const iconComponent =
-              this.toolBoxManager.editorManager.selectedComponent.find(
+            selectedComponent.find(
                 ".tile-icon"
               )[0];
             let tileTextColor =  this.toolBoxManager.editorManager.selectedComponent.getAttributes()["tile-text-color"] || "#333333"
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
-              const whiteIconSvg = iconSvgComponent.replace(
+              const defaultIconColor = selectedComponent.getAttributes()?.["tile-color"];
+              const updatedIconColor = iconSvgComponent.replace(
                 'fill="#7c8791"',
-                `fill="${tileTextColor}"`
+                `fill="${defaultIconColor}"`
               );
               iconComponent.addStyle({ display: "block" });
               iconComponent.addAttributes({ "is-hidden": "false" });
-              iconComponent.components(whiteIconSvg);
+              iconComponent.components(updatedIconColor);
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon",
                 icon.IconName
@@ -3775,7 +3796,7 @@ class ThemeManager {
 
               this.toolBoxManager.setAttributeToSelected(
                 "tile-icon-color",
-                "#ffffff"
+                defaultIconColor
               );
             }
           } else {
@@ -3811,12 +3832,14 @@ class ToolBoxUI {
         titleComponent.addAttributes({ title: inputTitle });
         titleComponent.addAttributes({ "is-hidden": "false" });
 
+        const isTitleEditing = true;
         // titleComponent.components(inputTitle);
         titleComponent.addStyle({ display: "block" });
         const rowContainer = selectedComponent.closest(".container-row");
         if (rowContainer) {
           this.manager.editorManager.templateManager.templateUpdate.updateRightButtons(
-            rowContainer
+            rowContainer,
+            isTitleEditing
           );
         }
       }
@@ -3890,13 +3913,13 @@ class ToolBoxUI {
 
   updateTileProperties(selectComponent, page) {
     if (page && page.PageIsContentPage) {
-      this.updateContentPageProperties(selectComponent);
+      this.updateContentPageProperties(selectComponent, page);
     } else {
       this.updateTemplatePageProperties(selectComponent);
     }
   }
 
-  updateContentPageProperties(selectComponent) {
+  updateContentPageProperties(selectComponent, page) {
     const currentCtaBgColor =
       selectComponent?.getAttributes()?.["cta-background-color"];
     const CtaRadios = document.querySelectorAll(
@@ -3913,12 +3936,27 @@ class ToolBoxUI {
     }
 
     const ctaSelectedAction = document.getElementById("cta-selected-actions");
-
+    document.getElementById("cta-selected-actions").style.display = "flex";
     const attributes = selectComponent?.getAttributes();
-    ctaSelectedAction.innerHTML = `
+    if (selectComponent) {
+      const actionUrl = attributes?.["cta-button-action"];
+      let referenceName;
+      if (attributes?.["cta-button-type"] === "Form") {
+        const formLinkParams = new URL(actionUrl).searchParams;
+        referenceName = formLinkParams.get("WWPFormReferenceName");
+      }
+
+      ctaSelectedAction.innerHTML = `
         <span><strong>Type:</strong> ${attributes?.["cta-button-type"]}</span>
-        <span><strong>Action:</strong> ${attributes?.["cta-button-action"]}</span>
+        <span><strong>Action:</strong> ${
+          attributes?.["cta-button-type"] === "Form"
+            ? referenceName
+            : attributes?.["cta-button-action"]
+        }</span>
       `;
+    } else {
+      ctaSelectedAction.innerHTML = "";
+    }
   }
 
   updateTemplatePageProperties(selectComponent) {
@@ -3931,8 +3969,8 @@ class ToolBoxUI {
   updateTileOpacityProperties(selectComponent) {
     const tileOpacity =
       selectComponent?.getAttributes()?.["tile-bg-image-opacity"] || 0;
-      document.getElementById("bg-opacity").value = tileOpacity;
-      document.getElementById("valueDisplay").textContent = tileOpacity + " %";
+    document.getElementById("bg-opacity").value = tileOpacity;
+    document.getElementById("valueDisplay").textContent = tileOpacity + " %";
   }
 
   updateAlignmentProperties(selectComponent) {
@@ -3948,8 +3986,7 @@ class ToolBoxUI {
   }
 
   updateColorProperties(selectComponent) {
-    const currentTextColor =
-      selectComponent?.getAttributes()?.["tile-text-color"];
+    const currentTextColor = selectComponent?.getAttributes()?.["tile-color"];
     const textColorRadios = document.querySelectorAll(
       '.text-color-palette.text-colors .color-item input[type="radio"]'
     );
@@ -4109,8 +4146,8 @@ class ToolBoxUI {
           cta-background-color="${ctaType.iconBgColor}"
           >
             <div class="cta-button" ${defaultConstraints} style="background-color: ${
-              backgroundColor || ctaType.iconBgColor
-            };">
+      backgroundColor || ctaType.iconBgColor
+    };">
               ${ctaType.icon}
               <div class="cta-badge" ${defaultConstraints}><i class="fa fa-minus" ${defaultConstraints}></i></div>
             </div>
@@ -4397,6 +4434,7 @@ class ToolBoxUI {
     }
   }
 }
+
 
 // Content from classes/UndoRedoManager.js
 class UndoRedoManager {
@@ -6586,6 +6624,7 @@ class MediaComponent {
         0
       );
 
+      this.editorManager.editorEventManager.activateOpacitySlider(templateBlock);
       this.toolBoxManager.checkTileBgImage();
     }
 
@@ -6945,7 +6984,7 @@ function truncateText(text, length) {
   if (text.length > length) {
     return text.slice(0, length);
   }
-  return text;
+  return text + '...';
 }
 
 function processTileTitles(projectData) {

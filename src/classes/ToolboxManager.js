@@ -180,6 +180,8 @@ class ToolBoxManager {
           return;
         }
 
+        console.log('>>', res)
+
         this.dataManager.getPages().then((pages) => {
           this.editorManager.pages = pages.SDT_PageCollection;
         });

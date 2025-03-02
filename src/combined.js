@@ -279,7 +279,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -644,6 +644,8 @@ class ToolBoxManager {
         if (this.checkIfNotAuthenticated(res)) {
           return;
         }
+
+        console.log('>>', res)
 
         this.dataManager.getPages().then((pages) => {
           this.editorManager.pages = pages.SDT_PageCollection;
@@ -1934,6 +1936,9 @@ class TemplateManager {
                       data-gjs-editable="false"
                       data-gjs-droppable="false"
                       data-gjs-highlightable="false"
+                      title="${this.currentLanguage.getTranslation(
+                        "tile_title"
+                      )}"
                       data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
                         "tile_title"
                       )}</span>
@@ -3734,7 +3739,7 @@ class ThemeManager {
             selectedComponent.find(
                 ".tile-icon"
               )[0];
-
+            let tileTextColor =  this.toolBoxManager.editorManager.selectedComponent.getAttributes()["tile-text-color"] || "#333333"
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
               const defaultIconColor = selectedComponent.getAttributes()?.["tile-color"];
@@ -3977,7 +3982,7 @@ class ToolBoxUI {
   }
 
   updateActionProperties(selectComponent) {
-    const currentActionName =
+    let currentActionName =
       selectComponent?.getAttributes()?.["tile-action-object"];
     const currentActionId =
       selectComponent?.getAttributes()?.["tile-action-object-id"];
@@ -3996,6 +4001,9 @@ class ToolBoxUI {
                   <i class="fa fa-angle-down">
                   </i>`;
     if (currentActionName && currentActionId) {
+      currentActionName = currentActionName
+        .replace("Predefined Page", "Module") // Replace Predefined Page with Module (Temporary Fix)
+        .replace("Service/Product Page", "Service Page"); // Replace Predefined Page with Module (Temporary Fix)
       propertySection.textContent = currentActionName;
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
       if (selectedOptionElement) {
@@ -5906,7 +5914,7 @@ class MappingComponent {
     if (page) {
       const htmlBody = `
       <input required class="tb-form-control" type="text" id="pageName" placeholder="" value="${page.PageName}"/>
-      <small id="error_pageName" style="display:none">Error</small>
+      <small id="error_pageName" style="display:none; color:red"></small>
       `
       const formPopup = new FormPopupModal(
         "update-page-popup",
@@ -5918,8 +5926,13 @@ class MappingComponent {
         const errorLabel = document.querySelector(`#update-page-popup #error_pageName`)
 
         if (input.value) {
+          const reservedNames = ["Home", "Reception", "Location", "Calendar", "My Activity"]
+          if (reservedNames.includes(input.value)) {
+            errorLabel.innerHTML = "This name is reserved"
+            errorLabel.style.display = "block"
+            return
+          }
           page.PageName = input.value
-          console.log(page)
           this.dataManager.updatePage(page).then(res => {
             if(res.result) {
               this.toolBoxManager.ui.displayAlertMessage(res.result, "success");
@@ -5928,7 +5941,7 @@ class MappingComponent {
             }
           })
         }else{
-          errorLabel.content = "This field is required"
+          errorLabel.innerHTML = "This field is required"
           errorLabel.style.display = "block"
         }
       }
@@ -6894,10 +6907,8 @@ const iconsData = [
     tile-text-align="left"
   
     tile-icon=""
-    tile-icon-color="#333333"
-    tile-icon-align="left"
+    tile-color="#333333"
     tile-align="left"
-  
     tile-bg-image=""
     tile-bg-image-opacity=0
   

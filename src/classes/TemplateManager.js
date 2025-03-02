@@ -97,6 +97,9 @@ class TemplateManager {
                       data-gjs-editable="false"
                       data-gjs-droppable="false"
                       data-gjs-highlightable="false"
+                      title="${this.currentLanguage.getTranslation(
+                        "tile_title"
+                      )}"
                       data-gjs-hoverable="false">${this.currentLanguage.getTranslation(
                         "tile_title"
                       )}</span>

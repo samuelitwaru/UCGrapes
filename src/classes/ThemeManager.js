@@ -646,7 +646,7 @@ class ThemeManager {
             selectedComponent.find(
                 ".tile-icon"
               )[0];
-
+            let tileTextColor =  this.toolBoxManager.editorManager.selectedComponent.getAttributes()["tile-text-color"] || "#333333"
             if (iconComponent) {
               const iconSvgComponent = icon.IconSVG;
               const defaultIconColor = selectedComponent.getAttributes()?.["tile-color"];

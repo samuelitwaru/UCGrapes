@@ -40,7 +40,7 @@
         "background-color": "#969674",
         "color": "#ffffff",
         "justify-content": "start",
-        "height": "5rem"
+        "height": "4.5em !important"
       }
     },
     {
@@ -76,9 +76,9 @@
         "background-color": "#2c405a",
         "color": "#ffffff",
         "justify-content": "center",
-        "height": "5rem",
         "align-items": "center",
-        "text-transform": "capitalize"
+        "text-transform": "capitalize",
+        "height": "4.5em!important"
       }
     },
     {
@@ -119,7 +119,8 @@
         "background-color": "rgba(0,0,0, 0.5)",
         "color": "#ffffff",
         "justify-content": "start",
-        "height": "7rem"
+        "height": "6.0rem !important",
+        "align-items": "start"
       }
     },
     {
@@ -134,8 +135,8 @@
         "background-position": "center",
         "background-blend-mode": "overlay",
         "justify-content": "center",
-        "height": "5rem",
-        "align-items": "center"
+        "align-items": "center",
+        "height": "4.5em !important"
       }
     },
     {
@@ -146,9 +147,9 @@
         "background-color": "#969674",
         "color": "#ffffff",
         "justify-content": "center",
-        "height": "5rem",
         "align-items": "center",
-        "text-transform": "capitalize"
+        "text-transform": "capitalize",
+        "height": "4.5em!important"
       }
     },
     {
@@ -163,7 +164,7 @@
         "background-blend-mode": "overlay",
         "background-image": "url(https://staging.comforta.yukon.software/media/LocationInfo.png)",
         "justify-content": "start",
-        "height": "5rem"
+        "height": "4.5em !important"
       }
     },
     {
@@ -188,7 +189,8 @@
       ],
       "style": {
         "letter-spacing": "1.1px",
-        "font-size": "16px"
+        "font-size": "16px",
+        "text-align": "left"
       }
     },
     {
@@ -274,7 +276,7 @@
       ],
       "style": {
         "letter-spacing": "0.9px",
-        "font-size": "12px",
+        "font-size": "11.5px",
         "text-align": "center"
       }
     },
@@ -284,7 +286,7 @@
       ],
       "style": {
         "letter-spacing": "0.9px",
-        "font-size": "12px",
+        "font-size": "11.5px",
         "text-align": "center"
       }
     },
@@ -323,8 +325,8 @@
         "color": "#ffffff",
         "justify-content": "center",
         "align-items": "center",
-        "height": "5rem",
-        "text-transform": "capitalize"
+        "text-transform": "capitalize",
+        "height": "4.5em!important"
       }
     },
     {
@@ -342,7 +344,7 @@
       ],
       "style": {
         "letter-spacing": "0.9px",
-        "font-size": "12px",
+        "font-size": "11.5px",
         "text-align": "center",
         "display": "block"
       }
@@ -488,7 +490,9 @@
                                   "tile-action-object": "Predefined Page, Reception",
                                   "tile-action-object-id": "bd07a815-f287-434f-98c3-3b1b094a15a4",
                                   "id": "ipif",
-                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/receptie-197@3x.png"
+                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/receptie-197@3x.png",
+                                  "tile-color": "#ffffff",
+                                  "tile-align": "left"
                                 },
                                 "_undoexc": [
                                   "status",
@@ -583,7 +587,7 @@
                                                 "attributes": {
                                                   "id": "Receptie",
                                                   "d": "M14.833,0a3.56,3.56,0,1,0,3.56,3.56A3.564,3.564,0,0,0,14.833,0Zm-1.78,7.713A4.158,4.158,0,0,0,8.9,11.867v1.187H20.767V11.867a4.158,4.158,0,0,0-4.153-4.153Zm11.867,3.56v.593h1.187v-.593Zm.593.593A2.98,2.98,0,0,0,22.6,14.24H.593A.594.594,0,0,0,0,14.833v2.373a.593.593,0,0,0,.593.593h28.48a.592.592,0,0,0,.593-.593V14.833a.593.593,0,0,0-.593-.593h-.649A2.98,2.98,0,0,0,25.513,11.867Zm0,1.187a1.782,1.782,0,0,1,1.669,1.187H23.845A1.782,1.782,0,0,1,25.513,13.053ZM1.187,18.987V29.073a.593.593,0,0,0,.593.593H27.887a.592.592,0,0,0,.593-.593V18.987Z",
-                                                  "fill": "white"
+                                                  "fill": "#ffffff"
                                                 },
                                                 "_undoexc": [
                                                   "status",
@@ -936,7 +940,8 @@
                                   "id": "i2pfx",
                                   "tile-bg-image-url": "https://staging.comforta.yukon.software/media/Calendar.png",
                                   "tile-align": "center",
-                                  "TileText": ""
+                                  "TileText": "",
+                                  "tile-color": "#ffffff"
                                 },
                                 "_undoexc": [
                                   "status",
@@ -1032,7 +1037,7 @@
                                                   "id": "Agenda",
                                                   "d": "M10.3,1V5.867H7.867A4.881,4.881,0,0,0,3,10.733V44.8a4.881,4.881,0,0,0,4.867,4.867H41.933A4.881,4.881,0,0,0,46.8,44.8V10.733a4.881,4.881,0,0,0-4.867-4.867H39.5V1H34.633V5.867H15.167V1ZM7.867,10.733H41.933V15.6H7.867Zm0,9.733H41.933V44.8H7.867ZM27.333,30.2v9.733h9.733V30.2Z",
                                                   "transform": "translate(-3 -1)",
-                                                  "fill": "white"
+                                                  "fill": "#ffffff"
                                                 },
                                                 "_undoexc": [
                                                   "status",
@@ -1428,7 +1433,8 @@
                                   "tile-bg-image-opacity": "100",
                                   "tile-action-object": "Predefined Page, My Activity",
                                   "tile-action-object-id": "87744d37-5a0d-42cb-af7a-baafc774e1bf",
-                                  "id": "idbdo"
+                                  "id": "idbdo",
+                                  "tile-color": "#ffffff"
                                 },
                                 "_undoexc": [
                                   "status",
@@ -1525,7 +1531,7 @@
                                                   "data-name": "Path 546",
                                                   "d": "M5.743,6A2.742,2.742,0,0,0,3,8.743V25.2a2.742,2.742,0,0,0,2.743,2.743h27.43A2.742,2.742,0,0,0,35.915,25.2V8.743A2.742,2.742,0,0,0,33.173,6ZM12.6,30.687a1.372,1.372,0,1,0,0,2.743H26.315a1.372,1.372,0,1,0,0-2.743Z",
                                                   "transform": "translate(-3 -6)",
-                                                  "fill": "white"
+                                                  "fill": "#ffffff"
                                                 },
                                                 "_undoexc": [
                                                   "status",
@@ -1908,6 +1914,21 @@
                         "_undoexc": [
                           "status",
                           "open"
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "highlightable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
                         ],
                         "components": [
                           {
@@ -1949,7 +1970,8 @@
                                   "tile-action-object": "Predefined Page, Location",
                                   "tile-action-object-id": "aa4439f7-417e-49a6-86fa-1094cd23d3b5",
                                   "id": "ie1e09",
-                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/LocationInfo.png"
+                                  "tile-bg-image-url": "https://staging.comforta.yukon.software/media/LocationInfo.png",
+                                  "tile-color": "#ffffff"
                                 },
                                 "_undoexc": [
                                   "status",
@@ -2436,7 +2458,8 @@
                                   "tile-action-object": "Page",
                                   "tile-action-object-id": "",
                                   "id": "i3ggh",
-                                  "tile-align": "center"
+                                  "tile-align": "center",
+                                  "tile-color": "#ffffff"
                                 },
                                 "_undoexc": [
                                   "status",
@@ -2926,7 +2949,8 @@
                                   "tile-action-object": "Page",
                                   "tile-action-object-id": "",
                                   "id": "i0mu2g",
-                                  "tile-align": "center"
+                                  "tile-align": "center",
+                                  "tile-color": "#ffffff"
                                 },
                                 "_undoexc": [
                                   "status",
@@ -3868,6 +3892,66 @@
                               }
                             ]
                           }
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "highlightable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "highlightable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "highlightable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
+                        ]
+                      },
+                      {
+                        "type": "template-wrapper",
+                        "draggable": false,
+                        "droppable": "[data-gjs-type='tile-wrapper']",
+                        "highlightable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "classes": [
+                          "container-row"
+                        ],
+                        "_undoexc": [
+                          "status",
+                          "open"
                         ]
                       },
                       {

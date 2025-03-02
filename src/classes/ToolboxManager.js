@@ -85,7 +85,7 @@ class ToolBoxManager {
     sidebarInputTitle.addEventListener("input", (e) => {
       let inputValue = e.target.value;
 
-      if (inputValue.length > 30) {
+      if (inputValue.length > 35) {
         inputValue = truncateText(inputValue, 35);
         e.target.value = inputValue; 
       }

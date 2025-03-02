@@ -31,6 +31,8 @@ class TemplateManager {
                 style="background-color:${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name=""
+                tile-color="#333333"
+
                 ${defaultTileAttrs} 
                  data-gjs-draggable="false"
                  data-gjs-selectable="true"

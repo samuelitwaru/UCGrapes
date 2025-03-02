@@ -3,7 +3,7 @@ class TemplateUpdate {
     this.templateManager = templateManager;
   }
 
-  updateRightButtons(containerRow) {
+  updateRightButtons(containerRow, isTitleEditing = false) {
     if (!containerRow) return;
 
     const templates = containerRow.components();
@@ -16,14 +16,15 @@ class TemplateUpdate {
     const screenWidth = window.innerWidth;
     const isTemplateOne = count === 1;
 
-    this.updateTitleElements(containerRow, count, screenWidth, styleConfig);
+    this.updateTitleElements(containerRow, count, screenWidth, styleConfig, isTitleEditing);
     this.updateTemplateElements(
       containerRow,
       templates,
       count,
       screenWidth,
       isTemplateOne,
-      styleConfig
+      styleConfig,
+      isTitleEditing
     );
   }
 
@@ -44,7 +45,7 @@ class TemplateUpdate {
         attributes: { "tile-align": "left" },
       },
       3: {
-        title: { "letter-spacing": "0.9px", "font-size": "12px" },
+        title: { "letter-spacing": "0.9px", "font-size": "11.5px" },
         template: { "justify-content": "center", "align-items": "center" },
         rightButton: { display: "none" },
         titleSection: { "text-align": "center" },
@@ -55,14 +56,17 @@ class TemplateUpdate {
     return styleConfigs[count] || null;
   }
 
-  updateTitleElements(containerRow, count, screenWidth, styleConfig) {
+  updateTitleElements(containerRow, count, screenWidth, styleConfig, isTitleEditing) {
     // Update titles
     const titles = containerRow.find(".tile-title");
     titles.forEach((title) => {
-      title.addStyle({
-        ...styleConfig.title,
-        "text-align": count === 3 ? "center" : "left",
-      });
+      if (!isTitleEditing) {
+        title.addStyle({
+          ...styleConfig.title,
+          "text-align": (count === 3) ? "center" : "left",
+        });
+      }
+
       let tileTitle =
         title.getEl().getAttribute("title") || title.getEl().innerText;
 
@@ -83,7 +87,7 @@ class TemplateUpdate {
             truncatedWords.slice(0, 1).join(" ") + "<br>" + truncatedWords[1];
         }
 
-        title.parent().addStyle({ textAlign: "center" });
+        title.parent().addStyle({ "text-align": "center" });
       } else {
         tileTitle = tileTitle.replace("<br>", "");
 
@@ -123,8 +127,13 @@ class TemplateUpdate {
     count,
     screenWidth,
     isTemplateOne,
-    styleConfig
+    styleConfig,
+    isTitleEditing
   ) {
+    if (isTitleEditing) {
+      return;
+    }
+
     // Update template blocks
     const templateBlocks = containerRow.find(".template-block");
     templateBlocks.forEach((template) => {

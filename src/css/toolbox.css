@@ -384,6 +384,7 @@ button {
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-top: 16px;
 }
 
 .cta-main-button {

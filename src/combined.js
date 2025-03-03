@@ -1515,7 +1515,7 @@ class EditorEventManager {
       }
 
       const displayStyle = title.getStyle()?.["display"];
-      if (displayStyle === "none" || displayStyle === undefined) {
+      if (displayStyle === "none") {
         title.addAttributes({ "is-hidden": "true" });
       } else {
         title.addAttributes({ "is-hidden": "false" });
@@ -1525,7 +1525,7 @@ class EditorEventManager {
     const tileIcons = editor.DomComponents.getWrapper().find(".tile-icon");
     tileIcons.forEach((icon) => {
       const displayStyle = icon.getStyle()?.["display"];
-      if (displayStyle === "none" || displayStyle === undefined) {
+      if (displayStyle === "none") {
         icon.addAttributes({ "is-hidden": "true" });
       } else {
         icon.addAttributes({ "is-hidden": "false" });

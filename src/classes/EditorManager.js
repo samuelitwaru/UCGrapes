@@ -18,7 +18,8 @@ class EditorManager {
     templates,
     mapping,
     mediaCollection,
-    addServiceButtonEvent
+    addServiceButtonEvent,
+    organisationLogo
   ) {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
@@ -30,6 +31,7 @@ class EditorManager {
     this.mapping = mapping;
     this.mediaCollection = mediaCollection;
     this.addServiceButtonEvent = addServiceButtonEvent;
+    this.organisationLogo = organisationLogo;
 
     this.templateManager = new TemplateManager(this.currentLanguage, this); //
     this.editorEventManager = new EditorEventManager(
@@ -183,7 +185,7 @@ class EditorManager {
     return `
       <div class="home-app-bar">
         <div id="added-logo" class="logo-added" style="display:flex">
-          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="${this.organisationLogo || '/Resources/UCGrapes1/src/images/logo.png'}" alt="logo" /> 
         </div>
 
         <div id="add-profile-image" class="profile-section" style="display:flex">
@@ -372,7 +374,7 @@ class EditorManager {
         });
       }
       const windowWidth = window.innerWidth;
-      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.4rem";
+      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.0rem";
       console.log("ctaContainer");
     }
   }

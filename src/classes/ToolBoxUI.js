@@ -131,6 +131,8 @@ class ToolBoxUI {
         <span><strong>Action:</strong> ${
           attributes?.["cta-button-type"] === "Form"
             ? referenceName
+            : attributes?.["cta-button-type"] === "SiteUrl"
+            ? `<a href="${attributes?.["cta-button-action"]}" target="_blank">${attributes?.["cta-button-label"]}</a>`
             : attributes?.["cta-button-action"]
         }</span>
       `;
@@ -232,7 +234,7 @@ class ToolBoxUI {
     } else {
       const contentPageCtas = document.getElementById("call-to-actions");
       document.getElementById("cta-style").style.display = "flex";
-      document.getElementById("no-cta-message").style.display = "none";
+      document.getElementById("no_cta_message").style.display = "none";
 
       this.renderCtas(callToActions, editorInstance, contentPageCtas);
       this.setupButtonLayoutListeners(editorInstance);
@@ -604,7 +606,7 @@ class ToolBoxUI {
     if (contentPageSection) {
       contentPageSection.style.display = "none";
       document.getElementById("call-to-actions").innerHTML = "";
-      const noCtaDisplayMessage = document.getElementById("no-cta-message");
+      const noCtaDisplayMessage = document.getElementById("no_cta_message");
       if (noCtaDisplayMessage) {
         noCtaDisplayMessage.style.display = "block";
       }

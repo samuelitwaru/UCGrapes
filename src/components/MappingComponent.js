@@ -13,8 +13,8 @@ class MappingComponent {
   init() {
     this.setupEventListeners();
     this.listPagesListener();
-    document.getElementById("list-all-pages").style.display = "block";
-    document.getElementById("hide-pages").style.display = "none";
+    document.getElementById("list_all_pages").style.display = "block";
+    document.getElementById("hide_pages").style.display = "none";
     this.homePage = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageName == "Home"
     );
@@ -24,7 +24,7 @@ class MappingComponent {
   }
 
   listPagesListener() {
-    const listAllPages = document.getElementById("list-all-pages");
+    const listAllPages = document.getElementById("list_all_pages");
     listAllPages.addEventListener("click", () => {
       this.handleListAllPages();
     });
@@ -50,10 +50,10 @@ class MappingComponent {
   }
 
   hidePagesList() {
-    const listAllPages = document.getElementById("list-all-pages");
+    const listAllPages = document.getElementById("list_all_pages");
     listAllPages.style.display = "none";
 
-    const hidePagesList = document.getElementById("hide-pages");
+    const hidePagesList = document.getElementById("hide_pages");
     hidePagesList.style.display = "block";
 
     hidePagesList.addEventListener("click", () => {
@@ -327,8 +327,8 @@ class MappingComponent {
         updateIcon.style.display = "none";
       }
 
-      const iconDiv = document.createElement('div')
-      iconDiv.classList.add("tb-menu-icons-container")
+      const iconDiv = document.createElement("div");
+      iconDiv.classList.add("tb-menu-icons-container");
 
       deleteIcon.setAttribute("data-id", item.Id);
       updateIcon.setAttribute("data-id", item.Id);
@@ -338,7 +338,7 @@ class MappingComponent {
       );
 
       updateIcon.addEventListener("click", (event) =>
-       this.handleUpdate(item.PageId)
+        this.handleUpdate(item.PageId)
       );
 
       menuItem.appendChild(toggle);
@@ -346,9 +346,9 @@ class MappingComponent {
         menuItem.style.display = "none";
       }
       if (item.Name !== "Home") {
-        iconDiv.append(updateIcon)
-        iconDiv.append(deleteIcon)
-        menuItem.appendChild(iconDiv)
+        iconDiv.append(updateIcon);
+        iconDiv.append(deleteIcon);
+        menuItem.appendChild(iconDiv);
       }
       listItem.appendChild(menuItem);
 
@@ -377,14 +377,16 @@ class MappingComponent {
 
         // Find the editor where pageId matches id
         const targetEditor = editors.find((editor) => editor.pageId === id);
-        
+
         if (this.dataManager.deletePage(id)) {
           elementToRemove.remove();
 
           if (targetEditor) {
             const editorId = targetEditor.editor.getConfig().container;
             const editorContainerId = `${editorId}`;
-            this.editorManager.removePageOnTileDelete(editorContainerId.replace("#", ""));
+            this.editorManager.removePageOnTileDelete(
+              editorContainerId.replace("#", "")
+            );
           }
 
           this.dataManager.getPages().then((res) => {
@@ -432,42 +434,52 @@ class MappingComponent {
   }
 
   handleUpdate(PageId) {
-    const page = this.getPage(PageId)
+    const page = this.getPage(PageId);
     if (page) {
       const htmlBody = `
       <input required class="tb-form-control" type="text" id="pageName" placeholder="" value="${page.PageName}"/>
       <small id="error_pageName" style="display:none; color:red"></small>
-      `
+      `;
       const formPopup = new FormPopupModal(
         "update-page-popup",
         "Update Page",
         htmlBody
-      )
+      );
       formPopup.onConfirm = (event) => {
-        const input = document.querySelector(`#update-page-popup #pageName`)
-        const errorLabel = document.querySelector(`#update-page-popup #error_pageName`)
+        const input = document.querySelector(`#update-page-popup #pageName`);
+        const errorLabel = document.querySelector(
+          `#update-page-popup #error_pageName`
+        );
 
         if (input.value) {
-          const reservedNames = ["Home", "Reception", "Location", "Calendar", "My Activity"]
+          const reservedNames = [
+            "Home",
+            "Reception",
+            "Location",
+            "Calendar",
+            "My Activity",
+            "Web Link",
+            "Dynamic Forms"
+          ];
           if (reservedNames.includes(input.value)) {
-            errorLabel.innerHTML = "This name is reserved"
-            errorLabel.style.display = "block"
-            return
+            errorLabel.innerHTML = "This name is reserved";
+            errorLabel.style.display = "block";
+            return;
           }
-          page.PageName = input.value
-          this.dataManager.updatePage(page).then(res => {
-            if(res.result) {
+          page.PageName = input.value;
+          this.dataManager.updatePage(page).then((res) => {
+            if (res.result) {
               this.toolBoxManager.ui.displayAlertMessage(res.result, "success");
-              formPopup.closePopup()
-              this.init()
+              formPopup.closePopup();
+              this.init();
             }
-          })
-        }else{
-          errorLabel.innerHTML = "This field is required"
-          errorLabel.style.display = "block"
+          });
+        } else {
+          errorLabel.innerHTML = "This field is required";
+          errorLabel.style.display = "block";
         }
-      }
-      formPopup.show()
+      };
+      formPopup.show();
     }
   }
 

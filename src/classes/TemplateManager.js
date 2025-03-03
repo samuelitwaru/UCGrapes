@@ -521,6 +521,7 @@ class TemplateManager {
       }
     });
 
+    this.editorManager.toolsSection.mappingComponent.init();
     this.templateUpdate.updateRightButtons(containerRow);
   }
 

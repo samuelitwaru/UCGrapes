@@ -86,6 +86,9 @@ class Locale {
       "publish_confirm_button",
       "publish_cancel_button",
       "enter_title_place_holder",
+      "no_cta_message",
+      "list_all_pages",
+      "hide_pages"
     ];
 
     elementsToTranslate.forEach((elementId) => {
@@ -279,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -728,7 +731,7 @@ class ToolBoxManager {
       );
     }
   }
-
+ 
   checkTileBgImage() {
     if (this.editorManager.selectedTemplateWrapper) {
       const templateBlock = this.editorManager.selectedComponent;
@@ -760,6 +763,7 @@ class ToolBoxManager {
                     this.setAttributeToSelected("tile-bg-image-url", "");
                     this.setAttributeToSelected("tile-bg-image-opacity", 0);
                     this.ui.updateTileOpacityProperties(templateBlock);
+                    this.editorManager.editorEventManager.activateOpacitySlider(templateBlock);
                   };
                 }
               }
@@ -843,7 +847,8 @@ class EditorManager {
     templates,
     mapping,
     mediaCollection,
-    addServiceButtonEvent
+    addServiceButtonEvent,
+    organisationLogo
   ) {
     this.dataManager = dataManager;
     this.currentLanguage = currentLanguage;
@@ -855,6 +860,7 @@ class EditorManager {
     this.mapping = mapping;
     this.mediaCollection = mediaCollection;
     this.addServiceButtonEvent = addServiceButtonEvent;
+    this.organisationLogo = organisationLogo;
 
     this.templateManager = new TemplateManager(this.currentLanguage, this); //
     this.editorEventManager = new EditorEventManager(
@@ -1008,7 +1014,7 @@ class EditorManager {
     return `
       <div class="home-app-bar">
         <div id="added-logo" class="logo-added" style="display:flex">
-          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="/Resources/UCGrapes1/src/images/logo.png" alt="logo" /> 
+          <img id="toolbox-logo" style="${window.innerWidth < 1440 ? "height: 35px" : "height: 40px"}" src="${this.organisationLogo || '/Resources/UCGrapes1/src/images/logo.png'}" alt="logo" /> 
         </div>
 
         <div id="add-profile-image" class="profile-section" style="display:flex">
@@ -1197,7 +1203,7 @@ class EditorManager {
         });
       }
       const windowWidth = window.innerWidth;
-      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.4rem";
+      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.0rem";
       console.log("ctaContainer");
     }
   }
@@ -2394,6 +2400,7 @@ class TemplateManager {
       }
     });
 
+    this.editorManager.toolsSection.mappingComponent.init();
     this.templateUpdate.updateRightButtons(containerRow);
   }
 
@@ -2819,8 +2826,7 @@ class EventListenerManager {
 
       toolsSection.style.display =
         toolsSection.style.display === "none" ? "block" : "none";
-        
-      
+             
       mappingSection.style.display =
         mappingSection.style.display === "block" ? "none" : "block";
 
@@ -3951,6 +3957,8 @@ class ToolBoxUI {
         <span><strong>Action:</strong> ${
           attributes?.["cta-button-type"] === "Form"
             ? referenceName
+            : attributes?.["cta-button-type"] === "SiteUrl"
+            ? `<a href="${attributes?.["cta-button-action"]}" target="_blank">${attributes?.["cta-button-label"]}</a>`
             : attributes?.["cta-button-action"]
         }</span>
       `;
@@ -4052,7 +4060,7 @@ class ToolBoxUI {
     } else {
       const contentPageCtas = document.getElementById("call-to-actions");
       document.getElementById("cta-style").style.display = "flex";
-      document.getElementById("no-cta-message").style.display = "none";
+      document.getElementById("no_cta_message").style.display = "none";
 
       this.renderCtas(callToActions, editorInstance, contentPageCtas);
       this.setupButtonLayoutListeners(editorInstance);
@@ -4424,7 +4432,7 @@ class ToolBoxUI {
     if (contentPageSection) {
       contentPageSection.style.display = "none";
       document.getElementById("call-to-actions").innerHTML = "";
-      const noCtaDisplayMessage = document.getElementById("no-cta-message");
+      const noCtaDisplayMessage = document.getElementById("no_cta_message");
       if (noCtaDisplayMessage) {
         noCtaDisplayMessage.style.display = "block";
       }
@@ -4726,7 +4734,10 @@ class ActionListComponent {
       );
 
       this.predefinedPageOptions = this.filterPages(
-        (page) => page.PageIsPredefined && page.PageName != "Home"
+        (page) => page.PageIsPredefined && 
+                  page.PageName !== "Home" && 
+                  page.PageName !== "Web Link" && 
+                  page.PageName !== "Dynamic Forms"
       );
 
       this.servicePageOptions = (this.dataManager.services || []).map(
@@ -5202,8 +5213,8 @@ class ActionListComponent {
           dropdownMenu.style.display === "block" ? "none" : "block";
         const icon = dropdownHeader.querySelector("i");
         if (icon) {
-          icon.classList.toggle("fa-angle-up");
           icon.classList.toggle("fa-angle-down");
+          icon.classList.toggle("fa-angle-up");
         }
       });
     }
@@ -5225,8 +5236,8 @@ class ActionListComponent {
         dropdownMenu.style.display = "none";
         const icon = dropdownHeader.querySelector("i");
         if (icon) {
-          icon.classList.remove("fa-angle-up");
-          icon.classList.add("fa-angle-down");
+          icon.classList.remove("fa-angle-down");
+          icon.classList.add("fa-angle-up");
         }
         document.querySelectorAll(".category").forEach((details) => {
           details.open = false;
@@ -5525,8 +5536,8 @@ class MappingComponent {
   init() {
     this.setupEventListeners();
     this.listPagesListener();
-    document.getElementById("list-all-pages").style.display = "block";
-    document.getElementById("hide-pages").style.display = "none";
+    document.getElementById("list_all_pages").style.display = "block";
+    document.getElementById("hide_pages").style.display = "none";
     this.homePage = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageName == "Home"
     );
@@ -5536,7 +5547,7 @@ class MappingComponent {
   }
 
   listPagesListener() {
-    const listAllPages = document.getElementById("list-all-pages");
+    const listAllPages = document.getElementById("list_all_pages");
     listAllPages.addEventListener("click", () => {
       this.handleListAllPages();
     });
@@ -5562,10 +5573,10 @@ class MappingComponent {
   }
 
   hidePagesList() {
-    const listAllPages = document.getElementById("list-all-pages");
+    const listAllPages = document.getElementById("list_all_pages");
     listAllPages.style.display = "none";
 
-    const hidePagesList = document.getElementById("hide-pages");
+    const hidePagesList = document.getElementById("hide_pages");
     hidePagesList.style.display = "block";
 
     hidePagesList.addEventListener("click", () => {
@@ -5839,8 +5850,8 @@ class MappingComponent {
         updateIcon.style.display = "none";
       }
 
-      const iconDiv = document.createElement('div')
-      iconDiv.classList.add("tb-menu-icons-container")
+      const iconDiv = document.createElement("div");
+      iconDiv.classList.add("tb-menu-icons-container");
 
       deleteIcon.setAttribute("data-id", item.Id);
       updateIcon.setAttribute("data-id", item.Id);
@@ -5850,7 +5861,7 @@ class MappingComponent {
       );
 
       updateIcon.addEventListener("click", (event) =>
-       this.handleUpdate(item.PageId)
+        this.handleUpdate(item.PageId)
       );
 
       menuItem.appendChild(toggle);
@@ -5858,9 +5869,9 @@ class MappingComponent {
         menuItem.style.display = "none";
       }
       if (item.Name !== "Home") {
-        iconDiv.append(updateIcon)
-        iconDiv.append(deleteIcon)
-        menuItem.appendChild(iconDiv)
+        iconDiv.append(updateIcon);
+        iconDiv.append(deleteIcon);
+        menuItem.appendChild(iconDiv);
       }
       listItem.appendChild(menuItem);
 
@@ -5889,14 +5900,16 @@ class MappingComponent {
 
         // Find the editor where pageId matches id
         const targetEditor = editors.find((editor) => editor.pageId === id);
-        
+
         if (this.dataManager.deletePage(id)) {
           elementToRemove.remove();
 
           if (targetEditor) {
             const editorId = targetEditor.editor.getConfig().container;
             const editorContainerId = `${editorId}`;
-            this.editorManager.removePageOnTileDelete(editorContainerId.replace("#", ""));
+            this.editorManager.removePageOnTileDelete(
+              editorContainerId.replace("#", "")
+            );
           }
 
           this.dataManager.getPages().then((res) => {
@@ -5944,42 +5957,52 @@ class MappingComponent {
   }
 
   handleUpdate(PageId) {
-    const page = this.getPage(PageId)
+    const page = this.getPage(PageId);
     if (page) {
       const htmlBody = `
       <input required class="tb-form-control" type="text" id="pageName" placeholder="" value="${page.PageName}"/>
       <small id="error_pageName" style="display:none; color:red"></small>
-      `
+      `;
       const formPopup = new FormPopupModal(
         "update-page-popup",
         "Update Page",
         htmlBody
-      )
+      );
       formPopup.onConfirm = (event) => {
-        const input = document.querySelector(`#update-page-popup #pageName`)
-        const errorLabel = document.querySelector(`#update-page-popup #error_pageName`)
+        const input = document.querySelector(`#update-page-popup #pageName`);
+        const errorLabel = document.querySelector(
+          `#update-page-popup #error_pageName`
+        );
 
         if (input.value) {
-          const reservedNames = ["Home", "Reception", "Location", "Calendar", "My Activity"]
+          const reservedNames = [
+            "Home",
+            "Reception",
+            "Location",
+            "Calendar",
+            "My Activity",
+            "Web Link",
+            "Dynamic Forms"
+          ];
           if (reservedNames.includes(input.value)) {
-            errorLabel.innerHTML = "This name is reserved"
-            errorLabel.style.display = "block"
-            return
+            errorLabel.innerHTML = "This name is reserved";
+            errorLabel.style.display = "block";
+            return;
           }
-          page.PageName = input.value
-          this.dataManager.updatePage(page).then(res => {
-            if(res.result) {
+          page.PageName = input.value;
+          this.dataManager.updatePage(page).then((res) => {
+            if (res.result) {
               this.toolBoxManager.ui.displayAlertMessage(res.result, "success");
-              formPopup.closePopup()
-              this.init()
+              formPopup.closePopup();
+              this.init();
             }
-          })
-        }else{
-          errorLabel.innerHTML = "This field is required"
-          errorLabel.style.display = "block"
+          });
+        } else {
+          errorLabel.innerHTML = "This field is required";
+          errorLabel.style.display = "block";
         }
-      }
-      formPopup.show()
+      };
+      formPopup.show();
     }
   }
 

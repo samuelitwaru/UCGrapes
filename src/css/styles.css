@@ -646,7 +646,7 @@ span#scroll-right:hover {
   cursor: pointer;
 }
 
-.mapping-sub-title #hide-pages {
+.mapping-sub-title #hide_pages {
   display: none;
 }
 
@@ -782,7 +782,8 @@ h5#current-page-title {
   gap: 6px;
 }
 
-.tb-delete-icon, .tb-update-icon {
+.tb-delete-icon,
+.tb-update-icon {
   position: relative;
   color: #536baa;
   font-size: 12px;
@@ -794,14 +795,15 @@ h5#current-page-title {
   color: #536baa;
 }
 
-.tb-dropdown-item:hover .tb-delete-icon, .tb-dropdown-item:hover .tb-update-icon {
+.tb-dropdown-item:hover .tb-delete-icon,
+.tb-dropdown-item:hover .tb-update-icon {
   opacity: 1;
 }
 
-.tb-custom-menu-item:hover .tb-delete-icon, .tb-custom-menu-item:hover .tb-update-icon {
+.tb-custom-menu-item:hover .tb-delete-icon,
+.tb-custom-menu-item:hover .tb-update-icon {
   opacity: 1;
 }
-
 
 .tb-custom-menu-item.active-tree-item {
   color: #536baa;

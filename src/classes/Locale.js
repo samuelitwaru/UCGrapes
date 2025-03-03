@@ -65,6 +65,9 @@ class Locale {
       "publish_confirm_button",
       "publish_cancel_button",
       "enter_title_place_holder",
+      "no_cta_message",
+      "list_all_pages",
+      "hide_pages"
     ];
 
     elementsToTranslate.forEach((elementId) => {

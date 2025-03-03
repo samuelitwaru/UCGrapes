@@ -282,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -797,6 +797,11 @@ class ToolBoxManager {
         );
 
         const editor = this.editorManager.getCurrentEditor();
+        const titleComponent = editor.getSelected().find(".tile-title")[0];
+        if (titleComponent) {
+          titleComponent.components(service.ProductServiceTileName);
+          titleComponent.addStyle({ display: "block" });
+        }
         const editorId = editor.getConfig().container;
         const editorContainerId = `${editorId}-frame`;
         this.actionList.createContentPage(

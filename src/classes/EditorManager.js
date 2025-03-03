@@ -374,7 +374,7 @@ class EditorManager {
         });
       }
       const windowWidth = window.innerWidth;
-      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.4rem";
+      ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.0rem";
       console.log("ctaContainer");
     }
   }

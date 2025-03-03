@@ -178,4 +178,20 @@ class DataManager {
   async getContentPageData(productServiceId) {
     return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);
   }
+
+  async checkImage(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        if (!response.ok) {
+            console.log(`Image not found: ${url} (Status: ${response.status})`);
+            return false;
+        }
+        console.log(`Image exists: ${url}`);
+        return true;
+    } catch (error) {
+        console.log(`Error checking image: ${error.message}`);
+        return true;
+    }
+  }
+  
 }

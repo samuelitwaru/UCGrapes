@@ -114,6 +114,13 @@ class ToolBoxManager {
   }
 
   preparePageDataList(editors) {
+    // first update the JSON content of each page
+    editors.forEach(editorInfo => {
+      const page = this.dataManager.pages.SDT_PageCollection.find(
+        (page) => page.PageId == editorInfo.pageId);
+      this.editorManager.updatePageJSONContent(editorInfo.editor, page);
+    });
+
     let skipPages = ["Mailbox", "Calendar", "My Activity"];
     return this.dataManager.pages.SDT_PageCollection.filter(
       (page) => !skipPages.includes(page.PageName)

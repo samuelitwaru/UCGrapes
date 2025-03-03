@@ -256,7 +256,7 @@ class TemplateManager {
 
       wrappers += `
                 <div class="template-wrapper"
-                          style="flex: 0 0 ${columnWidth}%); background: ${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
+                          style="flex: 0 0 ${columnWidth}%);"
                           data-gjs-type="tile-wrapper"
                           data-gjs-selectable="false"
                           data-gjs-droppable="false">
@@ -268,6 +268,15 @@ class TemplateManager {
                           }"
                             tile-bgcolor="${tileBgColor}"
                             tile-bgcolor-name=""
+                            style="background-color:${tileBgColor}; color:#333333; height: ${
+                              isFirstTileOfFirstRow
+                                ? this.screenWidth <= 1440
+                                  ? "6.5rem"
+                                  : "7rem"
+                                : this.screenWidth <= 1440
+                                ? "4.5rem"
+                                : "5rem"
+                            }"
                             ${defaultTileAttrs}
                             data-gjs-draggable="false"
                             data-gjs-selectable="true"

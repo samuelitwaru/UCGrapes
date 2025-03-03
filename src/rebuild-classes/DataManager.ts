@@ -3,6 +3,8 @@ import { Media } from "./data-models/Media";
 import { Page } from "./data-models/Page";
 import { ProductService } from "./data-models/Service";
 import { Theme } from "./data-models/Theme";
+import { LoadingManager } from "../ui/LoadingManager";
+
 const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 

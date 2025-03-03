@@ -527,13 +527,13 @@ span#scroll-right:hover {
 }
 
 .theme-option:hover {
-  background: #222f54;
-  color: #fff;
+  background: #f0f0f0;
+  color: #333;
 }
 
 .theme-option.selected {
-  background: #222f54;
-  color: #fff;
+  background: #f0f0f0;
+  color: #333;
 }
 
 /* xx */
@@ -607,13 +607,13 @@ span#scroll-right:hover {
 }
 
 .category-option:hover {
-  background: #222f54;
-  color: #fff;
+  background: #f0f0f0;
+  color: #333;
 }
 
 .category-option.selected {
-  background: #222f54;
-  color: #fff;
+  background: #f0f0f0;
+  color: #333;
 }
 /* Sidebar */
 /* #mapping-section {

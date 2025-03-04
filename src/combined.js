@@ -1177,7 +1177,9 @@ class EditorManager {
         p[0].remove();
       } else {
         try {
-          p[0].components(contentPageData.ProductServiceDescription);
+          console.log(contentPageData.ProductServiceDescription);
+          const content = "             contentPageData.ProductServiceDescription.trim()"
+          p[0].components(content);
         } catch (err) {
           console.error("Error updating description:", err);
         }

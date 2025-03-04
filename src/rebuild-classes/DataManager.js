@@ -363,4 +363,5 @@ var DataManager = /** @class */ (function () {
     };
     return DataManager;
 }());
+
 exports.DataManager = DataManager;

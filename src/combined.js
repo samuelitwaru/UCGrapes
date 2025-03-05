@@ -282,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -1182,8 +1182,7 @@ class EditorManager {
         p[0].remove();
       } else {
         try {
-          console.log(contentPageData.ProductServiceDescription);
-          const content = "             contentPageData.ProductServiceDescription.trim()"
+          const content = contentPageData.ProductServiceDescription.trim()
           p[0].components(content);
         } catch (err) {
           console.error("Error updating description:", err);
@@ -1901,7 +1900,7 @@ class TemplateManager {
   }
 
   createTemplateHTML(isDefault = false) {
-    let tileBgColor = '#ffffff'
+    let tileBgColor = "#ffffff";
     return `
             <div class="template-wrapper ${
               isDefault ? "default-template" : ""
@@ -1914,7 +1913,9 @@ class TemplateManager {
                   data-gjs-resizable="false"
                   data-gjs-hoverable="false">
               <div class="template-block"
-                style="background-color:${tileBgColor}; color:#333333; height: ${this.screenWidth <= 1440 ? "4.5rem" : "5rem"}"
+                style="background-color:${tileBgColor}; color:#333333; height: ${
+      this.screenWidth <= 1440 ? "4.5rem" : "5rem"
+    }"
                 tile-bgcolor="${tileBgColor}"
                 tile-bgcolor-name=""
                 tile-color="#333333"
@@ -2096,8 +2097,7 @@ class TemplateManager {
   }
 
   generateTemplateRow(columns, rowIndex) {
-    let tileBgColor =
-      "#ffffff";
+    let tileBgColor = "#ffffff";
     let columnWidth = 100 / columns;
     if (columns === 1) {
       columnWidth = 100;
@@ -2155,14 +2155,14 @@ class TemplateManager {
                             tile-bgcolor="${tileBgColor}"
                             tile-bgcolor-name=""
                             style="background-color:${tileBgColor}; color:#333333; height: ${
-                              isFirstTileOfFirstRow
-                                ? this.screenWidth <= 1440
-                                  ? "6.5rem"
-                                  : "7rem"
-                                : this.screenWidth <= 1440
-                                ? "4.5rem"
-                                : "5rem"
-                            }"
+        isFirstTileOfFirstRow
+          ? this.screenWidth <= 1440
+            ? "6.5rem"
+            : "7rem"
+          : this.screenWidth <= 1440
+          ? "4.5rem"
+          : "5rem"
+      }"
                             ${defaultTileAttrs}
                             data-gjs-draggable="false"
                             data-gjs-selectable="true"
@@ -2471,6 +2471,7 @@ class TemplateManager {
   }
 
   initialContentPageTemplate(contentPageData) {
+    const contentPage = this.addDefaultConstraintsToContentDesc(contentPageData.ProductServiceDescription);
     return `
         <div
             class="content-frame-container test"
@@ -2543,8 +2544,8 @@ class TemplateManager {
                             ${
                               contentPageData.ProductServiceDescription
                                 ? `
-                                <p
-                                    style="flex: 1; padding: 0; margin: 0; height: auto; white-space: pre-wrap;"
+                                <div
+                                    style="flex: 1; padding: 0; margin: 0; height: auto; white-space: normal;"
                                     class="content-page-block"
                                     data-gjs-draggable="true"
                                     data-gjs-selectable="false"
@@ -2555,18 +2556,55 @@ class TemplateManager {
                                     id="product-service-description"
                                     data-gjs-type="product-service-description"
                                 >
-                                ${contentPageData.ProductServiceDescription}
-                                </p>
+                                ${contentPage}
+                                </div>
                             `
                                 : ""
                             }
                         </div>
                     </div>
                 </div>
-                <div class="cta-button-container" ${defaultConstraints}></div>
+                <div 
+                  class="cta-button-container"
+                  data-gjs-draggable="false"
+                  data-gjs-selectable="false"
+                  data-gjs-editable="false"
+                  data-gjs-highlightable="false"
+                  data-gjs-droppable="[data-gjs-type='cta-buttons']"
+                  data-gjs-resizable="false"
+                  data-gjs-hoverable="false"
+                ></div>
             </div>
         </div>
     `;
+  }
+
+  addDefaultConstraintsToContentDesc(htmlContent) {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlContent;
+
+    function addAttributesToElements(element) {
+      const parser = new DOMParser();
+      const constraintsDoc = parser.parseFromString(
+        `<div ${defaultConstraints.trim()}></div>`,
+        "text/html"
+      );
+      const constraintsElement = constraintsDoc.body.firstChild;
+
+      for (let attr of constraintsElement.attributes) {
+        element.setAttribute(attr.name, attr.value);
+      }
+
+      for (let child of element.children) {
+        addAttributesToElements(child);
+      }
+    }
+
+    for (let child of tempDiv.children) {
+      addAttributesToElements(child);
+    }
+
+    return tempDiv.innerHTML;
   }
 
   removeElementOnClick(targetSelector, sectionSelector) {
@@ -2574,20 +2612,21 @@ class TemplateManager {
       this.editorManager.selectedComponent?.find(targetSelector)[0];
     if (closeSection) {
       const closeEl = closeSection.getEl();
-      const selectedComponent =
-              this.editorManager.selectedComponent;
+      const selectedComponent = this.editorManager.selectedComponent;
       if (closeEl) {
         closeEl.onclick = () => {
           if (!this.checkIfTileHasTitleOrIcon(selectedComponent)) {
             const message = this.currentLanguage.getTranslation(
               "tile_must_have_title_or_icon"
             );
-            this.editorManager.toolsSection.ui.displayAlertMessage(message, "error");
+            this.editorManager.toolsSection.ui.displayAlertMessage(
+              message,
+              "error"
+            );
             return;
           }
           if (sectionSelector === ".tile-title-section") {
-            const component =
-              selectedComponent.find(".tile-title")[0];
+            const component = selectedComponent.find(".tile-title")[0];
             component.components("");
             this.editorManager.toolsSection.setAttributeToSelected(
               "TileText",
@@ -2595,18 +2634,17 @@ class TemplateManager {
             );
             $("#tile-title").val("");
             component.addStyle({ display: "none" });
-            component.addAttributes({"title": ""});
-            component.addAttributes({"is-hidden": "true"});
+            component.addAttributes({ title: "" });
+            component.addAttributes({ "is-hidden": "true" });
           } else if (sectionSelector === ".tile-icon-section") {
-            const component =
-              selectedComponent.find(".tile-icon")[0];
+            const component = selectedComponent.find(".tile-icon")[0];
             component.components("");
             this.editorManager.toolsSection.setAttributeToSelected(
               "tile-icon",
               ""
             );
             component.addStyle({ display: "none" });
-            component.addAttributes({"is-hidden": "true"});
+            component.addAttributes({ "is-hidden": "true" });
           }
         };
       }
@@ -2614,13 +2652,18 @@ class TemplateManager {
   }
 
   checkIfTileHasTitleOrIcon(selectedComponent) {
-    const isIconHidden = selectedComponent.find(".tile-icon")[0]?.getAttributes()?.["is-hidden"] === "false";
-    const isTitleHidden = selectedComponent.find(".tile-title")[0]?.getAttributes()?.["is-hidden"] === "false";
-    
+    const isIconHidden =
+      selectedComponent.find(".tile-icon")[0]?.getAttributes()?.[
+        "is-hidden"
+      ] === "false";
+    const isTitleHidden =
+      selectedComponent.find(".tile-title")[0]?.getAttributes()?.[
+        "is-hidden"
+      ] === "false";
+
     // Return true if both elements are hidden
     return isIconHidden && isTitleHidden;
   }
-
 }
 
 
@@ -4154,7 +4197,7 @@ class ToolBoxUI {
             id="id-${cta.CallToActionId}"
             data-gjs-type="cta-buttons"
             cta-button-id="${cta.CallToActionId}"
-            data-gjs-draggable="false"
+            data-gjs-draggable="true"
             data-gjs-editable="false"
             data-gjs-highlightable="false"
             data-gjs-droppable="false"
@@ -4289,7 +4332,7 @@ class ToolBoxUI {
     const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } =
       ctaAttributes;
     return `
-      data-gjs-draggable="false"
+      data-gjs-draggable="true"
       data-gjs-editable="false"
       data-gjs-highlightable="false"
       data-gjs-droppable="false"

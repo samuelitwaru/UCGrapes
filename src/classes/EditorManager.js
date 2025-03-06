@@ -130,6 +130,11 @@ class EditorManager {
       pageTitle = linkLabel;
     } else {
       pageTitle = page.PageName;
+      if (page.PageName == "Calendar") {
+        pageTitle = "Events"
+      }else if (page.PageName == "Mailbox") {
+        pageTitle = "My Activity"
+      }
     }
     const appBar = this.shouldShowAppBar(page)
       ? this.createContentPageAppBar(pageTitle, page.PageId)
@@ -249,7 +254,6 @@ class EditorManager {
   async loadExistingContent(editor, page) {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
-
       if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {

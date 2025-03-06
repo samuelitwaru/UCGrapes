@@ -18,7 +18,9 @@
               "attributes": {
                 "alt": "Sample Image"
               },
-              "selectable": false
+              "selectable": false,
+              "clickable": false,
+              "editable": false
             }
           ]
         }

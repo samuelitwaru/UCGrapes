@@ -1,10 +1,16 @@
+import { Form } from "./models/Form";
+import { Media } from "./models/Media";
+import { ProductService } from "./models/Service";
 import { Theme } from "./models/Theme";
 
 export class AppConfig {
     private static instance: AppConfig | null = null;
     
     private _themes: Theme[] = [];
-    // private _dataManagerCollection: DataManager[] = [];
+    private _services: ProductService[] = [];
+    private _forms: Form[] = [];
+    private _media: Media[] = [];
+
     private _isInitialized: boolean = false;
   
     private constructor() {}
@@ -18,15 +24,22 @@ export class AppConfig {
     }
   
     // Initialize with data - should be called only once
-    public init(themes: Theme[]): void {
+    public init(
+      themes: Theme[],
+      services: ProductService[],
+      forms: Form[],
+      media: Media[]
+    ): void {
       if (this._isInitialized) {
         console.warn("AppConfig already initialized - ignoring new data");
         return;
       }
       
       this._themes = themes;
+      this._services = services;
+      this._forms = forms;
+      this._media = media;
       this._isInitialized = true;
-      console.log("AppConfig initialized with data");
     }
   
     // Getters
@@ -34,6 +47,17 @@ export class AppConfig {
       return this._themes;
     }
 
+    get services(): ProductService[] {
+      return this._services;
+    }
+
+    get forms(): Form[] {
+      return this._forms;
+    }
+
+    get media(): Media[] {
+      return this._media;
+    }
   
     get isInitialized(): boolean {
       return this._isInitialized;

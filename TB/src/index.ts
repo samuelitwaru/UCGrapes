@@ -1,13 +1,26 @@
 import ToolboxApp from './app';
 import { AppConfig } from './AppConfig';
+import { Form } from './models/Form';
+import { Media } from './models/Media';
+import { ProductService } from './models/Service';
 import { Theme } from './models/Theme';
 
 class App {
   private toolboxApp: ToolboxApp;
   
-  constructor(themes: Theme[]) {
+  constructor(
+    themes: Theme[],
+    services: ProductService[],
+    forms: Form[],
+    media: Media[],
+  ) {
     const config = AppConfig.getInstance();
-    config.init(themes);
+    config.init(
+      themes,
+      services,
+      forms,
+      media
+    );
     
     this.toolboxApp = new ToolboxApp();
   }

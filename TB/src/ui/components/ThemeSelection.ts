@@ -1,5 +1,6 @@
 import { ThemeManager } from "../../controls/themes/ThemeManager";
 import { Theme } from "../../models/Theme";
+import { ToolBoxService } from "../../services/ToolBoxService";
 
 export class ThemeSelection extends ThemeManager{
     private container: HTMLElement;
@@ -66,7 +67,7 @@ export class ThemeSelection extends ThemeManager{
                 themeOption.classList.add("selected");
                 
                 this.selectedTheme.textContent = theme.ThemeName;
-                this.saveSelectedTheme(theme.ThemeName);
+                this.saveSelectedTheme(theme.ThemeId);
 
                 this.closeSelection();
             }
@@ -76,8 +77,9 @@ export class ThemeSelection extends ThemeManager{
         this.selectionDiv.appendChild(this.themeOptions);
     }
 
-    saveSelectedTheme(themeName: string) {
-        //
+    saveSelectedTheme(themeId: string) {
+        const toolboxService = new ToolBoxService();
+        toolboxService.updateLocationTheme(themeId);
     }
 
     closeSelection() {

@@ -1,4 +1,5 @@
 
+import { AppConfig } from "../AppConfig";
 import { LoadingManager } from "../controls/LoadingManager";
 import { Form } from "../models/Form";
 import { Media } from "../models/Media";
@@ -9,24 +10,27 @@ import { Theme } from "../models/Theme";
 const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
-export class ToolboxService {
-    services: ProductService[];
-    forms: Form[];
-    media: Media[];
-    pages: Page[];
-    selectedTheme: Theme | null;
-    loadingManager: LoadingManager;
+export class ToolBoxService {
+    private config: AppConfig;
+    services: any[] = [];
+    forms: any[] = [];
+    media: any[] = [];
+    pages: any[] = [];
+    loadingManager: any;
     preloaderEl: HTMLElement = document.getElementById('preloader')!
 
-    constructor(services = [], forms = [], media = []) {
-        this.services = services;
-        this.forms = forms;
-        this.media = media;
-        this.pages = [];
-        this.selectedTheme = null;
-        this.loadingManager = new LoadingManager(this.preloaderEl);
+    constructor() {
+        this.config = AppConfig.getInstance();
+        this.init();
     } 
 
+    init() {
+        this.services = this.config.services;
+        this.forms = this.config.forms;
+        this.media = this.config.media;
+        this.pages = [];
+        this.loadingManager = new LoadingManager(this.preloaderEl);
+    }
     // Helper method to handle API calls
     async fetchAPI(endpoint: string, options = {}, skipLoading = false) {
         const defaultOptions = {
@@ -136,14 +140,11 @@ export class ToolboxService {
         return await this.fetchAPI('/api/toolbox/location-theme');
     }
 
-    async updateLocationTheme() {
-        if (!this.selectedTheme?.ThemeId) {
-        throw new Error('No theme selected');
-        }
+    async updateLocationTheme(themeId: string) {
 
         return await this.fetchAPI('/api/toolbox/update-location-theme', {
         method: 'POST',
-        body: JSON.stringify({ ThemeId: this.selectedTheme.ThemeId }),
+        body: JSON.stringify({ ThemeId: themeId }),
         });
     }
 

@@ -11,6 +11,10 @@ export class TitleInputSection {
         this.input.placeholder = 'Enter a title';
         this.input.classList.add("tb-form-control");
         this.input.id = "tile-title";
+
+        this.input.addEventListener('input', (e) => {
+            // console.log(this.input.value);
+        })
     }
 
     render(container: HTMLElement) {

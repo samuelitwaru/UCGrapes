@@ -1,4 +1,7 @@
-export class IconListCategories {
+import { ThemeManager } from "../../../../controls/themes/ThemeManager";
+import { ThemeIcon } from "../../../../models/Theme";
+
+export class IconListCategories extends ThemeManager{
     container: HTMLElement;
     selectionDiv: HTMLElement;
     categoryOptions: HTMLElement;
@@ -6,10 +9,11 @@ export class IconListCategories {
     // icons: string[];
 
     constructor() {
-        this.container = document.createElement('div');
-        this.selectionDiv = document.createElement('div');
-        this.categoryOptions = document.createElement('div');
-        this.selectedCategory = document.createElement('span');
+        super();
+        this.container = document.createElement('div') as HTMLElement;
+        this.selectionDiv = document.createElement('div') as HTMLElement;
+        this.categoryOptions = document.createElement('div') as HTMLElement;
+        this.selectedCategory = document.createElement('span') as HTMLElement;
         this.init();
     }
 
@@ -45,6 +49,7 @@ export class IconListCategories {
         this.container.appendChild(this.selectionDiv);
 
         this.initializeCategoryOptions();
+        this.loadThemeIcons();
     }
 
     initializeCategoryOptions() {
@@ -67,6 +72,7 @@ export class IconListCategories {
                 
                 this.selectedCategory.textContent = category;
 
+                this.loadThemeIcons(category)
                 this.closeSelection();
             }
 
@@ -84,6 +90,31 @@ export class IconListCategories {
             button.setAttribute("aria-expanded", 'false');
             button.classList.toggle("open");
         }
+    }
+
+    loadThemeIcons(iconsCategory = "General") {
+        document.querySelectorAll("#icons-list").forEach((el) => el.remove());
+        const iconsList = document.createElement("div") as HTMLElement;
+        iconsList.classList.add("icons-list");
+        iconsList.id = "icons-list";
+
+        const themeIcons: ThemeIcon[] = this.getActiveThemeIcons();
+        themeIcons
+            .filter((icon) => icon.IconCategory === iconsCategory)
+            .forEach(themeIcon => {
+                const icon = document.createElement("div") as HTMLElement;
+                icon.classList.add("icon");
+                icon.title = themeIcon.IconName;
+                icon.innerHTML = `
+                    ${themeIcon.IconSVG}
+                `;
+
+                icon.addEventListener("click", () => {
+                    //
+                })
+                iconsList.appendChild(icon);
+        })
+        this.container.appendChild(iconsList);
     }
 
     render(container: HTMLElement) {

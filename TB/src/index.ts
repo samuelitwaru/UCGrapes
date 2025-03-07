@@ -1,8 +1,15 @@
-import ToolboxApp from "./app";
+import ToolboxApp from './app';
+import { AppConfig } from './AppConfig';
+import { Theme } from './models/Theme';
 
 class App {
-  constructor() {
-    new ToolboxApp();
+  private toolboxApp: ToolboxApp;
+  
+  constructor(themes: Theme[]) {
+    const config = AppConfig.getInstance();
+    config.init(themes);
+    
+    this.toolboxApp = new ToolboxApp();
   }
 }
 

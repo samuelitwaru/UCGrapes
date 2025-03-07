@@ -19,8 +19,8 @@ export class ToolboxManager {
 
   public setUpSideBar() {
     const sideBar = document.getElementById('tb-sidebar') as HTMLElement;
-
     const toolsSection = new ToolsSection();
+
     toolsSection.render(sideBar);
   }
 }

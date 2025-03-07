@@ -1,29 +1,31 @@
+import { ThemeColors } from "../../../models/Theme";
+
 export class ColorPalette {
     private paletteContainer: HTMLDivElement;
 
     constructor(
-        colors: {id: string; name: string; hex: string}[],
+        colors: ThemeColors,
         containerId: string
     ) {
         this.paletteContainer = document.createElement('div');
         this.paletteContainer.className = 'color-palette'
         this.paletteContainer.id = containerId;
 
-        colors.forEach(color => {
+        Object.entries(colors).forEach(([colorName, colorValue]) => {
             const colorItem = document.createElement('div');
             colorItem.className = 'color-item';
 
             const input = document.createElement('input');
             input.type = 'radio';
-            input.id = `color-${color.id}`;
+            input.id = `color-${colorName}`;
             input.name = 'theme-color';
-            input.value = color.hex;
+            input.value = colorValue;
 
             const label = document.createElement('label');
-            label.htmlFor = `color-${color.id}`;
+            label.htmlFor = `color-${colorName}`;
             label.className = 'color-box';
-            label.setAttribute('data-tile-bgcolor', color.hex);
-            label.style.backgroundColor = color.hex;
+            label.setAttribute('data-tile-bgcolor', colorValue);
+            label.style.backgroundColor = colorValue;
 
             colorItem.appendChild(input);
             colorItem.appendChild(label);

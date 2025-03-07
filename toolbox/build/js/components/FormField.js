@@ -1,4 +1,3 @@
-"use strict";
 class FormField {
     constructor(config) {
         this.formField = document.createElement('div');
@@ -50,3 +49,5 @@ class FormField {
         errorSpan.style.display = 'none';
     }
 }
+export {};
+//# sourceMappingURL=FormField.js.map

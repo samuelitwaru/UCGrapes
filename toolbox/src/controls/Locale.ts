@@ -25,7 +25,7 @@ export class Locale {
       const languages: string[] = ["english", "dutch"];
       for (const lang of languages) {
         const res = await fetch(
-          `${window.location.origin}/Resources/UCGrapes1/src/i18n/${lang}.json`
+          `${window.location.origin}/Resources/UCGrapes1/toolbox/i18n/${lang}.json`
         );
 
         if (!res.ok) throw new Error(`Failed to fetch ${lang} translations`);
@@ -33,7 +33,7 @@ export class Locale {
         const data = await res.json();
         this.translations[lang] = data;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to load translations:", error);
       throw new Error(`Failed to load translations: ${error.message}`);
     }

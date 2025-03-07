@@ -1,4 +1,3 @@
-"use strict";
 class TemplateWrapper {
     constructor(templates) {
         this.templateList = document.createElement("div");
@@ -28,6 +27,7 @@ class TemplateWrapper {
         container.appendChild(this.templateList);
     }
 }
+export {};
 //   const templates = [
 //       { image: "https://example.com/template1.jpg" },
 //       { image: "https://example.com/template2.jpg" },
@@ -36,3 +36,4 @@ class TemplateWrapper {
 //     // Create a TemplateWrapper instance with a list of templates
 //     const templateWrapper = new TemplateWrapper(templates);
 //     templateWrapper.render(document.body);
+//# sourceMappingURL=TemplateWrapper.js.map

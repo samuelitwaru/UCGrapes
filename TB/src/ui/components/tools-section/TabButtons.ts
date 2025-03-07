@@ -1,0 +1,40 @@
+export class TabButtons {
+    container: HTMLElement;
+
+    constructor() {
+        this.container = document.createElement('div');
+        this.init();
+    }
+
+    init() {
+        this.container.classList.add('tb-tabs');
+        const pagesButton = document.createElement('button');
+        pagesButton.id = 'pages-button';
+        pagesButton.className = 'tb-tab-button active';
+        pagesButton.setAttribute('data-tab', 'pages');
+
+        const pagesSpan = document.createElement('span');
+        pagesSpan.id = 'sidebar_tabs_pages_label';
+        pagesSpan.innerText = 'Pages';
+
+        pagesButton.appendChild(pagesSpan);
+
+        const templatesButton = document.createElement('button');
+        templatesButton.id = 'templates-button';
+        templatesButton.className = 'tb-tab-button';
+        templatesButton.setAttribute('data-tab', 'templates');
+
+        const templatesSpan = document.createElement('span');
+        templatesSpan.id = 'sidebar_tabs_templates_label';
+        templatesSpan.innerText = 'Templates';
+
+        templatesButton.appendChild(templatesSpan);
+
+        this.container.appendChild(pagesButton);
+        this.container.appendChild(templatesButton);
+    }
+
+    render(container: HTMLElement) {
+        container.appendChild(this.container);
+    }
+}

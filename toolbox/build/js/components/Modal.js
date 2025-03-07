@@ -1,4 +1,3 @@
-"use strict";
 class Modal {
     constructor(options) {
         this.modalContainer = document.createElement("div");
@@ -51,6 +50,7 @@ class Modal {
         this.modalContainer.remove();
     }
 }
+export {};
 // const modal = new Modal({
 //     title: "Welcome",
 //     width: "400px",
@@ -58,3 +58,4 @@ class Modal {
 // });
 // // Show the modal
 // modal.open();
+//# sourceMappingURL=Modal.js.map

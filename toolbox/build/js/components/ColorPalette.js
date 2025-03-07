@@ -1,4 +1,3 @@
-"use strict";
 class ColorPalette {
     constructor(colors, containerId) {
         this.paletteContainer = document.createElement('div');
@@ -42,3 +41,5 @@ const colors = [
 ];
 const colorPalette = new ColorPalette(colors, 'theme-color-palette');
 colorPalette.render(document.body);
+export {};
+//# sourceMappingURL=ColorPalette.js.map

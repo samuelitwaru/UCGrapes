@@ -1,4 +1,3 @@
-"use strict";
 class Form {
     constructor(id) {
         this.form = document.createElement('form');
@@ -23,6 +22,7 @@ class Form {
         return data;
     }
 }
+export {};
 // function createPageForm() {
 //     const form = new Form('page-form');
 //     // Add page title field
@@ -46,3 +46,4 @@ class Form {
 // }
 // // Create the form
 // const pageForm = createPageForm();
+//# sourceMappingURL=Form.js.map

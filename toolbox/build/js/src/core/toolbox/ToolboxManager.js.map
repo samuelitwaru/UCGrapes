@@ -1,0 +1,1 @@
+{"version":3,"file":"ToolboxManager.js","sourceRoot":"","sources":["../../../../../src/core/toolbox/ToolboxManager.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,2BAA2B,CAAC;AAE7D,MAAM,cAAc;IAChB,IAAI;QACA,MAAM,gBAAgB,GAAG,IAAI,gBAAgB,EAAE,CAAC;QAChD,gBAAgB,CAAC,gBAAgB,EAAE,CAAC;IACxC,CAAC;CACJ"}

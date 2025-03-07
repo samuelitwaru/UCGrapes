@@ -1,3 +1,4 @@
-"use strict";
 class EditorManager {
 }
+export {};
+//# sourceMappingURL=EditorManager.js.map

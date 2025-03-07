@@ -1,4 +1,3 @@
-"use strict";
 class SidebarSection {
     constructor(content) {
         this.sidebarSection = document.createElement("div");
@@ -11,6 +10,7 @@ class SidebarSection {
         container.appendChild(this.sidebarSection);
     }
 }
+export {};
 // const content = document.createElement("div");
 // content.innerHTML = `
 //     <h2>Theme</h2>
@@ -18,3 +18,4 @@ class SidebarSection {
 // `;
 // const sidebarSection = new SidebarSection(content);
 // sidebarSection.render(document.body);
+//# sourceMappingURL=SidebarSection.js.map

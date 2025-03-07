@@ -1,1 +1,2 @@
-"use strict";
+export {};
+//# sourceMappingURL=Input.js.map

@@ -61,13 +61,20 @@ export class ThemeSelection extends ThemeManager{
             themeOption.setAttribute('data-value', theme.ThemeName);
             themeOption.textContent = theme.ThemeName;
 
+            const currentTheme: Theme | undefined= this.getActiveTheme();
+            
+            if (currentTheme &&currentTheme.ThemeName === theme.ThemeName) {
+                themeOption.classList.add("selected");
+                this.selectedTheme.textContent = theme.ThemeName;
+            }
+
             themeOption.onclick = () => {
                 const allOptions = this.themeOptions.querySelectorAll(".theme-option");
                 allOptions.forEach((opt) => opt.classList.remove("selected"));
                 themeOption.classList.add("selected");
                 
                 this.selectedTheme.textContent = theme.ThemeName;
-                this.saveSelectedTheme(theme.ThemeId);
+                this.saveSelectedTheme(theme);
 
                 this.closeSelection();
             }
@@ -77,9 +84,14 @@ export class ThemeSelection extends ThemeManager{
         this.selectionDiv.appendChild(this.themeOptions);
     }
 
-    saveSelectedTheme(themeId: string) {
+    saveSelectedTheme(theme: Theme) {
         const toolboxService = new ToolBoxService();
-        toolboxService.updateLocationTheme(themeId);
+        toolboxService.updateLocationTheme(theme.ThemeId).then((res) => {
+            // check if authenticte
+            
+            this.setTheme(theme);
+        })
+        ;
     }
 
     closeSelection() {

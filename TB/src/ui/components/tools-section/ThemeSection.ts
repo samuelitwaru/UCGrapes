@@ -16,7 +16,7 @@ export class ThemeSection extends ThemeManager {
     this.container.className = "sidebar-section theme-section";
     this.container.style.paddingTop = "0px";
 
-    const colors: ThemeColors = this.getActiveThemeColors();
+    const colors: ThemeColors  = this.getActiveThemeColors();
 
     const colorPalette = new ColorPalette(colors, 'theme-color-palette');
     colorPalette.render(this.container);

@@ -13,13 +13,15 @@ class App {
     services: ProductService[],
     forms: Form[],
     media: Media[],
+    currentThemeId: string | null,
   ) {
     const config = AppConfig.getInstance();
     config.init(
       themes,
       services,
       forms,
-      media
+      media,
+      currentThemeId
     );
     
     this.toolboxApp = new ToolboxApp();

@@ -10,6 +10,7 @@ export class AppConfig {
     private _services: ProductService[] = [];
     private _forms: Form[] = [];
     private _media: Media[] = [];
+    private _currentThemeId: string | null = null;
 
     private _isInitialized: boolean = false;
   
@@ -28,7 +29,8 @@ export class AppConfig {
       themes: Theme[],
       services: ProductService[],
       forms: Form[],
-      media: Media[]
+      media: Media[],
+      currentThemeId: string | null
     ): void {
       if (this._isInitialized) {
         console.warn("AppConfig already initialized - ignoring new data");
@@ -39,6 +41,7 @@ export class AppConfig {
       this._services = services;
       this._forms = forms;
       this._media = media;
+      this._currentThemeId = currentThemeId
       this._isInitialized = true;
     }
   
@@ -57,6 +60,14 @@ export class AppConfig {
 
     get media(): Media[] {
       return this._media;
+    }
+
+    get currentThemeId(): string | null {
+      return this._currentThemeId;
+    }
+
+    set currentThemeId(value: string | null) {
+      this._currentThemeId = value;
     }
   
     get isInitialized(): boolean {

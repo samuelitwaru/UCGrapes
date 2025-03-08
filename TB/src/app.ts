@@ -15,7 +15,6 @@ class ToolboxApp {
       console.error("ToolboxApp created before AppConfig was initialized!");
     }
 
-    new ThemeManager(); 
     this.initialise();
   } 
 

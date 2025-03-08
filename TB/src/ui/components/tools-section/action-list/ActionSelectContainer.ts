@@ -1,3 +1,5 @@
+import { ActionListDropDown } from "./ActionListDropDown";
+
 export class ActionSelectContainer {
     container: HTMLElement;
 
@@ -19,10 +21,26 @@ export class ActionSelectContainer {
             <span id="sidebar_select_action_label">Select Action</span>
             <i class="fa fa-angle-down"></i>
         `;
+
+        const actionListDropDown = new ActionListDropDown();
+
+        dropDownHeader.addEventListener('click', (e) => {
+            e.preventDefault();
+            const icon = dropDownHeader.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-angle-up');
+                icon.classList.toggle('fa-angle-down');
+            }
+
+            const dropdown = actionListDropDown.container;
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        })
         
         div.appendChild(dropDownHeader);
+        actionListDropDown.render(div);
         
         this.container.appendChild(div);
+
     }
 
     render(container: HTMLElement) {

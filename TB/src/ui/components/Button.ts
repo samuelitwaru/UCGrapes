@@ -5,7 +5,7 @@ export class Button {
         id: string,
         text: string, 
         options: {
-            svg?: SVGElement,
+            svg?: string,
             variant?: 'outline' | 'primary',
             labelId?: string,
         } = {}
@@ -15,7 +15,11 @@ export class Button {
         this.button.className = `tb-btn tb-btn-${options.variant || 'primary'}`; 
     
         if (options.svg) {
-            this.button.appendChild(options.svg);
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(options.svg as string, 'image/svg+xml');
+            const svg = doc.documentElement;
+            
+            this.button.appendChild(svg);
         }
 
         const span = document.createElement('span');

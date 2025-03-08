@@ -15,7 +15,7 @@ export class ToolBoxService {
     services: any[] = [];
     forms: any[] = [];
     media: any[] = [];
-    pages: any[] = [];
+    pages: Promise<any>[] = [];
     loadingManager: any;
     preloaderEl: HTMLElement = document.getElementById('preloader')!
 
@@ -29,6 +29,7 @@ export class ToolBoxService {
         this.forms = this.config.forms;
         this.media = this.config.media;
         this.pages = [];
+        this.getPages();
         this.loadingManager = new LoadingManager(this.preloaderEl);
     }
     // Helper method to handle API calls
@@ -67,8 +68,9 @@ export class ToolBoxService {
 
     // Pages API methods
     async getPages() {
-        this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
-        return this.pages;
+        const response = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
+        this.pages = response.SDT_PageCollection;
+        return response.SDT_PageCollection;
     }
 
     async getServices() {

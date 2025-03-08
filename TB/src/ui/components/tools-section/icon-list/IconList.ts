@@ -14,7 +14,6 @@ export class IconList {
 
     init() {
         this.icons = [];
-        console.log("IconList init");
         const themeIcons: ThemeIcon[] = this.themeManager.getActiveThemeIcons();
         const activeTheme: Theme = this.themeManager.getActiveTheme();
         // Filter icons by category and theme
@@ -31,7 +30,6 @@ export class IconList {
                 
                 this.icons.push(icon);
             });
-            console.log("icons count: ", this.icons.length);
     }
 
     render(container: HTMLElement) {

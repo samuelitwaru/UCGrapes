@@ -1,4 +1,4 @@
-class TemplateWrapper {
+export class TemplateWrapper {
     private templateList: HTMLDivElement;
   
     constructor(templates: { image: string }[]) {

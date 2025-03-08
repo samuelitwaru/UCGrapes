@@ -30,8 +30,30 @@ export class TabButtons {
 
         templatesButton.appendChild(templatesSpan);
 
+        pagesButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            pagesButton?.classList.add('active');
+            templatesButton?.classList.remove('active');
+            this.switchTabs('pages-content', 'templates-content');
+        });
+
+        templatesButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            templatesButton?.classList.add('active');
+            pagesButton?.classList.remove('active');
+            this.switchTabs('templates-content', 'pages-content');
+        });
+
         this.container.appendChild(pagesButton);
         this.container.appendChild(templatesButton);
+    }
+
+    switchTabs (activeTab: string, inactiveTab: string) {
+        const activeTabDiv: HTMLElement | any = document.getElementById(activeTab);
+        const inactiveTabDiv: HTMLElement | any = document.getElementById(inactiveTab);
+        console.log(activeTabDiv, inactiveTabDiv);
+        activeTabDiv.style.display = 'block';
+        inactiveTabDiv.style.display = 'none';
     }
 
     render(container: HTMLElement) {

@@ -5,6 +5,7 @@ import { Media } from './models/Media';
 import { ProductService } from './models/Service';
 import { Theme } from './models/Theme';
 
+
 class App {
   private toolboxApp: ToolboxApp;
   
@@ -14,6 +15,7 @@ class App {
     forms: Form[],
     media: Media[],
     currentThemeId: string | null,
+    organisationLogo: string | null,
   ) {
     const config = AppConfig.getInstance();
     config.init(
@@ -21,7 +23,8 @@ class App {
       services,
       forms,
       media,
-      currentThemeId
+      currentThemeId,
+      organisationLogo
     );
     
     this.toolboxApp = new ToolboxApp();

@@ -1595,7 +1595,7 @@ div#cta-selected-actions {
 }
 .tb-dropdown-header {
   font-size: 14px;
-  padding: 6px;
+  padding: 6px 16px;
   border: 1px solid #b4b9bd;
   border-radius: 6px;
   display: flex;
@@ -1604,6 +1604,11 @@ div#cta-selected-actions {
   cursor: pointer;
   background-color: white;
 }
+
+.tb-dropdown-header i {
+  font-size: 11px;
+}
+
 .tb-dropdown-menu {
   position: absolute;
   top: 50px;
@@ -1634,6 +1639,11 @@ div#cta-selected-actions {
 .category summary:hover {
   background: #f0f0f0;
 }
+
+.category i {
+  font-size: 11px;
+}
+
 .category-content {
   margin: 5px 0;
   padding: 0 10px 0 0;
@@ -1666,7 +1676,7 @@ div#cta-selected-actions {
 }
 
 .category-content li {
-  padding: 8px 20px;
+  padding: 8px 16px;
   cursor: pointer;
   font-size: 14px;
 }
@@ -1678,9 +1688,9 @@ div#cta-selected-actions {
 }
 
 .search-container {
-  display: none;
+  display: flex;
   margin-top: 8px;
-  padding-left: 20px;
+  padding-left: 16px;
   position: relative;
   width: 100%;
   gap: 0.5rem;
@@ -1729,6 +1739,7 @@ button.add-new-service {
   border: none;
   background-color: #222f54;
   color: white;
+  margin-right: 4px;
 }
 
 button.add-new-service i {

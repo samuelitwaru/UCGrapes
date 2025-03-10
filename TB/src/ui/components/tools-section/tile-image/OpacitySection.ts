@@ -1,3 +1,5 @@
+import { ImageUpload } from "./ImageUpload";
+
 export class OpacitySection {
     container: HTMLElement;
 
@@ -34,6 +36,30 @@ export class OpacitySection {
                 oninput="document.getElementById('valueDisplay').textContent = this.value + ' %'">
             <span class="value-display" id="valueDisplay">0%</span>
         `;
+
+        addImageBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const selectedComponent = (globalThis as any).selectedComponent;
+            if (!selectedComponent) return;
+
+            const modal = document.createElement('div');
+            modal.classList.add('tb-modal');
+            modal.style.display = 'flex';
+
+            const modalContent = new ImageUpload('tile');
+            modalContent.render(modal);
+
+            const uploadInput = document.createElement('input');
+            uploadInput.type = 'file';
+            uploadInput.multiple = true;
+            uploadInput.accept = 'image/jpeg, image/jpg, image/png';
+            uploadInput.id = 'fileInput';
+            uploadInput.style.display = 'none';
+
+            document.body.appendChild(modal);
+            document.body.appendChild(uploadInput);
+
+        });
 
         this.container.appendChild(addImageBtn);
         this.container.appendChild(sliderWrapper);        

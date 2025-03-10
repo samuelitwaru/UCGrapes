@@ -1327,10 +1327,12 @@ div#cta-selected-actions {
 }
 
 .upload-area {
-  border: 1.2px dashed #ccc;
-  border-radius: 1px;
-  padding: 40px;
+  position: relative;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 20px;
   text-align: center;
+  transition: all 0.3sease;
   margin-bottom: 20px;
 }
 

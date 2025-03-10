@@ -95,7 +95,7 @@ export class TileManager {
             tileIconParentComponent.addStyle({"display": "none"})
         } else {
             console.warn("Tile has no icon or title")
-        }    
+        }
     }
   }
   
@@ -108,7 +108,7 @@ export class TileManager {
             tileTitleParentComponent.addStyle({"display": "none"})
         } else {
             console.warn("Tile has no icon or title")
-        }  
+        }
     }
   }
 
@@ -117,12 +117,21 @@ export class TileManager {
     if (!parentComponent) return false;
 
     const sectionComponents = parentComponent.components();
+    let hasIcon: boolean;
+    let hasTitle: boolean;
 
-    return sectionComponents.some((comp: any) => {
-        const displayStyle = comp.getStyle()?.["display"];
-        return displayStyle === "block"; 
+    const hasTitleVisible = sectionComponents.some((comp: any) => {
+      const displayStyle = comp.getStyle()?.["display"];
+      return comp.getClasses().includes('tile-title-section') && displayStyle !== "none" && displayStyle !== undefined;
     });
- }
+
+    const hasIconVisible = sectionComponents.some((comp: any) => {
+      const displayStyle = comp.getStyle()?.["display"];
+      return comp.getClasses().includes('tile-icon-section') && displayStyle !== "none" && displayStyle !== undefined;
+    });
+
+   return hasTitleVisible && hasIconVisible;
+  }
 
 
   private getTileRow() {
@@ -140,7 +149,7 @@ export class TileManager {
             </div>
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
-              <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-title">Title</span>
+              <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-title">Title</span>
             </div>
         </div>
         <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>

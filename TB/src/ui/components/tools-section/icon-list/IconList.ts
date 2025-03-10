@@ -1,5 +1,6 @@
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 import { Theme, ThemeIcon } from "../../../../models/Theme";
+import { DefaultAttributes } from "../../../../utils/default-attributes";
 
 export class IconList {
     private themeManager: ThemeManager;
@@ -34,10 +35,11 @@ export class IconList {
                     const iconComponent = selectedComponent.find(".tile-icon")[0];
                     if (!iconComponent) return;
                     const currentTileColor = selectedComponent.getStyle()?.["color"];
-                    alert(currentTileColor);
                     const whiteSVG = themeIcon.IconSVG.replace(/fill="#[^"]*"/g, `fill="${currentTileColor || "white"}"`);
-                    iconComponent.components(whiteSVG);
+                    const iconSVGWithAttributes = whiteSVG.replace('<svg', `<svg ${DefaultAttributes}`);
 
+                    iconComponent.components(iconSVGWithAttributes);
+                    
                     const iconCompParent = iconComponent.parent();
                     iconCompParent.addStyle({
                         'display': 'block'

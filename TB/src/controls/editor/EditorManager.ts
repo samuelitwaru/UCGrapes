@@ -46,8 +46,8 @@ export class EditorManager {
 
   async setUpEditor() {
     const editor = this.initializeGrapesEditor("gjs-0");
-    await this.loadHomePage(editor);  
     this.finalizeEditorSetup(editor);
+    await this.loadHomePage(editor);  
   }
 
   async loadHomePage(editor: any) {

@@ -1,12 +1,15 @@
 import { DefaultAttributes, rowDefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
+import { TileUpdate } from "./TileUpdate";
 
 export class TileManager {
   private event: MouseEvent;
   editor: any;
+  tileUpdate: TileUpdate;
   
   constructor(e: MouseEvent, editor: any) {
     this.event = e;
     this.editor = editor;
+    this.tileUpdate = new TileUpdate();
     this.init();
   }
 
@@ -14,6 +17,8 @@ export class TileManager {
     this.addTileBottom();
     this.addTileRight();
     this.deleteTile();
+    this.removeTileIcon();
+    this.removeTileTile();
   }
 
   addTileBottom() {
@@ -60,7 +65,7 @@ export class TileManager {
 
         const index = currentTileComponent.index();
         containerRowComponent.append(newTileComponent, { at: index + 1 });
-        this.updateTile(containerRowComponent);
+        this.tileUpdate.updateTile(containerRowComponent);
       }
     
   }
@@ -76,76 +81,49 @@ export class TileManager {
         const parentComponent = tileComponent.parent();
         tileComponent.remove();
         
-        this.updateTile(parentComponent);
+        this.tileUpdate.updateTile(parentComponent);
       }
+    }
+  }  
+
+  private removeTileIcon() {
+    const tileIcon = (this.event.target as Element).closest(".tile-close-icon");
+    if (tileIcon) {
+        const tileIconParent = tileIcon.parentElement;
+        const tileIconParentComponent = this.editor.Components.getWrapper().find('#' + tileIconParent?.id)[0];
+        if (this.checkTileHasIconOrTitle(tileIconParentComponent)) {
+            tileIconParentComponent.addStyle({"display": "none"})
+        } else {
+            console.warn("Tile has no icon or title")
+        }    
+    }
+  }
+  
+  private removeTileTile() {
+    const tileTitle = (this.event.target as Element).closest(".tile-close-title");
+    if (tileTitle) {
+        const tileTitleParent = tileTitle.parentElement;
+        const tileTitleParentComponent = this.editor.Components.getWrapper().find('#' + tileTitleParent?.id)[0];
+        if (this.checkTileHasIconOrTitle(tileTitleParentComponent)) {
+            tileTitleParentComponent.addStyle({"display": "none"})
+        } else {
+            console.warn("Tile has no icon or title")
+        }  
     }
   }
 
-  updateTile(rowComponent: any) {
-    const tiles = rowComponent.components();
-    const length = tiles.length;
-    tiles.forEach((tile: any) => {
-        const rightButton = tile.find(".add-button-right")[0];
-        if (rightButton) {
-            rightButton.addStyle({
-                "display": length >= 3 ? "none" : "flex"
-            });
-        }
-        const tileAlignment = {
-            "justify-content": length === 3 ? "center" : "start",
-            "align-items": length === 3 ? "center" : "start"
-        }
+  checkTileHasIconOrTitle(component: any): boolean {
+    const parentComponent = component.parent();
+    if (!parentComponent) return false;
 
-        const titleAlignment = {
-            "text-align": length === 3 ? "center" : "left"
-        }
+    const sectionComponents = parentComponent.components();
 
-        this.updateAlignment(tile, tileAlignment, titleAlignment);
-        this.updateTileTitleLength(tile, length);
+    return sectionComponents.some((comp: any) => {
+        const displayStyle = comp.getStyle()?.["display"];
+        return displayStyle === "block"; 
     });
+ }
 
-    
-  }
-
-  private updateAlignment(tile: any, tileAlignment: any, titleAlignment: any) {
-    const templateBlock = tile.find(".template-block")[0];
-    const tileTitle = tile.find(".tile-title-section")[0];
-    templateBlock.addStyle(tileAlignment)    
-    tileTitle.addStyle(titleAlignment)
-  }
-
-  private updateTileTitleLength(tile: any, length: number) {
-      // truncate title
-      const tileTitle = tile.find(".tile-title")[0];
-      if (tileTitle) {
-        const textLength = length === 3 ? 11 : (length === 2 ? 15 : 20);
-         const title = 
-            this.truncateText(textLength, tileTitle.getAttributes()?.["title"]);
-        
-            if (length === 3) {
-                tileTitle.components(this.wrapTileTitle(title));
-            } else {
-                tileTitle.components(title);
-            }
-      }
-  }
-
-  private truncateText(titleLength: number, tileTitle: string) {
-    const screenWidth: number = window.innerWidth;
-    if (tileTitle.length > (screenWidth <= 1440 ? titleLength : titleLength + 4)) {
-        return tileTitle.substring(0, screenWidth <= 1440 ? titleLength : titleLength + 4)
-            .trim() + '..';
-    }
-    return tileTitle;
-  }
-
-  private wrapTileTitle(title: any) {
-    const words = title.split(" ");
-    if (words.length > 1) {
-        return words[0] + "<br>" + words[1];
-    }
-    return title.replace("<br>", "");;
-  }
 
   private getTileRow() {
     const tile = this.getTile();

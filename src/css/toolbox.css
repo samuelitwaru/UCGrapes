@@ -315,7 +315,6 @@ button {
   text-transform: capitalize;
   font-weight: 400;
   cursor: default;
-  overflow-wrap: anywhere;
 }
 
 .tile-close-icon {

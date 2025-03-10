@@ -35,7 +35,7 @@ body {
 }
 
 button {
-  cursor: pointer !important;
+  cursor: pointer;
 }
 
 .frame-container,
@@ -428,6 +428,14 @@ button {
   flex-direction: column;
   margin: 0.5rem;
   text-transform: uppercase;
+}
+
+.plain-button:hover,
+.img-button:hover,
+.img-button-container:hover,
+.plain-button-container:hover,
+.cta-container-child:hover {
+  cursor: move;
 }
 
 .cta-button {

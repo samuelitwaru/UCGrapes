@@ -312,7 +312,7 @@ class ToolBoxUI {
             id="id-${cta.CallToActionId}"
             data-gjs-type="cta-buttons"
             cta-button-id="${cta.CallToActionId}"
-            data-gjs-draggable="false"
+            data-gjs-draggable="true"
             data-gjs-editable="false"
             data-gjs-highlightable="false"
             data-gjs-droppable="false"
@@ -447,7 +447,7 @@ class ToolBoxUI {
     const { ctaId, ctaName, ctaType, ctaAction, ctaButtonBgColor } =
       ctaAttributes;
     return `
-      data-gjs-draggable="false"
+      data-gjs-draggable="true"
       data-gjs-editable="false"
       data-gjs-highlightable="false"
       data-gjs-droppable="false"

@@ -212,8 +212,10 @@ function mapContentToPageData(templateData, page) {
     components.forEach((component) => {
       const topComponents =
         component.components?.[0]?.components?.[0]?.components || [];
+      console.log(page.PageName, topComponents)
       for (let index = 0; index < topComponents.length; index++) {
         const component = topComponents[index];
+        console.log(component?.type)
         if (component?.tagName === "img") {
           const imageUrl = component?.attributes.src.startsWith("http")
             ? component?.attributes.src
@@ -225,9 +227,10 @@ function mapContentToPageData(templateData, page) {
           });
         }
 
-        if (component?.tagName === "p") {
-          const textContent = component.components?.[0]?.content?.trim();
+        if (component?.type === "product-service-description") {
+          const textContent = component.components?.[0]?.content?.trim() || " ";
           if (textContent) {
+            console.log('>>>' + page.PageName, component)
             output.Content.push({
               ContentType: "Description",
               ContentValue: textContent,
@@ -268,6 +271,7 @@ function mapContentToPageData(templateData, page) {
       }
     });
   }
+  console.log(output)
   return output;
 }
 

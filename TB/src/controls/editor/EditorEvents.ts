@@ -1,7 +1,7 @@
 import { ChildEditor } from "./ChildEditor";
 import { TileManager } from "./TileManager";
-
 export class EditorEvents {
+
   editor: any;
   editorManager: any;
   tileManager: any;
@@ -56,9 +56,11 @@ export class EditorEvents {
 
   onSelected() {
     this.editor.on("component:selected", (component: any) => {
-    //   console.log(component);
-    //   const childEditor = new ChildEditor();
-    //   childEditor.init();
+      (globalThis as any).selectedComponent = component;
+    });
+
+    this.editor.on("component:deselected", () => {
+      (globalThis as any).selectedComponent = null;
     });
   }
 

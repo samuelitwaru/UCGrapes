@@ -293,11 +293,8 @@ button {
 
 .tile-icon {
   width: 30px;
-  height: 30px;
-  margin-bottom: 0.5rem;
-  border: 2px dashed #4c53577d;
-  display: none;
-  cursor: default;
+  height: 100%;
+  display: block;
 }
 
 .template-wrapper:hover .tile-icon {
@@ -349,6 +346,10 @@ button {
 .tile-icon-section {
   position: relative;
   width: fit-content;
+  height: 30px;
+  margin-bottom: 3px;
+  border: 2px dashed #4c53577d;
+  display: none;
 }
 
 .tile-title-section:hover {

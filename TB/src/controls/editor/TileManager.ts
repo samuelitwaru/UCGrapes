@@ -133,7 +133,11 @@ export class TileManager {
   private getTile() {
     return `
       <div ${DefaultAttributes} class="template-wrapper">
-        <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #fff text-align: left">
+        <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #fff justify-content: left">
+            <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
+              <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
+              <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-icon">Title</span>
+            </div>
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
               <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-title">Title</span>

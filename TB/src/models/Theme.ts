@@ -15,7 +15,7 @@ export interface ThemeIcon {
   IconId: string;
   IconName: string;
   IconCategory: string;
-  IconSVG: SVGAElement;
+  IconSVG: string;
 }
 
 export class Theme {

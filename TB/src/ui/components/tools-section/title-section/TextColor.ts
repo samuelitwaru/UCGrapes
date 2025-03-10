@@ -35,8 +35,15 @@ export class TextColor {
       colorItem.appendChild(colorBox);
       this.container.appendChild(colorItem);
 
-      radioInput.onclick = () => {
+      colorBox.onclick = (e) => {
+        e.preventDefault();
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (!selectedComponent) return;
         
+        selectedComponent.addStyle({
+            "color": colorValue
+        });
+        radioInput.checked = true
       };
     });
   }

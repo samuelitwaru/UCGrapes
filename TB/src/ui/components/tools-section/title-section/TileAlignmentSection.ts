@@ -34,12 +34,47 @@ export class TileAlignmentSection {
             </label>
         `;
     
-    leftAlign.onclick = () => {
-        //
+    leftAlign.onclick = (e) => {
+      e.preventDefault();
+      const leftAlignInput = document.getElementById("tile-left") as HTMLInputElement;
+
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
+
+      selectedComponent.addStyle({
+          "justify-content": "start",
+          "align-items": "start",
+      });
+
+      const titleSection = selectedComponent.find(".tile-title")[0];
+      if (titleSection) {
+        titleSection.addStyle({
+          "text-align": "left",
+        });
+      }
+      leftAlignInput.checked = true;
     }
 
-    centerAlign.onclick = () => {
-        
+    centerAlign.onclick = (e) => {
+      e.preventDefault();
+      const centerAlignInput = document.getElementById("tile-center") as HTMLInputElement;
+
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
+  
+      selectedComponent.addStyle({
+        "justify-content": "center",
+        "align-items": "center",
+      });
+
+      const titleSection = selectedComponent.find(".tile-title")[0];
+      if (titleSection) {
+        titleSection.addStyle({
+          "text-align": "center",
+        });
+      }
+
+      centerAlignInput.checked = true;
     }
 
     this.container.appendChild(leftAlign);

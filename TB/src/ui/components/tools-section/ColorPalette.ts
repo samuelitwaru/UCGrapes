@@ -31,6 +31,20 @@ export class ColorPalette {
 
             colorItem.appendChild(input);
             colorItem.appendChild(label);
+
+            colorItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                const selectedComponent = (globalThis as any).selectedComponent;
+                if (!selectedComponent) return;
+            
+                const currentColor = selectedComponent.getStyle()["background-color"];
+
+                selectedComponent.addStyle({
+                    "background-color": currentColor === colorValue ? "transparent" : colorValue
+                });
+                
+                input.checked = currentColor !== colorValue
+            });
             this.paletteContainer.appendChild(colorItem);
         });
     };
@@ -44,7 +58,6 @@ export class ColorPalette {
         
         if (existingComponent) {
             existingComponent.replaceWith(this.paletteContainer);
-            console.log(`Replaced existing color palette with ID: ${this.containerId}`);
         } else {
             container.appendChild(this.paletteContainer);
         }

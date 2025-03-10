@@ -25,8 +25,24 @@ export class IconList {
                 icon.title = themeIcon.IconName;
                 icon.innerHTML = `${themeIcon.IconSVG}`;
                 
-                // We don't add the click event here anymore
-                // It will be added in the loadThemeIcons method
+                icon.addEventListener("click", (e) => {
+                    e.preventDefault();
+
+                    const selectedComponent = (globalThis as any).selectedComponent;
+                    if (!selectedComponent) return;
+
+                    const iconComponent = selectedComponent.find(".tile-icon")[0];
+                    if (!iconComponent) return;
+                    const currentTileColor = selectedComponent.getStyle()?.["color"];
+                    alert(currentTileColor);
+                    const whiteSVG = themeIcon.IconSVG.replace(/fill="#[^"]*"/g, `fill="${currentTileColor || "white"}"`);
+                    iconComponent.components(whiteSVG);
+
+                    const iconCompParent = iconComponent.parent();
+                    iconCompParent.addStyle({
+                        'display': 'block'
+                    });
+                });
                 
                 this.icons.push(icon);
             });

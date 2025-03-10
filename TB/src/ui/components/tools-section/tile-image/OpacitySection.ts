@@ -31,8 +31,7 @@ export class OpacitySection {
                 min="0"
                 max="100"
                 value="80"
-                oninput="document.getElementById('valueDisplay').textContent = this.value + ' %'"
-                disabled>
+                oninput="document.getElementById('valueDisplay').textContent = this.value + ' %'">
             <span class="value-display" id="valueDisplay">0%</span>
         `;
 

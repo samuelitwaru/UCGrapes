@@ -311,7 +311,7 @@ button {
 }
 
 .tile-title {
-  font-size: 0.8rem;
+  font-size: calc(12px + 0.5vw) !important;
   text-transform: capitalize;
   font-weight: 400;
   cursor: default;

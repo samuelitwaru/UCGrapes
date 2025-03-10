@@ -4,6 +4,7 @@ import { FrameList } from "../../ui/components/editor-content/FrameList";
 import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavigatorButton";
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
 import { EditorEvents } from "./EditorEvents";
+import { JSONToGrapesJS } from "./JSONToGrapesJS";
 
 declare const grapesjs: any;
 
@@ -14,12 +15,14 @@ export class EditorManager {
   selectedComponent: any;
   editors: { pageId: string; frameId: string; editor: any }[] = [];
   editorEvents: EditorEvents
+  jsonToGrapes: JSONToGrapesJS;
 
   constructor() {
     this.config = AppConfig.getInstance();
     this.organisationLogo = this.config.organisationLogo;
     this.toolboxService = new ToolBoxService();
     this.editorEvents = new EditorEvents(this);
+    this.jsonToGrapes = new JSONToGrapesJS(this);
   }
 
   init() {

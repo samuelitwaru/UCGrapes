@@ -23,4 +23,31 @@ export class ToolboxManager {
 
     toolsSection.render(sideBar);
   }
+
+  public setUpScrollButtons() {
+    const scrollContainer = document.getElementById('child-container') as HTMLElement;
+    const leftScroll = document.querySelector('.navigator .page-navigator-left') as HTMLElement;
+    const rightScroll = document.querySelector('.navigator .page-navigator-right') as HTMLElement;
+
+    const scrollAmount: number = 300;
+
+    const updateButtonVisibility = () => {
+      leftScroll.style.display = scrollContainer.scrollLeft > 0 ? 'none' : 'block';
+      const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      rightScroll.style.display = scrollContainer.scrollLeft < maxScrollLeft - 5 ? 'none' : 'block';
+    };
+
+    leftScroll.onclick = () => {
+      scrollContainer.scrollLeft -= scrollAmount;
+    }
+
+    rightScroll.onclick = () => {
+      scrollContainer.scrollLeft += scrollAmount;
+    }
+
+    scrollContainer.addEventListener('scroll', updateButtonVisibility);
+    window.addEventListener('resize', updateButtonVisibility);
+
+    updateButtonVisibility();
+  }
 }

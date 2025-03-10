@@ -13,11 +13,13 @@ export class EditorManager {
   toolboxService: ToolBoxService;
   selectedComponent: any;
   editors: { pageId: string; frameId: string; editor: any }[] = [];
+  editorEvents: EditorEvents
 
   constructor() {
     this.config = AppConfig.getInstance();
     this.organisationLogo = this.config.organisationLogo;
     this.toolboxService = new ToolBoxService();
+    this.editorEvents = new EditorEvents(this);
   }
 
   init() {
@@ -39,11 +41,10 @@ export class EditorManager {
     rightNavigatorButton.render(editorFrameArea);
   }
 
-  setUpEditor() {
+  async setUpEditor() {
     const editor = this.initializeGrapesEditor("gjs-0");
-    this.loadHomePage(editor);
+    await this.loadHomePage(editor);  
     this.finalizeEditorSetup(editor);
-    const editorEvents = new EditorEvents(editor);
   }
 
   async loadHomePage(editor: any) {
@@ -54,6 +55,7 @@ export class EditorManager {
     if (homePage) {
       const pageData = JSON.parse(homePage.PageGJSJson);
       editor.loadProjectData(pageData);
+      this.editorEvents.init(editor);
     }
   }
 

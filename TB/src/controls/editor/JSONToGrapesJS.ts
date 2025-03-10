@@ -8,6 +8,7 @@ export class JSONToGrapesJS {
       data-gjs-droppable="false"
       data-gjs-resizable="false"
       data-gjs-hoverable="false"
+      data-gjs-type="tile-wrapper"
   `;
 
   DefaultAttributes: string = `
@@ -19,14 +20,24 @@ export class JSONToGrapesJS {
       data-gjs-resizable="false"
       data-gjs-hoverable="false"
   `;
+
+  rowDefaultAttributes: string = `
+      data-gjs-type="template-wrapper"
+      data-gjs-draggable="false"
+      data-gjs-selectable="false"
+      data-gjs-editable="false"
+      data-gjs-highlightable="true"
+      data-gjs-droppable="[data-gjs-type='tile-wrapper']"
+  `;
+
   constructor(json: any) {
     this.data = json;
   }
 
   private generateTile(tile: any, isFirstSingleTile: boolean): string {
     return `
-      <div class="template-wrapper">
-        <div ${this.tileDefaultAttributes} class="template-block${isFirstSingleTile ? ' high-priority-template' : ''}" style="background-color: ${
+      <div ${this.tileDefaultAttributes} class="template-wrapper">
+        <div ${this.DefaultAttributes} class="template-block${isFirstSingleTile ? ' high-priority-template' : ''}" style="background-color: ${
           tile.TileBGColor
         }; color: ${tile.TileColor}; text-align: ${tile.TileAlignment};">
             <div ${this.DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
@@ -44,7 +55,7 @@ export class JSONToGrapesJS {
   private generateRow(row: any): string {
     const isFirstSingleTile = row.Col.length === 1;
     const tilesHTML = row.Col.map((col: any, index: number) => this.generateTile(col.Tile, isFirstSingleTile && index === 0)).join('');
-    return `<div class="container-row">${tilesHTML}</div>`;
+    return `<div ${this.rowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
   }
 
   public generateHTML(): string {

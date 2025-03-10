@@ -1,12 +1,15 @@
 import { EditorFrame } from "../../ui/components/editor-content/EditorFrame";
+import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJS } from "./JSONToGrapesJS";
 
 export class ChildEditor {
     editorManager: EditorManager;
+    // editorEvents: EditorEvents
 
     constructor(){
         this.editorManager = new EditorManager();
+        // this.editorEvents = new EditorEvents(this.editorManager);
     }
 
     init(){
@@ -16,7 +19,7 @@ export class ChildEditor {
         const converter = new JSONToGrapesJS(jsonData);
         const htmlOutput = converter.generateHTML();
         childEditor.setComponents(htmlOutput);
-
+        // this.editorEvents.init(childEditor);
         this.editorManager.finalizeEditorSetup(childEditor);
     }
 

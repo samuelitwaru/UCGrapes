@@ -65,6 +65,9 @@ export class AppConfig {
       return this._media;
     }
 
+    set media(value: Media[]) {
+      this._media = value;
+    }
 
     get currentThemeId(): string | null {
       return this._currentThemeId;

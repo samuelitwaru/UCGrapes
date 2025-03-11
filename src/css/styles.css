@@ -1334,6 +1334,7 @@ div#cta-selected-actions {
   text-align: center;
   transition: all 0.3sease;
   margin-bottom: 20px;
+  cursor: pointer;
 }
 
 .upload-area img {
@@ -1345,6 +1346,7 @@ div#cta-selected-actions {
 .upload-area p {
   margin: 0;
   color: #666;
+  cursor: pointer;
 }
 
 .upload-area a {
@@ -1352,12 +1354,29 @@ div#cta-selected-actions {
   text-decoration: none;
 }
 
+.upload-area.drag-over {
+  background-color: rgba(33, 150, 243, 0.05);
+  border-color: #222f54;
+}
+
+.upload-text {
+  margin-top: 15px;
+  color: #666;
+}
+
+.empty-message {
+  text-align: center;
+  font-family: "Segoe UI";
+  color: grey;
+  font-size: 18px;
+}
+
 .file-list {
   margin-bottom: 20px;
   max-height: 300px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
+  /* scrollbar-color: transparent transparent; */
 }
 
 .file-item {

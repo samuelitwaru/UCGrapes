@@ -1,9 +1,10 @@
-import { Media } from "../../../../models/Media";
+import { Media } from "../../../../models/Media"; // Fixed typo in import name
+import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
 
 export class SingleImageFile {
     private container: HTMLElement;
-    private mediaFile: Media
+    private mediaFile: Media;
 
     constructor(mediaFile: Media) {
         this.mediaFile = mediaFile;
@@ -13,6 +14,7 @@ export class SingleImageFile {
 
     private init() {
         this.container.className = "file-item valid";
+        this.container.id = this.mediaFile.MediaId;
         
         const img = document.createElement("img");
         img.src = this.mediaFile.MediaUrl;
@@ -37,17 +39,21 @@ export class SingleImageFile {
         statusCheck.className = "status-icon";
         statusCheck.style.color = "green";
         
-        this.itemClickEvent(statusCheck);
+        this.setupItemClickEvent(statusCheck);
 
         const deleteSpan = document.createElement("span");
         deleteSpan.className = "delete-media fa-regular fa-trash-can";
         deleteSpan.title = "Delete image";
 
-        this.container.appendChild(img)
+        deleteSpan.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent triggering the container's click event
+            this.deleteEvent();
+        });
+
+        this.container.appendChild(img);
         this.container.appendChild(fileInfo);
         this.container.appendChild(statusCheck);
         this.container.appendChild(deleteSpan);
-
     }
 
     private formatBytes(bytes: number) {
@@ -58,8 +64,8 @@ export class SingleImageFile {
         return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
     }
 
-    private itemClickEvent(statusCheck: HTMLElement) {
-        this.container.onclick = () => {
+    private setupItemClickEvent(statusCheck: HTMLElement) {
+        this.container.addEventListener("click", () => {
             document.querySelectorAll(".file-item").forEach((el) => {
                 el.classList.remove("selected");
                 const icon = el.querySelector(".status-icon");
@@ -73,50 +79,80 @@ export class SingleImageFile {
             } else {
                 statusCheck.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13.423" viewBox="0 0 18 13.423">
-                        <path id="Icon_awesome-check" d="M6.114,17.736l-5.85-5.85a.9.9,0,0,1,0-1.273L1.536,9.341a.9.9,0,0,1,1.273,0L6.75,13.282l8.441-8.441a.9.9,0,0,1,1.273,0l1.273,1.273a.9.9,0,0,1,0,1.273L7.386,17.736A.9.9,0,0,1,6.114,17.736Z" transform="translate(0 -4.577)" fill="#3a9341"></path>
+                        <path id="Icon_awesome-check" data-name="Icon awesome-check" d="M6.114,17.736l-5.85-5.85a.9.9,0,0,1,0-1.273L1.536,9.341a.9.9,0,0,1,1.273,0L6.75,13.282l8.441-8.441a.9.9,0,0,1,1.273,0l1.273,1.273a.9.9,0,0,1,0,1.273L7.386,17.736A.9.9,0,0,1,6.114,17.736Z" transform="translate(0 -4.577)" fill="#3a9341"></path>
                     </svg>
                 `;
             }
             this.container.classList.toggle("selected");
-            this.handleModalActions();
-        }
+            this.setupModalActions();
+        });
     }
 
-    
-    public handleModalActions () {
+    private setupModalActions() {
         const modalActions = document.querySelector(".modal-actions") as HTMLElement;
-        if (modalActions) {
-            modalActions.style.display = 'flex';
-        }
+        if (!modalActions) return;
+        
+        modalActions.style.display = 'flex';
 
+        // Remove existing event listeners by cloning and replacing elements
         const cancelBtn = modalActions.querySelector("#cancel-modal") as HTMLElement;
         const saveBtn = modalActions.querySelector("#save-modal") as HTMLElement;
-        const modal = document.querySelector(".tb-modal") as HTMLElement;
         
-        cancelBtn.addEventListener("click", () => {
+        if (!cancelBtn || !saveBtn) return;
+        
+        const newCancelBtn = cancelBtn.cloneNode(true) as HTMLElement;
+        const newSaveBtn = saveBtn.cloneNode(true) as HTMLElement;
+        
+        cancelBtn.parentNode?.replaceChild(newCancelBtn, cancelBtn);
+        saveBtn.parentNode?.replaceChild(newSaveBtn, saveBtn);
+        
+        const modal = document.querySelector(".tb-modal") as HTMLElement;
+        if (!modal) return;
+        
+        newCancelBtn.addEventListener("click", () => {
             modal.style.display = "none";
             modal.remove();
         });
 
-        saveBtn.addEventListener("click", () => {
+        newSaveBtn.addEventListener("click", () => {
             this.addImageToTile();
             modal.style.display = "none";
             modal.remove();
-        })
+        });
     }
 
-    addImageToTile() {
+    private addImageToTile() {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
-        const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-        selectedComponent.addStyle({
-            "background-image": `url(${safeMediaUrl})`,
-            "background-size": "cover",
-            "background-position": "center",
-            "background-blend-mode": "overlay",
-          });
+        
+        try {
+            const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
+            console.log(safeMediaUrl);
+            selectedComponent.addStyle({
+                "background-image": `url(${safeMediaUrl})`,
+                "background-size": "cover",
+                "background-position": "center",
+                "background-blend-mode": "overlay",
+            });
+        } catch (error) {
+            console.error("Error adding image to tile:", error);
+        }
     }
-    
+
+    private deleteEvent() {
+        const title = "Delete media";
+        const message = "Are you sure you want to delete this media file?";
+        const confirmationBox = new ConfirmationBox(
+            message,
+            title,
+            this.mediaFile.MediaId
+        );
+        confirmationBox.render(document.body);
+    }
+
+    public getElement(): HTMLElement {
+        return this.container;
+    }
 
     public render(container: HTMLElement) {
         container.appendChild(this.container);

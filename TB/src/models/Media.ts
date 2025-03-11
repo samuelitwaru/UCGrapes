@@ -1,12 +1,11 @@
 export class Media {
     MediaId: string;
     MediaName: string;
-    MediaImage: Uint8Array | null;
+    MediaImage?: Uint8Array | null;
     MediaImage_GXI?: string | null;
     MediaSize: number;
     MediaType: string;
     MediaUrl: string
-    LocationId: string;
   
     constructor(
       MediaId: string,
@@ -16,7 +15,6 @@ export class Media {
       MediaSize: number,
       MediaType: string,
       MediaUrl: string,
-      LocationId: string
     ) {
       this.MediaId = MediaId;
       this.MediaName = MediaName;
@@ -25,6 +23,5 @@ export class Media {
       this.MediaSize = MediaSize;
       this.MediaType = MediaType;
       this.MediaUrl = MediaUrl;
-      this.LocationId = LocationId;
     }
   }

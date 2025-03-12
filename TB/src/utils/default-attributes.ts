@@ -1,6 +1,16 @@
 export const tileDefaultAttributes: string = `
-data-gjs-draggable="true"
+data-gjs-draggable="false"
 data-gjs-selectable="true"
+data-gjs-editable="false"
+data-gjs-highlightable="false"
+data-gjs-droppable="false"
+data-gjs-resizable="false"
+data-gjs-hoverable="false"
+`;
+
+export const tileWrapperDefaultAttributes: string = `
+data-gjs-draggable="true"
+data-gjs-selectable="false"
 data-gjs-editable="false"
 data-gjs-highlightable="false"
 data-gjs-droppable="false"

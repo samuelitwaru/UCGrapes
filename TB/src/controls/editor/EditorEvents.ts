@@ -1,8 +1,12 @@
 import { ChildEditor } from "./ChildEditor";
 import { TileManager } from "./TileManager";
+import { TileMapper } from "./TileMapper";
+import { TileProperties } from "./TileProperties";
+import { TileUpdate } from "./TileUpdate";
 export class EditorEvents {
 
   editor: any;
+  pageId: any;
   editorManager: any;
   tileManager: any;
 
@@ -10,18 +14,20 @@ export class EditorEvents {
     this.editorManager = editorManager;
   }
 
-  init(editor: any) {
+  init(editor: any, pageId: any) {
     this.editor = editor;
+    this.pageId = pageId;
     this.onLoad();
     this.onDragAndDrop();
     this.onSelected();
+    (globalThis as any).tileManager = new TileMapper(this.pageId) 
   }
 
   onLoad() {
     if (this.editor !== undefined) {
         const wrapper = this.editor.getWrapper();
         wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
-            this.tileManager = new TileManager(e, this.editor);
+            this.tileManager = new TileManager(e, this.editor, this.pageId);
         })
     }
   }
@@ -48,7 +54,9 @@ export class EditorEvents {
 
           this.editor.UndoManager.undo();
         }
-
+        const tileUpdate = new TileUpdate();
+        tileUpdate.updateTile(destinationComponent);
+        tileUpdate.updateTile(sourceComponent);
         this.onTileUpdate(destinationComponent);
       }
     });
@@ -57,6 +65,7 @@ export class EditorEvents {
   onSelected() {
     this.editor.on("component:selected", (component: any) => {
       (globalThis as any).selectedComponent = component;
+      this.setTileProperties();
     });
 
     this.editor.on("component:deselected", () => {
@@ -85,4 +94,17 @@ export class EditorEvents {
   }
 
   createNewEditor() {}
+
+  setTileProperties() {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    const tileWrapper = selectedComponent.parent();
+    const rowComponent = tileWrapper.parent();
+    const tileAttributes = (globalThis as any).tileManager.getTile(rowComponent.getId(), tileWrapper.getId()); 
+
+    if (selectedComponent && tileAttributes) {
+      const tileProperties = new TileProperties(selectedComponent, tileAttributes);
+      tileProperties.setTileAttributes();
+    }
+  }
+
 }

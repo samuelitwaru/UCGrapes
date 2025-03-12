@@ -1,65 +1,71 @@
+import { TileMapper } from "../../../controls/editor/TileMapper";
 import { ThemeColors } from "../../../models/Theme";
 
 export class ColorPalette {
-    private paletteContainer: HTMLDivElement;
-    private containerId: string;
+  private paletteContainer: HTMLDivElement;
+  private containerId: string;
 
-    constructor(
-        colors: ThemeColors,
-        containerId: string
-    ) {
-        this.containerId = containerId;
-        this.paletteContainer = document.createElement('div');
-        this.paletteContainer.className = 'color-palette'
-        this.paletteContainer.id = containerId;
+  constructor(colors: ThemeColors, containerId: string) {
+    this.containerId = containerId;
+    this.paletteContainer = document.createElement("div");
+    this.paletteContainer.className = "color-palette";
+    this.paletteContainer.id = containerId;
+    this;
 
-        Object.entries(colors).forEach(([colorName, colorValue]) => {
-            const colorItem = document.createElement('div');
-            colorItem.className = 'color-item';
+    Object.entries(colors).forEach(([colorName, colorValue]) => {
+      const colorItem = document.createElement("div");
+      colorItem.className = "color-item";
 
-            const input = document.createElement('input');
-            input.type = 'radio';
-            input.id = `color-${colorName}`;
-            input.name = 'theme-color';
-            input.value = colorValue;
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.id = `color-${colorName}`;
+      input.name = "theme-color";
+      input.value = colorValue;
 
-            const label = document.createElement('label');
-            label.htmlFor = `color-${colorName}`;
-            label.className = 'color-box';
-            label.setAttribute('data-tile-bgcolor', colorValue);
-            label.style.backgroundColor = colorValue;
+      const label = document.createElement("label");
+      label.htmlFor = `color-${colorName}`;
+      label.className = "color-box";
+      label.setAttribute("data-tile-bgcolor", colorValue);
+      label.style.backgroundColor = colorValue;
 
-            colorItem.appendChild(input);
-            colorItem.appendChild(label);
+      colorItem.appendChild(input);
+      colorItem.appendChild(label);
 
-            colorItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                const selectedComponent = (globalThis as any).selectedComponent;
-                if (!selectedComponent) return;
-            
-                const currentColor = selectedComponent.getStyle()["background-color"];
+      colorItem.addEventListener("click", (e) => {
+        e.preventDefault();
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (!selectedComponent) return;
 
-                selectedComponent.addStyle({
-                    "background-color": currentColor === colorValue ? "transparent" : colorValue
-                });
-                
-                input.checked = currentColor !== colorValue
-            });
-            this.paletteContainer.appendChild(colorItem);
+        const currentColor = selectedComponent.getStyle()["background-color"];
+
+        selectedComponent.addStyle({
+          "background-color":
+            currentColor === colorValue ? "transparent" : colorValue,
         });
-    };
 
-    render(container: HTMLElement) {
-            container.appendChild(this.paletteContainer);
-    }
+        (globalThis as any).tileManager.updateTile(
+          selectedComponent.parent().getId(),
+          "BGColor",
+          colorValue
+        );
 
-    refresh(container: HTMLElement) {
-        const existingComponent = document.getElementById(this.containerId);
-        
-        if (existingComponent) {
-            existingComponent.replaceWith(this.paletteContainer);
-        } else {
-            container.appendChild(this.paletteContainer);
-        }
+        input.checked = currentColor !== colorValue;
+      });
+      this.paletteContainer.appendChild(colorItem);
+    });
+  }
+
+  render(container: HTMLElement) {
+    container.appendChild(this.paletteContainer);
+  }
+
+  refresh(container: HTMLElement) {
+    const existingComponent = document.getElementById(this.containerId);
+
+    if (existingComponent) {
+      existingComponent.replaceWith(this.paletteContainer);
+    } else {
+      container.appendChild(this.paletteContainer);
     }
+  }
 }

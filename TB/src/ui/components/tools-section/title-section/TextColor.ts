@@ -43,6 +43,13 @@ export class TextColor {
         selectedComponent.addStyle({
             "color": colorValue
         });
+
+        (globalThis as any).tileManager.updateTile(
+          selectedComponent.parent().getId(),
+          "Color",
+          colorValue
+        );
+
         radioInput.checked = true
       };
     });

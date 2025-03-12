@@ -52,6 +52,13 @@ export class TileAlignmentSection {
           "text-align": "left",
         });
       }
+
+      (globalThis as any).tileManager.updateTile(
+        selectedComponent.parent().getId(),
+        "Align",
+        'left'
+      );
+
       leftAlignInput.checked = true;
     }
 
@@ -74,6 +81,12 @@ export class TileAlignmentSection {
         });
       }
 
+      (globalThis as any).tileManager.updateTile(
+        selectedComponent.parent().getId(),
+        "Align",
+        'center'
+      );
+      
       centerAlignInput.checked = true;
     }
 

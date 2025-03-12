@@ -24,8 +24,6 @@ export class TileUpdate {
             this.updateAlignment(tile, tileAlignment, titleAlignment);
             this.updateTileTitleLength(tile, length);
         });
-    
-        
       }
     
       private updateAlignment(tile: any, tileAlignment: any, titleAlignment: any) {
@@ -41,7 +39,7 @@ export class TileUpdate {
           if (tileTitle) {
             const textLength = length === 3 ? 11 : (length === 2 ? 15 : 20);
              const title = 
-                this.truncateText(textLength, tileTitle.getAttributes()?.["title"]);
+                this.truncateText(textLength, tileTitle.getAttributes()?.["title"] || tileTitle.getEl().innerText);
             
                 if (length === 3) {
                     tileTitle.components(this.wrapTileTitle(title));

@@ -1,4 +1,4 @@
-import { DefaultAttributes, rowDefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
+import { DefaultAttributes, rowDefaultAttributes, tileDefaultAttributes, tileWrapperDefaultAttributes } from "../../utils/default-attributes";
 
 export class JSONToGrapesJS {
   private data: any;
@@ -7,35 +7,45 @@ export class JSONToGrapesJS {
     this.data = json;
   }
 
-  private generateTile(tile: any, isFirstSingleTile: boolean): string {
+  private generateTile(tile: any, isFirstSingleTile: boolean, isThreeTiles: boolean): string {
     return `
-      <div ${tileDefaultAttributes} class="template-wrapper">
-        <div ${DefaultAttributes} class="template-block${isFirstSingleTile ? ' high-priority-template' : ''}" style="background-color: ${
-          tile.TileBGColor
-        }; color: ${tile.TileColor}; text-align: ${tile.TileAlignment};">
-            <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
-              <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
-              <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-title">${tile.TileText}</span>
-            </div>
+      <div${tileWrapperDefaultAttributes} class="template-wrapper" id="${tile.Id}">
+        <div ${tileDefaultAttributes} class="template-block${isFirstSingleTile ? ' high-priority-template' : ''}" 
+          style="background-color: ${tile.BGColor}; color: ${tile.Color}; text-align: ${tile.Align};
+          ${isThreeTiles ? 'align-items: center; justify-content: center;' : ''}">
+          
+          <div ${DefaultAttributes} class="tile-icon-section">
+            <span ${DefaultAttributes} class="tile-close-icon top-right">×</span>
+            <span ${DefaultAttributes} title="${tile.Icon}" class="tile-icon">${tile.Icon}</span>
+          </div>
+          
+          <div ${DefaultAttributes} class="tile-title-section">
+            <span ${DefaultAttributes} class="tile-close-icon top-right">×</span>
+            <span ${DefaultAttributes} class="tile-title">${tile.Text}</span>
+          </div>
         </div>
-        <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>
-        <button ${DefaultAttributes} id="ifvvi" data-gjs-type="default" title="Add template right" class="action-button add-button-right">+</button>
-        <button ${DefaultAttributes} id="i4ubt" data-gjs-type="default" title="Delete template" class="action-button add-button-bottom">&plus;</button>
+        ${isFirstSingleTile ? '' :`
+          <button ${DefaultAttributes} title="Delete tile" class="action-button delete-button">&minus;</button>`
+         }
+        <button ${DefaultAttributes} title="Add tile right" class="action-button add-button-right">+</button>
+        <button ${DefaultAttributes} title="Add tile below" class="action-button add-button-bottom">&plus;</button>
       </div>
     `;
   }
 
-  private generateRow(row: any): string {
-    const isFirstSingleTile = row.Col.length === 1;
-    const tilesHTML = row.Col.map((col: any, index: number) => this.generateTile(col.Tile, isFirstSingleTile && index === 0)).join('');
-    return `<div ${rowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
+  private generateRow(row: any, rowIndex: number): string {
+    const isFirstSingleTile = rowIndex === 0 && row.Tiles.length === 1;
+    const isThreeTiles = row.Tiles.length === 3;
+    const tilesHTML = row.Tiles.map((tile: any, index: number) => 
+      this.generateTile(tile, isFirstSingleTile && index === 0, isThreeTiles)).join('');
+    return `<div id="${row.Id}" ${rowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
   }
 
-  public generateHTML(): string {
+  public generateHTML(): any {
     return `
       <div ${DefaultAttributes} id="frame-container" data-gjs-type="template-wrapper" class="frame-container">
-        <div ${DefaultAttributes} id="i93m" data-gjs-type="template-wrapper" class="container-column">
-          ${this.data.Row.map((row: any) => this.generateRow(row)).join('')}
+        <div ${DefaultAttributes} class="container-column">
+          ${this.data.Content.Rows.map((row: any, rowIndex: number) => this.generateRow(row, rowIndex)).join('')}
         </div>
       </div>
     `;

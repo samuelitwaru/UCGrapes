@@ -44,6 +44,12 @@ export class IconList {
                     iconCompParent.addStyle({
                         'display': 'block'
                     });
+
+                    (globalThis as any).tileManager.updateTile(
+                        selectedComponent.parent().getId(),
+                        "Icon",
+                        themeIcon.IconName
+                      );
                 });
                 
                 this.icons.push(icon);

@@ -1,15 +1,21 @@
 import { DefaultAttributes, rowDefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
+import { randomIdGenerator } from "../../utils/helpers";
+import { TileMapper } from "./TileMapper";
 import { TileUpdate } from "./TileUpdate";
 
 export class TileManager {
   private event: MouseEvent;
   editor: any;
+  pageId: any;
   tileUpdate: TileUpdate;
+  tileMapper: TileMapper;
   
-  constructor(e: MouseEvent, editor: any) {
+  constructor(e: MouseEvent, editor: any, pageId: any) {
     this.event = e;
     this.editor = editor;
+    this.pageId = pageId;
     this.tileUpdate = new TileUpdate();
+    this.tileMapper = new TileMapper(this.pageId);
     this.init();
   }
 
@@ -41,6 +47,8 @@ export class TileManager {
 
       const newRowComponent = this.editor.Components.addComponent(this.getTileRow());
       columnComponent.append(newRowComponent, { at: index + 1 });
+
+      (globalThis as any).tileManager.addFreshRow(newRowComponent.getId() as string);
     }
   }
 
@@ -66,8 +74,9 @@ export class TileManager {
         const index = currentTileComponent.index();
         containerRowComponent.append(newTileComponent, { at: index + 1 });
         this.tileUpdate.updateTile(containerRowComponent);
+
+        (globalThis as any).tileManager.addTile(currentTile?.parentElement?.id as string, newTileComponent.getId() as string);
       }
-    
   }
 
   deleteTile() {
@@ -82,6 +91,7 @@ export class TileManager {
         tileComponent.remove();
         
         this.tileUpdate.updateTile(parentComponent);
+        (globalThis as any).tileManager.removeTile(tileComponent.getId() as string, parentComponent.getId() as string);
       }
     }
   }  
@@ -136,20 +146,20 @@ export class TileManager {
 
   private getTileRow() {
     const tile = this.getTile();
-    return `<div class="container-row" ${rowDefaultAttributes}>${tile}</div>`;
+    return `<div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(8)}">${tile}</div>`;
   }
 
   private getTile() {
     return `
-      <div ${DefaultAttributes} class="template-wrapper">
+      <div ${DefaultAttributes} class="template-wrapper" id="${randomIdGenerator(8)}">
         <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #fff justify-content: left">
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
-              <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-icon">Title</span>
+              <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" class="tile-icon">Title</span>
             </div>
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
-              <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Calendar" class="tile-title">Title</span>
+              <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Title" class="tile-title">Title</span>
             </div>
         </div>
         <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>

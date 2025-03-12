@@ -130,10 +130,23 @@ export class SingleImageFile {
             console.log(safeMediaUrl);
             selectedComponent.addStyle({
                 "background-image": `url(${safeMediaUrl})`,
+                "background-color": "transparent",
                 "background-size": "cover",
                 "background-position": "center",
                 "background-blend-mode": "overlay",
             });
+
+            (globalThis as any).tileManager.updateTile(
+                selectedComponent.parent().getId(),
+                "BGImageUrl",
+                safeMediaUrl
+              );
+            
+            (globalThis as any).tileManager.updateTile(
+                selectedComponent.parent().getId(),
+                "Opacity",
+                '0'
+              );
         } catch (error) {
             console.error("Error adding image to tile:", error);
         }

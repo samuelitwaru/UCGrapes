@@ -147,6 +147,13 @@ export class TileMapper {
         }
         // Insert tile at target position
         targetRow.Tiles.splice(targetIndex, 0, tileToMove);
+
+        if (targetRow.Tiles.length === 3) {
+            targetRow.Tiles.forEach((tile: any) => {
+              tile.Align = "center";
+            });
+        }
+
         // Remove source row if it's now empty
         if (sourceRow.Tiles.length === 0) {
             data.PageStructure.Rows = data.PageStructure.Rows.filter((r: any) => r.Id !== sourceRow.Id);            

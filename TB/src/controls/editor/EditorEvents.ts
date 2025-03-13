@@ -58,11 +58,13 @@ export class EditorEvents {
           model.target.remove();
           this.editor.UndoManager.undo();
         }
+
+        const isDragging: boolean = true;
         const tileUpdate = new TileUpdate();
-        // tileUpdate.updateTile(destinationComponent);
-        // tileUpdate.updateTile(sourceComponent);
-        console.log("Dragged: ", model.index);
-        console.log("Dragged: ", model);
+        tileUpdate.updateTile(destinationComponent, isDragging);
+        tileUpdate.updateTile(sourceComponent, isDragging);
+        
+
         tileMapper.moveTile(
           model.target.getId(),
           sourceComponent.getId(),

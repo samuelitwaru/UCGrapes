@@ -8,7 +8,7 @@ export class TileUpdate {
         this.pageId = pageId || null;
     }
 
-    updateTile(rowComponent: any) {
+    updateTile(rowComponent: any, isDragging: boolean = false) {
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
         console.log(tiles)
@@ -31,7 +31,9 @@ export class TileUpdate {
     
             this.updateAlignment(tile, tileAlignment, titleAlignment);
             this.updateTileTitleLength(tile, length);
-            this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
+            if (!isDragging) {
+                this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
+            }
         });
       }
     

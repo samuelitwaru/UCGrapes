@@ -11,6 +11,7 @@ export class TileUpdate {
     updateTile(rowComponent: any) {
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
+        console.log(tiles)
         const length = tiles.length;
         tiles.forEach((tile: any) => {
             const rightButton = tile.find(".add-button-right")[0];
@@ -42,7 +43,6 @@ export class TileUpdate {
       }
     
       private updateTileTitleLength(tile: any, length: number) {
-          // truncate title
           const tileTitle = tile.find(".tile-title")[0];
           if (tileTitle) {
             const textLength = length === 3 ? 11 : (length === 2 ? 15 : 20);

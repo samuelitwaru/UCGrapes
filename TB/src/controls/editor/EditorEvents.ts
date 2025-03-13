@@ -8,6 +8,7 @@ export class EditorEvents {
 
   editor: any;
   pageId: any;
+  frameId: any;
   editorManager: any;
   tileManager: any;
   tileProperties: any;
@@ -16,9 +17,10 @@ export class EditorEvents {
     this.editorManager = editorManager;
   }
 
-  init(editor: any, pageId: any) {
+  init(editor: any, pageId: any, frameEditor: any) {
     this.editor = editor;
     this.pageId = pageId;
+    this.frameId = frameEditor;
     this.onLoad();
     this.onDragAndDrop();
     this.onSelected();
@@ -29,6 +31,7 @@ export class EditorEvents {
         const wrapper = this.editor.getWrapper();
         wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId);
+            this.activateEditor();
         })
     }
   }
@@ -36,6 +39,7 @@ export class EditorEvents {
   onDragAndDrop() {
     let sourceComponent: any;
     let destinationComponent: any;
+    const tileMapper = new TileMapper(this.pageId)
 
     this.editor.on("component:drag:start", (model: any) => {
       sourceComponent = model.parent;
@@ -55,8 +59,16 @@ export class EditorEvents {
           this.editor.UndoManager.undo();
         }
         const tileUpdate = new TileUpdate();
-        tileUpdate.updateTile(destinationComponent);
-        tileUpdate.updateTile(sourceComponent);
+        // tileUpdate.updateTile(destinationComponent);
+        // tileUpdate.updateTile(sourceComponent);
+        console.log("Dragged: ", model.index);
+        console.log("Dragged: ", model);
+        tileMapper.moveTile(
+          model.target.getId(),
+          sourceComponent.getId(),
+          destinationComponent.getId(),
+          model.index
+        )
         this.onTileUpdate(destinationComponent);
       }
     });
@@ -65,7 +77,8 @@ export class EditorEvents {
   onSelected() {
     this.editor.on("component:selected", (component: any) => {
       (globalThis as any).selectedComponent = component;
-      (globalThis as any).tileManager = new TileMapper(this.pageId);
+      (globalThis as any).tileMapper = new TileMapper(this.pageId);
+      (globalThis as any).currentPageId = this.pageId;
       this.setTileProperties();
       this.createChildEditor();
     });
@@ -95,13 +108,21 @@ export class EditorEvents {
     }
   }
 
-  createNewEditor() {}
+  activateEditor () {
+    const framelist = document.querySelectorAll('.mobile-frame');
+    framelist.forEach((frame: any) => {
+      frame.classList.remove('active-editor');
+      if (frame.id.includes(this.frameId)) {
+        frame.classList.add('active-editor');
+      }
+    })
+  }
 
   setTileProperties() {
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
-    const tileAttributes = (globalThis as any).tileManager.getTile(rowComponent.getId(), tileWrapper.getId()); 
+    const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId()); 
 
     if (selectedComponent && tileAttributes) {
       this.tileProperties = new TileProperties(selectedComponent, tileAttributes);
@@ -113,13 +134,18 @@ export class EditorEvents {
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
-    const tileAttributes = (globalThis as any).tileManager.getTile(rowComponent.getId(), tileWrapper.getId());
-    console.log(rowComponent.getId(), tileWrapper.getId());
-
-    if (tileAttributes.Action.ObjectId) {
+    const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
+    if (tileAttributes?.Action.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
-      const childPage = demoPages.AppVersions.find((version: any) => version.IsActive == true)?.Pages.find((page: any) => page.PageId === objectId);
-      
+      const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
+      console.log(data);
+      let childPage;
+      if (Object.keys(data).length > 0) {
+        childPage = data
+      } else {
+        childPage = demoPages.AppVersions.find((version: any) => version.IsActive == true)?.Pages.find((page: any) => page.PageId === objectId);
+      }
+
       this.removeOtherEditors();
       if (childPage) {
         new ChildEditor(objectId, childPage).init();
@@ -130,16 +156,29 @@ export class EditorEvents {
   }
 
   removeOtherEditors(): void {
-    const currentFrame = document.querySelector(`#gjs-${this.pageId}-frame`)
+    // const currentFrame = document.querySelector(`#gjs-${this.pageId}-frame`)
 
-    if (currentFrame) {
-      let nextElement = currentFrame.nextElementSibling;
-      while (nextElement) {
-        const elementToRemove = nextElement;
-        nextElement = nextElement.nextElementSibling;
-        elementToRemove.remove();
+    // if (currentFrame) {
+    //   let nextElement = currentFrame.nextElementSibling;
+      // while (nextElement) {
+      //   const elementToRemove = nextElement;
+      //   nextElement = nextElement.nextElementSibling;
+      //   elementToRemove.remove();
+      // }
+    // }
+    const framelist = document.querySelectorAll('.mobile-frame');
+    framelist.forEach((frame: any) => {
+      if (frame.id.includes(this.frameId)) {
+        let nextElement = frame.nextElementSibling;
+        while (nextElement) {
+          const elementToRemove = nextElement;
+          nextElement = nextElement.nextElementSibling;
+          if (elementToRemove) {  // Add this check
+            elementToRemove.remove();
+          }
+        }
       }
-    }
+    });
   }
 }
 

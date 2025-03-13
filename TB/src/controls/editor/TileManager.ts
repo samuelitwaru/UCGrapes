@@ -1,4 +1,9 @@
-import { DefaultAttributes, rowDefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
+import {
+  DefaultAttributes,
+  rowDefaultAttributes,
+  tileDefaultAttributes,
+  tileWrapperDefaultAttributes,
+} from "../../utils/default-attributes";
 import { randomIdGenerator } from "../../utils/helpers";
 import { TileMapper } from "./TileMapper";
 import { TileUpdate } from "./TileUpdate";
@@ -8,14 +13,13 @@ export class TileManager {
   editor: any;
   pageId: any;
   tileUpdate: TileUpdate;
-  tileMapper: TileMapper;
-  
+
   constructor(e: MouseEvent, editor: any, pageId: any) {
     this.event = e;
     this.editor = editor;
     this.pageId = pageId;
     this.tileUpdate = new TileUpdate(pageId);
-    this.tileMapper = new TileMapper(this.pageId);
+    (globalThis as any).tileMapper = new TileMapper(this.pageId);
     this.init();
   }
 
@@ -32,7 +36,7 @@ export class TileManager {
       ".action-button.add-button-bottom"
     );
     if (addBottomButton) {
-      const templateWrapper =  addBottomButton.closest(".template-wrapper");
+      const templateWrapper = addBottomButton.closest(".template-wrapper");
       if (!templateWrapper) return;
 
       let currentRow = templateWrapper.parentElement;
@@ -42,42 +46,56 @@ export class TileManager {
 
       const index = Array.from(currentColumn.children).indexOf(currentRow);
 
-      const columnComponent = this.editor.Components.getWrapper().find('#' + currentColumn.id)[0];
+      const columnComponent = this.editor.Components.getWrapper().find(
+        "#" + currentColumn.id
+      )[0];
       if (!columnComponent) return;
 
-      const newRowComponent = this.editor.Components.addComponent(this.getTileRow());
+      const newRowComponent = this.editor.Components.addComponent(
+        this.getTileRow()
+      );
       columnComponent.append(newRowComponent, { at: index + 1 });
       const tileId = newRowComponent.find(".template-wrapper")[0]?.getId();
 
-      (globalThis as any).tileManager.addFreshRow(newRowComponent.getId() as string, tileId as string);
+      (globalThis as any).tileMapper.addFreshRow(
+        newRowComponent.getId() as string,
+        tileId as string
+      );
     }
   }
 
   addTileRight() {
     const addRightutton = (this.event.target as Element).closest(
-        ".action-button.add-button-right"
-      );    
-      if (addRightutton) {
-        const currentTile = addRightutton.closest(".template-wrapper");
-        const currentTileComponent = this.editor.Components.getWrapper().find('#' + currentTile?.id)[0];
-        if (!currentTileComponent) return;
-        
-        const containerRowComponent = currentTileComponent.parent();
-        const tiles = containerRowComponent.components().filter((comp: any) => {
-            const type = comp.get("type");
-            return type === "tile-wrapper";
-          });
+      ".action-button.add-button-right"
+    );
+    if (addRightutton) {
+      const currentTile = addRightutton.closest(".template-wrapper");
+      const currentTileComponent = this.editor.Components.getWrapper().find(
+        "#" + currentTile?.id
+      )[0];
+      if (!currentTileComponent) return;
 
-        if (tiles.length >= 3) return;
+      const containerRowComponent = currentTileComponent.parent();
+      const tiles = containerRowComponent.components().filter((comp: any) => {
+        const type = comp.get("type");
+        return type === "tile-wrapper";
+      });
 
-        const newTileComponent = this.editor.Components.addComponent(this.getTile());
+      if (tiles.length >= 3) return;
 
-        const index = currentTileComponent.index();
-        containerRowComponent.append(newTileComponent, { at: index + 1 });
-        this.tileUpdate.updateTile(containerRowComponent);
+      const newTileComponent = this.editor.Components.addComponent(
+        this.getTile()
+      );
 
-        (globalThis as any).tileManager.addTile(currentTile?.parentElement?.id as string, newTileComponent.getId() as string);
-      }
+      const index = currentTileComponent.index();
+      containerRowComponent.append(newTileComponent, { at: index + 1 });
+
+      (globalThis as any).tileMapper.addTile(
+        currentTile?.parentElement?.id as string,
+        newTileComponent.getId() as string
+      );
+      this.tileUpdate.updateTile(containerRowComponent);
+    }
   }
 
   deleteTile() {
@@ -87,39 +105,50 @@ export class TileManager {
     if (deleteButton) {
       const templateWrapper = deleteButton.closest(".template-wrapper");
       if (templateWrapper) {
-        const tileComponent = this.editor.Components.getWrapper().find('#' + templateWrapper?.id)[0];
+        const tileComponent = this.editor.Components.getWrapper().find(
+          "#" + templateWrapper?.id
+        )[0];
         const parentComponent = tileComponent.parent();
         tileComponent.remove();
-        
+
         this.tileUpdate.updateTile(parentComponent);
-        (globalThis as any).tileManager.removeTile(tileComponent.getId() as string, parentComponent.getId() as string);
+        (globalThis as any).tileMapper.removeTile(
+          tileComponent.getId() as string,
+          parentComponent.getId() as string
+        );
       }
     }
-  }  
+  }
 
   private removeTileIcon() {
     const tileIcon = (this.event.target as Element).closest(".tile-close-icon");
     if (tileIcon) {
-        const tileIconParent = tileIcon.parentElement;
-        const tileIconParentComponent = this.editor.Components.getWrapper().find('#' + tileIconParent?.id)[0];
-        if (this.checkTileHasIconOrTitle(tileIconParentComponent)) {
-            tileIconParentComponent.addStyle({"display": "none"})
-        } else {
-            console.warn("Tile has no icon or title")
-        }
+      const tileIconParent = tileIcon.parentElement;
+      const tileIconParentComponent = this.editor.Components.getWrapper().find(
+        "#" + tileIconParent?.id
+      )[0];
+      if (this.checkTileHasIconOrTitle(tileIconParentComponent)) {
+        tileIconParentComponent.addStyle({ display: "none" });
+      } else {
+        console.warn("Tile has no icon or title");
+      }
     }
   }
-  
+
   private removeTileTile() {
-    const tileTitle = (this.event.target as Element).closest(".tile-close-title");
+    const tileTitle = (this.event.target as Element).closest(
+      ".tile-close-title"
+    );
     if (tileTitle) {
-        const tileTitleParent = tileTitle.parentElement;
-        const tileTitleParentComponent = this.editor.Components.getWrapper().find('#' + tileTitleParent?.id)[0];
-        if (this.checkTileHasIconOrTitle(tileTitleParentComponent)) {
-            tileTitleParentComponent.addStyle({"display": "none"})
-        } else {
-            console.warn("Tile has no icon or title")
-        }
+      const tileTitleParent = tileTitle.parentElement;
+      const tileTitleParentComponent = this.editor.Components.getWrapper().find(
+        "#" + tileTitleParent?.id
+      )[0];
+      if (this.checkTileHasIconOrTitle(tileTitleParentComponent)) {
+        tileTitleParentComponent.addStyle({ display: "none" });
+      } else {
+        console.warn("Tile has no icon or title");
+      }
     }
   }
 
@@ -133,25 +162,37 @@ export class TileManager {
 
     const hasTitleVisible = sectionComponents.some((comp: any) => {
       const displayStyle = comp.getStyle()?.["display"];
-      return comp.getClasses().includes('tile-title-section') && displayStyle !== "none" && displayStyle !== undefined;
+      return (
+        comp.getClasses().includes("tile-title-section") &&
+        displayStyle !== "none" &&
+        displayStyle !== undefined
+      );
     });
 
     const hasIconVisible = sectionComponents.some((comp: any) => {
       const displayStyle = comp.getStyle()?.["display"];
-      return comp.getClasses().includes('tile-icon-section') && displayStyle !== "none" && displayStyle !== undefined;
+      return (
+        comp.getClasses().includes("tile-icon-section") &&
+        displayStyle !== "none" &&
+        displayStyle !== undefined
+      );
     });
 
-   return hasTitleVisible && hasIconVisible;
+    return hasTitleVisible && hasIconVisible;
   }
 
   private getTileRow() {
     const tile = this.getTile();
-    return `<div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(8)}">${tile}</div>`;
+    return `<div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(
+      8
+    )}">${tile}</div>`;
   }
 
   private getTile() {
     return `
-      <div ${DefaultAttributes} class="template-wrapper" id="${randomIdGenerator(8)}">
+      <div ${tileWrapperDefaultAttributes} class="template-wrapper" id="${randomIdGenerator(
+      8
+    )}">
         <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #fff justify-content: left">
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>

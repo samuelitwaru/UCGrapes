@@ -39,23 +39,23 @@ export class TextColor {
         e.preventDefault();
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
-        
+
         selectedComponent.addStyle({
-            "color": colorValue
+          color: colorValue,
         });
 
-        (globalThis as any).tileManager.updateTile(
+        (globalThis as any).tileMapper.updateTile(
           selectedComponent.parent().getId(),
           "Color",
           colorValue
         );
 
-        radioInput.checked = true
+        radioInput.checked = true;
       };
     });
   }
 
   render(container: HTMLElement) {
-    container.appendChild(this.container)
+    container.appendChild(this.container);
   }
 }

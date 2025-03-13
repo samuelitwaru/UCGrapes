@@ -3,60 +3,66 @@ import { Theme, ThemeIcon } from "../../../../models/Theme";
 import { DefaultAttributes } from "../../../../utils/default-attributes";
 
 export class IconList {
-    private themeManager: ThemeManager;
-    private icons: HTMLElement[] = [];
-    iconsCategory: string = "General"
+  private themeManager: ThemeManager;
+  private icons: HTMLElement[] = [];
+  iconsCategory: string = "General";
 
-    constructor(themeManager: ThemeManager, iconsCategory: string) {
-        this.themeManager = themeManager;
-        this.iconsCategory = iconsCategory;
-        this.init();
-    }
+  constructor(themeManager: ThemeManager, iconsCategory: string) {
+    this.themeManager = themeManager;
+    this.iconsCategory = iconsCategory;
+    this.init();
+  }
 
-    init() {
-        this.icons = [];
-        const themeIcons: ThemeIcon[] = this.themeManager.getActiveThemeIcons();
-        const activeTheme: Theme = this.themeManager.getActiveTheme();
-        // Filter icons by category and theme
-        themeIcons
-            .filter(icon => icon.IconCategory === this.iconsCategory)
-            .forEach(themeIcon => {
-                const icon = document.createElement("div");
-                icon.classList.add("icon");
-                icon.title = themeIcon.IconName;
-                icon.innerHTML = `${themeIcon.IconSVG}`;
-                
-                icon.addEventListener("click", (e) => {
-                    e.preventDefault();
+  init() {
+    this.icons = [];
+    const themeIcons: ThemeIcon[] = this.themeManager.getActiveThemeIcons();
+    const activeTheme: Theme = this.themeManager.getActiveTheme();
+    // Filter icons by category and theme
+    themeIcons
+      .filter((icon) => icon.IconCategory === this.iconsCategory)
+      .forEach((themeIcon) => {
+        const icon = document.createElement("div");
+        icon.classList.add("icon");
+        icon.title = themeIcon.IconName;
+        icon.innerHTML = `${themeIcon.IconSVG}`;
 
-                    const selectedComponent = (globalThis as any).selectedComponent;
-                    if (!selectedComponent) return;
+        icon.addEventListener("click", (e) => {
+          e.preventDefault();
 
-                    const iconComponent = selectedComponent.find(".tile-icon")[0];
-                    if (!iconComponent) return;
-                    const currentTileColor = selectedComponent.getStyle()?.["color"];
-                    const whiteSVG = themeIcon.IconSVG.replace(/fill="#[^"]*"/g, `fill="${currentTileColor || "white"}"`);
-                    const iconSVGWithAttributes = whiteSVG.replace('<svg', `<svg ${DefaultAttributes}`);
+          const selectedComponent = (globalThis as any).selectedComponent;
+          if (!selectedComponent) return;
 
-                    iconComponent.components(iconSVGWithAttributes);
-                    
-                    const iconCompParent = iconComponent.parent();
-                    iconCompParent.addStyle({
-                        'display': 'block'
-                    });
+          const iconComponent = selectedComponent.find(".tile-icon")[0];
+          if (!iconComponent) return;
+          const currentTileColor = selectedComponent.getStyle()?.["color"];
+          const whiteSVG = themeIcon.IconSVG.replace(
+            /fill="#[^"]*"/g,
+            `fill="${currentTileColor || "white"}"`
+          );
+          const iconSVGWithAttributes = whiteSVG.replace(
+            "<svg",
+            `<svg ${DefaultAttributes}`
+          );
 
-                    (globalThis as any).tileManager.updateTile(
-                        selectedComponent.parent().getId(),
-                        "Icon",
-                        themeIcon.IconName
-                      );
-                });
-                
-                this.icons.push(icon);
-            });
-    }
+          iconComponent.components(iconSVGWithAttributes);
 
-    render(container: HTMLElement) {
-        this.icons.forEach(icon => container.appendChild(icon));
-    }
+          const iconCompParent = iconComponent.parent();
+          iconCompParent.addStyle({
+            display: "block",
+          });
+
+          (globalThis as any).tileMapper.updateTile(
+            selectedComponent.parent().getId(),
+            "Icon",
+            themeIcon.IconName
+          );
+        });
+
+        this.icons.push(icon);
+      });
+  }
+
+  render(container: HTMLElement) {
+    this.icons.forEach((icon) => container.appendChild(icon));
+  }
 }

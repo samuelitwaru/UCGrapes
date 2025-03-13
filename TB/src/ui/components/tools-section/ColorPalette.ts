@@ -38,8 +38,11 @@ export class ColorPalette {
 
         const tileWrapper = selectedComponent.parent();
         const rowComponent = tileWrapper.parent();
-          
-        const tileAttributes = (globalThis as any).tileManager.getTile(rowComponent.getId(), tileWrapper.getId());
+
+        const tileAttributes = (globalThis as any).tileMapper.getTile(
+          rowComponent.getId(),
+          tileWrapper.getId()
+        );
 
         if (tileAttributes?.BGImageUrl) {
           return;
@@ -52,7 +55,7 @@ export class ColorPalette {
             currentColor === colorValue ? "transparent" : colorValue,
         });
 
-        (globalThis as any).tileManager.updateTile(
+        (globalThis as any).tileMapper.updateTile(
           selectedComponent.parent().getId(),
           "BGColor",
           colorValue

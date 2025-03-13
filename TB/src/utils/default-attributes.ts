@@ -19,6 +19,17 @@ data-gjs-hoverable="false"
 data-gjs-type="tile-wrapper"
 `;
 
+export const firstTileWrapperDefaultAttributes: string = `
+data-gjs-draggable="false"
+data-gjs-selectable="false"
+data-gjs-editable="false"
+data-gjs-highlightable="false"
+data-gjs-droppable="false"
+data-gjs-resizable="false"
+data-gjs-hoverable="false"
+data-gjs-type="tile-wrapper"
+`;
+
 export const DefaultAttributes: string = `
 data-gjs-draggable="false"
 data-gjs-selectable="false"

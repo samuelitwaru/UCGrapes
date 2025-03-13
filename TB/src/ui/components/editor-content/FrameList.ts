@@ -15,7 +15,7 @@ export class FrameList {
         this.container.className = "frame-list";
         this.container.id = "child-container";
 
-        const editorFrame = new EditorFrame(`gjs-${this.pageId}`, true);
+        const editorFrame = new EditorFrame(`${this.pageId}`, true);
         editorFrame.render(this.container);
     }
 

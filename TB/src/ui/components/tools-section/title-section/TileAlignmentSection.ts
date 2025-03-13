@@ -33,17 +33,19 @@ export class TileAlignmentSection {
                 </svg>
             </label>
         `;
-    
+
     leftAlign.onclick = (e) => {
       e.preventDefault();
-      const leftAlignInput = document.getElementById("tile-left") as HTMLInputElement;
+      const leftAlignInput = document.getElementById(
+        "tile-left"
+      ) as HTMLInputElement;
 
       const selectedComponent = (globalThis as any).selectedComponent;
       if (!selectedComponent) return;
 
       selectedComponent.addStyle({
-          "justify-content": "start",
-          "align-items": "start",
+        "justify-content": "start",
+        "align-items": "start",
       });
 
       const titleSection = selectedComponent.find(".tile-title")[0];
@@ -53,22 +55,24 @@ export class TileAlignmentSection {
         });
       }
 
-      (globalThis as any).tileManager.updateTile(
+      (globalThis as any).tileMapper.updateTile(
         selectedComponent.parent().getId(),
         "Align",
-        'left'
+        "left"
       );
 
       leftAlignInput.checked = true;
-    }
+    };
 
     centerAlign.onclick = (e) => {
       e.preventDefault();
-      const centerAlignInput = document.getElementById("tile-center") as HTMLInputElement;
+      const centerAlignInput = document.getElementById(
+        "tile-center"
+      ) as HTMLInputElement;
 
       const selectedComponent = (globalThis as any).selectedComponent;
       if (!selectedComponent) return;
-  
+
       selectedComponent.addStyle({
         "justify-content": "center",
         "align-items": "center",
@@ -81,14 +85,14 @@ export class TileAlignmentSection {
         });
       }
 
-      (globalThis as any).tileManager.updateTile(
+      (globalThis as any).tileMapper.updateTile(
         selectedComponent.parent().getId(),
         "Align",
-        'center'
+        "center"
       );
-      
+
       centerAlignInput.checked = true;
-    }
+    };
 
     this.container.appendChild(leftAlign);
     this.container.appendChild(centerAlign);

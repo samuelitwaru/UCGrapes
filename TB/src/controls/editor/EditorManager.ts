@@ -37,7 +37,7 @@ export class EditorManager {
   setUpEditorFrame() {
     const leftNavigatorButton = new LeftNavigatorButton();
     const rightNavigatorButton = new RightNavigatorButton();
-    const frameList = new FrameList(this.homepage?.PageId);
+    const frameList = new FrameList(`gjs-0`);
 
     const editorFrameArea = document.getElementById(
       "main-content"
@@ -49,13 +49,13 @@ export class EditorManager {
   }
 
   async setUpEditor() {
-    const editor = this.initializeGrapesEditor(`gjs-${this.homepage?.PageId}`);
+    const editor = this.initializeGrapesEditor(`gjs-0`);
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
+    this.activateHomeEditor(`gjs-0`)
   }
 
   async loadHomePage(editor: any) {
-    console.log("loadHomePage", this.homepage);
     // const pages = await this.toolboxService.getPages();
 
     // const homePage = pages.find((page: any) => page.PageName === "Home");
@@ -74,7 +74,7 @@ export class EditorManager {
     const htmlOutput = converter.generateHTML();
 
     editor.setComponents(htmlOutput);
-    this.editorEvents.init(editor, this.homepage?.PageId);
+    this.editorEvents.init(editor, this.homepage?.PageId, `gjs-0`);
     localStorage.setItem(`data-${this.homepage?.PageId}`, JSON.stringify(this.homepage));
   }
 
@@ -86,10 +86,9 @@ export class EditorManager {
       width: "auto",
       canvas: {
         styles: [
-          "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
+          "/Resources/UCGrapes1/src/css/toolbox.css",
           "/DVelop/Bootstrap/Shared/fontawesome_vlatest/css/all.min.css?202521714271081",
           "https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap",
-          "/Resources/UCGrapes1/src/css/toolbox.css",
         ],
       },
       baseCss: " ",
@@ -129,5 +128,10 @@ export class EditorManager {
     // if (!existingEditor) {
     //   this.editors.push({ pageId, frameId, editor });
     // }
+  }
+
+  activateHomeEditor (frameId: string) {
+    const homeFrame = document.getElementById(`${frameId}-frame`);
+    homeFrame?.classList.add('active-editor');
   }
 }

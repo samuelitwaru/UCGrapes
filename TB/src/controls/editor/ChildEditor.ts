@@ -1,4 +1,5 @@
 import { EditorFrame } from "../../ui/components/editor-content/EditorFrame";
+import { randomIdGenerator } from "../../utils/helpers";
 import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJS } from "./JSONToGrapesJS";
@@ -18,22 +19,30 @@ export class ChildEditor {
     }
 
     init(){
-        this.createNewEditor();
-        const childEditor = this.editorManager.initializeGrapesEditor('gjs-'+this.pageId);
+        let editorId: any = `gjs-${this.getEditorId()}`;
+        this.createNewEditor(editorId);
+        const childEditor = this.editorManager.initializeGrapesEditor(editorId);
         const converter = new JSONToGrapesJS(this.pageData);
         const htmlOutput = converter.generateHTML();
         childEditor.setComponents(htmlOutput);
         // console.log(this.pageData)
-        this.editorEvents.init(childEditor, this.pageId);
+        this.editorEvents.init(childEditor, this.pageId, editorId);
         this.editorManager.finalizeEditorSetup(childEditor);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(this.pageData));
     }
 
-    createNewEditor () {
+    createNewEditor (editorId: string) {
         const frameContainer = document.getElementById('child-container') as HTMLElement;
-        const newEditor = new EditorFrame('gjs-'+this.pageId, false, this.pageData.PageName);
+        const newEditor = new EditorFrame(editorId, false, this.pageData.PageName);
         newEditor.render(frameContainer);
     }
 
-
+    getEditorId (): number {
+        let id = 0;
+        const framelist = document.querySelectorAll('.mobile-frame');
+        framelist.forEach((frame: any) => {
+            id ++;
+        });
+        return id;
+    }
 }

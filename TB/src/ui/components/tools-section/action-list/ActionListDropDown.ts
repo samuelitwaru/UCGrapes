@@ -85,7 +85,8 @@ export class ActionListDropDown {
       const res = await demoPages.AppVersions.find((version) => version.IsActive)?.Pages || [];
       const pages = res.filter(
         (page: any) => 
-          page.PageType = "Menu" 
+          page.PageType == "Menu"
+          && page.PageName !== "Home"
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,

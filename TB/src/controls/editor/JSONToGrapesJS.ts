@@ -1,4 +1,4 @@
-import { DefaultAttributes, rowDefaultAttributes, tileDefaultAttributes, tileWrapperDefaultAttributes } from "../../utils/default-attributes";
+import { DefaultAttributes, firstTileWrapperDefaultAttributes, rowDefaultAttributes, tileDefaultAttributes, tileWrapperDefaultAttributes } from "../../utils/default-attributes";
 
 export class JSONToGrapesJS {
   private data: any;
@@ -9,7 +9,7 @@ export class JSONToGrapesJS {
 
   private generateTile(tile: any, isFirstSingleTile: boolean, isThreeTiles: boolean): string {
     return `
-      <div${tileWrapperDefaultAttributes} class="template-wrapper" id="${tile.Id}">
+      <div ${isFirstSingleTile ? firstTileWrapperDefaultAttributes : tileWrapperDefaultAttributes } class="template-wrapper" id="${tile.Id}">
         <div ${tileDefaultAttributes} class="template-block${isFirstSingleTile ? ' high-priority-template' : ''}" 
           style="background-color: ${tile.BGColor}; color: ${tile.Color}; text-align: ${tile.Align};
           ${isThreeTiles ? 'align-items: center; justify-content: center;' : ''}; 
@@ -25,7 +25,7 @@ export class JSONToGrapesJS {
           
           <div ${DefaultAttributes} class="tile-title-section" style="${isThreeTiles ? 'text-align: center;' : 'text-align: left'}">
             <span ${DefaultAttributes} class="tile-close-icon top-right">×</span>
-            <span ${DefaultAttributes} class="tile-title">${tile.Text}</span>
+            <span ${DefaultAttributes} class="tile-title" title="${tile.Text}">${tile.Text}</span>
           </div>
         </div>
         ${isFirstSingleTile ? '' :`

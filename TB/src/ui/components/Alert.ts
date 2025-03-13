@@ -1,7 +1,13 @@
 export class Alert {
-    private  alertElement: HTMLDivElement;
+    private alertElement: HTMLDivElement;
+    private alertContainer: HTMLDivElement;
+    private closeTimeout: number | null = null;
 
-    constructor(status: "error" | "success", message: string) {
+    constructor(status: "error" | "success", message: string, duration: number = 5000) {
+        this.alertContainer = document.createElement("div");
+        this.alertContainer.className = "tb-alerts-container";
+        this.alertContainer.id = "tb-alerts-container";
+
         this.alertElement = document.createElement("div");
         this.alertElement.className = `tb-alert ${status}`;
         this.alertElement.style.display = "flex";
@@ -28,15 +34,24 @@ export class Alert {
         this.alertElement.appendChild(alertHeader);
         this.alertElement.appendChild(paragraph);
 
-        document.body.appendChild(this.alertElement);
+        this.alertContainer.appendChild(this.alertElement);
+
+        document.body.appendChild(this.alertContainer);
 
         setTimeout(() => (this.alertElement.style.opacity = "1"), 50);
+        
+        // Auto-close after specified duration
+        this.closeTimeout = window.setTimeout(() => this.close(), duration);
     }
 
     close() {
+        // Clear the timeout if we're closing manually
+        if (this.closeTimeout) {
+            clearTimeout(this.closeTimeout);
+            this.closeTimeout = null;
+        }
+        
         this.alertElement.style.opacity = "0";
         setTimeout(() => this.alertElement.remove(), 500);
     }
 }
-
-// new Alert("success", "This is a success message!");

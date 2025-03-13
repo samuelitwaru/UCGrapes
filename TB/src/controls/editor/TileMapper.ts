@@ -20,7 +20,7 @@ export class TileMapper {
                     "Icon": "home",
                     "BGColor": "transparent",
                     "BGImageUrl": "",
-                    "Opacity": "50",
+                    "Opacity": "0",
                     "Action": {
                         "ObjectType": "",
                         "ObjectId": "",
@@ -40,12 +40,12 @@ export class TileMapper {
             "Id": tileId, 
             "Name": "Title",
             "Text": "Title",
-            "Color": "#333",
+            "Color": "#333333",
             "Align": "left",
             "Icon": "home",
             "BGColor": "transparent",
             "BGImageUrl": "",
-            "Opacity": "50",
+            "Opacity": "0",
             "Action": {
                 "ObjectType": "",
                 "ObjectId": "",
@@ -77,6 +77,7 @@ export class TileMapper {
     updateTile (tileId: string, attribute: string, value: any): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         data.PageStructure.Rows.forEach((row: any) => {
+            console.log(row);
             row.Tiles.forEach((tile: any) => {
                 if (tile.Id === tileId) {
                     if (attribute.includes('.')) {
@@ -99,15 +100,57 @@ export class TileMapper {
 
     getTile (rowId: string,tileId: string): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
-        console.log("data", data)
         if (rowId) {
             const row = data.PageStructure.Rows.find((r: any) => r.Id === rowId);
             if (row) {
-                console.log("row", row)
                 const tile = row.Tiles.find((t: any) => t.Id === tileId);
                 return tile || null;
             }
         } 
         return null;
+    }
+
+    findPageByTileId(pagesCollection: any, tileId: string): any {
+        for (const page of pagesCollection) {
+          for (const row of page.PageStructure.Rows) {
+            for (const tile of row.Tiles) {
+              if (tile.Id === tileId) {
+                return page.PageId;
+              }
+            }
+          }
+        }
+        return null; 
+    }
+
+    moveTile (
+        sourceTileId: string,
+        sourceRowId: string,
+        targetRowId: string,
+        targetIndex: number
+    ): void {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+
+        const sourceRow = data.PageStructure.Rows.find((r: any) => r.Id === sourceRowId);
+        if (!sourceRow) return;
+        
+        const sourceTileIndex = sourceRow.Tiles.findIndex((t: any) => t.Id === sourceTileId);
+        if (sourceTileIndex === -1) return;
+
+        const [tileToMove] = sourceRow.Tiles.splice(sourceTileIndex, 1);
+
+        const targetRow = data.PageStructure.Rows.find((r: any) => r.Id === targetRowId);
+        if (!targetRow) {
+            // If target row doesn't exist, put the tile back
+            sourceRow.Tiles.splice(sourceTileIndex, 0, tileToMove);
+            return;
+        }
+        // Insert tile at target position
+        targetRow.Tiles.splice(targetIndex, 0, tileToMove);
+        // Remove source row if it's now empty
+        if (sourceRow.Tiles.length === 0) {
+            data.PageStructure.Rows = data.PageStructure.Rows.filter((r: any) => r.Id !== sourceRow.Id);            
+        }
+        localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
 }

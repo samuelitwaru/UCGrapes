@@ -7,7 +7,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 export class ToolBoxService {
@@ -18,6 +18,7 @@ export class ToolBoxService {
     pages: Promise<any>[] = [];
     loadingManager: any;
     preloaderEl: HTMLElement = document.getElementById('preloader')!
+    appVersions: any;
 
     constructor() {
         this.config = AppConfig.getInstance();
@@ -31,6 +32,7 @@ export class ToolBoxService {
         this.pages = [];
         this.getPages();
         this.loadingManager = new LoadingManager(this.preloaderEl);
+        this.getThemes();
     }
     // Helper method to handle API calls
     async fetchAPI(endpoint: string, options = {}, skipLoading = false) {
@@ -195,5 +197,13 @@ export class ToolBoxService {
     // Content API methods
     async getContentPageData(productServiceId: string | number) {
         return await this.fetchAPI(`/api/productservice?Productserviceid=${productServiceId}`);
+    }
+
+    async getThemes() {
+        const response = await this.fetchAPI('/api/toolbox/v2/appversions', {}, true);
+        console.log('response', response)
+        this.appVersions = response.SDT_AppVersionCollection;
+        console.log('appVersions', this.appVersions)
+        return response.SDT_AppVersionCollection;
     }
 }

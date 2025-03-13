@@ -1,3 +1,4 @@
+import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { Media } from "../../../../models/Media"; // Fixed typo in import name
 import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
@@ -127,7 +128,6 @@ export class SingleImageFile {
         
         try {
             const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-            console.log(safeMediaUrl);
             selectedComponent.addStyle({
                 "background-image": `url(${safeMediaUrl})`,
                 "background-color": "transparent",
@@ -147,6 +147,15 @@ export class SingleImageFile {
                 "Opacity",
                 '0'
               );
+
+            const tileWrapper = selectedComponent.parent();
+            const rowComponent = tileWrapper.parent();
+             
+            const tileAttributes = (globalThis as any).tileManager.getTile(rowComponent.getId(), tileWrapper.getId()); 
+            if (selectedComponent && tileAttributes) {
+                const tileProperties = new TileProperties(selectedComponent, tileAttributes);
+                tileProperties.setTileAttributes();
+              }
         } catch (error) {
             console.error("Error adding image to tile:", error);
         }

@@ -14,7 +14,7 @@ export class TileManager {
     this.event = e;
     this.editor = editor;
     this.pageId = pageId;
-    this.tileUpdate = new TileUpdate();
+    this.tileUpdate = new TileUpdate(pageId);
     this.tileMapper = new TileMapper(this.pageId);
     this.init();
   }
@@ -47,8 +47,9 @@ export class TileManager {
 
       const newRowComponent = this.editor.Components.addComponent(this.getTileRow());
       columnComponent.append(newRowComponent, { at: index + 1 });
+      const tileId = newRowComponent.find(".template-wrapper")[0]?.getId();
 
-      (globalThis as any).tileManager.addFreshRow(newRowComponent.getId() as string);
+      (globalThis as any).tileManager.addFreshRow(newRowComponent.getId() as string, tileId as string);
     }
   }
 
@@ -142,7 +143,6 @@ export class TileManager {
 
    return hasTitleVisible && hasIconVisible;
   }
-
 
   private getTileRow() {
     const tile = this.getTile();

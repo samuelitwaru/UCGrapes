@@ -14,8 +14,7 @@ export class ActionDetails {
     this.details.className = "category";
     this.details.setAttribute("data-category", "Page");
 
-    this.createCategoryElement();
-    
+    this.createCategoryElement();    
   }
 
   createCategoryElement() {

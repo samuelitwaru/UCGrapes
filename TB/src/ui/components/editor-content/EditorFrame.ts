@@ -6,11 +6,13 @@ export class EditorFrame {
     private container: HTMLElement;
     private id: string;
     private isHome: boolean;
+    private pageName?: string;
 
-    constructor(id: string, isHome: boolean = false) {
+    constructor(id: string, isHome: boolean = false, pageName?: string) {
         this.container = document.createElement('div');
         this.id = id;
         this.isHome = isHome
+        this.pageName = pageName;
         this.init();
     }
 
@@ -21,7 +23,7 @@ export class EditorFrame {
 
         const frameHeader = new FrameHeader();
         const homeAppBar = new HomeAppBar();
-        const pageAppBar = new PageAppBar(); 
+        const pageAppBar = new PageAppBar(this.id, this.pageName); 
 
         frameHeader.render(this.container);
         if (this.isHome) {

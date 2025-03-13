@@ -9,6 +9,9 @@ export class TileProperties {
 
     public setTileAttributes() {
         this.setBgColorProperties();
+        this.setOpacityProperties();
+        this.setTileStyleProperties();
+        this.setTileActionProperties();
     }
 
     private setBgColorProperties(): void {
@@ -22,7 +25,6 @@ export class TileProperties {
             const inputBox = colorBox.querySelector("input") as HTMLInputElement;
             if (tileBGColor === tileBgColorAttr && tileBGColor === inputBox.value) {
                 inputBox.checked = true;
-                console.log("true");
             } else {
                 inputBox.checked = false;
             }            
@@ -30,11 +32,67 @@ export class TileProperties {
     }
 
     private setOpacityProperties(): void {
-        
+        const tileBgImageAttrUrl = this.tileAttributes.BGImageUrl;
+        const tileBgImageAttrOpacity = this.tileAttributes.Opacity;
+        const bgImageStyle = this.selectedComponent.getStyle()?.['background-image'];
+        let tileBGImage = '';
+
+        if (bgImageStyle && bgImageStyle.startsWith("url(")) {
+            tileBGImage = bgImageStyle.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+        }
+
+        if (tileBGImage && tileBgImageAttrUrl) { 
+            if (tileBGImage === tileBgImageAttrUrl) {
+                const opactySection = document.querySelector('.tile-img-section');
+                if (opactySection) {
+                    const slider = opactySection.querySelector('#slider-wrapper') as HTMLElement;
+                    slider.style.display = 'flex';
+                    const input = opactySection.querySelector("#bg-opacity") as HTMLInputElement;
+                    input.value = tileBgImageAttrOpacity;
+                    const tileImageSection = opactySection.querySelector('#tile-img-container') as HTMLElement;
+                    tileImageSection.style.display = 'block';
+                    const imageThumbnail = tileImageSection.querySelector('#tile-img-thumbnail') as HTMLImageElement;
+                    if (imageThumbnail) {
+                        imageThumbnail.src = tileBgImageAttrUrl;
+                    }
+                }
+            }
+        } else {
+            const slider = document.querySelector('#slider-wrapper') as HTMLElement;
+            const tileImageSection = document.querySelector('#tile-img-container') as HTMLElement;
+            slider.style.display = 'none';
+            tileImageSection.style.display = 'none';
+        }
     }
 
     private setTileStyleProperties () {
+        const title = document.querySelector('#tile-title') as HTMLInputElement;
+        const tileTitle = this.tileAttributes.Text;
+        title.value = tileTitle;
 
+        const tileColor = this.tileAttributes.Color;
+        const tileColorSection = document.querySelector('#text-color-palette');
+        const tileColorsOptions = tileColorSection?.querySelectorAll("input");
+        tileColorsOptions?.forEach((option) => {
+            if (option.value === tileColor) {
+                option.checked = true;
+            } else {
+                option.checked = false;
+            }
+        });
+    }
+
+    private setTileActionProperties () {
+        const tileAlign = this.tileAttributes.Align;
+        const tileAlignSection = document.querySelector('.text-alignment');
+        const tileAlignsOption = tileAlignSection?.querySelectorAll("input");
+        tileAlignsOption?.forEach((option) => {
+            if (option.value === tileAlign) {
+                option.checked = true;
+            } else {
+                option.checked = false;
+            }
+        });
     }
 
     private setActionProperties(): void {

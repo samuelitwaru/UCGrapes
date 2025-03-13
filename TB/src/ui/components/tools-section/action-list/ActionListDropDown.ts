@@ -1,6 +1,7 @@
 import { ActionPage } from "../../../../interfaces/ActionPage";
 import { Category } from "../../../../interfaces/Category";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
+import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 
 export class ActionListDropDown {
@@ -81,13 +82,10 @@ export class ActionListDropDown {
 
   async getPages() {
     try {
-      const res = await this.toolBoxService.getPages();
+      const res = await demoPages.AppVersions.find((version) => version.IsActive)?.Pages || [];
       const pages = res.filter(
         (page: any) => 
-          !page.PageIsContentPage &&
-          !page.PageIsPredefined &&
-          !page.PageIsDynamicForm &&
-          !page.PageIsWebLinkPage
+          page.PageType = "Menu" 
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,

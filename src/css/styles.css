@@ -527,13 +527,17 @@ span#scroll-right:hover {
 }
 
 .theme-option:hover {
-  background: #222f54;
-  color: #fff;
+  background: #e9ecef;
+  color: #333;
 }
 
 .theme-option.selected {
-  background: #222f54;
-  color: #fff;
+  background: #e9ecef;
+  color: #333;
+}
+
+span.clone-version.fa.fa-clone {
+  float: right;
 }
 
 /* xx */
@@ -881,7 +885,6 @@ h5#current-page-title {
   border: 1px solid #ddd;
   padding: 6px;
   border-radius: 6px;
-  width: 85%;
   background-color: #fff;
 }
 
@@ -891,7 +894,6 @@ h5#current-page-title {
   cursor: pointer;
   display: flex;
   align-items: center;
-  margin-right: 10px;
 }
 
 .bg-section .slider-wrapper {

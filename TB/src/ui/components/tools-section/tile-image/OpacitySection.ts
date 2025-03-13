@@ -26,16 +26,29 @@ export class OpacitySection {
         const sliderWrapper = document.createElement('div');
         sliderWrapper.className = 'slider-wrapper';
         sliderWrapper.id = 'slider-wrapper'
-        sliderWrapper.innerHTML = `
-            <input
-                type="range"
-                id="bg-opacity"
-                min="0"
-                max="100"
-                value="80"
-                oninput="document.getElementById('valueDisplay').textContent = this.value + ' %'">
-            <span class="value-display" id="valueDisplay">0%</span>
-        `;
+        sliderWrapper.style.display = 'none';
+
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.id = 'bg-opacity';
+        input.min = '0';
+        input.max = '100';
+        input.value = '80';
+        input.addEventListener("input", (event: any) => {
+            const value = event.target.value;
+            const valueDisplay = document.getElementById('valueDisplay');
+            if (valueDisplay) {
+                valueDisplay.innerHTML = `${value}%`;
+            }
+            this.updateImageOpacity(value);
+        });
+
+        const valueDisplay = document.createElement('span');
+        valueDisplay.id = 'valueDisplay';
+        valueDisplay.innerHTML = '80%';
+
+        sliderWrapper.appendChild(input);
+        sliderWrapper.appendChild(valueDisplay);
 
         addImageBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -63,6 +76,13 @@ export class OpacitySection {
 
         this.container.appendChild(addImageBtn);
         this.container.appendChild(sliderWrapper);        
+    }
+
+    updateImageOpacity(value: number) {
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (!selectedComponent) return;
+
+        // selectedComponent.imageOpacity = opacity;
     }
 
     render(container: HTMLElement) {

@@ -12,9 +12,32 @@ export class TitleInputSection {
         this.input.classList.add("tb-form-control");
         this.input.id = "tile-title";
 
+        
         this.input.addEventListener('input', (e) => {
-            // console.log(this.input.value);
+            const selectedComponent = (globalThis as any).selectedComponent;
+            if (!selectedComponent) return;
+            const componentRow = selectedComponent.closest(".container-row")
+            const rowTilesLength = componentRow.components().length;
+
+            const tileTitle = selectedComponent.find('.tile-title')[0];
+            if (tileTitle) {
+                const truncatedTitle = rowTilesLength === 3 ? this.truncate(11) : (rowTilesLength === 2 ? this.truncate(14) : this.truncate(25));
+                tileTitle.components(truncatedTitle);
+            }
+
+            (globalThis as any).tileManager.updateTile(
+                selectedComponent.parent().getId(),
+                "Text",
+                this.input.value.trim()
+            );
         })
+    }
+
+    truncate(length: number) {
+        if (this.input.value.length > length) {
+            return this.input.value.substring(0, length) + '..';
+        }
+        return this.input.value;
     }
 
     render(container: HTMLElement) {

@@ -2,8 +2,10 @@ import { EditorFrame } from "./EditorFrame";
 
 export class FrameList {
     private container: HTMLElement;
+    pageId: any;
 
-    constructor() {
+    constructor(pageId: any) {
+        this.pageId = pageId;
         this.container = document.createElement("div");
         this.init();
     }
@@ -13,7 +15,7 @@ export class FrameList {
         this.container.className = "frame-list";
         this.container.id = "child-container";
 
-        const editorFrame = new EditorFrame('gjs-0', true);
+        const editorFrame = new EditorFrame(`gjs-${this.pageId}`, true);
         editorFrame.render(this.container);
     }
 

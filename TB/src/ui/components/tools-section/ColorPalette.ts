@@ -36,6 +36,15 @@ export class ColorPalette {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
 
+        const tileWrapper = selectedComponent.parent();
+        const rowComponent = tileWrapper.parent();
+          
+        const tileAttributes = (globalThis as any).tileManager.getTile(rowComponent.getId(), tileWrapper.getId());
+
+        if (tileAttributes?.BGImageUrl) {
+          return;
+        }
+
         const currentColor = selectedComponent.getStyle()["background-color"];
 
         selectedComponent.addStyle({

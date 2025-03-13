@@ -5,27 +5,33 @@ import { JSONToGrapesJS } from "./JSONToGrapesJS";
 
 export class ChildEditor {
     editorManager: EditorManager;
-    // editorEvents: EditorEvents
+    editorEvents: EditorEvents;
+    pageId: any;
+    pageData: any;
 
-    constructor(){
+
+    constructor(pageId: any, pageData: any){
+        this.pageId = pageId;
+        this.pageData = pageData;
         this.editorManager = new EditorManager();
-        // this.editorEvents = new EditorEvents(this.editorManager);
+        this.editorEvents = new EditorEvents(this.editorManager);
     }
 
     init(){
         this.createNewEditor();
-        const childEditor = this.editorManager.initializeGrapesEditor('gjs-1');
-        const jsonData = {"PageName":"Home","PageId":"12901290129","Content":{"Rows":[{"Id":"1741700734462","Tiles":[{"Id":"1741700736875","Name":"New Tile","Text":"Tile Description","Color":"Red","Align":"left","Icon":"home","BGColor":"White","BGImageUrl":"https://via.placeholder.com/150","Opacity":"50","Action":{"ObjectType":"Page","ObjectId":"12901290129","ObjectUrl":"https://example.com/12901290129"}}]}]}}
-        const converter = new JSONToGrapesJS(jsonData);
+        const childEditor = this.editorManager.initializeGrapesEditor('gjs-'+this.pageId);
+        const converter = new JSONToGrapesJS(this.pageData);
         const htmlOutput = converter.generateHTML();
         childEditor.setComponents(htmlOutput);
-        // this.editorEvents.init(childEditor);
+        // console.log(this.pageData)
+        this.editorEvents.init(childEditor, this.pageId);
         this.editorManager.finalizeEditorSetup(childEditor);
+        localStorage.setItem(`data-${this.pageId}`, JSON.stringify(this.pageData));
     }
 
     createNewEditor () {
         const frameContainer = document.getElementById('child-container') as HTMLElement;
-        const newEditor = new EditorFrame('gjs-1', false);
+        const newEditor = new EditorFrame('gjs-'+this.pageId, false, this.pageData.PageName);
         newEditor.render(frameContainer);
     }
 

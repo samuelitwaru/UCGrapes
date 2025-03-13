@@ -1,8 +1,15 @@
+import { TileMapper } from "./TileMapper";
+
 export class TileUpdate {
-    constructor() {
+    rowComponent: any;
+    pageId: any;
+
+    constructor(pageId?: string) {
+        this.pageId = pageId || null;
     }
 
     updateTile(rowComponent: any) {
+        this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
         const length = tiles.length;
         tiles.forEach((tile: any) => {
@@ -23,14 +30,15 @@ export class TileUpdate {
     
             this.updateAlignment(tile, tileAlignment, titleAlignment);
             this.updateTileTitleLength(tile, length);
+            this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
         });
       }
     
       private updateAlignment(tile: any, tileAlignment: any, titleAlignment: any) {
         const templateBlock = tile.find(".template-block")[0];
         const tileTitle = tile.find(".tile-title-section")[0];
-        templateBlock.addStyle(tileAlignment)    
-        tileTitle.addStyle(titleAlignment)
+        templateBlock.addStyle(tileAlignment);    
+        tileTitle.addStyle(titleAlignment);
       }
     
       private updateTileTitleLength(tile: any, length: number) {
@@ -65,5 +73,15 @@ export class TileUpdate {
         }
         return title.replace("<br>", "");;
       }
+    
+    updateTileAttributes (tileId: string, attribute: string, value: string) {
+        console.log(tileId, attribute, value);
+        const tileAttributes = new TileMapper(this.pageId);
+        let align = value;
+        if (value === "start") {
+            align = "left"
+        }
+        tileAttributes.updateTile(tileId, attribute, align)
+    }
     
 }

@@ -23,7 +23,7 @@ export class TextColor {
       radioInput.type = "radio";
       radioInput.id = `text-color-${colorName}`;
       radioInput.name = "text-color";
-      radioInput.value = colorName;
+      radioInput.value = colorValue;
 
       const colorBox = document.createElement("label");
       colorBox.className = "color-box";

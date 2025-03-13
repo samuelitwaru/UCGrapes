@@ -3,12 +3,14 @@ import { EditorManager } from "../../../controls/editor/EditorManager";
 export class PageAppBar {
     private container: HTMLElement;
     private editor: EditorManager;
-    private title: string;
+    private title?: string;
+    private id: string;
 
-    constructor() {
+    constructor(id: string, title?: string) {
+        this.title = title || "Page Name";
+        this.id = id;
         this.container = document.createElement("div");
         this.editor = new EditorManager();
-        this.title = "New Page";
         this.init();
     }
 
@@ -17,7 +19,7 @@ export class PageAppBar {
 
         const backButton: HTMLElement = document.createElement('svg');
         backButton.innerHTML = `
-          <svg id="back-button-c378677a-6e59-493a-8999-b6fd02dce90a" class="content-back-button" xmlns="http://www.w3.org/2000/svg" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
+          <svg class="content-back-button" xmlns="http://www.w3.org/2000/svg" data-name="Group 14" width="47" height="47" viewBox="0 0 47 47">
             <g id="Ellipse_6" data-name="Ellipse 6" fill="none" stroke="#262626" stroke-width="1">
               <circle cx="23.5" cy="23.5" r="23.5" stroke="none"></circle>
               <circle cx="23.5" cy="23.5" r="23" fill="none"></circle>
@@ -26,24 +28,24 @@ export class PageAppBar {
           </svg>
         `;
 
-        backButton.addEventListener('click', () => {
-            const frameContainer = document.getElementById('child-container');
-            const frameList = frameContainer?.querySelectorAll(".mobile-frame");
-            
-            if (!frameList || frameList.length === 0) return;
-            
-            const currentIndex = frameList.length - 1;
-            frameList.forEach((frame, index) => {
-                if (index >= currentIndex) {
-                    frame.remove();
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const currentFrame = document.querySelector(`#${this.id}-frame`)
+            if (currentFrame) {
+                let nextElement = currentFrame.nextElementSibling;
+                while (nextElement) {
+                    const elementToRemove = nextElement;
+                    nextElement = nextElement.nextElementSibling;
+                    elementToRemove.remove();
                 }
-            });
+                currentFrame.remove();
+            }
         });
 
         const pageTitle = document.createElement('h1');
         pageTitle.className = 'title';
-        pageTitle.setAttribute('title', this.title);
-        pageTitle.textContent = this.title;
+        pageTitle.setAttribute('title', this.title || 'Page Name');
+        pageTitle.textContent = this.title || 'Page Name';
 
         this.container.appendChild(backButton);
         this.container.appendChild(pageTitle);

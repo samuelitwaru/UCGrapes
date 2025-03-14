@@ -67,6 +67,26 @@ export class ToolBoxService {
     }
   }
 
+  async getVersions() {
+    const response = await this.fetchAPI("/api/toolbox/v2/appversions", {}, true);
+    return response;
+  }
+
+  async createMenuPage(appVersionId: string, pageName: string) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-menu-page",
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          appVersionId: appVersionId,
+          name: pageName
+        }),
+      }
+    );
+
+    return response;    
+  }
+
   // Pages API methods
   async getPages() {
     const response = await this.fetchAPI("/api/toolbox/pages/list", {}, true);

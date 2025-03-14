@@ -49,13 +49,14 @@ export class VersionSelection extends ThemeManager{
         this.initializeCategoryOptions();
     }
 
-    initializeCategoryOptions() {
+    async initializeCategoryOptions() {
         this.versionSelection.className = "theme-options-list";
         this.versionSelection.setAttribute("role", "listbox");
 
-        let versions = demoPages.AppVersions;
+        const toolBoxService = new ToolBoxService();
+        let versions = await toolBoxService.getVersions();
 
-        versions.forEach((version) => {
+        versions.AppVersions.forEach((version: any) => {
             const themeOption = document.createElement('div') as HTMLElement;
             themeOption.className = "theme-option";
             themeOption.role = "option";
@@ -67,8 +68,6 @@ export class VersionSelection extends ThemeManager{
             duplicateBtn.title = "Duplicate";
             themeOption.append(duplicateBtn);
 
-            const currentTheme: Theme | undefined= this.getActiveTheme();
-            
             if (version.IsActive) {
                 themeOption.classList.add("selected");
                 this.activeVersion.textContent = version.AppVersionName;

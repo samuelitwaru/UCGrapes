@@ -1,4 +1,6 @@
-class Form {
+import { FormField } from "./FormField";
+
+export class Form {
     private form: HTMLFormElement;
     private fields: FormField[];
 
@@ -23,7 +25,7 @@ class Form {
         const data: Record<string, string> = {};
         this.fields.forEach(field => {
             const input = field.getElement().querySelector('input') as HTMLInputElement;
-            data[input.name] = input.value
+            data[input.id] = input.value;
         });
 
         return data;
@@ -34,13 +36,13 @@ class Form {
 //     const form = new Form('page-form');
 
 //     // Add page title field
-//     form.addField({
-//         label: 'Page Title',
-//         type: 'text',
-//         id: 'page_title',
-//         placeholder: 'New page title',
-//         required: true
-//     });
+    // form.addField({
+    //     label: 'Page Title',
+    //     type: 'text',
+    //     id: 'page_title',
+    //     placeholder: 'New page title',
+    //     required: true
+    // });
 
 //     // Add description field
 //     form.addField({

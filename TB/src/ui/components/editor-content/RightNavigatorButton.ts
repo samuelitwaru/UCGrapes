@@ -9,10 +9,13 @@ export class RightNavigatorButton {
     init() {
         this.container.style.display = "none";
         this.container.className = "navigator page-navigator-right";
-        this.container.innerHTML = `<span id="scroll-right"><i class="fa fa-arrow-left-long"></i></span>`;
+        this.container.innerHTML = `<span id="scroll-right"><i class="fa fa-arrow-right-long"></i></span>`;
 
-        this.container.addEventListener("click", () => {
-            //
+        this.container.addEventListener("click", (e) => {
+            // e.preventDefault();
+            // const scrollAmount = 300;
+            // const scrollContainer = document.querySelector('.frame-list') as HTMLElement;
+            // scrollContainer.scrollLeft += scrollAmount;
         })
     }
 

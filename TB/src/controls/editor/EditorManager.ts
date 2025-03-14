@@ -5,7 +5,7 @@ import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavi
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
 import { demoPages } from "../../utils/test-data/pages";
 import { EditorEvents } from "./EditorEvents";
-import { JSONToGrapesJS } from "./JSONToGrapesJS";
+import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { TileMapper } from "./TileMapper";
 
 declare const grapesjs: any;
@@ -17,7 +17,7 @@ export class EditorManager {
   selectedComponent: any;
   editors: { pageId: string; frameId: string; editor: any }[] = [];
   editorEvents: EditorEvents;
-  jsonToGrapes: JSONToGrapesJS;
+  jsonToGrapes: JSONToGrapesJSMenu;
   homepage: any;
 
   constructor() {
@@ -25,11 +25,15 @@ export class EditorManager {
     this.organisationLogo = this.config.organisationLogo;
     this.toolboxService = new ToolBoxService();
     this.editorEvents = new EditorEvents(this);
-    this.jsonToGrapes = new JSONToGrapesJS(this);
+    this.jsonToGrapes = new JSONToGrapesJSMenu(this);
   }
 
-  init() {
-    this.homepage = demoPages.AppVersions.find((version: any) => version.IsActive == true)?.Pages.find((page: any) => page.PageName === "Home");
+  async init() {
+    const versions = await this.toolboxService.getVersions();
+    this.homepage = versions.AppVersions.find(
+      (version: any) => version.IsActive == true
+    )?.Pages.find((page: any) => page.PageName === "Home");
+    console.log("this.homepage", this.homepage);
     this.setUpEditorFrame();
     this.setUpEditor();
   }
@@ -52,7 +56,7 @@ export class EditorManager {
     const editor = this.initializeGrapesEditor(`gjs-0`);
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
-    this.activateHomeEditor(`gjs-0`)
+    this.activateHomeEditor(`gjs-0`);
   }
 
   async loadHomePage(editor: any) {
@@ -69,13 +73,16 @@ export class EditorManager {
     //   const tileMapper = new TileMapper(homePage.PageId, homePage.PageName);
     //   tileMapper.init();
     // }
-    
-    const converter = new JSONToGrapesJS(this.homepage);
+
+    const converter = new JSONToGrapesJSMenu(this.homepage);
     const htmlOutput = converter.generateHTML();
 
     editor.setComponents(htmlOutput);
     this.editorEvents.init(editor, this.homepage?.PageId, `gjs-0`);
-    localStorage.setItem(`data-${this.homepage?.PageId}`, JSON.stringify(this.homepage));
+    localStorage.setItem(
+      `data-${this.homepage?.PageId}`,
+      JSON.stringify(this.homepage)
+    );
   }
 
   initializeGrapesEditor(editorId: string) {
@@ -130,8 +137,8 @@ export class EditorManager {
     // }
   }
 
-  activateHomeEditor (frameId: string) {
+  activateHomeEditor(frameId: string) {
     const homeFrame = document.getElementById(`${frameId}-frame`);
-    homeFrame?.classList.add('active-editor');
+    homeFrame?.classList.add("active-editor");
   }
 }

@@ -5,4 +5,5 @@ export interface Category {
     displayName: string;
     label: string;
     options: ActionPage[];
+    canCreatePage: boolean;
   }

@@ -1,8 +1,8 @@
-class Modal {
+export class Modal {
     private modalContainer: HTMLDivElement;
     private popupBody: HTMLDivElement;
 
-    constructor(options: { title: string; width?: string; body?: HTMLElement | string }) {
+    constructor(options: { title: string; width?: string; body?: any }) {
         this.modalContainer = document.createElement("div");
         this.modalContainer.className = "popup-modal-link";
         this.modalContainer.style.display = "flex";

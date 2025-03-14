@@ -1,4 +1,4 @@
-class FormField {
+export class FormField {
     private formField: HTMLDivElement;
 
     constructor (config: {

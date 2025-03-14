@@ -12,12 +12,14 @@ export class TileManager {
   private event: MouseEvent;
   editor: any;
   pageId: any;
+  frameId: any;
   tileUpdate: TileUpdate;
 
-  constructor(e: MouseEvent, editor: any, pageId: any) {
+  constructor(e: MouseEvent, editor: any, pageId: any, frameId: any) {
     this.event = e;
     this.editor = editor;
     this.pageId = pageId;
+    this.frameId = frameId;
     this.tileUpdate = new TileUpdate(pageId);
     (globalThis as any).tileMapper = new TileMapper(this.pageId);
     this.init();
@@ -116,6 +118,8 @@ export class TileManager {
           tileComponent.getId() as string,
           parentComponent.getId() as string
         );
+
+        this.removeEditor(tileComponent.getId() as string);
       }
     }
   }
@@ -179,6 +183,26 @@ export class TileManager {
     });
 
     return hasTitleVisible && hasIconVisible;
+  }
+
+  removeEditor(tileId: string): void {
+    const framelist = document.querySelectorAll('.mobile-frame');
+    framelist.forEach((frame: any) => {
+      const frameHasTile = frame.querySelector(`#${tileId}`)
+      if (frameHasTile) {
+        console.log(frameHasTile)
+      }
+      if (frame.id.includes(this.frameId)) {
+        let nextElement = frame.nextElementSibling;
+        while (nextElement) {
+          const elementToRemove = nextElement;
+          nextElement = nextElement.nextElementSibling;
+          if (elementToRemove) {  // Add this check
+            elementToRemove.remove();
+          }
+        }
+      }
+    });
   }
 
   private getTileRow() {

@@ -6,7 +6,7 @@ import { ActionDetails } from "./ActionDetails";
 
 export class ActionListDropDown {
   container: HTMLElement;
-  toolBoxService: ToolBoxService;
+  toolBoxService: ToolBoxService;  
 
   constructor() {
     this.container = document.createElement("div");
@@ -34,30 +34,35 @@ export class ActionListDropDown {
         displayName: "Pages",
         label: "Pages",
         options: await this.getPages(),
+        canCreatePage: true,
       },
       {
         name: "Service/Product Page",
         displayName: "Service Pages",
         label: "Service Page",
         options: this.getServices(),
+        canCreatePage: true,
       },
       {
         name: "Dynamic Forms",
         displayName: "Dynamic Forms",
         label: "Dynamic Forms",
         options: this.getDynamicForms(),
+        canCreatePage: false,
       },
       {
         name: "Predefined Page",
         displayName: "Modules",
         label: "Modules",
         options: [],
+        canCreatePage: false,
       },
       {
         name: "Web Link",
         displayName: "Web Links",
         label: "Web Link",
         options: [],
+        canCreatePage: false,
       },
     ];
   }
@@ -82,7 +87,8 @@ export class ActionListDropDown {
 
   async getPages() {
     try {
-      const res = await demoPages.AppVersions.find((version) => version.IsActive)?.Pages || [];
+      const versions = await this.toolBoxService.getVersions();
+      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Menu"

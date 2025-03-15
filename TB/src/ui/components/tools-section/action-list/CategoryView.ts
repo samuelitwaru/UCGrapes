@@ -68,7 +68,7 @@ export class CategoryView {
 
       li.addEventListener("click", (e) => {
         e.preventDefault();
-        this.pageAttacher.attachToTile(page);
+        this.pageAttacher.attachToTile(page, this.categoryData.name);
       });
 
       list.appendChild(li);

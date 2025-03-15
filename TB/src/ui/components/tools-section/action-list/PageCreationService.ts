@@ -163,7 +163,7 @@ export class PageCreationService {
      */
     private async processMenuPageData(formData: Record<string, string>) {
         const version = await this.appVersionManager.getActiveVersion();
-        console.log('version:', version);
+        
         this.toolBoxService.createMenuPage(version.AppVersionId, formData.page_title).then((res: any) => {            
             console.log('Res:', res);
             new Alert('success', 'Page created successfully');

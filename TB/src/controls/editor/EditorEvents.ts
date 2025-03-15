@@ -82,6 +82,7 @@ export class EditorEvents {
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = new TileMapper(this.pageId);
       (globalThis as any).currentPageId = this.pageId;
+      (globalThis as any).frameId = this.frameId;
       this.setTileProperties();
       this.createChildEditor();
     });

@@ -2,6 +2,7 @@ import { EditorFrame } from "../../ui/components/editor-content/EditorFrame";
 import { randomIdGenerator } from "../../utils/helpers";
 import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
+import { JSONToGrapesJSContent } from "./JSONToGrapesJSContent";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 
 export class ChildEditor {
@@ -21,13 +22,25 @@ export class ChildEditor {
     let editorId: any = `gjs-${this.getEditorId()}`;
     this.createNewEditor(editorId);
     const childEditor = this.editorManager.initializeGrapesEditor(editorId);
-    const converter = new JSONToGrapesJSMenu(this.pageData);
-    const htmlOutput = converter.generateHTML();
-    childEditor.setComponents(htmlOutput);
-    // console.log(this.pageData)
-    this.editorEvents.init(childEditor, this.pageId, editorId);
-    this.editorManager.finalizeEditorSetup(childEditor);
-    localStorage.setItem(`data-${this.pageId}`, JSON.stringify(this.pageData));
+    
+    console.log(this.pageData);
+    let converter;
+    if (this.pageData?.PageType === "Menu") {
+      converter = new JSONToGrapesJSMenu(this.pageData);
+    } else if(this.pageData?.PageType === "Content") {
+        converter = new JSONToGrapesJSContent(this.pageData);
+    }
+
+    if (converter) {
+        const htmlOutput = converter.generateHTML();
+        childEditor.setComponents(htmlOutput);
+        this.editorEvents.init(childEditor, this.pageId, editorId);
+        this.editorManager.finalizeEditorSetup(childEditor);
+        localStorage.setItem(`data-${this.pageId}`, JSON.stringify(this.pageData));
+    } else {
+        console.error("Invalid PageType or pageData is undefined:", this.pageData);
+    }
+    
   }
 
   createNewEditor(editorId: string) {

@@ -2,15 +2,18 @@ import { ActionPage } from "../../../../interfaces/ActionPage";
 import { ChildEditor } from "../../../../controls/editor/ChildEditor";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { Alert } from "../../Alert";
+import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;
+  appVersionManager: any;
 
   constructor() {
+    this.appVersionManager = new AppVersionManager();
     this.toolboxService = new ToolBoxService();
   }
 
-  async attachToTile(page: ActionPage) {
+  async attachToTile(page: ActionPage, categoryName: string) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -30,42 +33,54 @@ export class PageAttacher {
       new Alert("error", "Page cannot be linked to itself");
       return;
     }
-
     const updates = [
-      ["Text", page.PageName],
-      ["Name", page.PageName],
-      ["Action.ObjectType", "Page"],
-      ["Action.ObjectId", page.PageId],
-    ];
+        ["Text", page.PageName],
+        ["Name", page.PageName],
+        ["Action.ObjectType", "Page"],
+        ["Action.ObjectId", page.PageId],
+      ];
+      
+    //   for (const [property, value] of updates) {
+    //     (globalThis as any).tileMapper.updateTile(tileId, property, value);
+    //   }
+  
+      const version = await this.appVersionManager.getActiveVersion(); 
+      this.attachPage(page, version);
+  }
 
-    for (const [property, value] of updates) {
-      (globalThis as any).tileMapper.updateTile(tileId, property, value);
-    }
-
-    const newPageId = page.PageId;
-    const versions = await this.toolboxService.getVersions();
+  attachPage(page: ActionPage, version: any) {
+    const selectedItemPageId = page.PageId;
 
     const childPage =
-      versions.AppVersions.find((version: any) => version.IsActive)?.Pages.find(
-        (page: any) => page.PageId === newPageId
-      ) || null;
+        version?.Pages.find(
+            (page: any) => page.PageId === selectedItemPageId
+        ) || null;
 
-    const removeOtherEditors = () => {
-      const currentFrame = document.querySelector(`#gjs-${page.PageId}-frame`);
+    this.removeOtherEditors();
 
-      if (currentFrame) {
-        let nextElement = currentFrame.nextElementSibling;
+    if (childPage) {
+        new ChildEditor(page.PageId, childPage).init();
+    } else{
+        this.toolboxService.createContentPage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
+            new ChildEditor(newPage.PageId, newPage.ContentPage).init();
+        });
+    }
+  }
+
+  removeOtherEditors(): void {
+    const frameId = (globalThis as any).frameId;
+    const framelist = document.querySelectorAll('.mobile-frame');
+    framelist.forEach((frame: any) => {
+      if (frame.id.includes(frameId)) {
+        let nextElement = frame.nextElementSibling;
         while (nextElement) {
           const elementToRemove = nextElement;
           nextElement = nextElement.nextElementSibling;
-          elementToRemove.remove();
+          if (elementToRemove) {  // Add this check
+            elementToRemove.remove();
+          }
         }
       }
-    };
-
-    removeOtherEditors();
-    if (childPage) {
-      new ChildEditor(page.PageId, childPage).init();
-    }
+    });
   }
 }

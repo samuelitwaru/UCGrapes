@@ -79,7 +79,22 @@ export class ToolBoxService {
         method: "POST",
         body: JSON.stringify({ 
           appVersionId: appVersionId,
-          name: pageName
+          pageName: pageName
+        }),
+      }
+    );
+
+    return response;    
+  }
+
+  async createContentPage(appVersionId: string, productServiceId: string) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-service-page",
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          appVersionId: appVersionId,
+          ProductServiceId: productServiceId,
         }),
       }
     );
@@ -154,12 +169,12 @@ export class ToolBoxService {
     });
   }
 
-  async createContentPage(pageId: string | number) {
-    return await this.fetchAPI("/api/toolbox/create-content-page", {
-      method: "POST",
-      body: JSON.stringify({ PageId: pageId }),
-    });
-  }
+  // async createContentPage(pageId: string | number) {
+  //   return await this.fetchAPI("/api/toolbox/create-content-page", {
+  //     method: "POST",
+  //     body: JSON.stringify({ PageId: pageId }),
+  //   });
+  // }
 
   async createDynamicFormPage(formId: string | number, pageName: string) {
     return await this.fetchAPI("/api/toolbox/create-dynamic-form-page", {

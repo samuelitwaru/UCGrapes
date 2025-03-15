@@ -11,13 +11,13 @@ export class JSONToGrapesJSMenu {
 
   constructor(json: any) {
     this.data = json;
-  }
+ }
 
-  private generateTile(
+ private generateTile(
     tile: any,
     isFirstSingleTile: boolean,
     isThreeTiles: boolean
-  ): string {
+ ): string {
     return `
       <div ${
         isFirstSingleTile
@@ -25,8 +25,8 @@ export class JSONToGrapesJSMenu {
           : tileWrapperDefaultAttributes
       } class="template-wrapper" id="${tile.Id}">
         <div ${tileDefaultAttributes} class="template-block${
-      isFirstSingleTile ? " high-priority-template" : ""
-    }" 
+              isFirstSingleTile ? " high-priority-template" : ""
+          }" 
           style="background-color: ${tile.BGColor}; color: ${
       tile.Color
     }; text-align: ${tile.Align};
@@ -62,43 +62,54 @@ export class JSONToGrapesJSMenu {
           isFirstSingleTile
             ? ""
             : `
-          <button ${DefaultAttributes} title="Delete tile" class="action-button delete-button">&minus;</button>`
+          <button ${DefaultAttributes} title="Delete tile" class="action-button delete-button">−</button>`
         }
         <button ${DefaultAttributes} title="Add tile right" class="action-button add-button-right">+</button>
-        <button ${DefaultAttributes} title="Add tile below" class="action-button add-button-bottom">&plus;</button>
+        <button ${DefaultAttributes} title="Add tile below" class="action-button add-button-bottom">+</button>
       </div>
     `;
-  }
+ }
 
-  private generateContent(content: any): string {
-    if (content.ContentType === "Image") {
-      return `
-        <img id="product-service-image" data-gjs-type="product-service-image" draggable="true" src="${content.ContentValue}" alt="Product Service Image" class="content-page-block">
-      `;      
-    } else {
-      return `
-        <p id="product-service-description" data-gjs-type="product-service-description" draggable="true" class="content-page-block">
-          ${content.ContentValue}
-        </p>
-      `;
-    }
-  }
+ private generateRow(row: any, rowIndex: number): string {
+    const isFirstSingleTile = rowIndex === 0 && row.Tiles.length === 1;
+    const isThreeTiles = row.Tiles.length === 3;
+    const tilesHTML = row.Tiles.map((tile: any, index: number) =>
+       this.generateTile(tile, isFirstSingleTile && index === 0, isThreeTiles)
+    ).join("");
+    return `<div id="${row.Id}" ${rowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
+ }
 
-  public generateHTML(): any {
+ public generateHTML(): any {
+    console.log("generateHTML", this.data);
     const htmlData = `
-      <div ${DefaultAttributes} id="frame-container" data-gjs-type="template-wrapper" class="content-frame-container">
+      <div ${DefaultAttributes} id="frame-container" data-gjs-type="template-wrapper" class="frame-container">
         <div ${DefaultAttributes} class="container-column">
-        <div ${rowDefaultAttributes} class="container-row">
-          <div data-gjs-type="default" class="template-wrapper">
-            <div id="iuel" data-gjs-type="default" class="content-page-wrapper">
-            ${this.data.Content.map((content: any) =>
-              this.generateContent(content)
-            ).join("")}
-            </div>
-          </div>
-        </div>          
+          ${this.data.PageMenuStructure.Rows.map((row: any, rowIndex: number) =>
+            this.generateRow(row, rowIndex)
+          ).join("")}
         </div>
       </div>
     `;
-  }
+    return this.filterHTML(htmlData);
+ }
+
+ filterHTML(htmlData: string) {
+    const div = document.createElement("div");
+    div.innerHTML = htmlData;
+
+    const rows = div.querySelectorAll(".container-row");
+
+    rows.forEach((row) => {
+       const tiles = row.querySelectorAll(".template-block");
+       if (tiles.length === 3) {
+          const deleteButtons = row.querySelectorAll(".add-button-right");
+          deleteButtons.forEach((button: any) => {
+             button.style.display = "none";
+          });
+       }
+    });
+
+    const modifiedHTML = div.innerHTML;
+    return modifiedHTML;
+ }
 }

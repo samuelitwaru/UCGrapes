@@ -201,9 +201,8 @@ export class ToolBoxService {
 
     async getThemes() {
         const response = await this.fetchAPI('/api/toolbox/v2/appversions', {}, true);
-        console.log('response', response)
-        this.appVersions = response.SDT_AppVersionCollection;
-        console.log('appVersions', this.appVersions)
+        console.log('response', response.AppVersions)
+        this.appVersions = response.AppVersions;
         return response.SDT_AppVersionCollection;
     }
 }

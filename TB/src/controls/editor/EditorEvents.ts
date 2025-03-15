@@ -1,4 +1,5 @@
 import { demoPages } from "../../utils/test-data/pages";
+import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
@@ -12,9 +13,10 @@ export class EditorEvents {
   editorManager: any;
   tileManager: any;
   tileProperties: any;
-
-  constructor(editorManager: any) {
-    this.editorManager = editorManager;
+    appVersionManager: any;
+  
+  constructor() {
+    this.appVersionManager = new AppVersionManager();
   }
 
   init(editor: any, pageId: any, frameEditor: any) {
@@ -134,20 +136,22 @@ export class EditorEvents {
     }
   }
 
-  createChildEditor () {
+  async createChildEditor () {
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
+   
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
-      console.log(data);
+      
       let childPage;
       if (Object.keys(data).length > 0) {
         childPage = data
       } else {
-        childPage = demoPages.AppVersions.find((version: any) => version.IsActive == true)?.Pages.find((page: any) => page.PageId === objectId);
+        const version = await this.appVersionManager.getActiveVersion();
+        childPage = version?.Pages.find((page: any) => page.PageId === objectId);
       }
 
       this.removeOtherEditors();

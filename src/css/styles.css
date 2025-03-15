@@ -422,7 +422,7 @@ span#scroll-right:hover {
   margin: 0;
   text-transform: uppercase;
   font-family: Roboto;
-  letter-spacing: 1.1px;
+  /* letter-spacing: 1px; */
   font-weight: 500;
 }
 

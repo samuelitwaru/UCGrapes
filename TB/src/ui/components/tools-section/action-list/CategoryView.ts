@@ -59,8 +59,7 @@ export class CategoryView {
 
     const list = document.createElement("ul");
     list.className = "category-content";
-
-    this.categoryData.options.forEach((page: ActionPage) => {
+    this.categoryData?.options?.forEach((page: ActionPage) => {
       const li = document.createElement("li") as HTMLElement;
       li.innerText = page.PageName;
       li.setAttribute("data-page-name", page.PageName);

@@ -15,7 +15,7 @@ export class ChildEditor {
     this.pageId = pageId;
     this.pageData = pageData;
     this.editorManager = new EditorManager();
-    this.editorEvents = new EditorEvents(this.editorManager);
+    this.editorEvents = new EditorEvents();
   }
 
   init() {
@@ -23,7 +23,6 @@ export class ChildEditor {
     this.createNewEditor(editorId);
     const childEditor = this.editorManager.initializeGrapesEditor(editorId);
     
-    console.log(this.pageData);
     let converter;
     if (this.pageData?.PageType === "Menu") {
       converter = new JSONToGrapesJSMenu(this.pageData);

@@ -1,9 +1,10 @@
+import { EditorEvents } from "../../../controls/editor/EditorEvents";
 import { EditorManager } from "../../../controls/editor/EditorManager";
 
 export class PageAppBar {
     private container: HTMLElement;
     private editor: EditorManager;
-    private title?: string;
+    private title: string;
     private id: string;
 
     constructor(id: string, title?: string) {
@@ -39,13 +40,16 @@ export class PageAppBar {
                     elementToRemove.remove();
                 }
                 currentFrame.remove();
+                new EditorEvents().activateNavigators();
             }
         });
 
         const pageTitle = document.createElement('h1');
         pageTitle.className = 'title';
-        pageTitle.setAttribute('title', this.title || 'Page Name');
-        pageTitle.textContent = this.title || 'Page Name';
+
+        const truncatedTitle = this.title.length > 20 ? this.title.substring(0, 16) + "..." : this.title
+        pageTitle.setAttribute('title', truncatedTitle || 'Page Name');
+        pageTitle.textContent = truncatedTitle || 'Page Name';
 
         this.container.appendChild(backButton);
         this.container.appendChild(pageTitle);

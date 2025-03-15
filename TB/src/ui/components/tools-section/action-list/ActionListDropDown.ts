@@ -51,10 +51,10 @@ export class ActionListDropDown {
         canCreatePage: false,
       },
       {
-        name: "Predefined Page",
+        name: "Predefined Pages",
         displayName: "Modules",
         label: "Modules",
-        options: [],
+        options: await this.getPredefinedPages(),
         canCreatePage: false,
       },
       {
@@ -92,13 +92,35 @@ export class ActionListDropDown {
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Menu"
-          && page.PageName !== "Home"
+          && page.PageName !== "My Care"
+          && page.PageName !== "My Living"
+          && page.PageName !== "My Services"
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
         TileName: page.PageName
       }))
 
+      return pages;
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+      throw error;
+    }
+  }
+
+  async getPredefinedPages() {
+    try {
+      const versions = await this.toolBoxService.getVersions();
+      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      const pages = res.filter(
+        (page: any) => 
+          page.PageType == "Content"
+          && page.PageName !== "Home"
+      ).map((page: any) => ({
+        PageId: page.PageId,
+        PageName: page.PageName,
+        TileName: page.PageName
+      }))
       return pages;
     } catch (error) {
       console.error("Error fetching pages:", error);

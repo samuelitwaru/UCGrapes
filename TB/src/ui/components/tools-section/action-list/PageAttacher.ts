@@ -40,9 +40,9 @@ export class PageAttacher {
         ["Action.ObjectId", page.PageId],
       ];
       
-    //   for (const [property, value] of updates) {
-    //     (globalThis as any).tileMapper.updateTile(tileId, property, value);
-    //   }
+      for (const [property, value] of updates) {
+        (globalThis as any).tileMapper.updateTile(tileId, property, value);
+      }
   
       const version = await this.appVersionManager.getActiveVersion(); 
       this.attachPage(page, version);

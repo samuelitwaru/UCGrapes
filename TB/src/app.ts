@@ -26,7 +26,6 @@ class ToolboxApp {
     this.toolboxManager.setUpSideBar();
     this.editor.init();
   }
-
 }
 
 export default ToolboxApp;

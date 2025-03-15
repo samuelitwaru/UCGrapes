@@ -6,7 +6,7 @@ import {
     tileWrapperDefaultAttributes,
  } from "../../utils/default-attributes";
  
- export class JSONToGrapesJSContent {
+ export class JSONToGrapesJSContent { 
     private data: any;
  
     constructor(json: any) {

@@ -96,10 +96,23 @@ export class ToolBoxService {
           appVersionId: appVersionId,
           ProductServiceId: productServiceId,
         }),
-      }
+      },
     );
 
     return response;    
+  }
+
+  async autoSavePage(pageData: any) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/save-page",
+      {
+        method: "POST",
+        body: JSON.stringify(pageData),
+      },
+      true
+    );
+
+    return response;
   }
 
   // Pages API methods

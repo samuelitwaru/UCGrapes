@@ -24,7 +24,7 @@ export class EditorManager {
     this.config = AppConfig.getInstance();
     this.organisationLogo = this.config.organisationLogo;
     this.toolboxService = new ToolBoxService();
-    this.editorEvents = new EditorEvents(this);
+    this.editorEvents = new EditorEvents();
     this.jsonToGrapes = new JSONToGrapesJSMenu(this);
   }
 

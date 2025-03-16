@@ -104,7 +104,7 @@ export class ToolboxManager {
           }
         }
       });
-    }, 5000);
+    }, 10000);
   }
 
   openToastMessage() {

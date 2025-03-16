@@ -5,12 +5,16 @@ import {
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
 } from "../../utils/default-attributes";
+import { ThemeManager } from "../themes/ThemeManager";
 
 export class JSONToGrapesJSMenu {
   private data: any;
+  themeManager: ThemeManager;
+
 
   constructor(json: any) {
     this.data = json;
+    this.themeManager = new ThemeManager();
  }
 
  private generateTile(
@@ -27,7 +31,7 @@ export class JSONToGrapesJSMenu {
         <div ${tileDefaultAttributes} class="template-block${
               isFirstSingleTile ? " high-priority-template" : ""
           }" 
-          style="background-color: ${tile.BGColor}; color: ${
+          style="background-color: ${this.themeManager.getThemeColor(tile.BGColor)}; color: ${
       tile.Color
     }; text-align: ${tile.Align};
           ${

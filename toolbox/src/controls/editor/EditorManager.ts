@@ -4,6 +4,7 @@ import { FrameList } from "../../ui/components/editor-content/FrameList";
 import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavigatorButton";
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
 import { demoPages } from "../../utils/test-data/pages";
+import { ThemeManager } from "../themes/ThemeManager";
 import { EditorEvents } from "./EditorEvents";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { TileMapper } from "./TileMapper";
@@ -19,10 +20,12 @@ export class EditorManager {
   editorEvents: EditorEvents;
   jsonToGrapes: JSONToGrapesJSMenu;
   homepage: any;
+  themeManager: any;
 
   constructor() {
     this.config = AppConfig.getInstance();
     this.organisationLogo = this.config.organisationLogo;
+    this.themeManager = new ThemeManager();
     this.toolboxService = new ToolBoxService();
     this.editorEvents = new EditorEvents();
     this.jsonToGrapes = new JSONToGrapesJSMenu(this);
@@ -56,6 +59,7 @@ export class EditorManager {
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
     this.activateHomeEditor(`gjs-0`);
+    this.themeManager.applyTheme(this.themeManager.currentTheme);
   }
 
   async loadHomePage(editor: any) {

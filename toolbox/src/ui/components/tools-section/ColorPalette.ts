@@ -55,10 +55,12 @@ export class ColorPalette {
             currentColor === colorValue ? "transparent" : colorValue,
         });
 
+        selectedComponent.getEl().style.backgroundColor = currentColor === colorValue ? "transparent" : colorValue,
+
         (globalThis as any).tileMapper.updateTile(
           selectedComponent.parent().getId(),
           "BGColor",
-          colorValue
+          colorName
         );
 
         input.checked = currentColor !== colorValue;

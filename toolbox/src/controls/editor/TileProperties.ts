@@ -1,10 +1,14 @@
+import { ThemeManager } from "../themes/ThemeManager";
+
 export class TileProperties {
     tileAttributes: any;
     selectedComponent: any;
+    themeManager: any;
 
     constructor(selectedComponent: any, tileAttributes: any) {
         this.tileAttributes = tileAttributes;
         this.selectedComponent = selectedComponent;
+        this.themeManager = new ThemeManager();
     }
 
     public setTileAttributes() {
@@ -18,10 +22,12 @@ export class TileProperties {
         const themeColors = document.getElementById('theme-color-palette');
         const tileBGColor = this.selectedComponent.getStyle()?.['background-color'];
         const hasBgImage: boolean = this.selectedComponent.getStyle()?.['background-image'];
-        const tileBgColorAttr = this.tileAttributes.BGColor;
+        const tileBgColorAttr = this.themeManager.getThemeColor(this.tileAttributes.BGColor);
+        
         if (hasBgImage) {
             console.log('has bg image');
         }
+
         const colorBoxes: any = themeColors?.children;
         for (let i = 0; i < colorBoxes.length; i++) {
             const colorBox = colorBoxes[i] as HTMLElement;

@@ -1,5 +1,6 @@
 import { EditorFrame } from "../../ui/components/editor-content/EditorFrame";
 import { randomIdGenerator } from "../../utils/helpers";
+import { ThemeManager } from "../themes/ThemeManager";
 import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJSContent } from "./JSONToGrapesJSContent";
@@ -10,10 +11,12 @@ export class ChildEditor {
   editorEvents: EditorEvents;
   pageId: any;
   pageData: any;
+  themeManager: any;
 
   constructor(pageId: any, pageData: any) {
     this.pageId = pageId;
     this.pageData = pageData;
+    this.themeManager = new ThemeManager();
     this.editorManager = new EditorManager();
     this.editorEvents = new EditorEvents();
   }
@@ -35,6 +38,7 @@ export class ChildEditor {
         childEditor.setComponents(htmlOutput);
         this.editorEvents.init(childEditor, this.pageId, editorId);
         this.editorManager.finalizeEditorSetup(childEditor);
+        this.themeManager.applyTheme(this.themeManager.currentTheme);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(this.pageData));
     } else {
         console.error("Invalid PageType or pageData is undefined:", this.pageData);

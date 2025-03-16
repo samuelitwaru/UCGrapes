@@ -16,7 +16,7 @@ export class IconList {
   init() {
     this.icons = [];
     const themeIcons: ThemeIcon[] = this.themeManager.getActiveThemeIcons();
-    const activeTheme: Theme = this.themeManager.getActiveTheme();
+    const activeTheme: Theme = this.themeManager.currentTheme;
     // Filter icons by category and theme
     themeIcons
       .filter((icon) => icon.IconCategory === this.iconsCategory)

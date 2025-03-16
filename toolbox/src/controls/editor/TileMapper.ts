@@ -31,7 +31,7 @@ export class TileMapper {
             ]
         };
     
-        data.PageMenuStructure.Rows?.push(newRow);    
+        data.PageMenuStructure?.Rows?.push(newRow);    
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
     
@@ -55,7 +55,7 @@ export class TileMapper {
         }
 
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
-        const row = data.PageMenuStructure.Rows.find((r: any) => r.Id === rowId);
+        const row = data.PageMenuStructure?.Rows?.find((r: any) => r.Id === rowId);
         if (row) {
             row.Tiles.push(newTile);
             localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
@@ -68,7 +68,7 @@ export class TileMapper {
         if (row) {            
             row.Tiles = row.Tiles.filter((t: any) => t.Id !== tileId);
             if (row.Tiles.length === 0) {
-                data.PageMenuStructure.Rows = data.PageMenuStructure.Rows.filter((r: any) => r.Id !== row.Id);
+                data.PageMenuStructure.Rows = data.PageMenuStructure?.Rows?.filter((r: any) => r.Id !== row.Id);
             }
             localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
         }
@@ -76,7 +76,7 @@ export class TileMapper {
 
     updateTile (tileId: string, attribute: string, value: any): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
-        data.PageMenuStructure.Rows.forEach((row: any) => {
+        data?.PageMenuStructure?.Rows?.forEach((row: any) => {
             row.Tiles.forEach((tile: any) => {
                 if (tile.Id === tileId) {
                     if (attribute.includes('.')) {
@@ -100,7 +100,7 @@ export class TileMapper {
     getTile (rowId: string,tileId: string): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (rowId) {
-            const row = data.PageMenuStructure.Rows.find((r: any) => r.Id === rowId);
+            const row = data?.PageMenuStructure?.Rows?.find((r: any) => r.Id === rowId);
             if (row) {
                 const tile = row.Tiles.find((t: any) => t.Id === tileId);
                 return tile || null;
@@ -111,7 +111,7 @@ export class TileMapper {
 
     findPageByTileId(pagesCollection: any, tileId: string): any {
         for (const page of pagesCollection) {
-          for (const row of page.PageMenuStructure.Rows) {
+          for (const row of page?.PageMenuStructure?.Rows) {
             for (const tile of row.Tiles) {
               if (tile.Id === tileId) {
                 return page.PageId;
@@ -130,15 +130,15 @@ export class TileMapper {
     ): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
-        const sourceRow = data.PageMenuStructure.Rows.find((r: any) => r.Id === sourceRowId);
+        const sourceRow = data?.PageMenuStructure?.Rows.find((r: any) => r.Id === sourceRowId);
         if (!sourceRow) return;
         
-        const sourceTileIndex = sourceRow.Tiles.findIndex((t: any) => t.Id === sourceTileId);
+        const sourceTileIndex = sourceRow?.Tiles?.findIndex((t: any) => t.Id === sourceTileId);
         if (sourceTileIndex === -1) return;
 
-        const [tileToMove] = sourceRow.Tiles.splice(sourceTileIndex, 1);
+        const [tileToMove] = sourceRow?.Tiles?.splice(sourceTileIndex, 1);
 
-        const targetRow = data.PageMenuStructure.Rows.find((r: any) => r.Id === targetRowId);
+        const targetRow = data.PageMenuStructure?.Rows?.find((r: any) => r.Id === targetRowId);
         if (!targetRow) {
             // If target row doesn't exist, put the tile back
             sourceRow.Tiles.splice(sourceTileIndex, 0, tileToMove);
@@ -147,15 +147,15 @@ export class TileMapper {
         // Insert tile at target position
         targetRow.Tiles.splice(targetIndex, 0, tileToMove);
 
-        if (targetRow.Tiles.length === 3) {
-            targetRow.Tiles.forEach((tile: any) => {
+        if (targetRow?.Tiles?.length === 3) {
+            targetRow?.Tiles.forEach((tile: any) => {
               tile.Align = "center";
             });
         }
 
         // Remove source row if it's now empty
-        if (sourceRow.Tiles.length === 0) {
-            data.PageMenuStructure.Rows = data.PageMenuStructure.Rows.filter((r: any) => r.Id !== sourceRow.Id);            
+        if (sourceRow?.Tiles?.length === 0) {
+            data.PageMenuStructure.Rows = data?.PageMenuStructure?.Rows.filter((r: any) => r.Id !== sourceRow.Id);            
         }
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }

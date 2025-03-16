@@ -61,7 +61,7 @@ export class ThemeSelection extends ThemeManager{
             themeOption.setAttribute('data-value', theme.ThemeName);
             themeOption.textContent = theme.ThemeName;
 
-            const currentTheme: Theme | undefined= this.getActiveTheme();
+            const currentTheme: Theme | undefined= this.currentTheme;
             
             if (currentTheme &&currentTheme.ThemeName === theme.ThemeName) {
                 themeOption.classList.add("selected");

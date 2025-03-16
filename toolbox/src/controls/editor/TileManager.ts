@@ -219,7 +219,7 @@ export class TileManager {
       <div ${tileWrapperDefaultAttributes} class="template-wrapper" id="${randomIdGenerator(
       8
     )}">
-        <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #fff justify-content: left">
+        <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #333333; justify-content: left">
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
               <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" class="tile-icon">Title</span>

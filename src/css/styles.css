@@ -214,7 +214,7 @@ span#scroll-right {
   align-items: center;
   color: #5068a8;
   border: none;
-  padding: 10px 15px;
+  padding: 10px 13px;
   cursor: pointer;
   border-radius: 50%;
   font-size: 25px;
@@ -422,7 +422,7 @@ span#scroll-right:hover {
   margin: 0;
   text-transform: uppercase;
   font-family: Roboto;
-  letter-spacing: 1.1px;
+  /* letter-spacing: 1px; */
   font-weight: 500;
 }
 
@@ -527,13 +527,17 @@ span#scroll-right:hover {
 }
 
 .theme-option:hover {
-  background: #222f54;
-  color: #fff;
+  background: #e9ecef;
+  color: #333;
 }
 
 .theme-option.selected {
-  background: #222f54;
-  color: #fff;
+  background: #e9ecef;
+  color: #333;
+}
+
+span.clone-version.fa.fa-clone {
+  float: right;
 }
 
 /* xx */
@@ -881,7 +885,6 @@ h5#current-page-title {
   border: 1px solid #ddd;
   padding: 6px;
   border-radius: 6px;
-  width: 85%;
   background-color: #fff;
 }
 
@@ -891,7 +894,6 @@ h5#current-page-title {
   cursor: pointer;
   display: flex;
   align-items: center;
-  margin-right: 10px;
 }
 
 .bg-section .slider-wrapper {
@@ -1327,11 +1329,14 @@ div#cta-selected-actions {
 }
 
 .upload-area {
-  border: 1.2px dashed #ccc;
-  border-radius: 1px;
-  padding: 40px;
+  position: relative;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 20px;
   text-align: center;
+  transition: all 0.3sease;
   margin-bottom: 20px;
+  cursor: pointer;
 }
 
 .upload-area img {
@@ -1343,6 +1348,7 @@ div#cta-selected-actions {
 .upload-area p {
   margin: 0;
   color: #666;
+  cursor: pointer;
 }
 
 .upload-area a {
@@ -1350,12 +1356,29 @@ div#cta-selected-actions {
   text-decoration: none;
 }
 
+.upload-area.drag-over {
+  background-color: rgba(33, 150, 243, 0.05);
+  border-color: #222f54;
+}
+
+.upload-text {
+  margin-top: 15px;
+  color: #666;
+}
+
+.empty-message {
+  text-align: center;
+  font-family: "Segoe UI";
+  color: grey;
+  font-size: 18px;
+}
+
 .file-list {
   margin-bottom: 20px;
   max-height: 300px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
+  /* scrollbar-color: transparent transparent; */
 }
 
 .file-item {

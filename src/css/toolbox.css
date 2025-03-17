@@ -341,6 +341,7 @@ button {
 .tile-title-section {
   position: relative;
   width: fit-content;
+  display: block;
 }
 
 .tile-icon-section {

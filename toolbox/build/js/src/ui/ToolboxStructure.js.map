@@ -1,1 +1,0 @@
-{"version":3,"file":"ToolboxStructure.js","sourceRoot":"","sources":["../../../../src/ui/ToolboxStructure.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,gBAAgB;IAGzB;QACI,IAAI,CAAC,cAAc,GAAG,QAAQ,CAAC,cAAc,CAAC,gBAAgB,CAAgB,CAAC;IACnF,CAAC;IAEM,gBAAgB;QACnB,OAAO,IAAI,CAAC,cAAc,CAAC;IAC/B,CAAC;CACJ"}

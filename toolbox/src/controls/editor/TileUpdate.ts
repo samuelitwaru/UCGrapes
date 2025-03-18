@@ -28,13 +28,25 @@ export class TileUpdate {
             const titleAlignment = {
                 "text-align": length === 3 ? "center" : "left"
             }
-    
+            
+            this.updateTileHeight(tile, length);
             this.updateAlignment(tile, tileAlignment, titleAlignment);
             this.updateTileTitleLength(tile, length);
             if (!isDragging) {
                 this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
             }
         });
+      }
+
+      private updateTileHeight(tile: any, length: number) {
+        const templateBlock = tile.find(".template-block")[0];
+        if (length === 1) {
+            if(templateBlock.getClasses().includes("first-tile")) {
+                templateBlock.addClass("high-priority-template");
+            }                
+        } else {
+            templateBlock.removeClass("high-priority-template");
+        }
       }
     
       private updateAlignment(tile: any, tileAlignment: any, titleAlignment: any) {

@@ -153,6 +153,10 @@ button {
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.high-priority-template {
+  height: 6rem;
+}
+
 .template-title {
   color: #6b7280;
   font-size: 1rem;

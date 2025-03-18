@@ -22,6 +22,8 @@ export class VersionSelection extends ThemeManager{
         this.versionSelection = document.createElement('div') as HTMLElement;
         this.activeVersion = document.createElement('span') as HTMLElement;
         this.init();
+
+        document.addEventListener('click', this.handleOutsideClick.bind(this));
     }
 
     init() {
@@ -82,7 +84,7 @@ export class VersionSelection extends ThemeManager{
             duplicateBtn.addEventListener("click", (e) => {
                 e.stopPropagation(); // Stop event from bubbling up to parent
                 e.preventDefault();
-                this.createVersionModal(version.AppVersionName + ' - Copy', "Duplicate version", "Duplicate");
+                this.createVersionModal(version.AppVersionName + ' - Cop', "Duplicate version", "Duplicate");
             });
 
             // Event handler for selecting a version
@@ -193,6 +195,14 @@ export class VersionSelection extends ThemeManager{
             const button = this.container.querySelector(".theme-select-button") as HTMLElement;
             button.setAttribute("aria-expanded", 'false');
             button.classList.toggle("open");
+        }
+    }
+
+    private handleOutsideClick(event: MouseEvent) {
+        // Check if the dropdown is open and the click is outside the container
+        if (this.versionSelection.classList.contains('show') && 
+            !this.container.contains(event.target as Node)) {
+            this.closeSelection();
         }
     }
 

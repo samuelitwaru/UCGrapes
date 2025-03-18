@@ -29,7 +29,7 @@ export class JSONToGrapesJSMenu {
           : tileWrapperDefaultAttributes
       } class="template-wrapper" id="${tile.Id}">
         <div ${tileDefaultAttributes} class="template-block${
-              isFirstSingleTile ? " high-priority-template" : ""
+              isFirstSingleTile ? " first-tile high-priority-template" : ""
           }" 
           style="background-color: ${this.themeManager.getThemeColor(tile.BGColor)}; color: ${
       tile.Color

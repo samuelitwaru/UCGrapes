@@ -2,6 +2,7 @@ import { Category } from "../../../../interfaces/Category";
 import { ActionPage } from "../../../../interfaces/ActionPage";
 import { PageAttacher } from "./PageAttacher";
 import { PageCreationService } from "./PageCreationService";
+import { Alert } from "../../Alert";
 
 export class CategoryView {
   details: HTMLDetailsElement;
@@ -51,6 +52,11 @@ export class CategoryView {
         if (addButton) {
           addButton.addEventListener("click", (e) => {
             e.preventDefault();
+            const selectedComponent = (globalThis as any).selectedComponent;
+            if (!selectedComponent) {
+              new Alert("error", "Select tile to continue..");
+              return;
+            }
             this.pageCreationService.addNewMenuPage();
           });
         }
@@ -67,7 +73,17 @@ export class CategoryView {
 
       li.addEventListener("click", (e) => {
         e.preventDefault();
-        this.pageAttacher.attachToTile(page, this.categoryData.name);
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (!selectedComponent) {
+          new Alert("error", "Select tile to continue..");
+          return;
+        }
+
+        if (this.categoryData.name === "Dynamic Forms") {
+          this.pageCreationService.handleDynamicForms(page);
+        } else {
+          this.pageAttacher.attachToTile(page, this.categoryData.name);
+        }
       });
 
       list.appendChild(li);
@@ -88,6 +104,11 @@ export class CategoryView {
           icon.classList.toggle("fa-angle-down");
         }
       } else {
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (!selectedComponent) {
+          new Alert("error", "Select tile to continue..");
+          return;
+        }
         this.pageCreationService.handleWebLinks();
       }
     });

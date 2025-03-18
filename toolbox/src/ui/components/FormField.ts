@@ -2,9 +2,10 @@ export class FormField {
     private formField: HTMLDivElement;
 
     constructor (config: {
-        label: string,
+        label?: string,
         type: string,
         id: string,
+        value?: string,
         placeholder?: string,
         required?: boolean,
         errorMessage?: string
@@ -15,14 +16,17 @@ export class FormField {
 
         // label
         const label = document.createElement('label');
-        label.htmlFor = config.id;
-        label.textContent = config.label;
+        if (config.label) {
+            label.htmlFor = config.id;
+            label.textContent = config.label;
+        }
 
         // input
         const input = document.createElement('input');
         input.type = config.type;
         input.id = config.id;
         input.className = 'tb-form-control';
+        input.value = config.value || '';
 
         // optional attributes
         if(config.placeholder) {
@@ -45,7 +49,9 @@ export class FormField {
 
         errorSpan.textContent = config.errorMessage || 'Error message';
 
-        this.formField.appendChild(label);
+        if (config.label) {
+            this.formField.appendChild(label);
+        }
         this.formField.appendChild(input);
         this.formField.appendChild(errorSpan);
     }

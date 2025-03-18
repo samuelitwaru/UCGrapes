@@ -7,7 +7,7 @@ import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
 const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
-const baseURL =
+export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
 
@@ -67,8 +67,41 @@ export class ToolBoxService {
     }
   }
 
+  async debugApp(urlList: any) {
+    const response = await this.fetchAPI("/api/toolbox/v2/debug", {
+      method: "POST",
+      body: JSON.stringify({ 
+        UrlList: urlList
+      }),
+    }, true);
+
+    return response;
+  }
+
   async getVersions() {
     const response = await this.fetchAPI("/api/toolbox/v2/appversions", {}, true);
+    return response;
+  }
+
+  async createVersion(versionName: any) {
+    const response = await this.fetchAPI("/api/toolbox/v2/create-appversion", {
+      method: "POST",
+      body: JSON.stringify({ 
+        AppVersionName: versionName
+      }),
+    });
+
+    return response;
+  }
+
+  async activateVersion(versionId: any) {
+    const response = await this.fetchAPI("/api/toolbox/v2/activate-appversion", {
+      method: "POST",
+      body: JSON.stringify({ 
+        AppVersionId: versionId
+      }),
+    });
+
     return response;
   }
 

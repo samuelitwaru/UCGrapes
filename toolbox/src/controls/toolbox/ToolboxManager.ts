@@ -17,6 +17,11 @@ export class ToolboxManager {
     const navBar = document.getElementById("tb-navbar") as HTMLElement;
 
     const navbarTitle = document.getElementById("navbar_title") as HTMLElement;
+    if (!navBar || !navbarTitle) {
+      console.error("Navigation bar elements not found!");
+      return;
+    }
+
     navbarTitle.textContent = "App toolbox";
 
     let navBarButtons = new NavbarButtons();
@@ -79,28 +84,29 @@ export class ToolboxManager {
         const localStorageKey = `data-${pageId}`;
         const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
         
-        if (pageData.PageMenuStructure) {
-          const currentStructureString = JSON.stringify(pageData.PageMenuStructure);
-          const lastSavedStructure = lastSavedStates.get(pageId);
-          
-          // Check if the structure has changed since last save
-          if (!lastSavedStructure || currentStructureString !== lastSavedStructure) {
-            
-            const pageInfo = {
-              AppVersionId: activeVersion.AppVersionId,
-              PageId: pageId,
-              PageName: page.PageName,
-              PageType: page.PageType,
-              PageStructure: currentStructureString,
-            };
-            
-            try {
-              await this.toolboxService.autoSavePage(pageInfo);
-              lastSavedStates.set(pageId, currentStructureString);
-              this.openToastMessage();
-            } catch (error) {
-              console.error(`Failed to save page ${page.PageName}:`, error);
-            }
+        let localStructureProperty = null;
+        if (page.PageType === "Menu") localStructureProperty = "PageMenuStructure";
+        else if (page.PageType === "Content") localStructureProperty = "PageContentStructure";
+        
+        if (!localStructureProperty || !pageData[localStructureProperty]) return;
+        
+        const localStructureString = JSON.stringify(pageData[localStructureProperty]);
+        
+        if (localStructureString !== page.PageStructure) {
+          const pageInfo = {
+            AppVersionId: activeVersion.AppVersionId,
+            PageId: pageId,
+            PageName: page.PageName,
+            PageType: page.PageType,
+            PageStructure: localStructureString,
+          };
+
+          try {
+            await this.toolboxService.autoSavePage(pageInfo);
+            lastSavedStates.set(pageId, localStructureString);
+            this.openToastMessage();
+          } catch (error) {
+            console.error(`Failed to save page ${page.PageName}:`, error);
           }
         }
       });
@@ -125,5 +131,16 @@ export class ToolboxManager {
         document.body.removeChild(toast);
       }, 500);
     }, 3000);
+  }
+
+  closeDropDowns() {
+    // document.addEventListener("click", (e) => {
+      
+    //   const dropDowns = document.querySelectorAll(".theme-options-list");
+    //   dropDowns.forEach((dropDown) => {
+    //     console.log("clicked");
+    //     dropDown.classList.remove("show");
+    //   })
+    // });
   }
 }

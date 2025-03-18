@@ -92,6 +92,7 @@ export class ActionListDropDown {
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Menu"
+          && page.PageName !== "Home"
           && page.PageName !== "My Care"
           && page.PageName !== "My Living"
           && page.PageName !== "My Services"

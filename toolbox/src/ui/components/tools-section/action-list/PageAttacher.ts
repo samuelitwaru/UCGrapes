@@ -4,6 +4,7 @@ import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { Alert } from "../../Alert";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { EditorEvents } from "../../../../controls/editor/EditorEvents";
+import { PageCreationService } from "./PageCreationService";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;
@@ -37,19 +38,21 @@ export class PageAttacher {
     const updates = [
         ["Text", page.PageName],
         ["Name", page.PageName],
-        ["Action.ObjectType", "Page"],
+        ["Action.ObjectType", "Service/Product Page"],
         ["Action.ObjectId", page.PageId],
       ];
       
       for (const [property, value] of updates) {
         (globalThis as any).tileMapper.updateTile(tileId, property, value);
       }
+
+      new PageCreationService().updateActionListDropDown("Dynamic Form", page.PageName);
   
       const version = await this.appVersionManager.getActiveVersion(); 
-      this.attachPage(page, version);
+      this.attachPage(page, version, tileAttributes);
   }
 
-  attachPage(page: ActionPage, version: any) {
+  attachPage(page: ActionPage, version: any, tileAttributes: any) {
     const selectedItemPageId = page.PageId;
 
     const childPage =
@@ -60,11 +63,10 @@ export class PageAttacher {
     this.removeOtherEditors();
 
     if (childPage) {
-        new ChildEditor(page.PageId, childPage).init();
+        new ChildEditor(page.PageId, childPage).init(tileAttributes);
     } else{
         this.toolboxService.createContentPage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
-           console.log("newPage", newPage);
-          new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init();
+          new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init(tileAttributes);
         });
     }
   }
@@ -85,5 +87,13 @@ export class PageAttacher {
         }
       }
     });
+  }
+
+  updateActionProperty(type: string, pageName: string) {
+    const actionHeaderLabel = document.querySelector('#sidebar_select_action_label') as HTMLElement;
+
+    if (actionHeaderLabel) {
+        actionHeaderLabel.innerText = `${type}, ${pageName.length > 10 ? pageName.substring(0, 10) + "..." : pageName}`
+    }     
   }
 }

@@ -62,12 +62,12 @@ import {
     private generateContent(content: any): any {
     if (content.ContentType === "Image" && content.ContentValue !== "") {
         return `
-        <img id="product-service-image" data-gjs-type="product-service-image" draggable="true" src="${content.ContentValue}" alt="Product Service Image" class="content-page-block">
+        <img id="product-service-image" data-gjs-type="product-service-image" draggable="true" src="${content?.ContentValue}" alt="Product Service Image" class="content-page-block">
         `;      
     } else if(content.ContentType === "Description" && content.ContentValue !== "") {
         return `
         <p id="product-service-description" data-gjs-type="product-service-description" draggable="true" class="content-page-block">
-            ${content.ContentValue}
+            ${content?.ContentValue}
         </p>
         `;
     }
@@ -96,7 +96,6 @@ import {
             </div>
         </div>
     `;
-
     return htmlData;
     }
  }

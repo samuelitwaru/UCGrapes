@@ -152,12 +152,11 @@ export class EditorEvents {
       } else {
         const version = await this.appVersionManager.getActiveVersion();
         childPage = version?.Pages.find((page: any) => page.PageId === objectId);
-        console.log("newPage", childPage);
       }
 
       this.removeOtherEditors();
       if (childPage) {
-        new ChildEditor(objectId, childPage).init();
+        new ChildEditor(objectId, childPage).init(tileAttributes);
       }
     } else{
       this.removeOtherEditors();

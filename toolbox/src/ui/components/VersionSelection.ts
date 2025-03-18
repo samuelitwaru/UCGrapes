@@ -1,4 +1,5 @@
 import ToolboxApp from "../../app";
+import { EditorManager } from "../../controls/editor/EditorManager";
 import { ThemeManager } from "../../controls/themes/ThemeManager";
 import { Theme } from "../../models/Theme";
 import { ToolBoxService } from "../../services/ToolBoxService";
@@ -60,7 +61,6 @@ export class VersionSelection extends ThemeManager{
 
         const toolBoxService = new ToolBoxService();
         let versions = await toolBoxService.getVersions();
-        console.log(versions);
         versions.AppVersions.forEach((version: any) => {
             const versionOption = document.createElement('div') as HTMLElement;
             versionOption.className = "theme-option";
@@ -78,35 +78,60 @@ export class VersionSelection extends ThemeManager{
                 this.activeVersion.textContent = version.AppVersionName;
             }
 
-            versionOption.onclick = () => {
+            // Separate event handler for duplicate button
+            duplicateBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Stop event from bubbling up to parent
+                e.preventDefault();
+                this.createVersionModal(version.AppVersionName + ' - Copy', "Duplicate version", "Duplicate");
+            });
+
+            // Event handler for selecting a version
+            versionOption.addEventListener('click', async (e) => {
+                // Check if the click was on the duplicate button
+                if ((e.target as HTMLElement).classList.contains('clone-version')) {
+                    return; // Duplicate button click is handled separately
+                }
+                
                 const allOptions = this.versionSelection.querySelectorAll(".theme-option");
                 allOptions.forEach((opt) => opt.classList.remove("selected"));
                 versionOption.classList.add("selected");
                 
                 this.activeVersion.textContent = version.AppVersionName;
-                this.toolboxService.activateVersion(version.AppVersionId).then((res) => {
+                await this.toolboxService.activateVersion(version.AppVersionId).then((res) => {
                     if (res) {
                         this.clearActiveTheme();
-                        new ToolboxApp();
-                        this.closeSelection();
                     }
-                });
+                })
+                .catch(error => console.error("Version activation failed:", error))
+                .finally(() => this.closeSelection());
 
                 this.closeSelection();
-            }
+            });
 
             this.versionSelection.appendChild(versionOption);
         })
         const newVersionBtn = document.createElement('div');
         newVersionBtn.className = "theme-option";
-        newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Create new version"`;
+        newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Create new version`;
         newVersionBtn.onclick = () => {
-            const form = new Form('page-form');
+            this.createVersionModal();
+        }
+        this.versionSelection.appendChild(newVersionBtn);
+        this.selectionDiv.appendChild(this.versionSelection);
+    }
+
+    clearActiveTheme() {
+        location.reload();
+    }  
+
+    createVersionModal(value?: string, title?: string, buttonText?: string) {
+        const form = new Form('page-form');
             form.addField({
                 type: 'text',
                 id: 'version_name',
                 placeholder: 'Version name',
-                required: true
+                required: true,
+                value: value,
             });
 
             const div = document.createElement('div');
@@ -116,7 +141,7 @@ export class VersionSelection extends ThemeManager{
             submitSection.classList.add('popup-footer');
             submitSection.style.marginBottom = '-12px';
 
-            const saveBtn = this.createButton('submit_form', 'tb-btn-primary', 'Save');
+            const saveBtn = this.createButton('submit_form', 'tb-btn-primary', `${buttonText || 'Save'}`);
             const cancelBtn = this.createButton('cancel_form', 'tb-btn-secondary', 'Cancel');
 
             submitSection.appendChild(saveBtn);
@@ -125,7 +150,7 @@ export class VersionSelection extends ThemeManager{
             div.appendChild(submitSection);
 
             const modal = new Modal({
-                title: "Create new version",
+                title: title || "Create new version",
                 width: "400px",
                 body: div
             });
@@ -138,8 +163,8 @@ export class VersionSelection extends ThemeManager{
                 const newVersion = inputValue.value;
                 if (newVersion) {
                     this.toolboxService.createVersion(newVersion).then((res) => {
-                        console.log(res);
                         modal.close();
+                        this.refreshVersionList();
                     });
                 }
             });
@@ -148,19 +173,16 @@ export class VersionSelection extends ThemeManager{
                 e.preventDefault();
                 modal.close();
             });
-        }
-        this.versionSelection.appendChild(newVersionBtn);
-        this.selectionDiv.appendChild(this.versionSelection);
     }
-
-    clearActiveTheme() {
-        const navBar = document.getElementById("tb-navbar") as HTMLElement
-        const sideBar = document.getElementById("tb-sidebar") as HTMLElement
-        const editorFrameArea = document.getElementById("main-content") as HTMLElement;
-
-        navBar.innerHTML = '';
-        sideBar.innerHTML = '';
-        editorFrameArea.innerHTML = '';
+    
+    async refreshVersionList() {
+        this.versionSelection.classList.toggle("show");
+        const button = this.container.querySelector(".theme-select-button") as HTMLElement;
+        button.classList.toggle("open");
+        button.setAttribute("aria-expanded", 'true');
+        this.versionSelection.innerHTML = '';
+        
+        await this.initializeVersionOptions();
     }
 
     closeSelection() {

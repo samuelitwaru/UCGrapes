@@ -5,6 +5,7 @@ export class FormField {
         label?: string,
         type: string,
         id: string,
+        value?: string,
         placeholder?: string,
         required?: boolean,
         errorMessage?: string
@@ -25,6 +26,7 @@ export class FormField {
         input.type = config.type;
         input.id = config.id;
         input.className = 'tb-form-control';
+        input.value = config.value || '';
 
         // optional attributes
         if(config.placeholder) {

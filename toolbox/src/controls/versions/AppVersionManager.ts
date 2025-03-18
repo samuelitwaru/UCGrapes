@@ -12,10 +12,7 @@ export class AppVersionManager {
 
     public async getActiveVersion() {
         const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
-        const versions = await toolboxService.getVersions();
-
-        console.log("Versions:", versions);
-        
+        const versions = await toolboxService.getVersions();       
         return versions?.AppVersions?.find((version: any) => version.IsActive) || null;
     }    
 }

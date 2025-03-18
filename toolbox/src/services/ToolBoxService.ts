@@ -67,6 +67,17 @@ export class ToolBoxService {
     }
   }
 
+  async debugApp(urlList: any) {
+    const response = await this.fetchAPI("/api/toolbox/v2/debug", {
+      method: "POST",
+      body: JSON.stringify({ 
+        UrlList: urlList
+      }),
+    }, true);
+
+    return response;
+  }
+
   async getVersions() {
     const response = await this.fetchAPI("/api/toolbox/v2/appversions", {}, true);
     return response;

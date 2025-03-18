@@ -24,6 +24,7 @@ class ToolboxApp {
   initialise(): void {
     this.toolboxManager.setUpNavBar();
     this.toolboxManager.setUpSideBar();
+    this.toolboxManager.closeDropDowns();
     this.editor.init();
   }
 }

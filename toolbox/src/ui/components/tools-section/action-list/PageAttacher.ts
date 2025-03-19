@@ -65,7 +65,7 @@ export class PageAttacher {
     if (childPage) {
         new ChildEditor(page.PageId, childPage).init(tileAttributes);
     } else{
-        this.toolboxService.createContentPage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
+        this.toolboxService.createServicePage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
           new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init(tileAttributes);
         });
     }

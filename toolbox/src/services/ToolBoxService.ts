@@ -120,7 +120,7 @@ export class ToolBoxService {
     return response;    
   }
 
-  async createContentPage(appVersionId: string, productServiceId: string) {
+  async createServicePage(appVersionId: string, productServiceId: string) {
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-service-page",
       {
@@ -131,7 +131,22 @@ export class ToolBoxService {
         }),
       },
     );
+    return response;    
+  }
 
+  async createContentPage(appVersionId: string, pageName: string) {
+    alert(appVersionId)
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-content-page",
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          appVersionId: appVersionId,
+          PageName: pageName
+        }),
+      },
+    );
+    console.log(response)
     return response;    
   }
 
@@ -215,7 +230,7 @@ export class ToolBoxService {
     });
   }
 
-  // async createContentPage(pageId: string | number) {
+  // async createServicePage(pageId: string | number) {
   //   return await this.fetchAPI("/api/toolbox/create-content-page", {
   //     method: "POST",
   //     body: JSON.stringify({ PageId: pageId }),

@@ -111,6 +111,7 @@ export class EditorManager {
       hoverable: false,
       highlightable: false,
       selectable: false,
+      richTextEditor: {},
     });
   }
 

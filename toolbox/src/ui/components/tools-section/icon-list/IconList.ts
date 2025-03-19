@@ -11,6 +11,7 @@ export class IconList {
     this.themeManager = themeManager;
     this.iconsCategory = iconsCategory;
     this.init();
+
   }
 
   init() {
@@ -61,6 +62,8 @@ export class IconList {
         this.icons.push(icon);
       });
   }
+
+  
 
   render(container: HTMLElement) {
     this.icons.forEach((icon) => container.appendChild(icon));

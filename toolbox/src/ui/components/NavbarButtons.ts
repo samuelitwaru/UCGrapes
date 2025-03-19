@@ -1,3 +1,4 @@
+import { PublishManager } from "../../controls/toolbox/PublishManager";
 import { AppVersionManager } from "../../controls/versions/AppVersionManager";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { Button } from "./Button";
@@ -57,6 +58,11 @@ export class NavbarButtons {
     this.container.appendChild(debugButton);
     treeButton.render(this.container);
     publishButton.render(this.container);
+
+    publishButton.button.addEventListener("click", (e) => {
+      e.preventDefault();
+      new PublishManager().openModal();
+    });
   }
 
   
@@ -79,7 +85,6 @@ export class NavbarButtons {
         body: div
     });
 
-    // Show the modal
     modal.open();
   }
 

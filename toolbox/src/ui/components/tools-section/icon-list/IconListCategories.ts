@@ -17,6 +17,8 @@ export class IconListCategories {
     this.selectedCategory = document.createElement("span") as HTMLElement;
     this.themeManager = new ThemeManager();
     this.init();
+
+    document.addEventListener("click", this.handleOutsideClick.bind(this));
   }
 
   init() {
@@ -105,8 +107,17 @@ export class IconListCategories {
 
     const themeIcons = new IconList(this.themeManager, iconsCategory);
     themeIcons.render(iconsList);
-    
+
     this.container.appendChild(iconsList);
+  }
+
+  private handleOutsideClick(event: MouseEvent) {
+    if (
+      this.categoryOptions.classList.contains("show") &&
+      !this.container.contains(event.target as Node)
+    ) {
+      this.closeSelection();
+    }
   }
 
   render(container: HTMLElement) {

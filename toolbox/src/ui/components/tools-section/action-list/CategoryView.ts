@@ -57,7 +57,9 @@ export class CategoryView {
               new Alert("error", "Select tile to continue..");
               return;
             }
-            this.pageCreationService.addNewMenuPage();
+            if (this.categoryData.name == "Content Page") {
+              this.pageCreationService.addNewContentPage();
+            }
           });
         }
       }, 0);

@@ -15,6 +15,8 @@ export class ThemeSelection extends ThemeManager{
         this.themeOptions = document.createElement('div') as HTMLElement;
         this.selectedTheme = document.createElement('span') as HTMLElement;
         this.init();
+
+        document.addEventListener('click', this.handleOutsideClick.bind(this));
     }
 
     init() {
@@ -102,6 +104,14 @@ export class ThemeSelection extends ThemeManager{
             const button = this.container.querySelector(".theme-select-button") as HTMLElement;
             button.setAttribute("aria-expanded", 'false');
             button.classList.toggle("open");
+        }
+    }
+
+    private handleOutsideClick(event: MouseEvent) {
+        // Check if the dropdown is open and the click is outside the container
+        if (this.themeOptions.classList.contains('show') && 
+            !this.container.contains(event.target as Node)) {
+            this.closeSelection();
         }
     }
 

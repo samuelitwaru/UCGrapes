@@ -64,6 +64,13 @@ export class ActionListDropDown {
         options: [],
         canCreatePage: false,
       },
+      {
+        name: "Content Page",
+        displayName: "Content Page",
+        label: "Content Page",
+        options: await this.getContentPages(),
+        canCreatePage: true,
+      },
     ];
   }
 
@@ -83,6 +90,26 @@ export class ActionListDropDown {
         TileName: service.ProductServiceTileName || service.ProductServiceName
       }));
     return forms;
+  }
+
+  async getContentPages() {
+    try {
+      const versions = await this.toolBoxService.getVersions();
+      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      const pages = res.filter(
+        (page: any) => 
+          page.PageType == "Content"
+      ).map((page: any) => ({
+        PageId: page.PageId,
+        PageName: page.PageName,
+        TileName: page.PageName
+      }))
+
+      return pages;
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+      throw error;
+    }
   }
 
   async getPages() {

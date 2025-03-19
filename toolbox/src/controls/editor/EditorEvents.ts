@@ -42,6 +42,7 @@ export class EditorEvents {
         const wrapper = this.editor.getWrapper();
         wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
+            (globalThis as any).activeEditor = this.editor;
             this.activateEditor();
         })
         this.activateNavigators();
@@ -145,7 +146,11 @@ export class EditorEvents {
         console.log(response.SDT_ProductService.CallToActions);
         new ContentSection(response.SDT_ProductService.CallToActions)
       }
-      
+    } else {
+      const menuSection = document.getElementById('menu-page-section');
+      const contentection = document.getElementById('content-page-section');
+      if (menuSection) menuSection.style.display = 'block';
+      if (contentection) contentection.style.display = 'none';
     }
   }
 

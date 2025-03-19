@@ -236,7 +236,7 @@ span#scroll-right:hover {
   height: 90vh;
   max-width: 320px;
   max-height: 680px;
-  background-color: #EFEEEC;
+  background-color: #efeeec;
   border-radius: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   position: relative;
@@ -1046,12 +1046,22 @@ h5#current-page-title {
 }
 
 .call-to-action-item {
-  align-content: center;
-  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 40px;
   width: 40px;
   background-color: #e9e9e9;
   border-radius: 100%;
+}
+
+.call-to-action-item svg {
+  height: 16px;
+  width: 16px;
+}
+
+.call-to-action-item svg path {
+  fill: #747474;
 }
 
 .call-to-action-item:hover {
@@ -2103,4 +2113,3 @@ button.add-new-service i {
     transform: rotate(360deg);
   }
 }
-

@@ -25,10 +25,6 @@ export class PageAttacher {
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();
 
-    const tileAttributes = (globalThis as any).tileMapper.getTile(
-      rowId,
-      tileId
-    );
     const currentPageId = (globalThis as any).currentPageId;
 
     if (currentPageId === page.PageId) {
@@ -46,6 +42,11 @@ export class PageAttacher {
         (globalThis as any).tileMapper.updateTile(tileId, property, value);
       }
 
+      const tileAttributes = (globalThis as any).tileMapper.getTile(
+        rowId,
+        tileId
+      );
+      
       new PageCreationService().updateActionListDropDown("Dynamic Form", page.PageName);
   
       const version = await this.appVersionManager.getActiveVersion(); 

@@ -63,25 +63,11 @@ export class EditorManager {
   }
 
   async loadHomePage(editor: any) {
-    // const pages = await this.toolboxService.getPages();
-
-    // const homePage = pages.find((page: any) => page.PageName === "Home");
-
-    // if (homePage) {
-    // const pageData = JSON.parse(homePage.PageGJSJson);
-    // editor.loadProjectData(pageData);
-    // this.editorEvents.init(editor);
-
-    //   // if data exits, load it to the localstorage too else create local storage
-    //   const tileMapper = new TileMapper(homePage.PageId, homePage.PageName);
-    //   tileMapper.init();
-    // }
-
     const converter = new JSONToGrapesJSMenu(this.homepage);
     const htmlOutput = converter.generateHTML();
 
     editor.setComponents(htmlOutput);
-    this.editorEvents.init(editor, this.homepage?.PageId, `gjs-0`);
+    this.editorEvents.init(editor, this.homepage, `gjs-0`);
     localStorage.setItem(
       `data-${this.homepage?.PageId}`,
       JSON.stringify(this.homepage)
@@ -128,6 +114,11 @@ export class EditorManager {
     const canvas = editor.Canvas.getElement();
     if (canvas) {
       canvas.style.setProperty("height", "calc(100% - 100px)", "important");
+    }
+    
+    const canvasBody = editor.Canvas.getBody();
+    if (canvasBody) {
+      canvasBody.style.setProperty("background-color", "#EFEEEC", "important");
     }
   }
 

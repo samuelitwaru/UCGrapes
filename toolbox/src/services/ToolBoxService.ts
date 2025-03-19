@@ -312,7 +312,9 @@ export class ToolBoxService {
   // Content API methods
   async getContentPageData(productServiceId: string | number) {
     return await this.fetchAPI(
-      `/api/productservice?Productserviceid=${productServiceId}`
+      `/api/productservice?Productserviceid=${productServiceId}`,
+      {},
+      true
     );
   }
 }

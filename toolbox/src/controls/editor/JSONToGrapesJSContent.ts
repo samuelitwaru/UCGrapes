@@ -1,21 +1,23 @@
 import {
-    DefaultAttributes,
-    firstTileWrapperDefaultAttributes,
-    rowDefaultAttributes,
-    tileDefaultAttributes,
-    tileWrapperDefaultAttributes,
- } from "../../utils/default-attributes";
- 
- export class JSONToGrapesJSContent { 
-    private data: any;
- 
-    constructor(json: any) {
-       this.data = json;
-    }
+  contentColumnDefaultAttributes,
+  contentDefaultAttributes,
+  DefaultAttributes,
+  firstTileWrapperDefaultAttributes,
+  rowDefaultAttributes,
+  tileDefaultAttributes,
+  tileWrapperDefaultAttributes,
+} from "../../utils/default-attributes";
 
-    private generateCta(cta: any) {
-        if (cta.CtaButtonType === "Image") {
-            return `<div data-gjs-type="cta-buttons" class="img-button-container">
+export class JSONToGrapesJSContent {
+  private data: any;
+
+  constructor(json: any) {
+    this.data = json;
+  }
+
+  private generateCta(cta: any) {
+    if (cta.CtaButtonType === "Image") {
+      return `<div data-gjs-type="cta-buttons" class="img-button-container">
                 <div class="img-button">
                     <span  class="img-button-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="30" viewBox="0 0 13 16">
@@ -27,8 +29,8 @@ import {
                     <i id="imtnq" data-gjs-type="default" class="fa fa-angle-right img-button-arrow"></i>
                 </div>
             </div>`;
-        } else if (cta.CtaButtonType === "FullWidth") {
-            return `
+    } else if (cta.CtaButtonType === "FullWidth") {
+      return `
             <div
                 data-gjs-type="cta-buttons"
                 cta-background-color="#c4a082"
@@ -42,10 +44,9 @@ import {
                 </button>
             </div>
             `;
-        } else if (cta.CtaButtonType === "Icon") {
-            
-        } else if (cta.CtaButtonType === "Round") {
-            return `
+    } else if (cta.CtaButtonType === "Icon") {
+    } else if (cta.CtaButtonType === "Round") {
+      return `
             <div ${tileDefaultAttributes} data-gjs-type="cta-buttons" cta-button-label="Email" cta-button-type="Email" cta-button-action="info@rotterdam.com" cta-background-color="#b2b997" class="cta-container-child cta-child">
                 <div class="cta-button" ${DefaultAttributes}>
                     <svg ${DefaultAttributes} id="isqih" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="28" viewBox="0 0 41 32.8">
@@ -56,46 +57,92 @@ import {
                 <div class="cta-label" ${DefaultAttributes}>Email</div>
             </div>
             `;
-        }
     }
-    
-    private generateContent(content: any): any {
+  }
+
+  private generateContent(content: any): any {
     if (content.ContentType === "Image" && content.ContentValue !== "") {
-        return `
-        <img id="product-service-image" data-gjs-type="product-service-image" draggable="true" src="${content?.ContentValue}" alt="Product Service Image" class="content-page-block">
-        `;      
-    } else if(content.ContentType === "Description" && content.ContentValue !== "") {
-        return `
-        <p id="product-service-description" data-gjs-type="product-service-description" draggable="true" class="content-page-block">
-            ${content?.ContentValue}
-        </p>
-        `;
-    }
-    return null;
-    }
-
-    public generateHTML(): any {
-    const htmlData = `
-        <div ${DefaultAttributes} id="frame-container" data-gjs-type="template-wrapper" class="content-frame-container">
-            <div ${DefaultAttributes} class="container-column">
-                <div ${DefaultAttributes} class="container-row">
-                    <div ${DefaultAttributes} data-gjs-type="default" class="template-wrapper">
-                        <div ${rowDefaultAttributes} data-gjs-type="default" class="content-page-wrapper">
-                            ${this.data?.PageContentStructure?.Content?.map((content: any) =>
-                                this.generateContent(content)
-                            ).join("")}
-
-                        </div>
-                    </div>
-                </div> 
-                <div ${rowDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;">
-                    ${this.data.PageContentStructure?.Cta?.map((cta: any) => `
-                            ${this.generateCta(cta)}
-                    `).join("")}
-                </div>         
+      return `
+            <img ${contentDefaultAttributes} id="${content?.ContentId}" data-gjs-type="product-service-image" draggable="true" src="${content?.ContentValue}" alt="Product Service Image" class="content-page-block">
+            `;
+    } else if (
+      content.ContentType === "Description" &&
+      content.ContentValue !== ""
+    ) {
+      return `
+            <div ${contentDefaultAttributes} id="${content?.ContentId}" data-gjs-type="product-service-description" draggable="true" class="content-page-block">
+                ${this.addGrapesAttributes(content?.ContentValue)}
             </div>
-        </div>
-    `;
-    return htmlData;
+            `;
+    } else {
+      return "";
     }
- }
+  }
+
+  public generateHTML(): any {
+    let contentHtml = "";
+    let ctaHtml = "";
+
+    if (
+      this.data?.PageContentStructure?.Content &&
+      Array.isArray(this.data.PageContentStructure.Content)
+    ) {
+      contentHtml = this.data.PageContentStructure.Content.map((content: any) =>
+        this.generateContent(content)
+      ).join("");
+    }
+
+    if (
+      this.data?.PageContentStructure?.Cta &&
+      Array.isArray(this.data.PageContentStructure.Cta)
+    ) {
+      ctaHtml = this.data.PageContentStructure.Cta.map((cta: any) =>
+        this.generateCta(cta)
+      ).join("");
+    }
+
+    const htmlData = `
+            <div ${DefaultAttributes} id="frame-container" data-gjs-type="template-wrapper" class="content-frame-container">
+                <div ${DefaultAttributes} class="container-column">
+                    <div ${DefaultAttributes} class="container-row">
+                        <div ${DefaultAttributes} data-gjs-type="default" class="template-wrapper">
+                            <div ${contentColumnDefaultAttributes} data-gjs-type="default" class="content-page-wrapper">
+                                ${contentHtml}
+                            </div>
+                        </div>
+                    </div> 
+                    ${
+                      ctaHtml
+                        ? `
+                    <div ${rowDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;">
+                        ${ctaHtml}
+                    </div>`
+                        : ""
+                    }         
+                </div>
+            </div>
+        `;
+
+    return htmlData;
+  }
+
+  addGrapesAttributes(descContainerHtml: string) {
+    const descContainer = document.createElement("div");
+    if (typeof descContainerHtml === "string") {
+      descContainer.innerHTML = descContainerHtml;
+    }
+
+    const allElements = descContainer.querySelectorAll("*");
+    allElements.forEach((element) => {
+      element.setAttribute("data-gjs-draggable", "false");
+      element.setAttribute("data-gjs-selectable", "false");
+      element.setAttribute("data-gjs-editable", "false");
+      element.setAttribute("data-gjs-highlightable", "false");
+      element.setAttribute("data-gjs-droppable", "false");
+      element.setAttribute("data-gjs-resizable", "false");
+      element.setAttribute("data-gjs-hoverable", "false");
+    });
+
+    return descContainer.innerHTML;
+  }
+}

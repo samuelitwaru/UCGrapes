@@ -5,6 +5,8 @@ import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJSContent } from "./JSONToGrapesJSContent";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
+import { LoadCalendarData } from "./LoadCalendarData";
+import { LoadMyActivityData } from "./LoadMyActivityData";
 import { UrlPageEditor } from "./UrlPageEditor";
 
 export class ChildEditor {
@@ -49,9 +51,15 @@ export class ChildEditor {
     } else if(this.pageData?.PageType === "WebLink" || this.pageData?.PageType === "DynamicForm") {
         const urlPageEditor =  new UrlPageEditor(childEditor);
         urlPageEditor.initialise(tileAttributes.Action);
+    } else if(this.pageData?.PageType === "MyActivity") {
+      const activtyEditor =  new LoadMyActivityData(childEditor);
+      activtyEditor.load();
+    } else if(this.pageData?.PageType === "Calendar") {
+      const activtyEditor =  new LoadCalendarData(childEditor);
+      activtyEditor.load();
     }
 
-    this.editorEvents.init(childEditor, this.pageId, editorId);
+    this.editorEvents.init(childEditor, this.pageData, editorId);
     this.editorManager.finalizeEditorSetup(childEditor);
     this.themeManager.applyTheme(this.themeManager.currentTheme);
   }

@@ -14,6 +14,24 @@ export class ContentMapper {
         return row;
     }
 
+    moveContentRow(contentId: any, newIndex: number): void {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+        if (!data?.PageContentStructure?.Content) return;
+    
+        const contentArray = data.PageContentStructure.Content;
+        const contentRowIndex = contentArray.findIndex((row: any) => row.ContentId === contentId);
+        
+        if (contentRowIndex === -1 || newIndex < 0 || newIndex >= contentArray.length) return;
+    
+        const [contentRow] = contentArray.splice(contentRowIndex, 1);
+    
+        // Insert the item at the new position
+        contentArray.splice(newIndex, 0, contentRow);
+    
+        localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+    }
+    
+
     public addContentCta (cta: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 

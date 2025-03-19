@@ -1,6 +1,9 @@
+import { ToolBoxService } from "../../services/ToolBoxService";
+import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { demoPages } from "../../utils/test-data/pages";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
+import { ContentMapper } from "./ContentMapper";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
 import { TileProperties } from "./TileProperties";
@@ -10,22 +13,28 @@ export class EditorEvents {
   editor: any;
   pageId: any;
   frameId: any;
+  pageData: any;
   editorManager: any;
   tileManager: any;
   tileProperties: any;
-    appVersionManager: any;
+  appVersionManager: any;
+  toolboxService: any;
   
   constructor() {
     this.appVersionManager = new AppVersionManager();
+    this.toolboxService = new ToolBoxService();
   }
 
-  init(editor: any, pageId: any, frameEditor: any) {
+  init(editor: any, pageData: any, frameEditor: any) {
+    console.log("EditorEvents init", pageData);
     this.editor = editor;
-    this.pageId = pageId;
+    this.pageData = pageData;
+    this.pageId = pageData.PageId;
     this.frameId = frameEditor;
     this.onLoad();
     this.onDragAndDrop();
     this.onSelected();
+
   }
 
   onLoad() {
@@ -43,6 +52,7 @@ export class EditorEvents {
     let sourceComponent: any;
     let destinationComponent: any;
     const tileMapper = new TileMapper(this.pageId)
+    const contentMapper = new ContentMapper(this.pageId)
 
     this.editor.on("component:drag:start", (model: any) => {
       sourceComponent = model.parent;
@@ -65,16 +75,19 @@ export class EditorEvents {
         const isDragging: boolean = true;
         const tileUpdate = new TileUpdate();
         tileUpdate.updateTile(destinationComponent, isDragging);
-        tileUpdate.updateTile(sourceComponent, isDragging);
-        
+        tileUpdate.updateTile(sourceComponent, isDragging);        
 
         tileMapper.moveTile(
           model.target.getId(),
           sourceComponent.getId(),
           destinationComponent.getId(),
           model.index
-        )
+        );
         this.onTileUpdate(destinationComponent);
+      } else if (parentEl && parentEl.classList.contains("content-page-wrapper")) {
+          contentMapper.moveContentRow(model.target.getId(), model.index);
+      } else if (parentEl && parentEl.classList.contains("cta-button-container")) {
+          console.log("cta-button-container");
       }
     });
   }
@@ -120,8 +133,20 @@ export class EditorEvents {
       frame.classList.remove('active-editor');
       if (frame.id.includes(this.frameId)) {
         frame.classList.add('active-editor');
+        this.toggleSidebar();
       }
     })
+  }
+
+  async toggleSidebar() {
+    if (this.pageData?.PageType === "Content") {
+      const response = await this.toolboxService.getContentPageData(this.pageData?.PageId);
+      if (response) {
+        console.log(response.SDT_ProductService.CallToActions);
+        new ContentSection(response.SDT_ProductService.CallToActions)
+      }
+      
+    }
   }
 
   setTileProperties() {

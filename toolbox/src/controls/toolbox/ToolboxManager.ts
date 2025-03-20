@@ -3,13 +3,16 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { NavbarButtons } from "../../ui/components/NavbarButtons";
 import { ToolsSection } from "../../ui/components/ToolsSection";
 import { AppVersionManager } from "../versions/AppVersionManager";
+import { PageAttacher } from "../../ui/components/tools-section/action-list/PageAttacher";
 
 export class ToolboxManager {
   appVersions: any;
   toolboxService: any;
+  pageAttacher: PageAttacher;
   constructor() {
     this.appVersions = new AppVersionManager();
     this.toolboxService = new ToolBoxService();
+    this.pageAttacher = new PageAttacher();
   }
 
   public setUpNavBar() {

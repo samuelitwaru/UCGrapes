@@ -1,8 +1,10 @@
+import { JSONToGrapesJSContent } from "../../../../controls/editor/JSONToGrapesJSContent";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
+import { DefaultAttributes, tileDefaultAttributes } from "../../../../utils/default-attributes";
 import { randomIdGenerator } from "../../../../utils/helpers";
 import { Modal } from "../../Modal";
 
-export class CreateCTA {
+export class CreateCTAComponent {
     toolboxService: ToolBoxService;
     modal: Modal | undefined;
     ctaSelectInput: HTMLSelectElement | undefined;
@@ -11,34 +13,22 @@ export class CreateCTA {
     emailInput: HTMLInputElement | undefined;
     urlInput: HTMLInputElement | undefined;
     formSelect: HTMLSelectElement  | undefined;
+    errorLabel: HTMLLabelElement | undefined;
     constructor() {
-        this.renderAddButton();
         this.toolboxService = new ToolBoxService();
     }
 
-    renderAddButton() {
-        // Create a new button element
-        const button = document.createElement("button");
-
-        // Set button text
-        button.textContent = "Add CTA";
-        button.classList.add("tb-btn");
-        button.id = "add-cta-button";
-
-        // Add a click event
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            this.showPopup();
-        });
-
-        // Append the button to the body
-        const container = document.getElementById("tb-sidebar");
-        container?.appendChild(button);
-    }
 
     renderForm() {
         // Create a new form element
         const form = document.createElement("form");
+
+        // error Label
+        const errorDiv = document.createElement("div")
+        this.errorLabel = document.createElement("label") 
+        this.errorLabel.style.color = "red"
+        errorDiv.appendChild(this.errorLabel)
+        form.appendChild(errorDiv)
 
         // Create call to action type select
         const selectlabel = document.createElement("label");
@@ -115,7 +105,7 @@ export class CreateCTA {
             });
         } else if (value === "Phone") {
             // add phone input field
-            this.phoneInput = await this.renderPhoneInput2();
+            this.phoneInput = await this.renderPhoneInput();
             ctaValueDiv.appendChild(this.phoneInput);
         } else if (value === "Email") {
             // add email input field
@@ -131,6 +121,7 @@ export class CreateCTA {
             ctaValueDiv.appendChild(this.urlInput);
         }
     }
+
 
     renderModalFooter() {
         const submitSection = document.createElement("div");
@@ -149,7 +140,6 @@ export class CreateCTA {
         });
         addBtn.addEventListener("click", (e) => {
             this.addCtaToPage();
-            this.modal?.close();
         })
         submitSection.appendChild(cancelBtn);
         submitSection.appendChild(addBtn);
@@ -167,50 +157,7 @@ export class CreateCTA {
         this.renderForm();
     }
 
-    renderPhoneInput() {
-        // render phone input with country code
-        const container = document.createElement("div");
-        container.style.display = "flex";
-
-        // Create country code select
-        const countrySelect = document.createElement("select");
-        const countryCodes = [
-            { code: "+1", country: "🇺🇸 USA" },
-            { code: "+44", country: "🇬🇧 UK" },
-            { code: "+91", country: "🇮🇳 India" },
-            { code: "+81", country: "🇯🇵 Japan" },
-            { code: "+61", country: "🇦🇺 Australia" },
-        ];
-
-        countryCodes.forEach(({ code, country }) => {
-            const option = document.createElement("option");
-            option.value = code;
-            option.textContent = `${country} (${code})`;
-            countrySelect.appendChild(option);
-        });
-
-        // Create phone input field
-        const phoneInput = document.createElement("input");
-        phoneInput.type = "tel";
-        phoneInput.placeholder = "Enter phone number";
-        phoneInput.style.marginLeft = "10px";
-        phoneInput.style.padding = "5px";
-
-        // Update phone input with country code on change
-        countrySelect.addEventListener("change", () => {
-            phoneInput.value = countrySelect.value + " ";
-        });
-
-        // Default country code
-        phoneInput.value = countrySelect.value + " ";
-
-        // Append elements to container
-        container.appendChild(countrySelect);
-        container.appendChild(phoneInput);
-        return container;
-    }
-
-    async renderPhoneInput2() {
+    async renderPhoneInput() {
         const container = document.createElement("div");
         container.style.display = "flex";
         container.style.gap = "2px";
@@ -278,8 +225,6 @@ export class CreateCTA {
         return container;
     }
 
-
-
     addCtaToPage() {
         const data = {
             CtaId: randomIdGenerator(5),
@@ -298,7 +243,86 @@ export class CreateCTA {
             data.CtaValue = this.urlInput?.value || "";
         }
 
-        console.log(data);
+        const res = this.validateCta(data)
+        if (res.isValid) {
+            console.log(data);
+            const editor = (globalThis as any).activeEditor
+            if (editor) {
+                const components = editor.DomComponents.getWrapper().find('.content-page-wrapper')
+                if(components.length > 0) {
+                    const contentWrapper = components[0];
+                    contentWrapper.append(this.generateCta(data))
+                }
+                this.modal?.close();
+            }
+        }else{
+            if (this.errorLabel) {
+                this.errorLabel.textContent = res.message
+            }
+        }
+    }
+
+    validateCta(data:any) {
+        const phoneRegex = /^\d{10}$/;
+        const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!data.CtaLabel || !data.CtaType || !data.CtaValue) {
+            return { isValid: false, message: `Type, Label, and ${data.CtaType} are required.` };
+        }
+        
+        switch (data.CtaType) {
+            case "Phone":
+                if (!phoneRegex.test(data.CtaValue)) {
+                    return { isValid: false, message: "CtaValue must be a 10-digit number for Phone type." };
+                }
+                break;
+            case "Url":
+            case "Form":
+                if (!urlRegex.test(data.CtaValue)) {
+                    return { isValid: false, message: "CtaValue must be a valid URL for Url or Form type." };
+                }
+                break;
+            case "Email":
+                if (!emailRegex.test(data.CtaValue)) {
+                    return { isValid: false, message: "CtaValue must be a valid email address for Email type." };
+                }
+                break;
+            default:
+                return { isValid: false, message: "Invalid CtaType." };
+        }
+        
+        return { isValid: true, message: "Validation successful." };
+    }
+
+    generateCta(cta:any) {
+        let icon:string = ""
+        switch (cta.CtaType) {
+            case "Phone":
+                icon = ""
+                break;
+            case "Email":
+                icon = ""
+                break;
+            case "Url":
+                icon = ""
+                break;
+            case "Form":
+                icon = ""
+                break;
+            default:
+                break;
+        }
+        
+        return `
+        <div ${tileDefaultAttributes} data-gjs-type="cta-buttons" cta-button-label="${cta.CtaLabel}" cta-button-type="${cta.CtaType}" cta-button-action="${cta.CtaValue}" cta-background-color="#b2b997" class="cta-container-child cta-child">
+            <div class="cta-button" ${DefaultAttributes}>
+                ${icon}
+                <div class="cta-badge" ${DefaultAttributes}><i ${DefaultAttributes} data-gjs-type="default" class="fa fa-minus"></i></div>
+            </div>
+            <div class="cta-label" ${DefaultAttributes}>${cta.CtaLabel}</div>
+        </div>
+        `
     }
 
 }

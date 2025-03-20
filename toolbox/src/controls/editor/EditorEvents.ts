@@ -1,4 +1,5 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { demoPages } from "../../utils/test-data/pages";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -42,6 +43,7 @@ export class EditorEvents {
         const wrapper = this.editor.getWrapper();
         wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
+            (globalThis as any).activeEditor = this.editor;
             this.activateEditor();
         })
         this.activateNavigators();
@@ -145,7 +147,11 @@ export class EditorEvents {
         console.log(response.SDT_ProductService.CallToActions);
         new ContentSection(response.SDT_ProductService.CallToActions)
       }
-      
+    } else {
+      const menuSection = document.getElementById('menu-page-section');
+      const contentection = document.getElementById('content-page-section');
+      if (menuSection) menuSection.style.display = 'block';
+      if (contentection) contentection.style.display = 'none';
     }
   }
 
@@ -186,6 +192,9 @@ export class EditorEvents {
     } else{
       this.removeOtherEditors();
       this.activateNavigators();
+      const pageSelector = new PageSelector()
+      const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
+      pageSelector.render(childCcontainerDiv)
     }
   }
 

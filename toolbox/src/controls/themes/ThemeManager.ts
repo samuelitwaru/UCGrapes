@@ -1,7 +1,9 @@
 import ToolboxApp from "../../app";
 import { AppConfig } from "../../AppConfig";
-import { Theme, ThemeColors } from "../../models/Theme";
+import { Theme, ThemeColors, ThemeCtaColor } from "../../models/Theme";
 import { ColorPalette } from "../../ui/components/tools-section/ColorPalette";
+import { CtaColorPalette } from "../../ui/components/tools-section/content-section/CtaColorPalette";
+import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { IconList } from "../../ui/components/tools-section/icon-list/IconList";
 import { IconListCategories } from "../../ui/components/tools-section/icon-list/IconListCategories";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -38,9 +40,14 @@ export class ThemeManager {
     return this.currentTheme ? this.currentTheme.ThemeColors : {};
   }
 
+  getActiveThemeCtaColors() {
+    return this.currentTheme ? this.currentTheme.ThemeCtaColors : {};
+  }
+
   setTheme(theme: Theme) {
     this.config.currentThemeId = theme.ThemeId;
     this.updateColorPallete(theme.ThemeColors);
+    this.updateCtaColorPallete(theme.ThemeCtaColors);
     this.updateThemeIcons();
     this.applyTheme(theme);
   }
@@ -52,6 +59,12 @@ export class ThemeManager {
     ) as HTMLElement;
 
     colorPallete.refresh(parent);
+  }
+
+  updateCtaColorPallete(ctaColors: ThemeCtaColor) {
+    const ctaColorPallete = new CtaColorPalette(ctaColors);
+    const container  = document.getElementById('content-page-section') as HTMLElement;
+    ctaColorPallete.refresh(container);
   }
 
   updateThemeIcons() {

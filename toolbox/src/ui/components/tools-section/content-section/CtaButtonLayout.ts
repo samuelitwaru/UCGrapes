@@ -1,20 +1,19 @@
-import { CreateCTA } from "./CreateCTA";
 
 export class CtaButtonLayout {
     container: HTMLElement;
     constructor() {
-        new CreateCTA();
         this.container = document.createElement('div');
         this.init();
     }
 
     private init() {
         this.container.classList.add('cta-button-layout-container');
-        this.container.style.display = "none";
+        this.container.style.display = "flex";
 
         const plainBtn = document.createElement('button');
         plainBtn.classList.add('tb-btn', 'cta-button-layout');
         plainBtn.id = 'plain-button-layout';
+        plainBtn.innerText = "Button";
 
         const imgBtn = document.createElement('button');
         imgBtn.classList.add('tb-btn', 'cta-button-layout');

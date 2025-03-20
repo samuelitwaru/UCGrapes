@@ -136,4 +136,7 @@ export class EditorManager {
     const homeFrame = document.getElementById(`${frameId}-frame`);
     homeFrame?.classList.add("active-editor");
   }
+
+  
+
 }

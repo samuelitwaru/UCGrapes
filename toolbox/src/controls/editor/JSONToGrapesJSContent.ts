@@ -114,10 +114,13 @@ export class JSONToGrapesJSContent {
                     ${
                       ctaHtml
                         ? `
-                    <div ${rowDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;">
-                        ${ctaHtml}
-                    </div>`
-                        : ""
+                      <div ${rowDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;">
+                          ${ctaHtml}
+                      </div>`
+                        : `
+                      <div ${rowDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;">
+                          
+                      </div>`
                     }         
                 </div>
             </div>

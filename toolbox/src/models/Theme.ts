@@ -18,12 +18,19 @@ export interface ThemeIcon {
   IconSVG: string;
 }
 
+export interface ThemeCtaColor {
+  CtaColorName: string;
+  CtaColorCode: string;
+  CtaColorId: string;
+}
+
 export class Theme {
   ThemeId: string;
   ThemeName: string;
   ThemeFontFamily: string;
   ThemeFontSize: number;
   ThemeColors: ThemeColors;
+  ThemeCtaColors: ThemeCtaColor;
   ThemeIcons: ThemeIcon[] = [];
 
   constructor(
@@ -32,6 +39,7 @@ export class Theme {
     ThemeFontFamily: string,
     ThemeFontSize: number,
     ThemeColors: ThemeColors,
+    ThemeCtaColors: ThemeCtaColor,
     ThemeIcons: ThemeIcon[] = []
   ) {
     this.ThemeId = ThemeId;
@@ -39,6 +47,7 @@ export class Theme {
     this.ThemeFontFamily = ThemeFontFamily;
     this.ThemeFontSize = ThemeFontSize;
     this.ThemeColors = ThemeColors;
+    this.ThemeCtaColors = ThemeCtaColors;
     this.ThemeIcons = ThemeIcons;
   }
 }

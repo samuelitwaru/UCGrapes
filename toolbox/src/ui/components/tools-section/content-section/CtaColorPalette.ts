@@ -1,9 +1,13 @@
+import { CtaManager } from "../../../../controls/themes/CtaManager";
+
 export class CtaColorPalette {
     colorList: any;
     container: HTMLElement;
+    ctaManager: CtaManager;
 
     constructor(colorList: any) {
         this.colorList = colorList;
+        this.ctaManager = new CtaManager();
         this.container = document.createElement('div');
         this.init();
     }
@@ -38,7 +42,7 @@ export class CtaColorPalette {
             paletteDiv.appendChild(colorItem);
 
             input.addEventListener('click', () => {
-                
+                this.ctaManager.changeCtaColor(color);
             })
 
             paletteDiv.appendChild(colorItem);

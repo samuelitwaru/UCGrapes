@@ -1,9 +1,11 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { demoPages } from "../../utils/test-data/pages";
+import { RichEditor } from "../quill/RichEditor";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
 import { ContentMapper } from "./ContentMapper";
+import { CtaButtonProperties } from "./CtaButtonProperties";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
 import { TileProperties } from "./TileProperties";
@@ -26,7 +28,6 @@ export class EditorEvents {
   }
 
   init(editor: any, pageData: any, frameEditor: any) {
-    console.log("EditorEvents init", pageData);
     this.editor = editor;
     this.pageData = pageData;
     this.pageId = pageData.PageId;
@@ -42,7 +43,10 @@ export class EditorEvents {
         const wrapper = this.editor.getWrapper();
         wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
+            const richEditor = new RichEditor(e, this.editor);
+            richEditor.activateEditor();
             (globalThis as any).activeEditor = this.editor;
+            (globalThis as any).currentPageId = this.pageId;
             this.activateEditor();
         })
         this.activateNavigators();
@@ -88,7 +92,8 @@ export class EditorEvents {
       } else if (parentEl && parentEl.classList.contains("content-page-wrapper")) {
           contentMapper.moveContentRow(model.target.getId(), model.index);
       } else if (parentEl && parentEl.classList.contains("cta-button-container")) {
-          console.log("cta-button-container");
+          console.log("cta-button-container", model.target.getId());
+          contentMapper.moveCta(model.target.getId(), model.index);
       }
     });
   }
@@ -97,9 +102,10 @@ export class EditorEvents {
     this.editor.on("component:selected", (component: any) => {
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = new TileMapper(this.pageId);
-      (globalThis as any).currentPageId = this.pageId;
+      
       (globalThis as any).frameId = this.frameId;
       this.setTileProperties();
+      this.setCtaProperties();
       this.createChildEditor();
     });
 
@@ -143,7 +149,6 @@ export class EditorEvents {
     if (this.pageData?.PageType === "Content") {
       const response = await this.toolboxService.getContentPageData(this.pageData?.PageId);
       if (response) {
-        console.log(response.SDT_ProductService.CallToActions);
         new ContentSection(response.SDT_ProductService.CallToActions)
       }
     } else {
@@ -163,6 +168,16 @@ export class EditorEvents {
     if (selectedComponent && tileAttributes) {
       this.tileProperties = new TileProperties(selectedComponent, tileAttributes);
       this.tileProperties.setTileAttributes();
+    }
+  }
+
+  setCtaProperties() {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    const ctaAttributes = new ContentMapper(this.pageId).getContentCta(selectedComponent.getId()); 
+
+    if (ctaAttributes) {
+      const ctaProperties = new CtaButtonProperties(selectedComponent, ctaAttributes);
+      ctaProperties.setctaAttributes();
     }
   }
 

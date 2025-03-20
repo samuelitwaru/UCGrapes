@@ -482,6 +482,13 @@ button {
 .img-button-container:hover .cta-badge {
   opacity: 1;
 }
+.plain-button:hover,
+.img-button:hover,
+.img-button-container:hover,
+.plain-button-container:hover,
+.cta-container-child:hover {
+  cursor: move;
+}
 
 .cta-label {
   margin-top: 8px;
@@ -539,12 +546,16 @@ button {
   position: relative;
   width: 100%;
   border-radius: 13px;
-  border: 2px solid #5068a8;
+  border: none;
   background-color: #5068a8;
   display: inline-block;
   vertical-align: middle;
   color: white;
-  padding: 6px;
+  padding: 10px;
+}
+
+.plain-button:hover {
+  cursor: move;
 }
 
 @media (max-width: 1440px) {
@@ -661,6 +672,83 @@ button {
   top: 20px;
   transform: translateY(-3px);
   z-index: 6;
+}
+
+/* QUill */
+.content-page-block:hover .edit-icon {
+  display: inline;
+}
+
+.edit-icon {
+  display: none;
+  position: absolute;
+  right: -12px;
+  top: 10px;
+  cursor: pointer;
+  background: white;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.tb-toolbar {
+  display: none;
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  gap: 5px;
+  align-items: center;
+}
+
+.toolbar button {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.toolbar button:hover {
+  background-color: #e9e9e9;
+}
+
+.toolbar button.active {
+  background-color: #ddd;
+}
+
+.editor {
+  min-height: 50px;
+  padding: 10px;
+  outline: none;
+}
+
+.save-btn {
+  display: none;
+  cursor: pointer;
+  background: green;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+/* SVG Icons */
+.icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 .gjs-badge__name,

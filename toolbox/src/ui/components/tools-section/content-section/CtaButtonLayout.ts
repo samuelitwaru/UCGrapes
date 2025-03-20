@@ -1,6 +1,10 @@
+import { CtaManager } from "../../../../controls/themes/CtaManager";
+
 export class CtaButtonLayout {
     container: HTMLElement;
+    ctaManager: any;
     constructor() {
+        this.ctaManager = new CtaManager();
         this.container = document.createElement('div');
         this.init();
     }
@@ -23,6 +27,16 @@ export class CtaButtonLayout {
             </svg>
             Button
         `;
+
+        plainBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.ctaManager.changeToPlainButton();
+        });
+
+        imgBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.ctaManager.changeToImgButton();
+        });
 
         this.container.appendChild(plainBtn);
         this.container.appendChild(imgBtn);

@@ -1,3 +1,4 @@
+import { RichEditor } from "../../../controls/quill/RichEditor";
 import { ThemeManager } from "../../../controls/themes/ThemeManager";
 import { CtaButtonLayout } from "./content-section/CtaButtonLayout";
 import { CtaColorPalette } from "./content-section/CtaColorPalette";
@@ -17,6 +18,12 @@ export class ContentSection {
     }
 
     private init() {
+        if (this.container.style.display === 'block') {
+            console.log('Content Section is already initialized');
+            return;
+        } else {
+            console.log("Hello wolrldl")
+        }
         this.container.classList.add('sidebar-section', 'content-page-section');
         this.container.id = 'content-page-section';
         this.container.style.display = 'block';

@@ -30,6 +30,23 @@ export class ContentMapper {
     
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
+
+    moveCta(CtaId: any, newIndex: number): void {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+        if (!data?.PageContentStructure?.Cta) return;
+    
+        const contentArray = data.PageContentStructure.Cta;
+        const contentRowIndex = contentArray.findIndex((row: any) => row.CtaId === CtaId);
+        
+        if (contentRowIndex === -1 || newIndex < 0 || newIndex >= contentArray.length) return;
+    
+        const [contentRow] = contentArray.splice(contentRowIndex, 1);
+    
+        // Insert the item at the new position
+        contentArray.splice(newIndex, 0, contentRow);
+    
+        localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+    }
     
 
     public addContentCta (cta: any): any {
@@ -43,6 +60,9 @@ export class ContentMapper {
             "CtaBGColor": cta.CtaBGColor,
             "CtaButtonType": cta.CtaButtonType
         }
+         if (!data.PageContentStructure.Cta) {
+            data.PageContentStructure.Cta = [];
+         }
 
         data?.PageContentStructure?.Cta.push(ctaButton);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
@@ -71,6 +91,21 @@ export class ContentMapper {
             
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta[ctaIndex].CtaBGColor = bgColor;
+                
+                localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+                return true; 
+            }
+        }
+    }
+
+    public updateContentButtonType (ctaId: any, buttonType: any): any {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+
+        if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
+            const ctaIndex = data.PageContentStructure.Cta.findIndex((cta: any) => cta.CtaId === ctaId);
+            
+            if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
+                data.PageContentStructure.Cta[ctaIndex].CtaButtonType = buttonType;
                 
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
                 return true; 

@@ -6,7 +6,7 @@ export class LoadCalendarData {
         this.editor = editor;
     }
      load() {
-         this.editor.setComponents(this.htmlData());
+        this.editor.setComponents(this.htmlData());
      }
 
      private htmlData() {

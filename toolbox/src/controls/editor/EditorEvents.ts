@@ -145,7 +145,7 @@ export class EditorEvents {
       const response = await this.toolboxService.getContentPageData(this.pageData?.PageId);
       if (response) {
         console.log(response.SDT_ProductService.CallToActions);
-        new ContentSection(response.SDT_ProductService.CallToActions)
+        new ContentSection(response.SDT_ProductService.ProductServiceId, response.SDT_ProductService.CallToActions)
       }
     } else {
       const menuSection = document.getElementById('menu-page-section');

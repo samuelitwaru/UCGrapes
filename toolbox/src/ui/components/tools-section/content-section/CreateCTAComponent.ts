@@ -9,12 +9,15 @@ export class CreateCTAComponent {
     modal: Modal | undefined;
     ctaSelectInput: HTMLSelectElement | undefined;
     ctaLabelInput: HTMLInputElement | undefined;
-    phoneInput: HTMLDivElement | undefined;
+    phoneInput: HTMLInputElement | undefined;
     emailInput: HTMLInputElement | undefined;
     urlInput: HTMLInputElement | undefined;
     formSelect: HTMLSelectElement  | undefined;
     errorLabel: HTMLLabelElement | undefined;
-    constructor() {
+    countrySelect: HTMLSelectElement | undefined;
+    serviceId: string;
+    constructor(serviceId:string) {
+        this.serviceId = serviceId
         this.toolboxService = new ToolBoxService();
     }
 
@@ -105,8 +108,8 @@ export class CreateCTAComponent {
             });
         } else if (value === "Phone") {
             // add phone input field
-            this.phoneInput = await this.renderPhoneInput();
-            ctaValueDiv.appendChild(this.phoneInput);
+            const phoneInput = await this.renderPhoneInput();
+            ctaValueDiv.appendChild(phoneInput);
         } else if (value === "Email") {
             // add email input field
             this.emailInput = document.createElement("input");
@@ -121,7 +124,6 @@ export class CreateCTAComponent {
             ctaValueDiv.appendChild(this.urlInput);
         }
     }
-
 
     renderModalFooter() {
         const submitSection = document.createElement("div");
@@ -163,15 +165,15 @@ export class CreateCTAComponent {
         container.style.gap = "2px";
 
         // Create country code select
-        const countrySelect = document.createElement("select");
-        countrySelect.classList.add("tb-form-control");
-        countrySelect.style.width = "100px";
+        this.countrySelect = document.createElement("select");
+        this.countrySelect.classList.add("tb-form-control");
+        this.countrySelect.style.width = "100px";
 
         // Create phone input field
-        const phoneInput = document.createElement("input");
-        phoneInput.type = "number";
-        phoneInput.placeholder = "Enter phone number";
-        phoneInput.classList.add("tb-form-control");
+        this.phoneInput = document.createElement("input");
+        this.phoneInput.type = "number";
+        this.phoneInput.placeholder = "Enter phone number";
+        this.phoneInput.classList.add("tb-form-control");
 
         try {
             // Fetch country data
@@ -211,21 +213,33 @@ export class CreateCTAComponent {
                     const option = document.createElement("option");
                     option.value = code;
                     option.innerHTML = `(${code}) ${name}`; // Default flag in case flag image fails
-                    countrySelect.appendChild(option);
+                    this.countrySelect?.appendChild(option);
                 }
             );
 
             // Append elements to container
-            container.appendChild(countrySelect);
-            container.appendChild(phoneInput);
+            container.appendChild(this.countrySelect);
+            container.appendChild(this.phoneInput);
         } catch (error) {
             console.error("Error fetching country data:", error);
-            countrySelect.innerHTML = "<option>Error loading codes</option>";
+            this.countrySelect.innerHTML = "<option>Error loading codes</option>";
         }
         return container;
     }
 
     addCtaToPage() {
+        let payload = {
+            ProductServiceId: this.serviceId,
+            CallToActionName:this.ctaLabelInput?.value,
+            CallToActionType: "",
+            CallToActionPhone: "",
+            CallToActionPhoneCode: "",
+            CallToActionPhoneNumber: "",
+            CallToActionUrl: "",
+            CallToActionEmail: "",
+            LocationDynamicFormId: "",
+        }
+
         const data = {
             CtaId: randomIdGenerator(5),
             CtaLabel: this.ctaLabelInput?.value,
@@ -233,19 +247,29 @@ export class CreateCTAComponent {
             CtaValue: "",
         }
 
+
         if (this.ctaSelectInput?.value === "Form") {
-            data.CtaValue = this.formSelect?.value || "";
+            payload.LocationDynamicFormId = this.formSelect?.value || "";
+            data.CtaValue = payload.LocationDynamicFormId
         }else if (this.ctaSelectInput?.value === "Phone") {
-            data.CtaValue = this.phoneInput?.querySelector("input")?.value || "";
+            payload.CallToActionPhoneNumber = this.phoneInput?.value || "";
+            payload.CallToActionPhoneCode = this.countrySelect?.value || "";
+            data.CtaValue = payload.CallToActionPhoneNumber
         }else if (this.ctaSelectInput?.value === "Email") {
-            data.CtaValue = this.emailInput?.value || "";
+            payload.CallToActionEmail = this.emailInput?.value || "";
+            data.CtaValue = payload.CallToActionEmail
         }else if (this.ctaSelectInput?.value === "Url") {
-            data.CtaValue = this.urlInput?.value || "";
+            payload.CallToActionUrl = this.urlInput?.value || "";
+            data.CtaValue = payload.CallToActionUrl
         }
 
         const res = this.validateCta(data)
         if (res.isValid) {
-            console.log(data);
+            console.log(payload)
+            this.toolboxService.createServiceCTA(payload).then(res=>{
+                console.log(res)
+            })
+            return
             const editor = (globalThis as any).activeEditor
             if (editor) {
                 const components = editor.DomComponents.getWrapper().find('.content-page-wrapper')

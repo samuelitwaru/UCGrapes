@@ -253,7 +253,7 @@ button {
   gap: 1rem;
 }
 
-#product-service-image {
+#product-service-image, img.content-page-block {
   max-height: 156px;
   object-fit: cover;
   display: block;

@@ -27,7 +27,7 @@ export class CategoryView {
 
   createCategoryElement() {
     const summary = document.createElement("summary");
-    summary.innerText = `${this.categoryData.name}`;
+    summary.innerText = `${this.categoryData.displayName}`;
     const icon = document.createElement("i");
     icon.className = "fa fa-angle-right";
     if (this.categoryData.name !== "Web Link") summary.appendChild(icon);

@@ -146,6 +146,17 @@ export class ToolBoxService {
         }),
       },
     );
+    return response;    
+  }
+
+  async createServiceCTA(payload:any) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-service-cta",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
     console.log(response)
     return response;    
   }

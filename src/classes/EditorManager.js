@@ -280,8 +280,6 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-    // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
-
     const locationData = this.dataManager.Location;
 
     const dataComponents =
@@ -376,23 +374,6 @@ class EditorManager {
   }
 
   async updateImage(wrapper, contentPageData) {
-    // const img = wrapper.find("#product-service-image");
-    // console.log("Updating image",contentPageData?.ProductServiceImage);
-    // if (img.length > 0) {
-    //   if (!contentPageData?.ProductServiceImage) {
-    //     img[0].remove();
-    //   } else {
-    //     console.log("Updating image",contentPageData?.ProductServiceImage);
-    //     try {
-    //       img[0].setAttributes({
-    //         src: contentPageData.ProductServiceImage,
-    //         alt: "Product Service Image",
-    //       });
-    //     } catch (err) {
-    //       console.error("Error updating image:", err);
-    //     }
-    //   }
-    // }
     if (contentPageData?.ProductServiceImage) {
       const imageWrapper = wrapper.find("#content-image")[0];
       if(imageWrapper) {
@@ -410,7 +391,6 @@ class EditorManager {
             alt="Full-width Image"
         />
         `;
-        console.log("Updating image",contentPageData?.ProductServiceImage);
 
         const existingImage = imageWrapper.find("#product-service-image")[0];
         if (existingImage) {
@@ -434,7 +414,8 @@ class EditorManager {
         p[0].remove();
       } else {
         try {
-          const content = contentPageData.ProductServiceDescription.trim()
+          const content = this.editorEventManager.templateManager
+            .addDefaultConstraintsToContentDesc(contentPageData.ProductServiceDescription);
           const updatedContent = `
             <button ${defaultConstraints} class="tb-edit-content-icon">
               <?xml ${defaultConstraints}  version="1.0" ?>

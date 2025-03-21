@@ -230,7 +230,7 @@ class ToolBoxUI {
   }
 
   updateTileIconProperties(selectedComponent) {
-    const selectedTileIcon = selectedComponent.getAttributes()?.["tile-icon"];
+    const selectedTileIcon = selectedComponent?.getAttributes()?.["tile-icon"];
     if (selectedTileIcon) {
       const iconsListSection = document.getElementById("icons-list");
       if (iconsListSection) {

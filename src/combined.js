@@ -282,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -717,6 +717,12 @@ class ToolBoxManager {
         e.preventDefault();
         um.undo();
         this.editorManager.currentEditor.editor.refresh();
+        // const stack = um.getStack();
+        // stack.each(item => {
+        //   if (item.getClasses().includes("high-priority-template")) {
+        //     console.l
+        //   }
+        // });
       };
     }
 
@@ -728,6 +734,10 @@ class ToolBoxManager {
         this.editorManager.currentEditor.editor.refresh();
       };
     }
+  }
+
+  updateContentPageInformationOnEdit() {
+
   }
 
   checkIfNotAuthenticated(res) {
@@ -1119,7 +1129,9 @@ class EditorManager {
   async loadExistingContent(editor, page) {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
-      if (page.PageIsPredefined && page.PageName === "Location") {
+      if (page.PageIsPredefined && page.PageName === "Calendar") {
+        await this.handleCalendarPage(editor);
+      } else if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
         editor.loadProjectData(pageData);
@@ -1135,8 +1147,6 @@ class EditorManager {
   }
 
   async handleLocationPage(editor, pageData) {
-    // if (this.toolsSection.checkIfNotAuthenticated(locationData)) return;
-
     const locationData = this.dataManager.Location;
 
     const dataComponents =
@@ -1231,23 +1241,6 @@ class EditorManager {
   }
 
   async updateImage(wrapper, contentPageData) {
-    // const img = wrapper.find("#product-service-image");
-    // console.log("Updating image",contentPageData?.ProductServiceImage);
-    // if (img.length > 0) {
-    //   if (!contentPageData?.ProductServiceImage) {
-    //     img[0].remove();
-    //   } else {
-    //     console.log("Updating image",contentPageData?.ProductServiceImage);
-    //     try {
-    //       img[0].setAttributes({
-    //         src: contentPageData.ProductServiceImage,
-    //         alt: "Product Service Image",
-    //       });
-    //     } catch (err) {
-    //       console.error("Error updating image:", err);
-    //     }
-    //   }
-    // }
     if (contentPageData?.ProductServiceImage) {
       const imageWrapper = wrapper.find("#content-image")[0];
       if(imageWrapper) {
@@ -1265,7 +1258,6 @@ class EditorManager {
             alt="Full-width Image"
         />
         `;
-        console.log("Updating image",contentPageData?.ProductServiceImage);
 
         const existingImage = imageWrapper.find("#product-service-image")[0];
         if (existingImage) {
@@ -1289,7 +1281,8 @@ class EditorManager {
         p[0].remove();
       } else {
         try {
-          const content = contentPageData.ProductServiceDescription.trim()
+          const content = this.editorEventManager.templateManager
+            .addDefaultConstraintsToContentDesc(contentPageData.ProductServiceDescription);
           const updatedContent = `
             <button ${defaultConstraints} class="tb-edit-content-icon">
               <?xml ${defaultConstraints}  version="1.0" ?>
@@ -4276,7 +4269,7 @@ class ToolBoxUI {
   }
 
   updateTileIconProperties(selectedComponent) {
-    const selectedTileIcon = selectedComponent.getAttributes()?.["tile-icon"];
+    const selectedTileIcon = selectedComponent?.getAttributes()?.["tile-icon"];
     if (selectedTileIcon) {
       const iconsListSection = document.getElementById("icons-list");
       if (iconsListSection) {
@@ -7053,6 +7046,37 @@ class MediaComponent {
         }
       }
     });
+  }
+
+  async changeServiceImage(newImageUrl) {
+    try {
+      const base64String = await imageToBase64(newImageUrl);
+      
+      const data = {
+        ProductServiceId: this.editorManager.currentPageId,
+        ProductServiceDescription: "",
+        ProductServiceImageBase64: base64String
+      };
+
+      console.log("Data to be sent:", data);
+  
+      const res = await this.editorManager.dataManager.updateContentImage(data);
+      
+      if (res) {
+        console.log(res)
+        const imageComponent = this.editorManager
+          .currentEditor.editor.Components
+            .getWrapper().find("#product-service-image")[0];
+        if (imageComponent) {
+          imageComponent.setAttributes({
+            src: newImageUrl,
+            alt: "Product Service Image"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 }
 

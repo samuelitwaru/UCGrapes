@@ -553,8 +553,8 @@ class ActionListComponent {
           dropdownMenu.style.display === "block" ? "none" : "block";
         const icon = dropdownHeader.querySelector("i");
         if (icon) {
-          icon.classList.toggle("fa-angle-down");
           icon.classList.toggle("fa-angle-up");
+          icon.classList.toggle("fa-angle-down");
         }
       });
     }
@@ -576,8 +576,8 @@ class ActionListComponent {
         dropdownMenu.style.display = "none";
         const icon = dropdownHeader.querySelector("i");
         if (icon) {
-          icon.classList.remove("fa-angle-down");
-          icon.classList.add("fa-angle-up");
+          icon.classList.remove("fa-angle-up");
+          icon.classList.add("fa-angle-down");
         }
         document.querySelectorAll(".category").forEach((details) => {
           details.open = false;

@@ -330,12 +330,15 @@ class MediaComponent {
     saveBtn.onclick = () => {
       if (!this.isTile) {
         if (this.selectedFile?.MediaUrl) {
+          console.log(this.selectedFile)
           const safeMediaUrl = encodeURI(this.selectedFile.MediaUrl);
           this.closeModal(modal, fileInputField);
           if (this.type === "logo") {
             this.changeLogo(safeMediaUrl);
           } else if (this.type === "profile-image") {
             this.changeProfile(safeMediaUrl);
+          } else if (this.type === "update-content-image") {
+            this.changeServiceImage(safeMediaUrl);
           }
         }
 
@@ -708,5 +711,36 @@ class MediaComponent {
         }
       }
     });
+  }
+
+  async changeServiceImage(newImageUrl) {
+    try {
+      const base64String = await imageToBase64(newImageUrl);
+      
+      const data = {
+        ProductServiceId: this.editorManager.currentPageId,
+        ProductServiceDescription: "",
+        ProductServiceImageBase64: base64String
+      };
+
+      console.log("Data to be sent:", data);
+  
+      const res = await this.editorManager.dataManager.updateContentImage(data);
+      
+      if (res) {
+        console.log(res)
+        const imageComponent = this.editorManager
+          .currentEditor.editor.Components
+            .getWrapper().find("#product-service-image")[0];
+        if (imageComponent) {
+          imageComponent.setAttributes({
+            src: newImageUrl,
+            alt: "Product Service Image"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 }

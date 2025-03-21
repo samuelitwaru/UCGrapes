@@ -193,5 +193,28 @@ class DataManager {
         return true;
     }
   }
+
+  async updateDescription (data) {
+    return await this.fetchAPI('/api/toolbox/v2/update-service', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentImage (data) {
+    console.log(data)
+    return await this.fetchAPI('/api/toolbox/v2/update-service', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentImage (data) {
+    console.log(data)
+    return await this.fetchAPI('/api/toolbox/v2/delete-service-image', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
   
 }

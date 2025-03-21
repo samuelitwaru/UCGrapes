@@ -23,8 +23,11 @@ const files = [
     "components/MappingComponent.js",
     "components/MediaComponent.js",
     "classes/ImageCropper.js",
+    "classes/ContentEditorManager.js",
     "utils/defaults.js",
     "utils/helper.js",
+    "utils/helper.js",
+    "../dist/quill/quill.js"
 ];
 
 

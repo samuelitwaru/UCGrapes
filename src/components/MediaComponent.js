@@ -341,6 +341,8 @@ class MediaComponent {
             this.changeServiceImage(safeMediaUrl);
           } else if (this.type === "update-location-image") {
             this.changeLocationImage(safeMediaUrl);
+          } else if (this.type === "update-reception-image") {
+            this.changeReceptionImage(safeMediaUrl);
           }
         }
 
@@ -749,10 +751,40 @@ class MediaComponent {
       const base64String = await imageToBase64(newImageUrl);
       
       const data = {
-        LocationDescription: "content",
+        LocationDescription: "",
         LocationImageBase64: base64String,
         ReceptionDescription: "",
         ReceptionImageBase64: ""
+      };
+
+      const res = await this.editorManager.dataManager.updateLocationInfo(data);
+      
+      if (res) {
+        console.log(res)
+        const imageComponent = this.editorManager
+          .currentEditor.editor.Components
+            .getWrapper().find("#product-service-image")[0];
+        if (imageComponent) {
+          imageComponent.setAttributes({
+            src: newImageUrl,
+            alt: "Location Image"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  } 
+
+  async changeReceptionImage(newImageUrl) {
+    try {
+      const base64String = await imageToBase64(newImageUrl);
+      
+      const data = {
+        LocationDescription: "",
+        LocationImageBase64: "",
+        ReceptionDescription: "",
+        ReceptionImageBase64: base64String
       };
 
       const res = await this.editorManager.dataManager.updateLocationInfo(data);

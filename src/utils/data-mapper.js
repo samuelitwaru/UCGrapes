@@ -24,7 +24,7 @@ class TileMapper {
   setTileAttributes() {
     const bgColor = this.component.getStyle()["background-color"] || "#ffffff";
     const bgImage = this.component.getStyle()["background-image"] || "";
-    const textColor = this.component.getStyle()["color"] || "#ffffff";
+    const textColor = this.component.getStyle()["color"] || "#000000";
     this.component.addAttributes({
       "tile-bgcolor": bgColor,
       "tile-bg-image-url": bgImage,
@@ -352,17 +352,17 @@ function generateNewPage(theme) {
                                     "high-priority-template",
                                   ],
                                   style: {
-                                    color: "#ffffff",
+                                    color: "#000000",
                                   },
                                   attributes: {
                                     "tile-text": "Tile",
-                                    "tile-text-color": "#ffffff",
+                                    "tile-text-color": "#000000",
                                     "tile-text-align": "left",
                                     "tile-icon": "icon-name",
-                                    "tile-icon-color": "#ffffff",
+                                    "tile-icon-color": "#000000",
                                     "tile-icon-align": "left",
-                                    "tile-bgcolor": `${theme.ThemeColors.accentColor}`,
-                                    "tile-bgcolor-name": "accentColor",
+                                    "tile-bgcolor": `#ffffff`,
+                                    "tile-bgcolor-name": "",
                                     "tile-bg-image": "",
                                     "tile-bg-image-opacity": "0",
                                     "tile-action-object": "Page",
@@ -663,3 +663,4 @@ function generateNewPage(theme) {
     ],
   };
 }
+

@@ -500,6 +500,25 @@ class DataManager {
       body: JSON.stringify(data),
     });
   }
+
+  async getLocationData() {
+    return await this.fetchAPI('/api/toolbox/v2/get-location');
+  }
+
+  async updateLocationInfo (data) {
+    return await this.fetchAPI('/api/toolbox/v2/update-location', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // async deleteLocationInfo (data) {
+  //   console.log(data)
+  //   return await this.fetchAPI('/api/toolbox/v2/delete-service-image', {
+  //     method: 'POST',
+  //     body: JSON.stringify(data),
+  //   });
+  // }
   
 }
 
@@ -1138,9 +1157,11 @@ class EditorManager {
       if (page.PageIsPredefined && page.PageName === "Calendar") {
         await this.handleCalendarPage(editor);
       } else if (page.PageIsPredefined && page.PageName === "Location") {
-        await this.handleLocationPage(editor, pageData);
+        editor.loadProjectData(pageData);
+        await this.handlePredefinedContentPage(editor, page);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
         editor.loadProjectData(pageData);
+        this.handlePredefinedContentPage(editor, page);
       } else if (page.PageIsContentPage) {
         editor.loadProjectData(pageData);
         await this.handleContentPage(editor, page);
@@ -1234,6 +1255,47 @@ class EditorManager {
     }
   }
 
+  async handlePredefinedContentPage(editor, page) {
+    try {
+      const res = await this.dataManager.getLocationData();
+      if (this.toolsSection.checkIfNotAuthenticated(res)) return;
+      console.log("Location data:", res.BC_Trn_Location, "page", page);
+      const locationInfo = res.BC_Trn_Location;
+      let contentPageData = "";
+      if (page.PageName === "Location") {
+        contentPageData = {
+          ProductServiceImage: locationInfo.LocationImage,
+          ProductServiceDescription: locationInfo.LocationDescription,
+          // CallToActions: {
+          //   CallToActionId: 
+          //   CallToActionName: 
+          //   CallToActionType: 
+          // }
+        }
+      } else if(page.PageName === "Reception") {
+        contentPageData = {
+          ProductServiceImage: locationInfo.ReceptionImage,
+          ProductServiceDescription: locationInfo.ReceptionDescription,
+          // CallToActions: {
+          //   CallToActionId: 
+          //   CallToActionName: 
+          //   CallToActionType: 
+          // }
+        }
+      }
+
+      if (!contentPageData) {
+        console.warn("No content page data received");
+        return;
+      }
+
+      await this.updateContentPageElements(editor, contentPageData);
+      // await this.updateEditorCtaButtons(editor, contentPageData);
+    } catch (error) {
+      console.error("Error loading content page data:", error);
+    }
+  }
+
   async updateContentPageElements(editor, contentPageData) {
     const wrapper = editor.DomComponents.getWrapper();
     if (!wrapper) {
@@ -1241,6 +1303,7 @@ class EditorManager {
       return;
     }
 
+    console.log("cnontent", contentPageData);
     await this.updateImage(wrapper, contentPageData);
     await this.updateDescription(wrapper, contentPageData);
     this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
@@ -1248,8 +1311,10 @@ class EditorManager {
 
   async updateImage(wrapper, contentPageData) {
     if (contentPageData?.ProductServiceImage) {
+      console.log("Image removed", wrapper.getEl());
       const imageWrapper = wrapper.find("#content-image")[0];
       if(imageWrapper) {
+        console.log("imageWrapper imageWrapper");
         const image = `
         <img
             id="product-service-image"
@@ -1270,12 +1335,14 @@ class EditorManager {
           existingImage.replaceWith(image);
         } else {
           imageWrapper.append(image, { at: 2});
+          console.log("Image not found");
         }        
       }
     } else{
       const img = wrapper.find("#product-service-image")[0];
       if (img) {
         img.remove();
+        console.log("Image not found");
       }
     }
   }
@@ -1325,7 +1392,6 @@ class EditorManager {
       }
       const windowWidth = window.innerWidth;
       ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.0rem";
-      console.log("ctaContainer");
     }
   }
 
@@ -1624,9 +1690,9 @@ class EditorEventManager {
       const previousSelected =
         this.editorManager.currentEditor.editor.getSelected();
       if (previousSelected) {
-        this.editorManager.currentEditor.editor.selectRemove(previousSelected);
-        this.editorManager.selectedComponent = null;
-        this.editorManager.selectedTemplateWrapper = null;
+        // this.editorManager.currentEditor.editor.selectRemove(previousSelected);
+        // this.editorManager.selectedComponent = null;
+        // this.editorManager.selectedTemplateWrapper = null;
       }
 
       this.handleEditorClick(e, editor);
@@ -2671,7 +2737,7 @@ class TemplateManager {
                                     </button>
                                     <button ${defaultConstraints} class="tb-delete-image-icon">
                                       <svg fill="#5068a8" ${defaultConstraints} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                          <title ${defaultConstraints}>trash-line</title>
+                                          <title ${defaultConstraints}>delete</title>
                                           <path fill="#5068a8" ${defaultConstraints} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
                                           <rect fill="#5068a8" ${defaultConstraints} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
                                           <rect fill="#5068a8" ${defaultConstraints} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
@@ -6680,6 +6746,8 @@ class MediaComponent {
             this.changeProfile(safeMediaUrl);
           } else if (this.type === "update-content-image") {
             this.changeServiceImage(safeMediaUrl);
+          } else if (this.type === "update-location-image") {
+            this.changeLocationImage(safeMediaUrl);
           }
         }
 
@@ -7064,8 +7132,6 @@ class MediaComponent {
         ProductServiceImageBase64: base64String
       };
 
-      console.log("Data to be sent:", data);
-  
       const res = await this.editorManager.dataManager.updateContentImage(data);
       
       if (res) {
@@ -7077,6 +7143,36 @@ class MediaComponent {
           imageComponent.setAttributes({
             src: newImageUrl,
             alt: "Product Service Image"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async changeLocationImage(newImageUrl) {
+    try {
+      const base64String = await imageToBase64(newImageUrl);
+      
+      const data = {
+        LocationDescription: "content",
+        LocationImageBase64: base64String,
+        ReceptionDescription: "",
+        ReceptionImageBase64: ""
+      };
+
+      const res = await this.editorManager.dataManager.updateLocationInfo(data);
+      
+      if (res) {
+        console.log(res)
+        const imageComponent = this.editorManager
+          .currentEditor.editor.Components
+            .getWrapper().find("#product-service-image")[0];
+        if (imageComponent) {
+          imageComponent.setAttributes({
+            src: newImageUrl,
+            alt: "Location Image"
           });
         }
       }
@@ -7542,11 +7638,13 @@ class ContentEditorManager {
     this.init();
   }
 
-  init() {
+  async init() {
+    this.pages = await this.editorManager.dataManager.getPages();
+    this.currentPage = this.pages?.SDT_PageCollection?.find((page) => page.PageId === this.editorManager.currentPageId);
     this.openContentEditModal();
     this.openImageUploadModal();
     this.openDeleteModal();
-    this.templateManager = new TemplateManager
+    this.templateManager = new TemplateManager;
   }
 
   openContentEditModal() {
@@ -7559,19 +7657,16 @@ class ContentEditorManager {
                         </div>`;
         const handleConfirm = async (event) => {
             const content = document.querySelector("#editor .ql-editor").innerHTML;
-            const data = {
-                ProductServiceId: this.editorManager.currentPageId,
-                ProductServiceDescription: content
+            if (this.currentPage) {
+              if (this.currentPage.PageName === "Location") {
+                this.saveLocationContent(content);
+              } else if (this.currentPage.PageName === "Reception") {
+                this.saveReceptionContent(content);
+              } else {
+                this.saveContentPageInfo(content);
+              }      
             }
-
-            const res = await this.editorManager.dataManager.updateDescription(data);
-            if (res) {
-                const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; // Assuming you have a method to get the description component
-                if (descComponent) {
-                    descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
-                }
-            }
-            
+                        
             editModal.closePopup();
         };
 
@@ -7594,6 +7689,16 @@ class ContentEditorManager {
     const editorTrigger = this.event.target.closest(".tb-edit-image-icon");
     if (editorTrigger) {
         const toolboxManager = this.editorManager.toolsSection;
+        let type;
+
+        if (this.currentPage.PageName === "Location") {
+          type = 'update-location-image';
+        } else if (this.currentPage.PageName === "Reception") {
+          type = 'update-reception-image';
+        } else {
+          type = 'update-content-image';
+        } 
+
         toolboxManager.openFileManager('update-content-image');
     }
   }
@@ -7633,6 +7738,55 @@ class ContentEditorManager {
         if (descComponent) {
             console.log(descComponent.getEl().innerHTML);
             return descComponent.getEl().innerHTML;
+        }
+    }
+  }
+
+  async saveContentPageInfo(content) {
+    const data = {
+      ProductServiceId: this.editorManager.currentPageId,
+      ProductServiceDescription: content
+    }
+
+    const res = await this.editorManager.dataManager.updateDescription(data);
+    if (res) {
+        const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; 
+        if (descComponent) {
+            descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
+        }
+    }
+  }
+
+  async saveLocationContent(content) {
+    const data = {
+      LocationDescription: content,
+      LocationImageBase64: "",
+      ReceptionDescription: "",
+      ReceptionImageBase64: ""
+    }
+
+    const res = await this.editorManager.dataManager.updateLocationInfo(data);
+    if (res) {
+        const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; 
+        if (descComponent) {
+            descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
+        }
+    }
+  }
+
+  async saveReceptionContent(content) {
+    const data = {
+      LocationDescription: "",
+      LocationImageBase64: "",
+      ReceptionDescription: content,
+      ReceptionImageBase64: ""
+    }
+
+    const res = await this.editorManager.dataManager.updateLocationInfo(data);
+    if (res) {
+        const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; 
+        if (descComponent) {
+            descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
         }
     }
   }

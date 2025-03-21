@@ -37,9 +37,9 @@ class EditorEventManager {
       const previousSelected =
         this.editorManager.currentEditor.editor.getSelected();
       if (previousSelected) {
-        this.editorManager.currentEditor.editor.selectRemove(previousSelected);
-        this.editorManager.selectedComponent = null;
-        this.editorManager.selectedTemplateWrapper = null;
+        // this.editorManager.currentEditor.editor.selectRemove(previousSelected);
+        // this.editorManager.selectedComponent = null;
+        // this.editorManager.selectedTemplateWrapper = null;
       }
 
       this.handleEditorClick(e, editor);

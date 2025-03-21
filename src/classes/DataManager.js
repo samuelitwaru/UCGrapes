@@ -216,5 +216,24 @@ class DataManager {
       body: JSON.stringify(data),
     });
   }
+
+  async getLocationData() {
+    return await this.fetchAPI('/api/toolbox/v2/get-location');
+  }
+
+  async updateLocationInfo (data) {
+    return await this.fetchAPI('/api/toolbox/v2/update-location', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // async deleteLocationInfo (data) {
+  //   console.log(data)
+  //   return await this.fetchAPI('/api/toolbox/v2/delete-service-image', {
+  //     method: 'POST',
+  //     body: JSON.stringify(data),
+  //   });
+  // }
   
 }

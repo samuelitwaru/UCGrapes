@@ -146,6 +146,7 @@ class ToolBoxUI {
     this.updateAlignmentProperties(selectComponent);
     this.updateColorProperties(selectComponent);
     this.updateActionProperties(selectComponent);
+    this.updateTileIconProperties(selectComponent);
   }
 
   updateTileOpacityProperties(selectComponent) {
@@ -224,6 +225,23 @@ class ToolBoxUI {
       propertySection.innerHTML += ' <i class="fa fa-angle-down"></i>';
       if (selectedOptionElement) {
         selectedOptionElement.style.background = "#f0f0f0";
+      }
+    }
+  }
+
+  updateTileIconProperties(selectedComponent) {
+    const selectedTileIcon = selectedComponent?.getAttributes()?.["tile-icon"];
+    if (selectedTileIcon) {
+      const iconsListSection = document.getElementById("icons-list");
+      if (iconsListSection) {
+        const icons = iconsListSection.querySelectorAll(".icon");
+        icons.forEach((icon) => {
+          if (icon.title === selectedTileIcon) {
+            icon.classList.add("selected-tile-icon");
+          } else {
+            icon.classList.remove("selected-tile-icon");
+          }
+        });
       }
     }
   }

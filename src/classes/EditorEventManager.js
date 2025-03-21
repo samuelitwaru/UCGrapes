@@ -43,6 +43,7 @@ class EditorEventManager {
       }
 
       this.handleEditorClick(e, editor);
+      new ContentEditorManager(e, editor, this.editorManager);
     });
   }
 

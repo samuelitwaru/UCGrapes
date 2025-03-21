@@ -2,10 +2,13 @@ class FormPopupModal {
     title = ""
     htmlBody = ""
     popup = null
-    constructor (popupId, title, htmlBody) {
+    onConfirmHandler = null
+    
+    constructor(popupId, title, htmlBody, onConfirmHandler = null) {
         this.title = title
         this.htmlBody = htmlBody
         this.popupId = popupId
+        this.onConfirmHandler = onConfirmHandler || this.defaultConfirmHandler
         this.popup = this.createPopup()
     }
 
@@ -19,7 +22,6 @@ class FormPopupModal {
 
     closePopup() {
         this.popup.remove()
-        this.popup.style.display = "flex";
     }
 
     createPopup () {
@@ -53,8 +55,12 @@ class FormPopupModal {
         return popup;
     }
 
-    onConfirm (event) {
-        alert('add your confirm function')
+    defaultConfirmHandler(event) {
+        alert('Please provide a confirm handler function')
+    }
+
+    onConfirm(event) {
+        this.onConfirmHandler(event)
     }
 
     addEventListeners () {

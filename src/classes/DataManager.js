@@ -1,4 +1,4 @@
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -192,6 +192,29 @@ class DataManager {
         console.log(`Error checking image: ${error.message}`);
         return true;
     }
+  }
+
+  async updateDescription (data) {
+    return await this.fetchAPI('/api/toolbox/v2/update-service', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentImage (data) {
+    console.log(data)
+    return await this.fetchAPI('/api/toolbox/v2/update-service', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentImage (data) {
+    console.log(data)
+    return await this.fetchAPI('/api/toolbox/v2/delete-service-image', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
   
 }

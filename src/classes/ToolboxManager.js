@@ -210,6 +210,12 @@ class ToolBoxManager {
         e.preventDefault();
         um.undo();
         this.editorManager.currentEditor.editor.refresh();
+        // const stack = um.getStack();
+        // stack.each(item => {
+        //   if (item.getClasses().includes("high-priority-template")) {
+        //     console.l
+        //   }
+        // });
       };
     }
 
@@ -221,6 +227,10 @@ class ToolBoxManager {
         this.editorManager.currentEditor.editor.refresh();
       };
     }
+  }
+
+  updateContentPageInformationOnEdit() {
+
   }
 
   checkIfNotAuthenticated(res) {

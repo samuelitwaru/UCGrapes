@@ -236,7 +236,7 @@ span#scroll-right:hover {
   height: 90vh;
   max-width: 320px;
   max-height: 680px;
-  background-color: #fdfdfd;
+  background-color: #efeeec;
   border-radius: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   position: relative;
@@ -1209,12 +1209,12 @@ div#cta-selected-actions {
 }
 
 .sidebar-section .icons-list .icon {
-  display: flex; /* Enables Flexbox */
-  align-items: center; /* Vertical alignment */
-  justify-content: center; /* Horizontal alignment */
-  flex-direction: column; /* Stacks the SVG and the span vertically */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   background-color: #f9f9f9;
-  border: 1px solid #7070702b;
+  border: 1.5px solid #7070702e;
   border-radius: 6px;
   padding: 4px 8px;
   text-align: center;
@@ -1979,6 +1979,14 @@ button.add-new-service i {
   border-radius: 50%;
   border-top-color: #fff;
   animation: spin 1s ease-in-out infinite;
+}
+
+.selected-tile-icon {
+  border: 2px solid #5068a8 !important;
+}
+
+.selected-tile-icon path {
+  fill: #5068a8 !important;
 }
 
 @keyframes spin {

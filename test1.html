@@ -1,121 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Circular Buttons with Adaptive Spacing</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #f5f5f5;
-    }
-
-    .container {
-      margin: 20px;
-      text-align: center;
-    }
-
-    .button-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      /* Initial gap will be set by JavaScript */
-    }
-
-    .circular-button {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      font-size: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .circular-button:hover {
-      background-color: #2980b9;
-    }
-
-    .controls {
-      margin-top: 40px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .info {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #555;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input {
+            width: 80%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .short-url {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+        .copy-btn {
+            background: #007bff;
+            margin-left: 5px;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Dynamic Circular Buttons</h1>
-    <p>The gap automatically adjusts: 24px for two buttons, 16px for three or more buttons</p>
-    
-    <div class="button-container" id="buttonContainer">
-      <!-- Buttons will be added here dynamically -->
+    <div class="container">
+        <h2>URL Shortener</h2>
+        <input type="text" id="long-url" placeholder="Enter long URL">
+        <button onclick="shortenURL()">Shorten</button>
+        <p class="short-url" id="short-url"></p>
     </div>
     
-    <div class="controls">
-      <button onclick="addButton()">Add Button</button>
-      <button onclick="removeButton()">Remove Button</button>
-    </div>
-    
-    <div class="info" id="info">
-      Current buttons: 0
-    </div>
-  </div>
+    <script>
+        async function shortenURL() {
+            const longUrl = document.getElementById('long-url').value;
+            if (!longUrl) {
+                alert('Please enter a URL.');
+                return;
+            }
 
-  <script>
-    const buttonContainer = document.getElementById('buttonContainer');
-    const infoElement = document.getElementById('info');
-    let buttonCount = 0;
-    
-    // Function to update the gap based on number of buttons
-    function updateGap() {
-      // Set 24px gap for two buttons, 16px for three or more
-      const gap = buttonCount === 2 ? '24px' : '16px';
-      buttonContainer.style.gap = gap;
-      
-      // Update info text
-      infoElement.textContent = `Current buttons: ${buttonCount} (Gap: ${gap})`;
-    }
-    
-    // Function to add a button
-    function addButton() {
-      buttonCount++;
-      const button = document.createElement('button');
-      button.className = 'circular-button';
-      button.textContent = buttonCount;
-      buttonContainer.appendChild(button);
-      updateGap();
-    }
-    
-    // Function to remove a button
-    function removeButton() {
-      if (buttonCount > 0) {
-        buttonContainer.removeChild(buttonContainer.lastChild);
-        buttonCount--;
-        updateGap();
-      }
-    }
-    
-    // Initialize with two buttons
-    addButton();
-    addButton();
-  </script>
+            try {
+                const response = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`);
+                const data = await response.json();
+
+                if (data.shorturl) {
+                    document.getElementById('short-url').innerHTML = `
+                        Short URL: <a href="${data.shorturl}" target="_blank">${data.shorturl}</a>
+                        <button class="copy-btn" onclick="copyToClipboard('${data.shorturl}')">Copy</button>
+                    `;
+                } else {
+                    alert('Failed to shorten URL.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Short URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+    </script>
 </body>
 </html>

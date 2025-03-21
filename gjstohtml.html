@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function grapesjsToHTML(projectData) {
+            // Ensure the input is a valid object
+            if (!projectData || typeof projectData !== 'object') {
+              throw new Error('Invalid project data');
+            }
+          
+            // Extract HTML content
+            const htmlContent = projectData.html || '';
+            
+            // Extract CSS content
+            const cssContent = projectData.css || '';
+          
+            // Create a complete HTML document
+            return `<!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Exported Grape.js Project</title>
+              <style>
+          ${cssContent}
+              </style>
+          </head>
+          <body>
+          ${htmlContent}
+          </body>
+          </html>`;
+          }
+          
+          // Example usage:
+          const sampleProjectData = {
+            html: '<div class="container">Hello World</div>',
+            css: '.container { color: blue; padding: 20px; }'
+          };
+          
+          const exportedHTML = grapesjsToHTML(sampleProjectData);
+          console.log(exportedHTML);
+    </script>
+</body>
+</html>

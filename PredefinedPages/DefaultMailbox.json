@@ -1,35 +1,120 @@
 {
-    "assets": [],
-    "pages": [
-      {
-        "id": "page-id-1",
-        "name": "Page 1",
-        "component": {
-          "type": "wrapper",
-          "components": [
-            {
-              "type": "image",
-              "src": "https://staging.comforta.yukon.software/media/mailbox.png",
-              "style": {
-                "width": "100%",
-                "height": "auto",
-                "display": "block"
-              },
-              "attributes": {
-                "alt": "Sample Image"
-              },
-              "selectable": false,
-              "clickable": false,
-              "editable": false
-            }
-          ]
-        }
+  "assets": [],
+  "styles": [
+    {
+      "selectors": ["#iqdy"],
+      "style": { "background-color": "#5068a8", "border-radius": "6px" }
+    },
+    {
+      "selectors": ["#i6lk"],
+      "style": {
+        "background-color": "#e1e1e1",
+        "border-radius": "6px",
+        "color": "#262626"
       }
-    ],
-    "styles": "",
-    "css": "",
-    "html": "",
-    "components": "",
-    "stylesheets": [],
-    "scripts": []
-  }
+    }
+  ],
+  "pages": [
+    {
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "droppable": false,
+            "stylable": [
+              "background",
+              "background-color",
+              "background-image",
+              "background-repeat",
+              "background-attachment",
+              "background-position",
+              "background-size"
+            ],
+            "selectable": false,
+            "hoverable": false,
+            "_undoexc": ["status", "open"],
+            "components": [
+              {
+                "draggable": false,
+                "droppable": false,
+                "highlightable": false,
+                "selectable": false,
+                "hoverable": false,
+                "classes": ["tb-chat-container"],
+                "_undoexc": ["status", "open"],
+                "components": [
+                  {
+                    "draggable": false,
+                    "droppable": false,
+                    "highlightable": false,
+                    "selectable": false,
+                    "hoverable": false,
+                    "classes": ["tb-toggle-buttons"],
+                    "_undoexc": ["status", "open"],
+                    "components": [
+                      {
+                        "tagName": "button",
+                        "type": "text",
+                        "draggable": false,
+                        "highlightable": false,
+                        "editable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "attributes": { "id": "iqdy" },
+                        "_undoexc": ["status", "open"],
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "Messages",
+                            "_undoexc": ["status", "open"]
+                          }
+                        ]
+                      },
+                      {
+                        "tagName": "button",
+                        "type": "text",
+                        "draggable": false,
+                        "highlightable": false,
+                        "editable": false,
+                        "selectable": false,
+                        "hoverable": false,
+                        "attributes": { "id": "i6lk" },
+                        "_undoexc": ["status", "open"],
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "Requests",
+                            "_undoexc": ["status", "open"]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "draggable": false,
+                    "highlightable": false,
+                    "editable": false,
+                    "selectable": false,
+                    "hoverable": false,
+                    "classes": ["tb-chat-body"],
+                    "_undoexc": ["status", "open"],
+                    "components": [
+                      {
+                        "type": "textnode",
+                        "content": "No messages yet",
+                        "_undoexc": ["status", "open"]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "type": "main",
+      "id": "GsHYIE9trk0gFMnV"
+    }
+  ]
+}

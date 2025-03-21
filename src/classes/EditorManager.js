@@ -271,10 +271,8 @@ class EditorManager {
       if (page.PageIsPredefined && page.PageName === "Calendar") {
         await this.handleCalendarPage(editor);
       } else if (page.PageIsPredefined && page.PageName === "Location") {
-        editor.loadProjectData(pageData);
         await this.handlePredefinedContentPage(editor, page);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
-        editor.loadProjectData(pageData);
         this.handlePredefinedContentPage(editor, page);
       } else if (page.PageIsContentPage) {
         editor.loadProjectData(pageData);
@@ -387,9 +385,11 @@ class EditorManager {
           // }
         }
       } else if(page.PageName === "Reception") {
+        const defaultDesc = "Welkom bij de receptie van onze app. Hier kunt u al uw vragen stellen en krijgt u direct hulp van ons team. Of het nu gaat om technische ondersteuning, informatie over diensten, of algemene vragen, wij zijn er om u te helpen.";
+        const defaultImage = "https://staging.comforta.yukon.software/media/receptie-197@3x.png";
         contentPageData = {
-          ProductServiceImage: locationInfo.ReceptionImage,
-          ProductServiceDescription: locationInfo.ReceptionDescription,
+          ProductServiceImage: locationInfo.ReceptionImage === ""? defaultImage: locationInfo.ReceptionImage,
+          ProductServiceDescription: locationInfo.ReceptionDescription === ""? defaultDesc: locationInfo.ReceptionDescription,
           // CallToActions: {
           //   CallToActionId: 
           //   CallToActionName: 
@@ -416,19 +416,18 @@ class EditorManager {
       console.error("Wrapper not found in editor");
       return;
     }
-
-    console.log("cnontent", contentPageData);
-    await this.updateImage(wrapper, contentPageData);
-    await this.updateDescription(wrapper, contentPageData);
+    const projectData =
+    this.templateManager.initialContentPageTemplate(contentPageData);
+    editor.addComponents(projectData)[0];
+    // await this.updateImage(wrapper, contentPageData);
+    // await this.updateDescription(wrapper, contentPageData);
     this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
   }
 
   async updateImage(wrapper, contentPageData) {
     if (contentPageData?.ProductServiceImage) {
-      console.log("Image removed", wrapper.getEl());
       const imageWrapper = wrapper.find("#content-image")[0];
       if(imageWrapper) {
-        console.log("imageWrapper imageWrapper");
         const image = `
         <img
             id="product-service-image"
@@ -443,7 +442,6 @@ class EditorManager {
             alt="Full-width Image"
         />
         `;
-
         const existingImage = imageWrapper.find("#product-service-image")[0];
         if (existingImage) {
           existingImage.replaceWith(image);
@@ -456,7 +454,6 @@ class EditorManager {
       const img = wrapper.find("#product-service-image")[0];
       if (img) {
         img.remove();
-        console.log("Image not found");
       }
     }
   }

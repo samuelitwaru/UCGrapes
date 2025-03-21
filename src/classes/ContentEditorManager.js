@@ -58,7 +58,6 @@ class ContentEditorManager {
     if (editorTrigger) {
         const toolboxManager = this.editorManager.toolsSection;
         let type;
-
         if (this.currentPage.PageName === "Location") {
           type = 'update-location-image';
         } else if (this.currentPage.PageName === "Reception") {
@@ -67,7 +66,7 @@ class ContentEditorManager {
           type = 'update-content-image';
         } 
 
-        toolboxManager.openFileManager('update-content-image');
+        toolboxManager.openFileManager(type);
     }
   }
 

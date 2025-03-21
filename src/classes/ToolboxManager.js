@@ -346,6 +346,8 @@ class ToolBoxManager {
 
     const isTile = false;
 
+    console.log("type:---------------->", type);
+
     this.mediaComponent.handleModalOpen(
       modal,
       fileInputField,

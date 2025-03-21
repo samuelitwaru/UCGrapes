@@ -282,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -871,6 +871,8 @@ class ToolBoxManager {
     let allUploadedFiles = [];
 
     const isTile = false;
+
+    console.log("type:---------------->", type);
 
     this.mediaComponent.handleModalOpen(
       modal,
@@ -6985,8 +6987,8 @@ class MediaComponent {
 
   closeModal(modal, fileInputField) {
     modal.style.display = "none";
-    document.body.removeChild(modal);
-    document.body.removeChild(fileInputField);
+    document.body?.removeChild(modal);
+    document.body?.removeChild(fileInputField);
   }
 
   saveSelectedFile(modal, fileInputField) {
@@ -7163,6 +7165,8 @@ class MediaComponent {
       const profileAddedSection = document.getElementById(
         "profile-image-added"
       );
+      
+      console.log("changeLocationImage: ", data)
       const addProfileSection = document.getElementById("add-profile-image");
 
       if (profileAddedSection && addProfileSection) {
@@ -7186,6 +7190,8 @@ class MediaComponent {
         ProductServiceDescription: "",
         ProductServiceImageBase64: base64String
       };
+      
+      console.log("changeLocationImage: ", data)
 
       const res = await this.editorManager.dataManager.updateContentImage(data);
       
@@ -7217,6 +7223,7 @@ class MediaComponent {
         ReceptionImageBase64: ""
       };
 
+      console.log("changeLocationImage: ", data)
       const res = await this.editorManager.dataManager.updateLocationInfo(data);
       
       if (res) {
@@ -7775,7 +7782,6 @@ class ContentEditorManager {
     if (editorTrigger) {
         const toolboxManager = this.editorManager.toolsSection;
         let type;
-
         if (this.currentPage.PageName === "Location") {
           type = 'update-location-image';
         } else if (this.currentPage.PageName === "Reception") {
@@ -7784,7 +7790,7 @@ class ContentEditorManager {
           type = 'update-content-image';
         } 
 
-        toolboxManager.openFileManager('update-content-image');
+        toolboxManager.openFileManager(type);
     }
   }
 

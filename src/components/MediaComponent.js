@@ -525,8 +525,8 @@ class MediaComponent {
 
   closeModal(modal, fileInputField) {
     modal.style.display = "none";
-    document.body.removeChild(modal);
-    document.body.removeChild(fileInputField);
+    document.body?.removeChild(modal);
+    document.body?.removeChild(fileInputField);
   }
 
   saveSelectedFile(modal, fileInputField) {
@@ -703,6 +703,8 @@ class MediaComponent {
       const profileAddedSection = document.getElementById(
         "profile-image-added"
       );
+      
+      console.log("changeLocationImage: ", data)
       const addProfileSection = document.getElementById("add-profile-image");
 
       if (profileAddedSection && addProfileSection) {
@@ -726,6 +728,8 @@ class MediaComponent {
         ProductServiceDescription: "",
         ProductServiceImageBase64: base64String
       };
+      
+      console.log("changeLocationImage: ", data)
 
       const res = await this.editorManager.dataManager.updateContentImage(data);
       
@@ -757,6 +761,7 @@ class MediaComponent {
         ReceptionImageBase64: ""
       };
 
+      console.log("changeLocationImage: ", data)
       const res = await this.editorManager.dataManager.updateLocationInfo(data);
       
       if (res) {

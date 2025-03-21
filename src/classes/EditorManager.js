@@ -385,7 +385,6 @@ class EditorManager {
     try {
       const res = await this.dataManager.getLocationData();
       if (this.toolsSection.checkIfNotAuthenticated(res)) return;
-      console.log("Location data:", res.BC_Trn_Location, "page", page);
       const locationInfo = res.BC_Trn_Location;
       let contentPageData = "";
       if (page.PageName === "Location") {
@@ -503,7 +502,6 @@ class EditorManager {
           existingImage.replaceWith(image);
         } else {
           imageWrapper.append(image, { at: 2});
-          console.log("Image not found");
         }        
       }
     } else{

@@ -154,7 +154,6 @@ class ToolBoxManager {
     let page = this.dataManager.pages.SDT_PageCollection.find(
       (page) => page.PageId == pageId
     );
-    console.log("page", page);
     let projectData = editor.getProjectData();
     let htmlData = editor.getHtml();
     let pageName = page.PageName;

@@ -704,7 +704,6 @@ class MediaComponent {
         "profile-image-added"
       );
       
-      console.log("changeLocationImage: ", data)
       const addProfileSection = document.getElementById("add-profile-image");
 
       if (profileAddedSection && addProfileSection) {
@@ -729,8 +728,6 @@ class MediaComponent {
         ProductServiceImageBase64: base64String
       };
       
-      console.log("changeLocationImage: ", data)
-
       const res = await this.editorManager.dataManager.updateContentImage(data);
       
       if (res) {
@@ -760,8 +757,6 @@ class MediaComponent {
         ReceptionDescription: "",
         ReceptionImageBase64: ""
       };
-
-      console.log("changeLocationImage: ", data)
       const res = await this.editorManager.dataManager.updateLocationInfo(data);
       
       if (res) {
@@ -794,8 +789,9 @@ class MediaComponent {
 
       const res = await this.editorManager.dataManager.updateLocationInfo(data);
       
+      console.log("changeReceptionImage: ", data)
+
       if (res) {
-        console.log(res)
         const imageComponent = this.editorManager
           .currentEditor.editor.Components
             .getWrapper().find("#product-service-image")[0];

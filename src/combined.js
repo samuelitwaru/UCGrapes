@@ -1241,7 +1241,6 @@ class EditorManager {
       }
 
       await this.updateContentPageElements(editor, contentPageData);
-      await this.updateEditorCtaButtons(editor, contentPageData);
     } catch (error) {
       console.error("Error loading content page data:", error);
     }
@@ -1283,11 +1282,26 @@ class EditorManager {
         return;
       }
 
-      await this.updateContentPageElements(editor, contentPageData);
+      await this.updatePredefinedPageElements(editor, contentPageData);
       // await this.updateEditorCtaButtons(editor, contentPageData);
     } catch (error) {
       console.error("Error loading content page data:", error);
     }
+  }
+
+  async updatePredefinedPageElements(editor, contentPageData) {
+    const wrapper = editor.DomComponents.getWrapper();
+    if (!wrapper) {
+      console.error("Wrapper not found in editor");
+      return;
+    }
+    const projectData =
+      this.templateManager.initialContentPageTemplate(contentPageData);
+    editor.addComponents(projectData)[0];
+    // await this.updateImage(wrapper, contentPageData);
+    // await this.updateDescription(wrapper, contentPageData);
+      // await this.updateEditorCtaButtons(editor, contentPageData);
+    this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
   }
 
   async updateContentPageElements(editor, contentPageData) {
@@ -1296,11 +1310,16 @@ class EditorManager {
       console.error("Wrapper not found in editor");
       return;
     }
+
+    const existingCtaContainer = editor.getWrapper().find(".cta-button-container")[0];
     const projectData =
-    this.templateManager.initialContentPageTemplate(contentPageData);
-    editor.addComponents(projectData)[0];
-    // await this.updateImage(wrapper, contentPageData);
-    // await this.updateDescription(wrapper, contentPageData);
+      this.templateManager.initialContentPageTemplate(contentPageData);
+    
+      editor.setComponents(projectData)[0];
+    const newContainer = editor.getWrapper().find(".cta-button-container")[0];
+    if (existingCtaContainer && newContainer) {
+      newContainer.replaceWith(existingCtaContainer);
+    }
     this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
   }
 

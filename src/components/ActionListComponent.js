@@ -29,13 +29,13 @@ class ActionListComponent {
       },
       {
         name: "Dynamic Forms",
-        displayName: "Dynamic Forms",
+        displayName: "Forms",
         label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [],
       },
       {
         name: "Predefined Page",
-        displayName: "Module",
+        displayName: "Modules",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },

@@ -212,15 +212,26 @@ function mapContentToPageData(templateData, page) {
     components.forEach((component) => {
       const topComponents =
         component.components?.[0]?.components?.[0]?.components || [];
-      console.log(page.PageName, topComponents)
       for (let index = 0; index < topComponents.length; index++) {
         const component = topComponents[index];
-        console.log(component?.type)
-        if (component?.tagName === "img") {
-          const imageUrl = component?.attributes.src.startsWith("http")
-            ? component?.attributes.src
-            : baseURL + "/" + component?.attributes.src;
+        if ((component?.tagName === "img")) {
+          const imageUrl = component?.attributes?.src?.startsWith("http")
+            ? component?.attributes?.src
+            : baseURL + "/" + component?.attributes?.src;
 
+          output.Content.push({
+            ContentType: "Image",
+            ContentValue: imageUrl,
+          });
+        }
+
+        if (component?.attributes?.id === "content-image") {
+          const newComp = component.components.find((comp) => comp.tagName === "img")
+          // console.log('newComp', component.components)
+          const imageUrl = newComp?.attributes?.src?.startsWith("http")
+            ? newComp?.attributes?.src
+            : baseURL + "/" + newComp?.attributes?.src;
+          // console.log('url', imageUrl)
           output.Content.push({
             ContentType: "Image",
             ContentValue: imageUrl,
@@ -230,7 +241,6 @@ function mapContentToPageData(templateData, page) {
         if (component?.type === "product-service-description") {
           const textContent = component.components?.[0]?.content?.trim() || " ";
           if (textContent) {
-            console.log('>>>' + page.PageName, component)
             output.Content.push({
               ContentType: "Description",
               ContentValue: textContent,
@@ -271,7 +281,7 @@ function mapContentToPageData(templateData, page) {
       }
     });
   }
-  console.log(output)
+  // console.log(output)
   return output;
 }
 

@@ -122,10 +122,13 @@ class EditorManager {
       editorId,
       linkLabel
     );
+    
     this.configureEditorContainer(editorContainer, containerId, page.PageId);
     if (!page.PageId) {
       this.newPageComponent.createNewPageMenu();
     }
+    //new PageNameEditor(this, page);
+    
     return { editorId, containerId };
   }
 
@@ -144,6 +147,7 @@ class EditorManager {
     const appBar = this.shouldShowAppBar(page)
       ? this.createContentPageAppBar(pageTitle, page.PageId)
       : this.createHomePageAppBar();
+    
     let editorContainer = `<div id="${editorId}"></div>`;
     if (!page.PageId) {
       editorContainer = `<div id="new-page-menu"></div>`
@@ -187,9 +191,11 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 contenteditable class="title" title=${pageName} style="text-transform: uppercase;">${
-      pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
-    }</h1>
+          <div id="page-name-editor">
+            <h1 class="title" title=${pageName} style="text-transform: uppercase;">${
+              pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
+            }</h1>
+          </div>
       </div>
     `;
   }

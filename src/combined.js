@@ -282,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -1008,10 +1008,13 @@ class EditorManager {
       editorId,
       linkLabel
     );
+    
     this.configureEditorContainer(editorContainer, containerId, page.PageId);
     if (!page.PageId) {
       this.newPageComponent.createNewPageMenu();
     }
+    //new PageNameEditor(this, page);
+    
     return { editorId, containerId };
   }
 
@@ -1030,6 +1033,7 @@ class EditorManager {
     const appBar = this.shouldShowAppBar(page)
       ? this.createContentPageAppBar(pageTitle, page.PageId)
       : this.createHomePageAppBar();
+    
     let editorContainer = `<div id="${editorId}"></div>`;
     if (!page.PageId) {
       editorContainer = `<div id="new-page-menu"></div>`
@@ -1073,9 +1077,11 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 contenteditable class="title" title=${pageName} style="text-transform: uppercase;">${
-      pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
-    }</h1>
+          <div id="page-name-editor">
+            <h1 class="title" title=${pageName} style="text-transform: uppercase;">${
+              pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
+            }</h1>
+          </div>
       </div>
     `;
   }
@@ -5045,13 +5051,13 @@ class ActionListComponent {
       },
       {
         name: "Dynamic Forms",
-        displayName: "Dynamic Forms",
+        displayName: "Forms",
         label: this.currentLanguage.getTranslation("category_dynamic_form"),
         options: [],
       },
       {
         name: "Predefined Page",
-        displayName: "Module",
+        displayName: "Modules",
         label: this.currentLanguage.getTranslation("category_predefined_page"),
         options: [],
       },
@@ -7454,17 +7460,17 @@ class NewPageButton {
         );
         });
 
-        // if (titleComponent) {
-        //     titleComponent.addAttributes({ title: title });
-        //     titleComponent.components(tileTitle);
-        //     titleComponent.addStyle({ display: "block" });
+        if (titleComponent) {
+            titleComponent.addAttributes({ title: title });
+            titleComponent.components(tileTitle);
+            titleComponent.addStyle({ display: "block" });
 
-        //     const sidebarInputTitle = document.getElementById("tile-title");
-        //     if (sidebarInputTitle) {
-        //         sidebarInputTitle.value = tileTitle;
-        //         sidebarInputTitle.title = tileTitle;
-        //     }
-        // }
+            const sidebarInputTitle = document.getElementById("tile-title");
+            if (sidebarInputTitle) {
+                sidebarInputTitle.value = tileTitle;
+                sidebarInputTitle.title = tileTitle;
+            }
+        }
         
     }
 }
@@ -7518,6 +7524,106 @@ class TileContextMenu {
         document.addEventListener("click", () => {
             contextMenu.style.display = "none";
         });
+    }
+}
+
+// Content from components/PageNameEditor.js
+class PageNameEditor {
+    constructor(editorManager, page) {
+        this.editorManager = editorManager;
+        this.dataManager = editorManager.dataManager;
+        this.page = page;
+        this.pageName = page.PageName;
+        this.pageId = page.PageId;
+        const pageNameContainer = document.getElementById("page-name-editor");
+        if (pageNameContainer) {
+            pageNameContainer.appendChild(this.render());
+        }
+    }
+
+    render(){
+        const pageName = this.pageName;
+        const header = document.createElement("h1");
+        header.classList.add("title");
+        header.setAttribute("title", pageName);
+        //header.setAttribute("contenteditable", "true");
+        header.style.textTransform = "uppercase";
+        header.innerHTML = pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName;
+        header.addEventListener("dblclick", (e) => {
+            this.toggleEditMode();
+        });
+        return header;
+    }
+
+    toggleEditMode() {
+        const header = document.querySelector("#page-name-editor h1");
+        const input = document.querySelector("#page-name-editor input");
+        console.log("header", header);
+        console.log("input", input);
+        if (header) {
+            const input = this.createInput(this.pageName);
+            header.replaceWith(input);
+            input.focus();
+        }
+        if (input) {
+            const header = this.render();
+            input.replaceWith(header);
+        }
+    }
+
+    createInput(pageName) {
+        const input = document.createElement("input");
+        input.style.textTransform = "uppercase";
+        input.classList.add("page-name-editor", "tb-form-control");
+        input.type = "text";
+        input.value = pageName;
+        input.classList.add("page-name-editor", "tb-form-control");
+
+        // add on leave event
+        input.addEventListener("blur", (e) => {
+            const value = e.target.value;
+            if(value.length > 0){
+                this.updatePageName(value);
+            }
+        });
+        input.setAttribute("placeholder", "Page Name");
+        return input;
+    }
+
+    updatePageName(name) {
+        const input = document.querySelector(`#update-page-popup #pageName`);
+        const errorLabel = document.querySelector(
+          `#update-page-popup #error_pageName`
+        );
+
+        if (name) {
+          const reservedNames = [
+            "Home",
+            "Reception",
+            "Location",
+            "Calendar",
+            "My Activity",
+            "Web Link",
+            "Dynamic Forms"
+          ];
+          if (reservedNames.includes(name)) {
+            errorLabel.innerHTML = "This name is reserved";
+            errorLabel.style.display = "block";
+            return;
+          }
+          const page = this.page;
+          page.PageName = name;
+          this.dataManager.updatePage(page).then((res) => {
+            if (res.result) {
+                this.pageName = name;
+                this.editorManager.toolsSection.ui.displayAlertMessage(res.result, "success");
+                this.toggleEditMode();
+            }
+          });
+        } else {
+          errorLabel.innerHTML = "This field is required";
+          errorLabel.style.display = "block";
+        }
     }
 }
 

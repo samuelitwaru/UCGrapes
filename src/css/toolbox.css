@@ -47,7 +47,6 @@ button {
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
-  background-color: #efeeec;
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;

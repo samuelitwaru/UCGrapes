@@ -338,8 +338,7 @@ class EditorManager {
               <div class="tb-current-time-dot" ${defaultConstraints}></div>` : ''}
           </div>
         `;
-    }
-    
+    }    
     pageData += `</div>`;
     
     editor.setComponents(pageData);
@@ -449,7 +448,29 @@ class EditorManager {
     const newContainer = editor.getWrapper().find(".cta-button-container")[0];
     if (existingCtaContainer && newContainer) {
       newContainer.replaceWith(existingCtaContainer);
+      const ctaButtons = existingCtaContainer.findType("cta-buttons");
+      if (ctaButtons.length > 0) {
+        ctaButtons.forEach((ctaButton) => {
+          if (ctaButton.components().length === 1) {
+            ctaButton.components().forEach((component) => {
+              component.addStyle({
+                "background-color": ctaButton.getAttributes()?.["cta-background-color"],
+                "border-color": 'transparent',
+              });
+            })
+          } else {
+            const button = ctaButton.find(".cta-button")[0];
+            if (button) {
+              button.addStyle({
+                "background-color": ctaButton.getAttributes()?.["cta-background-color"],
+                "border-color": "transparent"
+              }) 
+            }
+          }
+        });
+      } 
     }
+    await this.updateEditorCtaButtons(editor, contentPageData);
     this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
   }
 

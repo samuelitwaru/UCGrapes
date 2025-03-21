@@ -339,6 +339,8 @@ class MediaComponent {
             this.changeProfile(safeMediaUrl);
           } else if (this.type === "update-content-image") {
             this.changeServiceImage(safeMediaUrl);
+          } else if (this.type === "update-location-image") {
+            this.changeLocationImage(safeMediaUrl);
           }
         }
 
@@ -723,8 +725,6 @@ class MediaComponent {
         ProductServiceImageBase64: base64String
       };
 
-      console.log("Data to be sent:", data);
-  
       const res = await this.editorManager.dataManager.updateContentImage(data);
       
       if (res) {
@@ -736,6 +736,36 @@ class MediaComponent {
           imageComponent.setAttributes({
             src: newImageUrl,
             alt: "Product Service Image"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async changeLocationImage(newImageUrl) {
+    try {
+      const base64String = await imageToBase64(newImageUrl);
+      
+      const data = {
+        LocationDescription: "content",
+        LocationImageBase64: base64String,
+        ReceptionDescription: "",
+        ReceptionImageBase64: ""
+      };
+
+      const res = await this.editorManager.dataManager.updateLocationInfo(data);
+      
+      if (res) {
+        console.log(res)
+        const imageComponent = this.editorManager
+          .currentEditor.editor.Components
+            .getWrapper().find("#product-service-image")[0];
+        if (imageComponent) {
+          imageComponent.setAttributes({
+            src: newImageUrl,
+            alt: "Location Image"
           });
         }
       }

@@ -265,9 +265,11 @@ class EditorManager {
       if (page.PageIsPredefined && page.PageName === "Calendar") {
         await this.handleCalendarPage(editor);
       } else if (page.PageIsPredefined && page.PageName === "Location") {
-        await this.handleLocationPage(editor, pageData);
+        editor.loadProjectData(pageData);
+        await this.handlePredefinedContentPage(editor, page);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
         editor.loadProjectData(pageData);
+        this.handlePredefinedContentPage(editor, page);
       } else if (page.PageIsContentPage) {
         editor.loadProjectData(pageData);
         await this.handleContentPage(editor, page);
@@ -361,6 +363,47 @@ class EditorManager {
     }
   }
 
+  async handlePredefinedContentPage(editor, page) {
+    try {
+      const res = await this.dataManager.getLocationData();
+      if (this.toolsSection.checkIfNotAuthenticated(res)) return;
+      console.log("Location data:", res.BC_Trn_Location, "page", page);
+      const locationInfo = res.BC_Trn_Location;
+      let contentPageData = "";
+      if (page.PageName === "Location") {
+        contentPageData = {
+          ProductServiceImage: locationInfo.LocationImage,
+          ProductServiceDescription: locationInfo.LocationDescription,
+          // CallToActions: {
+          //   CallToActionId: 
+          //   CallToActionName: 
+          //   CallToActionType: 
+          // }
+        }
+      } else if(page.PageName === "Reception") {
+        contentPageData = {
+          ProductServiceImage: locationInfo.ReceptionImage,
+          ProductServiceDescription: locationInfo.ReceptionDescription,
+          // CallToActions: {
+          //   CallToActionId: 
+          //   CallToActionName: 
+          //   CallToActionType: 
+          // }
+        }
+      }
+
+      if (!contentPageData) {
+        console.warn("No content page data received");
+        return;
+      }
+
+      await this.updateContentPageElements(editor, contentPageData);
+      // await this.updateEditorCtaButtons(editor, contentPageData);
+    } catch (error) {
+      console.error("Error loading content page data:", error);
+    }
+  }
+
   async updateContentPageElements(editor, contentPageData) {
     const wrapper = editor.DomComponents.getWrapper();
     if (!wrapper) {
@@ -368,6 +411,7 @@ class EditorManager {
       return;
     }
 
+    console.log("cnontent", contentPageData);
     await this.updateImage(wrapper, contentPageData);
     await this.updateDescription(wrapper, contentPageData);
     this.toolsSection.ui.pageContentCtas(contentPageData.CallToActions, editor);
@@ -375,8 +419,10 @@ class EditorManager {
 
   async updateImage(wrapper, contentPageData) {
     if (contentPageData?.ProductServiceImage) {
+      console.log("Image removed", wrapper.getEl());
       const imageWrapper = wrapper.find("#content-image")[0];
       if(imageWrapper) {
+        console.log("imageWrapper imageWrapper");
         const image = `
         <img
             id="product-service-image"
@@ -397,12 +443,14 @@ class EditorManager {
           existingImage.replaceWith(image);
         } else {
           imageWrapper.append(image, { at: 2});
+          console.log("Image not found");
         }        
       }
     } else{
       const img = wrapper.find("#product-service-image")[0];
       if (img) {
         img.remove();
+        console.log("Image not found");
       }
     }
   }
@@ -452,7 +500,6 @@ class EditorManager {
       }
       const windowWidth = window.innerWidth;
       ctaContainer.getEl().style.gap = windowWidth <= 1440 ? "0.2rem" : "1.0rem";
-      console.log("ctaContainer");
     }
   }
 

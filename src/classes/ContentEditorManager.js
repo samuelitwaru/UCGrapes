@@ -6,11 +6,13 @@ class ContentEditorManager {
     this.init();
   }
 
-  init() {
+  async init() {
+    this.pages = await this.editorManager.dataManager.getPages();
+    this.currentPage = this.pages?.SDT_PageCollection?.find((page) => page.PageId === this.editorManager.currentPageId);
     this.openContentEditModal();
     this.openImageUploadModal();
     this.openDeleteModal();
-    this.templateManager = new TemplateManager
+    this.templateManager = new TemplateManager;
   }
 
   openContentEditModal() {
@@ -23,19 +25,16 @@ class ContentEditorManager {
                         </div>`;
         const handleConfirm = async (event) => {
             const content = document.querySelector("#editor .ql-editor").innerHTML;
-            const data = {
-                ProductServiceId: this.editorManager.currentPageId,
-                ProductServiceDescription: content
+            if (this.currentPage) {
+              if (this.currentPage.PageName === "Location") {
+                this.saveLocationContent(content);
+              } else if (this.currentPage.PageName === "Reception") {
+                this.saveReceptionContent(content);
+              } else {
+                this.saveContentPageInfo(content);
+              }      
             }
-
-            const res = await this.editorManager.dataManager.updateDescription(data);
-            if (res) {
-                const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; // Assuming you have a method to get the description component
-                if (descComponent) {
-                    descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
-                }
-            }
-            
+                        
             editModal.closePopup();
         };
 
@@ -58,6 +57,16 @@ class ContentEditorManager {
     const editorTrigger = this.event.target.closest(".tb-edit-image-icon");
     if (editorTrigger) {
         const toolboxManager = this.editorManager.toolsSection;
+        let type;
+
+        if (this.currentPage.PageName === "Location") {
+          type = 'update-location-image';
+        } else if (this.currentPage.PageName === "Reception") {
+          type = 'update-reception-image';
+        } else {
+          type = 'update-content-image';
+        } 
+
         toolboxManager.openFileManager('update-content-image');
     }
   }
@@ -97,6 +106,55 @@ class ContentEditorManager {
         if (descComponent) {
             console.log(descComponent.getEl().innerHTML);
             return descComponent.getEl().innerHTML;
+        }
+    }
+  }
+
+  async saveContentPageInfo(content) {
+    const data = {
+      ProductServiceId: this.editorManager.currentPageId,
+      ProductServiceDescription: content
+    }
+
+    const res = await this.editorManager.dataManager.updateDescription(data);
+    if (res) {
+        const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; 
+        if (descComponent) {
+            descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
+        }
+    }
+  }
+
+  async saveLocationContent(content) {
+    const data = {
+      LocationDescription: content,
+      LocationImageBase64: "",
+      ReceptionDescription: "",
+      ReceptionImageBase64: ""
+    }
+
+    const res = await this.editorManager.dataManager.updateLocationInfo(data);
+    if (res) {
+        const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; 
+        if (descComponent) {
+            descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
+        }
+    }
+  }
+
+  async saveReceptionContent(content) {
+    const data = {
+      LocationDescription: "",
+      LocationImageBase64: "",
+      ReceptionDescription: content,
+      ReceptionImageBase64: ""
+    }
+
+    const res = await this.editorManager.dataManager.updateLocationInfo(data);
+    if (res) {
+        const descComponent = this.editor.Components.getWrapper().find("#contentDescription")[0]; 
+        if (descComponent) {
+            descComponent.replaceWith(`<div ${defaultConstraints} id="contentDescription">${content}</div>`);
         }
     }
   }

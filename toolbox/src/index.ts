@@ -16,6 +16,7 @@ class App {
     media: Media[],
     currentThemeId: string | null,
     organisationLogo: string | null,
+    addServiceButtonEvent: any
   ) {
     const config = AppConfig.getInstance();
     config.init(
@@ -24,7 +25,8 @@ class App {
       forms,
       media,
       currentThemeId,
-      organisationLogo
+      organisationLogo,
+      addServiceButtonEvent
     );
     
     this.toolboxApp = new ToolboxApp();

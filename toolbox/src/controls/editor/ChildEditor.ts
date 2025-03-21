@@ -1,4 +1,5 @@
 import { EditorFrame } from "../../ui/components/editor-content/EditorFrame";
+import { contentDefaultAttributes } from "../../utils/default-attributes";
 import { randomIdGenerator } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 import { EditorEvents } from "./EditorEvents";
@@ -79,5 +80,27 @@ export class ChildEditor {
         id++;
     });
     return id;
+  }
+
+  addImageContent(editor: any) {
+    const components = editor.DomComponents.getWrapper().find('.content-page-wrapper')
+    if(components.length > 0) {
+      const contentWrapper = components[0];
+      contentWrapper.append(`
+      <img ${contentDefaultAttributes} id="${randomIdGenerator(5)}" data-gjs-type="product-service-image" draggable="true" src="https://plus.unsplash.com/premium_photo-1686949554005-78d1370ab4f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2fHx8ZW58MHx8fHx8" alt="Product Service Image" class="content-page-block">
+      `)
+    }
+  }
+
+  addDescriptionContent(editor: any) {
+    const components = editor.DomComponents.getWrapper().find('.content-page-wrapper')
+    if(components.length > 0) {
+      const contentWrapper = components[0];
+      contentWrapper.append(`
+      <div ${contentDefaultAttributes} id="${randomIdGenerator(5)}" data-gjs-type="product-service-description" draggable="true" class="content-page-block">
+          lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+      </div>
+      `)
+    }
   }
 }

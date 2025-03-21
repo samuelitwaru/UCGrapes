@@ -97,6 +97,7 @@ export class EditorManager {
       hoverable: false,
       highlightable: false,
       selectable: false,
+      richTextEditor: {},
     });
   }
 
@@ -135,4 +136,7 @@ export class EditorManager {
     const homeFrame = document.getElementById(`${frameId}-frame`);
     homeFrame?.classList.add("active-editor");
   }
+
+  
+
 }

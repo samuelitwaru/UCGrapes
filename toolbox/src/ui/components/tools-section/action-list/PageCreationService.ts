@@ -23,6 +23,27 @@ export class PageCreationService {
         // console.log("addNewService");
     }
 
+    addNewContentPage() {
+        const form = this.formModalService.createForm('conent-page-form', [
+            {
+                label: 'Page Title',
+                type: 'text',
+                id: 'page_title',
+                placeholder: 'Enter page title',
+                required: true,
+                errorMessage: 'Please enter a page title',
+                minLength: 3,
+                maxLength: 50
+            }
+        ]);
+
+        this.formModalService.createModal({
+            title: "Add New Content Page",
+            form,
+            onSave: () => this.processContentPageData(form.getData())
+        });
+    }
+
     addNewMenuPage() {
         const form = this.formModalService.createForm('menu-page-form', [
             {
@@ -114,6 +135,15 @@ export class PageCreationService {
             this.updateActionListDropDown("Home", res.MenuPage.PageName);
             this.updateTileAfterPageCreation(res.MenuPage);
 
+            new Alert('success', 'Page created successfully');
+        });
+    }
+
+    private async processContentPageData(formData: Record<string, string>) {
+        const version = await this.appVersionManager.getActiveVersion();
+        
+        this.toolBoxService.createContentPage(version.AppVersionId, formData.page_title).then((res: any) => { 
+            this.updateTileAfterPageCreation(res.ContentPage);
             new Alert('success', 'Page created successfully');
         });
     }

@@ -1,4 +1,5 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { demoPages } from "../../utils/test-data/pages";
 import { RichEditor } from "../quill/RichEditor";
@@ -206,6 +207,9 @@ export class EditorEvents {
     } else{
       this.removeOtherEditors();
       this.activateNavigators();
+      const pageSelector = new PageSelector()
+      const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
+      pageSelector.render(childCcontainerDiv)
     }
   }
 

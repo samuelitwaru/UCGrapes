@@ -3,6 +3,7 @@ import { ActionPage } from "../../../../interfaces/ActionPage";
 import { PageAttacher } from "./PageAttacher";
 import { PageCreationService } from "./PageCreationService";
 import { Alert } from "../../Alert";
+import { AppConfig } from "../../../../AppConfig";
 
 export class CategoryView {
   details: HTMLDetailsElement;
@@ -57,7 +58,15 @@ export class CategoryView {
               new Alert("error", "Select tile to continue..");
               return;
             }
-            this.pageCreationService.addNewMenuPage();
+            if (this.categoryData.name == "Content Page") {
+              this.pageCreationService.addNewContentPage();
+            }
+            if (this.categoryData.name == "Service/Product Page") {
+              // open popup
+              const config = AppConfig.getInstance();
+              console.log(config.addServiceButtonEvent)
+              config.addServiceButtonEvent()
+            }
           });
         }
       }, 0);
@@ -82,6 +91,8 @@ export class CategoryView {
         if (this.categoryData.name === "Dynamic Forms") {
           this.pageCreationService.handleDynamicForms(page);
         } else {
+          console.log(page)
+          alert()
           this.pageAttacher.attachToTile(page, this.categoryData.name);
         }
       });

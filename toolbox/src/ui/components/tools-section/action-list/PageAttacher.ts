@@ -15,6 +15,19 @@ export class PageAttacher {
     this.toolboxService = new ToolBoxService();
   }
 
+  async attachNewServiceToTile(serviceId:string) {
+    const services = await this.toolboxService.getServices()
+    const newService = services.find(service => service.ProductServiceId==serviceId)
+    if (newService) {
+      const page = {
+        "PageId": serviceId,
+        "PageName": newService.ProductServiceName,
+        "TileName": newService.ProductServiceTileName,
+      }
+      this.attachToTile(page, "Service/Product Page")
+    }
+  }
+
   async attachToTile(page: ActionPage, categoryName: string) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
@@ -66,7 +79,7 @@ export class PageAttacher {
     if (childPage) {
         new ChildEditor(page.PageId, childPage).init(tileAttributes);
     } else{
-        this.toolboxService.createContentPage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
+        this.toolboxService.createServicePage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
           new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init(tileAttributes);
         });
     }

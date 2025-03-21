@@ -14,6 +14,7 @@ export class AppConfig {
     private _organisationLogo: string | null = null;
 
     private _isInitialized: boolean = false;
+    addServiceButtonEvent: any;
   
     private constructor() {}
   
@@ -32,7 +33,8 @@ export class AppConfig {
       forms: Form[],
       media: Media[],
       currentThemeId: string | null,
-      organisationLogo: string | null
+      organisationLogo: string | null,
+      addServiceButtonEvent: any
     ): void {
       if (this._isInitialized) {
         console.warn("AppConfig already initialized - ignoring new data");
@@ -45,6 +47,7 @@ export class AppConfig {
       this._media = media;
       this._currentThemeId = currentThemeId,
       this._organisationLogo = organisationLogo;
+      this.addServiceButtonEvent = addServiceButtonEvent
       this._isInitialized = true;
     }
   

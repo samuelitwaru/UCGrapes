@@ -282,7 +282,7 @@ class LoadingManager {
 }
 
 // Content from classes/DataManager.js
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 class DataManager {
@@ -889,6 +889,8 @@ class EditorManager {
     this.mediaCollection = mediaCollection;
     this.addServiceButtonEvent = addServiceButtonEvent;
     this.organisationLogo = organisationLogo;
+    this.newPageComponent = new NewPageComponent(this)
+    this.tileContextMenu = new TileContextMenu(this);
 
     this.templateManager = new TemplateManager(this.currentLanguage, this); //
     this.editorEventManager = new EditorEventManager(
@@ -958,8 +960,10 @@ class EditorManager {
   createChildEditor(page, linkUrl = "", linkLabel = "") {
     const editorDetails = this.setupEditorContainer(page, linkLabel);
     const editor = this.initializeGrapesEditor(editorDetails.editorId);
-    this.editorEventManager.addEditorEventListeners(editor, page);
-    this.loadEditorContent(editor, page, linkUrl);
+    if (page.PageId) {
+      this.editorEventManager.addEditorEventListeners(editor, page);
+      this.loadEditorContent(editor, page, linkUrl);
+    }
     this.setupEditorLayout(editor, page, editorDetails.containerId);
     this.finalizeEditorSetup(editor, page, editorDetails);
     return editor
@@ -969,7 +973,6 @@ class EditorManager {
     const count = this.container.children.length;
     const editorId = `gjs-${count}`;
     const containerId = `${editorId}-frame`;
-
     const editorContainer = document.createElement("div");
     editorContainer.innerHTML = this.generateEditorHTML(
       page,
@@ -977,7 +980,9 @@ class EditorManager {
       linkLabel
     );
     this.configureEditorContainer(editorContainer, containerId, page.PageId);
-
+    if (!page.PageId) {
+      this.newPageComponent.createNewPageMenu();
+    }
     return { editorId, containerId };
   }
 
@@ -987,11 +992,19 @@ class EditorManager {
       pageTitle = linkLabel;
     } else {
       pageTitle = page.PageName;
+      if (page.PageName == "Calendar") {
+        pageTitle = "Events"
+      }else if (page.PageName == "Mailbox") {
+        pageTitle = "My Activity"
+      }
     }
     const appBar = this.shouldShowAppBar(page)
       ? this.createContentPageAppBar(pageTitle, page.PageId)
       : this.createHomePageAppBar();
-
+    let editorContainer = `<div id="${editorId}"></div>`;
+    if (!page.PageId) {
+      editorContainer = `<div id="new-page-menu"></div>`
+    }
     return `
       <div class="header">
           <span id="current-time-${page.PageId}"></span>
@@ -1002,7 +1015,7 @@ class EditorManager {
           </span>
       </div>
       ${appBar}
-      <div id="${editorId}"></div>
+      ${editorContainer}
     `;
   }
 
@@ -1031,7 +1044,7 @@ class EditorManager {
             </g>
             <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"/>
           </svg>
-          <h1 class="title" title=${pageName} style="text-transform: uppercase;">${
+          <h1 contenteditable class="title" title=${pageName} style="text-transform: uppercase;">${
       pageName.length > 20 ? pageName.substring(0, 16) + "..." : pageName
     }</h1>
       </div>
@@ -1106,9 +1119,7 @@ class EditorManager {
   async loadExistingContent(editor, page) {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
-      if (page.PageIsPredefined && page.PageName === "Calendar") {
-        await this.handleCalendarPage(editor);
-      } else if (page.PageIsPredefined && page.PageName === "Location") {
+      if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handleLocationPage(editor, pageData);
       } else if (page.PageIsPredefined && page.PageName === "Reception") {
         editor.loadProjectData(pageData);
@@ -1739,10 +1750,25 @@ class EditorEventManager {
         .replace("Dynamic Forms, ", "");
     }
 
-    const page = this.editorManager.getPage(pageId);
+    let page = this.editorManager.getPage(pageId);
     $(editorContainerId).nextAll().remove();
+    console.log('page',page);
     if (page) {
       this.editorManager.createChildEditor(page, pageUrl, linkLabel);
+    }else{
+      // show new button component
+      const container = document.getElementById("child-container");
+      this.newPageButton = new NewPageButton(this.editorManager);
+      container.appendChild(this.newPageButton.render());
+
+      // page = {
+      //   "PageId": null,
+      //   "PageName": "New Page",
+      //   "PageGJSJson": "",
+      //   "PageGJSHtml": "",
+      //   "PageJsonContent": ""
+      // }
+      // this.editorManager.createChildEditor(page, pageUrl, linkLabel);
     }
   }
 
@@ -1765,8 +1791,9 @@ class EditorEventManager {
   }
 
   editorOnSelected(editor) {
-    editor.on("component:selected", (component) =>
+    editor.on("component:selected", (component) => {
       this.handleComponentSelected(component)
+    }
     );
     this.editorOnComponentAdd(editor);
   }
@@ -1849,6 +1876,7 @@ class EditorEventManager {
         this.editorManager.selectedComponent
       );
     }
+    
 
     this.editorManager.toolsSection.ui.updateTileProperties(
       this.editorManager.selectedComponent,
@@ -7026,39 +7054,267 @@ class MediaComponent {
       }
     });
   }
-
-  async changeServiceImage(newImageUrl) {
-    try {
-      const base64String = await imageToBase64(newImageUrl);
-      
-      const data = {
-        ProductServiceId: this.editorManager.currentPageId,
-        ProductServiceDescription: "",
-        ProductServiceImageBase64: base64String
-      };
-
-      console.log("Data to be sent:", data);
-  
-      const res = await this.editorManager.dataManager.updateContentImage(data);
-      
-      if (res) {
-        console.log(res)
-        const imageComponent = this.editorManager
-          .currentEditor.editor.Components
-            .getWrapper().find("#product-service-image")[0];
-        if (imageComponent) {
-          imageComponent.setAttributes({
-            src: newImageUrl,
-            alt: "Product Service Image"
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
 }
 
+
+// Content from components/NewPageComponent.js
+class NewPageComponent  {
+    constructor(editorManager) {
+        this.editorManager = editorManager;
+        this.dataManager = editorManager.dataManager;
+    }
+    createNewPageMenu() {
+        // Create the menu container
+        const menu = document.createElement('div');
+        menu.classList.add('tb-menu');
+
+        // Create first child div
+        const addMenuPage = document.createElement('div');
+        addMenuPage.textContent = 'Add menu page';
+        addMenuPage.addEventListener('click', () => {
+            this.createNewPage('Untitled', false);
+        });
+
+        // Create second child div
+        const addNewPage = document.createElement('div');
+        addNewPage.textContent = 'Add content page';
+        addNewPage.addEventListener('click', () => {
+            this.editorManager.toolsSection.newServiceEvent()
+            // this.createNewPage('Untitled', true);
+        });
+
+        // Append child divs to menu
+        menu.appendChild(addMenuPage);
+        menu.appendChild(addNewPage);
+        const container = document.getElementById(`new-page-menu`);
+        container.appendChild(menu);
+    }
+
+    async createNewPage(title, isServicePage = false) {
+        const editor = this.editorManager.getCurrentEditor();
+        const selected = editor.getSelected();
+        if (!selected) return;
+
+        const titleComponent = selected.find(".tile-title")[0];
+        // const tileTitle = this.truncateText(title, 12);
+        const tileTitle = title;
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+        let res;
+        if (isServicePage) {
+            res = await this.dataManager.createContentPage('039fbad2-7a24-4111-8394-638e8e44a680')
+        }else {
+            res = await this.dataManager.createNewPage(title, this.editorManager.toolsSection.currentTheme)
+        }
+        
+        if (this.editorManager.toolsSection.checkIfNotAuthenticated(res)) {
+            return;
+        }
+
+        const result = JSON.parse(res.result);
+        const pageId = result.Trn_PageId;
+        const pageName = result.Trn_PageName;
+
+        this.dataManager.getPages().then((res) => {
+        this.editorManager.toolsSection.actionList.init();
+
+        this.editorManager.toolsSection.setAttributeToSelected(
+            "tile-action-object-id",
+            pageId
+        );
+
+        this.editorManager.toolsSection.setAttributeToSelected(
+            "tile-action-object",
+            `Page, ${pageName}`
+        );
+
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(
+            this.editorManager.getPage(pageId)
+        );
+        });
+
+        if (titleComponent) {
+            titleComponent.addAttributes({ title: title });
+            titleComponent.components(tileTitle);
+            titleComponent.addStyle({ display: "block" });
+
+            const sidebarInputTitle = document.getElementById("tile-title");
+            if (sidebarInputTitle) {
+                sidebarInputTitle.value = tileTitle;
+                sidebarInputTitle.title = tileTitle;
+            }
+        }
+        
+    }
+}
+
+// Content from components/NewPageButton.js
+class NewPageButton {
+    constructor(editorManager) {
+        this.editorManager = editorManager;
+        this.editorManager = editorManager;
+        this.dataManager = editorManager.dataManager;
+        this.render();
+    }
+
+    render() {
+        // Create menu container
+        const menuContainer = document.createElement("div");
+        menuContainer.classList.add("menu-container");
+
+        // Create button
+        const menuButton = document.createElement("button");
+        menuButton.classList.add("menu-button");
+        menuButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24.053" height="26.783" viewBox="0 0 24.053 26.783">                 <path class="icon-path" d="M2.672.038a2.041,2.041,0,0,0-1.4.408,2.87,2.87,0,0,0-1.154,1.6l-.094.3V22.761l.093.32a2.724,2.724,0,0,0,.7,1.207,2.65,2.65,0,0,0,1.04.706l.288.117H7.692c5.545,0,5.555,0,5.629.083a4.979,4.979,0,0,0,.418.337A6.472,6.472,0,0,0,16.6,26.738a8.81,8.81,0,0,0,2,0,6.5,6.5,0,0,0,5.409-5.425,7.669,7.669,0,0,0-.023-2.078,6.5,6.5,0,0,0-4.323-5.046,5.3,5.3,0,0,0-.516-.152L19,14.012l.012-2.195c.01-1.66,0-2.305-.042-2.651l-.054-.457-.445-.487Q16.888,6.5,15.289,4.8c-3.2-3.414-4.34-4.6-4.541-4.714A23.429,23.429,0,0,0,6.971.016q-2.15-.009-4.3.022m6.82,4.753a14.651,14.651,0,0,0,.1,3.184,2.955,2.955,0,0,0,1.551,1.847c.5.24.518.241,4.914.258l1.135.005V13.85l-.371.051a6.48,6.48,0,0,0-5.495,8.034,6.926,6.926,0,0,0,.4,1.126l.083.162H2.345l-.168-.144a1.487,1.487,0,0,1-.269-.315l-.1-.171L1.8,12.612l-.01-9.98L1.9,2.4a.736.736,0,0,1,.626-.476c.123-.013,1.737-.026,3.585-.03l3.361-.006.018,2.9m3.87.641c.885.935,1.82,1.926,2.078,2.2l.468.5-.531.032c-.292.018-1.155.024-1.917.014-1.6-.022-1.718-.041-1.925-.3a1.537,1.537,0,0,1-.171-.27c-.056-.133-.1-3.62-.053-4.071l.028-.261.206.227c.114.125.932.992,1.817,1.927m5.066,9.959a5.047,5.047,0,0,1,3.626,2.649,4.5,4.5,0,0,1,.545,2.29,4.806,4.806,0,0,1-.843,2.818,6.309,6.309,0,0,1-1.393,1.374,5.022,5.022,0,0,1-7.053-1.6,5.09,5.09,0,0,1-.467-4.129A5.21,5.21,0,0,1,14.1,16.765a4.988,4.988,0,0,1,4.328-1.374m-.972,1.85a.638.638,0,0,0-.241.158l-.119.124-.012,1.223-.012,1.223H15.9c-1.1,0-1.182,0-1.305.08a.528.528,0,0,0-.217.721c.146.272.206.283,1.523.283h1.176v1.191c0,1.124,0,1.2.081,1.322a.539.539,0,0,0,.913-.01c.063-.1.072-.242.083-1.305l.012-1.2H19.33c1.263,0,1.307-.006,1.479-.225a.6.6,0,0,0,0-.611c-.143-.234-.229-.248-1.5-.248H18.161V18.854a11.308,11.308,0,0,0-.041-1.265.549.549,0,0,0-.663-.348" fill="#6e7276" fill-rule="evenodd"/>             </svg>`;
+
+        // Create dropdown menu
+        const dropdownMenu = document.createElement("div");
+        dropdownMenu.classList.add("menu");
+        dropdownMenu.id = "dropdownMenu";
+
+        // Create menu items
+        const menuItem1 = document.createElement("div");
+        menuItem1.classList.add("menu-item");
+        menuItem1.textContent = "Add menu page";
+        menuItem1.addEventListener("click", () => {
+            this.createNewPage("Untitled", false);
+        });
+
+        const menuItem2 = document.createElement("div");
+        menuItem2.classList.add("menu-item");
+        menuItem2.textContent = "Add content page";
+        menuItem2.addEventListener("click", () => {
+            this.editorManager.toolsSection.newServiceEvent()
+            //this.createNewPage("Untitled", true);
+        });
+
+        dropdownMenu.appendChild(menuItem1);
+        dropdownMenu.appendChild(menuItem2);
+
+        menuButton.addEventListener("click", (e) => {
+            e.preventDefault(); 
+        });
+
+        // Append elements to the container
+        menuContainer.appendChild(menuButton);
+        menuContainer.appendChild(dropdownMenu);
+
+        return menuContainer;
+    }
+
+    async createNewPage(title, isServicePage = false) {
+        const editor = this.editorManager.getCurrentEditor();
+        const selected = editor.getSelected();
+        if (!selected) return;
+
+        const titleComponent = selected.find(".tile-title")[0];
+        // const tileTitle = this.truncateText(title, 12);
+        const tileTitle = title;
+        const editorId = editor.getConfig().container;
+        const editorContainerId = `${editorId}-frame`;
+        let res;
+        if (isServicePage) {
+            res = await this.dataManager.createContentPage('80db3166-d4e2-4bd3-83c8-0ebfcd2a704d')
+        }else {
+            res = await this.dataManager.createNewPage(title, this.editorManager.toolsSection.currentTheme)
+        }
+        
+        if (this.editorManager.toolsSection.checkIfNotAuthenticated(res)) {
+            return;
+        }
+        if(res.error.Message) {
+            this.editorManager.toolsSection.ui.displayAlertMessage(res.error.Message, "error");
+        }
+        const result = JSON.parse(res.result);
+        const pageId = result.Trn_PageId;
+        const pageName = result.Trn_PageName;
+
+        this.dataManager.getPages().then((res) => {
+        this.editorManager.toolsSection.actionList.init();
+
+        this.editorManager.toolsSection.setAttributeToSelected(
+            "tile-action-object-id",
+            pageId
+        );
+
+        this.editorManager.toolsSection.setAttributeToSelected(
+            "tile-action-object",
+            `Page, ${pageName}`
+        );
+
+        $(editorContainerId).nextAll().remove();
+        this.editorManager.createChildEditor(
+            this.editorManager.getPage(pageId)
+        );
+        });
+
+        // if (titleComponent) {
+        //     titleComponent.addAttributes({ title: title });
+        //     titleComponent.components(tileTitle);
+        //     titleComponent.addStyle({ display: "block" });
+
+        //     const sidebarInputTitle = document.getElementById("tile-title");
+        //     if (sidebarInputTitle) {
+        //         sidebarInputTitle.value = tileTitle;
+        //         sidebarInputTitle.title = tileTitle;
+        //     }
+        // }
+        
+    }
+}
+
+// Content from components/TileContextMenu.js
+class TileContextMenu {
+    constructor(editorManager, event) {
+        this.editorManager = editorManager;
+        this.event = event;
+        console.log("TileContextMenu constructor called");
+        // this.createMenu();
+        // this.addEventListeners();
+    }
+
+    createMenu() {
+        // Create context menu container
+        const contextMenu = document.createElement("div");
+        contextMenu.id = "contextMenu";
+        contextMenu.classList.add("context-menu");
+        // Create unordered list
+        const ul = document.createElement("ul");
+        // Menu options
+        const options = ["Option 1", "Option 2", "Option 3"];
+        options.forEach((option, index) => {
+            const li = document.createElement("li");
+            li.textContent = option;
+            li.onclick = () => alert(`${option} selected`);
+            ul.appendChild(li);
+        });
+        contextMenu.appendChild(ul);
+        document.body.appendChild(contextMenu);
+
+        contextMenu.style.top = `${this.event.clientY}vh`;
+        contextMenu.style.left = `${40}vw`;
+        contextMenu.style.display = "block";
+    }
+
+    addEventListeners() {
+        document.addEventListener("contextmenu", (event) => {
+            console.log(event)
+            if (event.target.classList.contains("context-menu-box")) {
+                event.preventDefault();
+                contextMenu.style.top = `${event.clientY}px`;
+                contextMenu.style.left = `${event.clientX}px`;
+                contextMenu.style.display = "block";
+            } else {
+                contextMenu.style.display = "none";
+            }
+        });
+        
+        document.addEventListener("click", () => {
+            contextMenu.style.display = "none";
+        });
+    }
+}
 
 // Content from classes/ImageCropper.js
 class ImageCropper {

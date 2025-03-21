@@ -24,7 +24,7 @@ class TileMapper {
   setTileAttributes() {
     const bgColor = this.component.getStyle()["background-color"] || "#ffffff";
     const bgImage = this.component.getStyle()["background-image"] || "";
-    const textColor = this.component.getStyle()["color"] || "#ffffff";
+    const textColor = this.component.getStyle()["color"] || "#000000";
     this.component.addAttributes({
       "tile-bgcolor": bgColor,
       "tile-bg-image-url": bgImage,
@@ -212,8 +212,10 @@ function mapContentToPageData(templateData, page) {
     components.forEach((component) => {
       const topComponents =
         component.components?.[0]?.components?.[0]?.components || [];
+      console.log(page.PageName, topComponents)
       for (let index = 0; index < topComponents.length; index++) {
         const component = topComponents[index];
+        console.log(component?.type)
         if (component?.tagName === "img") {
           const imageUrl = component?.attributes.src.startsWith("http")
             ? component?.attributes.src
@@ -225,9 +227,10 @@ function mapContentToPageData(templateData, page) {
           });
         }
 
-        if (component?.tagName === "p") {
-          const textContent = component.components?.[0]?.content?.trim();
+        if (component?.type === "product-service-description") {
+          const textContent = component.components?.[0]?.content?.trim() || " ";
           if (textContent) {
+            console.log('>>>' + page.PageName, component)
             output.Content.push({
               ContentType: "Description",
               ContentValue: textContent,
@@ -268,6 +271,7 @@ function mapContentToPageData(templateData, page) {
       }
     });
   }
+  console.log(output)
   return output;
 }
 
@@ -348,17 +352,17 @@ function generateNewPage(theme) {
                                     "high-priority-template",
                                   ],
                                   style: {
-                                    color: "#ffffff",
+                                    color: "#000000",
                                   },
                                   attributes: {
                                     "tile-text": "Tile",
-                                    "tile-text-color": "#ffffff",
+                                    "tile-text-color": "#000000",
                                     "tile-text-align": "left",
                                     "tile-icon": "icon-name",
-                                    "tile-icon-color": "#ffffff",
+                                    "tile-icon-color": "#000000",
                                     "tile-icon-align": "left",
-                                    "tile-bgcolor": `${theme.ThemeColors.accentColor}`,
-                                    "tile-bgcolor-name": "accentColor",
+                                    "tile-bgcolor": `#ffffff`,
+                                    "tile-bgcolor-name": "",
                                     "tile-bg-image": "",
                                     "tile-bg-image-opacity": "0",
                                     "tile-action-object": "Page",
@@ -659,3 +663,4 @@ function generateNewPage(theme) {
     ],
   };
 }
+

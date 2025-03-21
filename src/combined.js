@@ -1154,7 +1154,9 @@ class EditorManager {
   async loadExistingContent(editor, page) {
     try {
       const pageData = JSON.parse(page.PageGJSJson);
-      if (page.PageIsPredefined && page.PageName === "Calendar") {
+      if (page.PageIsPredefined && page.PageName === "My Activity") {
+        await this.handleMyActivityPage(editor);
+      }else if (page.PageIsPredefined && page.PageName === "Calendar") {
         await this.handleCalendarPage(editor);
       } else if (page.PageIsPredefined && page.PageName === "Location") {
         await this.handlePredefinedContentPage(editor, page);
@@ -1234,6 +1236,20 @@ class EditorManager {
     
     editor.setComponents(pageData);
   }
+  async handleMyActivityPage(editor) {
+    let pageData = `
+      <div class="tb-chat-container" ${defaultConstraints}>
+            <div class="tb-toggle-buttons"  ${defaultConstraints}>
+                <button style="background-color: #5068a8;border-radius: 6px;"  ${defaultConstraints}>Messages</button>
+                <button style="background-color: #e1e1e1;border-radius: 6px;color:rgba(38, 38, 38, 0.47);"  ${defaultConstraints}>Requests</button>
+            </div>
+            <div class="tb-chat-body" ${defaultConstraints}>No messages yet</div>
+        </div>
+    `;
+    
+    editor.setComponents(pageData);
+  }
+
 
   async handleContentPage(editor, page) {
     try {

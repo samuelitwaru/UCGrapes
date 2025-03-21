@@ -25,6 +25,7 @@ const files = [
     "components/NewPageComponent.js",
     "components/NewPageButton.js",
     "components/TileContextMenu.js",
+    "components/PageNameEditor.js",
     "classes/ImageCropper.js",
     "utils/defaults.js",
     "utils/helper.js",

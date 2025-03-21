@@ -97,17 +97,17 @@ class NewPageButton {
         );
         });
 
-        // if (titleComponent) {
-        //     titleComponent.addAttributes({ title: title });
-        //     titleComponent.components(tileTitle);
-        //     titleComponent.addStyle({ display: "block" });
+        if (titleComponent) {
+            titleComponent.addAttributes({ title: title });
+            titleComponent.components(tileTitle);
+            titleComponent.addStyle({ display: "block" });
 
-        //     const sidebarInputTitle = document.getElementById("tile-title");
-        //     if (sidebarInputTitle) {
-        //         sidebarInputTitle.value = tileTitle;
-        //         sidebarInputTitle.title = tileTitle;
-        //     }
-        // }
+            const sidebarInputTitle = document.getElementById("tile-title");
+            if (sidebarInputTitle) {
+                sidebarInputTitle.value = tileTitle;
+                sidebarInputTitle.title = tileTitle;
+            }
+        }
         
     }
 }

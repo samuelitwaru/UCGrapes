@@ -48,6 +48,25 @@ class NewPageButton {
         menuContainer.appendChild(menuButton);
         menuContainer.appendChild(dropdownMenu);
 
+        // on button hover
+        menuButton.addEventListener("mouseover", () => {
+            // get position of the button in parent div
+            const rect = menuContainer.getBoundingClientRect();
+            console.log(rect);
+            console.log(menuContainer.offsetWidth);
+            // get number of children of the parent div
+            const children = menuContainer.parentNode.children;
+            console.log(children.length);
+
+            if (children.length > 2) {
+                dropdownMenu.style.top = "60px"
+                dropdownMenu.style.left = "-100%"
+            } else {
+                dropdownMenu.style.top = "-10px";
+                dropdownMenu.style.left = "100%";
+            }
+        });
+
         return menuContainer;
     }
 

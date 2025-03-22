@@ -32,7 +32,7 @@ class EditorManager {
     this.mediaCollection = mediaCollection;
     this.addServiceButtonEvent = addServiceButtonEvent;
     this.organisationLogo = organisationLogo;
-    this.newPageComponent = new NewPageComponent(this)
+    // this.newPageComponent = new NewPageComponent(this)
     this.tileContextMenu = new TileContextMenu(this);
 
     this.templateManager = new TemplateManager(this.currentLanguage, this); //
@@ -122,13 +122,7 @@ class EditorManager {
       editorId,
       linkLabel
     );
-    
     this.configureEditorContainer(editorContainer, containerId, page.PageId);
-    if (!page.PageId) {
-      this.newPageComponent.createNewPageMenu();
-    }
-    //new PageNameEditor(this, page);
-    
     return { editorId, containerId };
   }
 

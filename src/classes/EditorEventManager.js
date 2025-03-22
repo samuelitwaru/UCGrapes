@@ -172,15 +172,8 @@ class EditorEventManager {
       const container = document.getElementById("child-container");
       this.newPageButton = new NewPageButton(this.editorManager);
       container.appendChild(this.newPageButton.render());
-
-      // page = {
-      //   "PageId": null,
-      //   "PageName": "New Page",
-      //   "PageGJSJson": "",
-      //   "PageGJSHtml": "",
-      //   "PageJsonContent": ""
-      // }
-      // this.editorManager.createChildEditor(page, pageUrl, linkLabel);
+      // auto scroll to the extreme right of the container
+      container.scrollLeft = container.scrollWidth - container.clientWidth;
     }
   }
 

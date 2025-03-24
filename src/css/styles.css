@@ -234,8 +234,8 @@ span#scroll-right:hover {
   flex-shrink: 0;
   width: 50vw;
   height: 90vh;
-  max-width: 320px;
-  max-height: 680px;
+  max-width: 378px;
+  max-height: 812px;
   background-color: #efeeec;
   border-radius: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -1499,7 +1499,7 @@ div#cta-selected-actions {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
-  align-items: start;
+  align-items: center;
   z-index: 999999999;
 }
 .popup {

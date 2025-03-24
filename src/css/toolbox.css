@@ -138,7 +138,7 @@ button {
 .template-block {
   border: 2px dashed #4c53577d;
   border-radius: 8px;
-  height: 4.5rem;
+  height: 4.5rem; 
   padding: 0.4rem;
   background-color: transparent;
   display: flex;
@@ -147,14 +147,18 @@ button {
   cursor: move;
 }
 
-.template-block:hover {
-  border-color: #9ca3af;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.high-priority-template {
+  height: 6rem; 
 }
 
-.high-priority-template {
-  height: 6rem;
+@media screen and (min-width: 350px) {
+  .template-block {
+    height: 6rem; 
+  }
+  
+  .template-block.high-priority-template {
+    height: 9rem; 
+  }
 }
 
 .template-title {
@@ -163,7 +167,7 @@ button {
 }
 
 .content-page-block {
-  border-radius: 13px;
+  border-radius: 1px;
   width: 100% !important;
   background-color: transparent;
   display: flex;
@@ -186,8 +190,7 @@ button {
 }
 
 .content-page-block:hover {
-  border: 2px dashed #4c53573f;
-  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #5068A8;
   cursor: move;
   padding: 0px;
 }
@@ -255,6 +258,9 @@ button {
 
 #product-service-image {
   max-height: 156px;
+  min-height: 156px;
+  width: 100%;
+  border-radius: 13px;
   object-fit: cover;
   display: block;
 }
@@ -390,7 +396,7 @@ button {
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0;
 }
 
 .cta-main-button {
@@ -433,7 +439,6 @@ button {
   display: flex;
   flex-direction: column;
   margin: 0.5rem;
-  margin-right: 1.1rem;
   text-transform: uppercase;
 }
 
@@ -558,12 +563,20 @@ button {
   cursor: move;
 }
 
-@media (max-width: 1440px) {
+@media (min-width: 350px) {
   .cta-button-container {
-    gap: 0;
+    gap: 1rem;
   }
   .cta-container-child {
-    margin-right: 0.5rem;
+    margin-right: 1.1rem;
+  }
+  .cta-button {
+    width: 70px;
+    height: 70px;
+  }
+  .cta-button svg {
+    width: 42px;
+    height: 38px;
   }
 }
 
@@ -674,81 +687,77 @@ button {
   z-index: 6;
 }
 
+#contentDescription p {
+  margin: 0;
+}
 /* QUill */
-.content-page-block:hover .edit-icon {
-  display: inline;
-}
-
-.edit-icon {
-  display: none;
+.tb-edit-image-icon,
+.tb-delete-image-icon,
+.tb-edit-content-icon {
   position: absolute;
-  right: -12px;
-  top: 10px;
-  cursor: pointer;
-  background: white;
-  border-radius: 50%;
-  padding: 5px;
-  font-size: 12px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.tb-toolbar {
   display: none;
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background-color: #f1f1f1;
-  border: 1px solid #ccc;
-  padding: 5px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  gap: 5px;
-  align-items: center;
-}
-
-.toolbar button {
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  padding: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-}
-
-.toolbar button:hover {
-  background-color: #e9e9e9;
-}
-
-.toolbar button.active {
-  background-color: #ddd;
-}
-
-.editor {
-  min-height: 50px;
-  padding: 10px;
-  outline: none;
-}
-
-.save-btn {
-  display: none;
-  cursor: pointer;
-  background: green;
-  color: white;
-  border-radius: 5px;
-  padding: 5px 10px;
+  height: 26px;
+  width: 26px;
+  transform: translate(-50%, -50%);
   font-size: 14px;
+  padding: 4px;
+  border: 1px solid #5068a8;
+  border-radius: 50%;
+  background-color: white;
 }
 
-/* SVG Icons */
-.icon {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
+.tb-edit-content-icon {
+  right: -20px;
+}
+
+.tb-delete-image-icon {
+  right: -20px;
+}
+
+.tb-edit-image-icon {
+  right: 10px;
+}
+
+.content-page-block:hover .tb-edit-content-icon {
+  display: flex;
+}
+
+.tb-edit-content-icon:hover {
+  background-color: #5068a8;
+}
+
+.tb-edit-content-icon:hover path {
+  fill: #fff !important;
+}
+
+.content-image:hover .tb-delete-image-icon,
+.content-image:hover .tb-edit-image-icon {
+  display: flex !important;
+}
+
+.tb-delete-image-icon:hover,
+.tb-edit-image-icon:hover {
+  background-color: #5068a8;
+}
+
+.tb-delete-image-icon:hover path,
+.tb-edit-image-icon:hover path {
+  fill: #fff !important;
+}
+
+.tb-delete-image-icon:hover rect,
+.tb-edit-image-icon:hover rect {
+  fill: #fff !important;
+}
+
+.content-image {
+  display: flex;
+}
+
+.content-image:hover {
+  cursor: move;
 }
 
 .gjs-badge__name,
@@ -780,3 +789,4 @@ button {
   font-family: "Segoe UI";
   src: url("../fonts/segoeui.ttf") format("truetype");
 }
+

@@ -5,15 +5,15 @@ export class ConfirmationBox {
     private container: HTMLElement;
     private message: string;
     private title: string; 
-    private mediaId: string;
     private toolboxService: ToolBoxService;
+    private onConfirmCallback: () => void;
 
-    constructor(message: string, title: string, mediaId: string) {
+    constructor(message: string, title: string, onConfirm?: () => void) {
         this.container = document.createElement('div');
         this.message = message;
         this.title = title;
         this.toolboxService = new ToolBoxService();
-        this.mediaId = mediaId;
+        this.onConfirmCallback = onConfirm || (() => {});
 
         this.init();
     }
@@ -62,7 +62,7 @@ export class ConfirmationBox {
         cancelBtn.innerText = "Cancel";
 
         cancelBtn.addEventListener('click', () => {
-            this.close();
+            this.close(); // Cancel should only close, not execute callback
         });
 
         const confirmBtn = document.createElement('button');
@@ -70,27 +70,10 @@ export class ConfirmationBox {
         confirmBtn.id = "confirm_action";
         confirmBtn.innerText = "Confirm";
 
-        confirmBtn.addEventListener('click', async (e) => {
+        confirmBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            try {
-                await this.toolboxService.deleteMedia(this.mediaId);
-                this.toolboxService.media = this.toolboxService.media.filter(
-                    item => item.MediaId !== this.mediaId
-                );
-                const mediaItem = document.getElementById(this.mediaId);                
-                if (mediaItem) {
-                    mediaItem.remove();
-                }                
-                
-                if (this.toolboxService.media.length === 0) {
-                    const modalFooter = document.querySelector(".modal-actions") as HTMLElement;
-                    modalFooter.style.display = "none";
-                }
-                this.close();
-            } catch (error) {
-                console.error("Error deleting media:", error);
-                // Optionally add error handling UI here
-            }
+            this.onConfirmCallback(); // Execute the callback when confirm is clicked
+            this.close(); // And then close the modal
         });
 
         confirmationFooter.appendChild(confirmBtn);

@@ -31,6 +31,40 @@ export class ContentMapper {
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
 
+    updateContentDescription(contentId: any, newDescription: string): boolean {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+        if (!data?.PageContentStructure?.Content) return false;
+    
+        const ContentItem = data.PageContentStructure.Content.find((Content: any) => Content.ContentId === contentId);
+            
+        if (ContentItem) {
+            ContentItem.ContentValue = newDescription; 
+            
+            localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+            return true; 
+        }
+    
+        return false; 
+    }
+
+    updateContentImage(contentId: any, newImageUrl: string): boolean {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+        if (!data?.PageContentStructure?.Content) return false;
+    
+        const ContentItem = data.PageContentStructure.Content.find((Content: any) => Content.ContentId === contentId);
+            
+        if (ContentItem) {
+            ContentItem.ContentValue = newImageUrl; 
+            
+            localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+            return true; 
+        }
+    
+        return false; 
+    }
+    
+    
+
     moveCta(CtaId: any, newIndex: number): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageContentStructure?.Cta) return;

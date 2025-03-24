@@ -7,7 +7,9 @@ import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJSContent } from "./JSONToGrapesJSContent";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { LoadCalendarData } from "./LoadCalendarData";
+import { LoadLocationData } from "./LoadLocationData";
 import { LoadMyActivityData } from "./LoadMyActivityData";
+import { LoadReceptionData } from "./LoadReceptionData";
 import { UrlPageEditor } from "./UrlPageEditor";
 
 export class ChildEditor {
@@ -46,6 +48,12 @@ export class ChildEditor {
     if (this.pageData?.PageType === "Menu") {
       converter = new JSONToGrapesJSMenu(this.pageData);
       setUpEditor(converter);
+    } else if(this.pageData?.PageName === "Location") {
+      const locationEditor =  new LoadLocationData(childEditor, this.pageData);
+      locationEditor.setupEditor();
+    } else if(this.pageData?.PageName === "Reception") {
+      const receptionEditor =  new LoadReceptionData(childEditor, this.pageData);
+      receptionEditor.setupEditor();
     } else if(this.pageData?.PageType === "Content") {
         converter = new JSONToGrapesJSContent(this.pageData);
         setUpEditor(converter);
@@ -53,12 +61,12 @@ export class ChildEditor {
         const urlPageEditor =  new UrlPageEditor(childEditor);
         urlPageEditor.initialise(tileAttributes.Action);
     } else if(this.pageData?.PageType === "MyActivity") {
-      const activtyEditor =  new LoadMyActivityData(childEditor);
-      activtyEditor.load();
+      const activityEditor =  new LoadMyActivityData(childEditor);
+      activityEditor.load();
     } else if(this.pageData?.PageType === "Calendar") {
-      const activtyEditor =  new LoadCalendarData(childEditor);
-      activtyEditor.load();
-    }
+      const calendarEditor =  new LoadCalendarData(childEditor);
+      calendarEditor.load();
+    } 
 
     this.editorEvents.init(childEditor, this.pageData, editorId);
     this.editorManager.finalizeEditorSetup(childEditor);

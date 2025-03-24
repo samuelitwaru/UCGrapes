@@ -5,6 +5,7 @@ import { demoPages } from "../../utils/test-data/pages";
 import { RichEditor } from "../quill/RichEditor";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
+import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
 import { TileManager } from "./TileManager";
@@ -48,6 +49,8 @@ export class EditorEvents {
             richEditor.activateEditor();
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
+            (globalThis as any).pageData = this.pageData;
+            new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
         })
         this.activateNavigators();

@@ -4,7 +4,7 @@ import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { SingleImageFile } from "./SingleImageFile";
 
 export class ImageUpload {
-  private type: "tile" | "cta";
+  private type: "tile" | "cta" | "content";
   modalContent: HTMLElement;
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
@@ -112,7 +112,7 @@ export class ImageUpload {
         // Render each media item
         if (media && media.length > 0) {
           media.forEach((item: Media) => {
-            const singleImageFile = new SingleImageFile(item);
+            const singleImageFile = new SingleImageFile(item, this.type);
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
         }
@@ -144,10 +144,6 @@ export class ImageUpload {
     });
 
     uploadArea.addEventListener("click", (e) => {
-      // Only trigger if clicking directly on the upload area (not on child elements)
-      // if (e.target === uploadArea) {
-      //     fileInput.click();
-      // }
       fileInput.click();
     });
 
@@ -218,7 +214,6 @@ export class ImageUpload {
 
           const uploadedMedia: Media = response.BC_Trn_Media;
 
-          // The progress simulation will replace the progress indicator with the actual file
         } catch (error) {
           console.error("Error processing file:", error);
 
@@ -336,7 +331,7 @@ export class ImageUpload {
   }
 
   private displayMediaFile(fileList: HTMLElement, file: Media): void {
-    const singleImageFile = new SingleImageFile(file);
+    const singleImageFile = new SingleImageFile(file, this.type);
     singleImageFile.render(fileList);
     fileList.insertBefore(singleImageFile.getElement(), fileList.firstChild);
   }

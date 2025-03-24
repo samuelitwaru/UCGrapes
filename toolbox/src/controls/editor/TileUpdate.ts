@@ -11,7 +11,6 @@ export class TileUpdate {
     updateTile(rowComponent: any, isDragging: boolean = false) {
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
-        console.log(tiles)
         const length = tiles.length;
         tiles.forEach((tile: any) => {
             const rightButton = tile.find(".add-button-right")[0];
@@ -89,7 +88,6 @@ export class TileUpdate {
       }
     
     updateTileAttributes (tileId: string, attribute: string, value: string) {
-        console.log(tileId, attribute, value);
         const tileAttributes = new TileMapper(this.pageId);
         let align = value;
         if (value === "start") {

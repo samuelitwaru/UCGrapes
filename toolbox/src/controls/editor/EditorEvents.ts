@@ -8,6 +8,7 @@ import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
+import { NewPageButton } from "./NewPageButton";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
 import { TileProperties } from "./TileProperties";
@@ -211,9 +212,11 @@ export class EditorEvents {
     } else{
       this.removeOtherEditors();
       this.activateNavigators();
-      const pageSelector = new PageSelector()
-      const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
-      pageSelector.render(childCcontainerDiv)
+      const newPageButton = new NewPageButton()
+      newPageButton.render()
+      // const pageSelector = new PageSelector()
+      // const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
+      // pageSelector.render(childCcontainerDiv)
     }
   }
 

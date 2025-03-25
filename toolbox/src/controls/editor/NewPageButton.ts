@@ -1,11 +1,11 @@
 import { EditorManager } from "./EditorManager";
 
-class NewPageButton {
-    editorManager: EditorManager;
-    constructor(editorManager:EditorManager) {
-        this.editorManager = editorManager;
-        this.editorManager = editorManager;
-        this.render();
+export class NewPageButton {
+    constructor() {
+        const menuContainer = this.render();
+        const childContainer = document.getElementById('child-container')
+        console.log(childContainer)
+        childContainer?.appendChild(menuContainer)
     }
 
     render() {

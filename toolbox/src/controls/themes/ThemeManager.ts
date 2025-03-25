@@ -58,13 +58,17 @@ export class ThemeManager {
       ".sidebar-section .theme-section"
     ) as HTMLElement;
 
-    colorPallete.refresh(parent);
+    if (colorPallete) {
+      colorPallete.refresh(parent);
+    }
   }
 
   updateCtaColorPallete(ctaColors: ThemeCtaColor) {
     const ctaColorPallete = new CtaColorPalette(ctaColors);
     const container  = document.getElementById('content-page-section') as HTMLElement;
-    ctaColorPallete.refresh(container);
+    if (container) {
+      ctaColorPallete.refresh(container);
+    }
   }
 
   updateThemeIcons() {

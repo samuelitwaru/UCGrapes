@@ -18,17 +18,6 @@ export class NavbarButtons {
   }
 
    init() {
-    const debugButton = document.createElement("button");
-    debugButton.innerText = "Debug";
-    debugButton.classList.add("tb-btn", "tb-btn-outline");
-    debugButton.style.marginRight = "10px";
-    debugButton.id = "debug-button";
-
-    debugButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.showProgressModal();
-      this.debugApp();
-    })
     const editActions = new EditActions();
 
     const themeSelection = new ThemeSelection();
@@ -55,7 +44,6 @@ export class NavbarButtons {
     editActions.render(this.container);
     versionSelection.render(this.container);
     themeSelection.render(this.container);
-    this.container.appendChild(debugButton);
     treeButton.render(this.container);
     publishButton.render(this.container);
 
@@ -63,86 +51,6 @@ export class NavbarButtons {
       e.preventDefault();
       new PublishManager().openModal();
     });
-  }
-
-  
-  showProgressModal() {
-    const div = document.createElement("div");
-    div.id = "debug-modal";
-    div.style.textAlign = "center";
-
-    const spinner = document.createElement("span");
-    spinner.innerHTML = `<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`;
-
-    const progressText = document.createElement("p");
-    progressText.textContent = "Debugging in progress please wait...";
-    div.appendChild(spinner);
-    div.appendChild(progressText);
-
-    const modal = new Modal({
-        title: "App debugging",
-        width: "500px",
-        body: div
-    });
-
-    modal.open();
-  }
-
-  async debugApp() {
-    try {
-      this.getAppUrls();
-      const urlList: string[] = await this.getAppUrls();
-  
-      const toolBoxService = new ToolBoxService();
-      const response = await toolBoxService.debugApp(urlList);
-      const results = response.DebugResults;
-      console.log(results);
-
-      const summaryDiv = document.createElement("div");
-      summaryDiv.innerHTML = `
-          <h3>Summary</h3>
-          <p>Total URLs checked: ${results.Summary.TotalUrls}</p>
-          <p>Valid URLs: ${results.Summary.SuccessCount}</p>
-          <p>Invalid URLs: ${results.Summary.FailureCount}</p>
-          <p>Completion time: ${new Date().toLocaleTimeString()}</p>`;
-  
-      // Update modal after success
-      this.updateModalContent(summaryDiv);
-    } catch (error) {
-      console.error("Error:", error);
-      this.updateModalContent("An error occurred during debugging.");
-    }
-  }
-
-  async getAppUrls() {
-    let urls: string[] = [];
-    const activeVersion = await this.appVersions.getActiveVersion();
-    const pages = activeVersion.Pages;
-
-    for (const page of pages) {
-        const rows = page.PageMenuStructure?.Rows;
-        if (rows) {
-            for (const row of rows) {
-                const tiles = row.Tiles;
-                if (tiles) {
-                    for (const tile of tiles) {
-                        if (tile.Action?.ObjectUrl) {
-                            urls.push(tile.Action.ObjectUrl);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return urls;
-}
-
-  
-  updateModalContent(summary: any) {
-    const modalBody = document.getElementById("debug-modal");
-    if (modalBody) {
-      modalBody.innerHTML = `${summary.innerHTML}`;
-    }
   }
 
   render(container: HTMLElement) {

@@ -4,6 +4,7 @@ import { NavbarButtons } from "../../ui/components/NavbarButtons";
 import { ToolsSection } from "../../ui/components/ToolsSection";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { PageAttacher } from "../../ui/components/tools-section/action-list/PageAttacher";
+import { NavbarLeftButtons } from "../../ui/components/NavBarLeftButtons";
 
 export class ToolboxManager {
   appVersions: any;
@@ -19,16 +20,18 @@ export class ToolboxManager {
     this.autoSave();
     const navBar = document.getElementById("tb-navbar") as HTMLElement;
 
-    const navbarTitle = document.getElementById("navbar_title") as HTMLElement;
-    if (!navBar || !navbarTitle) {
-      console.error("Navigation bar elements not found!");
-      return;
-    }
+    // const navbarTitle = document.getElementById("navbar_title") as HTMLElement;
+    // if (!navBar || !navbarTitle) {
+    //   console.error("Navigation bar elements not found!");
+    //   return;
+    // }
 
-    navbarTitle.textContent = "App toolbox";
+    // navbarTitle.textContent = "App toolbox";
 
-    let navBarButtons = new NavbarButtons();
-
+    const navBarButtons = new NavbarButtons();
+    const leftNavBarButtons = new NavbarLeftButtons();
+    
+    leftNavBarButtons.render(navBar);
     navBarButtons.render(navBar);
   }
 

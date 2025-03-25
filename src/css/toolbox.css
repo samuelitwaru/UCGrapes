@@ -159,6 +159,8 @@ button {
   .template-block.high-priority-template {
     height: 9rem;
   }
+
+  
 }
 
 .template-title {
@@ -320,10 +322,16 @@ button {
 }
 
 .tile-title {
-  font-size: calc(12px + 0.5vw) !important;
+  font-size: 12px;
   text-transform: capitalize;
   font-weight: 400;
   cursor: default;
+}
+
+@media (min-width: 350px) {
+  .tile-title {
+    font-size: 16px;
+  }
 }
 
 .tile-close-icon {
@@ -397,6 +405,7 @@ button {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0;
+  margin-top: 28px;
 }
 
 .cta-main-button {
@@ -578,6 +587,11 @@ button {
   bottom: -6px;
   right: -10px;
   cursor: pointer;
+  opacity: 0;
+}
+
+.img-button-container:hover .img-button-section span {
+  opacity: 1;
 }
 
 .img-button-section span:hover g {

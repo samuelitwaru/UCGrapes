@@ -166,7 +166,7 @@ export class VersionSelection extends ThemeManager{
                 if (newVersion) {
                     this.toolboxService.createVersion(newVersion).then((res) => {
                         modal.close();
-                        this.refreshVersionList();
+                        // this.refreshVersionList();
                     });
                 }
             });
@@ -178,13 +178,20 @@ export class VersionSelection extends ThemeManager{
     }
     
     async refreshVersionList() {
-        this.versionSelection.classList.toggle("show");
-        const button = this.container.querySelector(".theme-select-button") as HTMLElement;
-        button.classList.toggle("open");
-        button.setAttribute("aria-expanded", 'true');
         this.versionSelection.innerHTML = '';
         
         await this.initializeVersionOptions();
+        
+        // Ensure the dropdown is visible
+        if (!this.versionSelection.classList.contains("show")) {
+            this.versionSelection.classList.add("show");
+        }
+        
+        const button = this.container.querySelector(".theme-select-button") as HTMLElement;
+        if (!button.classList.contains("open")) {
+            button.classList.add("open");
+        }
+        button.setAttribute("aria-expanded", 'true');
     }
 
     closeSelection() {

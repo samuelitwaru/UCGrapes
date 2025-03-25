@@ -92,7 +92,8 @@ export class ContentMapper {
             "CtaLabel": cta.CtaLabel,
             "CtaAction": cta.CtaAction,
             "CtaBGColor": cta.CtaBGColor,
-            "CtaButtonType": cta.CtaButtonType
+            "CtaButtonType": cta.CtaButtonType,
+            "CtaButtonImgUrl": cta.CtaButtonImgUrl,
         }
          if (!data.PageContentStructure.Cta) {
             data.PageContentStructure.Cta = [];
@@ -132,7 +133,7 @@ export class ContentMapper {
         }
     }
 
-    public updateContentButtonType (ctaId: any, buttonType: any): any {
+    public updateContentButtonType (ctaId: any, buttonType: any, imageUrl?: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
@@ -141,6 +142,10 @@ export class ContentMapper {
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta[ctaIndex].CtaButtonType = buttonType;
                 
+                if (imageUrl) {
+                    data.PageContentStructure.Cta[ctaIndex].CtaButtonImgUrl = imageUrl;                    
+                }
+
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
                 return true; 
             }

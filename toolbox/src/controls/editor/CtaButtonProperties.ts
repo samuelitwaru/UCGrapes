@@ -22,8 +22,6 @@ export class CtaButtonProperties {
         let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes.CtaBGColor);
 
         colorItems?.forEach((input: any) => {
-            console.log("ctaColorAttribute", ctaColorAttribute)
-            console.log("input", input)
             if (input.value === ctaColorAttribute) {
                 input.checked = true;
             }

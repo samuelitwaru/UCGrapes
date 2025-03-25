@@ -122,16 +122,6 @@ export class EditorManager {
     }
   }
 
-  updateEditors(pageId: string, frameId: string, editor: any) {
-    // // Check if editor exists for the given pageId and frameId
-    // const existingEditor = this.editors.find(
-    //   (ed) => ed.pageId === pageId && ed.frameId === frameId
-    // );
-    // if (!existingEditor) {
-    //   this.editors.push({ pageId, frameId, editor });
-    // }
-  }
-
   activateHomeEditor(frameId: string) {
     const homeFrame = document.getElementById(`${frameId}-frame`);
     homeFrame?.classList.add("active-editor");

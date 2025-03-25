@@ -91,8 +91,6 @@ export class CategoryView {
         if (this.categoryData.name === "Dynamic Forms") {
           this.pageCreationService.handleDynamicForms(page);
         } else {
-          console.log(page)
-          alert()
           this.pageAttacher.attachToTile(page, this.categoryData.name);
         }
       });

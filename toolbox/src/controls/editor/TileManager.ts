@@ -5,6 +5,7 @@ import {
   tileWrapperDefaultAttributes,
 } from "../../utils/default-attributes";
 import { randomIdGenerator } from "../../utils/helpers";
+import { CtaManager } from "../themes/CtaManager";
 import { EditorEvents } from "./EditorEvents";
 import { TileMapper } from "./TileMapper";
 import { TileUpdate } from "./TileUpdate";
@@ -32,6 +33,7 @@ export class TileManager {
     this.deleteTile();
     this.removeTileIcon();
     this.removeTileTile();
+    this.removeCTa();
   }
 
   addTileBottom() {
@@ -184,6 +186,15 @@ export class TileManager {
     });
 
     return hasTitleVisible && hasIconVisible;
+  }
+
+  removeCTa() {
+    const ctaBadgeBtn = (this.event.target as Element).closest(
+      ".cta-badge"
+    ) as HTMLElement;
+    if (ctaBadgeBtn) {
+      new CtaManager().removeCta(ctaBadgeBtn);
+    }
   }
 
   removeEditor(tileId: string): void {

@@ -87,6 +87,16 @@ export class ThemeManager {
     return this.currentTheme.ThemeColors[colorName] || 'transparent';
   }
 
+  getThemeCtaColor(colorName: string) {
+
+    if (!this.currentTheme || !this.currentTheme.ThemeCtaColors) {
+      console.error("ThemeColors is undefined or invalid:", this.currentTheme);
+      return null;
+    }
+
+    return this.currentTheme.ThemeCtaColors.find((color: any) => color.CtaColorName === colorName)?.CtaColorCode || '#5068a8';
+  }
+
   async applyTheme (theme: Theme) {
     const iframes = document.querySelectorAll(".mobile-frame iframe") as NodeListOf<HTMLIFrameElement>;
     if (!iframes.length) return;

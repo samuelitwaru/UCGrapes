@@ -1,3 +1,4 @@
+import { RichEditor } from "../../../controls/quill/RichEditor";
 import { ThemeManager } from "../../../controls/themes/ThemeManager";
 import { CreateCTAComponent } from "./content-section/CreateCTAComponent";
 import { CtaButtonLayout } from "./content-section/CtaButtonLayout";
@@ -20,6 +21,12 @@ export class ContentSection {
     }
 
     private init() {
+        if (this.container.style.display === 'block') {
+            console.log('Content Section is already initialized');
+            return;
+        } else {
+            // console.log("Hello wolrldl")
+        }
         this.container.classList.add('sidebar-section', 'content-page-section');
         this.container.id = 'content-page-section';
         this.container.style.display = 'block';
@@ -37,18 +44,18 @@ export class ContentSection {
     }
 
     renderCreateCTAButton(){
-        const button = document.createElement("button");
-        // Set button text
-        button.textContent = "Add CTA";
-        button.classList.add("tb-btn");
-        button.id = "add-cta-button";
+        // const button = document.createElement("button");
+        // // Set button text
+        // button.textContent = "Add CTA";
+        // button.classList.add("tb-btn");
+        // button.id = "add-cta-button";
 
-        // Add a click event
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            this.createCTAComponent?.showPopup();
-        });
-        this.container.append(button)
+        // // Add a click event
+        // button.addEventListener("click", (e) => {
+        //     e.preventDefault();
+        //     this.createCTAComponent?.showPopup();
+        // });
+        // this.container.append(button)
     }
 
     private toggleSideBar () {

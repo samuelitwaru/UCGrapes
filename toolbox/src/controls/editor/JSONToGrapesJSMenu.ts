@@ -31,19 +31,23 @@ export class JSONToGrapesJSMenu {
         <div ${tileDefaultAttributes} class="template-block${
               isFirstSingleTile ? " first-tile high-priority-template" : ""
           }" 
-          style="background-color: ${this.themeManager.getThemeColor(tile.BGColor)}; color: ${
+          style="color: ${
       tile.Color
     }; text-align: ${tile.Align};
           ${
-            isThreeTiles ? "align-items: center; justify-content: center;" : ""
+            isThreeTiles ? "align-items: center; justify-content: center;" 
+            : `align-items: ${tile.Align === "left" ? "start" : tile.Align}; justify-content: ${tile.Align === "left" ? "start" : tile.Align};`
           }; 
           ${
             tile.BGImageUrl
-              ? `background-image: url('${tile.BGImageUrl}');
-          background-size: cover;
-          background-position: center;
-          background-blend-mode: overlay;`
-              : ``
+              ? `background-color: rgba(0,0,0, ${tile.Opacity / 100});
+                 background-image: url('${tile.BGImageUrl}');
+                 background-size: cover;
+                 background-position: center;
+                 background-blend-mode: overlay;`
+              : `
+              background-color: ${this.themeManager.getThemeColor(tile.BGColor)}; 
+              `
           }">
           
           <div ${DefaultAttributes} class="tile-icon-section">

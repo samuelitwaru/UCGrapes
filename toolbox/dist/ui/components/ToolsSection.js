@@ -6,7 +6,6 @@ export class ToolsSection {
     }
     init() {
         const tabButtons = new TabButtons();
-        alert('Setting up sidebar');
         tabButtons.render(this.container);
     }
     render(container) {

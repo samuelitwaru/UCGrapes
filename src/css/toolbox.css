@@ -138,7 +138,7 @@ button {
 .template-block {
   border: 2px dashed #4c53577d;
   border-radius: 8px;
-  height: 4.5rem;
+  height: 4.5rem; 
   padding: 0.4rem;
   background-color: transparent;
   display: flex;
@@ -147,14 +147,18 @@ button {
   cursor: move;
 }
 
-.template-block:hover {
-  border-color: #9ca3af;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.high-priority-template {
+  height: 6rem; 
 }
 
-.high-priority-template {
-  height: 6rem;
+@media screen and (min-width: 350px) {
+  .template-block {
+    height: 6rem; 
+  }
+  
+  .template-block.high-priority-template {
+    height: 9rem; 
+  }
 }
 
 .template-title {
@@ -163,7 +167,7 @@ button {
 }
 
 .content-page-block {
-  border-radius: 13px;
+  border-radius: 1px;
   width: 100% !important;
   background-color: transparent;
   display: flex;
@@ -186,8 +190,7 @@ button {
 }
 
 .content-page-block:hover {
-  border: 2px dashed #4c53573f;
-  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #5068A8;
   cursor: move;
   padding: 0px;
 }
@@ -255,6 +258,9 @@ button {
 
 #product-service-image, img.content-page-block {
   max-height: 156px;
+  min-height: 156px;
+  width: 100%;
+  border-radius: 13px;
   object-fit: cover;
   display: block;
 }
@@ -390,7 +396,7 @@ button {
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0;
 }
 
 .cta-main-button {
@@ -433,7 +439,6 @@ button {
   display: flex;
   flex-direction: column;
   margin: 0.5rem;
-  margin-right: 1.1rem;
   text-transform: uppercase;
 }
 
@@ -481,6 +486,13 @@ button {
 .plain-button:hover .cta-badge,
 .img-button-container:hover .cta-badge {
   opacity: 1;
+}
+.plain-button:hover,
+.img-button:hover,
+.img-button-container:hover,
+.plain-button-container:hover,
+.cta-container-child:hover {
+  cursor: move;
 }
 
 .cta-label {
@@ -539,20 +551,32 @@ button {
   position: relative;
   width: 100%;
   border-radius: 13px;
-  border: 2px solid #5068a8;
+  border: none;
   background-color: #5068a8;
   display: inline-block;
   vertical-align: middle;
   color: white;
-  padding: 6px;
+  padding: 10px;
 }
 
-@media (max-width: 1440px) {
+.plain-button:hover {
+  cursor: move;
+}
+
+@media (min-width: 350px) {
   .cta-button-container {
-    gap: 0;
+    gap: 1rem;
   }
   .cta-container-child {
-    margin-right: 0.5rem;
+    margin-right: 1.1rem;
+  }
+  .cta-button {
+    width: 70px;
+    height: 70px;
+  }
+  .cta-button svg {
+    width: 42px;
+    height: 38px;
   }
 }
 
@@ -661,6 +685,79 @@ button {
   top: 20px;
   transform: translateY(-3px);
   z-index: 6;
+}
+
+#contentDescription p {
+  margin: 0;
+}
+/* QUill */
+.tb-edit-image-icon,
+.tb-delete-image-icon,
+.tb-edit-content-icon {
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  width: 26px;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  padding: 4px;
+  border: 1px solid #5068a8;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.tb-edit-content-icon {
+  right: -20px;
+}
+
+.tb-delete-image-icon {
+  right: -20px;
+}
+
+.tb-edit-image-icon {
+  right: 10px;
+}
+
+.content-page-block:hover .tb-edit-content-icon {
+  display: flex;
+}
+
+.tb-edit-content-icon:hover {
+  background-color: #5068a8;
+}
+
+.tb-edit-content-icon:hover path {
+  fill: #fff !important;
+}
+
+.content-image:hover .tb-delete-image-icon,
+.content-image:hover .tb-edit-image-icon {
+  display: flex !important;
+}
+
+.tb-delete-image-icon:hover,
+.tb-edit-image-icon:hover {
+  background-color: #5068a8;
+}
+
+.tb-delete-image-icon:hover path,
+.tb-edit-image-icon:hover path {
+  fill: #fff !important;
+}
+
+.tb-delete-image-icon:hover rect,
+.tb-edit-image-icon:hover rect {
+  fill: #fff !important;
+}
+
+.content-image {
+  display: flex;
+}
+
+.content-image:hover {
+  cursor: move;
 }
 
 .gjs-badge__name,

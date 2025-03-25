@@ -1,14 +1,20 @@
+import { ContentDataManager } from "../../../../controls/editor/ContentDataManager";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { Media } from "../../../../models/Media"; // Fixed typo in import name
+import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
 
 export class SingleImageFile {
   private container: HTMLElement;
   private mediaFile: Media;
+  private toolboxService: ToolBoxService;
+  type: any;
 
-  constructor(mediaFile: Media) {
+  constructor(mediaFile: Media, type: any) {
     this.mediaFile = mediaFile;
+    this.type = type;
+    this.toolboxService = new ToolBoxService();
     this.container = document.createElement("div");
     this.init();
   }
@@ -120,7 +126,11 @@ export class SingleImageFile {
     });
 
     newSaveBtn.addEventListener("click", () => {
-      this.addImageToTile();
+      if (this.type === "tile") {
+        this.addImageToTile();
+      } else if (this.type === "content") {
+        this.addImageToContentPage();
+      }
       modal.style.display = "none";
       modal.remove();
     });
@@ -171,13 +181,41 @@ export class SingleImageFile {
     }
   }
 
+  private async addImageToContentPage() {
+    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
+    const activeEditor = (globalThis as any).activeEditor;
+    const activePage =(globalThis as any).pageData;
+    const contentManager = new ContentDataManager(activeEditor, activePage);
+    contentManager.updateContentImage(safeMediaUrl);
+  }
+
   private deleteEvent() {
     const title = "Delete media";
     const message = "Are you sure you want to delete this media file?";
+
+    const handleConfirmation = async () => {
+      try {
+        await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
+        this.toolboxService.media = this.toolboxService.media.filter(
+            item => item.MediaId !== this.mediaFile.MediaId
+        );
+        const mediaItem = document.getElementById(this.mediaFile.MediaId);                
+        if (mediaItem) {
+            mediaItem.remove();
+        }                
+        
+        if (this.toolboxService.media.length === 0) {
+            const modalFooter = document.querySelector(".modal-actions") as HTMLElement;
+            modalFooter.style.display = "none";
+        }
+      } catch (error) {
+          console.error("Error deleting media:", error);
+      }
+    }
     const confirmationBox = new ConfirmationBox(
       message,
       title,
-      this.mediaFile.MediaId
+      handleConfirmation,
     );
     confirmationBox.render(document.body);
   }

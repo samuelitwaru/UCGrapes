@@ -27,7 +27,7 @@ export class ContentMapper {
     
         // Insert the item at the new position
         contentArray.splice(newIndex, 0, contentRow);
-    
+        alert()
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
 

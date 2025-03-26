@@ -1,7 +1,18 @@
+import { AppConfig } from "../../AppConfig";
+import { ToolBoxService } from "../../services/ToolBoxService";
+import { Alert } from "../../ui/components/Alert";
+import { PageAttacher } from "../../ui/components/tools-section/action-list/PageAttacher";
+import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorManager } from "./EditorManager";
 
 export class NewPageButton {
-    constructor() {
+    toolboxService: ToolBoxService;
+    appVersionManager: AppVersionManager;
+    pageAttacher: PageAttacher;
+    constructor(toolboxService:ToolBoxService, appVersionManager:AppVersionManager) {
+        this.toolboxService = toolboxService
+        this.appVersionManager = appVersionManager
+        this.pageAttacher = new PageAttacher();
         const menuContainer = this.render();
         const childContainer = document.getElementById('child-container')
         console.log(childContainer)
@@ -28,15 +39,15 @@ export class NewPageButton {
         menuItem1.classList.add("menu-item");
         menuItem1.textContent = "Add menu page";
         menuItem1.addEventListener("click", () => {
-            // this.createNewPage("Untitled", false);
+            this.createNewPage("Untitled");
         });
 
         const menuItem2 = document.createElement("div");
         menuItem2.classList.add("menu-item");
         menuItem2.textContent = "Add content page";
         menuItem2.addEventListener("click", () => {
-            // this.editorManager.toolsSection.newServiceEvent()
-            //this.createNewPage("Untitled", true);
+            const config = AppConfig.getInstance();
+            config.addServiceButtonEvent()
         });
 
         dropdownMenu.appendChild(menuItem1);
@@ -72,63 +83,20 @@ export class NewPageButton {
         return menuContainer;
     }
 
-    // async createNewPage(title, isServicePage = false) {
-    //     const editor = this.editorManager.getCurrentEditor();
-    //     const selected = editor.getSelected();
-    //     if (!selected) return;
+    async createNewPage(title:string) {
+        const appVersion = await this.appVersionManager.getActiveVersion()
+        this.toolboxService.createMenuPage(appVersion.AppVersionId, title).then(res=>{
+            if(!res.error.message) {
+                const page = {
+                    PageId: res.MenuPage.PageId,
+                    PageName: res.MenuPage.PageName,
+                    TileName: res.MenuPage.PageName
+                }
+                this.pageAttacher.attachToTile(page, "Menu")
+            }else{
+                new Alert("error", res.error.message)
+            }
 
-    //     const titleComponent = selected.find(".tile-title")[0];
-    //     // const tileTitle = this.truncateText(title, 12);
-    //     const tileTitle = title;
-    //     const editorId = editor.getConfig().container;
-    //     const editorContainerId = `${editorId}-frame`;
-    //     let res;
-    //     if (isServicePage) {
-    //         res = await this.dataManager.createContentPage('80db3166-d4e2-4bd3-83c8-0ebfcd2a704d')
-    //     }else {
-    //         res = await this.dataManager.createNewPage(title, this.editorManager.toolsSection.currentTheme)
-    //     }
-        
-    //     if (this.editorManager.toolsSection.checkIfNotAuthenticated(res)) {
-    //         return;
-    //     }
-    //     if(res.error.Message) {
-    //         this.editorManager.toolsSection.ui.displayAlertMessage(res.error.Message, "error");
-    //     }
-    //     const result = JSON.parse(res.result);
-    //     const pageId = result.Trn_PageId;
-    //     const pageName = result.Trn_PageName;
-
-    //     this.dataManager.getPages().then((res) => {
-    //     this.editorManager.toolsSection.actionList.init();
-
-    //     this.editorManager.toolsSection.setAttributeToSelected(
-    //         "tile-action-object-id",
-    //         pageId
-    //     );
-
-    //     this.editorManager.toolsSection.setAttributeToSelected(
-    //         "tile-action-object",
-    //         `Page, ${pageName}`
-    //     );
-
-    //     $(editorContainerId).nextAll().remove();
-    //     this.editorManager.createChildEditor(
-    //         this.editorManager.getPage(pageId)
-    //     );
-    //     });
-
-    //     if (titleComponent) {
-    //         titleComponent.addAttributes({ title: title });
-    //         titleComponent.components(tileTitle);
-    //         titleComponent.addStyle({ display: "block" });
-
-    //         const sidebarInputTitle = document.getElementById("tile-title");
-    //         if (sidebarInputTitle) {
-    //             sidebarInputTitle.value = tileTitle;
-    //             sidebarInputTitle.title = tileTitle;
-    //         }
-    //     }
-        
-    // }
+        })
+    }
 }

@@ -174,6 +174,22 @@ export class ToolBoxService {
     return response;
   }
 
+  async publishAppVersion(appVersionId: string, notify=false) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/publish-appversion",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          AppVersionId: appVersionId,
+          Notify: notify,
+        }),
+      },
+      true
+    );
+
+    return response;
+  }
+
   // Pages API methods
   async getPages() {
     const response = await this.fetchAPI("/api/toolbox/pages/list", {}, true);

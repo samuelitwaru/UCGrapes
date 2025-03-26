@@ -35,16 +35,19 @@ export class EditorEvents {
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
-    this.onLoad();
     this.onDragAndDrop();
     this.onSelected();
+    this.onLoad();
 
   }
 
   onLoad() {
     if (this.editor !== undefined) {
+
+      this.editor.on('load', () => {
         const wrapper = this.editor.getWrapper();
-        wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
+        if (wrapper) {
+          wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
             const richEditor = new RichEditor(e, this.editor);
             richEditor.activateEditor();
@@ -53,8 +56,13 @@ export class EditorEvents {
             (globalThis as any).pageData = this.pageData;
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
-        })
-        this.activateNavigators();
+          })
+        } else {
+          console.error("Wrapper not found!");
+        }
+      });
+
+      this.activateNavigators();
     }
   }
 
@@ -212,7 +220,7 @@ export class EditorEvents {
     } else{
       this.removeOtherEditors();
       this.activateNavigators();
-      const newPageButton = new NewPageButton()
+      const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
       newPageButton.render()
       // const pageSelector = new PageSelector()
       // const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement

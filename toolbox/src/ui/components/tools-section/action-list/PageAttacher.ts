@@ -5,6 +5,7 @@ import { Alert } from "../../Alert";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { EditorEvents } from "../../../../controls/editor/EditorEvents";
 import { PageCreationService } from "./PageCreationService";
+import { TileProperties } from "../../../../controls/editor/TileProperties";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;
@@ -47,7 +48,7 @@ export class PageAttacher {
     const updates = [
         ["Text", page.PageName],
         ["Name", page.PageName],
-        ["Action.ObjectType", "Service/Product Page"],
+        ["Action.ObjectType", `${categoryName} Page`],
         ["Action.ObjectId", page.PageId],
       ];
       
@@ -64,6 +65,15 @@ export class PageAttacher {
   
       const version = await this.appVersionManager.getActiveVersion(); 
       this.attachPage(page, version, tileAttributes);
+
+      // set tile properties
+      if (selectedComponent && tileAttributes) {
+        const tileProperties = new TileProperties(
+          selectedComponent,
+          tileAttributes
+        );
+        tileProperties.setTileAttributes();
+      }
   }
 
   attachPage(page: ActionPage, version: any, tileAttributes: any) {

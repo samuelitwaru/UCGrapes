@@ -22,6 +22,7 @@ export class ContentDataUi {
         this.openContentEditModal();
         this.openImageEditModal();
         this.openDeleteImageModal();
+        this.updateCtaButtonImage();
     }
 
     private openContentEditModal() {
@@ -55,7 +56,7 @@ export class ContentDataUi {
             const quill = new Quill("#editor", {
                 modules: {
                     toolbar: [
-                    ["bold", "italic", "underline"],
+                    ["bold", "italic", "underline", "link"],
                     [{ list: "ordered" }, { list: "bullet" }],
                     ],
                 },
@@ -112,6 +113,30 @@ export class ContentDataUi {
                 );
                 confirmationBox.render(document.body);
             }
+        }
+    }
+
+    private updateCtaButtonImage () {
+        const ctaImageEditButton = (this.e.target as Element).closest('.edit-cta-image');
+        if (ctaImageEditButton) {
+            const ctaParentContainer = ctaImageEditButton.closest(".img-button-container");
+            (globalThis as any).ctaContainerId = ctaParentContainer ? ctaParentContainer.id : "";
+            const modal = document.createElement("div");
+            modal.classList.add("tb-modal");
+            modal.style.display = "flex";
+    
+            const modalContent = new ImageUpload("cta");
+            modalContent.render(modal);
+    
+            const uploadInput = document.createElement("input");
+            uploadInput.type = "file";
+            uploadInput.multiple = true;
+            uploadInput.accept = "image/jpeg, image/jpg, image/png";
+            uploadInput.id = "fileInput";
+            uploadInput.style.display = "none";
+    
+            document.body.appendChild(modal);
+            document.body.appendChild(uploadInput);
         }
     }
 

@@ -88,6 +88,35 @@ export class ContentDataManager {
         }
     }
 
+    updateCtaButtonImage(safeMediaUrl: string) {
+        const ctaContainerId = (globalThis as any).ctaContainerId
+        const ctaButtonImgWrapper = this.editor.Components
+                  .getWrapper().find(`#${ctaContainerId}`)[0];
+
+              if (ctaButtonImgWrapper) {
+                const img = ctaButtonImgWrapper.find("img")[0];
+                const icon = ctaButtonImgWrapper.find("svg")[0];
+                if (img) {
+                    img.setAttributes({
+                        src: safeMediaUrl,
+                        alt: `cta Image`
+                    });
+                
+                    const editIcon = `
+                    <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="22" height="22" viewBox="0 0 33 33">
+                        <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                        <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                        <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                        </g>
+                        <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                    </svg>
+                    `
+                    icon.replaceWith(editIcon);
+                    this.contentMapper.updateContentButtonType(ctaContainerId, 'Image', safeMediaUrl);                  
+                }
+              }
+    }
+
     private async updateServiceContentImage(safeMediaUrl: string) {
         try {
             const base64String = await imageToBase64(safeMediaUrl);

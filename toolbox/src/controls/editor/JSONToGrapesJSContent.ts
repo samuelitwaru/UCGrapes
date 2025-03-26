@@ -27,10 +27,33 @@ export class JSONToGrapesJSContent {
                 ${ctaTileDEfaultAttributes} 
                   button-type="${cta.CtaType}"
                   class="img-button-container">
-                    <div ${DefaultAttributes} class="img-button"
+                    <div ${DefaultAttributes} class="img-button cta-styled-btn"
                         style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
-                        <span ${DefaultAttributes} class="img-button-icon">
-                          ${this.ctaIcon(cta)}
+                        <span ${DefaultAttributes} class="img-button-section">
+                            <img ${DefaultAttributes} src="${cta.CtaButtonImgUrl}" />
+                            <span ${DefaultAttributes} class="edit-cta-image">
+                                ${cta.CtaButtonImgUrl ? `
+                                <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="22" height="22" viewBox="0 0 33 33">
+                                  <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                                    <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                                    <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                                  </g>
+                                  <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                                </svg>
+                                ` : `
+                                 <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_53_4" data-name="Component 53 – 4" width="22" height="22" viewBox="0 0 22 22">
+                                    <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
+                                        <g ${DefaultAttributes} id="Group_2307" data-name="Group 2307">
+                                        <g ${DefaultAttributes} id="Ellipse_6" data-name="Ellipse 6" fill="#fdfdfd" stroke="#5068a8" stroke-width="1">
+                                            <circle ${DefaultAttributes} cx="11" cy="11" r="11" stroke="none"/>
+                                            <circle ${DefaultAttributes} cx="11" cy="11" r="10.5" fill="none"/>
+                                        </g>
+                                        </g>
+                                    </g>
+                                    <path ${DefaultAttributes} id="Icon_ionic-ios-add" data-name="Icon ionic-ios-add" d="M18.342,13.342H14.587V9.587a.623.623,0,1,0-1.245,0v3.755H9.587a.623.623,0,0,0,0,1.245h3.755v3.755a.623.623,0,1,0,1.245,0V14.587h3.755a.623.623,0,1,0,0-1.245Z" transform="translate(-2.965 -2.965)" fill="#5068a8"/>
+                                </svg>
+                                `}
+                            </span>
                         </span>
                         <div${DefaultAttributes} class="cta-badge">
                             <i ${DefaultAttributes} class="fa fa-minus"></i>
@@ -58,6 +81,24 @@ export class JSONToGrapesJSContent {
             </div>
             `;
     } else if (cta.CtaButtonType === "Icon") {
+      return `
+          <div id="${cta.CtaId}" data-gjs-type="cta-buttons"
+            ${ctaTileDEfaultAttributes} 
+              button-type="${cta.CtaType}"
+              class="img-button-container">
+                <div ${DefaultAttributes} class="img-button cta-styled-btn"
+                    style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
+                    <span ${DefaultAttributes} class="img-button-icon">
+                      ${this.ctaIcon(cta)}
+                    </span>
+                    <div${DefaultAttributes} class="cta-badge">
+                        <i ${DefaultAttributes} class="fa fa-minus"></i>
+                    </div>
+                    <span ${DefaultAttributes} class="img-button-label">${cta.CtaLabel}</span>
+                    <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
+                </div>
+            </div>
+      `;
     } else if (cta.CtaButtonType === "Round") {
       return `
             <div ${ctaTileDEfaultAttributes} 

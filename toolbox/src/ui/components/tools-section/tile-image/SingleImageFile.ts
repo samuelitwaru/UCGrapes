@@ -130,6 +130,8 @@ export class SingleImageFile {
         this.addImageToTile();
       } else if (this.type === "content") {
         this.addImageToContentPage();
+      } else if (this.type === "cta") {
+        this.updateCtaButtonImage();
       }
       modal.style.display = "none";
       modal.remove();
@@ -187,6 +189,14 @@ export class SingleImageFile {
     const activePage =(globalThis as any).pageData;
     const contentManager = new ContentDataManager(activeEditor, activePage);
     contentManager.updateContentImage(safeMediaUrl);
+  }
+
+  private async updateCtaButtonImage() {
+    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
+    const activeEditor = (globalThis as any).activeEditor;
+    const activePage =(globalThis as any).pageData;
+    const contentManager = new ContentDataManager(activeEditor, activePage);
+    contentManager.updateCtaButtonImage(safeMediaUrl);
   }
 
   private deleteEvent() {

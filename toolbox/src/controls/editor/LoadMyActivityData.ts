@@ -17,7 +17,7 @@ export class LoadMyActivityData {
                 <button style="background-color: #e1e1e1;border-radius: 6px;color: #262626;"  ${DefaultAttributes}>Requests</button>
             </div>
             <div class="tb-chat-body" ${DefaultAttributes}>No messages yet</div>
-        </div>
+         </div>
          `;
      }
 }

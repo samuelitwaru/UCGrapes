@@ -28,9 +28,7 @@ export class TileProperties {
       this.tileAttributes.BGColor
     );
 
-    if (hasBgImage) {
-      console.log("has bg image");
-    }
+    console.log("styles: ", this.selectedComponent.getStyle())
 
     const colorBoxes: any = themeColors?.children;
     for (let i = 0; i < colorBoxes.length; i++) {

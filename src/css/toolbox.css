@@ -151,7 +151,7 @@ button {
   height: 6rem;
 }
 
-@media screen and (min-width: 350px) {
+@media (min-width: 350px) {
   .template-block {
     height: 6rem;
   }
@@ -160,7 +160,9 @@ button {
     height: 9rem;
   }
 
-  
+  .high-priority-template .tile-title {
+    font-size: 20px;
+  }
 }
 
 .template-title {
@@ -322,7 +324,7 @@ button {
 }
 
 .tile-title {
-  font-size: 12px;
+  font-size: 15px;
   text-transform: capitalize;
   font-weight: 400;
   cursor: default;
@@ -330,7 +332,7 @@ button {
 
 @media (min-width: 350px) {
   .tile-title {
-    font-size: 16px;
+    font-size: 18px;
   }
 }
 
@@ -384,6 +386,13 @@ button {
 
 .template-block.high-priority-template .tile-title {
   text-transform: uppercase !important;
+  font-size: 17px !important;
+}
+
+@media (min-width: 350px) {
+  .high-priority-template .tile-title {
+    font-size: 20px;
+  }
 }
 
 .top-left {

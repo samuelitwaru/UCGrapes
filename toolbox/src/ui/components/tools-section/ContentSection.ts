@@ -10,8 +10,9 @@ export class ContentSection {
     iconsList: any;
     themeManager: ThemeManager
     createCTAComponent: CreateCTAComponent | undefined ;
-
-    constructor(iconsList: any) {
+    serviceId: string;
+    constructor(serviceId:string,iconsList: any) {
+        this.serviceId = serviceId;
         this.iconsList = iconsList;
         this.themeManager = new ThemeManager();
         this.container = document.createElement('div');
@@ -34,7 +35,7 @@ export class ContentSection {
         const ctaIconList = new CtaIconList(this.iconsList);
         const activeCtaColors = this.themeManager.currentTheme.ThemeCtaColors;
         const ctaColorList = new CtaColorPalette(activeCtaColors);
-        this.createCTAComponent = new CreateCTAComponent()
+        this.createCTAComponent = new CreateCTAComponent(this.serviceId)
         ctaButtonSection.render(this.container);
         ctaIconList.render(this.container);
         ctaColorList.render(this.container);

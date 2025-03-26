@@ -260,7 +260,7 @@ button {
   gap: 1rem;
 }
 
-#product-service-image {
+#product-service-image, img.content-page-block {
   max-height: 156px;
   min-height: 156px;
   width: 100%;

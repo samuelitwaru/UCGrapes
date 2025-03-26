@@ -17,7 +17,7 @@ export class HomeAppBar {
         logoSection.classList.add("logo-added");
         
         const logo: HTMLImageElement | any = document.createElement("img") as HTMLImageElement;
-        logo.src = this.editor.organisationLogo;
+        logo.src = this.editor.organisationLogo || `/Resources/ComfortaLogo1.png`;
         logo.style.height = "35px";
 
         logoSection.appendChild(logo);

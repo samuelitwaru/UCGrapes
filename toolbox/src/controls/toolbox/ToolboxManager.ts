@@ -79,44 +79,47 @@ export class ToolboxManager {
   }
 
   autoSave() {
-    const lastSavedStates = new Map<string, string>();
-    
     setInterval(async () => {
-      const activeVersion = await this.appVersions.getActiveVersion();
-      const pages = activeVersion.Pages;
-      
-      pages.forEach(async (page: any) => {
-        const pageId = page.PageId;
-        const localStorageKey = `data-${pageId}`;
-        const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
-        
-        let localStructureProperty = null;
-        if (page.PageType === "Menu") localStructureProperty = "PageMenuStructure";
-        else if (page.PageType === "Content") localStructureProperty = "PageContentStructure";
-        
-        if (!localStructureProperty || !pageData[localStructureProperty]) return;
-        
-        const localStructureString = JSON.stringify(pageData[localStructureProperty]);
-        
-        if (localStructureString !== page.PageStructure) {
-          const pageInfo = {
-            AppVersionId: activeVersion.AppVersionId,
-            PageId: pageId,
-            PageName: page.PageName,
-            PageType: page.PageType,
-            PageStructure: localStructureString,
-          };
-
-          try {
-            await this.toolboxService.autoSavePage(pageInfo);
-            lastSavedStates.set(pageId, localStructureString);
-            this.openToastMessage();
-          } catch (error) {
-            console.error(`Failed to save page ${page.PageName}:`, error);
-          }
-        }
-      });
+      this.savePages()
     }, 10000);
+  }
+
+  async savePages(publish=false){
+    const lastSavedStates = new Map<string, string>();
+    const activeVersion = await this.appVersions.getActiveVersion();
+    const pages = activeVersion.Pages;
+
+    pages.forEach(async (page: any) => {
+      const pageId = page.PageId;
+      const localStorageKey = `data-${pageId}`;
+      const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
+      
+      let localStructureProperty = null;
+      if (page.PageType === "Menu") localStructureProperty = "PageMenuStructure";
+      else if (page.PageType === "Content") localStructureProperty = "PageContentStructure";
+      
+      if (!localStructureProperty || !pageData[localStructureProperty]) return;
+      
+      const localStructureString = JSON.stringify(pageData[localStructureProperty]);
+      
+      if (localStructureString !== page.PageStructure) {
+        const pageInfo = {
+          AppVersionId: activeVersion.AppVersionId,
+          PageId: pageId,
+          PageName: page.PageName,
+          PageType: page.PageType,
+          PageStructure: localStructureString,
+        };
+
+        try {
+          await this.toolboxService.autoSavePage(pageInfo);
+          lastSavedStates.set(pageId, localStructureString);
+          if (!publish) this.openToastMessage();
+        } catch (error) {
+          console.error(`Failed to save page ${page.PageName}:`, error);
+        }
+      }
+    });
   }
 
   openToastMessage() {

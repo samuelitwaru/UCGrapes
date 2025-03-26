@@ -8,6 +8,7 @@ import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
+import { NewPageButton } from "./NewPageButton";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
 import { TileProperties } from "./TileProperties";
@@ -34,16 +35,19 @@ export class EditorEvents {
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
-    this.onLoad();
     this.onDragAndDrop();
     this.onSelected();
+    this.onLoad();
 
   }
 
   onLoad() {
     if (this.editor !== undefined) {
+
+      this.editor.on('load', () => {
         const wrapper = this.editor.getWrapper();
-        wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
+        if (wrapper) {
+          wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
             const richEditor = new RichEditor(e, this.editor);
             richEditor.activateEditor();
@@ -52,8 +56,13 @@ export class EditorEvents {
             (globalThis as any).pageData = this.pageData;
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
-        })
-        this.activateNavigators();
+          })
+        } else {
+          console.error("Wrapper not found!");
+        }
+      });
+
+      this.activateNavigators();
     }
   }
 
@@ -153,7 +162,8 @@ export class EditorEvents {
     if (this.pageData?.PageType === "Content") {
       const response = await this.toolboxService.getContentPageData(this.pageData?.PageId);
       if (response) {
-        new ContentSection(response.SDT_ProductService.CallToActions)
+        console.log(response.SDT_ProductService.CallToActions);
+        new ContentSection(response.SDT_ProductService.ProductServiceId, response.SDT_ProductService.CallToActions)
       }
     } else {
       const menuSection = document.getElementById('menu-page-section');
@@ -210,9 +220,11 @@ export class EditorEvents {
     } else{
       this.removeOtherEditors();
       this.activateNavigators();
-      const pageSelector = new PageSelector()
-      const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
-      pageSelector.render(childCcontainerDiv)
+      const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
+      newPageButton.render()
+      // const pageSelector = new PageSelector()
+      // const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
+      // pageSelector.render(childCcontainerDiv)
     }
   }
 

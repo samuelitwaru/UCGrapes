@@ -1,10 +1,17 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { Alert } from "../../ui/components/Alert";
 import { Modal } from "../../ui/components/Modal";
+import { AppVersionManager } from "../versions/AppVersionManager";
+import { ToolboxManager } from "./ToolboxManager";
 
 export class PublishManager {
   toolboxService: any;
+  toolBoxManager: ToolboxManager;
+  appVersions: AppVersionManager;
   constructor() {
     this.toolboxService = new ToolBoxService();
+    this.toolBoxManager = new ToolboxManager()
+    this.appVersions = new AppVersionManager();
   }
 
   openModal() {
@@ -58,12 +65,20 @@ export class PublishManager {
 
     saveBtn.addEventListener("click", (e) => {
       e.preventDefault();
+      
       console.log("Publishing...", input.checked);
-    //   this.processData()
-    //   this.toolboxService.createVersion().then((res) => {
-    //     modal.close();
-    //     this.refreshVersionList();
-    //   });
+
+      this.toolBoxManager.savePages(false).then(res => {
+        this.appVersions.getActiveVersion().then(res=>{
+          this.toolboxService.publishAppVersion(res.AppVersionId, input.checked)
+          .then((res:any)=>{
+            if(!res.message){
+              modal.close()
+              new Alert("success", "App published successfully")
+            }
+          })
+        })
+      })
     });
 
     cancelBtn.addEventListener("click", (e) => {
@@ -73,6 +88,10 @@ export class PublishManager {
   }
   public processData() {
     // process the data from here
+  }
+
+  publishAppVersion() {
+
   }
 
   private createButton(id: string, className: string, text: string): HTMLButtonElement {

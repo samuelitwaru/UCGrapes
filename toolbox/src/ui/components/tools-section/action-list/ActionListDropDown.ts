@@ -45,7 +45,7 @@ export class ActionListDropDown {
       },
       {
         name: "Dynamic Forms",
-        displayName: "Dynamic Forms",
+        displayName: "Forms",
         label: "Dynamic Forms",
         options: this.getDynamicForms(),
         canCreatePage: false,

@@ -136,6 +136,7 @@ export class TileProperties {
     const tileActionType = this.tileAttributes.Action?.ObjectType;
     const tileActionName = this.tileAttributes?.Text;
 
+    
     const actionHeader = document.querySelector(
       ".tb-dropdown-header"
     ) as HTMLElement;

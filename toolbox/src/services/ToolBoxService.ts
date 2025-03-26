@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -146,6 +146,17 @@ export class ToolBoxService {
         }),
       },
     );
+    return response;    
+  }
+
+  async createServiceCTA(payload:any) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-service-cta",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
     console.log(response)
     return response;    
   }
@@ -156,6 +167,22 @@ export class ToolBoxService {
       {
         method: "POST",
         body: JSON.stringify(pageData),
+      },
+      true
+    );
+
+    return response;
+  }
+
+  async publishAppVersion(appVersionId: string, notify=false) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/publish-appversion",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          AppVersionId: appVersionId,
+          Notify: notify,
+        }),
       },
       true
     );

@@ -41,7 +41,7 @@ export class CtaColorPalette {
             colorItem.appendChild(label);
             paletteDiv.appendChild(colorItem);
 
-            input.addEventListener('click', () => {
+            label.addEventListener('click', () => {
                 this.ctaManager.changeCtaColor(color);
             })
 

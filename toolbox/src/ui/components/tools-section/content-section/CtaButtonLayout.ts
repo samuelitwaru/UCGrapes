@@ -11,7 +11,7 @@ export class CtaButtonLayout {
 
     private init() {
         this.container.classList.add('cta-button-layout-container');
-        this.container.style.display = "flex";
+        this.container.style.display = "none";
 
         const plainBtn = document.createElement('button');
         plainBtn.classList.add('tb-btn', 'cta-button-layout');

@@ -3,7 +3,6 @@ import { AppConfig } from "../../AppConfig";
 import { Theme, ThemeColors, ThemeCtaColor, ThemeIcon } from "../../models/Theme";
 import { ColorPalette } from "../../ui/components/tools-section/ColorPalette";
 import { CtaColorPalette } from "../../ui/components/tools-section/content-section/CtaColorPalette";
-import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { IconList } from "../../ui/components/tools-section/icon-list/IconList";
 import { IconListCategories } from "../../ui/components/tools-section/icon-list/IconListCategories";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -93,7 +92,9 @@ export class ThemeManager {
   }
 
   getThemeCtaColor(colorName: string) {
-
+    if (!colorName) {
+      colorName = "CtaColorOne"
+    }
     if (!this.currentTheme || !this.currentTheme.ThemeCtaColors) {
       console.error("ThemeColors is undefined or invalid:", this.currentTheme);
       return null;
@@ -138,6 +139,23 @@ export class ThemeManager {
                     }
                   }
                 });
+              }
+            });
+          });
+        }
+
+        if (pageData.PageContentStructure) {
+          const ctas = pageData.PageContentStructure?.Cta;
+          ctas.forEach((cta: any, index: number) => {
+            iframes.forEach((iframe) => {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+              if (iframeDoc) {
+                const ctaElement = iframeDoc.querySelector(`#${cta.CtaId}`) as HTMLElement;
+
+                if (ctaElement) {
+                  const ctaButton = ctaElement.querySelector('.cta-styled-btn') as HTMLElement;
+                  ctaButton.style.backgroundColor = this.getThemeCtaColor(cta.CtaBGColor);
+                }
               }
             });
           });

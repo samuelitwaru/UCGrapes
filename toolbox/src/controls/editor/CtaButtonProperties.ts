@@ -12,7 +12,19 @@ export class CtaButtonProperties {
     }
 
     public setctaAttributes() {
+        this.displayButtonLayouts();
         this.ctaColorAttributes();
+    }
+
+    private displayButtonLayouts() {
+        const buttonLayoutContainer = document.querySelector(".cta-button-layout-container") as HTMLElement;
+        if (this.selectedComponent.parent().getClasses().includes("cta-button-container")) {
+            if (buttonLayoutContainer) {
+                buttonLayoutContainer.style.display = "flex";
+            }
+        } else {
+            if (buttonLayoutContainer) buttonLayoutContainer.style.display = "none";
+        }
     }
 
     ctaColorAttributes() {        
@@ -26,6 +38,5 @@ export class CtaButtonProperties {
                 input.checked = true;
             }
         });
-    }
-    
+    }    
 }

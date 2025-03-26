@@ -80,6 +80,8 @@ export class CtaManager {
                 "background-color": color.CtaColorCode,
             });
 
+            ctaButton.getEl().style.backgroundColor = color.CtaColorCode;
+
             const ctaButtonComponent = ctaButton.parent();
             this.contentMapper.updateContentCtaBGColor(ctaButtonComponent.getId(), color.CtaColorName);
         }

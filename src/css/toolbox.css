@@ -336,7 +336,7 @@ button {
   }
 }
 
-.tile-close-icon {
+.tile-close-icon, .tile-close-title {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -354,7 +354,8 @@ button {
   cursor: pointer;
 }
 
-.gjs-selected .tile-icon-section:hover .tile-close-icon {
+.gjs-selected .tile-icon-section:hover .tile-close-icon, 
+.gjs-selected .tile-icon-section:hover .tile-close-title {
   opacity: 1;
   visibility: visible;
   color: #222f54;
@@ -378,7 +379,8 @@ button {
 .tile-title-section:hover {
   border: 2px dashed #4c53577d;
 }
-.gjs-selected .tile-title-section:hover .tile-close-icon {
+.gjs-selected .tile-title-section:hover .tile-close-icon,
+.gjs-selected .tile-title-section:hover .tile-close-title {
   opacity: 1;
   visibility: visible;
   color: #222f54;

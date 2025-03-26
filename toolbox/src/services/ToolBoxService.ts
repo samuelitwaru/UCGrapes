@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -368,7 +368,7 @@ export class ToolBoxService {
   }
 
   async getLocationData() {
-    return await this.fetchAPI('/api/toolbox/v2/get-location');
+    return await this.fetchAPI('/api/toolbox/v2/get-location', {}, true);
   }
 
   async updateLocationInfo (data: any) {

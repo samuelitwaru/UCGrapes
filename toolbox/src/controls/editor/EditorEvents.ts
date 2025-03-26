@@ -1,8 +1,6 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
-import { demoPages } from "../../utils/test-data/pages";
-import { RichEditor } from "../quill/RichEditor";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
@@ -49,8 +47,6 @@ export class EditorEvents {
         if (wrapper) {
           wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
-            const richEditor = new RichEditor(e, this.editor);
-            richEditor.activateEditor();
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
@@ -105,7 +101,6 @@ export class EditorEvents {
       } else if (parentEl && parentEl.classList.contains("content-page-wrapper")) {
           contentMapper.moveContentRow(model.target.getId(), model.index);
       } else if (parentEl && parentEl.classList.contains("cta-button-container")) {
-          console.log("cta-button-container", model.target.getId());
           contentMapper.moveCta(model.target.getId(), model.index);
       }
     });
@@ -160,16 +155,12 @@ export class EditorEvents {
 
   async toggleSidebar() {
     if (this.pageData?.PageType === "Content") {
-      const response = await this.toolboxService.getContentPageData(this.pageData?.PageId);
-      if (response) {
-        console.log(response.SDT_ProductService.CallToActions);
-        new ContentSection(response.SDT_ProductService.ProductServiceId, response.SDT_ProductService.CallToActions)
-      }
+      new ContentSection(this.pageData)
     } else {
       const menuSection = document.getElementById('menu-page-section');
       const contentection = document.getElementById('content-page-section');
       if (menuSection) menuSection.style.display = 'block';
-      if (contentection) contentection.style.display = 'none';
+      if (contentection) contentection.remove();
     }
   }
 

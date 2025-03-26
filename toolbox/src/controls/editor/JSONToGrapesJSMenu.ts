@@ -62,7 +62,7 @@ export class JSONToGrapesJSMenu {
                 <div ${DefaultAttributes} class="tile-title-section" style="${
                     isThreeTiles ? "text-align: center;" : "text-align: left"
                   }">
-                  <span ${DefaultAttributes} class="tile-close-icon top-right">×</span>
+                  <span ${DefaultAttributes} class="tile-close-title top-right">×</span>
                   <span ${DefaultAttributes} class="tile-title" title="${
             tile.Text
           }">${this.truncateText(tile.Text, isThreeTiles)}</span>

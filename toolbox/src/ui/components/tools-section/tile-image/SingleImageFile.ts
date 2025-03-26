@@ -152,6 +152,8 @@ export class SingleImageFile {
         "background-blend-mode": "overlay",
       });
 
+      selectedComponent.getEl().style.backgroundColor = "transparent";
+
       (globalThis as any).tileMapper.updateTile(
         selectedComponent.parent().getId(),
         "BGImageUrl",
@@ -162,6 +164,12 @@ export class SingleImageFile {
         selectedComponent.parent().getId(),
         "Opacity",
         "0"
+      );
+
+      (globalThis as any).tileMapper.updateTile(
+        selectedComponent.parent().getId(),
+        "BGColor",
+        "transparent"
       );
 
       const tileWrapper = selectedComponent.parent();

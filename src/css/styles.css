@@ -1080,6 +1080,7 @@ h5#current-page-title {
   display: none;
   margin-bottom: 16px;
   gap: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .tb-btn.cta-button-layout {
@@ -2165,8 +2166,6 @@ button.add-new-service i {
 .page-selector h1 {
   font-size: 20px;
 }
-
-
 
 /* New Page Button */
 .menu-container {

@@ -19,3 +19,12 @@ export async function imageToBase64(url: string) {
     reader.readAsDataURL(blob);
   });
 }
+
+export function rgbToHex(rgb: string): string {
+  if (!rgb) return ""; 
+
+  const rgbArray = rgb.match(/\d+/g); 
+  return rgbArray && rgbArray.length === 3
+    ? `#${rgbArray.map((x) => Number(x).toString(16).padStart(2, "0")).join("")}`
+    : "";
+}

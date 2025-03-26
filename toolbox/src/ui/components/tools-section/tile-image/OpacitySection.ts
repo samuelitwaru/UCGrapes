@@ -82,10 +82,8 @@ export class OpacitySection {
     if (!selectedComponent) return;
 
     const opacity = value / 100;
-    console.log(opacity);
-    selectedComponent.addStyle({
-      "background-color": `rgba(0, 0, 0, ${opacity})`,
-    });
+
+    selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
 
     (globalThis as any).tileMapper.updateTile(
       selectedComponent.parent().getId(),

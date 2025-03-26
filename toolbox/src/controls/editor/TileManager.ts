@@ -130,14 +130,22 @@ export class TileManager {
   private removeTileIcon() {
     const tileIcon = (this.event.target as Element).closest(".tile-close-icon");
     if (tileIcon) {
-      const tileIconParent = tileIcon.parentElement;
-      const tileIconParentComponent = this.editor.Components.getWrapper().find(
-        "#" + tileIconParent?.id
-      )[0];
-      if (this.checkTileHasIconOrTitle(tileIconParentComponent)) {
-        tileIconParentComponent.addStyle({ display: "none" });
-      } else {
-        console.warn("Tile has no icon or title");
+      const templateWrapper = tileIcon.closest(".template-wrapper");
+      if (templateWrapper) {
+          const tileComponent = this.editor.Components.getWrapper().find(
+            "#" + templateWrapper?.id
+          )[0];
+
+          if (this.checkTileHasIconOrTitle(tileComponent)) {
+              (globalThis as any).tileMapper
+                .updateTile(tileComponent.getId(), "Icon", "");
+              const iconSection = tileComponent.find(".tile-icon-section")[0];
+              if (iconSection) {
+                iconSection.addStyle({ display: "none" });
+              }
+          } else {
+          console.warn("Tile has no icon or title");
+        }
       }
     }
   }
@@ -147,14 +155,22 @@ export class TileManager {
       ".tile-close-title"
     );
     if (tileTitle) {
-      const tileTitleParent = tileTitle.parentElement;
-      const tileTitleParentComponent = this.editor.Components.getWrapper().find(
-        "#" + tileTitleParent?.id
-      )[0];
-      if (this.checkTileHasIconOrTitle(tileTitleParentComponent)) {
-        tileTitleParentComponent.addStyle({ display: "none" });
-      } else {
-        console.warn("Tile has no icon or title");
+      const templateWrapper = tileTitle.closest(".template-wrapper");
+      if (templateWrapper) {
+          const tileComponent = this.editor.Components.getWrapper().find(
+            "#" + templateWrapper?.id
+          )[0];
+
+        if (this.checkTileHasIconOrTitle(tileComponent)) {
+            (globalThis as any).tileMapper
+              .updateTile(tileComponent.getId(), "Text", "");
+            const tileSection = tileComponent.find(".tile-title-section")[0];
+            if (tileSection) {
+              tileSection.addStyle({ display: "none" });
+            }
+        } else {
+          console.warn("Tile has no icon or title");
+        }
       }
     }
   }
@@ -162,30 +178,13 @@ export class TileManager {
   checkTileHasIconOrTitle(component: any): boolean {
     const parentComponent = component.parent();
     if (!parentComponent) return false;
-
-    const sectionComponents = parentComponent.components();
-    let hasIcon: boolean;
-    let hasTitle: boolean;
-
-    const hasTitleVisible = sectionComponents.some((comp: any) => {
-      const displayStyle = comp.getStyle()?.["display"];
-      return (
-        comp.getClasses().includes("tile-title-section") &&
-        displayStyle !== "none" &&
-        displayStyle !== undefined
-      );
-    });
-
-    const hasIconVisible = sectionComponents.some((comp: any) => {
-      const displayStyle = comp.getStyle()?.["display"];
-      return (
-        comp.getClasses().includes("tile-icon-section") &&
-        displayStyle !== "none" &&
-        displayStyle !== undefined
-      );
-    });
-
-    return hasTitleVisible && hasIconVisible;
+    const tileAttributes = (globalThis as any).tileMapper.getTile(parentComponent.getId(), component.getId());
+    if (tileAttributes) {
+      if (tileAttributes.Icon && tileAttributes.Text) {
+        return true;
+      }
+    }
+    return false;
   }
 
   removeCTa() {

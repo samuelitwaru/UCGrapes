@@ -94,6 +94,19 @@ export class ToolBoxService {
     return response;
   }
 
+  async duplicateVersion(appVersionId: string, versionName: any) {
+    console.log("AppVersionId:", appVersionId, "versionName: ", versionName)   
+    const response = await this.fetchAPI("/api/toolbox/v2/copy-appversion", {
+      method: "POST",
+      body: JSON.stringify({ 
+        AppVersionId: appVersionId,
+        AppVersionName: versionName
+      }),
+    });
+
+    return response;
+  }
+
   async activateVersion(versionId: any) {
     const response = await this.fetchAPI("/api/toolbox/v2/activate-appversion", {
       method: "POST",

@@ -5,7 +5,7 @@ import { Button } from "./Button";
 import { EditActions } from "./EditActions";
 import { Modal } from "./Modal";
 import { ThemeSelection } from "./ThemeSelection";
-import { VersionSelectionView } from "./VersionSelectionView";
+import { VersionSelectionView } from "../views/VersionSelectionView";
 
 export class NavbarButtons {
   container: HTMLElement;

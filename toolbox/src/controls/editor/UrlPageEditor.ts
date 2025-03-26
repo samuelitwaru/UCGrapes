@@ -110,7 +110,6 @@ export class UrlPageEditor {
                   if (fallback) {
                   }
                   fallback.style.display = "none";
-                  console.log("Object content loaded");
                 });
     
                 el.addEventListener("error", (e: any) => {

@@ -57,9 +57,16 @@ export class AppVersionController {
         }
     }
 
-    async createVersion(versionName: string): Promise<AppVersion | null> {
+    async createVersion(versionName: string, isDuplicating = false): Promise<AppVersion | null> {
         try {
-            const result = await this.toolboxService.createVersion(versionName);
+            let result;    
+            if (isDuplicating) {
+                const activeVersionId = await this.appVersion.getActiveVersionId();
+                result = await this.toolboxService.duplicateVersion(activeVersionId, versionName);
+            } else {
+                result = await this.toolboxService.createVersion(versionName);
+            }   
+            console.log("Version creation result:", result)         
             return result;
         } catch (error) {
             console.error("Version creation failed:", error);

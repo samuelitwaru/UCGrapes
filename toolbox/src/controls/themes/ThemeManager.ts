@@ -146,7 +146,7 @@ export class ThemeManager {
 
         if (pageData.PageContentStructure) {
           const ctas = pageData.PageContentStructure?.Cta;
-          ctas.forEach((cta: any, index: number) => {
+          ctas?.forEach((cta: any, index: number) => {
             iframes.forEach((iframe) => {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
               if (iframeDoc) {

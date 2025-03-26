@@ -213,13 +213,11 @@ export class EditorEvents {
       this.activateNavigators();
       const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
       newPageButton.render()
-      // const pageSelector = new PageSelector()
-      // const childCcontainerDiv = document.querySelector("#child-container") as HTMLDivElement
-      // pageSelector.render(childCcontainerDiv)
     }
   }
 
   removeOtherEditors(): void {
+    console.log('Removing other editors');
     const framelist = document.querySelectorAll('.mobile-frame');
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {

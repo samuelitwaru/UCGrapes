@@ -125,6 +125,7 @@ export class PageCreationService {
             rowId,
             tileId
         );
+        new PageAttacher().removeOtherEditors();
         new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
     }
 
@@ -224,6 +225,8 @@ export class PageCreationService {
             rowId,
             tileId
         );
+        
+        new PageAttacher().removeOtherEditors();
         new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
     }
 }

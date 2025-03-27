@@ -27,9 +27,9 @@ class App {
       currentThemeId,
       organisationLogo,
       addServiceButtonEvent
-    );
-    
-    this.toolboxApp = new ToolboxApp();
+      );
+      
+      this.toolboxApp = new ToolboxApp();
   }
 }
 

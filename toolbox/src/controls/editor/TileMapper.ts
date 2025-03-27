@@ -74,6 +74,12 @@ export class TileMapper {
         }
     }
 
+    updateTile2(component:any) {
+        console.log(component.getEl())
+        console.log(component.getStyle())
+        
+    }
+
     updateTile (tileId: string, attribute: string, value: any): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         data?.PageMenuStructure?.Rows?.forEach((row: any) => {

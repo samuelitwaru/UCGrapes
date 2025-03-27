@@ -1,6 +1,7 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
+import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
@@ -50,9 +51,11 @@ export class EditorEvents {
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
+            new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
           })
+          
         } else {
           console.error("Wrapper not found!");
         }

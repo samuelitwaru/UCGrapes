@@ -123,10 +123,10 @@ export class ToolboxManager {
     });
   }
 
-  openToastMessage() {
+  openToastMessage(message?: string) {
     const toast = document.createElement("div") as HTMLElement;
     toast.id = "toast";
-    toast.textContent = "Your changes are saved";
+    toast.textContent = message || "Your changes are saved";
 
     document.body.appendChild(toast);
 
@@ -143,14 +143,34 @@ export class ToolboxManager {
     }, 3000);
   }
 
-  closeDropDowns() {
-    // document.addEventListener("click", (e) => {
-      
-    //   const dropDowns = document.querySelectorAll(".theme-options-list");
-    //   dropDowns.forEach((dropDown) => {
-    //     console.log("clicked");
-    //     dropDown.classList.remove("show");
-    //   })
-    // });
+  unDoReDo() {    
+    const undoButton = document.getElementById("undo") as HTMLButtonElement;
+    const redoButton = document.getElementById("redo") as HTMLButtonElement;
+
+    const editorInstance = (globalThis as any).activeEditor;
+    if (!editorInstance) return;
+    console.log("Editor instance found:", editorInstance)
+    const um = editorInstance.UndoManager;
+
+    // Update button states
+    if (undoButton) {
+      undoButton.disabled = !um.hasUndo();
+      undoButton.onclick = (e) => {
+        e.preventDefault();
+        console.log("Undo button clicked")
+        um.undo();
+        editorInstance.refresh();
+      };
+    }
+
+    if (redoButton) {
+      redoButton.disabled = !um.hasRedo();
+      redoButton.onclick = (e) => {
+        e.preventDefault();
+        console.log("Redo button clicked")
+        um.redo();
+        editorInstance.refresh();
+      };
+    }
   }
 }

@@ -1497,7 +1497,7 @@ div#cta-selected-actions {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
-  align-items: center;
+  align-items: start;
   z-index: 999999999;
 }
 .popup {

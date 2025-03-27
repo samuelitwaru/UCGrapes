@@ -14,5 +14,10 @@ export class AppVersionManager {
         const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
         const versions = await toolboxService.getVersions();       
         return versions?.AppVersions?.find((version: any) => version.IsActive) || null;
-    }    
+    } 
+    
+    async getActiveVersionId() {
+        const activeVersion = await this.getActiveVersion();
+        return activeVersion.AppVersionId;
+    }
 }

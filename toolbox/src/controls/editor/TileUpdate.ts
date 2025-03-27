@@ -72,8 +72,8 @@ export class TileUpdate {
     
       private truncateText(titleLength: number, tileTitle: string) {
         const screenWidth: number = window.innerWidth;
-        if (tileTitle.length > (screenWidth <= 1440 ? titleLength : titleLength + 4)) {
-            return tileTitle.substring(0, screenWidth <= 1440 ? titleLength : titleLength + 4)
+        if (tileTitle.length > (screenWidth <= 280 ? titleLength : titleLength + 4)) {
+            return tileTitle.substring(0, screenWidth <= 280 ? titleLength : titleLength + 4)
                 .trim() + '..';
         }
         return tileTitle;

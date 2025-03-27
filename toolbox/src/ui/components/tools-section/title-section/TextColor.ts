@@ -40,6 +40,12 @@ export class TextColor {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
 
+        const iconPath = selectedComponent.find("path")[0];
+
+        if (iconPath) {
+          iconPath.addAttributes({"fill": colorValue});
+        }
+
         selectedComponent.addStyle({
           color: colorValue,
         });

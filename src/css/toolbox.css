@@ -151,13 +151,17 @@ button {
   height: 6rem;
 }
 
-@media screen and (min-width: 350px) {
+@media (min-width: 350px) {
   .template-block {
     height: 6rem;
   }
 
   .template-block.high-priority-template {
     height: 9rem;
+  }
+
+  .high-priority-template .tile-title {
+    font-size: 20px;
   }
 }
 
@@ -320,13 +324,19 @@ button {
 }
 
 .tile-title {
-  font-size: calc(12px + 0.5vw) !important;
+  font-size: 15px;
   text-transform: capitalize;
   font-weight: 400;
   cursor: default;
 }
 
-.tile-close-icon {
+@media (min-width: 350px) {
+  .tile-title {
+    font-size: 18px;
+  }
+}
+
+.tile-close-icon, .tile-close-title {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -344,7 +354,8 @@ button {
   cursor: pointer;
 }
 
-.gjs-selected .tile-icon-section:hover .tile-close-icon {
+.gjs-selected .tile-icon-section:hover .tile-close-icon, 
+.gjs-selected .tile-icon-section:hover .tile-close-title {
   opacity: 1;
   visibility: visible;
   color: #222f54;
@@ -368,7 +379,8 @@ button {
 .tile-title-section:hover {
   border: 2px dashed #4c53577d;
 }
-.gjs-selected .tile-title-section:hover .tile-close-icon {
+.gjs-selected .tile-title-section:hover .tile-close-icon,
+.gjs-selected .tile-title-section:hover .tile-close-title {
   opacity: 1;
   visibility: visible;
   color: #222f54;
@@ -376,6 +388,13 @@ button {
 
 .template-block.high-priority-template .tile-title {
   text-transform: uppercase !important;
+  font-size: 17px !important;
+}
+
+@media (min-width: 350px) {
+  .high-priority-template .tile-title {
+    font-size: 20px;
+  }
 }
 
 .top-left {
@@ -397,6 +416,7 @@ button {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0;
+  margin-top: 28px;
 }
 
 .cta-main-button {
@@ -578,6 +598,11 @@ button {
   bottom: -6px;
   right: -10px;
   cursor: pointer;
+  opacity: 0;
+}
+
+.img-button-container:hover .img-button-section span {
+  opacity: 1;
 }
 
 .img-button-section span:hover g {

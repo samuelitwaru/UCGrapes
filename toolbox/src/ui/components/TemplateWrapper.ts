@@ -1,13 +1,18 @@
+import { TemplateManager } from "../../controls/templates/TemplateManager";
+import { Alert } from "./Alert";
+import { ConfirmationBox } from "./ConfirmationBox";
+
 export class TemplateWrapper {
     private templateList: HTMLDivElement;
   
-    constructor(templates: { image: string }[]) {
+    constructor(templates: { id: string, image: string }[]) {
       this.templateList = document.createElement("div");
       this.templateList.id = "page-templates";
   
       templates.forEach((template, index) => {
         const templateWrapper = document.createElement("div");
         templateWrapper.className = "page-template-wrapper";
+        templateWrapper.id = template.id;
   
         const templateBlockNumber = document.createElement("div");
         templateBlockNumber.className = "page-template-block-number";
@@ -32,6 +37,35 @@ export class TemplateWrapper {
         templateWrapper.appendChild(templateBlockNumber);
         templateWrapper.appendChild(templateBlock);
   
+        templateWrapper.addEventListener("click", (e) => {
+          e.preventDefault();
+          const editor = (globalThis as any).activeEditor;
+          const page = (globalThis as any).pageData;
+
+          if (!editor && !page?.PageId) {
+            new Alert("error", "No active page selected");
+            return;
+          }
+
+          if (!page || page.PageType !== "Menu") {
+            new Alert("error", "Templates can only be applied to menu pages");
+            return;
+          }
+
+          const title = "Confirmation";
+          const message = "When you continue, all the changes you have made will be cleared.";
+      
+          const handleConfirmation = async () => {
+            new TemplateManager(page.PageId, editor, templateWrapper.id)
+          }
+          const confirmationBox = new ConfirmationBox(
+              message,
+              title,
+              handleConfirmation,
+          );
+          confirmationBox.render(document.body);          
+        });
+
         this.templateList.appendChild(templateWrapper);
       });
     }

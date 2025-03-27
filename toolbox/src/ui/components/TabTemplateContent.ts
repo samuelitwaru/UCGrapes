@@ -20,10 +20,10 @@ export class TabTemplateContent {
     div.id = "page-templates";
 
     const templates = [
-      { image: "/Resources/UCGrapes1/src/images/template-1.png" },
-      { image: "/Resources/UCGrapes1/src/images/template-2.png" },
-      { image: "/Resources/UCGrapes1/src/images/template-3.png" },
-      { image: "/Resources/UCGrapes1/src/images/template-4.png" },
+      { id: "template-one", image: "/Resources/UCGrapes1/src/images/template-1.png" },
+      { id: "template-two", image: "/Resources/UCGrapes1/src/images/template-2.png" },
+      { id: "template-three", image: "/Resources/UCGrapes1/src/images/template-3.png" },
+      { id: "template-four", image: "/Resources/UCGrapes1/src/images/template-4.png" },
     ];
 
     const templateWrapper = new TemplateWrapper(templates);

@@ -9,7 +9,7 @@ export class TileImgContainer {
   init() {
     this.container.classList.add("tile-img-container");
     this.container.id = "tile-img-container";
-
+    
     const img = document.createElement("img");
     img.alt = "Tile Image";
     img.src =
@@ -20,7 +20,8 @@ export class TileImgContainer {
     button.className = "tile-img-delete-button";
     button.id = "tile-img-delete-button";
     button.innerHTML = '<i class="fa fa-xmark"></i>';
-
+    
+    let tileAttributes;
     button.addEventListener("click", (e) => {
       e.preventDefault();
       const selectedComponent = (globalThis as any).selectedComponent;
@@ -28,7 +29,7 @@ export class TileImgContainer {
 
       const tileWrapper = selectedComponent.parent();
       const rowComponent = tileWrapper.parent();
-      const tileAttributes = (globalThis as any).tileMapper.getTile(
+      tileAttributes = (globalThis as any).tileMapper.getTile(
         rowComponent.getId(),
         tileWrapper.getId()
       );
@@ -57,6 +58,8 @@ export class TileImgContainer {
       ) as HTMLInputElement;
       slider.style.display = "none";
     });
+
+    console.log("TileImgContainer: ", tileAttributes);
 
     this.container.appendChild(img);
     this.container.appendChild(button);

@@ -15,7 +15,6 @@ export class NewPageButton {
         this.pageAttacher = new PageAttacher();
         const menuContainer = this.render();
         const childContainer = document.getElementById('child-container')
-        console.log(childContainer)
         childContainer?.appendChild(menuContainer)
     }
 

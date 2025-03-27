@@ -11,7 +11,6 @@ export class LoadLocationData {
         this.toolboxService = new ToolBoxService();
         this.editor = editor;
         this.pageData = pageData;
-        console.log("Reception: ", this.pageData?.PageName)
     }
 
     public async setupEditor() {

@@ -55,6 +55,7 @@ export class ColorPalette {
             currentColor === colorValue ? "transparent" : colorValue,
         });
 
+        console.log("Tile Attributes", colorValue);
         selectedComponent.getEl().style.backgroundColor = currentColor === colorValue ? "transparent" : colorValue,
 
         (globalThis as any).tileMapper.updateTile(

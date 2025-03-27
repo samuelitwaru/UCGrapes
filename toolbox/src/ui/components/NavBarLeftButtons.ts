@@ -82,68 +82,69 @@ export class NavbarLeftButtons {
   async debugApp() {
     try {
       // Get URLs from the application
-      const urlList: string[] = await this.getAppUrls();
+      const pageUrls: { page: string; urls: string[] }[] = await this.getAppUrls();
 
       // Use existing ToolBoxService to debug app
       const toolBoxService = new ToolBoxService();
-      const response = await toolBoxService.debugApp(urlList);
+      const response = await toolBoxService.debugApp(pageUrls);
       const results = response.DebugResults;
+      console.log(results);
 
       // Create detailed results div
       const resultsDiv = document.createElement("div");
-      resultsDiv.innerHTML = `
-        <style>
-          .debug-results { 
-            font-family: Arial, sans-serif; 
-            max-width: 100%;
-            overflow-x: auto;
-          }
-          .summary { 
-            margin-bottom: 15px; 
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-          }
-          .link-list { 
-            max-height: 300px; 
-            overflow-y: auto; 
-            border: 1px solid #e0e0e0;
-          }
-          .link-item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 8px; 
-            border-bottom: 1px solid #eee; 
-          }
-          .status-success { color: green; }
-          .status-error { color: red; }
-        </style>
-        <div class="debug-results">
-          <div class="summary">
-            <h3>Link Debugging Summary</h3>
-            <p>Total URLs checked: ${results.Summary.TotalUrls}</p>
-            <p>Successful URLs: ${results.Summary.SuccessCount}</p>
-            <p>Failed URLs: ${results.Summary.FailureCount}</p>
-          </div>
-          <div class="link-list">
-            <h4>Detailed Results:</h4>
-            ${results.UrlList.map(
-              (link: any) => `
-              <div class="link-item">
-                <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${
-                  link.Url
-                }</span>
-                <span class="status-${
-                  link.StatusCode.trim() === "200" ? "success" : "error"
-                }">
-                  ${link.StatusCode} - ${link.StatusMessage}
-                </span>
-              </div>
-            `
-            ).join("")}
-          </div>
-        </div>
-      `;
+      // resultsDiv.innerHTML = `
+      //   <style>
+      //     .debug-results { 
+      //       font-family: Arial, sans-serif; 
+      //       max-width: 100%;
+      //       overflow-x: auto;
+      //     }
+      //     .summary { 
+      //       margin-bottom: 15px; 
+      //       background-color: #f4f4f4;
+      //       padding: 10px;
+      //       border-radius: 5px;
+      //     }
+      //     .link-list { 
+      //       max-height: 300px; 
+      //       overflow-y: auto; 
+      //       border: 1px solid #e0e0e0;
+      //     }
+      //     .link-item { 
+      //       display: flex; 
+      //       justify-content: space-between; 
+      //       padding: 8px; 
+      //       border-bottom: 1px solid #eee; 
+      //     }
+      //     .status-success { color: green; }
+      //     .status-error { color: red; }
+      //   </style>
+      //   <div class="debug-results">
+      //     <div class="summary">
+      //       <h3>Link Debugging Summary</h3>
+      //       <p>Total URLs checked: ${results.Summary.TotalUrls}</p>
+      //       <p>Successful URLs: ${results.Summary.SuccessCount}</p>
+      //       <p>Failed URLs: ${results.Summary.FailureCount}</p>
+      //     </div>
+      //     <div class="link-list">
+      //       <h4>Detailed Results:</h4>
+      //       ${results.UrlList.map(
+      //         (link: any) => `
+      //         <div class="link-item">
+      //           <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${
+      //             link.Url
+      //           }</span>
+      //           <span class="status-${
+      //             link.StatusCode.trim() === "200" ? "success" : "error"
+      //           }">
+      //             ${link.StatusCode} - ${link.StatusMessage}
+      //           </span>
+      //         </div>
+      //       `
+      //       ).join("")}
+      //     </div>
+      //   </div>
+      // `;
 
       // Update modal content
       this.updateModalContent(resultsDiv);
@@ -154,49 +155,59 @@ export class NavbarLeftButtons {
   }
 
   async getAppUrls() {
-    let urls: string[] = [];
+    let pageUrls: { page: string; urls: string[] }[] = [];
+
     const activeVersion = await this.appVersions.getActiveVersion();
     const pages = activeVersion.Pages;
 
     for (const page of pages) {
-      const rows = page.PageMenuStructure?.Rows;
-      if (rows) {
-        for (const row of rows) {
-          const tiles = row.Tiles;
-          if (tiles) {
-            for (const tile of tiles) {
-              if (tile.Action?.ObjectUrl) {
-                urls.push(tile.Action.ObjectUrl);
-              }
+        let urls: string[] = [];
 
-              if (tile.BGImageUrl) {
-                urls.push(tile.BGImageUrl);
-              }
+        const rows = page.PageMenuStructure?.Rows;
+        if (rows) {
+            for (const row of rows) {
+                const tiles = row.Tiles;
+                if (tiles) {
+                    for (const tile of tiles) {
+                        if (tile.Action?.ObjectUrl) {
+                            urls.push(tile.Action.ObjectUrl);
+                        }
+
+                        if (tile.BGImageUrl) {
+                            urls.push(tile.BGImageUrl);
+                        }
+                    }
+                }
             }
-          }
         }
-      }
 
-      const content = page.PageContentStructure?.Content;
-      if (content) {
-        for (const item of content) {
-          if (item.Type == "Image" && item.ContentValue) {
-            urls.push(item.ContentValue);
-          }
+        const content = page.PageContentStructure?.Content;
+        if (content) {
+            for (const item of content) {
+                if (item.Type == "Image" && item.ContentValue) {
+                    urls.push(item.ContentValue);
+                }
+            }
         }
-      }
 
-      const ctas = page.PageContentStructure?.Cta;
-      if (ctas) {
-        for (const cta of ctas) {
-          if (cta.CtaButtonImgUrl) {
-            urls.push(cta.CtaButtonImgUrl);
-          }
+        const ctas = page.PageContentStructure?.Cta;
+        if (ctas) {
+            for (const cta of ctas) {
+                if (cta.CtaButtonImgUrl) {
+                    urls.push(cta.CtaButtonImgUrl);
+                }
+            }
         }
-      }
+
+        // Only add the page if it has URLs
+        if (urls.length > 0) {
+            pageUrls.push({ page: page.PageName || `Page-${pages.indexOf(page) + 1}`, urls });
+        }
     }
-    return urls;
-  }
+
+    return pageUrls;
+}
+
 
   updateModalContent(summary: any) {
     const modalBody = document.getElementById("debug-modal");

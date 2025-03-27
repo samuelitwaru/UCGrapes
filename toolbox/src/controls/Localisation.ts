@@ -1,8 +1,15 @@
-// import { dictionaryEn } from "../i18n/e";
-// import { dictionaryNl } from "../i18n/nl";
+import {I18n} from "i18n-js";
 
-// const Localisation = require("localisation");
+export class Localisation {
+    async loadTranslations(i18n: any, locale: any) {
+        const response = await fetch(`../i18n/${locale}.json`);
+        const translations = await response.json();
+    
+        i18n.store(translations);
+    }
+}
 
-// export const locale = new Localisation({defaultLocale: "en"});
-// locale.addDict("en", dictionaryEn);
-// locale.addDict("nl", dictionaryNl);
+
+// const i18n = new I18n();
+
+// export {i18n, loadTranslations};

@@ -101,7 +101,8 @@ export class ToolboxManager {
       if (!localStructureProperty || !pageData[localStructureProperty]) return;
       
       const localStructureString = JSON.stringify(pageData[localStructureProperty]);
-      
+      console.log(localStructureProperty)
+      console.log(page.PageStructure)
       if (localStructureString !== page.PageStructure) {
         const pageInfo = {
           AppVersionId: activeVersion.AppVersionId,

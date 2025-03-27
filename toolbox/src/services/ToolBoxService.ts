@@ -71,7 +71,7 @@ export class ToolBoxService {
     const response = await this.fetchAPI("/api/toolbox/v2/debug", {
       method: "POST",
       body: JSON.stringify({ 
-        UrlList: urlList
+        PageUrlList: urlList
       }),
     }, true);
 

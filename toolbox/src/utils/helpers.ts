@@ -28,3 +28,7 @@ export function rgbToHex(rgb: string): string {
     ? `#${rgbArray.map((x) => Number(x).toString(16).padStart(2, "0")).join("")}`
     : "";
 }
+
+export function truncateString(str: string, n: number): string {
+  return str.length > n ? str.slice(0, n) + "..." : str;
+}

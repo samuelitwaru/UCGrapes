@@ -7,6 +7,7 @@ import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
+import { FrameEvent } from "./FrameEvent";
 import { NewPageButton } from "./NewPageButton";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
@@ -34,10 +35,10 @@ export class EditorEvents {
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
+    new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
     this.onLoad();
-
   }
 
   onLoad() {
@@ -59,9 +60,10 @@ export class EditorEvents {
         } else {
           console.error("Wrapper not found!");
         }
-      });
 
-      this.activateNavigators();
+        this.frameEventListener();
+        this.activateNavigators();
+      });
     }
   }
 
@@ -143,6 +145,20 @@ export class EditorEvents {
             console.log("more than 3");
           }
     }
+  }
+
+  frameEventListener() {
+    const framelist = document.querySelectorAll('.mobile-frame');
+    framelist.forEach((frame: any) => {
+      if (frame.id.includes(this.frameId)) {
+        frame.addEventListener('click', (event:MouseEvent) => {
+          (globalThis as any).activeEditor = this.editor;
+          (globalThis as any).currentPageId = this.pageId;
+          (globalThis as any).pageData = this.pageData;
+          this.activateEditor();
+        });
+      }
+    })
   }
 
   activateEditor () {

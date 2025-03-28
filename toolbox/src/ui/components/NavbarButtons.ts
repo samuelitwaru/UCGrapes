@@ -7,6 +7,7 @@ import { Modal } from "./Modal";
 import { ThemeSelection } from "./ThemeSelection";
 import { VersionSelectionView } from "../views/VersionSelectionView";
 import { i18n } from "../../i18n/i18n";
+import { TreeComponent } from "./TreeComponent";
 
 export class NavbarButtons {
   container: HTMLElement;

@@ -54,7 +54,7 @@ export class PageAppBar {
         const pageTitle = document.createElement('h1');
         pageTitle.className = 'title';
     
-        const truncatedTitle = this.title.length > 20 ? this.title.substring(0, 16) + "..." : this.title;
+        const truncatedTitle = this.title.length > 16 ? this.title.substring(0, 16) + "..." : this.title;
         pageTitle.setAttribute('title', truncatedTitle || 'Page Name');
         pageTitle.textContent = truncatedTitle || 'Page Name';
     
@@ -115,24 +115,6 @@ export class PageAppBar {
             pageTitle.title = pageTitle.textContent || ""
         });
     
-        // pageTitle.addEventListener("blur", () => {
-        //     pageTitle.contentEditable = "false";
-        //     editHeader.style.display = "block";
-        //     saveChange.style.display = "none";
-        //     titleDiv.style.removeProperty("border-width");
-        //     pageTitle.style.whiteSpace = "";
-        //     pageTitle.style.overflow = "";
-        //     pageTitle.style.textOverflow = "";
-            
-        //     const frame = pageTitle.closest(".mobile-frame");
-        //     const frameWidth = frame?.clientWidth;
-        //     const length = frameWidth? (frameWidth <= 350 ? 16 : 24) : 16;
-
-        //     if (pageTitle.textContent && pageTitle.textContent.length > length) {
-        //         pageTitle.textContent = pageTitle.textContent.substring(0, length) + "...";
-        //     }
-        // });
-
         saveChange.addEventListener("click", (e) => {
             e.preventDefault();
             const appVersionManager = new AppVersionManager();

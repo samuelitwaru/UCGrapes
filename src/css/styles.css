@@ -283,7 +283,6 @@ span#scroll-right:hover {
 .home-app-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 12px 16px;
   width: 100%;
 }

@@ -34,7 +34,6 @@ export class NavbarLeftButtons {
       labelId: "debug_button_label",
     });
     debugButton.button.style.marginRight = "10px";
-
     debugButton.button.addEventListener("click", (e) => {
       e.preventDefault();
       this.initialiseDebug();
@@ -51,7 +50,7 @@ export class NavbarLeftButtons {
       variant: "outline",
       labelId: "navbar_tree_label",
     });
-
+    
     debugButton.render(this.container);
     treeButton.render(this.container);
 

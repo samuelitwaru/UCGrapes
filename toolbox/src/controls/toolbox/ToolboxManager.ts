@@ -20,7 +20,6 @@ export class ToolboxManager {
   public setUpNavBar() {
     this.autoSave();
     const navBar = document.getElementById("tb-navbar") as HTMLElement;
-
     // const navbarTitle = document.getElementById("navbar_title") as HTMLElement;
     // if (!navBar || !navbarTitle) {
     //   console.error("Navigation bar elements not found!");

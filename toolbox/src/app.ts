@@ -17,7 +17,6 @@ class ToolboxApp {
     this.config = AppConfig.getInstance();
     this.toolboxManager = new ToolboxManager();
     this.editor = new EditorManager();
-
     if (!this.config.isInitialized) {
       console.error("ToolboxApp created before AppConfig was initialized!");
     }

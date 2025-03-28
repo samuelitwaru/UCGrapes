@@ -33,6 +33,17 @@ export class NavbarButtons {
       labelId: "navbar_tree_label",
     });
 
+    treeButton.button.addEventListener("click", (e) => {
+      e.preventDefault()
+      const toolSection = document.getElementById('tools-section') as HTMLDivElement
+      const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
+      toolSection.style.display = "none"
+      mappingSection.style.display = "block"
+
+      const treeComp = new TreeComponent(this.appVersions) 
+  
+    })
+
     const publishButtonSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" viewBox="0 0 13 18">
         <path id="Path_958" data-name="Path 958" d="M13.5,3.594l-.519.507L7.925,9.263l1.038,1.06,3.814-3.9V18.644h1.444V6.429l3.814,3.9,1.038-1.06L14.019,4.1ZM7,20.119v1.475H20V20.119Z" transform="translate(-7 -3.594)" fill="#fff"></path>
       </svg>`;

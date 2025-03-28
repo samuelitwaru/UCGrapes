@@ -64,7 +64,8 @@ export class CategoryView {
             if (this.categoryData.name == "Service/Product Page") {
               // open popup
               const config = AppConfig.getInstance();
-              config.addServiceButtonEvent()
+              console.log(config.addServiceButtonEvent)
+              // config.addServiceButtonEvent()
             }
           });
         }

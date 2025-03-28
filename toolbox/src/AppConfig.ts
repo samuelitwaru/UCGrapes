@@ -42,7 +42,6 @@ export class AppConfig {
         console.warn("AppConfig already initialized - ignoring new data");
         return;
       }
-      
       this._themes = themes;
       this._services = services;
       this._forms = forms;

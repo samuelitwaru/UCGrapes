@@ -157,6 +157,10 @@ export class EditorEvents {
   }
 
   async toggleSidebar() {
+    const toolSection = document.getElementById('tools-section') as HTMLDivElement
+    const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
+    toolSection.style.display = "block"
+    mappingSection.style.display = "none"
     if (this.pageData?.PageType === "Content") {
       new ContentSection(this.pageData)
     } else {
@@ -194,7 +198,7 @@ export class EditorEvents {
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
-   
+    console.log(tileAttributes?.Action?.ObjectId)
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");

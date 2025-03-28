@@ -4,7 +4,7 @@ export const i18n = new I18n({
     en: {
       hello: "Hi!",
       inbox: {
-        zero: "You have no messages",
+        zero: "You have no messages yet",
         one: "You have one message",
         other: "You have %{count} messages",
       },

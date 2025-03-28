@@ -1,3 +1,5 @@
+import { i18n } from "../../../i18n/i18n";
+
 export class TabButtons {
     container: HTMLElement;
 
@@ -15,7 +17,7 @@ export class TabButtons {
 
         const pagesSpan = document.createElement('span');
         pagesSpan.id = 'sidebar_tabs_pages_label';
-        pagesSpan.innerText = 'Pages';
+        pagesSpan.innerText = i18n.t("sidebar.pages");
 
         pagesButton.appendChild(pagesSpan);
 
@@ -26,7 +28,7 @@ export class TabButtons {
 
         const templatesSpan = document.createElement('span');
         templatesSpan.id = 'sidebar_tabs_templates_label';
-        templatesSpan.innerText = 'Templates';
+        templatesSpan.innerText = i18n.t("sidebar.templates");
 
         templatesButton.appendChild(templatesSpan);
 

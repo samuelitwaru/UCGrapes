@@ -5,6 +5,7 @@ import { ToolsSection } from "../../ui/components/ToolsSection";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { PageAttacher } from "../../ui/components/tools-section/action-list/PageAttacher";
 import { NavbarLeftButtons } from "../../ui/components/NavBarLeftButtons";
+import { UndoRedoManager } from "./UndoRedoManager";
 
 export class ToolboxManager {
   appVersions: any;
@@ -30,7 +31,7 @@ export class ToolboxManager {
 
     const navBarButtons = new NavbarButtons();
     const leftNavBarButtons = new NavbarLeftButtons();
-    
+
     leftNavBarButtons.render(navBar);
     navBarButtons.render(navBar);
   }
@@ -80,11 +81,11 @@ export class ToolboxManager {
 
   autoSave() {
     setInterval(async () => {
-      this.savePages()
+      this.savePages();
     }, 10000);
   }
 
-  async savePages(publish=false){
+  async savePages(publish = false) {
     const lastSavedStates = new Map<string, string>();
     const activeVersion = await this.appVersions.getActiveVersion();
     const pages = activeVersion.Pages;
@@ -92,17 +93,23 @@ export class ToolboxManager {
     pages.forEach(async (page: any) => {
       const pageId = page.PageId;
       const localStorageKey = `data-${pageId}`;
-      const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
-      
+      const pageData = JSON.parse(
+        localStorage.getItem(localStorageKey) || "{}"
+      );
+
       let localStructureProperty = null;
-      if (page.PageType === "Menu") localStructureProperty = "PageMenuStructure";
-      else if (page.PageType === "Content") localStructureProperty = "PageContentStructure";
-      
+      if (page.PageType === "Menu")
+        localStructureProperty = "PageMenuStructure";
+      else if (page.PageType === "Content")
+        localStructureProperty = "PageContentStructure";
+
       if (!localStructureProperty || !pageData[localStructureProperty]) return;
-      
-      const localStructureString = JSON.stringify(pageData[localStructureProperty]);
-      console.log(localStructureProperty)
-      console.log(page.PageStructure)
+
+      const localStructureString = JSON.stringify(
+        pageData[localStructureProperty]
+      );
+      // console.log(localStructureProperty)
+      // console.log(page.PageStructure)
       if (localStructureString !== page.PageStructure) {
         const pageInfo = {
           AppVersionId: activeVersion.AppVersionId,
@@ -143,33 +150,33 @@ export class ToolboxManager {
     }, 3000);
   }
 
-  unDoReDo() {    
+  unDoReDo() {
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
 
-    const editorInstance = (globalThis as any).activeEditor;
-    if (!editorInstance) return;
-    console.log("Editor instance found:", editorInstance)
-    const um = editorInstance.UndoManager;
+    const currentPageId = (globalThis as any).currentPageId;
+    if (!currentPageId) return;
+    console.log("Editor instance found:", currentPageId);
+    const um = new UndoRedoManager(currentPageId);
 
     // Update button states
     if (undoButton) {
-      undoButton.disabled = !um.hasUndo();
+      // undoButton.disabled = !um.hasUndo();
       undoButton.onclick = (e) => {
         e.preventDefault();
-        console.log("Undo button clicked")
+        console.log("Undo button clicked");
         um.undo();
-        editorInstance.refresh();
+        // editorInstance.refresh();
       };
     }
 
     if (redoButton) {
-      redoButton.disabled = !um.hasRedo();
+      // redoButton.disabled = !um.hasRedo();
       redoButton.onclick = (e) => {
         e.preventDefault();
-        console.log("Redo button clicked")
+        console.log("Redo button clicked");
         um.redo();
-        editorInstance.refresh();
+        // editorInstance.refresh();
       };
     }
   }

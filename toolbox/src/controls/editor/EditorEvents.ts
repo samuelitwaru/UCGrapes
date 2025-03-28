@@ -51,7 +51,7 @@ export class EditorEvents {
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
-            new ToolboxManager().unDoReDo();
+            // new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
           })

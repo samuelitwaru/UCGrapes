@@ -2,6 +2,7 @@ import { PublishManager } from "../../controls/toolbox/PublishManager";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
 import { AppVersionManager } from "../../controls/versions/AppVersionManager";
 import { DebugController } from "../../controls/versions/DebugController";
+import { i18n } from "../../i18n/i18n";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { ShareLinkView } from "../views/ShareLinkView";
 import { Button } from "./Button";
@@ -29,7 +30,7 @@ export class NavbarLeftButtons {
         </svg>
     `;
 
-    let debugButton = new Button("debug-button", "Debug", {
+    let debugButton = new Button("debug-button", i18n.t("navbar.debug"), {
       labelId: "debug_button_label",
     });
     debugButton.button.style.marginRight = "10px";
@@ -45,7 +46,7 @@ export class NavbarLeftButtons {
         </svg>
     `;
 
-    let treeButton = new Button("open-mapping", "Share", {
+    let treeButton = new Button("open-mapping", i18n.t("navbar.share"), {
       svg: treeButtonSvg,
       variant: "outline",
       labelId: "navbar_tree_label",

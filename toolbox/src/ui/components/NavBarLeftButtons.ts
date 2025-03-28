@@ -1,6 +1,7 @@
 import { PublishManager } from "../../controls/toolbox/PublishManager";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
 import { AppVersionManager } from "../../controls/versions/AppVersionManager";
+import { DebugController } from "../../controls/versions/DebugController";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { ShareLinkView } from "../views/ShareLinkView";
 import { Button } from "./Button";
@@ -10,9 +11,11 @@ import { Modal } from "./Modal";
 export class NavbarLeftButtons {
   container: HTMLElement;
   appVersions: AppVersionManager;
+  debugController: DebugController;
 
   constructor() {
     this.appVersions = new AppVersionManager();
+    this.debugController = new DebugController();
     this.container = document.getElementById(
       "navbar-buttons-left"
     ) as HTMLElement;
@@ -31,8 +34,8 @@ export class NavbarLeftButtons {
     debugButton.button.style.marginRight = "10px";
     debugButton.button.addEventListener("click", (e) => {
       e.preventDefault();
-      this.showProgressModal();
-      this.debugApp();
+      this.initialiseDebug();
+      this.debugController.init();
     });
 
     const treeButtonSvg: string = `
@@ -54,163 +57,23 @@ export class NavbarLeftButtons {
     });
   }
 
-  showProgressModal() {
-    const div = document.createElement("div");
-    div.id = "debug-modal";
-    div.style.textAlign = "center";
-
-    const spinner = document.createElement("span");
-    spinner.innerHTML = `<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`;
-
-    const progressText = document.createElement("p");
-    progressText.textContent = "Debugging in progress please wait...";
-    div.appendChild(spinner);
-    div.appendChild(progressText);
+  initialiseDebug() {
+    const debugDiv = document.createElement("div");
+    debugDiv.id = "tb-debugging";
+    debugDiv.innerHTML = `
+      <div class="tb_debug-spinner-container">
+          <div class="tb_debug-spinner"></div>
+      </div>
+      <p style="text-align: center; font-size: 14px; margin-top: 10px">Please wait while we are checking the urls...</p>
+    `;
 
     const modal = new Modal({
-      title: "App debugging",
-      width: "600px",
-      body: div,
+      title: "App Debugging",
+      width: "800px",
+      body: debugDiv,
     });
 
     modal.open();
-  }
-
-  async debugApp() {
-    try {
-      // Get URLs from the application
-      const pageUrls: { page: string; urls: string[] }[] = await this.getAppUrls();
-
-      // Use existing ToolBoxService to debug app
-      const toolBoxService = new ToolBoxService();
-      const response = await toolBoxService.debugApp(pageUrls);
-      const results = response.DebugResults;
-      console.log(results);
-
-      // Create detailed results div
-      const resultsDiv = document.createElement("div");
-      // resultsDiv.innerHTML = `
-      //   <style>
-      //     .debug-results { 
-      //       font-family: Arial, sans-serif; 
-      //       max-width: 100%;
-      //       overflow-x: auto;
-      //     }
-      //     .summary { 
-      //       margin-bottom: 15px; 
-      //       background-color: #f4f4f4;
-      //       padding: 10px;
-      //       border-radius: 5px;
-      //     }
-      //     .link-list { 
-      //       max-height: 300px; 
-      //       overflow-y: auto; 
-      //       border: 1px solid #e0e0e0;
-      //     }
-      //     .link-item { 
-      //       display: flex; 
-      //       justify-content: space-between; 
-      //       padding: 8px; 
-      //       border-bottom: 1px solid #eee; 
-      //     }
-      //     .status-success { color: green; }
-      //     .status-error { color: red; }
-      //   </style>
-      //   <div class="debug-results">
-      //     <div class="summary">
-      //       <h3>Link Debugging Summary</h3>
-      //       <p>Total URLs checked: ${results.Summary.TotalUrls}</p>
-      //       <p>Successful URLs: ${results.Summary.SuccessCount}</p>
-      //       <p>Failed URLs: ${results.Summary.FailureCount}</p>
-      //     </div>
-      //     <div class="link-list">
-      //       <h4>Detailed Results:</h4>
-      //       ${results.UrlList.map(
-      //         (link: any) => `
-      //         <div class="link-item">
-      //           <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${
-      //             link.Url
-      //           }</span>
-      //           <span class="status-${
-      //             link.StatusCode.trim() === "200" ? "success" : "error"
-      //           }">
-      //             ${link.StatusCode} - ${link.StatusMessage}
-      //           </span>
-      //         </div>
-      //       `
-      //       ).join("")}
-      //     </div>
-      //   </div>
-      // `;
-
-      // Update modal content
-      this.updateModalContent(resultsDiv);
-    } catch (error) {
-      console.error("Error:", error);
-      this.updateModalContent("An error occurred during debugging.");
-    }
-  }
-
-  async getAppUrls() {
-    let pageUrls: { page: string; urls: string[] }[] = [];
-
-    const activeVersion = await this.appVersions.getActiveVersion();
-    const pages = activeVersion.Pages;
-
-    for (const page of pages) {
-        let urls: string[] = [];
-
-        const rows = page.PageMenuStructure?.Rows;
-        if (rows) {
-            for (const row of rows) {
-                const tiles = row.Tiles;
-                if (tiles) {
-                    for (const tile of tiles) {
-                        if (tile.Action?.ObjectUrl) {
-                            urls.push(tile.Action.ObjectUrl);
-                        }
-
-                        if (tile.BGImageUrl) {
-                            urls.push(tile.BGImageUrl);
-                        }
-                    }
-                }
-            }
-        }
-
-        const content = page.PageContentStructure?.Content;
-        if (content) {
-            for (const item of content) {
-                if (item.Type == "Image" && item.ContentValue) {
-                    urls.push(item.ContentValue);
-                }
-            }
-        }
-
-        const ctas = page.PageContentStructure?.Cta;
-        if (ctas) {
-            for (const cta of ctas) {
-                if (cta.CtaButtonImgUrl) {
-                    urls.push(cta.CtaButtonImgUrl);
-                }
-            }
-        }
-
-        // Only add the page if it has URLs
-        if (urls.length > 0) {
-            pageUrls.push({ page: page.PageName || `Page-${pages.indexOf(page) + 1}`, urls });
-        }
-    }
-
-    return pageUrls;
-}
-
-
-  updateModalContent(summary: any) {
-    const modalBody = document.getElementById("debug-modal");
-    if (modalBody) {
-      modalBody.innerHTML = `${summary.innerHTML}`;
-    }
   }
 
   render(container: HTMLElement) {

@@ -39,13 +39,12 @@ export class NavbarLeftButtons {
         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.293 2.293a1 1 0 0 1 1.414 0l3 3a1 1 0 0 1-1.414 1.414L13 5.414V15a1 1 0 1 1-2 0V5.414L9.707 6.707a1 1 0 0 1-1.414-1.414l3-3zM4 11a2 2 0 0 1 2-2h2a1 1 0 0 1 0 2H6v9h12v-9h-2a1 1 0 1 1 0-2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9z" fill="#0D0D0D"/>
         </svg>
     `;
-    
     let treeButton = new Button("open-mapping", "Share", {
       svg: treeButtonSvg,
       variant: "outline",
       labelId: "navbar_tree_label",
     });
-
+    
     debugButton.render(this.container);
     treeButton.render(this.container);
 
@@ -80,68 +79,69 @@ export class NavbarLeftButtons {
   async debugApp() {
     try {
       // Get URLs from the application
-      const urlList: string[] = await this.getAppUrls();
+      const pageUrls: { page: string; urls: string[] }[] = await this.getAppUrls();
 
       // Use existing ToolBoxService to debug app
       const toolBoxService = new ToolBoxService();
-      const response = await toolBoxService.debugApp(urlList);
+      const response = await toolBoxService.debugApp(pageUrls);
       const results = response.DebugResults;
+      console.log(results);
 
       // Create detailed results div
       const resultsDiv = document.createElement("div");
-      resultsDiv.innerHTML = `
-        <style>
-          .debug-results { 
-            font-family: Arial, sans-serif; 
-            max-width: 100%;
-            overflow-x: auto;
-          }
-          .summary { 
-            margin-bottom: 15px; 
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-          }
-          .link-list { 
-            max-height: 300px; 
-            overflow-y: auto; 
-            border: 1px solid #e0e0e0;
-          }
-          .link-item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 8px; 
-            border-bottom: 1px solid #eee; 
-          }
-          .status-success { color: green; }
-          .status-error { color: red; }
-        </style>
-        <div class="debug-results">
-          <div class="summary">
-            <h3>Link Debugging Summary</h3>
-            <p>Total URLs checked: ${results.Summary.TotalUrls}</p>
-            <p>Successful URLs: ${results.Summary.SuccessCount}</p>
-            <p>Failed URLs: ${results.Summary.FailureCount}</p>
-          </div>
-          <div class="link-list">
-            <h4>Detailed Results:</h4>
-            ${results.UrlList.map(
-              (link: any) => `
-              <div class="link-item">
-                <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${
-                  link.Url
-                }</span>
-                <span class="status-${
-                  link.StatusCode.trim() === "200" ? "success" : "error"
-                }">
-                  ${link.StatusCode} - ${link.StatusMessage}
-                </span>
-              </div>
-            `
-            ).join("")}
-          </div>
-        </div>
-      `;
+      // resultsDiv.innerHTML = `
+      //   <style>
+      //     .debug-results { 
+      //       font-family: Arial, sans-serif; 
+      //       max-width: 100%;
+      //       overflow-x: auto;
+      //     }
+      //     .summary { 
+      //       margin-bottom: 15px; 
+      //       background-color: #f4f4f4;
+      //       padding: 10px;
+      //       border-radius: 5px;
+      //     }
+      //     .link-list { 
+      //       max-height: 300px; 
+      //       overflow-y: auto; 
+      //       border: 1px solid #e0e0e0;
+      //     }
+      //     .link-item { 
+      //       display: flex; 
+      //       justify-content: space-between; 
+      //       padding: 8px; 
+      //       border-bottom: 1px solid #eee; 
+      //     }
+      //     .status-success { color: green; }
+      //     .status-error { color: red; }
+      //   </style>
+      //   <div class="debug-results">
+      //     <div class="summary">
+      //       <h3>Link Debugging Summary</h3>
+      //       <p>Total URLs checked: ${results.Summary.TotalUrls}</p>
+      //       <p>Successful URLs: ${results.Summary.SuccessCount}</p>
+      //       <p>Failed URLs: ${results.Summary.FailureCount}</p>
+      //     </div>
+      //     <div class="link-list">
+      //       <h4>Detailed Results:</h4>
+      //       ${results.UrlList.map(
+      //         (link: any) => `
+      //         <div class="link-item">
+      //           <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis;">${
+      //             link.Url
+      //           }</span>
+      //           <span class="status-${
+      //             link.StatusCode.trim() === "200" ? "success" : "error"
+      //           }">
+      //             ${link.StatusCode} - ${link.StatusMessage}
+      //           </span>
+      //         </div>
+      //       `
+      //       ).join("")}
+      //     </div>
+      //   </div>
+      // `;
 
       // Update modal content
       this.updateModalContent(resultsDiv);
@@ -152,49 +152,59 @@ export class NavbarLeftButtons {
   }
 
   async getAppUrls() {
-    let urls: string[] = [];
+    let pageUrls: { page: string; urls: string[] }[] = [];
+
     const activeVersion = await this.appVersions.getActiveVersion();
     const pages = activeVersion.Pages;
 
     for (const page of pages) {
-      const rows = page.PageMenuStructure?.Rows;
-      if (rows) {
-        for (const row of rows) {
-          const tiles = row.Tiles;
-          if (tiles) {
-            for (const tile of tiles) {
-              if (tile.Action?.ObjectUrl) {
-                urls.push(tile.Action.ObjectUrl);
-              }
+        let urls: string[] = [];
 
-              if (tile.BGImageUrl) {
-                urls.push(tile.BGImageUrl);
-              }
+        const rows = page.PageMenuStructure?.Rows;
+        if (rows) {
+            for (const row of rows) {
+                const tiles = row.Tiles;
+                if (tiles) {
+                    for (const tile of tiles) {
+                        if (tile.Action?.ObjectUrl) {
+                            urls.push(tile.Action.ObjectUrl);
+                        }
+
+                        if (tile.BGImageUrl) {
+                            urls.push(tile.BGImageUrl);
+                        }
+                    }
+                }
             }
-          }
         }
-      }
 
-      const content = page.PageContentStructure?.Content;
-      if (content) {
-        for (const item of content) {
-          if (item.Type == "Image" && item.ContentValue) {
-            urls.push(item.ContentValue);
-          }
+        const content = page.PageContentStructure?.Content;
+        if (content) {
+            for (const item of content) {
+                if (item.Type == "Image" && item.ContentValue) {
+                    urls.push(item.ContentValue);
+                }
+            }
         }
-      }
 
-      const ctas = page.PageContentStructure?.Cta;
-      if (ctas) {
-        for (const cta of ctas) {
-          if (cta.CtaButtonImgUrl) {
-            urls.push(cta.CtaButtonImgUrl);
-          }
+        const ctas = page.PageContentStructure?.Cta;
+        if (ctas) {
+            for (const cta of ctas) {
+                if (cta.CtaButtonImgUrl) {
+                    urls.push(cta.CtaButtonImgUrl);
+                }
+            }
         }
-      }
+
+        // Only add the page if it has URLs
+        if (urls.length > 0) {
+            pageUrls.push({ page: page.PageName || `Page-${pages.indexOf(page) + 1}`, urls });
+        }
     }
-    return urls;
-  }
+
+    return pageUrls;
+}
+
 
   updateModalContent(summary: any) {
     const modalBody = document.getElementById("debug-modal");

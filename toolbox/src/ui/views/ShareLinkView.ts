@@ -1,4 +1,5 @@
 import { AppVersionController } from "../../controls/versions/AppVersionController";
+import { i18n } from "../../i18n/i18n";
 import { Modal } from "../components/Modal";
 
 export class ShareLinkView {
@@ -38,7 +39,8 @@ export class ShareLinkView {
     private createModalContent(): HTMLDivElement {
         const div = document.createElement("div");
         const p = document.createElement("p");
-        p.innerText = "A shareable link has been generated for you. Copy it and share for previews!";
+        p.innerText = i18n.t("hello");
+        // p.innerText = "A shareable link has been generated for you. Copy it and share for previews!";
         
         const linkSection = this.createLinkSection();
         const submitSection = this.createSubmitSection(linkSection);

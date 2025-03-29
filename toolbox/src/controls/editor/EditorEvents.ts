@@ -214,7 +214,7 @@ export class EditorEvents {
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
-    console.log(tileAttributes?.Action?.ObjectId)
+
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
@@ -228,19 +228,22 @@ export class EditorEvents {
       }
 
       this.removeOtherEditors();
+      this.activateNavigators();
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }
     } else{
       this.removeOtherEditors();
-      this.activateNavigators();
-      const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
-      newPageButton.render()
+      if (selectedComponent.getClasses().includes('template-block')) {
+        const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
+        newPageButton.render();
+        const activateNav = this.activateNavigators();
+        activateNav.scrollBy(200)
+      }
     }
   }
 
   removeOtherEditors(): void {
-    console.log('Removing other editors');
     const framelist = document.querySelectorAll('.mobile-frame');
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {
@@ -263,9 +266,11 @@ export class EditorEvents {
     const prevButton = document.getElementById("scroll-left") as HTMLElement;
     const nextButton = document.getElementById("scroll-right") as HTMLElement;
     const frames = document.querySelectorAll(".mobile-frame");
+    const menuContainer = document.querySelector(".menu-container") as HTMLElement;
 
     // Show navigation buttons only when content overflows
-    const totalFramesWidth = Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0);
+    const menuWidth = menuContainer ? menuContainer.clientWidth : 0;
+    const totalFramesWidth = Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0) + menuWidth;
     const containerWidth = scrollContainer.clientWidth;
 
     if (totalFramesWidth > containerWidth) {
@@ -288,8 +293,9 @@ export class EditorEvents {
     scrollContainer.style.setProperty("justify-content", alignment);
 
     const scrollBy = (offset: number) => {
+        const adjustedOffset = offset + menuWidth;
         scrollContainer.scrollTo({
-            left: scrollContainer.scrollLeft + offset,
+            left: scrollContainer.scrollLeft + adjustedOffset,
             behavior: "smooth",
         });
     };

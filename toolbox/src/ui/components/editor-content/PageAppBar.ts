@@ -53,10 +53,13 @@ export class PageAppBar {
     
         const pageTitle = document.createElement('h1');
         pageTitle.className = 'title';
-    
+        
+
         const truncatedTitle = this.title.length > 16 ? this.title.substring(0, 16) + "..." : this.title;
+        const  titleSpan= document.createElement('span');
+        titleSpan.textContent = truncatedTitle || 'Page Name';
         pageTitle.setAttribute('title', truncatedTitle || 'Page Name');
-        pageTitle.textContent = truncatedTitle || 'Page Name';
+        pageTitle.appendChild(titleSpan);
     
         // Create a container div for the edit/save icons
         const iconContainer = document.createElement('div');

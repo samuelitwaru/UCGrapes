@@ -11,6 +11,7 @@ import { LoadCalendarData } from "./LoadCalendarData";
 import { LoadLocationData } from "./LoadLocationData";
 import { LoadMyActivityData } from "./LoadMyActivityData";
 import { LoadReceptionData } from "./LoadReceptionData";
+import { MapsPageEditor } from "./MapsPageEditor";
 import { UrlPageEditor } from "./UrlPageEditor";
 
 export class ChildEditor {
@@ -52,13 +53,19 @@ export class ChildEditor {
     };
 
     let converter;
-    if (this.pageData?.PageType === "Menu") {
+    console.log("PageType:", this.pageData?.PageType);
+    if (
+        this.pageData?.PageType === "Menu" ||
+        this.pageData?.PageType === "MyLiving" ||
+        this.pageData?.PageType === "MyCare" ||
+        this.pageData?.PageType === "MyService" 
+      ) {
       converter = new JSONToGrapesJSMenu(this.pageData);
       setUpEditor(converter);
-    } else if (this.pageData?.PageName === "Location") {
+    } else if (this.pageData?.PageType === "Location") {
       const locationEditor = new LoadLocationData(childEditor, this.pageData);
       locationEditor.setupEditor();
-    } else if (this.pageData?.PageName === "Reception") {
+    } else if (this.pageData?.PageType === "Reception") {
       const receptionEditor = new LoadReceptionData(childEditor, this.pageData);
       receptionEditor.setupEditor();
     } else if (this.pageData?.PageType === "Content") {
@@ -70,7 +77,13 @@ export class ChildEditor {
     ) {
       const urlPageEditor = new UrlPageEditor(childEditor);
       urlPageEditor.initialise(tileAttributes.Action);
+    }else if (
+      this.pageData?.PageType === "Maps"
+    ) {
+      const mapsPageEditor = new MapsPageEditor(childEditor);
+      mapsPageEditor.initialise(tileAttributes.Action);
     } else if (this.pageData?.PageType === "MyActivity") {
+      console.log("MyActivity")
       const activityEditor = new LoadMyActivityData(childEditor);
       activityEditor.load();
     } else if (this.pageData?.PageType === "Calendar") {

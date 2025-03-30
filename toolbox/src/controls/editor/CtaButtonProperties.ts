@@ -1,3 +1,4 @@
+import { truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
 export class CtaButtonProperties {
@@ -14,6 +15,7 @@ export class CtaButtonProperties {
     public setctaAttributes() {
         this.displayButtonLayouts();
         this.ctaColorAttributes();
+        this.ctaActionDisplay();
     }
 
     private displayButtonLayouts() {
@@ -38,5 +40,23 @@ export class CtaButtonProperties {
                 input.checked = true;
             }
         });
-    }    
+    }  
+    
+    ctaActionDisplay () {
+        const contentSection = document.querySelector("#content-page-section");
+        const ctaActionDiv = document.createElement("div")
+        console.log("this.selectedComponent", contentSection);
+        ctaActionDiv.id = "cta-selected-actions";
+        ctaActionDiv.style.display = "flex";
+
+        const type = document.createElement("span");
+        type.innerHTML = `<strong>Type:</strong> ${this.ctaAttributes.CtaType}`;
+        ctaActionDiv.appendChild(type);
+
+        const action = document.createElement("span");
+        action.innerHTML = `<strong>Action:</strong> ${truncateString(this.ctaAttributes.CtaAction, 30)}`;
+        ctaActionDiv.appendChild(action);
+
+        contentSection?.appendChild(ctaActionDiv);
+    }
 }

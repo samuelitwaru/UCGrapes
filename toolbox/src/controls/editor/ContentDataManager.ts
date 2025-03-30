@@ -75,8 +75,8 @@ export class ContentDataManager {
     }
 
     private updateMapper(descComponent: any, contentDescription: any) {
-        const parentComponent = descComponent.parent();
-        descComponent.replaceWith(`<div ${DefaultAttributes} id="contentDescription">${contentDescription}</div>`);
+        const parentComponent = descComponent.parent(); 
+        descComponent.replaceWith(`<div ${DefaultAttributes} id="contentDescription">${this.addGrapesAttributes(contentDescription)}</div>`);
         this.contentMapper.updateContentDescription(parentComponent.getId(), contentDescription);
     }
 
@@ -206,4 +206,24 @@ export class ContentDataManager {
             console.error("Error deleting media:", error);
         }
     }
+
+    addGrapesAttributes(descContainerHtml: string) {
+        const descContainer = document.createElement("div");
+        if (typeof descContainerHtml === "string") {
+          descContainer.innerHTML = descContainerHtml;
+        }
+    
+        const allElements = descContainer.querySelectorAll("*");
+        allElements.forEach((element) => {
+          element.setAttribute("data-gjs-draggable", "false");
+          element.setAttribute("data-gjs-selectable", "false");
+          element.setAttribute("data-gjs-editable", "false");
+          element.setAttribute("data-gjs-highlightable", "false");
+          element.setAttribute("data-gjs-droppable", "false");
+          element.setAttribute("data-gjs-resizable", "false");
+          element.setAttribute("data-gjs-hoverable", "false");
+        });
+    
+        return descContainer.innerHTML;
+      }
 }

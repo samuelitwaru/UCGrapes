@@ -85,7 +85,7 @@ export class TreeComponent {
     }
 
     showAllPages() {
-        new AllPagesComponent(this.pages)
+        new AllPagesComponent(this.version)
     }
 
     createPageTree(rootPageId:string, childDivId:string) {

@@ -36,6 +36,9 @@ export class EditorManager {
     this.homepage = versions.AppVersions.find(
       (version: any) => version.IsActive == true
     )?.Pages.find((page: any) => page.PageName === "Home");
+    console.log(this.homepage)
+    const mainContainer = document.getElementById('main-content') as HTMLDivElement
+    mainContainer.innerHTML = ""
     this.setUpEditorFrame();
     this.setUpEditor();
   }

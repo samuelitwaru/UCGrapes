@@ -1,17 +1,29 @@
+import { EditorManager } from "../../controls/editor/EditorManager";
+import { ToolBoxService } from "../../services/ToolBoxService";
+import { Alert } from "./Alert";
+import { Modal } from "./Modal";
+
 export class AllPagesComponent {
     pages: any[];
-    constructor(pages:any[]){
-        this.pages = pages
+    toolboxService: ToolBoxService;
+    appVersion: any;
+    constructor(appVersion:any){
+        this.appVersion = appVersion
+        this.pages = this.appVersion.Pages
+        this.toolboxService = new ToolBoxService()
+        this.showList()
+    }
 
+    showList() {
         const listContainer = document.createElement("ul");
         listContainer.classList.add("tb-custom-list");
         this.pages.forEach(page => {
             const listItem = this.buildListItem(page)
-            console.log(listItem)
             listContainer.appendChild(listItem)
         })
 
         const treeContainer = document.getElementById("tree-container") as HTMLDivElement
+        treeContainer.innerHTML = ""
         treeContainer.appendChild(listContainer);
     }
 
@@ -48,11 +60,7 @@ export class AllPagesComponent {
         updateIcon.setAttribute("data-id", page.PageId);
 
         deleteIcon.addEventListener("click", (event) => 
-            this.handleDelete()
-        );
-
-        updateIcon.addEventListener("click", (event) =>
-            this.handleUpdate()
+            this.handleDelete(event)
         );
 
         menuItem.appendChild(toggle);
@@ -60,7 +68,7 @@ export class AllPagesComponent {
             menuItem.style.display = "none";
         }
         if (page.PageName !== "Home") {
-            iconDiv.append(updateIcon);
+            // iconDiv.append(updateIcon);
             iconDiv.append(deleteIcon);
             menuItem.appendChild(iconDiv);
         }
@@ -68,11 +76,68 @@ export class AllPagesComponent {
         return listItem;
     }
 
-    handleDelete = () => {
-        alert('add delete function')
+    handleDelete(event:Event) {
+        const el = event.target as HTMLElement
+        const pageId = el.dataset.id as string
+        const body = document.createElement("div")
+        const modal = document.createElement("div");
+        modal.classList.add("popup-body");
+        modal.id = "confirmation_modal_message";
+        modal.innerText = "Are you sure you want to delete this page?";
+
+        // Create footer container
+        const footer = document.createElement("div");
+        footer.classList.add("popup-footer");
+
+        // Create delete button
+        const deleteButton = document.createElement("button");
+        deleteButton.id = "yes_delete";
+        deleteButton.classList.add("tb-btn", "tb-btn-primary");
+        deleteButton.innerText = "Delete";
+
+        // Create cancel button
+        const cancelButton = document.createElement("button");
+        cancelButton.id = "close_popup";
+        cancelButton.classList.add("tb-btn", "tb-btn-outline");
+        cancelButton.innerText = "Cancel";
+
+        // Append buttons to footer
+        footer.appendChild(deleteButton);
+        footer.appendChild(cancelButton);
+
+        // Append modal and footer to document body
+        body.appendChild(modal);
+        body.appendChild(footer);
+
+        const options = {
+            title: 'Delete Page', 
+            width: '100', 
+            body: body
+        }
+        const deleteModal = new Modal(options)
+        deleteModal.open()
+
+        cancelButton.addEventListener('click', (e)=>{
+            deleteModal.close()
+        })
+
+        deleteButton.addEventListener('click', (e)=>{
+            this.toolboxService.deletePage(this.appVersion.AppVersionId, pageId).then((res)=>{
+                console.log(res)
+                if(!res.error.message) {
+                    this.appVersion = res.AppVersion
+                    this.pages = this.appVersion.Pages
+                    this.showList()
+                    deleteModal.close();
+                    // reload the editor
+                    console.log((window as any).app.toolboxApp.editor.init())
+                    // console.log(window.App)
+                }else {
+                    new Alert("error", res.error.message)
+                }
+            })
+        })
+
     }
   
-    handleUpdate() {
-      alert('add update function')
-    }
 }

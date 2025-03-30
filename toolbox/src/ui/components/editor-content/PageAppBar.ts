@@ -1,5 +1,6 @@
 import { EditorEvents } from "../../../controls/editor/EditorEvents";
 import { EditorManager } from "../../../controls/editor/EditorManager";
+import { PageNameEditor } from "./PageNameEditor";
 
 export class PageAppBar {
     private container: HTMLElement;
@@ -50,6 +51,8 @@ export class PageAppBar {
         const truncatedTitle = this.title.length > 20 ? this.title.substring(0, 16) + "..." : this.title
         pageTitle.setAttribute('title', truncatedTitle || 'Page Name');
         pageTitle.textContent = truncatedTitle || 'Page Name';
+
+        // PageNameEditor()
 
         this.container.appendChild(backButton);
         this.container.appendChild(pageTitle);

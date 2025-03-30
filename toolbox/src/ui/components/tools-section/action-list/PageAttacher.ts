@@ -48,7 +48,7 @@ export class PageAttacher {
     const updates = [
         ["Text", page.PageName],
         ["Name", page.PageName],
-        ["Action.ObjectType", `${categoryName} Page`],
+        ["Action.ObjectType", `${categoryName}`],
         ["Action.ObjectId", page.PageId],
       ];
       

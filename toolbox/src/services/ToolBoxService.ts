@@ -220,8 +220,20 @@ export class ToolBoxService {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }
 
-  async deletePage(pageId: string | number) {
-    return await this.fetchAPI(`/api/toolbox/deletepage?Pageid=${pageId}`);
+  async deletePage(appVersionId:string, pageId:string) {
+    console.log(
+      {
+        AppVersionId: appVersionId,
+        PageId: pageId,
+      }
+    )
+    return await this.fetchAPI("/api/toolbox/V2/delete-page", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        PageId: pageId,
+      }),
+    });
   }
 
   async getPagesService() {

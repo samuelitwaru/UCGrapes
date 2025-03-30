@@ -43,15 +43,14 @@ export class ChildEditor {
           console.error("Invalid PageType or pageData is undefined:", this.pageData);
       }
     }
-
     let converter;
     if (this.pageData?.PageType === "Menu") {
       converter = new JSONToGrapesJSMenu(this.pageData);
       setUpEditor(converter);
-    } else if(this.pageData?.PageName === "Location") {
+    } else if(this.pageData?.PageType === "Location") {
       const locationEditor =  new LoadLocationData(childEditor, this.pageData);
       locationEditor.setupEditor();
-    } else if(this.pageData?.PageName === "Reception") {
+    } else if(this.pageData?.PageType === "Reception") {
       const receptionEditor =  new LoadReceptionData(childEditor, this.pageData);
       receptionEditor.setupEditor();
     } else if(this.pageData?.PageType === "Content") {
@@ -77,7 +76,7 @@ export class ChildEditor {
     const frameContainer = document.getElementById(
       "child-container"
     ) as HTMLElement;
-    const newEditor = new EditorFrame(editorId, false, this.pageTitle);
+    const newEditor = new EditorFrame(editorId, false, this.pageData, this.pageTitle);
     newEditor.render(frameContainer);
   }
 

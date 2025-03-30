@@ -7,13 +7,14 @@ export class PageAppBar {
     private editor: EditorManager;
     private title: string;
     private id: string;
+    editorWidth: number;
 
     constructor(id: string, title?: string) {
         this.title = title || "Page Name";
         this.id = id;
         this.container = document.createElement("div");
         this.editor = new EditorManager();
-        console.log("PageAppBar created", this.id)
+        this.editorWidth = (globalThis as any).deviceWidth;
         this.init();
     }
 
@@ -53,13 +54,10 @@ export class PageAppBar {
     
         const pageTitle = document.createElement('h1');
         pageTitle.className = 'title';
-        
-
-        const truncatedTitle = this.title.length > 16 ? this.title.substring(0, 16) + "..." : this.title;
-        const  titleSpan= document.createElement('span');
-        titleSpan.textContent = truncatedTitle || 'Page Name';
-        pageTitle.setAttribute('title', truncatedTitle || 'Page Name');
-        pageTitle.appendChild(titleSpan);
+        const length = this.editorWidth? (this.editorWidth <= 350 ? 16 : 24) : 16;
+        const truncatedTitle = this.title.length > length ? this.title.substring(0, length) + "..." : this.title;
+        pageTitle.setAttribute('title', this.title || 'Page Name');
+        pageTitle.textContent = truncatedTitle || 'Page Name';
     
         // Create a container div for the edit/save icons
         const iconContainer = document.createElement('div');
@@ -143,9 +141,7 @@ export class PageAppBar {
         pageTitle.style.overflow = "";
         pageTitle.style.textOverflow = "";
         
-        const frame = pageTitle.closest(".mobile-frame");
-        const frameWidth = frame?.clientWidth;
-        const length = frameWidth? (frameWidth <= 350 ? 16 : 24) : 16;
+        const length = this.editorWidth? (this.editorWidth <= 350 ? 16 : 24) : 16;
 
         if (pageTitle.textContent && pageTitle.textContent.length > length) {
             pageTitle.textContent = pageTitle.textContent.substring(0, length) + "...";

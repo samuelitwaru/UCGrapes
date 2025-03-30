@@ -434,7 +434,7 @@ span#scroll-right:hover {
 .app-bar .appbar-title-container {
   position: relative;
   display: flex;
-  width: -webkit-fill-available;
+  width: calc(100% - 50px);
   border: 0 dashed #b9c9eb;
 }
 
@@ -461,6 +461,7 @@ span#scroll-right:hover {
   border-radius: 0;
   position: initial;
   border-radius: 2px;
+  margin-left: 8px;
 }
 
 .app-bar .appbar-title-container #edit_page_title {

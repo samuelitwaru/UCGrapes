@@ -53,6 +53,14 @@ export class EditorManager {
     leftNavigatorButton.render(editorFrameArea);
     frameList.render(editorFrameArea);
     rightNavigatorButton.render(editorFrameArea);
+    this.setClientWidth(frameList.container);
+  }
+
+  setClientWidth(container: HTMLElement) {
+    const frame = container.querySelector(".mobile-frame") as HTMLElement;
+    if (frame) {
+      (globalThis as any).deviceWidth = frame.clientWidth;
+    }
   }
 
   async setUpEditor() {

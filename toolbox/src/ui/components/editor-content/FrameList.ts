@@ -1,7 +1,7 @@
 import { EditorFrame } from "./EditorFrame";
 
 export class FrameList {
-    private container: HTMLElement;
+    container: HTMLElement;
     pageId: any;
 
     constructor(pageId: any) {

@@ -37,13 +37,6 @@ export class CategoryView {
     searchContainer.innerHTML = `
             <i class="fas fa-search search-icon"></i>
             <input type="text" placeholder="Search" class="search-input" />
-            ${
-              this.categoryData.canCreatePage
-                ? `<button title="Add New Service/Menu Page" class="add-new-service" id="add-new-service">
-            <i class="fa fa-plus"></i>
-            </button>`
-                : ""
-            }
         `;
 
     // Add event listener for the add new service button if it exists

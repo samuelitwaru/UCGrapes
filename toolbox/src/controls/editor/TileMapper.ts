@@ -26,13 +26,12 @@ export class TileMapper {
           Icon: "",
           BGColor: "transparent",
           BGImageUrl: "",
-          Opacity: "0",
+          Opacity: 0,
           Action: {
             ObjectType: "",
             ObjectId: "",
             ObjectUrl: "",
-          },
-          TilePermissionName: "",
+          }
         },
       ],
     };
@@ -52,13 +51,12 @@ export class TileMapper {
       Icon: "",
       BGColor: "transparent",
       BGImageUrl: "",
-      Opacity: "0",
+      Opacity: 0,
       Action: {
         ObjectType: "",
         ObjectId: "",
         ObjectUrl: "",
       },
-      TilePermissionName: "",
     };
 
     const data: any = JSON.parse(

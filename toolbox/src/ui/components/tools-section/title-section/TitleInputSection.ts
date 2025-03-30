@@ -35,6 +35,13 @@ export class TitleInputSection {
         "Text",
         this.input.value.trim()
       );
+
+      const parentComponent = tileTitle.parent();
+      if (parentComponent) {
+        if (parentComponent.getStyle()["display"] === "none") {
+          parentComponent.addStyle({ display: "block" });
+        }
+      }
     });
   }
 

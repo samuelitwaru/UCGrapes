@@ -52,7 +52,7 @@ export class EditorEvents {
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
-            // new ToolboxManager().unDoReDo();
+            new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
           })
@@ -177,7 +177,11 @@ export class EditorEvents {
     const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
     toolSection.style.display = "block"
     mappingSection.style.display = "none"
-    if (this.pageData?.PageType === "Content") {
+    if (
+      this.pageData?.PageType === "Content" ||
+      this.pageData?.PageType === "Location" ||
+      this.pageData?.PageType === "Reception"
+    ) {
       new ContentSection(this.pageData)
     } else {
       const menuSection = document.getElementById('menu-page-section');

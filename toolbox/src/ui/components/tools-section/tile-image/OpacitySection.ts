@@ -81,7 +81,7 @@ export class OpacitySection {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
-    const opacity = value / 100;
+    const opacity: number = value / 100;
 
     selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
 

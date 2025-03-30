@@ -90,7 +90,6 @@ export class UndoRedoManager {
               ObjectId: "",
               ObjectUrl: "",
             },
-            TilePermissionName: "",
           };
           row.Tiles.push(removedTile);
         }

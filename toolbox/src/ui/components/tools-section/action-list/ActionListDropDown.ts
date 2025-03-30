@@ -58,18 +58,18 @@ export class ActionListDropDown {
         canCreatePage: false,
       },
       {
-        name: "Web Link",
-        displayName: "Web Links",
-        label: "Web Link",
-        options: [],
-        canCreatePage: false,
-      },
-      {
         name: "Content Page",
         displayName: "Content Page",
         label: "Content Page",
         options: await this.getContentPages(),
         canCreatePage: true,
+      },
+      {
+        name: "Web Link",
+        displayName: "Web Links",
+        label: "Web Link",
+        options: [],
+        canCreatePage: false,
       },
     ];
   }
@@ -142,7 +142,9 @@ export class ActionListDropDown {
       const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
       const pages = res.filter(
         (page: any) => 
-          page.PageType == "Content"
+          page.PageType == "Maps" ||
+          page.PageType == "MyActivity" ||
+          page.PageType == "Calendar"
           && page.PageName !== "Home"
       ).map((page: any) => ({
         PageId: page.PageId,

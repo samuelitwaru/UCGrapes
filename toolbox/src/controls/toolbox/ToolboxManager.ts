@@ -99,8 +99,8 @@ export class ToolboxManager {
         let localStructureProperty = null;
         if (
           page.PageType === "Menu" ||
-          page.PageType === "MyLiving" ||
           page.PageType === "MyCare" ||
+          page.PageType === "MyLiving" ||
           page.PageType === "MyService"
         )
           localStructureProperty = "PageMenuStructure";

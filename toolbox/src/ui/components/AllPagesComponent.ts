@@ -60,7 +60,7 @@ export class AllPagesComponent {
             menuItem.style.display = "none";
         }
         if (page.PageName !== "Home") {
-            iconDiv.append(updateIcon);
+            // iconDiv.append(updateIcon);
             iconDiv.append(deleteIcon);
             menuItem.appendChild(iconDiv);
         }

@@ -77,6 +77,11 @@ export class ActionSelectContainer {
     }
 
     render(container: HTMLElement) {
-        container.appendChild(this.container);
+        const existingElement = container.querySelector("#select-container");
+        if (existingElement) {
+            container.replaceChild(this.container, existingElement);
+            return;
+        }
+        container.insertBefore(this.container, container.children[3]);
     }
 }

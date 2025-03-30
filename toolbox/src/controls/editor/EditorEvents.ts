@@ -1,5 +1,6 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
+import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -184,10 +185,13 @@ export class EditorEvents {
     ) {
       new ContentSection(this.pageData)
     } else {
-      const menuSection = document.getElementById('menu-page-section');
+      const menuSection = document.getElementById('menu-page-section') as HTMLElement;
       const contentection = document.getElementById('content-page-section');
       if (menuSection) menuSection.style.display = 'block';
       if (contentection) contentection.remove();
+
+      const actionListContainer = new ActionSelectContainer();
+      actionListContainer.render(menuSection);
     }
   }
 

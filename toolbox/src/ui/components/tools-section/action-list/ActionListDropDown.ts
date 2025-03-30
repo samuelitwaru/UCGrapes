@@ -12,7 +12,6 @@ export class ActionListDropDown {
     this.container = document.createElement("div");
     this.toolBoxService = new ToolBoxService();
     this.init();
-    this.getPages()
   }
 
   async init() {
@@ -27,8 +26,9 @@ export class ActionListDropDown {
     });
   }
 
-  async getCategoryData() {
-    return [
+  async getCategoryData(): Promise<Category[]> {
+    const activePage = (globalThis as any).pageData;
+    const categories = [
       {
         name: "Page",
         displayName: "Pages",
@@ -36,13 +36,19 @@ export class ActionListDropDown {
         options: await this.getPages(),
         canCreatePage: true,
       },
-      {
-        name: "Service/Product Page",
-        displayName: "Service Pages",
-        label: "Service Page",
-        options: this.getServices(),
-        canCreatePage: true,
-      },
+      (activePage) && (
+        activePage.PageType === "MyCare" || 
+        activePage.PageType === "MyService" ||
+        activePage.PageType === "MyLiving"
+      )
+        ? {
+          name: "Service/Product Page",
+          displayName: "Service Pages",
+          label: "Service Page",
+          options: this.getServices(activePage),
+          canCreatePage: true,
+        }
+        : null,
       {
         name: "Dynamic Forms",
         displayName: "Forms",
@@ -72,6 +78,10 @@ export class ActionListDropDown {
         canCreatePage: false,
       },
     ];
+
+    return categories.filter((category): category is Category => 
+      category !== null
+    );
   }
 
   getDynamicForms() {
@@ -83,13 +93,19 @@ export class ActionListDropDown {
     return forms;
   }
 
-  getServices() {
-    const forms = (this.toolBoxService.services || []).map((service) => ({
+  getServices(activePage: any) {
+    let services = (this.toolBoxService.services || []);
+    services = services.filter(
+      (service: any) => 
+        service.ProductServiceClass.replace(/\s+/g, "")== activePage.PageType
+      )
+      .map((service) => ({
         PageId: service.ProductServiceId,
         PageName: service.ProductServiceName,
-        TileName: service.ProductServiceTileName || service.ProductServiceName
+        TileName: service.ProductServiceTileName || service.ProductServiceName,
+        TileCategory: service.ProductServiceClass
       }));
-    return forms;
+    return services;
   }
 
   async getContentPages() {

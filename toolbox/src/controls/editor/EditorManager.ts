@@ -5,6 +5,7 @@ import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavi
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
 import { demoPages } from "../../utils/test-data/pages";
 import { ThemeManager } from "../themes/ThemeManager";
+import { UndoRedoManager } from "../toolbox/UndoRedoManager";
 import { EditorEvents } from "./EditorEvents";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { TileMapper } from "./TileMapper";
@@ -55,6 +56,14 @@ export class EditorManager {
     leftNavigatorButton.render(editorFrameArea);
     frameList.render(editorFrameArea);
     rightNavigatorButton.render(editorFrameArea);
+    this.setClientWidth(frameList.container);
+  }
+
+  setClientWidth(container: HTMLElement) {
+    const frame = container.querySelector(".mobile-frame") as HTMLElement;
+    if (frame) {
+      (globalThis as any).deviceWidth = frame.clientWidth;
+    }
   }
 
   async setUpEditor() {
@@ -75,6 +84,8 @@ export class EditorManager {
       `data-${this.homepage?.PageId}`,
       JSON.stringify(this.homepage)
     );
+
+    new UndoRedoManager(this.homepage.PageId);
   }
 
   initializeGrapesEditor(editorId: string) {
@@ -118,7 +129,7 @@ export class EditorManager {
     if (canvas) {
       canvas.style.setProperty("height", "calc(100% - 100px)", "important");
     }
-    
+
     const canvasBody = editor.Canvas.getBody();
     if (canvasBody) {
       canvasBody.style.setProperty("background-color", "#EFEEEC", "important");
@@ -129,7 +140,4 @@ export class EditorManager {
     const homeFrame = document.getElementById(`${frameId}-frame`);
     homeFrame?.classList.add("active-editor");
   }
-
-  
-
 }

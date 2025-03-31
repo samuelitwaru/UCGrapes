@@ -187,6 +187,19 @@ export class ToolBoxService {
     return response;
   }
 
+  async updatePageTitle(pageData: any) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/update-page-title",
+      {
+        method: "POST",
+        body: JSON.stringify(pageData),
+      },
+      true
+    );
+
+    return response;
+  }
+
   async publishAppVersion(appVersionId: string, notify=false) {
     const response = await this.fetchAPI(
       "/api/toolbox/v2/publish-appversion",
@@ -378,7 +391,6 @@ export class ToolBoxService {
   }
 
   async updateContentImage (data: any) {
-    console.log(data)
     return await this.fetchAPI('/api/toolbox/v2/update-service', {
       method: 'POST',
       body: JSON.stringify(data),

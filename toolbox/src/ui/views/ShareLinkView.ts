@@ -1,12 +1,15 @@
+import { ToolboxManager } from "../../controls/toolbox/ToolboxManager";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
 import { i18n } from "../../i18n/i18n";
 import { Modal } from "../components/Modal";
 
 export class ShareLinkView {
     private appVersionController: AppVersionController;
+    private toolboxManager: ToolboxManager;
 
     constructor() {
         this.appVersionController = new AppVersionController();
+        this.toolboxManager = new ToolboxManager();
     }
 
     private createButton(id: string, className: string, text: string): HTMLButtonElement {
@@ -39,8 +42,8 @@ export class ShareLinkView {
     private createModalContent(): HTMLDivElement {
         const div = document.createElement("div");
         const p = document.createElement("p");
-        p.innerText = i18n.t("hello");
-        // p.innerText = "A shareable link has been generated for you. Copy it and share for previews!";
+        // p.innerText = i18n.t("hello");
+        p.innerText = "A shareable link has been generated for you. Copy it and share for previews!";
         
         const linkSection = this.createLinkSection();
         const submitSection = this.createSubmitSection(linkSection);
@@ -115,15 +118,18 @@ export class ShareLinkView {
                 
                 if (link.href) {
                     const copied = await this.appVersionController.copyToClipboard(link.href);
-                    
+
                     if (copied) {
-                        alert("Link copied to clipboard");
+                        setTimeout(() => {
+                            modal.close();
+                            this.toolboxManager.openToastMessage("Link copied to clipboard");
+                          }, 500);
                     } else {
-                        alert("Failed to copy link");
+                        modal.close();
+                        console.error("Failed to copy link");
                     }
                 }
 
-                modal.close();
             });
         }
 

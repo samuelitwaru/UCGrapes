@@ -42,9 +42,10 @@ export class PublishManager {
       "tb-btn-primary",
       "Publish"
     );
+    
     const cancelBtn = this.createButton(
       "cancel_publish",
-      "tb-btn-secondary",
+      "tb-btn-outline",
       "Cancel"
     );
 

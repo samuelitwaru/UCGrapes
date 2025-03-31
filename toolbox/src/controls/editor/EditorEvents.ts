@@ -1,11 +1,14 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
+import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
+import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
+import { FrameEvent } from "./FrameEvent";
 import { NewPageButton } from "./NewPageButton";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
@@ -33,10 +36,10 @@ export class EditorEvents {
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
+    new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
     this.onLoad();
-
   }
 
   onLoad() {
@@ -50,15 +53,18 @@ export class EditorEvents {
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
+            new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
           })
+          
         } else {
           console.error("Wrapper not found!");
         }
-      });
 
-      this.activateNavigators();
+        this.frameEventListener();
+        this.activateNavigators();
+      });
     }
   }
 
@@ -142,6 +148,20 @@ export class EditorEvents {
     }
   }
 
+  frameEventListener() {
+    const framelist = document.querySelectorAll('.mobile-frame');
+    framelist.forEach((frame: any) => {
+      if (frame.id.includes(this.frameId)) {
+        frame.addEventListener('click', (event:MouseEvent) => {
+          (globalThis as any).activeEditor = this.editor;
+          (globalThis as any).currentPageId = this.pageId;
+          (globalThis as any).pageData = this.pageData;
+          this.activateEditor();
+        });
+      }
+    })
+  }
+
   activateEditor () {
     const framelist = document.querySelectorAll('.mobile-frame');
     framelist.forEach((frame: any) => {
@@ -158,13 +178,20 @@ export class EditorEvents {
     const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
     toolSection.style.display = "block"
     mappingSection.style.display = "none"
-    if (this.pageData?.PageType === "Content") {
+    if (
+      this.pageData?.PageType === "Content" ||
+      this.pageData?.PageType === "Location" ||
+      this.pageData?.PageType === "Reception"
+    ) {
       new ContentSection(this.pageData)
     } else {
-      const menuSection = document.getElementById('menu-page-section');
+      const menuSection = document.getElementById('menu-page-section') as HTMLElement;
       const contentection = document.getElementById('content-page-section');
       if (menuSection) menuSection.style.display = 'block';
       if (contentection) contentection.remove();
+
+      const actionListContainer = new ActionSelectContainer();
+      actionListContainer.render(menuSection);
     }
   }
 
@@ -195,7 +222,6 @@ export class EditorEvents {
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
-    console.log(tileAttributes)
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
@@ -210,19 +236,22 @@ export class EditorEvents {
       }
 
       this.removeOtherEditors();
+      this.activateNavigators();
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }
     } else{
       this.removeOtherEditors();
-      this.activateNavigators();
-      const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
-      newPageButton.render()
+      if (selectedComponent.getClasses().includes('template-block')) {
+        const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager)
+        newPageButton.render();
+        const activateNav = this.activateNavigators();
+        activateNav.scrollBy(200)
+      }
     }
   }
 
   removeOtherEditors(): void {
-    console.log('Removing other editors');
     const framelist = document.querySelectorAll('.mobile-frame');
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {
@@ -245,9 +274,11 @@ export class EditorEvents {
     const prevButton = document.getElementById("scroll-left") as HTMLElement;
     const nextButton = document.getElementById("scroll-right") as HTMLElement;
     const frames = document.querySelectorAll(".mobile-frame");
+    const menuContainer = document.querySelector(".menu-container") as HTMLElement;
 
     // Show navigation buttons only when content overflows
-    const totalFramesWidth = Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0);
+    const menuWidth = menuContainer ? menuContainer.clientWidth : 0;
+    const totalFramesWidth = Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0) + menuWidth;
     const containerWidth = scrollContainer.clientWidth;
 
     if (totalFramesWidth > containerWidth) {
@@ -270,8 +301,9 @@ export class EditorEvents {
     scrollContainer.style.setProperty("justify-content", alignment);
 
     const scrollBy = (offset: number) => {
+        const adjustedOffset = offset + menuWidth;
         scrollContainer.scrollTo({
-            left: scrollContainer.scrollLeft + offset,
+            left: scrollContainer.scrollLeft + adjustedOffset,
             behavior: "smooth",
         });
     };

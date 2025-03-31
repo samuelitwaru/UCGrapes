@@ -8,6 +8,7 @@ import {
 import {
   ThemeManager
 } from "../themes/ThemeManager";
+import { i18n } from "../../i18n/i18n";
 
 export class JSONToGrapesJSMenu {
   private data: any;
@@ -72,10 +73,10 @@ export class JSONToGrapesJSMenu {
         isFirstSingleTile
           ? ""
           : `
-        <button ${DefaultAttributes} title="Delete tile" class="action-button delete-button">−</button>`
+        <button ${DefaultAttributes} title="${i18n.t("tile.delete_tile")}" class="action-button delete-button">−</button>`
       }
-      <button ${DefaultAttributes} title="Add tile right" class="action-button add-button-right">+</button>
-      <button ${DefaultAttributes} title="Add tile below" class="action-button add-button-bottom">+</button>
+      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_right")}" class="action-button add-button-right">+</button>
+      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_bottom")}" class="action-button add-button-bottom">+</button>
     </div>
   `;
   }

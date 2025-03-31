@@ -1,6 +1,7 @@
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 import { ThemeIcon } from "../../../../models/Theme";
 import { IconList } from "./IconList";
+import { i18n } from "../../../../i18n/i18n";
 
 export class IconListCategories {
   container: HTMLElement;
@@ -33,7 +34,7 @@ export class IconListCategories {
     openSelection.setAttribute("aria-expanded", "false");
 
     this.selectedCategory.className = "selected-category-value";
-    this.selectedCategory.textContent = "General";
+    this.selectedCategory.textContent = i18n.t("icon_category_general");
     openSelection.appendChild(this.selectedCategory);
 
     openSelection.onclick = (e) => {
@@ -60,7 +61,7 @@ export class IconListCategories {
     this.categoryOptions.className = "category-options-list";
     this.categoryOptions.setAttribute("role", "listbox");
 
-    let categories: string[] = ["General", "Services", "Health", "Living"];
+    let categories: string[] = [i18n.t("icon_category_general"), i18n.t("icon_category_services"), i18n.t("icon_category_health"), i18n.t("icon_category_living")];
 
     categories.forEach((category) => {
       const categoryOption = document.createElement("div") as HTMLElement;

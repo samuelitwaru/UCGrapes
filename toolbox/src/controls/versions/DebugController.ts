@@ -11,7 +11,6 @@ export class DebugController {
 
     async init() {
         const pageUrls: { page: string; urls: { url: string; affectedType: string; affectedName?: string }[] }[] = await this.getUrls();
-        console.log("DebugController initialized", pageUrls)
         this.debugProcess(pageUrls);
     }
 
@@ -22,7 +21,7 @@ export class DebugController {
             const response = await toolBoxService.debugApp(pageUrls);
             if (response) {                
                 results = response.DebugResults;
-                console.log("DebugController results", results);
+                console.log("DebugController results", response);
             }
         } catch (error) {
             console.error(error);

@@ -57,7 +57,7 @@ export class MapsPageEditor {
             if (preloader) {
               preloader.getEl().style.display = 'none';
             }
-          }, 5000); // Remove after 5 seconds max
+          }, 5000); // Remove after 5 secondbs max
         },
         (error) => {
           console.error("Geolocation error:", error.message);

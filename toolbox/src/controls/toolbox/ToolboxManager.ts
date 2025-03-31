@@ -89,7 +89,6 @@ export class ToolboxManager {
       const lastSavedStates = new Map<string, string>();
       const activeVersion = await this.appVersions.getActiveVersion();
       const pages = activeVersion.Pages;
-      console.log("Saving pages");
       
       await Promise.all(pages.map(async (page: any) => {
         const pageId = page.PageId;
@@ -119,9 +118,10 @@ export class ToolboxManager {
         const pageStructureString = typeof page.PageStructure === 'string' 
           ? page.PageStructure 
           : JSON.stringify(page.PageStructure);
-        
-        // console.log(`Saving localStructureProperty ${localStructureString}`);
-        // console.log(`Saving page.PageStructure ${pageStructureString}`);
+        // if (page.PageType === "Content") {
+        //   console.log(`Saving localStructureProperty ${localStructureString}`);
+        //   console.log(`Saving page.PageStructure ${pageStructureString}`);
+        // }       
       
         // Compare serialized versions to avoid hidden character differences
         if (localStructureString !== pageStructureString) {

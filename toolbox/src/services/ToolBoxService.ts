@@ -68,6 +68,7 @@ export class ToolBoxService {
   }
 
   async debugApp(urlList: any) {
+    console.log("debugApp", urlList);
     const response = await this.fetchAPI("/api/toolbox/v2/debug", {
       method: "POST",
       body: JSON.stringify({ 

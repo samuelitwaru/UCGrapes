@@ -17,7 +17,6 @@ export class DebugUIManager {
     private debugSummary() {
         const debugSummary = document.createElement('div');
         debugSummary.classList.add('tb_debug_summary');
-
         // Total URLs Section
         const totalUrls = this.createSummaryItem(this.debugResults.Summary.TotalUrls, 'Total URLs', true);
 

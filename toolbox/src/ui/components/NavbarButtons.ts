@@ -49,7 +49,7 @@ export class NavbarButtons {
         <path id="Path_958" data-name="Path 958" d="M13.5,3.594l-.519.507L7.925,9.263l1.038,1.06,3.814-3.9V18.644h1.444V6.429l3.814,3.9,1.038-1.06L14.019,4.1ZM7,20.119v1.475H20V20.119Z" transform="translate(-7 -3.594)" fill="#fff"></path>
       </svg>`;
 
-    let publishButton = new Button("publish", i18n.t("navbar.publish"), {
+    let publishButton = new Button("publish", i18n.t("navbar.publish.label"), {
       svg: publishButtonSvg,
       labelId: "navbar_tree_label",
     });

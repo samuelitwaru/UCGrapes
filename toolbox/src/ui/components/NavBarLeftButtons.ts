@@ -30,7 +30,7 @@ export class NavbarLeftButtons {
         </svg>
     `;
 
-    let debugButton = new Button("debug-button", i18n.t("navbar.debug"), {
+    let debugButton = new Button("debug-button", i18n.t("navbar.debug.label"), {
       labelId: "debug_button_label",
     });
     debugButton.button.style.marginRight = "10px";
@@ -40,21 +40,21 @@ export class NavbarLeftButtons {
       this.debugController.init();
     });
 
-    const treeButtonSvg: string = `
+    const shareButtonSvg: string = `
         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.293 2.293a1 1 0 0 1 1.414 0l3 3a1 1 0 0 1-1.414 1.414L13 5.414V15a1 1 0 1 1-2 0V5.414L9.707 6.707a1 1 0 0 1-1.414-1.414l3-3zM4 11a2 2 0 0 1 2-2h2a1 1 0 0 1 0 2H6v9h12v-9h-2a1 1 0 1 1 0-2h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9z" fill="#0D0D0D"/>
         </svg>
     `;
 
-    let treeButton = new Button("open-mapping", i18n.t("navbar.share"), {
-      svg: treeButtonSvg,
+    let shareButton = new Button("open-mapping", i18n.t("navbar.share.label"), {
+      svg: shareButtonSvg,
       variant: "outline",
       labelId: "navbar_tree_label",
     });
     
     debugButton.render(this.container);
-    treeButton.render(this.container);
+    shareButton.render(this.container);
 
-    treeButton.button.addEventListener("click", (e) => {
+    shareButton.button.addEventListener("click", (e) => {
       e.preventDefault();
       new ShareLinkView().openShareLinkModal();
     });
@@ -71,7 +71,7 @@ export class NavbarLeftButtons {
     `;
 
     const modal = new Modal({
-      title: "App Debugging",
+      title: i18n.t("navbar.debug.modal_title"),
       width: "800px",
       body: debugDiv,
     });

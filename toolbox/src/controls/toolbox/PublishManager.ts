@@ -1,3 +1,4 @@
+import { i18n } from "../../i18n/i18n";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { Alert } from "../../ui/components/Alert";
 import { Modal } from "../../ui/components/Modal";
@@ -17,7 +18,7 @@ export class PublishManager {
   openModal() {
     const div = document.createElement("div");
     const p = document.createElement("p");
-    p.innerText = "Are you sure you want to publish? Once published, all currently visible pages will be finalized and visible to residents. This action cannot be undone.";
+    p.innerText = i18n.t("navbar.publish.modal_description");
     
     const label = document.createElement("label") as HTMLLabelElement;
     label.className = "notify_residents";
@@ -28,7 +29,7 @@ export class PublishManager {
     input.name = "notify_residents";
 
     const span = document.createElement("span") as HTMLSpanElement;
-    span.innerText = "Notify residents on about the updates made.";
+    span.innerText = i18n.t("navbar.publish.notify_residents");
 
     label.appendChild(input);
     label.appendChild(span);
@@ -40,13 +41,13 @@ export class PublishManager {
     const saveBtn = this.createButton(
       "submit_publish",
       "tb-btn-primary",
-      "Publish"
+      i18n.t("navbar.publish.modal_confirm")
     );
     
     const cancelBtn = this.createButton(
       "cancel_publish",
       "tb-btn-outline",
-      "Cancel"
+      i18n.t("navbar.publish.modal_cancel")
     );
 
     submitSection.appendChild(saveBtn);
@@ -57,7 +58,7 @@ export class PublishManager {
     div.appendChild(submitSection);
 
     const modal = new Modal({
-      title: "Confirm Publish",
+      title: i18n.t("navbar.publish.modal_title"),
       width: "500px",
       body: div,
     });
@@ -75,7 +76,7 @@ export class PublishManager {
           .then((res:any)=>{
             if(!res.message){
               modal.close()
-              new Alert("success", "App published successfully")
+              new Alert("success", i18n.t("messages.success.published"))
             }
           })
         })

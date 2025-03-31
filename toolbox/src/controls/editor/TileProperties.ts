@@ -1,3 +1,4 @@
+import { i18n } from "../../i18n/i18n";
 import { rgbToHex } from "../../utils/helpers";
 import {
   ThemeManager
@@ -139,6 +140,21 @@ export class TileProperties {
       const tileActionType = this.tileAttributes.Action?.ObjectType;
       const tileActionName = this.tileAttributes?.Text;
 
+      let actionLabel = "";
+      if (tileActionType == "Page") {
+        actionLabel = i18n.t("sidebar.action_list.page");
+      } else if (tileActionType == "Web Link") {
+        actionLabel = i18n.t("sidebar.action_list.services");
+      } else if (tileActionType == "Service/Product Page") {
+        actionLabel = i18n.t("sidebar.action_list.weblink");
+      } else if (tileActionType == "Dynamic Form") {
+        actionLabel = i18n.t("sidebar.action_list.forms");
+      } else if (tileActionType == "Module") {
+        actionLabel = i18n.t("sidebar.action_list.module");
+      } else if (tileActionType == "Content") {
+        actionLabel = i18n.t("sidebar.action_list.content");
+      } 
+
 
       const actionHeader = document.querySelector(
           ".tb-dropdown-header"
@@ -152,9 +168,9 @@ export class TileProperties {
               actionHeaderLabel.innerText = "Select Action";
           } else {
               actionHeaderLabel.innerText = `${
-        tileActionType.length > 10
-          ? tileActionType.substring(0, 14) + "..."
-          : tileActionType
+        actionLabel.length > 10
+          ? actionLabel.substring(0, 14) + "..."
+          : actionLabel
       }, ${
         tileActionName.length > 10
           ? tileActionName.substring(0, 14) + "..."

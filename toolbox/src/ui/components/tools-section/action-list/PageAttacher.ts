@@ -6,6 +6,7 @@ import { AppVersionManager } from "../../../../controls/versions/AppVersionManag
 import { EditorEvents } from "../../../../controls/editor/EditorEvents";
 import { PageCreationService } from "./PageCreationService";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
+import { i18n } from "../../../../i18n/i18n";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;
@@ -25,11 +26,11 @@ export class PageAttacher {
         "PageName": newService.ProductServiceName,
         "TileName": newService.ProductServiceTileName,
       }
-      this.attachToTile(page, "Service/Product Page")
+      this.attachToTile(page, "Service/Product Page", i18n.t("sidebar.action_list.services"))
     }
   }
 
-  async attachToTile(page: ActionPage, categoryName: string) {
+  async attachToTile(page: ActionPage, categoryName: string, categoryLabel: string) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -42,7 +43,7 @@ export class PageAttacher {
     const currentPageId = (globalThis as any).currentPageId;
 
     if (currentPageId === page.PageId) {
-      new Alert("error", "Page cannot be linked to itself");
+      new Alert("error", i18n.t("messages.error.page_linking"));
       return;
     }
     const updates = [

@@ -4,6 +4,7 @@ import { PageAttacher } from "./PageAttacher";
 import { PageCreationService } from "./PageCreationService";
 import { Alert } from "../../Alert";
 import { AppConfig } from "../../../../AppConfig";
+import { i18n } from "../../../../i18n/i18n";
 
 export class CategoryView {
   details: HTMLDetailsElement;
@@ -48,7 +49,7 @@ export class CategoryView {
             e.preventDefault();
             const selectedComponent = (globalThis as any).selectedComponent;
             if (!selectedComponent) {
-              new Alert("error", "Select tile to continue..");
+              new Alert("error", i18n.t("messages.error.select_tile"));
               return;
             }
             if (this.categoryData.name == "Content Page") {
@@ -77,14 +78,14 @@ export class CategoryView {
         e.preventDefault();
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) {
-          new Alert("error", "Select tile to continue..");
+          new Alert("error", i18n.t("messages.error.select_tile"));
           return;
         }
 
         if (this.categoryData.name === "Dynamic Forms") {
           this.pageCreationService.handleDynamicForms(page);
         } else {
-          this.pageAttacher.attachToTile(page, this.categoryData.name);
+          this.pageAttacher.attachToTile(page, this.categoryData.name, this.categoryData.label);
         }
       });
 
@@ -108,7 +109,7 @@ export class CategoryView {
       } else {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) {
-          new Alert("error", "Select tile to continue..");
+          new Alert("error", i18n.t("messages.error.select_tile"));
           return;
         }
         this.pageCreationService.handleWebLinks();

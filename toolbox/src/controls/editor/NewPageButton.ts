@@ -88,9 +88,9 @@ export class NewPageButton {
                     PageName: res.MenuPage.PageName,
                     TileName: res.MenuPage.PageName
                 }
-                this.pageAttacher.attachToTile(page, "Menu")
+                this.pageAttacher.attachToTile(page, "Menu", "Menu")
             }else{
-                new Alert("error", res.error.message)
+                console.error("error", res.error.message)
             }
 
         })

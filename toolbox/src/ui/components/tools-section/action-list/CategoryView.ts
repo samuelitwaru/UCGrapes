@@ -82,9 +82,15 @@ export class CategoryView {
           return;
         }
 
+        
+
         if (this.categoryData.name === "Dynamic Forms") {
           this.pageCreationService.handleDynamicForms(page);
-        } else {
+        } 
+        else if (this.categoryData.name == "Modules") {
+          this.pageAttacher.attachToTile(page, page.PageType, this.categoryData.label);
+        }
+        else {
           this.pageAttacher.attachToTile(page, this.categoryData.name, this.categoryData.label);
         }
       });

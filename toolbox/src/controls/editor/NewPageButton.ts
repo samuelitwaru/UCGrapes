@@ -86,7 +86,8 @@ export class NewPageButton {
                 const page = {
                     PageId: res.MenuPage.PageId,
                     PageName: res.MenuPage.PageName,
-                    TileName: res.MenuPage.PageName
+                    TileName: res.MenuPage.PageName,
+                    PageType: res.MenuPage.PageType
                 }
                 this.pageAttacher.attachToTile(page, "Menu", "Menu")
             }else{

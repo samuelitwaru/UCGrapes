@@ -50,7 +50,7 @@ export class ActionListDropDown {
         }
         : null,
       {
-        name: "Dynamic Form",
+        name: "Dynamic Forms",
         displayName: i18n.t("sidebar.action_list.forms"),
         label: i18n.t("sidebar.action_list.forms"),
         options: this.getDynamicForms(),
@@ -64,9 +64,9 @@ export class ActionListDropDown {
         canCreatePage: false,
       },
       {
-        name: "Content Page",
-        displayName: i18n.t("sidebar.action_list.content"),
-        label: i18n.t("sidebar.action_list.content"),
+        name: "Content",
+        displayName: i18n.t("sidebar.action_list.services"),
+        label: i18n.t("sidebar.action_list.services"),
         options: await this.getContentPages(),
         canCreatePage: true,
       },
@@ -165,7 +165,8 @@ export class ActionListDropDown {
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
-        TileName: page.PageName
+        TileName: page.PageName,
+        PageType: page.PageType
       }))
       return pages;
     } catch (error) {

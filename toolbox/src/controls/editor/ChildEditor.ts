@@ -50,10 +50,10 @@ export class ChildEditor {
           this.pageData
         );
       }
-    };
-
+    }
     let converter;
     console.log("PageType:", this.pageData?.PageType);
+    console.log("PageType:", this.pageData);
     if (
         this.pageData?.PageType === "Menu" ||
         this.pageData?.PageType === "MyLiving" ||
@@ -100,7 +100,7 @@ export class ChildEditor {
     const frameContainer = document.getElementById(
       "child-container"
     ) as HTMLElement;
-    const newEditor = new EditorFrame(editorId, false, this.pageTitle);
+    const newEditor = new EditorFrame(editorId, false, this.pageData, this.pageTitle);
     newEditor.render(frameContainer);
   }
 

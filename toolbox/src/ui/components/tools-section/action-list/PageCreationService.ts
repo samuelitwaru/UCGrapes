@@ -98,7 +98,6 @@ export class PageCreationService {
     async handleDynamicForms(form: any) {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
-
         const tileTitle = selectedComponent.find(".tile-title")[0];
         if (tileTitle) tileTitle.components(form.PageName);
 
@@ -214,7 +213,7 @@ export class PageCreationService {
         const updates = [
             ["Text", formData.link_label],
             ["Name", formData.link_label],
-            ["Action.ObjectType", "Web Link"],
+            ["Action.ObjectType", "WebLink"],
             ["Action.ObjectId", childPage?.PageId],
             ["Action.ObjectUrl", formData.link_url],
         ];

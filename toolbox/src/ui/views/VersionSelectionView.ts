@@ -38,7 +38,7 @@ export class VersionSelectionView {
     button.setAttribute("aria-haspopup", "listbox");
 
     this.activeVersion.classList.add("selected-theme-value");
-    this.activeVersion.textContent = "Select Theme";
+    this.activeVersion.textContent = "Select Version";
 
     button.appendChild(this.activeVersion);
     button.onclick = (e) => {

@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version20DevelopmentNETPostgreSQL";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -143,7 +143,6 @@ export class ToolBoxService {
   }
 
   async createContentPage(appVersionId: string, pageName: string) {
-    alert(appVersionId)
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-content-page",
       {
@@ -227,8 +226,20 @@ export class ToolBoxService {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }
 
-  async deletePage(pageId: string | number) {
-    return await this.fetchAPI(`/api/toolbox/deletepage?Pageid=${pageId}`);
+  async deletePage(appVersionId:string, pageId:string) {
+    console.log(
+      {
+        AppVersionId: appVersionId,
+        PageId: pageId,
+      }
+    )
+    return await this.fetchAPI("/api/toolbox/V2/delete-page", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        PageId: pageId,
+      }),
+    });
   }
 
   async getPagesService() {

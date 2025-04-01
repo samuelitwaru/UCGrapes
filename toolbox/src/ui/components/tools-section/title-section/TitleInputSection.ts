@@ -14,6 +14,9 @@ export class TitleInputSection {
 
     this.input.addEventListener("input", (e) => {
       const selectedComponent = (globalThis as any).selectedComponent;
+      
+      let isFirstTile = selectedComponent.getClasses().includes("first-tile") && selectedComponent.getClasses().includes("high-priority-template")
+      
       if (!selectedComponent) return;
       const componentRow = selectedComponent.closest(".container-row");
       const rowTilesLength = componentRow.components().length;
@@ -29,6 +32,9 @@ export class TitleInputSection {
         tileTitle.components(truncatedTitle);
         tileTitle.addAttributes({ title: this.input.value });
       }
+
+      // if tile is first and high priority, set text to upper case
+      if (isFirstTile) this.input.value = this.input.value.toUpperCase();
 
       (globalThis as any).tileMapper.updateTile(
         selectedComponent.parent().getId(),

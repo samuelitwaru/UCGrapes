@@ -25,8 +25,9 @@ export class PageAttacher {
         "PageId": serviceId,
         "PageName": newService.ProductServiceName,
         "TileName": newService.ProductServiceTileName,
+        "PageType": "Content"
       }
-      this.attachToTile(page, "Service/Product Page", i18n.t("sidebar.action_list.services"))
+      this.attachToTile(page, "Content", i18n.t("sidebar.action_list.services"))
     }
   }
 
@@ -49,7 +50,7 @@ export class PageAttacher {
     const updates = [
         ["Text", page.PageName],
         ["Name", page.PageName],
-        ["Action.ObjectType", `${categoryName} Page`],
+        ["Action.ObjectType", `${categoryName}`],
         ["Action.ObjectId", page.PageId],
       ];
       
@@ -62,7 +63,7 @@ export class PageAttacher {
         tileId
       );
       
-      new PageCreationService().updateActionListDropDown("Dynamic Form", page.PageName);
+      // new PageCreationService().updateActionListDropDown("Dynamic Form", page.PageName);
   
       const version = await this.appVersionManager.getActiveVersion(); 
       this.attachPage(page, version, tileAttributes);

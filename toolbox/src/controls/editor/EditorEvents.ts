@@ -231,16 +231,16 @@ export class EditorEvents {
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
-
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
-      
+    
       let childPage;
       if (Object.keys(data).length > 0) {
         childPage = data
       } else {
         const version = await this.appVersionManager.getActiveVersion();
+        console.log('version', version)
         childPage = version?.Pages.find((page: any) => page.PageId === objectId);
       }
 

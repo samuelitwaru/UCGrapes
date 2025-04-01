@@ -39,6 +39,7 @@ export class EditorEvents {
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
+    this.onComponentUpdate();
     this.onLoad();
   }
 
@@ -68,6 +69,14 @@ export class EditorEvents {
     }
   }
 
+  onComponentUpdate() {
+    this.editor.on("component:update", (model: any) => {
+      console.log("Component updated", model);
+      window.dispatchEvent(new CustomEvent('pageChanged', { 
+        detail: { pageId: this.pageId } 
+      }));
+    })
+  }
   onDragAndDrop() {
     let sourceComponent: any;
     let destinationComponent: any;

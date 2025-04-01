@@ -65,14 +65,16 @@ export class VersionSelectionView {
     versions.forEach((version: any) => this.createVersionOption(version));
 
     this.addNewVersionButton();
-    // this.selectFromTemplateButton();
+    this.selectFromTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
   private addNewVersionButton() {
     const newVersionBtn = document.createElement("div");
     newVersionBtn.className = "theme-option";
-    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> ${i18n.t("navbar.publish.create_new")}`;
+    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> ${i18n.t(
+      "navbar.appversion.create_new"
+    )}`;
     newVersionBtn.onclick = () => {
       this.createVersionModal();
     };
@@ -113,7 +115,7 @@ export class VersionSelectionView {
   private createDuplicateButton(version: AppVersion): HTMLSpanElement {
     const duplicateBtn = document.createElement("span");
     duplicateBtn.className = "clone-version fa fa-clone";
-    duplicateBtn.title = `${i18n.t("navbar.publish.duplicate")}`;
+    duplicateBtn.title = `${i18n.t("navbar.appversion.duplicate")}`;
 
     duplicateBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -179,9 +181,9 @@ export class VersionSelectionView {
     });
 
     modal.open();
-    let isDuplicating: boolean = false
+    let isDuplicating: boolean = false;
     if (title) {
-        isDuplicating  = true;
+      isDuplicating = true;
     }
     this.setupModalButtons(modal, div, isDuplicating);
   }
@@ -208,7 +210,11 @@ export class VersionSelectionView {
     return submitSection;
   }
 
-  private setupModalButtons(modal: Modal, div: HTMLElement, isDuplicating: boolean) {
+  private setupModalButtons(
+    modal: Modal,
+    div: HTMLElement,
+    isDuplicating: boolean
+  ) {
     const saveBtn = div.querySelector("#submit_form");
     const cancelBtn = div.querySelector("#cancel_form");
 

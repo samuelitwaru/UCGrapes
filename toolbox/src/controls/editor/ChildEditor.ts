@@ -83,7 +83,6 @@ export class ChildEditor {
       const mapsPageEditor = new MapsPageEditor(childEditor);
       mapsPageEditor.initialise(tileAttributes.Action);
     } else if (this.pageData?.PageType === "MyActivity") {
-      console.log("MyActivity")
       const activityEditor = new LoadMyActivityData(childEditor);
       activityEditor.load();
     } else if (this.pageData?.PageType === "Calendar") {

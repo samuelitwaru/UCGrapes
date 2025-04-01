@@ -15,8 +15,6 @@ export class ToolBoxService {
   private config: AppConfig;
   services: any[] = [];
   forms: any[] = [];
-  media: any[] = [];
-  pages: Promise<any>[] = [];
   loadingManager: any;
   preloaderEl: HTMLElement = document.getElementById("preloader")!;
 
@@ -28,10 +26,6 @@ export class ToolBoxService {
   init() {
     this.services = this.config.services;
     this.forms = this.config.forms;
-    this.media = [];
-    this.pages = [];
-    this.getPages();
-    this.getMediaFiles();
     this.loadingManager = new LoadingManager(this.preloaderEl);
   }
   // Helper method to handle API calls
@@ -220,7 +214,6 @@ export class ToolBoxService {
   // Pages API methods
   async getPages() {
     const response = await this.fetchAPI("/api/toolbox/pages/list", {}, true);
-    this.pages = response.SDT_PageCollection;
     return response.SDT_PageCollection;
   }
 
@@ -313,7 +306,6 @@ export class ToolBoxService {
   // Media API methods
   async getMediaFiles() {
     const response = await this.fetchAPI("/api/toolbox/media", {}, true);
-    this.media = response.SDT_MediaCollection;
     return response.SDT_MediaCollection;
   }
 

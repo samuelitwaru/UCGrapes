@@ -38,6 +38,9 @@ export const i18n = new I18n({
       appversion: {
         create_new: "Create new version",
         duplicate: "Duplicate version",
+        duplicate_button: "Duplicate",
+        save: "Save",
+        cancel: "Cancel"
       },
     },
     undo: "Undo",

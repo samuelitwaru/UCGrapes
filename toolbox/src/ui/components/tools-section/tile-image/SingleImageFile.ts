@@ -214,15 +214,16 @@ export class SingleImageFile {
     const handleConfirmation = async () => {
       try {
         await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
-        this.toolboxService.media = this.toolboxService.media.filter(
-            item => item.MediaId !== this.mediaFile.MediaId
+        let media =await this.toolboxService.getMediaFiles();
+        media = media.filter(
+            (item: Media) => item.MediaId !== this.mediaFile.MediaId
         );
         const mediaItem = document.getElementById(this.mediaFile.MediaId);                
         if (mediaItem) {
             mediaItem.remove();
         }                
         
-        if (this.toolboxService.media.length === 0) {
+        if (media.length === 0) {
             const modalFooter = document.querySelector(".modal-actions") as HTMLElement;
             modalFooter.style.display = "none";
         }

@@ -111,7 +111,7 @@ export class PageCreationService {
         const updates = [
             ["Text", form.PageName],
             ["Name", form.PageName],
-            ["Action.ObjectType", "Web Link"],
+            ["Action.ObjectType", "WebLink"],
             ["Action.ObjectId", childPage?.PageId],
             ["Action.ObjectUrl", formUrl],
         ];
@@ -213,7 +213,7 @@ export class PageCreationService {
         const updates = [
             ["Text", formData.link_label],
             ["Name", formData.link_label],
-            ["Action.ObjectType", "Web Link"],
+            ["Action.ObjectType", "WebLink"],
             ["Action.ObjectId", childPage?.PageId],
             ["Action.ObjectUrl", formData.link_url],
         ];

@@ -75,7 +75,7 @@ export class ActionListDropDown {
         canCreatePage: true,
       },
       {
-        name: "Web Link",
+        name: "WebLink",
         displayName: i18n.t("category_link"),
         label: i18n.t("category_link"),
         options: [],

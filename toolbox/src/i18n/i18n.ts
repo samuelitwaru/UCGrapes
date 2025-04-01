@@ -7,7 +7,7 @@ export const i18n = new I18n({
       category_services_or_page: "Service/Product Page",
       category_predefined_page: "Predefined Page",
       category_dynamic_form: "Dynamic Form",
-      category_link: "Web Link",
+      category_link: "WebLink",
       sidebar_tabs_pages_label: "Pages",
       icon_category_services: "Services",
       icon_category_general: "General",

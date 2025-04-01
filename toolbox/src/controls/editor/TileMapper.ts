@@ -15,9 +15,9 @@ export class TileMapper {
         // Save initial state to reference
         const parsedData = JSON.parse(initialData);
         this.history.push(parsedData);
-        console.log(
-          `Initial state saved. History length: ${this.history.length}`
-        );
+        // console.log(
+        //   `Initial state saved. History length: ${this.history.length}`
+        // );
       } catch (e) {
         console.error("Failed to parse initial data:", e);
       }
@@ -40,7 +40,7 @@ export class TileMapper {
             this.history.shift();
           }
           this.future = []; // Clear redo stack on new action
-          console.log(`State saved. History: ${this.history.length}, Future: ${this.future.length}`);
+          // console.log(`State saved. History: ${this.history.length}, Future: ${this.future.length}`);
           return true;
         }
         return false;

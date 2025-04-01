@@ -23,7 +23,7 @@ export class TreeComponent {
         this.appVersionManager.getActiveVersion().then(res=>{
             this.version = res
             this.pages = res.Pages
-            this.homePage = res.Pages.find((page: any)=>page.PageName=="Home")
+            this.homePage = res.Pages?.find((page: any)=>page.PageName=="Home")
             if(this.homePage){
                 this.clearMappings()
                 this.createPageTree(this.homePage.PageId, "tree-container");

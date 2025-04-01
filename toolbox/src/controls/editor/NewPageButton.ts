@@ -80,7 +80,7 @@ export class NewPageButton {
     }
 
     async createNewPage(title:string) {
-        const appVersion = await this.appVersionManager.getActiveVersion()
+        const appVersion = (globalThis as any).activeVersion;
         this.toolboxService.createMenuPage(appVersion.AppVersionId, title).then(res=>{
             if(!res.error.message) {
                 const page = {

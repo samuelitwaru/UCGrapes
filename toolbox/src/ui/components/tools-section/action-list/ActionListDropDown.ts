@@ -4,15 +4,18 @@ import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 import { i18n } from "../../../../i18n/i18n";
+import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 
 export class ActionListDropDown {
   container: HTMLElement;
   toolBoxService: ToolBoxService;  
   currentLanguage: any;
+  appVersion: AppVersionManager;
 
   constructor() {
     this.container = document.createElement("div");
     this.toolBoxService = new ToolBoxService();
+    this.appVersion = new AppVersionManager();
     this.init(); 
   }
 
@@ -110,8 +113,7 @@ export class ActionListDropDown {
 
   async getContentPages() {
     try {
-      const versions = await this.toolBoxService.getVersions();
-      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      const res = this.appVersion?.getPages() || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Content"
@@ -130,8 +132,8 @@ export class ActionListDropDown {
 
   async getPages() {
     try {
-      const versions = await this.toolBoxService.getVersions();
-      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      // const versions = await this.toolBoxService.getVersions();
+      const res = this.appVersion?.getPages() || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Menu"
@@ -154,8 +156,8 @@ export class ActionListDropDown {
 
   async getPredefinedPages() {
     try {
-      const versions = await this.toolBoxService.getVersions();
-      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      // const versions = await this.toolBoxService.appVersion;
+      const res = this.appVersion?.getPages() || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Maps" ||

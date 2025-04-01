@@ -104,8 +104,8 @@ export class PageCreationService {
         const tileId = selectedComponent.parent().getId();
         const rowId = selectedComponent.parent().parent().getId();
 
-        const version = await this.appVersionManager.getActiveVersion(); 
-        const childPage = version.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
+        const version = (globalThis as any).activeVersion; 
+        const childPage = version?.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
 
         const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
         const updates = [
@@ -130,7 +130,7 @@ export class PageCreationService {
     }
 
     private async processMenuPageData(formData: Record<string, string>) {
-        const version = await this.appVersionManager.getActiveVersion();
+        const version = await this.appVersionManager.appVersion;
         
         this.toolBoxService.createMenuPage(version.AppVersionId, formData.page_title).then((res: any) => { 
             this.updateActionListDropDown("Home", res.MenuPage.PageName);
@@ -141,7 +141,7 @@ export class PageCreationService {
     }
 
     private async processContentPageData(formData: Record<string, string>) {
-        const version = await this.appVersionManager.getActiveVersion();
+        const version = await this.appVersionManager.appVersion;
         
         this.toolBoxService.createContentPage(version.AppVersionId, formData.page_title).then((res: any) => { 
             this.updateTileAfterPageCreation(res.ContentPage);
@@ -187,7 +187,7 @@ export class PageCreationService {
         for (const [property, value] of updates) {
             (globalThis as any).tileMapper.updateTile(tileId, property, value);
         }
-        const version = await this.appVersionManager.getActiveVersion(); 
+        const version = await this.appVersionManager.appVersion; 
         this.attachPage(page, version, tileAttributes);
     }
 
@@ -207,8 +207,8 @@ export class PageCreationService {
         const tileId = selectedComponent.parent().getId();
         const rowId = selectedComponent.parent().parent().getId();
 
-        const version = await this.appVersionManager.getActiveVersion(); 
-        const childPage = version.Pages.find((page: any) => (page.PageName === "Web Link" && page.PageType === "WebLink"));
+        const version = (globalThis as any).activeVersion; 
+        const childPage = version?.Pages.find((page: any) => (page.PageName === "Web Link" && page.PageType === "WebLink"));
 
         const updates = [
             ["Text", formData.link_label],

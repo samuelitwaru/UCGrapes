@@ -65,8 +65,8 @@ export class PageAttacher {
       
       // new PageCreationService().updateActionListDropDown("Dynamic Form", page.PageName);
   
-      const version = await this.appVersionManager.getActiveVersion(); 
-      this.attachPage(page, version, tileAttributes);
+      const pages = this.appVersionManager.getPages(); 
+      this.attachPage(page, pages, tileAttributes);
 
       // set tile properties
       if (selectedComponent && tileAttributes) {
@@ -78,11 +78,11 @@ export class PageAttacher {
       }
   }
 
-  attachPage(page: ActionPage, version: any, tileAttributes: any) {
+  attachPage(page: ActionPage, pages: any, tileAttributes: any) {
     const selectedItemPageId = page.PageId;
 
-    const childPage =
-        version?.Pages.find(
+    const childPage = 
+      pages.find(
             (page: any) => page.PageId === selectedItemPageId
         ) || null;
 
@@ -91,7 +91,7 @@ export class PageAttacher {
     if (childPage) {
         new ChildEditor(page.PageId, childPage).init(tileAttributes);
     } else{
-        this.toolboxService.createServicePage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
+        this.toolboxService.createServicePage(this.appVersionManager.appVersion.AppVersionId, selectedItemPageId).then((newPage: any) => {  
           new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init(tileAttributes);
         });
     }

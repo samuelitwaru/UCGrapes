@@ -6,6 +6,7 @@ import { RightNavigatorButton } from "../../ui/components/editor-content/RightNa
 import { demoPages } from "../../utils/test-data/pages";
 import { ThemeManager } from "../themes/ThemeManager";
 import { UndoRedoManager } from "../toolbox/UndoRedoManager";
+import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorEvents } from "./EditorEvents";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { TileMapper } from "./TileMapper";
@@ -22,10 +23,12 @@ export class EditorManager {
   jsonToGrapes: JSONToGrapesJSMenu;
   homepage: any;
   themeManager: any;
+  appVersion: any;
 
   constructor() {
     this.config = AppConfig.getInstance();
     this.organisationLogo = this.config.organisationLogo;
+    this.appVersion = new AppVersionManager();
     this.themeManager = new ThemeManager();
     this.toolboxService = new ToolBoxService();
     this.editorEvents = new EditorEvents();
@@ -33,11 +36,8 @@ export class EditorManager {
   }
 
   async init() {
-    const versions = await this.toolboxService.getVersions();
-    this.homepage = versions.AppVersions.find(
-      (version: any) => version.IsActive == true
-    )?.Pages.find((page: any) => page.PageName === "Home");
-    console.log(this.homepage)
+    const version = await this.appVersion.getActiveVersion();
+    this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement
     mainContainer.innerHTML = ""
     this.setUpEditorFrame();

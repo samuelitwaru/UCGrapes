@@ -60,8 +60,6 @@ export class TileAlignmentSection {
         "Align",
         "left"
       );
-      (globalThis as any).tileMapper.updateTile2(selectedComponent)
-
 
       leftAlignInput.checked = true;
     };

@@ -111,7 +111,7 @@ export class ThemeManager {
     const iframes = document.querySelectorAll(".mobile-frame iframe") as NodeListOf<HTMLIFrameElement>;
     if (!iframes.length) return;
 
-    const activeVersion = await this.appVersionManager.getActiveVersion();
+    const activeVersion = (globalThis as any).activeVersion;
     if (activeVersion) {
       const pages = activeVersion.Pages;
       pages.forEach(async (page: any) => {

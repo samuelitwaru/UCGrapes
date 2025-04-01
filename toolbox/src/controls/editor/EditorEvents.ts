@@ -239,9 +239,8 @@ export class EditorEvents {
       if (Object.keys(data).length > 0) {
         childPage = data
       } else {
-        const version = await this.appVersionManager.getActiveVersion();
-        console.log('version', version)
-        childPage = version?.Pages.find((page: any) => page.PageId === objectId);
+        // const version = await this.appVersionManager.getActiveVersion();
+        childPage = this.appVersionManager.getPages()?.find((page: any) => page.PageId === objectId);
       }
 
       this.removeOtherEditors();

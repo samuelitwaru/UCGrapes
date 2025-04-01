@@ -88,7 +88,7 @@ export class ToolboxManager {
   async savePages(publish = false) {
     try {
       const lastSavedStates = new Map<string, string>();
-      const activeVersion = await this.appVersions.getActiveVersion();
+      const activeVersion = (globalThis as any).activeVersion;
       const pages = activeVersion.Pages;
       
       await Promise.all(pages.map(async (page: any) => {
@@ -183,17 +183,17 @@ export class ToolboxManager {
     }
 
     const tileMapper = new TileMapper(pageId);
-    console.log("TileMapper created")
-    console.log("TileMapper history", tileMapper.history)
-    console.log("TileMapper future", tileMapper.future);
+    // console.log("TileMapper created")
+    // console.log("TileMapper history", tileMapper.history)
+    // console.log("TileMapper future", tileMapper.future);
     undoButton.disabled = !tileMapper.history.length;
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
         const undoResult = tileMapper.undo();
         if (undoResult) {
-          console.log("Affected tiles:", undoResult.affectedTiles);
-          console.log("Affected rows:", undoResult.affectedRows);
+          // console.log("Affected tiles:", undoResult.affectedTiles);
+          // console.log("Affected rows:", undoResult.affectedRows);
         }
       };
     }

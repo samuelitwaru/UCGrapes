@@ -149,7 +149,6 @@ export class ToolBoxService {
   }
 
   async createContentPage(appVersionId: string, pageName: string) {
-    alert(appVersionId)
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-content-page",
       {

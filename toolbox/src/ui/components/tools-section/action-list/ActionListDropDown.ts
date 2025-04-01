@@ -13,16 +13,12 @@ export class ActionListDropDown {
   constructor() {
     this.container = document.createElement("div");
     this.toolBoxService = new ToolBoxService();
-    this.init();
-    
-    
+    this.init(); 
   }
 
   async init() {
     this.container.className = "tb-dropdown-menu";
     this.container.id = "dropdownMenu";
-
-
     const categoryData: Category[] = await this.getCategoryData();
     categoryData.forEach((category) => {
       const dropdownContent = new ActionDetails(category);
@@ -35,8 +31,8 @@ export class ActionListDropDown {
     const categories = [
       {
         name: "Page",
-        displayName: i18n.t("sidebar_tabs_pages_label"),
-        label: i18n.t("sidebar_tabs_pages_label"),
+        displayName: i18n.t("sidebar.action_list.page"),
+        label: i18n.t("sidebar.action_list.page"),
         options: await this.getPages(),
         canCreatePage: true,
       },
@@ -47,37 +43,37 @@ export class ActionListDropDown {
       )
         ? {
           name: "Service/Product Page",
-          displayName: "Service Pages",
-          label: i18n.t("category_services_or_page"),
+          displayName: i18n.t("sidebar.action_list.services"),
+          label: i18n.t("sidebar.action_list.services"),
           options: this.getServices(activePage),
           canCreatePage: true,
         }
         : null,
       {
         name: "Dynamic Forms",
-        displayName: i18n.t("category_dynamic_form"),
-        label: i18n.t("category_dynamic_form"),
+        displayName: i18n.t("sidebar.action_list.forms"),
+        label: i18n.t("sidebar.action_list.forms"),
         options: this.getDynamicForms(),
         canCreatePage: false,
       },
       {
-        name: "Predefined Pages",
-        displayName: i18n.t("category_predefined_page"),
-        label: "Modules",
+        name: "Modules",
+        displayName: i18n.t("sidebar.action_list.module"),
+        label: i18n.t("sidebar.action_list.module"),
         options: await this.getPredefinedPages(),
         canCreatePage: false,
       },
       {
-        name: "Content Page",
-        displayName: i18n.t("content_page"),
-        label: i18n.t("content_page"),
+        name: "Content",
+        displayName: i18n.t("sidebar.action_list.services"),
+        label: i18n.t("sidebar.action_list.services"),
         options: await this.getContentPages(),
         canCreatePage: true,
       },
       {
-        name: "WebLink",
-        displayName: i18n.t("category_link"),
-        label: i18n.t("category_link"),
+        name: "Web Link",
+        displayName: i18n.t("sidebar.action_list.weblink"),
+        label: i18n.t("sidebar.action_list.weblink"),
         options: [],
         canCreatePage: false,
       },
@@ -169,7 +165,8 @@ export class ActionListDropDown {
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
-        TileName: page.PageName
+        TileName: page.PageName,
+        PageType: page.PageType
       }))
       return pages;
     } catch (error) {

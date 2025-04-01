@@ -66,7 +66,7 @@ export class JSONToGrapesJSMenu {
                   <span ${DefaultAttributes} class="tile-close-title top-right">×</span>
                   <span ${DefaultAttributes} class="tile-title" title="${
             tile.Text
-          }">${this.truncateText(tile.Text, isThreeTiles)}</span>
+          }">${this.truncateText(tile, tile.Text, isThreeTiles)}</span>
         </div>
       </div>
       ${
@@ -81,7 +81,34 @@ export class JSONToGrapesJSMenu {
   `;
   }
 
-  private truncateText(tileTitle: string, isThreeTiles: boolean) {
+  private translateTileLabel(tile: any, tileTitle: string) {
+    console.log("tile", tile);
+    console.log("tile", tile.Action.ObjectType);
+    const tileActionType = tile.Action.ObjectType;
+    if (tileActionType === "Map") {
+      return i18n.t("default.map");
+    } else if (tileActionType === "location") {
+      return i18n.t("default.location");
+    } else if (tileActionType === "calendar") {
+      return i18n.t("default.calendar");      
+    } else if (tileActionType === "reception") {
+      return i18n.t("default.reception");      
+    } else if (tileActionType === "mycare") {
+      return i18n.t("default.mycare");      
+    } else if (tileActionType === "myliving") {
+      return i18n.t("default.calendar");      
+    } else if (tileActionType === "myliving") {
+      return i18n.t("default.calendar");      
+    } else if (tileActionType === "myservice") {
+      return i18n.t("default.myservice");      
+    } else if (tileActionType === "myactivity") {
+      return i18n.t("default.myactivity");      
+    }
+    return tileTitle;
+  }
+
+  private truncateText(tile: any, tileTitle: string, isThreeTiles: boolean) {
+      // const translatedTitle = this.translateTileLabel(tile, tileTitle);
       const screenWidth: number = window.innerWidth;
       const textLength = length === 3 ? 11 : (length === 2 ? 15 : 20);
       if (tileTitle.length > (screenWidth <= 280 ? 20 : textLength + 4)) {

@@ -21,7 +21,6 @@ export class DebugController {
             const response = await toolBoxService.debugApp(pageUrls);
             if (response) {                
                 results = response.DebugResults;
-                console.log("DebugController results", response);
             }
         } catch (error) {
             console.error(error);

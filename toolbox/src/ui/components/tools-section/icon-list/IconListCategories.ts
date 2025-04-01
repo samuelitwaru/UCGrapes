@@ -34,7 +34,7 @@ export class IconListCategories {
     openSelection.setAttribute("aria-expanded", "false");
 
     this.selectedCategory.className = "selected-category-value";
-    this.selectedCategory.textContent = i18n.t("icon_category_general");
+    this.selectedCategory.textContent = i18n.t("sidebar.icon_category.general");
     openSelection.appendChild(this.selectedCategory);
 
     openSelection.onclick = (e) => {
@@ -61,14 +61,32 @@ export class IconListCategories {
     this.categoryOptions.className = "category-options-list";
     this.categoryOptions.setAttribute("role", "listbox");
 
-    let categories: string[] = [i18n.t("icon_category_general"), i18n.t("icon_category_services"), i18n.t("icon_category_health"), i18n.t("icon_category_living")];
+    let categories: { name: string; label: string }[] = [
+      {
+        name: "General",
+        label: i18n.t("sidebar.icon_category.general"),
+      },
+      {
+        name: "Services",
+        label: i18n.t("sidebar.icon_category.services"),
+      },
+      {
+        name: "Health",
+        label: i18n.t("sidebar.icon_category.health"),
+      },
+      {
+        name: "Living",
+        label: i18n.t("sidebar.icon_category.living"),
+      },
+    ];
+    
 
     categories.forEach((category) => {
       const categoryOption = document.createElement("div") as HTMLElement;
       categoryOption.className = "category-option";
       categoryOption.role = "option";
-      categoryOption.setAttribute("data-value", category);
-      categoryOption.textContent = category;
+      categoryOption.setAttribute("data-value", category.name);
+      categoryOption.textContent = category.label;
 
       categoryOption.onclick = () => {
         const allOptions =
@@ -76,9 +94,9 @@ export class IconListCategories {
         allOptions.forEach((opt) => opt.classList.remove("selected"));
         categoryOption.classList.add("selected");
 
-        this.selectedCategory.textContent = category;
+        this.selectedCategory.textContent = category.label;
 
-        this.loadThemeIcons(category);
+        this.loadThemeIcons(category.name);
         this.closeSelection();
       };
 

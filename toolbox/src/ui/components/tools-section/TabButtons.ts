@@ -28,7 +28,7 @@ export class TabButtons {
 
         const templatesSpan = document.createElement('span');
         templatesSpan.id = 'sidebar_tabs_templates_label';
-        templatesSpan.innerText = i18n.t("sidebar.templates");
+        templatesSpan.innerText = i18n.t("sidebar.templates.label");
 
         templatesButton.appendChild(templatesSpan);
 

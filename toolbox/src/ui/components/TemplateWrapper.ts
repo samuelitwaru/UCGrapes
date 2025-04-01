@@ -1,4 +1,5 @@
 import { TemplateManager } from "../../controls/templates/TemplateManager";
+import { i18n } from "../../i18n/i18n";
 import { Alert } from "./Alert";
 import { ConfirmationBox } from "./ConfirmationBox";
 
@@ -19,7 +20,7 @@ export class TemplateWrapper {
   
         const templateBlock = document.createElement("div");
         templateBlock.className = "page-template-block";
-        templateBlock.title = "Click to select template";
+        templateBlock.title = i18n.t("sidebar.templates.click_to_add_template");
   
         const div = document.createElement("div");
   
@@ -43,17 +44,17 @@ export class TemplateWrapper {
           const page = (globalThis as any).pageData;
 
           if (!editor && !page?.PageId) {
-            new Alert("error", "No active page selected");
+            new Alert("error", i18n.t("messages.error.no_active_page"));
             return;
           }
 
           if (!page || page.PageType !== "Menu") {
-            new Alert("error", "Templates can only be applied to menu pages");
+            new Alert("error", i18n.t("messages.error.templates_on_menu_pages"));
             return;
           }
 
-          const title = "Confirmation";
-          const message = "When you continue, all the changes you have made will be cleared.";
+          const title = i18n.t("sidebar.templates.confirmation_title");
+          const message = i18n.t("sidebar.templates.confirmation_message");
       
           const handleConfirmation = async () => {
             new TemplateManager(page.PageId, editor, templateWrapper.id)

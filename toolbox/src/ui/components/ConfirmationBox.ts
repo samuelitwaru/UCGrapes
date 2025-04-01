@@ -1,3 +1,4 @@
+import { i18n } from "../../i18n/i18n";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { ImageUpload } from "./tools-section/tile-image/ImageUpload";
 
@@ -59,7 +60,7 @@ export class ConfirmationBox {
         const cancelBtn = document.createElement('button');
         cancelBtn.className = "tb-btn tb-btn-outline";
         cancelBtn.id = "cancel_confirmation";
-        cancelBtn.innerText = "Cancel";
+        cancelBtn.innerText = i18n.t("sidebar.confirmation_cancel");
 
         cancelBtn.addEventListener('click', () => {
             this.close(); // Cancel should only close, not execute callback
@@ -68,7 +69,7 @@ export class ConfirmationBox {
         const confirmBtn = document.createElement('button');
         confirmBtn.className = "tb-btn tb-btn-primary";
         confirmBtn.id = "confirm_action";
-        confirmBtn.innerText = "Confirm";
+        confirmBtn.innerText = i18n.t("sidebar.confirmation_accept");
 
         confirmBtn.addEventListener('click', (e) => {
             e.preventDefault();

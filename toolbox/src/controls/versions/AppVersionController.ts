@@ -65,8 +65,7 @@ export class AppVersionController {
                 result = await this.toolboxService.duplicateVersion(activeVersionId, versionName);
             } else {
                 result = await this.toolboxService.createVersion(versionName);
-            }   
-            console.log("Version creation result:", result)         
+            }      
             return result;
         } catch (error) {
             console.error("Version creation failed:", error);

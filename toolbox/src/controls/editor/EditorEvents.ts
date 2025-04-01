@@ -71,7 +71,7 @@ export class EditorEvents {
 
   onComponentUpdate() {
     this.editor.on("component:update", (model: any) => {
-      console.log("Component updated", model);
+      // console.log("Component updated", model);
       window.dispatchEvent(new CustomEvent('pageChanged', { 
         detail: { pageId: this.pageId } 
       }));

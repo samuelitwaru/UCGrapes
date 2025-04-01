@@ -140,20 +140,20 @@ export class TileProperties {
       const tileActionType = this.tileAttributes.Action?.ObjectType;
       const tileActionName = this.tileAttributes?.Text;
 
-      let actionLabel = "";
-      if (tileActionType == "Page") {
-        actionLabel = i18n.t("sidebar.action_list.page");
-      } else if (tileActionType == "Web Link") {
-        actionLabel = i18n.t("sidebar.action_list.services");
-      } else if (tileActionType == "Service/Product Page") {
-        actionLabel = i18n.t("sidebar.action_list.weblink");
-      } else if (tileActionType == "Dynamic Form") {
-        actionLabel = i18n.t("sidebar.action_list.forms");
-      } else if (tileActionType == "Module") {
-        actionLabel = i18n.t("sidebar.action_list.module");
-      } else if (tileActionType == "Content") {
-        actionLabel = i18n.t("sidebar.action_list.content");
-      } 
+    //   let actionLabel = "";
+    //   if (tileActionType == "Page") {
+    //     actionLabel = i18n.t("sidebar.action_list.page");
+    //   } else if (tileActionType == "Web Link") {
+    //     actionLabel = i18n.t("sidebar.action_list.services");
+    //   } else if (tileActionType == "Service/Product Page") {
+    //     actionLabel = i18n.t("sidebar.action_list.weblink");
+    //   } else if (tileActionType == "Dynamic Form") {
+    //     actionLabel = i18n.t("sidebar.action_list.forms");
+    //   } else if (tileActionType == "Module") {
+    //     actionLabel = i18n.t("sidebar.action_list.module");
+    //   } else if (tileActionType == "Content") {
+    //     actionLabel = i18n.t("sidebar.action_list.content");
+    //   } 
 
 
       const actionHeader = document.querySelector(
@@ -168,9 +168,9 @@ export class TileProperties {
               actionHeaderLabel.innerText = "Select Action";
           } else {
               actionHeaderLabel.innerText = `${
-        actionLabel.length > 10
-          ? actionLabel.substring(0, 14) + "..."
-          : actionLabel
+        tileActionName.length > 10
+          ? tileActionName.substring(0, 14) + ""
+          : tileActionName
       }, ${
         tileActionName.length > 10
           ? tileActionName.substring(0, 14) + "..."

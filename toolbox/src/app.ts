@@ -33,13 +33,11 @@ class ToolboxApp {
   }
 
   initialiseLocalisation() {
-    console.log(this.config.currentLanguage)
     if (this.config.currentLanguage == "Dutch") {
       i18n.locale = "nl"
     } else {
       i18n.locale = "en"
     }
-    console.log("i18n.locale", i18n.locale)
   }
 }
 

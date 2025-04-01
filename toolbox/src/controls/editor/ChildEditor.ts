@@ -52,8 +52,6 @@ export class ChildEditor {
       }
     }
     let converter;
-    console.log("PageType:", this.pageData?.PageType);
-    console.log("PageType:", this.pageData);
     if (
         this.pageData?.PageType === "Menu" ||
         this.pageData?.PageType === "MyLiving" ||

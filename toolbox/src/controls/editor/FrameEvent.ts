@@ -3,7 +3,6 @@ export class FrameEvent {
 
     constructor(frameId: any) {
         this.frameId = frameId;
-        console.log("frameEvent", this.frameId)
     }
 
     init() {

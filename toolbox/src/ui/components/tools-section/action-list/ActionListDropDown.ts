@@ -3,15 +3,19 @@ import { Category } from "../../../../interfaces/Category";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
+import { i18n } from "../../../../i18n/i18n";
 
 export class ActionListDropDown {
   container: HTMLElement;
   toolBoxService: ToolBoxService;  
+  currentLanguage: any;
 
   constructor() {
     this.container = document.createElement("div");
     this.toolBoxService = new ToolBoxService();
     this.init();
+    
+    
   }
 
   async init() {
@@ -31,8 +35,8 @@ export class ActionListDropDown {
     const categories = [
       {
         name: "Page",
-        displayName: "Pages",
-        label: "Pages",
+        displayName: i18n.t("sidebar_tabs_pages_label"),
+        label: i18n.t("sidebar_tabs_pages_label"),
         options: await this.getPages(),
         canCreatePage: true,
       },
@@ -44,36 +48,36 @@ export class ActionListDropDown {
         ? {
           name: "Service/Product Page",
           displayName: "Service Pages",
-          label: "Service Page",
+          label: i18n.t("category_services_or_page"),
           options: this.getServices(activePage),
           canCreatePage: true,
         }
         : null,
       {
         name: "Dynamic Forms",
-        displayName: "Forms",
-        label: "Dynamic Forms",
+        displayName: i18n.t("category_dynamic_form"),
+        label: i18n.t("category_dynamic_form"),
         options: this.getDynamicForms(),
         canCreatePage: false,
       },
       {
         name: "Predefined Pages",
-        displayName: "Modules",
+        displayName: i18n.t("category_predefined_page"),
         label: "Modules",
         options: await this.getPredefinedPages(),
         canCreatePage: false,
       },
       {
         name: "Content Page",
-        displayName: "Content Page",
-        label: "Content Page",
+        displayName: i18n.t("content_page"),
+        label: i18n.t("content_page"),
         options: await this.getContentPages(),
         canCreatePage: true,
       },
       {
         name: "Web Link",
-        displayName: "Web Links",
-        label: "Web Link",
+        displayName: i18n.t("category_link"),
+        label: i18n.t("category_link"),
         options: [],
         canCreatePage: false,
       },

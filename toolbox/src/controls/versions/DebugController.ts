@@ -34,7 +34,7 @@ export class DebugController {
 
         const activeVersion = await this.appVersions.getActiveVersion();
         const pages = activeVersion.getPages();
-
+        console.log("Pages", pages);
         for (const page of pages) {
             let urls: { url: string; affectedType: string; affectedName?: string }[] = [];
 

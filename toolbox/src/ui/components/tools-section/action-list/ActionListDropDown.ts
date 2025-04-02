@@ -66,13 +66,13 @@ export class ActionListDropDown {
         options: await this.getPredefinedPages(),
         canCreatePage: false,
       },
-      {
-        name: "Content",
-        displayName: i18n.t("sidebar.action_list.services"),
-        label: i18n.t("sidebar.action_list.services"),
-        options: await this.getContentPages(),
-        canCreatePage: true,
-      },
+      // {
+      //   name: "Content",
+      //   displayName: i18n.t("sidebar.action_list.services"),
+      //   label: i18n.t("sidebar.action_list.services"),
+      //   options: await this.getContentPages(),
+      //   canCreatePage: true,
+      // },
       {
         name: "Web Link",
         displayName: i18n.t("sidebar.action_list.weblink"),

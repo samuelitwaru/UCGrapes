@@ -65,7 +65,7 @@ export class VersionSelectionView {
     versions.forEach((version: any) => this.createVersionOption(version));
 
     this.addNewVersionButton();
-    this.selectFromTemplateButton();
+    // this.selectFromTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 

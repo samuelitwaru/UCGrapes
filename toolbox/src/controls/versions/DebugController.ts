@@ -33,8 +33,8 @@ export class DebugController {
         let pageUrls: { page: string; urls: { url: string; affectedType: string; affectedName?: string }[] }[] = [];
 
         const activeVersion = await this.appVersions.getActiveVersion();
-        const pages = activeVersion.getPages();
-        console.log("Pages", pages);
+        const pages = activeVersion?.Pages;
+
         for (const page of pages) {
             let urls: { url: string; affectedType: string; affectedName?: string }[] = [];
 

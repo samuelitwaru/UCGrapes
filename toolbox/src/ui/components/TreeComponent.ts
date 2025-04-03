@@ -2,6 +2,7 @@ import { AppVersionManager } from "../../controls/versions/AppVersionManager"
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { AllPagesComponent } from "./AllPagesComponent";
 import { Alert } from "./Alert";
+import { i18n } from "../../i18n/i18n";
 
 export class TreeComponent {
     appVersionManager: AppVersionManager
@@ -22,7 +23,7 @@ export class TreeComponent {
         this.appVersionManager.getActiveVersion().then(res=>{
             this.version = res
             this.pages = res.Pages
-            this.homePage = res.Pages.find((page: any)=>page.PageName=="Home")
+            this.homePage = res.Pages?.find((page: any)=>page.PageName=="Home")
             if(this.homePage){
                 this.clearMappings()
                 this.createPageTree(this.homePage.PageId, "tree-container");
@@ -85,7 +86,7 @@ export class TreeComponent {
     }
 
     showAllPages() {
-        new AllPagesComponent(this.pages)
+        new AllPagesComponent(this.version)
     }
 
     createPageTree(rootPageId:string, childDivId:string) {
@@ -170,7 +171,7 @@ export class TreeComponent {
             if (pageName) {
                 this.createPage(pageName)
             }else {
-                new Alert("error", "Enter Page Name")
+                new Alert("error", i18n.t("messages.error.empty_page_name"))
             }
         })
     }

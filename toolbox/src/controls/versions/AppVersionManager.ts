@@ -6,6 +6,7 @@ export class AppVersionManager {
   private config: AppConfig;
   toolboxService: any;
   themes: any[] = [];
+  appVersion: any = (globalThis as any).activeVersion;
 
   constructor() {
     this.config = AppConfig.getInstance();
@@ -14,13 +15,18 @@ export class AppVersionManager {
   public async getActiveVersion() {
     const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
     const versions = await toolboxService.getVersions();
+    (globalThis as any).activeVersion = versions?.AppVersions?.find((version: any) => version.IsActive) || null
+    return (globalThis as any).activeVersion;
+  }
+
+  public getPages() {
     return (
-      versions?.AppVersions?.find((version: any) => version.IsActive) || null
+      (globalThis as any).activeVersion?.Pages || null
     );
   }
 
   async getActiveVersionId() {
-    const activeVersion = await this.getActiveVersion();
+    const activeVersion = (globalThis as any).activeVersion;
     return activeVersion.AppVersionId;
   }
 

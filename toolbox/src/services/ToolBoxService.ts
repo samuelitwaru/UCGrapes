@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/Comforta_version2_Development7NETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -15,8 +15,6 @@ export class ToolBoxService {
   private config: AppConfig;
   services: any[] = [];
   forms: any[] = [];
-  media: any[] = [];
-  pages: Promise<any>[] = [];
   loadingManager: any;
   preloaderEl: HTMLElement = document.getElementById("preloader")!;
 
@@ -28,10 +26,6 @@ export class ToolBoxService {
   init() {
     this.services = this.config.services;
     this.forms = this.config.forms;
-    this.media = [];
-    this.pages = [];
-    this.getPages();
-    this.getMediaFiles();
     this.loadingManager = new LoadingManager(this.preloaderEl);
   }
   // Helper method to handle API calls
@@ -68,7 +62,6 @@ export class ToolBoxService {
   }
 
   async debugApp(urlList: any) {
-    console.log("debugApp", urlList);
     const response = await this.fetchAPI("/api/toolbox/v2/debug", {
       method: "POST",
       body: JSON.stringify({ 
@@ -149,7 +142,6 @@ export class ToolBoxService {
   }
 
   async createContentPage(appVersionId: string, pageName: string) {
-    alert(appVersionId)
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-content-page",
       {
@@ -220,7 +212,6 @@ export class ToolBoxService {
   // Pages API methods
   async getPages() {
     const response = await this.fetchAPI("/api/toolbox/pages/list", {}, true);
-    this.pages = response.SDT_PageCollection;
     return response.SDT_PageCollection;
   }
 
@@ -234,8 +225,20 @@ export class ToolBoxService {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }
 
-  async deletePage(pageId: string | number) {
-    return await this.fetchAPI(`/api/toolbox/deletepage?Pageid=${pageId}`);
+  async deletePage(appVersionId:string, pageId:string) {
+    console.log(
+      {
+        AppVersionId: appVersionId,
+        PageId: pageId,
+      }
+    )
+    return await this.fetchAPI("/api/toolbox/V2/delete-page", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        PageId: pageId,
+      }),
+    });
   }
 
   async getPagesService() {
@@ -313,7 +316,6 @@ export class ToolBoxService {
   // Media API methods
   async getMediaFiles() {
     const response = await this.fetchAPI("/api/toolbox/media", {}, true);
-    this.media = response.SDT_MediaCollection;
     return response.SDT_MediaCollection;
   }
 

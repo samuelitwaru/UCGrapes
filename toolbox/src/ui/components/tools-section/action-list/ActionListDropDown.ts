@@ -4,25 +4,24 @@ import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 import { i18n } from "../../../../i18n/i18n";
+import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 
 export class ActionListDropDown {
   container: HTMLElement;
   toolBoxService: ToolBoxService;  
   currentLanguage: any;
+  appVersion: AppVersionManager;
 
   constructor() {
     this.container = document.createElement("div");
     this.toolBoxService = new ToolBoxService();
-    this.init();
-    
-    
+    this.appVersion = new AppVersionManager();
+    this.init(); 
   }
 
   async init() {
     this.container.className = "tb-dropdown-menu";
     this.container.id = "dropdownMenu";
-
-
     const categoryData: Category[] = await this.getCategoryData();
     categoryData.forEach((category) => {
       const dropdownContent = new ActionDetails(category);
@@ -35,8 +34,8 @@ export class ActionListDropDown {
     const categories = [
       {
         name: "Page",
-        displayName: i18n.t("sidebar_tabs_pages_label"),
-        label: i18n.t("sidebar_tabs_pages_label"),
+        displayName: i18n.t("sidebar.action_list.page"),
+        label: i18n.t("sidebar.action_list.page"),
         options: await this.getPages(),
         canCreatePage: true,
       },
@@ -47,37 +46,37 @@ export class ActionListDropDown {
       )
         ? {
           name: "Service/Product Page",
-          displayName: "Service Pages",
-          label: i18n.t("category_services_or_page"),
+          displayName: i18n.t("sidebar.action_list.services"),
+          label: i18n.t("sidebar.action_list.services"),
           options: this.getServices(activePage),
           canCreatePage: true,
         }
         : null,
       {
         name: "Dynamic Forms",
-        displayName: i18n.t("category_dynamic_form"),
-        label: i18n.t("category_dynamic_form"),
+        displayName: i18n.t("sidebar.action_list.forms"),
+        label: i18n.t("sidebar.action_list.forms"),
         options: this.getDynamicForms(),
         canCreatePage: false,
       },
       {
-        name: "Predefined Pages",
-        displayName: i18n.t("category_predefined_page"),
-        label: "Modules",
+        name: "Modules",
+        displayName: i18n.t("sidebar.action_list.module"),
+        label: i18n.t("sidebar.action_list.module"),
         options: await this.getPredefinedPages(),
         canCreatePage: false,
       },
-      {
-        name: "Content Page",
-        displayName: i18n.t("content_page"),
-        label: i18n.t("content_page"),
-        options: await this.getContentPages(),
-        canCreatePage: true,
-      },
+      // {
+      //   name: "Content",
+      //   displayName: i18n.t("sidebar.action_list.services"),
+      //   label: i18n.t("sidebar.action_list.services"),
+      //   options: await this.getContentPages(),
+      //   canCreatePage: true,
+      // },
       {
         name: "Web Link",
-        displayName: i18n.t("category_link"),
-        label: i18n.t("category_link"),
+        displayName: i18n.t("sidebar.action_list.weblink"),
+        label: i18n.t("sidebar.action_list.weblink"),
         options: [],
         canCreatePage: false,
       },
@@ -114,8 +113,8 @@ export class ActionListDropDown {
 
   async getContentPages() {
     try {
-      const versions = await this.toolBoxService.getVersions();
-      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      const versions = await this.appVersion.getActiveVersion();
+      const res = versions?.Pages || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Content"
@@ -134,15 +133,15 @@ export class ActionListDropDown {
 
   async getPages() {
     try {
-      const versions = await this.toolBoxService.getVersions();
-      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      const versions = await this.appVersion.getActiveVersion();
+      const res = versions?.Pages || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Menu"
-          && page.PageName !== "Home"
+          && (page.PageName !== "Home"
           && page.PageName !== "My Care"
           && page.PageName !== "My Living"
-          && page.PageName !== "My Services"
+          && page.PageName !== "My Services")
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
@@ -158,8 +157,8 @@ export class ActionListDropDown {
 
   async getPredefinedPages() {
     try {
-      const versions = await this.toolBoxService.getVersions();
-      const res = versions.AppVersions.find((version:any) => version.IsActive)?.Pages || [];
+      const versions = await this.appVersion.getActiveVersion();
+      const res = versions?.Pages || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Maps" ||
@@ -169,7 +168,8 @@ export class ActionListDropDown {
       ).map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
-        TileName: page.PageName
+        TileName: page.PageName,
+        PageType: page.PageType
       }))
       return pages;
     } catch (error) {

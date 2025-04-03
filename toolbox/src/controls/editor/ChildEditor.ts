@@ -50,10 +50,8 @@ export class ChildEditor {
           this.pageData
         );
       }
-    };
-
+    }
     let converter;
-    console.log("PageType:", this.pageData?.PageType);
     if (
         this.pageData?.PageType === "Menu" ||
         this.pageData?.PageType === "MyLiving" ||
@@ -83,7 +81,6 @@ export class ChildEditor {
       const mapsPageEditor = new MapsPageEditor(childEditor);
       mapsPageEditor.initialise(tileAttributes.Action);
     } else if (this.pageData?.PageType === "MyActivity") {
-      console.log("MyActivity")
       const activityEditor = new LoadMyActivityData(childEditor);
       activityEditor.load();
     } else if (this.pageData?.PageType === "Calendar") {
@@ -101,7 +98,7 @@ export class ChildEditor {
     const frameContainer = document.getElementById(
       "child-container"
     ) as HTMLElement;
-    const newEditor = new EditorFrame(editorId, false, this.pageTitle);
+    const newEditor = new EditorFrame(editorId, false, this.pageData, this.pageTitle);
     newEditor.render(frameContainer);
   }
 

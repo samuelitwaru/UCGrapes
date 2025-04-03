@@ -7,12 +7,14 @@ export class EditorFrame {
     private id: string;
     private isHome: boolean;
     private pageName?: string;
+    pageData: any;
 
-    constructor(id: string, isHome: boolean = false, pageName?: string) {
+    constructor(id: string, isHome: boolean = false, pageData?:any, pageName?: string) {
         this.container = document.createElement('div');
         this.id = id;
         this.isHome = isHome
         this.pageName = pageName;
+        this.pageData = pageData
         this.init();
     }
 

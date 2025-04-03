@@ -1,4 +1,5 @@
 import { AppConfig } from "../../../../AppConfig";
+import { i18n } from "../../../../i18n/i18n";
 import { Media } from "../../../../models/Media";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { SingleImageFile } from "./SingleImageFile";
@@ -22,7 +23,7 @@ export class ImageUpload {
     const modalHeader = document.createElement("div");
     modalHeader.className = "tb-modal-header";
     const h2 = document.createElement("h2");
-    h2.innerText = "Upload";
+    h2.innerText = i18n.t("sidebar.image_upload.modal_title");
 
     const closeBtn = document.createElement("span");
     closeBtn.className = "close";
@@ -47,7 +48,7 @@ export class ImageUpload {
     const cancelBtn = document.createElement("button");
     cancelBtn.className = "tb-btn tb-btn-outline";
     cancelBtn.id = "cancel-modal";
-    cancelBtn.innerText = "Cancel";
+    cancelBtn.innerText = i18n.t("sidebar.image_upload.cancel");
     cancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
       const modal = this.modalContent.parentElement as HTMLElement;
@@ -58,7 +59,7 @@ export class ImageUpload {
     const saveBtn = document.createElement("button");
     saveBtn.className = "tb-btn tb-btn-primary";
     saveBtn.id = "save-modal";
-    saveBtn.innerText = "Save";
+    saveBtn.innerText = i18n.t("sidebar.image_upload.save");
     // Add save functionality here
 
     modalActions.appendChild(cancelBtn);
@@ -80,7 +81,7 @@ export class ImageUpload {
             <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#afadad"></path>
           </svg>
           <div class="upload-text">
-            <p>Drag and drop or <a href="#" id="browseLink">browse</a></p>
+            ${i18n.t("sidebar.image_upload.upload_message")}
         </div>
         `;
     this.setupDragAndDrop(uploadArea);

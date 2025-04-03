@@ -59,8 +59,6 @@ export class TileImgContainer {
       slider.style.display = "none";
     });
 
-    console.log("TileImgContainer: ", tileAttributes);
-
     this.container.appendChild(img);
     this.container.appendChild(button);
   }

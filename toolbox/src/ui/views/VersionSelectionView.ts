@@ -2,6 +2,7 @@ import { Modal } from "../components/Modal";
 import { Form } from "../components/Form";
 import { AppVersion } from "../../interfaces/AppVersion ";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
+import { i18n } from "../../i18n/i18n";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -37,7 +38,7 @@ export class VersionSelectionView {
     button.setAttribute("aria-haspopup", "listbox");
 
     this.activeVersion.classList.add("selected-theme-value");
-    this.activeVersion.textContent = "Select Theme";
+    this.activeVersion.textContent = "Select Version";
 
     button.appendChild(this.activeVersion);
     button.onclick = (e) => {
@@ -64,27 +65,30 @@ export class VersionSelectionView {
     versions.forEach((version: any) => this.createVersionOption(version));
 
     this.addNewVersionButton();
-    this.addNewTemplateButton() ;
+    // this.selectFromTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
   private addNewVersionButton() {
     const newVersionBtn = document.createElement("div");
     newVersionBtn.className = "theme-option";
-    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Create new version`;
+    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> ${i18n.t(
+      "navbar.appversion.create_new"
+    )}`;
     newVersionBtn.onclick = () => {
       this.createVersionModal();
     };
     this.versionSelection.appendChild(newVersionBtn);
   }
-  private addNewTemplateButton() {
-    const newVersionBtn = document.createElement("div");
-    newVersionBtn.className = "theme-option";
-    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Select Template`;
-    newVersionBtn.onclick = () => {
-      this.createTemplateModal();
-    };
-    this.versionSelection.appendChild(newVersionBtn);
+
+  private selectFromTemplateButton() {
+    const selectFromTemplateBtn = document.createElement("div");
+    selectFromTemplateBtn.className = "theme-option";
+    selectFromTemplateBtn.innerHTML = `<i class="fa fa-plus"></i> Select from template`;
+    // selectFromTemplateBtn.onclick = () => {
+    //   this.selectFromTemplateModal();
+    // };
+    this.versionSelection.appendChild(selectFromTemplateBtn);
   }
 
   private createVersionOption(version: AppVersion) {
@@ -111,7 +115,7 @@ export class VersionSelectionView {
   private createDuplicateButton(version: AppVersion): HTMLSpanElement {
     const duplicateBtn = document.createElement("span");
     duplicateBtn.className = "clone-version fa fa-clone";
-    duplicateBtn.title = "Duplicate";
+    duplicateBtn.title = `${i18n.t("navbar.appversion.duplicate")}`;
 
     duplicateBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -179,9 +183,75 @@ export class VersionSelectionView {
     modal.open();
     let isDuplicating: boolean = false
     if (title) {
-        isDuplicating  = true;
+      isDuplicating = true;
     }
-    this.setupModalButtons(modal, div, isDuplicating);
+    interface Design {
+      id: number;
+      imageUrl: string;
+      title: string;
+  }
+
+  const designs: Design[] = [
+      { id: 1, imageUrl: "design1.png", title: "Design 1" },
+      { id: 2, imageUrl: "design2.png", title: "Design 2" },
+      { id: 3, imageUrl: "design3.png", title: "Design 3" },
+      { id: 4, imageUrl: "design4.png", title: "Design 4" },
+      { id: 5, imageUrl: "design5.png", title: "Design 5" }
+  ];
+  
+  let page: number = 0;
+  const itemsPerPage: number = 3;
+
+  function openModal(): void {
+      const mymodal = document.getElementById("designModal") as HTMLElement;
+      mymodal.style.display = "flex";
+      renderCards();
+  }
+  
+  function closeModal(): void {
+      const modal = document.getElementById("designModal") as HTMLElement;
+      modal.style.display = "none";
+  }
+  
+  function renderCards(): void {
+      const container = document.getElementById("cardContainer") as HTMLElement;
+      container.innerHTML = "";
+      let start = page * itemsPerPage;
+      let end = start + itemsPerPage;
+      let paginatedDesigns = designs.slice(start, end);
+      
+      paginatedDesigns.forEach((design: Design) => {
+          let card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+              <h3>${design.title}</h3>
+              <img src="${design.imageUrl}" alt="${design.title}">
+              <div class="buttons">
+                  <button>Apply</button>
+                  <button>Preview</button>
+              </div>
+          `;
+          container.appendChild(card);
+      });
+      
+      (document.getElementById("prevBtn") as HTMLButtonElement).disabled = page === 0;
+      (document.getElementById("nextBtn") as HTMLButtonElement).disabled = end >= designs.length;
+  }
+  
+  function prevPage(): void {
+      if (page > 0) {
+          page--;
+          renderCards();
+      }
+  }
+  
+  function nextPage(): void {
+      if ((page + 1) * itemsPerPage < designs.length) {
+          page++;
+          renderCards();
+      }
+  }
+    this.setupModalButtons(mymodal, div, isDuplicating);
   }
 
   createTemplateModal(value?: string, title?: string, buttonText?: string) {
@@ -303,7 +373,11 @@ export class VersionSelectionView {
     return submitSection;
   }
 
-  private setupModalButtons(modal: Modal, div: HTMLElement, isDuplicating: boolean) {
+  private setupModalButtons(
+    modal: Modal,
+    div: HTMLElement,
+    isDuplicating: boolean
+  ) {
     const saveBtn = div.querySelector("#submit_form");
     const cancelBtn = div.querySelector("#cancel_form");
 

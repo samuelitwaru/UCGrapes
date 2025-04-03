@@ -17,8 +17,7 @@ export class TemplateManager {
     private async init() {
         const pageDataRow = templates.Templates.find((template: any) => template.Id === this.templateId)?.Rows;
         const appVersionManager = new AppVersionManager();
-        const version = await appVersionManager.getActiveVersion();
-        const page = version?.Pages.find((page: any) => page.PageId === this.pageId);
+        const page = appVersionManager.getPages().find((page: any) => page.PageId === this.pageId);
 
         if (page) {
             const updatedData = this.getUpdatedPageData(pageDataRow, page);

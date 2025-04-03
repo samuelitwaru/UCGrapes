@@ -1,5 +1,6 @@
 import { ChildEditor } from "../../../../controls/editor/ChildEditor";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
+import { i18n } from "../../../../i18n/i18n";
 import { ActionPage } from "../../../../interfaces/ActionPage";
 import { baseURL, ToolBoxService } from "../../../../services/ToolBoxService";
 import { Alert } from "../../Alert";
@@ -97,15 +98,14 @@ export class PageCreationService {
     async handleDynamicForms(form: any) {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
-
         const tileTitle = selectedComponent.find(".tile-title")[0];
         if (tileTitle) tileTitle.components(form.PageName);
 
         const tileId = selectedComponent.parent().getId();
         const rowId = selectedComponent.parent().parent().getId();
 
-        const version = await this.appVersionManager.getActiveVersion(); 
-        const childPage = version.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
+        const version = (globalThis as any).activeVersion; 
+        const childPage = version?.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
 
         const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
         const updates = [
@@ -130,22 +130,22 @@ export class PageCreationService {
     }
 
     private async processMenuPageData(formData: Record<string, string>) {
-        const version = await this.appVersionManager.getActiveVersion();
+        const version = await this.appVersionManager.appVersion;
         
         this.toolBoxService.createMenuPage(version.AppVersionId, formData.page_title).then((res: any) => { 
             this.updateActionListDropDown("Home", res.MenuPage.PageName);
             this.updateTileAfterPageCreation(res.MenuPage);
 
-            new Alert('success', 'Page created successfully');
+            new Alert('success', i18n.t("messages.success.page_Created"));
         });
     }
 
     private async processContentPageData(formData: Record<string, string>) {
-        const version = await this.appVersionManager.getActiveVersion();
+        const version = await this.appVersionManager.appVersion;
         
         this.toolBoxService.createContentPage(version.AppVersionId, formData.page_title).then((res: any) => { 
             this.updateTileAfterPageCreation(res.ContentPage);
-            new Alert('success', 'Page created successfully');
+            new Alert('success', i18n.t("messages.success.page_Created"));
         });
     }
 
@@ -187,7 +187,7 @@ export class PageCreationService {
         for (const [property, value] of updates) {
             (globalThis as any).tileMapper.updateTile(tileId, property, value);
         }
-        const version = await this.appVersionManager.getActiveVersion(); 
+        const version = await this.appVersionManager.appVersion; 
         this.attachPage(page, version, tileAttributes);
     }
 
@@ -207,13 +207,13 @@ export class PageCreationService {
         const tileId = selectedComponent.parent().getId();
         const rowId = selectedComponent.parent().parent().getId();
 
-        const version = await this.appVersionManager.getActiveVersion(); 
-        const childPage = version.Pages.find((page: any) => (page.PageName === "Web Link" && page.PageType === "WebLink"));
+        const version = (globalThis as any).activeVersion; 
+        const childPage = version?.Pages.find((page: any) => (page.PageName === "Web Link" && page.PageType === "WebLink"));
 
         const updates = [
             ["Text", formData.link_label],
             ["Name", formData.link_label],
-            ["Action.ObjectType", "Web Link"],
+            ["Action.ObjectType", "WebLink"],
             ["Action.ObjectId", childPage?.PageId],
             ["Action.ObjectUrl", formData.link_url],
         ];

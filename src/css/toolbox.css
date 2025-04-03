@@ -364,7 +364,7 @@ button {
 .tile-title-section {
   position: relative;
   width: fit-content;
-  display: block;
+  display: flex;
 }
 
 .tile-icon-section {
@@ -640,6 +640,8 @@ button {
   margin-top: 5%;
   margin-left: 5%;
   margin-right: 5%;
+  background-color: #e1e1e1;
+    border-radius: 6px;
 }
 .tb-toggle-buttons button {
   flex: 1;

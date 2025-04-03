@@ -1,3 +1,4 @@
+import { i18n } from "../../i18n/i18n";
 import { DebugResults } from "../../interfaces/DebugResults";
 import { truncateString } from "../../utils/helpers";
 import { AppVersionManager } from "./AppVersionManager";
@@ -18,13 +19,13 @@ export class DebugUIManager {
         const debugSummary = document.createElement('div');
         debugSummary.classList.add('tb_debug_summary');
         // Total URLs Section
-        const totalUrls = this.createSummaryItem(this.debugResults.Summary.TotalUrls, 'Total URLs', true);
+        const totalUrls = this.createSummaryItem(this.debugResults.Summary.TotalUrls, `${i18n.t("navbar.debug.total_urls")}`, true);
 
         // Successful URLs Section
-        const totalSuccess = this.createSummaryItem(this.debugResults.Summary.SuccessCount, 'Successful');
+        const totalSuccess = this.createSummaryItem(this.debugResults.Summary.SuccessCount, `${i18n.t("navbar.debug.total_successful")}`);
 
         // Failed URLs Section
-        const totalFail = this.createSummaryItem(this.debugResults.Summary.FailureCount, 'Failed');
+        const totalFail = this.createSummaryItem(this.debugResults.Summary.FailureCount, `${i18n.t("navbar.debug.total_failed")}`);
 
         debugSummary.appendChild(totalUrls);
         debugSummary.appendChild(totalSuccess);
@@ -51,7 +52,7 @@ export class DebugUIManager {
 
             item.classList.add('active');
 
-            this.activeFilter = label === 'Total URLs' ? null : label;
+            this.activeFilter = label === `${i18n.t("navbar.debug.total_urls")}` ? null : label;
 
             this.filterPageSections();
         });
@@ -95,11 +96,11 @@ export class DebugUIManager {
         if (this.activeFilter === null) return true;
     
         // 3. For 'Successful' filter
-        if (this.activeFilter === 'Successful') {
+        if (this.activeFilter === `${i18n.t("navbar.debug.total_successful")}`) {
             return statusElement.classList.contains('tb_debug_status-200');
         }
     
-        if (this.activeFilter === 'Failed') {
+        if (this.activeFilter === `${i18n.t("navbar.debug.total_failed")}`) {
             return Number(statusElement.textContent?.split(' ')[0]) >= 400 || Number(statusElement.textContent?.split(' ')[0]) == 0;
         }
     
@@ -160,9 +161,9 @@ export class DebugUIManager {
                     <div class="tb_debug_url-status tb_debug_status-${urlItem.StatusCode}">${urlItem.StatusCode} ${truncateString(urlItem.StatusMessage, 10)}</div>
                 </summary>
                 <div class="tb_debug_details-content">
-                    <strong>Full URL:</strong> ${urlItem.Url}
-                    <br><strong>Status Code:</strong> ${urlItem.StatusCode}
-                    <br><strong>Status Message:</strong> ${urlItem.StatusMessage}
+                    <strong>${i18n.t("navbar.debug.full_url")}:</strong> ${urlItem.Url}
+                    <br><strong>${i18n.t("navbar.debug.status_code")}:</strong> ${urlItem.StatusCode}
+                    <br><strong>${i18n.t("navbar.debug.status_message")}:</strong> ${urlItem.StatusMessage}
                     ${urlItem.StatusCode >= 400 || urlItem.StatusCode == 0? `${this.getAffectedTiles(urlItem)}` : ''}
                 </div>
             </details>
@@ -173,11 +174,11 @@ export class DebugUIManager {
 
     private getAffectedTiles(url: { Url: string, StatusCode: number, StatusMessage: string, AffectedType: string, AffectedName: string }): string {
         if (url.AffectedType === 'Tile') {
-            return `<br><strong>Affected Tile:</strong> <div class="tb_debug-badge">${url.AffectedName}</div>`
+            return `<br><strong>${i18n.t("navbar.debug.affected_tile")}:</strong> <div class="tb_debug-badge">${url.AffectedName}</div>`
         } else if(url.AffectedType === 'Cta') {
-            return `<br><strong>Affected Call to Action: </strong><div class="tb_debug-badge">${url.AffectedName}</div>`
+            return `<br><strong>${i18n.t("navbar.debug.affected_cta")}: </strong><div class="tb_debug-badge">${url.AffectedName}</div>`
         } else if(url.AffectedType === 'Content') {
-            return `<br><strong>Affected Content: </strong><div class="tb_debug-badge">${url.AffectedName}</div>`
+            return `<br><strong>${i18n.t("navbar.debug.affected_content")}: </strong><div class="tb_debug-badge">${url.AffectedName}</div>`
         }
         return ``;
     }

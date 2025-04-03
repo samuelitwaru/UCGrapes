@@ -21,7 +21,6 @@ export class DebugController {
             const response = await toolBoxService.debugApp(pageUrls);
             if (response) {                
                 results = response.DebugResults;
-                console.log("DebugController results", response);
             }
         } catch (error) {
             console.error(error);
@@ -34,7 +33,7 @@ export class DebugController {
         let pageUrls: { page: string; urls: { url: string; affectedType: string; affectedName?: string }[] }[] = [];
 
         const activeVersion = await this.appVersions.getActiveVersion();
-        const pages = activeVersion.Pages;
+        const pages = activeVersion?.Pages;
 
         for (const page of pages) {
             let urls: { url: string; affectedType: string; affectedName?: string }[] = [];

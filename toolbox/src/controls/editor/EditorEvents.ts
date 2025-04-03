@@ -39,6 +39,7 @@ export class EditorEvents {
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
+    this.onComponentUpdate();
     this.onLoad();
   }
 
@@ -68,6 +69,14 @@ export class EditorEvents {
     }
   }
 
+  onComponentUpdate() {
+    this.editor.on("component:update", (model: any) => {
+      // console.log("Component updated", model);
+      window.dispatchEvent(new CustomEvent('pageChanged', { 
+        detail: { pageId: this.pageId } 
+      }));
+    })
+  }
   onDragAndDrop() {
     let sourceComponent: any;
     let destinationComponent: any;
@@ -222,17 +231,16 @@ export class EditorEvents {
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
-
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
-      
+    
       let childPage;
       if (Object.keys(data).length > 0) {
         childPage = data
       } else {
-        const version = await this.appVersionManager.getActiveVersion();
-        childPage = version?.Pages.find((page: any) => page.PageId === objectId);
+        // const version = await this.appVersionManager.getActiveVersion();
+        childPage = this.appVersionManager.getPages()?.find((page: any) => page.PageId === objectId);
       }
 
       this.removeOtherEditors();

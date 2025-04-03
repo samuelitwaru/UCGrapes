@@ -25,7 +25,7 @@ export class ShareLinkView {
             const div = this.createModalContent();
             
             const modal = new Modal({
-                title: "Share link for a preview",
+                title: i18n.t("navbar.share.modal_title"),
                 width: "500px",
                 body: div,
             });
@@ -43,7 +43,7 @@ export class ShareLinkView {
         const div = document.createElement("div");
         const p = document.createElement("p");
         // p.innerText = i18n.t("hello");
-        p.innerText = "A shareable link has been generated for you. Copy it and share for previews!";
+        p.innerText = i18n.t("navbar.share.modal_description");
         
         const linkSection = this.createLinkSection();
         const submitSection = this.createSubmitSection(linkSection);
@@ -93,12 +93,12 @@ export class ShareLinkView {
         const copyBtn = this.createButton(
             "copy-link",
             "tb-btn-primary",
-            "Copy"
+            i18n.t("navbar.share.copy")
         );
         const cancelBtn = this.createButton(
             "cancel",
             "tb-btn-outline",
-            "Close"
+            i18n.t("navbar.share.close")
         );
 
         submitSection.appendChild(copyBtn);
@@ -122,7 +122,7 @@ export class ShareLinkView {
                     if (copied) {
                         setTimeout(() => {
                             modal.close();
-                            this.toolboxManager.openToastMessage("Link copied to clipboard");
+                            this.toolboxManager.openToastMessage(i18n.t("navbar.share.copied"));
                           }, 500);
                     } else {
                         modal.close();

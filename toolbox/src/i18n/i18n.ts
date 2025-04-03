@@ -107,6 +107,10 @@ export const i18n = new I18n({
         no_active_page: "No active page",
       },
     },
+    Messages: "Messages",
+    Requests: "Requests",
+    NoMessagesYet: "No Messages Yet"
+  
   },
 
   nl: {
@@ -214,5 +218,8 @@ export const i18n = new I18n({
         no_active_page: "Geen actieve pagina",
       },
     },
+    Messages: "Berichten",
+    Requests: "Verzoeken",
+    NoMessagesYet: "Nog geen berichten",
   },
 });

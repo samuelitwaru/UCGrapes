@@ -1,5 +1,6 @@
 import { EditorEvents } from "../../../controls/editor/EditorEvents";
 import { EditorManager } from "../../../controls/editor/EditorManager";
+import { ThemeManager } from "../../../controls/themes/ThemeManager";
 import { AppVersionManager } from "../../../controls/versions/AppVersionManager";
 
 export class PageAppBar {
@@ -8,10 +9,12 @@ export class PageAppBar {
     private title: string;
     private id: string;
     editorWidth: number;
+    themeManager: ThemeManager;
 
     constructor(id: string, title?: string) {
         this.title = title || "Page Name";
         this.id = id;
+        this.themeManager = new ThemeManager();
         this.container = document.createElement("div");
         this.editor = new EditorManager();
         this.editorWidth = (globalThis as any).deviceWidth;
@@ -58,6 +61,7 @@ export class PageAppBar {
         const truncatedTitle = this.title.length > length ? this.title.substring(0, length) + "..." : this.title;
         pageTitle.setAttribute('title', this.title || 'Page Name');
         pageTitle.textContent = truncatedTitle || 'Page Name';
+        pageTitle.style.color = this.themeManager.getThemeColor('backgroundColor');
     
         // Create a container div for the edit/save icons
         const iconContainer = document.createElement('div');

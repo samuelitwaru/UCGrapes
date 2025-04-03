@@ -57,7 +57,7 @@ export class AppVersionController {
         }
     }
 
-    async createVersion(versionName: string, isDuplicating = false): Promise<AppVersion | null> {
+    async createVersion(versionName: string, isDuplicating = false): Promise<any | null> {
         try {
             let result;    
             if (isDuplicating) {

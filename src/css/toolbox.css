@@ -250,8 +250,31 @@ button {
   color: #fff;
 }
 
-.template-wrapper:hover .action-button {
+.tile-open-menu {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  opacity: 0;
+}
+
+.template-wrapper .gjs-selected ~ .tile-open-menu {
   opacity: 1;
+}
+
+.template-wrapper:hover .gjs-selected ~ .delete-button {
+  opacity: 1;
+}
+
+.template-wrapper:hover .add-button-right {
+  opacity: 1;
+}
+
+.template-wrapper:hover .add-button-bottom {
+  opacity: 1;
+}
+
+.tile-open-menu:hover {
+  cursor: pointer;
 }
 
 .content-page-wrapper {

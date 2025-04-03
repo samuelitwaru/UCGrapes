@@ -31,7 +31,6 @@ export class CtaButtonProperties {
 
     ctaColorAttributes() {        
         const contentSection = document.querySelector("#content-page-section");
-        console.log("this.contentSection", contentSection);
         const colorItems = contentSection?.querySelectorAll(".color-item > input");
         let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes.CtaBGColor);
 
@@ -45,7 +44,6 @@ export class CtaButtonProperties {
     ctaActionDisplay () {
         const contentSection = document.querySelector("#content-page-section");
         const ctaActionDiv = document.createElement("div")
-        console.log("this.selectedComponent", contentSection);
         ctaActionDiv.id = "cta-selected-actions";
         ctaActionDiv.style.display = "flex";
 

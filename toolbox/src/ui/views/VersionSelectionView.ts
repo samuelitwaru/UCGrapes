@@ -224,9 +224,21 @@ export class VersionSelectionView {
       const newVersion = inputValue.value;
 
       if (newVersion) {
-        await this.versionController.createVersion(newVersion, isDuplicating);
+        const result = await this.versionController.createVersion(newVersion, isDuplicating);
         modal.close();
         await this.refreshVersionList();
+        if (result) {
+          this.clearActiveTheme();
+        }
+        // const appVersionId = result?.AppVersion.AppVersionId;
+        // console.log("appVersionId", appVersionId);
+        // console.log("result", result);
+        // // const activationResult = await this.versionController.activateVersion(
+        // //   appVersionId
+        // // );
+        // // if (activationResult) {
+        // //   this.clearActiveTheme();
+        // // }
       }
     });
 

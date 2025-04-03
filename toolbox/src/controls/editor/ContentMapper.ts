@@ -62,8 +62,6 @@ export class ContentMapper {
         return false; 
     }
     
-    
-
     moveCta(CtaId: any, newIndex: number): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageContentStructure?.Cta) return;
@@ -92,8 +90,9 @@ export class ContentMapper {
             "CtaAction": cta.CtaAction,
             "CtaBGColor": cta.CtaBGColor,
             "CtaButtonType": cta.CtaButtonType,
-            "CtaButtonImgUrl": cta.CtaButtonImgUrl,
+            "CtaButtonImgUrl": cta.CtaButtonImgUrl || "",
         }
+        console.log(ctaButton);
          if (!data.PageContentStructure.Cta) {
             data.PageContentStructure.Cta = [];
          }

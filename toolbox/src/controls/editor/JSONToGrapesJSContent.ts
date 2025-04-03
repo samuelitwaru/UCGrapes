@@ -10,6 +10,7 @@ import {
   tileWrapperDefaultAttributes,
   ctaContainerDefaultAttributes,
 } from "../../utils/default-attributes";
+import { randomIdGenerator } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
 export class JSONToGrapesJSContent {
@@ -248,7 +249,7 @@ export class JSONToGrapesJSContent {
 
   contentImage(content: any) {
     return `
-    <div ${contentDefaultAttributes} class="content-image" id="${content?.ContentId}" data-gjs-type="product-service-image">
+    <div ${contentDefaultAttributes} class="content-image" id="${content?.ContentId ? content?.ContentId : randomIdGenerator(15)}" data-gjs-type="product-service-image">
         <button ${DefaultAttributes} class="tb-edit-image-icon"
         ${(this.data?.PageType === "Location" || this.data?.PageType === "Reception") ? `style="right: -20px"` : ``}>
             <svg ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -284,7 +285,7 @@ export class JSONToGrapesJSContent {
         style="flex: 1; padding: 0; margin: 0; height: auto; white-space: normal;"
         class="content-page-block"
         ${contentDefaultAttributes} 
-        id="${content?.ContentId}"
+        id="${content?.ContentId ? content?.ContentId : randomIdGenerator(15)}"
         data-gjs-type="product-service-description"
     >
       <button ${DefaultAttributes} class="tb-edit-content-icon">

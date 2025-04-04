@@ -2,7 +2,6 @@ import { Modal } from "../components/Modal";
 import { Form } from "../components/Form";
 import { AppVersion } from "../../interfaces/AppVersion ";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
-import { i18n } from "../../i18n/i18n";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -38,7 +37,7 @@ export class VersionSelectionView {
     button.setAttribute("aria-haspopup", "listbox");
 
     this.activeVersion.classList.add("selected-theme-value");
-    this.activeVersion.textContent = "Select Version";
+    this.activeVersion.textContent = "Select Theme";
 
     button.appendChild(this.activeVersion);
     button.onclick = (e) => {
@@ -65,30 +64,17 @@ export class VersionSelectionView {
     versions.forEach((version: any) => this.createVersionOption(version));
 
     this.addNewVersionButton();
-    // this.selectFromTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
   private addNewVersionButton() {
     const newVersionBtn = document.createElement("div");
     newVersionBtn.className = "theme-option";
-    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> ${i18n.t(
-      "navbar.appversion.create_new"
-    )}`;
+    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Create new version`;
     newVersionBtn.onclick = () => {
       this.createVersionModal();
     };
     this.versionSelection.appendChild(newVersionBtn);
-  }
-
-  private selectFromTemplateButton() {
-    const selectFromTemplateBtn = document.createElement("div");
-    selectFromTemplateBtn.className = "theme-option";
-    selectFromTemplateBtn.innerHTML = `<i class="fa fa-plus"></i> Select from template`;
-    // selectFromTemplateBtn.onclick = () => {
-    //   this.selectFromTemplateModal();
-    // };
-    this.versionSelection.appendChild(selectFromTemplateBtn);
   }
 
   private createVersionOption(version: AppVersion) {
@@ -115,7 +101,7 @@ export class VersionSelectionView {
   private createDuplicateButton(version: AppVersion): HTMLSpanElement {
     const duplicateBtn = document.createElement("span");
     duplicateBtn.className = "clone-version fa fa-clone";
-    duplicateBtn.title = `${i18n.t("navbar.appversion.duplicate")}`;
+    duplicateBtn.title = "Duplicate";
 
     duplicateBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -183,172 +169,9 @@ export class VersionSelectionView {
     modal.open();
     let isDuplicating: boolean = false
     if (title) {
-      isDuplicating = true;
-    }
-    interface Design {
-      id: number;
-      imageUrl: string;
-      title: string;
-  }
-
-  const designs: Design[] = [
-      { id: 1, imageUrl: "design1.png", title: "Design 1" },
-      { id: 2, imageUrl: "design2.png", title: "Design 2" },
-      { id: 3, imageUrl: "design3.png", title: "Design 3" },
-      { id: 4, imageUrl: "design4.png", title: "Design 4" },
-      { id: 5, imageUrl: "design5.png", title: "Design 5" }
-  ];
-  
-  let page: number = 0;
-  const itemsPerPage: number = 3;
-
-  function openModal(): void {
-      const mymodal = document.getElementById("designModal") as HTMLElement;
-      mymodal.style.display = "flex";
-      renderCards();
-  }
-  
-  function closeModal(): void {
-      const modal = document.getElementById("designModal") as HTMLElement;
-      modal.style.display = "none";
-  }
-  
-  function renderCards(): void {
-      const container = document.getElementById("cardContainer") as HTMLElement;
-      container.innerHTML = "";
-      let start = page * itemsPerPage;
-      let end = start + itemsPerPage;
-      let paginatedDesigns = designs.slice(start, end);
-      
-      paginatedDesigns.forEach((design: Design) => {
-          let card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-              <h3>${design.title}</h3>
-              <img src="${design.imageUrl}" alt="${design.title}">
-              <div class="buttons">
-                  <button>Apply</button>
-                  <button>Preview</button>
-              </div>
-          `;
-          container.appendChild(card);
-      });
-      
-      (document.getElementById("prevBtn") as HTMLButtonElement).disabled = page === 0;
-      (document.getElementById("nextBtn") as HTMLButtonElement).disabled = end >= designs.length;
-  }
-  
-  function prevPage(): void {
-      if (page > 0) {
-          page--;
-          renderCards();
-      }
-  }
-  
-  function nextPage(): void {
-      if ((page + 1) * itemsPerPage < designs.length) {
-          page++;
-          renderCards();
-      }
-  }
-    this.setupModalButtons(mymodal, div, isDuplicating);
-  }
-
-  createTemplateModal(value?: string, title?: string, buttonText?: string) {
-    const form = new Form("page-form");
-    form.addField({
-      type: "text",
-      id: "version_name",
-      placeholder: "Version name",
-      required: true,
-      value: value,
-    });
-
-    const div = document.createElement("div");
-    form.render(div);
-
-    const submitSection = this.createSubmitSection(buttonText);
-    div.appendChild(submitSection);
-
-    const mymodal = new Modal({
-      title: title || "Select Template",
-      width: "80%",
-      body: '<div id="designModal" class="modal"><div class="modal-content"><h2>Select a Design</h2><div id="cardContainer"></div><div class="buttons"><button id="prevBtn" onclick="prevPage()">Prev</button><button id="nextBtn" onclick="nextPage()">Next</button></div><button onclick="closeModal()">Close</button></div></div>',
-    });
-
-    mymodal.open();
-
-    let isDuplicating: boolean = false
-    if (title) {
         isDuplicating  = true;
     }
-    interface Design {
-      id: number;
-      imageUrl: string;
-      title: string;
-  }
-
-  const designs: Design[] = [
-      { id: 1, imageUrl: "design1.png", title: "Design 1" },
-      { id: 2, imageUrl: "design2.png", title: "Design 2" },
-      { id: 3, imageUrl: "design3.png", title: "Design 3" },
-      { id: 4, imageUrl: "design4.png", title: "Design 4" },
-      { id: 5, imageUrl: "design5.png", title: "Design 5" }
-  ];
-  
-  let page: number = 0;
-  const itemsPerPage: number = 3;
-
-  function openModal(): void {
-      const mymodal = document.getElementById("designModal") as HTMLElement;
-      mymodal.style.display = "flex";
-      renderCards();
-  }
-  
-  function closeModal(): void {
-      const modal = document.getElementById("designModal") as HTMLElement;
-      modal.style.display = "none";
-  }
-  
-  function renderCards(): void {
-      const container = document.getElementById("cardContainer") as HTMLElement;
-      container.innerHTML = "";
-      let start = page * itemsPerPage;
-      let end = start + itemsPerPage;
-      let paginatedDesigns = designs.slice(start, end);
-      
-      paginatedDesigns.forEach((design: Design) => {
-          let card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-              <h3>${design.title}</h3>
-              <img src="${design.imageUrl}" alt="${design.title}">
-              <div class="buttons">
-                  <button>Apply</button>
-                  <button>Preview</button>
-              </div>
-          `;
-          container.appendChild(card);
-      });
-      
-      (document.getElementById("prevBtn") as HTMLButtonElement).disabled = page === 0;
-      (document.getElementById("nextBtn") as HTMLButtonElement).disabled = end >= designs.length;
-  }
-  
-  function prevPage(): void {
-      if (page > 0) {
-          page--;
-          renderCards();
-      }
-  }
-  
-  function nextPage(): void {
-      if ((page + 1) * itemsPerPage < designs.length) {
-          page++;
-          renderCards();
-      }
-  }
-    this.setupModalButtons(mymodal, div, isDuplicating);
+    this.setupModalButtons(modal, div, isDuplicating);
   }
 
   private createSubmitSection(buttonText?: string): HTMLDivElement {
@@ -373,11 +196,7 @@ export class VersionSelectionView {
     return submitSection;
   }
 
-  private setupModalButtons(
-    modal: Modal,
-    div: HTMLElement,
-    isDuplicating: boolean
-  ) {
+  private setupModalButtons(modal: Modal, div: HTMLElement, isDuplicating: boolean) {
     const saveBtn = div.querySelector("#submit_form");
     const cancelBtn = div.querySelector("#cancel_form");
 
@@ -387,21 +206,9 @@ export class VersionSelectionView {
       const newVersion = inputValue.value;
 
       if (newVersion) {
-        const result = await this.versionController.createVersion(newVersion, isDuplicating);
+        await this.versionController.createVersion(newVersion, isDuplicating);
         modal.close();
         await this.refreshVersionList();
-        if (result) {
-          this.clearActiveTheme();
-        }
-        // const appVersionId = result?.AppVersion.AppVersionId;
-        // console.log("appVersionId", appVersionId);
-        // console.log("result", result);
-        // // const activationResult = await this.versionController.activateVersion(
-        // //   appVersionId
-        // // );
-        // // if (activationResult) {
-        // //   this.clearActiveTheme();
-        // // }
       }
     });
 

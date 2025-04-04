@@ -9,9 +9,9 @@ export class NewPageButton {
     toolboxService: ToolBoxService;
     appVersionManager: AppVersionManager;
     pageAttacher: PageAttacher;
-    constructor(toolboxService:ToolBoxService, appVersionManager:AppVersionManager) {
-        this.toolboxService = toolboxService
-        this.appVersionManager = appVersionManager
+    constructor() {
+        this.toolboxService = new ToolBoxService();
+        this.appVersionManager = new AppVersionManager();
         this.pageAttacher = new PageAttacher();
         const menuContainer = this.render();
         const childContainer = document.getElementById('child-container')

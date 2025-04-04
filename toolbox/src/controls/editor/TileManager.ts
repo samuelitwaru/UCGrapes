@@ -1,3 +1,4 @@
+import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
 import {
   DefaultAttributes,
   rowDefaultAttributes,
@@ -7,6 +8,7 @@ import {
 import { randomIdGenerator } from "../../utils/helpers";
 import { CtaManager } from "../themes/CtaManager";
 import { EditorEvents } from "./EditorEvents";
+import { NewPageButton } from "./NewPageButton";
 import { TileMapper } from "./TileMapper";
 import { TileUpdate } from "./TileUpdate";
 
@@ -133,7 +135,10 @@ export class TileManager {
       ".tile-open-menu"
     );
     if (addBottomButton) {
-      console.log("addBottomButton");
+      const templateContainer = addBottomButton.closest(".template-wrapper") as HTMLElement;
+      console.log("templateContainer: ", templateContainer);
+      const menu = new ActionListPopUp(templateContainer)
+      menu.render();
     }
   }
 

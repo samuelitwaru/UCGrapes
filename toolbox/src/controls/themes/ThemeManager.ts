@@ -137,6 +137,8 @@ export class ThemeManager {
                       }   
                       this.updateTileIcon(tile, tileWrapper);                   
                     }
+
+                    this.updateFrameColor(iframeDoc);
                   }
                 });
               }
@@ -156,6 +158,8 @@ export class ThemeManager {
                   const ctaButton = ctaElement.querySelector('.cta-styled-btn') as HTMLElement;
                   ctaButton.style.backgroundColor = this.getThemeCtaColor(cta.CtaBGColor);
                 }
+
+                this.updateFrameColor(iframeDoc);
               }
             });
           });
@@ -194,5 +198,26 @@ export class ThemeManager {
     } catch (error) {
       console.error('Error updating font family:', error);
     }
+  }
+
+  private updateFrameColor (iframeDoc: any) {
+    const activeFrame = document.querySelector('.active-editor') as HTMLElement;
+    activeFrame?.style.setProperty('border', `5px solid ${this.getThemeColor('backgroundColor')}`);
+    
+    const appBarTitle = document.querySelector('.appbar-title-container .title') as HTMLElement;
+    appBarTitle?.style.setProperty('color', this.getThemeColor('backgroundColor'));
+
+    const backButton = document.querySelector('.app-bar svg');
+    const svgG = backButton?.querySelector('g');
+    svgG?.style.setProperty('stroke', this.getThemeColor('backgroundColor'));
+
+    const arrowLeft = backButton?.querySelector('path');
+    arrowLeft?.style.setProperty('fill', this.getThemeColor('backgroundColor'));
+
+    const myActivityMessageButton = iframeDoc.querySelector('.tb-toggle-buttons')?.children[0] as HTMLElement;
+    myActivityMessageButton?.style.setProperty('background-color', this.getThemeColor('backgroundColor'));
+
+    const calendarDateSelector = iframeDoc.querySelector('.tb-date-selector') as HTMLElement;
+    calendarDateSelector?.style.setProperty('background-color', this.getThemeColor('backgroundColor'));
   }
 }

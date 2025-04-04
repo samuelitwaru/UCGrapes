@@ -213,7 +213,7 @@ button {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0;
+  display: none;
   transition: all 0.2s ease;
   z-index: 1;
 }
@@ -254,27 +254,32 @@ button {
   position: absolute;
   top: -12px;
   left: -12px;
-  opacity: 0;
+  display: none;
 }
 
 .template-wrapper .gjs-selected ~ .tile-open-menu {
-  opacity: 1;
+  display: block;
 }
 
 .template-wrapper:hover .gjs-selected ~ .delete-button {
-  opacity: 1;
+  display: block;
 }
 
 .template-wrapper:hover .add-button-right {
-  opacity: 1;
+  display: block;
 }
 
 .template-wrapper:hover .add-button-bottom {
-  opacity: 1;
+  display: block;
 }
 
 .tile-open-menu:hover {
   cursor: pointer;
+}
+
+.tile-open-menu:hover .menu-container {
+  opacity: 1;
+  visibility: visible;
 }
 
 .content-page-wrapper {
@@ -283,7 +288,8 @@ button {
   gap: 1rem;
 }
 
-#product-service-image, img.content-page-block {
+#product-service-image,
+img.content-page-block {
   max-height: 156px;
   min-height: 156px;
   width: 100%;
@@ -359,7 +365,8 @@ button {
   }
 }
 
-.tile-close-icon, .tile-close-title {
+.tile-close-icon,
+.tile-close-title {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -377,7 +384,7 @@ button {
   cursor: pointer;
 }
 
-.gjs-selected .tile-icon-section:hover .tile-close-icon, 
+.gjs-selected .tile-icon-section:hover .tile-close-icon,
 .gjs-selected .tile-icon-section:hover .tile-close-title {
   opacity: 1;
   visibility: visible;
@@ -664,7 +671,7 @@ button {
   margin-left: 5%;
   margin-right: 5%;
   background-color: #e1e1e1;
-    border-radius: 6px;
+  border-radius: 6px;
 }
 .tb-toggle-buttons button {
   flex: 1;
@@ -833,6 +840,51 @@ button {
 
 .content-image:hover {
   cursor: move;
+}
+
+/* menu container */
+.menu-container {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+.menu-container .menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: max-content;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
+  z-index: 999999;
+  position: absolute;
+}
+
+.menu-container .menu-item {
+  padding: 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  z-index: 10;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.tile-open-menu:hover + .menu-container {
+  opacity: 1;
+  visibility: visible;
+}
+
+.menu-container .menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-container .menu-item:hover {
+  background-color: #f0f0f0;
 }
 
 .gjs-badge__name,

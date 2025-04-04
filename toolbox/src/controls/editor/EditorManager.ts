@@ -137,7 +137,7 @@ export class EditorManager {
   }
 
   activateHomeEditor(frameId: string) {
-    const homeFrame = document.getElementById(`${frameId}-frame`);
-    homeFrame?.classList.add("active-editor");
+    const homeFrame = document.getElementById(`${frameId}-frame`) as HTMLElement;
+    homeFrame.style.border = `5px solid ${this.themeManager.getThemeColor('backgroundColor')}`
   }
 }

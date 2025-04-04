@@ -1,9 +1,12 @@
 import { DefaultAttributes } from "../../utils/default-attributes";
+import { ThemeManager } from "../themes/ThemeManager";
 
 export class LoadCalendarData {
     editor: any;
-    constructor(editor: any) {
-        this.editor = editor;
+    themeManager: ThemeManager;
+        constructor(editor: any) {
+            this.editor = editor;
+            this.themeManager = new ThemeManager();
     }
      load() {
         this.editor.setComponents(this.htmlData());
@@ -11,7 +14,9 @@ export class LoadCalendarData {
 
      private htmlData() {
         let pageData = `
-        <div class="tb-date-selector" ${DefaultAttributes}>
+        <div class="tb-date-selector" 
+          ${DefaultAttributes}
+          style="background-color: ${this.themeManager.getThemeColor('backgroundColor')};">
           <span class="tb-arrow" ${DefaultAttributes}>❮</span>
           <span class="tb-date-text" id="current-date" ${DefaultAttributes}> ${this.formatDate()}</span>
           <span class="tb-arrow" ${DefaultAttributes}>❯</span>

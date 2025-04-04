@@ -2,6 +2,7 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
+import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
@@ -25,10 +26,12 @@ export class EditorEvents {
   tileProperties: any;
   appVersionManager: any;
   toolboxService: any;
+  themeManager:any;
   
   constructor() {
     this.appVersionManager = new AppVersionManager();
     this.toolboxService = new ToolBoxService();
+    this.themeManager = new ThemeManager();
   }
 
   init(editor: any, pageData: any, frameEditor: any) {
@@ -58,6 +61,15 @@ export class EditorEvents {
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor();
           })
+
+          wrapper.view.el.addEventListener("mouseenter", (e: MouseEvent) => {
+            // this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);            
+            const target = e.target as HTMLElement;
+            console.log("Mouse enter", e.target);
+            if (target.closest(".tile-open-menu")) {
+              console.log("Mouse enter", e.target);
+            }
+          });
           
         } else {
           console.error("Wrapper not found!");
@@ -175,8 +187,10 @@ export class EditorEvents {
     const framelist = document.querySelectorAll('.mobile-frame');
     framelist.forEach((frame: any) => {
       frame.classList.remove('active-editor');
+      frame.style.border = `5px solid #373737`
       if (frame.id.includes(this.frameId)) {
         frame.classList.add('active-editor');
+        frame.style.border = `5px solid ${this.themeManager.getThemeColor('backgroundColor')}`
         this.toggleSidebar();
       }
     })

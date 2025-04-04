@@ -2,7 +2,6 @@ import { Modal } from "../components/Modal";
 import { Form } from "../components/Form";
 import { AppVersion } from "../../interfaces/AppVersion ";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
-import { i18n } from "../../i18n/i18n";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -38,7 +37,7 @@ export class VersionSelectionView {
     button.setAttribute("aria-haspopup", "listbox");
 
     this.activeVersion.classList.add("selected-theme-value");
-    this.activeVersion.textContent = "Select Version";
+    this.activeVersion.textContent = "Select Theme";
 
     button.appendChild(this.activeVersion);
     button.onclick = (e) => {
@@ -65,30 +64,17 @@ export class VersionSelectionView {
     versions.forEach((version: any) => this.createVersionOption(version));
 
     this.addNewVersionButton();
-    // this.selectFromTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
   private addNewVersionButton() {
     const newVersionBtn = document.createElement("div");
     newVersionBtn.className = "theme-option";
-    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> ${i18n.t(
-      "navbar.appversion.create_new"
-    )}`;
+    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Create new version`;
     newVersionBtn.onclick = () => {
       this.createVersionModal();
     };
     this.versionSelection.appendChild(newVersionBtn);
-  }
-
-  private selectFromTemplateButton() {
-    const selectFromTemplateBtn = document.createElement("div");
-    selectFromTemplateBtn.className = "theme-option";
-    selectFromTemplateBtn.innerHTML = `<i class="fa fa-plus"></i> Select from template`;
-    // selectFromTemplateBtn.onclick = () => {
-    //   this.selectFromTemplateModal();
-    // };
-    this.versionSelection.appendChild(selectFromTemplateBtn);
   }
 
   private createVersionOption(version: AppVersion) {
@@ -115,7 +101,7 @@ export class VersionSelectionView {
   private createDuplicateButton(version: AppVersion): HTMLSpanElement {
     const duplicateBtn = document.createElement("span");
     duplicateBtn.className = "clone-version fa fa-clone";
-    duplicateBtn.title = `${i18n.t("navbar.appversion.duplicate")}`;
+    duplicateBtn.title = "Duplicate";
 
     duplicateBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -181,9 +167,9 @@ export class VersionSelectionView {
     });
 
     modal.open();
-    let isDuplicating: boolean = false;
+    let isDuplicating: boolean = false
     if (title) {
-      isDuplicating = true;
+        isDuplicating  = true;
     }
     this.setupModalButtons(modal, div, isDuplicating);
   }
@@ -210,11 +196,7 @@ export class VersionSelectionView {
     return submitSection;
   }
 
-  private setupModalButtons(
-    modal: Modal,
-    div: HTMLElement,
-    isDuplicating: boolean
-  ) {
+  private setupModalButtons(modal: Modal, div: HTMLElement, isDuplicating: boolean) {
     const saveBtn = div.querySelector("#submit_form");
     const cancelBtn = div.querySelector("#cancel_form");
 
@@ -224,21 +206,9 @@ export class VersionSelectionView {
       const newVersion = inputValue.value;
 
       if (newVersion) {
-        const result = await this.versionController.createVersion(newVersion, isDuplicating);
+        await this.versionController.createVersion(newVersion, isDuplicating);
         modal.close();
         await this.refreshVersionList();
-        if (result) {
-          this.clearActiveTheme();
-        }
-        // const appVersionId = result?.AppVersion.AppVersionId;
-        // console.log("appVersionId", appVersionId);
-        // console.log("result", result);
-        // // const activationResult = await this.versionController.activateVersion(
-        // //   appVersionId
-        // // );
-        // // if (activationResult) {
-        // //   this.clearActiveTheme();
-        // // }
       }
     });
 

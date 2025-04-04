@@ -88,7 +88,7 @@ export class ToolboxManager {
   async savePages(publish = false) {
     try {
       const lastSavedStates = new Map<string, string>();
-      const activeVersion = (globalThis as any).activeVersion;
+      const activeVersion = await this.appVersions.getActiveVersion();
       const pages = activeVersion.Pages;
       
       await Promise.all(pages.map(async (page: any) => {

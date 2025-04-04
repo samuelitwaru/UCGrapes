@@ -109,8 +109,7 @@ export const i18n = new I18n({
     },
     Messages: "Messages",
     Requests: "Requests",
-    NoMessagesYet: "No Messages Yet"
-  
+    NoMessagesYet: "No Messages Yet"  
   },
 
   nl: {

@@ -45,6 +45,9 @@ export class IconList {
           );
 
           iconComponent.components(iconSVGWithAttributes);
+          iconComponent.addAttributes({
+            "title": themeIcon.IconName,
+          });
 
           const iconCompParent = iconComponent.parent();
           iconCompParent.addStyle({

@@ -63,6 +63,7 @@ export class EditorManager {
     const frame = container.querySelector(".mobile-frame") as HTMLElement;
     if (frame) {
       (globalThis as any).deviceWidth = frame.clientWidth;
+      (globalThis as any).deviceHeight = frame.clientHeight;
     }
   }
 

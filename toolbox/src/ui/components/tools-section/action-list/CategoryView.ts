@@ -53,7 +53,7 @@ export class CategoryView {
               return;
             }
             if (this.categoryData.name == "Content Page") {
-              this.pageCreationService.addNewContentPage();
+              // this.pageCreationService.addNewContentPage();
             }
             if (this.categoryData.name == "Service/Product Page") {
               // open popup
@@ -85,7 +85,7 @@ export class CategoryView {
         
 
         if (this.categoryData.name === "Dynamic Forms") {
-          this.pageCreationService.handleDynamicForms(page);
+          // this.pageCreationService.handleDynamicForms(page);
         } 
         else if (this.categoryData.name == "Modules") {
           this.pageAttacher.attachToTile(page, page.PageType, this.categoryData.label);

@@ -1,5 +1,6 @@
 export class FormField {
     private formField: HTMLDivElement;
+    private validateFn?: (value: string) => boolean;
 
     constructor (config: {
         label?: string,
@@ -9,7 +10,10 @@ export class FormField {
         placeholder?: string,
         required?: boolean,
         errorMessage?: string
+        validate?: (value: string) => boolean,
+        minLength?: number,
     }) {
+        this.validateFn = config.validate;
         this.formField = document.createElement('div');
         this.formField.className = 'form-field';
         this.formField.style.marginBottom = '10px';
@@ -71,5 +75,18 @@ export class FormField {
     hideError() {
         const errorSpan = this.formField.querySelector('.error-message') as HTMLSpanElement;
         errorSpan.style.display = 'none';
+    }
+
+    validate(): boolean {
+        const input = this.formField.querySelector('input') as HTMLInputElement;
+        const isValid = this.validateFn ? this.validateFn(input.value) : true;
+
+        if (!isValid) {
+            this.showError(input.validationMessage || 'Invalid input');
+        } else {
+            this.hideError();
+        }
+
+        return isValid;
     }
 }

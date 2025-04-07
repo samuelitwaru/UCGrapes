@@ -137,7 +137,7 @@ export class ToolboxManager {
           try {
             await this.toolboxService.autoSavePage(pageInfo);
             lastSavedStates.set(pageId, localStructureString);
-            if (!publish) this.openToastMessage();
+            // if (!publish) this.openToastMessage();
           } catch (error) {
             console.error(`Failed to save page ${page.PageName}:`, error);
             throw error; // Re-throw to be caught by the outer try/catch

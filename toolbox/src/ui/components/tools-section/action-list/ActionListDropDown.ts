@@ -39,13 +39,20 @@ export class ActionListDropDown {
         options: await this.getPages(),
         canCreatePage: true,
       },
+      // {
+      //       name: "Services",
+      //       displayName: i18n.t("sidebar.action_list.services"),
+      //       label: i18n.t("sidebar.action_list.services"),
+      //       options: this.getServices(activePage),
+      //       canCreatePage: true,
+      //     },
       (activePage) && (
         activePage.PageType === "MyCare" || 
         activePage.PageType === "MyService" ||
         activePage.PageType === "MyLiving"
       )
         ? {
-          name: "Service/Product Page",
+          name: "Services",
           displayName: i18n.t("sidebar.action_list.services"),
           label: i18n.t("sidebar.action_list.services"),
           options: this.getServices(activePage),
@@ -53,7 +60,7 @@ export class ActionListDropDown {
         }
         : null,
       {
-        name: "Dynamic Forms",
+        name: "Forms",
         displayName: i18n.t("sidebar.action_list.forms"),
         label: i18n.t("sidebar.action_list.forms"),
         options: this.getDynamicForms(),
@@ -110,6 +117,16 @@ export class ActionListDropDown {
       }));
     return services;
   }
+  // getServices(activePage: any) {
+  //   let services = (this.toolBoxService.services || []);
+  //   services = services.map((service) => ({
+  //       PageId: service.ProductServiceId,
+  //       PageName: service.ProductServiceName,
+  //       TileName: service.ProductServiceTileName || service.ProductServiceName,
+  //       TileCategory: service.ProductServiceClass
+  //     }));
+  //   return services;
+  // }
 
   async getContentPages() {
     try {
@@ -157,8 +174,8 @@ export class ActionListDropDown {
 
   async getPredefinedPages() {
     try {
-      const versions = await this.appVersion.getActiveVersion();
-      const res = versions?.Pages || [];
+      const version = await this.appVersion.getActiveVersion();
+      const res = version?.Pages || [];
       const pages = res.filter(
         (page: any) => 
           page.PageType == "Maps" ||

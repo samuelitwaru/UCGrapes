@@ -150,6 +150,20 @@ export class ContentMapper {
         }
     }
 
+    public updateContentCtaLabel (ctaId: any, label: any): any {
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+
+        if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
+            const ctaIndex = data.PageContentStructure.Cta.findIndex((cta: any) => cta.CtaId === ctaId);
+
+            if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
+                data.PageContentStructure.Cta[ctaIndex].CtaLabel = label;
+                localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+                return true; 
+            }
+        }
+    }
+
     public getContentCta(ctaId: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 

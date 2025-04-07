@@ -36,7 +36,6 @@ export class TileManager {
     this.removeTileIcon();
     this.removeTileTile();
     this.removeCTa();
-    this.openMenu();
   }
 
   addTileBottom() {
@@ -127,18 +126,6 @@ export class TileManager {
 
         this.removeEditor(tileComponent.getId() as string);
       }
-    }
-  }
-
-  openMenu() {
-    const addBottomButton = (this.event.target as Element).closest(
-      ".tile-open-menu"
-    );
-    if (addBottomButton) {
-      const templateContainer = addBottomButton.closest(".template-wrapper") as HTMLElement;
-      console.log("templateContainer: ", templateContainer);
-      const menu = new ActionListPopUp(templateContainer)
-      menu.render();
     }
   }
 

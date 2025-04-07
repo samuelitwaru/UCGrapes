@@ -16,6 +16,7 @@ export class AppConfig {
 
     private _isInitialized: boolean = false;
     addServiceButtonEvent: any;
+    UC: any;
   
     private constructor() {}
   
@@ -29,6 +30,7 @@ export class AppConfig {
   
     // Initialize with data - should be called only once
     public init(
+      UC: any,
       themes: Theme[],
       services: ProductService[],
       forms: Form[],
@@ -42,6 +44,7 @@ export class AppConfig {
         console.warn("AppConfig already initialized - ignoring new data");
         return;
       }
+      this.UC = UC;
       this._themes = themes;
       this._services = services;
       this._forms = forms;

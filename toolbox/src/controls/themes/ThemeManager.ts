@@ -71,13 +71,13 @@ export class ThemeManager {
     }
   }
 
-  updateThemeIcons() {
+  updateThemeIcons(categoryTitle: string = "General") {
     const iconsList = document.getElementById("icons-list") as HTMLElement;
     iconsList.classList.add("icons-list");
     iconsList.id = "icons-list";
     iconsList.innerHTML = "";
 
-    const themeIcons = new IconList(this, "General");
+    const themeIcons = new IconList(this, categoryTitle);
     themeIcons.render(iconsList);
   }
 
@@ -105,6 +105,10 @@ export class ThemeManager {
 
   getThemeIcon(iconName: string) {
     return this.getActiveThemeIcons()?.find((icon: any) => icon.IconName === iconName)?.IconSVG || null;
+  }
+
+  getIconCategory(iconName: string) {
+    return this.getActiveThemeIcons()?.find((icon: any) => icon.IconName === iconName)?.IconCategory || null;
   }
 
   async applyTheme (theme: Theme) {

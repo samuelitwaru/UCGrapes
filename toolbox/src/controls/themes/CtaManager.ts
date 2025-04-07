@@ -3,6 +3,7 @@ import { ThemeCtaColor } from "../../models/Theme";
 import { ctaTileDEfaultAttributes, DefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
 import { randomIdGenerator } from "../../utils/helpers";
 import { ContentMapper } from "../editor/ContentMapper";
+import { CtaButtonProperties } from "../editor/CtaButtonProperties";
 import { CtaSvgManager } from "./CtaSvgManager";
 import { ThemeManager } from "./ThemeManager";
 
@@ -21,13 +22,12 @@ export class CtaManager {
     }
 
     addCtaButton(ctaButton: CallToAction) {
-
         const ctaContainer = this.editor.Components.getWrapper().find(".cta-button-container")[0];
         if (ctaContainer) {
             
             const buttonId = randomIdGenerator(12);
             const {ctaButtonEl, ctaAction} = this.getIconAndAction(ctaButton, buttonId);
-
+            
             const ctaMapper = {
                 CtaId: buttonId,
                 CtaLabel: ctaButton.CallToActionName,
@@ -101,13 +101,15 @@ export class CtaManager {
                         style="background-color: ${this.themeManager.getThemeCtaColor(ctaButtonAttributes.CtaBGColor)}">
                         <div ${DefaultAttributes} id="ihd0f" class="cta-badge">
                                 <i ${DefaultAttributes} id="i7o62" data-gjs-type="default" class="fa fa-minus"></i>
-                        </div> ${ctaButtonAttributes.CtaLabel} 
+                        </div>
+                        <span ${DefaultAttributes} class="label">${ctaButtonAttributes.CtaLabel}</span> 
                     </button>
                 </div>
             `;
 
             this.selectComponentAfterAdd(ctaButtonAttributes.CtaId, selectedComponent, plainButton);
             this.contentMapper.updateContentButtonType(ctaButtonAttributes.CtaId, 'FullWidth');
+            this.updateProperties();
         }
     }
 
@@ -133,7 +135,7 @@ export class CtaManager {
                         <div${DefaultAttributes} class="cta-badge">
                             <i ${DefaultAttributes} class="fa fa-minus"></i>
                         </div>
-                        <span ${DefaultAttributes} class="img-button-label">${ctaButtonAttributes.CtaLabel}</span>
+                        <span ${DefaultAttributes} class="img-button-label label">${ctaButtonAttributes.CtaLabel}</span>
                         <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
                     </div>
                 </div>
@@ -141,6 +143,7 @@ export class CtaManager {
 
             this.selectComponentAfterAdd(ctaButtonAttributes.CtaId, selectedComponent, iconButton);
             this.contentMapper.updateContentButtonType(ctaButtonAttributes.CtaId, 'Icon');
+            this.updateProperties();
         }
     }
 
@@ -190,7 +193,7 @@ export class CtaManager {
                         <div${DefaultAttributes} class="cta-badge">
                             <i ${DefaultAttributes} class="fa fa-minus"></i>
                         </div>
-                        <span ${DefaultAttributes} class="img-button-label">${ctaButtonAttributes.CtaLabel}</span>
+                        <span ${DefaultAttributes} class="img-button-label label">${ctaButtonAttributes.CtaLabel}</span>
                         <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
                     </div>
                 </div>
@@ -198,6 +201,7 @@ export class CtaManager {
 
             this.selectComponentAfterAdd(ctaButtonAttributes.CtaId, selectedComponent, imgButton);
             this.contentMapper.updateContentButtonType(ctaButtonAttributes.CtaId, 'Image', '/Resources/UCGrapes1/src/images/image.png');
+            this.updateProperties();
         }
     }
 
@@ -251,6 +255,15 @@ export class CtaManager {
                 break;
         } 
         return {ctaButtonEl, ctaAction}
+    }
+
+    private updateProperties() {
+        const selectedComponent = (globalThis as any).selectedComponent;
+        const ctaButtonAttributes = this.contentMapper.getContentCta(selectedComponent.getId());
+        if (!ctaButtonAttributes || !selectedComponent) return;
+
+        const ctaButtonProperties = new CtaButtonProperties(selectedComponent, ctaButtonAttributes);
+        ctaButtonProperties.setctaAttributes();
     }
 
 }

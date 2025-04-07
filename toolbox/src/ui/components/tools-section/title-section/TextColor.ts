@@ -35,7 +35,7 @@ export class TextColor {
       colorItem.appendChild(colorBox);
       this.container.appendChild(colorItem);
 
-      colorBox.onclick = (e) => {
+      colorItem.onclick = (e) => {
         e.preventDefault();
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;

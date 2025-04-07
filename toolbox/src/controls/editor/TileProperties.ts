@@ -8,7 +8,7 @@ export class TileProperties {
   tileAttributes: any;
   selectedComponent: any;
   themeManager: any;
-
+ 
   constructor(selectedComponent: any, tileAttributes: any) {
       this.tileAttributes = tileAttributes;
       this.selectedComponent = selectedComponent;
@@ -21,6 +21,7 @@ export class TileProperties {
       this.setTitleStyleProperties();
       this.setTileActionProperties();
       this.setActionProperties();
+      this.setTileIconProperties();
   }
 
   private setBgColorProperties(): void {
@@ -135,6 +136,39 @@ export class TileProperties {
           }
       });
   }
+
+  private setTileIconProperties() {    
+    const tileIcon = this.tileAttributes.Icon as string;
+    if (!tileIcon) return;
+    const categoryTitle = this.themeManager.getIconCategory(tileIcon);
+    this.themeManager.updateThemeIcons(categoryTitle);
+
+    const iconDiv = this.selectedComponent.getEl().querySelector(".tile-icon") as HTMLElement;
+    const selectedTileIcon = iconDiv?.getAttribute("title") ?? "";
+
+    const sideBarIconsDiv = document.querySelector("#icons-list") as HTMLDivElement;
+    const sidebarIcons = sideBarIconsDiv.querySelectorAll(".icon");
+
+    sidebarIcons.forEach((icon) => {
+        const iconElement = icon as HTMLElement;
+        const iconTitle = iconElement.getAttribute("title") ?? "";
+
+        if (iconTitle === tileIcon && iconTitle === selectedTileIcon) {
+            iconElement.style.border = "2px solid #5068A8";
+            const svgPath = iconElement.querySelector("svg path") as SVGPathElement;
+            if (svgPath) {
+                svgPath.setAttribute("fill", "#5068A8");
+            }
+        } else {
+            iconElement.style.border = "";
+            const svgPath = iconElement.querySelector("svg path") as SVGPathElement;
+            if (svgPath) {
+                svgPath.setAttribute("fill", "#7c8791");
+            }
+        }
+    });
+}
+
 
   private setActionProperties(): void {
       const tileActionType = this.tileAttributes.Action?.ObjectType;

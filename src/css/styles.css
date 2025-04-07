@@ -481,7 +481,6 @@ span#scroll-right:hover {
   fill: #fff;
 }
 
-
 .app-bar .appbar-title-container #save_page_title:hover path {
   stroke: #fff;
 }
@@ -1122,15 +1121,15 @@ h5#current-page-title {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
   background-color: #e9e9e9;
   border-radius: 100%;
 }
 
 .call-to-action-item svg {
-  height: 16px;
-  width: 16px;
+  height: auto;
+  width: 25px;
 }
 
 .call-to-action-item svg path {
@@ -1152,25 +1151,26 @@ h5#current-page-title {
 .cta-button-layout-container {
   display: none;
   margin-bottom: 16px;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+  gap: 1rem;
+  flex-direction: column;
 }
 
-.tb-btn.cta-button-layout {
+/* .tb-btn.cta-button-layout {
   border-radius: 7px;
   border: 1px solid #b4b9bd;
   background-color: transparent;
   align-self: center;
   vertical-align: middle;
-}
+  width: 100%;
+} */
 
-.tb-btn.cta-button-layout:hover {
+/* .tb-btn.cta-button-layout:hover {
   background-color: #e9e9e9;
 }
 
 .cta-button-layout svg {
   height: 14px;
-  width: 18px;
+  width: 18px; */
 }
 
 .plain-button:hover {
@@ -1179,6 +1179,57 @@ h5#current-page-title {
 
 .plain-button svg {
   height: 14px;
+}
+
+/* new cta button styles */
+#plain-button-layout {
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #757575;
+  cursor: pointer;
+  align-items: center;
+  border: 1px solid #b4b9bd;
+  width: 100%;
+  background-color: #e9e9e9;
+}
+
+#icon-button-layout, #image-button-layout {
+  height: 54px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #b4b9bd;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+#icon-button-layout label,
+#image-button-layout label {
+  width: 100%;
+  text-align: left;
+  color: #717070;
+  margin-left: 16px;
+  cursor: pointer;
+}
+
+#icon-button-layout img,
+#image-button-layout img {
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#icon-button-layout span,
+#image-button-layout span {
+  min-width: 35px;  
+}
+
+#icon-button-layout:hover,
+#image-button-layout:hover,
+#plain-button-layout:hover {
+  background-color: #e9e9e9ab;
 }
 .text-color-palette {
   display: flex;

@@ -1,3 +1,4 @@
+import { ActionInput } from "../../ui/components/tools-section/content-section/ActionInput";
 import { truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
@@ -16,6 +17,7 @@ export class CtaButtonProperties {
         this.displayButtonLayouts();
         this.ctaColorAttributes();
         this.ctaActionDisplay();
+        this.selectedButtonLayout();
     }
 
     private displayButtonLayouts() {
@@ -26,6 +28,24 @@ export class CtaButtonProperties {
             }
         } else {
             if (buttonLayoutContainer) buttonLayoutContainer.style.display = "none";
+        }
+    }
+
+    private selectedButtonLayout() {
+        if (this.ctaAttributes) {
+            let buttons = document.querySelectorAll(".cta-button-layout") as NodeListOf<HTMLElement>;
+            buttons.forEach((button) => {
+                if (this.ctaAttributes.CtaButtonType === "FullWidth" && button.id === "plain-button-layout") {
+                    button.style.border = "2px solid #5068a8";
+                } else if (this.ctaAttributes.CtaButtonType === "Icon" && button.id === "icon-button-layout") {
+                    button.style.border = "2px solid #5068a8";
+                } else if (this.ctaAttributes.CtaButtonType === "Image" && button.id === "image-button-layout") {
+                    button.style.border = "2px solid #5068a8";
+                } else {
+                    button.style.border = "";                    
+                }
+            });
+            
         }
     }
 
@@ -43,18 +63,8 @@ export class CtaButtonProperties {
     
     ctaActionDisplay () {
         const contentSection = document.querySelector("#content-page-section");
-        const ctaActionDiv = document.createElement("div")
-        ctaActionDiv.id = "cta-selected-actions";
-        ctaActionDiv.style.display = "flex";
-
-        const type = document.createElement("span");
-        type.innerHTML = `<strong>Type:</strong> ${this.ctaAttributes.CtaType}`;
-        ctaActionDiv.appendChild(type);
-
-        const action = document.createElement("span");
-        action.innerHTML = `<strong>Action:</strong> ${truncateString(this.ctaAttributes.CtaAction, 30)}`;
-        ctaActionDiv.appendChild(action);
-
-        contentSection?.appendChild(ctaActionDiv);
+        const value = this.ctaAttributes.CtaLabel;
+        const actionInput = new ActionInput(value, this.ctaAttributes);
+        actionInput.render(contentSection as HTMLElement);
     }
 }

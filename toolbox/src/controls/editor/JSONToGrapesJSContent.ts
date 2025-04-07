@@ -10,7 +10,7 @@ import {
   tileWrapperDefaultAttributes,
   ctaContainerDefaultAttributes,
 } from "../../utils/default-attributes";
-import { randomIdGenerator } from "../../utils/helpers";
+import { randomIdGenerator, truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
 export class JSONToGrapesJSContent {
@@ -59,7 +59,7 @@ export class JSONToGrapesJSContent {
                         <div${DefaultAttributes} class="cta-badge">
                             <i ${DefaultAttributes} class="fa fa-minus"></i>
                         </div>
-                        <span ${DefaultAttributes} class="img-button-label">${cta.CtaLabel}</span>
+                        <span ${DefaultAttributes} class="img-button-label">${this.getCtaLabel(cta)}</span>
                         <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
                     </div>
                 </div>`;
@@ -77,7 +77,7 @@ export class JSONToGrapesJSContent {
                     <div ${DefaultAttributes} id="iyocy" data-gjs-type="default" class="cta-badge">
                         <i ${DefaultAttributes} id="ifxn6" data-gjs-type="default" class="fa fa-minus"></i>
                     </div>
-                    Form
+                    <span ${DefaultAttributes} class"label">${this.getCtaLabel(cta)}</span>
                 </button>
             </div>
             `;
@@ -95,7 +95,7 @@ export class JSONToGrapesJSContent {
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>
                     </div>
-                    <span ${DefaultAttributes} class="img-button-label">${cta.CtaLabel}</span>
+                    <span ${DefaultAttributes} class="img-button-label label">${this.getCtaLabel(cta)}</span>
                     <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
                 </div>
             </div>
@@ -112,10 +112,22 @@ export class JSONToGrapesJSContent {
                     ${this.ctaIcon(cta)}
                     <div class="cta-badge" ${DefaultAttributes}><i ${DefaultAttributes} data-gjs-type="default" class="fa fa-minus"></i></div>
                 </div>
-                <div class="cta-label" ${DefaultAttributes}>${cta.CtaLabel}</div>
+                <span class="cta-label label" ${DefaultAttributes}>${this.getCtaLabel(cta)}</span>
             </div>
             `;
     }
+  }
+
+  getCtaLabel(cta: any): string {
+    let label = cta.CtaLabel;
+    if (label) {
+      label =
+      cta.CtaButtonType === "Round"
+          ? truncateString(label, 5)
+          : truncateString(label, 14);
+      return label;
+    }
+    return '';
   }
   
   ctaIcon(cta: any) {

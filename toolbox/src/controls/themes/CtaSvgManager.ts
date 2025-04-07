@@ -77,9 +77,9 @@ export class CtaSvgManager {
                             <i ${DefaultAttributes} id="ityrb" data-gjs-type="default" class="fa fa-minus"></i>
                         </div>
                     </div>
-                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label">${
-            ctaButton.CallToActionName
-            }</div>
+                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
+                      ctaButton.CallToActionName
+                    }</div>
         </div>
         `;
   }
@@ -103,7 +103,7 @@ export class CtaSvgManager {
                             <i ${DefaultAttributes} id="idkak" data-gjs-type="default" class="fa fa-minus"></i>
                         </div>
                     </div>
-                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label">${
+                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
             ctaButton.CallToActionName
             }</div>
         </div>
@@ -129,7 +129,7 @@ export class CtaSvgManager {
                             <i ${DefaultAttributes} id="iw1yc" data-gjs-type="default" class="fa fa-minus"></i>
                         </div>
                     </div>
-                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label">${
+                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
             ctaButton.CallToActionName
             }</div>
         </div>
@@ -152,7 +152,7 @@ export class CtaSvgManager {
                     <i ${DefaultAttributes} id="idkak" data-gjs-type="default" class="fa fa-minus"></i>
                 </div>
             </div>
-            <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label">${
+            <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
       ctaButton.CallToActionName
     }</div>
         </div>

@@ -8,7 +8,7 @@ export class TileProperties {
   tileAttributes: any;
   selectedComponent: any;
   themeManager: any;
-
+ 
   constructor(selectedComponent: any, tileAttributes: any) {
       this.tileAttributes = tileAttributes;
       this.selectedComponent = selectedComponent;
@@ -137,10 +137,14 @@ export class TileProperties {
       });
   }
 
-  private setTileIconProperties() {
+  private setTileIconProperties() {    
+    const tileIcon = this.tileAttributes.Icon as string;
+    if (!tileIcon) return;
+    const categoryTitle = this.themeManager.getIconCategory(tileIcon);
+    this.themeManager.updateThemeIcons(categoryTitle);
+
     const iconDiv = this.selectedComponent.getEl().querySelector(".tile-icon") as HTMLElement;
     const selectedTileIcon = iconDiv?.getAttribute("title") ?? "";
-    const tileIcon = this.tileAttributes.Icon as string;
 
     const sideBarIconsDiv = document.querySelector("#icons-list") as HTMLDivElement;
     const sidebarIcons = sideBarIconsDiv.querySelectorAll(".icon");

@@ -1,3 +1,4 @@
+import { CtaButtonProperties } from "../../../../controls/editor/CtaButtonProperties";
 import { CtaManager } from "../../../../controls/themes/CtaManager";
 
 export class CtaButtonLayout {
@@ -12,31 +13,34 @@ export class CtaButtonLayout {
     private init() {
         this.container.classList.add('cta-button-layout-container');
         this.container.style.display = "none";
-
+ 
         const plainBtn = document.createElement('button');
-        plainBtn.classList.add('tb-btn', 'cta-button-layout');
+        plainBtn.classList.add('cta-button-layout');
         plainBtn.id = 'plain-button-layout';
-        plainBtn.innerText = "Plain";
+        plainBtn.innerText = "Button";
 
         const imgBtn = document.createElement('button');
-        imgBtn.classList.add('tb-btn', 'cta-button-layout');
+        imgBtn.classList.add('cta-button-layout');
         imgBtn.id = 'image-button-layout';
         imgBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40.999 28.865">
-                <path id="Path_1040" data-name="Path 1040" d="M21.924,11.025a3.459,3.459,0,0,0-3.287,3.608,3.459,3.459,0,0,0,3.287,3.608,3.459,3.459,0,0,0,3.287-3.608A3.459,3.459,0,0,0,21.924,11.025ZM36.716,21.849l-11.5,14.432-8.218-9.02L8.044,39.89h41Z" transform="translate(-8.044 -11.025)" fill="#4c5357"></path>
-            </svg>
-            Image
+            <span class="img-button-icon">
+                <img src="Resources/UCGrapes1/toolbox/public/images/food.png" alt="img-button-icon" width="35px" height="auto">  
+            </span>
+            <label>Button</label>
+            <i class="fa fa-angle-right img-button-arrow"></i>
         `;
 
         const iconBtn = document.createElement('button');
-        iconBtn.classList.add('tb-btn', 'cta-button-layout');
-        iconBtn.id = 'image-button-layout';
+        iconBtn.classList.add('cta-button-layout');
+        iconBtn.id = 'icon-button-layout';
         iconBtn.innerHTML = `
-            <svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8.135 12.736l-.764 1.058A6.297 6.297 0 1 1 13.281 5h-1.138a5.286 5.286 0 1 0-4.644 7.8 5.201 5.201 0 0 0 .636-.064zM11 6v6.923l1 1.385V7h10v10h-8.056l.723 1H23V6zm6.044 17H1.956L9.5 12.554zM9.5 14.262L3.911 22H15.09z"/>
-                <path fill="none" d="M0 0h24v24H0z"/>
-            </svg>
-            Icon
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 35.401 42.251">
+                    <path id="calendar" d="M31.713,3.7H28.858V.849a1.713,1.713,0,0,0-3.425,0h0V3.7H15.157V.849a1.713,1.713,0,1,0-3.425,0h0V3.7H8.877A6.281,6.281,0,0,0,2.6,9.984h0V35.106a6.281,6.281,0,0,0,6.281,6.281H31.716A6.281,6.281,0,0,0,38,35.106h0V9.984A6.281,6.281,0,0,0,31.716,3.7h0ZM8.876,7.13H11.73V9.984a1.713,1.713,0,1,0,3.425,0h0V7.13H25.432V9.984a1.713,1.713,0,0,0,3.425,0h0V7.13h2.855a2.855,2.855,0,0,1,2.855,2.855h0v6.281H6.018V9.984A2.855,2.855,0,0,1,8.873,7.13h0ZM31.713,37.96H8.874A2.855,2.855,0,0,1,6.02,35.106h0V19.69H34.568V35.106a2.855,2.855,0,0,1-2.855,2.855Z" transform="translate(-2.596 0.864)" fill="#747474"/>
+                </svg>
+            </span>
+            <label>Button</label>
+            <i class="fa fa-angle-right img-button-arrow"></i>
         `;
 
         plainBtn.addEventListener('click', (e) => {

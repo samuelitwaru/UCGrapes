@@ -1,3 +1,4 @@
+import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 import { Theme, ThemeIcon } from "../../../../models/Theme";
 import { DefaultAttributes } from "../../../../utils/default-attributes";
@@ -59,6 +60,16 @@ export class IconList {
             "Icon",
             themeIcon.IconName
           );
+          
+          const tileWrapper = selectedComponent.parent();
+          const rowComponent = tileWrapper.parent();
+          const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId()); 
+          const tileProperties = new TileProperties(
+            selectedComponent,
+            tileAttributes
+          );
+
+          tileProperties.setTileAttributes();
         });
 
         this.icons.push(icon);

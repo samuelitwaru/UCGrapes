@@ -10,6 +10,7 @@ class App {
   private toolboxApp: ToolboxApp;
   
   constructor(
+    UC: any,
     themes: Theme[],
     services: ProductService[],
     forms: Form[],
@@ -21,6 +22,7 @@ class App {
   ) {
     const config = AppConfig.getInstance();
     config.init(
+      UC,
       themes,
       services,
       forms,

@@ -289,7 +289,7 @@ export class EditorEvents {
     // else{
     //   this.removeOtherEditors();
     //   if (selectedComponent.getClasses().includes('template-block')) {
-    //     const newPageButton = new NewPageButton()
+    //     const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager, this.pageData)
     //     newPageButton.render();
     //     const activateNav = this.activateNavigators();
     //     activateNav.scrollBy(200)

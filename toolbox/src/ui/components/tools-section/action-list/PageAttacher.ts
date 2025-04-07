@@ -7,6 +7,7 @@ import { EditorEvents } from "../../../../controls/editor/EditorEvents";
 import { PageCreationService } from "./PageCreationService";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { i18n } from "../../../../i18n/i18n";
+import { ActionSelectContainer } from "./ActionSelectContainer";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;
@@ -28,6 +29,15 @@ export class PageAttacher {
         "PageType": "Content"
       }
       this.attachToTile(page, "Content", i18n.t("sidebar.action_list.services"))
+      
+      // reload the action list container
+      const menuSection = document.getElementById('menu-page-section') as HTMLElement;
+      const contentection = document.getElementById('content-page-section');
+      if (menuSection) menuSection.style.display = 'block';
+      if (contentection) contentection.remove();
+      const actionListContainer = new ActionSelectContainer();
+      actionListContainer.render(menuSection);
+
     }
   }
 

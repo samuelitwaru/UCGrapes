@@ -5,7 +5,7 @@ import { ProductService } from "./data-models/Service";
 import { Theme } from "./data-models/Theme";
 import { LoadingManager } from "../ui/LoadingManager";
 
-const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+const environment = "/Comforta_version2_Development7NETPostgreSQL";
 const baseURL = window.location.origin + (window.location.origin.startsWith("http://localhost") ? environment : "");
 
 export class DataManager {

@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version20DevelopmentNETPostgreSQL";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -113,6 +113,10 @@ export class ToolBoxService {
   }
 
   async createMenuPage(appVersionId: string, pageName: string) {
+    console.log({ 
+      appVersionId: appVersionId,
+      pageName: pageName
+    })
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-menu-page",
       {

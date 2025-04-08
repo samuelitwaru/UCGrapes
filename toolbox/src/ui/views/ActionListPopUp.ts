@@ -1,19 +1,26 @@
 import { ActionListController } from "../../controls/ActionListController";
+import { MenuItemManager } from "./MenuItemManager";
 
 export class ActionListPopUp {
   private controller: ActionListController;
   private menuContainer: HTMLDivElement;
   private templateContainer: HTMLElement;
   private menuList: HTMLUListElement;
+  private parentContainer: HTMLElement;
+  private menuItemManager: MenuItemManager;
 
-  constructor(templateContainer: HTMLElement) {
+  constructor(templateContainer: HTMLElement, parentContainer: HTMLElement) {
     this.controller = new ActionListController();
     this.templateContainer = templateContainer;
+    this.parentContainer = parentContainer;
     this.menuContainer = document.createElement("div");
     this.menuList = document.createElement("ul");
+    this.menuItemManager = new MenuItemManager(this.menuContainer, this.controller);
+    
     this.controller.handleSubMenuAction = (type: string) => {
       this.showSubMenu(type);
     };
+    
     this.init();
   }
 
@@ -28,7 +35,9 @@ export class ActionListPopUp {
       menuCategory.classList.add("menu-category");
 
       category.forEach((item) => {
-        const menuItem = this.createMenuItem(item);
+        const menuItem = this.menuItemManager.createMenuItem(item, () => {
+          this.menuContainer.remove();
+        });
         menuCategory.appendChild(menuItem);
       });
 
@@ -36,137 +45,90 @@ export class ActionListPopUp {
     });
   }
 
-  private createMenuItem(item: any): HTMLElement {
-    const menuItem = document.createElement("li");
-    menuItem.classList.add("menu-item");
-    menuItem.innerHTML =
-      item.label.length > 20 ? item.label.substring(0, 20) + "..." : item.label;
-    menuItem.setAttribute("data-name", item.name || "");
-
-    if (item.expandable) {
-      const icon = document.createElement("i");
-      icon.classList.add("fa", "fa-chevron-right", "expandable-icon");
-      menuItem.appendChild(icon);
+  render(triggerRect?: DOMRect, iframeRect?: DOMRect) {
+    if (!triggerRect) {
+      const trigger = this.templateContainer.querySelector(
+        ".tile-open-menu"
+      ) as HTMLElement;
+      if (!trigger) return;
+      
+      triggerRect = trigger.getBoundingClientRect();
     }
-
-    menuItem.id = item.id;
-    menuItem.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (item.action) {
-        // For submenu items, we'll handle them specially
-        if (item.expandable) {
-          this.showSubMenu(item.name); // Pass the name (Services/Forms/Modules)
-        } else {
-          item.action();
-          this.menuContainer.remove();
-        }
-      }
-    });
-    return menuItem;
+    
+    this.displayMenu(triggerRect, iframeRect);
   }
 
-  render() {
-    const trigger = this.templateContainer.querySelector(
-      ".tile-open-menu"
-    ) as HTMLElement;
-    if (!trigger) return;
+  private displayMenu(triggerRect: DOMRect, iframeRect?: DOMRect) {
+    const parentRect = this.parentContainer.getBoundingClientRect();
 
-    const triggerRect = trigger.getBoundingClientRect();
+    if (!iframeRect) {
+      return;      
+    }
+    
+    this.menuContainer.style.position = "absolute";
+    this.menuContainer.style.left = "-9999px";
+    this.menuContainer.style.top = "-9999px";
+    this.menuContainer.style.opacity = "0";
+    this.menuContainer.style.visibility = "visible"; 
+    this.parentContainer.appendChild(this.menuContainer);
+    
+    void this.menuContainer.offsetHeight;
+    
     const popupRect = this.menuContainer.getBoundingClientRect();
-    const windowWidth = (globalThis as any).deviceWidth;
-    const windowHeight = (globalThis as any).deviceHeight;
 
-    // Reset positioning
-    this.menuContainer.style.top = "";
+    const relTriggerLeft = iframeRect.left - parentRect.left + triggerRect.left;
+    const relTriggerTop = iframeRect.top - parentRect.top + triggerRect.top;
+    const relTriggerRight = relTriggerLeft + triggerRect.width;
+    const relTriggerBottom = relTriggerTop + triggerRect.height;
+    
+    const containerWidth = parentRect.width;
+    const containerHeight = parentRect.height;
+    
     this.menuContainer.style.left = "";
+    this.menuContainer.style.top = "";
     this.menuContainer.style.right = "";
     this.menuContainer.style.bottom = "";
-
-    // Position the menu based on available space
-    if (triggerRect.right + popupRect.width < windowWidth / 2) {
-      this.menuContainer.style.left = `6px`;
-      this.menuContainer.style.top = "8px";
-    } if (triggerRect.left - popupRect.width > 0) {
-      this.menuContainer.style.right = `8px`;
-      this.menuContainer.style.top = "12px";
-    } else if (triggerRect.bottom + popupRect.height < windowHeight) {
-      this.menuContainer.style.top = `8px`;
-      this.menuContainer.style.left = "0";
-    } else if (triggerRect.top - popupRect.height > 0) {
-      this.menuContainer.style.bottom = `${triggerRect.height + 8}px`;
-      this.menuContainer.style.left = "0";
+    
+    const spaceBelow = containerHeight - relTriggerBottom;
+    const spaceAbove = relTriggerTop;
+    
+    const effectiveMenuHeight = popupRect.height > 0 ? popupRect.height : 200; 
+    
+    if (spaceBelow >= effectiveMenuHeight + 10) {
+      this.menuContainer.style.top = `${relTriggerBottom - 10}px`;
+    } else if (spaceAbove >= effectiveMenuHeight + 10) {
+      this.menuContainer.style.top = `${relTriggerTop - effectiveMenuHeight - 0}px`;
     } else {
-      this.menuContainer.style.left = `8px`;
-      this.menuContainer.style.top = "8px";
+      this.menuContainer.style.top = "10px";
+      if (effectiveMenuHeight > containerHeight - 20) {
+        this.menuContainer.style.maxHeight = `${containerHeight - 20}px`;
+        this.menuContainer.style.overflowY = "auto";
+      }
     }
-
-    // Make the menu visible
-    this.menuContainer.style.opacity = "1";
+    
+    if (relTriggerLeft + popupRect.width <= containerWidth - 10) {
+      this.menuContainer.style.left = `${relTriggerLeft + 16}px`;
+    } else {
+      const rightAlignedPos = containerWidth - popupRect.width - 10;
+      this.menuContainer.style.left = `${Math.max(10, rightAlignedPos + 16)}px`;
+    }
+  
     this.menuContainer.style.visibility = "visible";
-    this.templateContainer.appendChild(this.menuContainer);
+    this.menuContainer.style.opacity = "1";
+  }
+  
+  hideMenu() {
+    if (this.menuContainer.parentNode) {
+      this.menuContainer.parentNode.removeChild(this.menuContainer);
+    }
+  }
+
+  hideSubMenu() {
+    this.menuItemManager.hideSubMenu();
   }
 
   async showSubMenu(type: string) {
-    this.menuContainer.innerHTML = "";
-    this.menuList = document.createElement("ul");
-    this.menuList.classList.add("menu-list");
-  
-    this.createSubMenuHeader(type);
-    const categoryData = await this.controller.actionList.getCategoryData();
-  
-    const items = await this.controller.getSubMenuItems(categoryData, type);
-    
-    if (items && items.length > 0) {
-      // If we have items, display them
-      items.forEach((item) => {
-        const menuItem = this.createMenuItem(item);
-        this.menuList.appendChild(menuItem);
-      });
-    } else {
-      // If no items are available, show a message
-      const noItemsMessage = document.createElement("li");
-      noItemsMessage.classList.add("menu-item", "no-items");
-      noItemsMessage.innerHTML = `No ${type.toLowerCase()} available`;
-      this.menuList.appendChild(noItemsMessage);
-    }
-  
-    this.menuContainer.appendChild(this.menuList);
-    this.menuContainer.style.opacity = "1";
-    this.menuContainer.style.visibility = "visible";
-  }
-
-  private createSubMenuHeader(type: string) {
-    const menuHeader = document.createElement("div");
-    menuHeader.classList.add("sub-menu-header");
-
-    const backIcon = document.createElement("span");
-    backIcon.classList.add("menu-back-icon");
-    backIcon.style.width = "20px";
-    backIcon.innerHTML = `<i class="fas fa-chevron-left"></i>`;
-    backIcon.addEventListener("click", () => {
-      this.menuContainer.innerHTML = "";
-      this.init();
-    });
-
-    menuHeader.appendChild(backIcon);
-
-    const searchContainer = document.createElement("div");
-    searchContainer.className = "search-container";
-    searchContainer.innerHTML = `
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" placeholder="Search" class="search-input" />
-    `;
-
-    menuHeader.appendChild(searchContainer);
-    this.menuContainer.appendChild(menuHeader);
-
-    const searchInput = searchContainer.querySelector(
-      ".search-input"
-    ) as HTMLInputElement;
-    searchInput?.addEventListener("input", (e) => {
-      const searchTerm = (e.target as HTMLInputElement).value;
-      this.filterMenuItems(searchTerm);
-    });
+    // await this.menuItemManager.showSubMenu(type);
   }
 
   private filterMenuItems(searchTerm: string) {

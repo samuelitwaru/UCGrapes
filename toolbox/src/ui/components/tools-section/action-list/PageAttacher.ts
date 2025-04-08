@@ -72,9 +72,7 @@ export class PageAttacher {
         rowId,
         tileId
       );
-      
-      new PageCreationService().updateActionListDropDown("Dynamic Form", page.PageName);
-  
+        
       const version = await this.appVersionManager.getActiveVersion(); 
       this.attachPage(page, version, tileAttributes);
 

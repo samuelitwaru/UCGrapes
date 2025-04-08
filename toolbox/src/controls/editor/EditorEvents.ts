@@ -2,6 +2,7 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
+import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -53,6 +54,17 @@ export class EditorEvents {
         const wrapper = this.editor.getWrapper();
         if (wrapper) {
           wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
+            const targetElement = (e.target as Element);
+            if (
+              targetElement.closest('.menu-container') || 
+              targetElement.closest('.menu-category') ||
+              targetElement.closest('.sub-menu-header') 
+            ){
+                e.stopPropagation(); 
+                return;
+            }
+
+            this.clearAllMenuContainers();
             this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
@@ -62,15 +74,18 @@ export class EditorEvents {
             this.activateEditor();
           })
 
-          wrapper.view.el.addEventListener("mouseenter", (e: MouseEvent) => {
-            // this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);            
+          wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            console.log("Mouse enter", e.target);
             if (target.closest(".tile-open-menu")) {
-              console.log("Mouse enter", e.target);
+              const menuBtn = target.closest(".tile-open-menu") as HTMLElement;
+              const templateContainer = menuBtn.closest(".template-wrapper") as HTMLElement;
+
+              this.clearAllMenuContainers();
+
+              const menu = new ActionListPopUp(templateContainer)
+              menu.render();
             }
-          });
-          
+          });          
         } else {
           console.error("Wrapper not found!");
         }
@@ -79,6 +94,14 @@ export class EditorEvents {
         this.activateNavigators();
       });
     }
+  }
+
+  clearAllMenuContainers() {
+    const wrapperEl = this.editor.getWrapper()?.view.el as HTMLElement;
+    const existingMenu = wrapperEl.querySelectorAll(".menu-container");
+    existingMenu.forEach((menu: any) => {
+      menu.remove();
+    });
   }
 
   onComponentUpdate() {
@@ -262,7 +285,8 @@ export class EditorEvents {
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }
-    } else{
+    } 
+    else{
       this.removeOtherEditors();
       if (selectedComponent.getClasses().includes('template-block')) {
         const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager, this.pageData)

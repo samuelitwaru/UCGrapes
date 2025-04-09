@@ -77,6 +77,11 @@ export class ToolBoxService {
     return response;
   }
 
+  async getVersion() {
+    const response = await this.fetchAPI("/api/toolbox/v2/appversion", {}, true);
+    return response;
+  }
+
   async createVersion(versionName: any) {
     const response = await this.fetchAPI("/api/toolbox/v2/create-appversion", {
       method: "POST",
@@ -168,7 +173,7 @@ export class ToolBoxService {
       },
     );
     console.log(response)
-    return response;    
+    return response;
   }
 
   async autoSavePage(pageData: any) {

@@ -153,7 +153,7 @@ export class ActionListController {
           const updates = [
               ["Text", form.PageName],
               ["Name", form.PageName],
-              ["Action.ObjectType", "Web Link"],
+              ["Action.ObjectType", "WebLink"],
               ["Action.ObjectId", childPage?.PageId],
               ["Action.ObjectUrl", formUrl],
           ];

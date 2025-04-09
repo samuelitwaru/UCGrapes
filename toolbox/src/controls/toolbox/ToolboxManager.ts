@@ -86,6 +86,7 @@ export class ToolboxManager {
   }
 
   async savePages(publish = false) {
+    console.log('auto saving...')
     try {
       const lastSavedStates = new Map<string, string>();
       const activeVersion = await this.appVersions.getActiveVersion();

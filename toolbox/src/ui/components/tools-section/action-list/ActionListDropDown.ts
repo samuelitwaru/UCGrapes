@@ -178,7 +178,7 @@ export class ActionListDropDown {
       const res = version?.Pages || [];
       const pages = res.filter(
         (page: any) => 
-          page.PageType == "Maps" ||
+          page.PageType == "Map" ||
           page.PageType == "MyActivity" ||
           page.PageType == "Calendar"
           && page.PageName !== "Home"

@@ -113,6 +113,10 @@ export class ToolBoxService {
   }
 
   async createMenuPage(appVersionId: string, pageName: string) {
+    console.log({ 
+      appVersionId: appVersionId,
+      pageName: pageName
+    })
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-menu-page",
       {

@@ -205,18 +205,18 @@ export class ThemeManager {
   }
 
   private updateFrameColor (iframeDoc: any) {
-    const activeFrame = document.querySelector('.active-editor') as HTMLElement;
-    activeFrame?.style.setProperty('border', `5px solid ${this.getThemeColor('backgroundColor')}`);
+    // const activeFrame = document.querySelector('.active-editor') as HTMLElement;
+    // activeFrame?.style.setProperty('border', `5px solid ${this.getThemeColor('backgroundColor')}`);
     
-    const appBarTitle = document.querySelector('.appbar-title-container .title') as HTMLElement;
-    appBarTitle?.style.setProperty('color', this.getThemeColor('backgroundColor'));
+    // const appBarTitle = document.querySelector('.appbar-title-container .title') as HTMLElement;
+    // appBarTitle?.style.setProperty('color', this.getThemeColor('backgroundColor'));
 
-    const backButton = document.querySelector('.app-bar svg');
-    const svgG = backButton?.querySelector('g');
-    svgG?.style.setProperty('stroke', this.getThemeColor('backgroundColor'));
+    // const backButton = document.querySelector('.app-bar svg');
+    // const svgG = backButton?.querySelector('g');
+    // svgG?.style.setProperty('stroke', this.getThemeColor('backgroundColor'));
 
-    const arrowLeft = backButton?.querySelector('path');
-    arrowLeft?.style.setProperty('fill', this.getThemeColor('backgroundColor'));
+    // const arrowLeft = backButton?.querySelector('path');
+    // arrowLeft?.style.setProperty('fill', this.getThemeColor('backgroundColor'));
 
     const myActivityMessageButton = iframeDoc.querySelector('.tb-toggle-buttons')?.children[0] as HTMLElement;
     myActivityMessageButton?.style.setProperty('background-color', this.getThemeColor('backgroundColor'));

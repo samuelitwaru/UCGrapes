@@ -79,13 +79,24 @@ export class EditorEvents {
             if (target.closest(".tile-open-menu")) {
               const menuBtn = target.closest(".tile-open-menu") as HTMLElement;
               const templateContainer = menuBtn.closest(".template-wrapper") as HTMLElement;
-
+          
               this.clearAllMenuContainers();
-
-              const menu = new ActionListPopUp(templateContainer)
-              menu.render();
+          
+              // Get the mobileFrame for positioning context
+              const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
+              const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
+              const iframeRect = iframe?.getBoundingClientRect();
+              
+              // Pass the mobileFrame to the ActionListPopUp constructor
+              const menu = new ActionListPopUp(templateContainer, mobileFrame);
+              
+              const triggerRect = menuBtn.getBoundingClientRect();
+              
+              menu.render(triggerRect, iframeRect);
+              // const activateNav = this.activateNavigators();
+              // activateNav.scrollBy(50)
             }
-          });          
+          });         
         } else {
           console.error("Wrapper not found!");
         }
@@ -97,8 +108,7 @@ export class EditorEvents {
   }
 
   clearAllMenuContainers() {
-    const wrapperEl = this.editor.getWrapper()?.view.el as HTMLElement;
-    const existingMenu = wrapperEl.querySelectorAll(".menu-container");
+    const existingMenu = document.querySelectorAll(".menu-container");
     existingMenu.forEach((menu: any) => {
       menu.remove();
     });
@@ -210,10 +220,9 @@ export class EditorEvents {
     const framelist = document.querySelectorAll('.mobile-frame');
     framelist.forEach((frame: any) => {
       frame.classList.remove('active-editor');
-      frame.style.border = `5px solid #373737`
       if (frame.id.includes(this.frameId)) {
         frame.classList.add('active-editor');
-        frame.style.border = `5px solid ${this.themeManager.getThemeColor('backgroundColor')}`
+        // frame.style.border = `5px solid ${this.themeManager.getThemeColor('backgroundColor')}`
         this.toggleSidebar();
       }
     })
@@ -286,15 +295,15 @@ export class EditorEvents {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }
     } 
-    // else{
-    //   this.removeOtherEditors();
-    //   if (selectedComponent.getClasses().includes('template-block')) {
-    //     const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager, this.pageData)
-    //     newPageButton.render();
-    //     const activateNav = this.activateNavigators();
-    //     activateNav.scrollBy(200)
-    //   }
-    // }
+    else{
+      this.removeOtherEditors();
+      if (selectedComponent.getClasses().includes('template-block')) {
+        const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager, this.pageData)
+        newPageButton.render();
+        const activateNav = this.activateNavigators();
+        activateNav.scrollBy(200)
+      }
+    }
   }
 
   removeOtherEditors(): void {
@@ -321,7 +330,6 @@ export class EditorEvents {
     const nextButton = document.getElementById("scroll-right") as HTMLElement;
     const frames = document.querySelectorAll(".mobile-frame");
     const menuContainer = document.querySelector(".menu-container") as HTMLElement;
-
     // Show navigation buttons only when content overflows
     const menuWidth = menuContainer ? menuContainer.clientWidth : 0;
     const totalFramesWidth = Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0) + menuWidth;
@@ -355,7 +363,10 @@ export class EditorEvents {
     };
 
     prevButton.addEventListener("click", () => scrollBy(-200));
-    nextButton.addEventListener("click", () => scrollBy(200));
+    nextButton.addEventListener("click", () => {
+      scrollBy(200);
+      console.log("menuContainer", menuContainer?.clientWidth);
+    });
 
     const updateButtonVisibility = () => {
         const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;

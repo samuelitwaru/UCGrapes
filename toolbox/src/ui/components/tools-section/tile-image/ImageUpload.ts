@@ -139,10 +139,10 @@ export class ImageUpload {
 
     // Browse link click handler
     const browseLink = uploadArea.querySelector("#browseLink");
-    browseLink?.addEventListener("click", (e) => {
-      e.preventDefault();
-      fileInput.click();
-    });
+    // browseLink?.addEventListener("click", (e) => {
+    //   e.preventDefault();
+    //   fileInput.click();
+    // });
 
     uploadArea.addEventListener("click", (e) => {
       fileInput.click();

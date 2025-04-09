@@ -33,7 +33,7 @@ export class PageAppBar {
         `;
     
         const backButton = wrapper.firstElementChild;
-    
+        const thumbsList = document.querySelector(".editor-thumbs-list") as HTMLElement;
         backButton?.addEventListener('click', (e) => {
             e.preventDefault();
             const currentFrame = document.querySelector(`#${this.id}-frame`)
@@ -42,7 +42,17 @@ export class PageAppBar {
                 while (nextElement) {
                     const elementToRemove = nextElement;
                     nextElement = nextElement.nextElementSibling;
+                    
+                    const thumbToRemove = thumbsList.querySelector(`div[id="${elementToRemove.id}"]`);
+                    if (thumbToRemove) {  
+                        thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+                    } 
+
                     elementToRemove.remove();
+                }
+                const thumbToRemove = thumbsList.querySelector(`div[id="${currentFrame.id}"]`);
+                if (thumbToRemove) {  
+                    thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
                 }
                 currentFrame.remove();
                 new EditorEvents().activateNavigators();

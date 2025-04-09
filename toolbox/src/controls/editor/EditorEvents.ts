@@ -1,4 +1,5 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
@@ -17,7 +18,6 @@ import { TileMapper } from "./TileMapper";
 import { TileProperties } from "./TileProperties";
 import { TileUpdate } from "./TileUpdate";
 export class EditorEvents {
-
   editor: any;
   pageId: any;
   frameId: any;
@@ -27,19 +27,21 @@ export class EditorEvents {
   tileProperties: any;
   appVersionManager: any;
   toolboxService: any;
-  themeManager:any;
-  
+  themeManager: any;
+  isHome?: boolean;
+
   constructor() {
     this.appVersionManager = new AppVersionManager();
     this.toolboxService = new ToolBoxService();
     this.themeManager = new ThemeManager();
   }
 
-  init(editor: any, pageData: any, frameEditor: any) {
+  init(editor: any, pageData: any, frameEditor: any, isHome?: boolean) {
     this.editor = editor;
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
+    this.isHome = isHome;
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
@@ -49,58 +51,75 @@ export class EditorEvents {
 
   onLoad() {
     if (this.editor !== undefined) {
-
-      this.editor.on('load', () => {
+      this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         if (wrapper) {
           wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
-            const targetElement = (e.target as Element);
+            const targetElement = e.target as Element;
             if (
-              targetElement.closest('.menu-container') || 
-              targetElement.closest('.menu-category') ||
-              targetElement.closest('.sub-menu-header') 
-            ){
-                e.stopPropagation(); 
-                return;
+              targetElement.closest(".menu-container") ||
+              targetElement.closest(".menu-category") ||
+              targetElement.closest(".sub-menu-header")
+            ) {
+              e.stopPropagation();
+              return;
             }
 
             this.clearAllMenuContainers();
-            this.tileManager = new TileManager(e, this.editor, this.pageId, this.frameId);
+            this.tileManager = new TileManager(
+              e,
+              this.editor,
+              this.pageId,
+              this.frameId
+            );
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
             new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
-            this.activateEditor();
-          })
+            this.activateEditor(this.frameId,);
+          });
 
           wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
             const target = e.target as HTMLElement;
             if (target.closest(".tile-open-menu")) {
               const menuBtn = target.closest(".tile-open-menu") as HTMLElement;
-              const templateContainer = menuBtn.closest(".template-wrapper") as HTMLElement;
-          
+              const templateContainer = menuBtn.closest(
+                ".template-wrapper"
+              ) as HTMLElement;
+
               this.clearAllMenuContainers();
-          
+
               // Get the mobileFrame for positioning context
-              const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
-              const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
+              const mobileFrame = document.getElementById(
+                `${this.frameId}-frame`
+              ) as HTMLElement;
+              const iframe = mobileFrame?.querySelector(
+                "iframe"
+              ) as HTMLIFrameElement;
               const iframeRect = iframe?.getBoundingClientRect();
-              
+
               // Pass the mobileFrame to the ActionListPopUp constructor
               const menu = new ActionListPopUp(templateContainer, mobileFrame);
-              
+
               const triggerRect = menuBtn.getBoundingClientRect();
-              
+
               menu.render(triggerRect, iframeRect);
               // const activateNav = this.activateNavigators();
               // activateNav.scrollBy(50)
             }
-          });         
+          });
         } else {
           console.error("Wrapper not found!");
         }
 
+        new EditorThumbs(
+          this.frameId,
+          this.pageId,
+          this.editor,
+          this.pageData,
+          this.isHome
+        );
         this.frameEventListener();
         this.activateNavigators();
       });
@@ -117,16 +136,18 @@ export class EditorEvents {
   onComponentUpdate() {
     this.editor.on("component:update", (model: any) => {
       // console.log("Component updated", model);
-      window.dispatchEvent(new CustomEvent('pageChanged', { 
-        detail: { pageId: this.pageId } 
-      }));
-    })
+      window.dispatchEvent(
+        new CustomEvent("pageChanged", {
+          detail: { pageId: this.pageId },
+        })
+      );
+    });
   }
   onDragAndDrop() {
     let sourceComponent: any;
     let destinationComponent: any;
-    const tileMapper = new TileMapper(this.pageId)
-    const contentMapper = new ContentMapper(this.pageId)
+    const tileMapper = new TileMapper(this.pageId);
+    const contentMapper = new ContentMapper(this.pageId);
 
     this.editor.on("component:drag:start", (model: any) => {
       sourceComponent = model.parent;
@@ -149,7 +170,7 @@ export class EditorEvents {
         const isDragging: boolean = true;
         const tileUpdate = new TileUpdate();
         tileUpdate.updateTile(destinationComponent, isDragging);
-        tileUpdate.updateTile(sourceComponent, isDragging);        
+        tileUpdate.updateTile(sourceComponent, isDragging);
 
         tileMapper.moveTile(
           model.target.getId(),
@@ -158,10 +179,16 @@ export class EditorEvents {
           model.index
         );
         this.onTileUpdate(destinationComponent);
-      } else if (parentEl && parentEl.classList.contains("content-page-wrapper")) {
-          contentMapper.moveContentRow(model.target.getId(), model.index);
-      } else if (parentEl && parentEl.classList.contains("cta-button-container")) {
-          contentMapper.moveCta(model.target.getId(), model.index);
+      } else if (
+        parentEl &&
+        parentEl.classList.contains("content-page-wrapper")
+      ) {
+        contentMapper.moveContentRow(model.target.getId(), model.index);
+      } else if (
+        parentEl &&
+        parentEl.classList.contains("cta-button-container")
+      ) {
+        contentMapper.moveCta(model.target.getId(), model.index);
       }
     });
   }
@@ -170,7 +197,7 @@ export class EditorEvents {
     this.editor.on("component:selected", (component: any) => {
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = new TileMapper(this.pageId);
-      
+
       (globalThis as any).frameId = this.frameId;
       this.setTileProperties();
       this.setCtaProperties();
@@ -183,7 +210,10 @@ export class EditorEvents {
   }
 
   onTileUpdate(containerRow: any) {
-    if (containerRow && containerRow.getEl()?.classList.contains("container-row")) {
+    if (
+      containerRow &&
+      containerRow.getEl()?.classList.contains("container-row")
+    ) {
       this.editor.off("component:add", this.handleComponentAdd);
       this.editor.on("component:add", this.handleComponentAdd);
     }
@@ -192,57 +222,107 @@ export class EditorEvents {
   private handleComponentAdd = (model: any) => {
     const parent = model.parent();
     if (parent && parent.getEl()?.classList.contains("container-row")) {
-        const tileWrappers = parent.components().filter((comp: any) => {
-            const type = comp.get("type");
-            return type === "tile-wrapper";
-          });
-          if (tileWrappers.length === 3) {
-            console.log("more than 3");
-          }
+      const tileWrappers = parent.components().filter((comp: any) => {
+        const type = comp.get("type");
+        return type === "tile-wrapper";
+      });
+      if (tileWrappers.length === 3) {
+        console.log("more than 3");
+      }
     }
-  }
+  };
 
   frameEventListener() {
-    const framelist = document.querySelectorAll('.mobile-frame');
+    const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {
-        frame.addEventListener('click', (event:MouseEvent) => {
+        frame.addEventListener("click", (event: MouseEvent) => {
           (globalThis as any).activeEditor = this.editor;
           (globalThis as any).currentPageId = this.pageId;
           (globalThis as any).pageData = this.pageData;
-          this.activateEditor();
+          (globalThis as any).frameId = this.frameId;
+          this.activateEditor(this.frameId);
+          this.clearAllMenuContainers();
         });
       }
-    })
+    });
   }
 
-  activateEditor () {
-    const framelist = document.querySelectorAll('.mobile-frame');
+  setPageFocus(editor: any, frameId: string, pageId: string, pageData: any) {
+    const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
-      frame.classList.remove('active-editor');
-      if (frame.id.includes(this.frameId)) {
-        frame.classList.add('active-editor');
-        // frame.style.border = `5px solid ${this.themeManager.getThemeColor('backgroundColor')}`
+      if (frame.id.includes(frameId)) {
+        console.log("frame clicked", pageData);
+        console.log("page: ", pageData.PageName);
+        console.log("frame: ", frameId);
+        console.log("pageId: ", pageId);
+        console.log("pageData: ", pageData);
+        console.log("editor: ", editor);
+
+        (globalThis as any).activeEditor = editor;
+        (globalThis as any).currentPageId = pageId;
+        (globalThis as any).pageData = pageData;
+        (globalThis as any).frameId = frameId;
+        this.activateEditor(frameId);
+        this.clearAllMenuContainers();
+      }
+    });
+  }
+
+  activateEditor(frameId: any) {
+    const framelist = document.querySelectorAll(".mobile-frame");
+    framelist.forEach((frame: any) => {
+      frame.classList.remove("active-editor");
+      if (frame.id.includes(frameId)) {
+        frame.classList.add("active-editor");
+        this.activateMiniatureFrame(frame.id);
         this.toggleSidebar();
       }
-    })
+    });
+  }
+
+  activateMiniatureFrame(frameId: string) {
+    const thumbsList = document.querySelector(
+      ".editor-thumbs-list"
+    ) as HTMLElement;
+    const highlighters = thumbsList.querySelectorAll(".tb-highlighter");
+    highlighters.forEach((el: any) => {
+      el.style.display = "none";
+    });
+
+    const activeThumb = thumbsList.querySelector(`div[id="${frameId}"]`);
+    if (activeThumb) {
+      const highlighter =
+        activeThumb.parentElement?.parentElement?.querySelector(
+          ".tb-highlighter"
+        ) as HTMLElement;
+      if (highlighter) {
+        highlighter.style.display = "block";
+      }
+    }
   }
 
   async toggleSidebar() {
-    const toolSection = document.getElementById('tools-section') as HTMLDivElement
-    const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
-    toolSection.style.display = "block"
-    mappingSection.style.display = "none"
+    const toolSection = document.getElementById(
+      "tools-section"
+    ) as HTMLDivElement;
+    const mappingSection = document.querySelector(
+      "#mapping-section"
+    ) as HTMLDListElement;
+    toolSection.style.display = "block";
+    mappingSection.style.display = "none";
     if (
       this.pageData?.PageType === "Content" ||
       this.pageData?.PageType === "Location" ||
       this.pageData?.PageType === "Reception"
     ) {
-      new ContentSection(this.pageData)
+      new ContentSection(this.pageData);
     } else {
-      const menuSection = document.getElementById('menu-page-section') as HTMLElement;
-      const contentection = document.getElementById('content-page-section');
-      if (menuSection) menuSection.style.display = 'block';
+      const menuSection = document.getElementById(
+        "menu-page-section"
+      ) as HTMLElement;
+      const contentection = document.getElementById("content-page-section");
+      if (menuSection) menuSection.style.display = "block";
       if (contentection) contentection.remove();
 
       const actionListContainer = new ActionSelectContainer();
@@ -254,39 +334,57 @@ export class EditorEvents {
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
-    const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId()); 
+    const tileAttributes = (globalThis as any).tileMapper.getTile(
+      rowComponent.getId(),
+      tileWrapper.getId()
+    );
 
     if (selectedComponent && tileAttributes) {
-      this.tileProperties = new TileProperties(selectedComponent, tileAttributes);
+      this.tileProperties = new TileProperties(
+        selectedComponent,
+        tileAttributes
+      );
       this.tileProperties.setTileAttributes();
     }
   }
 
   setCtaProperties() {
     const selectedComponent = (globalThis as any).selectedComponent;
-    const ctaAttributes = new ContentMapper(this.pageId).getContentCta(selectedComponent.getId()); 
+    const ctaAttributes = new ContentMapper(this.pageId).getContentCta(
+      selectedComponent.getId()
+    );
 
     if (ctaAttributes) {
-      const ctaProperties = new CtaButtonProperties(selectedComponent, ctaAttributes);
+      const ctaProperties = new CtaButtonProperties(
+        selectedComponent,
+        ctaAttributes
+      );
       ctaProperties.setctaAttributes();
     }
   }
 
-  async createChildEditor () {
+  async createChildEditor() {
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
-    const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
+    const tileAttributes = (globalThis as any).tileMapper.getTile(
+      rowComponent.getId(),
+      tileWrapper.getId()
+    );
     if (tileAttributes?.Action?.ObjectId) {
       const objectId = tileAttributes.Action.ObjectId;
-      const data: any = JSON.parse(localStorage.getItem(`data-${objectId}`) || "{}");
-    
+      const data: any = JSON.parse(
+        localStorage.getItem(`data-${objectId}`) || "{}"
+      );
+
       let childPage;
       if (Object.keys(data).length > 0) {
-        childPage = data
+        childPage = data;
       } else {
         // const version = await this.appVersionManager.getActiveVersion();
-        childPage = this.appVersionManager.getPages()?.find((page: any) => page.PageId === objectId);
+        childPage = this.appVersionManager
+          .getPages()
+          ?.find((page: any) => page.PageId === objectId);
       }
 
       this.removeOtherEditors();
@@ -294,27 +392,42 @@ export class EditorEvents {
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }
-    } 
-    else{
+    } else {
       this.removeOtherEditors();
-      if (selectedComponent.getClasses().includes('template-block')) {
-        const newPageButton = new NewPageButton(this.toolboxService, this.appVersionManager, this.pageData)
+      if (selectedComponent.getClasses().includes("template-block")) {
+        const newPageButton = new NewPageButton(
+          this.toolboxService,
+          this.appVersionManager,
+          this.pageData
+        );
         newPageButton.render();
         const activateNav = this.activateNavigators();
-        activateNav.scrollBy(200)
+        activateNav.scrollBy(200);
       }
     }
   }
 
   removeOtherEditors(): void {
-    const framelist = document.querySelectorAll('.mobile-frame');
+    const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {
+        console.log("frame", frame);
         let nextElement = frame.nextElementSibling;
         while (nextElement) {
           const elementToRemove = nextElement;
           nextElement = nextElement.nextElementSibling;
-          if (elementToRemove) {  // Add this check
+
+          if (elementToRemove) {
+            const thumbsList = document.querySelector(
+              ".editor-thumbs-list"
+            ) as HTMLElement;
+            const thumbToRemove = thumbsList.querySelector(
+              `div[id="${elementToRemove.id}"]`
+            );
+            if (thumbToRemove) {
+              thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+            }
+
             elementToRemove.remove();
           }
         }
@@ -323,24 +436,34 @@ export class EditorEvents {
   }
 
   activateNavigators(): any {
-    const leftNavigator = document.querySelector(".page-navigator-left") as HTMLElement;
-    const rightNavigator = document.querySelector(".page-navigator-right") as HTMLElement;
-    const scrollContainer = document.getElementById("child-container") as HTMLElement;
+    const leftNavigator = document.querySelector(
+      ".page-navigator-left"
+    ) as HTMLElement;
+    const rightNavigator = document.querySelector(
+      ".page-navigator-right"
+    ) as HTMLElement;
+    const scrollContainer = document.getElementById(
+      "child-container"
+    ) as HTMLElement;
     const prevButton = document.getElementById("scroll-left") as HTMLElement;
     const nextButton = document.getElementById("scroll-right") as HTMLElement;
     const frames = document.querySelectorAll(".mobile-frame");
-    const menuContainer = document.querySelector(".menu-container") as HTMLElement;
+    const menuContainer = document.querySelector(
+      ".menu-container"
+    ) as HTMLElement;
     // Show navigation buttons only when content overflows
     const menuWidth = menuContainer ? menuContainer.clientWidth : 0;
-    const totalFramesWidth = Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0) + menuWidth;
+    const totalFramesWidth =
+      Array.from(frames).reduce((sum, frame) => sum + frame.clientWidth, 0) +
+      menuWidth;
     const containerWidth = scrollContainer.clientWidth;
 
     if (totalFramesWidth > containerWidth) {
-        leftNavigator.style.display = "flex";
-        rightNavigator.style.display = "flex";
+      leftNavigator.style.display = "flex";
+      rightNavigator.style.display = "flex";
     } else {
-        leftNavigator.style.display = "none";
-        rightNavigator.style.display = "none";
+      leftNavigator.style.display = "none";
+      rightNavigator.style.display = "none";
     }
 
     const alignment =
@@ -355,11 +478,11 @@ export class EditorEvents {
     scrollContainer.style.setProperty("justify-content", alignment);
 
     const scrollBy = (offset: number) => {
-        const adjustedOffset = offset + menuWidth;
-        scrollContainer.scrollTo({
-            left: scrollContainer.scrollLeft + adjustedOffset,
-            behavior: "smooth",
-        });
+      const adjustedOffset = offset + menuWidth;
+      scrollContainer.scrollTo({
+        left: scrollContainer.scrollLeft + adjustedOffset,
+        behavior: "smooth",
+      });
     };
 
     prevButton.addEventListener("click", () => scrollBy(-200));
@@ -369,9 +492,10 @@ export class EditorEvents {
     });
 
     const updateButtonVisibility = () => {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-        prevButton.style.display = scrollLeft > 0 ? "flex" : "none";
-        nextButton.style.display = scrollLeft + clientWidth < scrollWidth ? "flex" : "none";
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+      prevButton.style.display = scrollLeft > 0 ? "flex" : "none";
+      nextButton.style.display =
+        scrollLeft + clientWidth < scrollWidth ? "flex" : "none";
     };
 
     updateButtonVisibility();
@@ -379,5 +503,4 @@ export class EditorEvents {
 
     return { updateButtonVisibility, scrollBy };
   }
-} 
-
+}

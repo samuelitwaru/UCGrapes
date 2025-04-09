@@ -9,6 +9,7 @@ export class TileUpdate {
     }
 
     updateTile(rowComponent: any, isDragging: boolean = false) {
+        console.log("updateTile")
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
         const length = tiles.length;

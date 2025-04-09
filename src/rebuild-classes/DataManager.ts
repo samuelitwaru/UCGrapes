@@ -63,6 +63,10 @@ export class DataManager {
         this.pages = await this.fetchAPI('/api/toolbox/pages/list', {}, true);
         return this.pages;
     }
+    async getTemplates() {
+        this.pages = await this.fetchAPI('/api/toolbox/templates/list', {}, true);
+        return this.pages;
+    }
 
     async getServices() {
         const services = await this.fetchAPI('/api/toolbox/services', {}, true);

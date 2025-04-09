@@ -40,7 +40,8 @@ export const i18n = new I18n({
         duplicate: "Duplicate version",
         duplicate_button: "Duplicate",
         save: "Save",
-        cancel: "Cancel"
+        cancel: "Cancel",
+        delete: "Delete",
       },
     },
     undo: "Undo",

@@ -112,6 +112,15 @@ export class ToolBoxService {
     return response;
   }
 
+  async deleteVersion(appVersionId:string) {
+    return await this.fetchAPI("/api/toolbox/v2/delete-version", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId
+      }),
+    });
+  }
+
   async createMenuPage(appVersionId: string, pageName: string) {
     console.log({ 
       appVersionId: appVersionId,
@@ -230,12 +239,6 @@ export class ToolBoxService {
   }
 
   async deletePage(appVersionId:string, pageId:string) {
-    console.log(
-      {
-        AppVersionId: appVersionId,
-        PageId: pageId,
-      }
-    )
     return await this.fetchAPI("/api/toolbox/V2/delete-page", {
       method: "POST",
       body: JSON.stringify({

@@ -53,6 +53,7 @@ export class MenuItemManager {
             onCloseCallback();
           }
         }
+        this.menuContainer.remove();
       });
 
       menuItem.addEventListener("mouseenter", (e) => {
@@ -86,8 +87,6 @@ export class MenuItemManager {
 
     const parentDoc = document.querySelector(".frame-list");
     const parentDocRect = parentDoc?.getBoundingClientRect();
-    console.log("Parent Rect:", parentDocRect);
-    console.log("Parent parentDoc:", parentDoc?.clientWidth);
 
     const subMenuContainer = document.createElement("div");
     subMenuContainer.classList.add("sub-menu-container");

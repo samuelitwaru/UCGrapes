@@ -57,18 +57,31 @@ export class EditorThumbs {
   
       // Handle iframe inside .gjs-cv-canvas
       const iframe = canvasWrapper.querySelector("iframe") as HTMLIFrameElement;
-      if (iframe && iframe.contentWindow && iframe.contentDocument?.body) {
+      if (iframe) {
         try {
-          const canvas = await html2canvas(iframe.contentDocument.body);
-          const img = document.createElement("img");
-          img.src = canvas.toDataURL("image/png");
-          img.style.width = iframe.offsetWidth + "px";
-          img.style.height = iframe.offsetHeight + "px";
-          img.style.display = "block";
-  
-          const iframeClone = clone.querySelector("iframe");
-          if (iframeClone?.parentNode) {
-            iframeClone.parentNode.replaceChild(img, iframeClone);
+          // Wait for iframe to load before capturing
+          await ensureIframeLoaded(iframe);
+          
+          if (iframe.contentWindow && iframe.contentDocument?.body) {
+            // Make sure all images and sub-resources in the iframe are loaded
+            await waitForIframeResources(iframe);
+            
+            const canvas = await html2canvas(iframe.contentDocument.body, {
+              allowTaint: true,
+              useCORS: true,
+              logging: false
+            });
+            
+            const img = document.createElement("img");
+            img.src = canvas.toDataURL("image/png");
+            img.style.width = iframe.offsetWidth + "px";
+            img.style.height = iframe.offsetHeight + "px";
+            img.style.display = "block";
+            
+            const iframeClone = clone.querySelector("iframe");
+            if (iframeClone?.parentNode) {
+              iframeClone.parentNode.replaceChild(img, iframeClone);
+            }
           }
         } catch (err) {
           console.warn("Failed to render iframe with html2canvas:", err);
@@ -123,6 +136,50 @@ export class EditorThumbs {
       // Disconnect the observer after the first successful capture
       observer.disconnect();
     };
+
+    // Helper function to ensure iframe is loaded
+    const ensureIframeLoaded = (iframe: HTMLIFrameElement): Promise<void> => {
+      return new Promise((resolve) => {
+        if (iframe.contentDocument?.readyState === 'complete') {
+          resolve();
+        } else {
+          iframe.onload = () => resolve();
+          
+          // Fallback if onload doesn't trigger
+          setTimeout(() => {
+            resolve();
+          }, 2000);
+        }
+      });
+    };
+    
+    // Helper function to wait for all resources in the iframe to load
+    const waitForIframeResources = (iframe: HTMLIFrameElement): Promise<void> => {
+      return new Promise((resolve) => {
+        if (!iframe.contentDocument || !iframe.contentWindow) {
+          resolve();
+          return;
+        }
+        
+        const doc = iframe.contentDocument;
+        
+        // Check if document is already loaded
+        if (doc.readyState === 'complete') {
+          // Additional wait for any dynamic content
+          setTimeout(resolve, 500);
+          return;
+        }
+        
+        // Wait for document load
+        iframe.contentWindow.addEventListener('load', () => {
+          // Additional wait for any dynamic content
+          setTimeout(resolve, 500);
+        }, { once: true });
+        
+        // Fallback timeout
+        setTimeout(resolve, 3000);
+      });
+    };
   
     const disableInteractivity = (element: HTMLElement) => {
       const clone = element.cloneNode(false) as HTMLElement;
@@ -145,7 +202,14 @@ export class EditorThumbs {
       return clone;
     };
   
-    const observer = new MutationObserver(updateMirror);
+    const observer = new MutationObserver(() => {
+      // Debounce multiple rapid calls to updateMirror
+      if (updateTimeoutId) clearTimeout(updateTimeoutId);
+      updateTimeoutId = setTimeout(updateMirror, 300);
+    });
+    
+    let updateTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    
     observer.observe(editorDiv, {
       childList: true,
       subtree: true,

@@ -126,8 +126,7 @@ export class ActionListController {
   }
 
   private handleSubMenuItemSelection(item: any, type: string): void {
-    // Implement logic for handling submenu item selection
-    console.log(`Selected ${type} item:`, item);
+    this.pageAttacher.removeOtherEditors();
     if (type === "Forms") {
         this.handleDynamicForms(item);
     } else if (type === "Modules") {
@@ -167,7 +166,6 @@ export class ActionListController {
               rowId,
               tileId
           );
-          this.pageAttacher.removeOtherEditors();
           
           new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
       }

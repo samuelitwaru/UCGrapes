@@ -195,6 +195,7 @@ button#open-mapping {
 
 .frame-list {
   max-width: 950px;
+  min-width: 500px;
   overflow: hidden;
   align-content: center;
   display: flex;
@@ -1944,7 +1945,6 @@ button.add-new-service i {
 @media (max-width: 1440px) {
   .frame-list {
     gap: 1.2em;
-    min-width: 500px;
     max-width: 600px;
   }
 

@@ -140,4 +140,9 @@ export class ChildEditor {
       `);
     }
   }
+
+  private updateFrame() {
+    this.editorEvents.removeOtherEditors();
+    this.editorEvents.activateNavigators();
+  }
 }

@@ -105,21 +105,8 @@ export class PageAttacher {
   }
 
   removeOtherEditors(): void {
-    const frameId = (globalThis as any).frameId;
-    const framelist = document.querySelectorAll('.mobile-frame');
-    framelist.forEach((frame: any) => {
-      if (frame.id.includes(frameId)) {
-        let nextElement = frame.nextElementSibling;
-        while (nextElement) {
-          const elementToRemove = nextElement;
-          nextElement = nextElement.nextElementSibling;
-          if (elementToRemove) {  // Add this check
-            elementToRemove.remove();
-            new EditorEvents().activateNavigators();
-          }
-        }
-      }
-    });
+    new EditorEvents().removeOtherEditors();
+    new EditorEvents().activateNavigators();
   }
 
   updateActionProperty(type: string, pageName: string) {

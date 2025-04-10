@@ -252,13 +252,6 @@ export class EditorEvents {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       if (frame.id.includes(frameId)) {
-        console.log("frame clicked", pageData);
-        console.log("page: ", pageData.PageName);
-        console.log("frame: ", frameId);
-        console.log("pageId: ", pageId);
-        console.log("pageData: ", pageData);
-        console.log("editor: ", editor);
-
         (globalThis as any).activeEditor = editor;
         (globalThis as any).currentPageId = pageId;
         (globalThis as any).pageData = pageData;
@@ -364,6 +357,7 @@ export class EditorEvents {
   }
 
   async createChildEditor() {
+    console.log("createChildEditor");
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
@@ -371,7 +365,14 @@ export class EditorEvents {
       rowComponent.getId(),
       tileWrapper.getId()
     );
+    this.removeOtherEditors();
     if (tileAttributes?.Action?.ObjectId) {
+      if (
+        tileAttributes?.Action?.ObjectType === "Phone" ||
+        tileAttributes?.Action?.ObjectType === "Email"
+      ) {
+        return;
+      }
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(
         localStorage.getItem(`data-${objectId}`) || "{}"
@@ -387,31 +388,17 @@ export class EditorEvents {
           ?.find((page: any) => page.PageId === objectId);
       }
 
-      this.removeOtherEditors();
-      this.activateNavigators();
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }
-    } else {
-      this.removeOtherEditors();
-      if (selectedComponent.getClasses().includes("template-block")) {
-        const newPageButton = new NewPageButton(
-          this.toolboxService,
-          this.appVersionManager,
-          this.pageData
-        );
-        newPageButton.render();
-        const activateNav = this.activateNavigators();
-        activateNav.scrollBy(200);
-      }
     }
+    this.activateNavigators();
   }
 
   removeOtherEditors(): void {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
-      if (frame.id.includes(this.frameId)) {
-        console.log("frame", frame);
+      if (frame.id.includes((globalThis as any).frameId)) {
         let nextElement = frame.nextElementSibling;
         while (nextElement) {
           const elementToRemove = nextElement;
@@ -447,7 +434,7 @@ export class EditorEvents {
     ) as HTMLElement;
     const prevButton = document.getElementById("scroll-left") as HTMLElement;
     const nextButton = document.getElementById("scroll-right") as HTMLElement;
-    const frames = document.querySelectorAll(".mobile-frame");
+    const frames = document.querySelectorAll("#child-container .mobile-frame");
     const menuContainer = document.querySelector(
       ".menu-container"
     ) as HTMLElement;
@@ -469,10 +456,10 @@ export class EditorEvents {
     const alignment =
       window.innerWidth <= 1440
         ? frames.length > 1
-          ? "flex-start"
+          ? "center"
           : "center"
         : frames.length > 3
-        ? "flex-start"
+        ? "center"
         : "center";
 
     scrollContainer.style.setProperty("justify-content", alignment);
@@ -488,7 +475,6 @@ export class EditorEvents {
     prevButton.addEventListener("click", () => scrollBy(-200));
     nextButton.addEventListener("click", () => {
       scrollBy(200);
-      console.log("menuContainer", menuContainer?.clientWidth);
     });
 
     const updateButtonVisibility = () => {

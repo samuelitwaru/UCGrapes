@@ -41,7 +41,7 @@ button {
 .frame-container,
 .content-frame-container,
 .form-frame-container {
-  height: 100vh;
+  height: calc(100vh - 10px);
   padding: 1em;
   display: flex;
   flex-direction: column;
@@ -844,7 +844,7 @@ img.content-page-block {
 }
 
 /* menu container */
-.menu-container {
+/* .menu-container {
   position: absolute;
   background-color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -861,11 +861,7 @@ img.content-page-block {
   padding: 0;
   margin: 0;
   width: 100%;
-  /* border: 1px solid #ccc; */
-  /* border-radius: 6px; */
   overflow: hidden;
-  /* background-color: #fff; */
-  /* z-index: 999999; */
   position: relative;
   max-height: 240px;
   overflow-y: auto;
@@ -885,7 +881,6 @@ img.content-page-block {
 .menu-container .menu-list .menu-item {
   padding: 10px;
   font-size: 13px;
-  /* border-bottom: 1px solid #ddd; */
   cursor: pointer;
   z-index: 10;
   color: #303030;
@@ -944,12 +939,6 @@ img.content-page-block {
   box-sizing: border-box;
   background-color: white;
 }
-/* Keep your existing hover behavior */
-/* .tile-open-menu:hover + .menu-container,
-.menu-container:hover {
-  opacity: 1;
-  visibility: visible;
-} */
 
 .menu-container .menu-item:last-child {
   border-bottom: none;
@@ -967,7 +956,7 @@ img.content-page-block {
 
 .menu-container .menu-item:hover {
   background-color: #f0f0f0;
-}
+} */
 
 .gjs-badge__name,
 .gjs-toolbar {

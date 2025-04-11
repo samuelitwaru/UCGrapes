@@ -81,7 +81,7 @@ export class ActionListDropDown {
       //   canCreatePage: true,
       // },
       {
-        name: "Web Link",
+        name: "WebLink",
         displayName: i18n.t("sidebar.action_list.weblink"),
         label: i18n.t("sidebar.action_list.weblink"),
         options: [],
@@ -98,7 +98,8 @@ export class ActionListDropDown {
     const forms = (this.toolBoxService.forms || []).map((form) => ({
         PageId: form.FormId,
         PageName: form.ReferenceName,
-        TileName: form.ReferenceName
+        TileName: form.ReferenceName,
+        PageUrl: form.FormUrl,
       }));
     return forms;
   }

@@ -11,6 +11,7 @@ import { ChildEditor } from "./ChildEditor";
 import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
+import { DeletePageButton } from "./DeletePageButton";
 import { FrameEvent } from "./FrameEvent";
 import { NewPageButton } from "./NewPageButton";
 import { TileManager } from "./TileManager";

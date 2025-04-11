@@ -76,7 +76,7 @@ export class ChildEditor {
       const urlPageEditor = new UrlPageEditor(childEditor);
       urlPageEditor.initialise(tileAttributes.Action);
     }else if (
-      this.pageData?.PageType === "Maps"
+      this.pageData?.PageType === "Map"
     ) {
       const mapsPageEditor = new MapsPageEditor(childEditor);
       mapsPageEditor.initialise(tileAttributes.Action);

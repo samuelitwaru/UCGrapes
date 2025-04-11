@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version20DevelopmentNETPostgreSQL";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -74,6 +74,11 @@ export class ToolBoxService {
 
   async getVersions() {
     const response = await this.fetchAPI("/api/toolbox/v2/appversions", {}, true);
+    return response;
+  }
+
+  async getVersion() {
+    const response = await this.fetchAPI("/api/toolbox/v2/appversion", {}, true);
     return response;
   }
 
@@ -177,7 +182,7 @@ export class ToolBoxService {
       },
     );
     console.log(response)
-    return response;    
+    return response;
   }
 
   async autoSavePage(pageData: any) {

@@ -133,7 +133,7 @@ export class PageCreationService {
     let childPage: any;
     if (type === "WebLink") {
         childPage = version?.Pages.find(
-            (page: any) => page.PageName === "Web Link" && page.PageType === "WebLink"
+            (page: any) => page.PageName === "WebLink" && page.PageType === "WebLink"
           );   
         objectId = childPage?.PageId;     
     }

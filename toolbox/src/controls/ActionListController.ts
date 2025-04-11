@@ -90,10 +90,6 @@ export class ActionListController {
     ];
   }
 
-  handleSubMenuAction(type: string): void {
-    throw new Error("Submenu action handler not implemented in UI layer");
-  }
-
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
     const category = categoryData.find((cat: any) => cat.name === type);
     const itemsList = category?.options || [];

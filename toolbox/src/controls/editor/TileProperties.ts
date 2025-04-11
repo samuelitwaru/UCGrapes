@@ -140,6 +140,22 @@ export class TileProperties {
     if (tileIcon) {
       const categoryTitle = this.themeManager.getIconCategory(tileIcon);
       this.themeManager.updateThemeIcons(categoryTitle);
+
+      console.log("tileIcon", tileIcon);
+      console.log("categoryTitle", categoryTitle)
+      const categoryContainer = document.querySelector("#icon-categories-list") as HTMLElement;
+      const allOptions =
+      categoryContainer.querySelectorAll(".category-option");
+        allOptions.forEach((opt) => {
+          opt.classList.remove("selected");
+          if (opt.getAttribute("data-value") === categoryTitle) {
+            opt.classList.add("selected");
+            const selectedCategory = categoryContainer.querySelector(".selected-category-value") as HTMLElement;
+            if (selectedCategory) {
+              selectedCategory.textContent = i18n.t(`sidebar.icon_category.${categoryTitle.toLowerCase()}`);             
+            }
+          }
+        });
     }
 
     const iconDiv = this.selectedComponent

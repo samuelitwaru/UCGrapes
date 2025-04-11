@@ -32,18 +32,29 @@ export class EditorThumbs {
     thumbnail.style.cursor = "pointer";
     thumbnail.addEventListener("click", (event: MouseEvent) => {
       const childContainer = document.getElementById("child-container") as HTMLDivElement;
-
+  
       if (childContainer && editorDiv) {
-        const editorDivLeft = editorDiv.offsetLeft;
-        const editorDivWidth = editorDiv.offsetWidth;
-
-        const targetScrollPosition = editorDivLeft - (childContainer.offsetWidth / 2) + (editorDivWidth / 2);
-
-        childContainer.scrollLeft = targetScrollPosition;
+        const editorFrames = Array.from(childContainer.children);
+        const isFirstItem = editorFrames[0] === editorDiv;
+        const isLastItem = editorFrames[editorFrames.length - 1] === editorDiv;
+  
+        if (isFirstItem) {
+          childContainer.scrollLeft = 0;
+          if (childContainer.children.length > 2) {
+            childContainer.style.justifyContent = "start"
+          }
+        } else if (isLastItem) {
+          childContainer.scrollLeft = childContainer.scrollWidth - childContainer.clientWidth;
+        } else {
+          const editorDivLeft = editorDiv.offsetLeft;
+          const editorDivWidth = editorDiv.offsetWidth;
+          const targetScrollPosition = editorDivLeft - (childContainer.offsetWidth / 2) + (editorDivWidth / 2);
+          childContainer.scrollLeft = targetScrollPosition;
+        }
       }
-
+  
       const editorEvents = new EditorEvents();
-      editorEvents.setPageFocus(this.editor, this.frameId, this.pageId, this.pageData)
+      editorEvents.setPageFocus(this.editor, this.frameId, this.pageId, this.pageData);
     });
     this.container.appendChild(thumbnail);
   }
@@ -55,15 +66,12 @@ export class EditorThumbs {
   
       const clone = disableInteractivity(editorDiv);
   
-      // Handle iframe inside .gjs-cv-canvas
       const iframe = canvasWrapper.querySelector("iframe") as HTMLIFrameElement;
       if (iframe) {
         try {
-          // Wait for iframe to load before capturing
           await ensureIframeLoaded(iframe);
           
           if (iframe.contentWindow && iframe.contentDocument?.body) {
-            // Make sure all images and sub-resources in the iframe are loaded
             await waitForIframeResources(iframe);
             
             const canvas = await html2canvas(iframe.contentDocument.body, {
@@ -88,7 +96,6 @@ export class EditorThumbs {
         }
       }
   
-      // Create the wrapper that will contain clone, space, and highlighter
       const miniWrapper = document.createElement("div");
       miniWrapper.style.position = "relative";
       miniWrapper.style.width = `${Math.ceil(canvasWrapper.offsetWidth * 0.15)}px`;
@@ -96,28 +103,23 @@ export class EditorThumbs {
       miniWrapper.style.display = "flex";
       miniWrapper.style.flexDirection = "column";
   
-      // Set up the clone
       clone.style.transform = "scale(0.15)";
       clone.style.transformOrigin = "top left";
       clone.style.width = `${canvasWrapper.offsetWidth}px`;
       clone.style.height = `${canvasWrapper.offsetHeight}px`;
       clone.style.overflow = "hidden";
       
-      // Create a container for the clone
       const cloneContainer = document.createElement("div");
       cloneContainer.style.flex = "1";
       cloneContainer.style.overflow = "hidden";
       cloneContainer.appendChild(clone);
       
-      // Add clone container to the mini wrapper
       miniWrapper.appendChild(cloneContainer);
       
-      // Create spacer element
       const spacer = document.createElement("div");
       spacer.style.height = "3px"; // 5px space
       miniWrapper.appendChild(spacer);
       
-      // Create highlighter with space above it
       const highlighter = document.createElement("div");
       highlighter.classList.add("tb-highlighter");
       highlighter.id = "tb-highlighter";
@@ -126,18 +128,14 @@ export class EditorThumbs {
       highlighter.style.display = this.isHome ? "block" : "none";
       highlighter.style.backgroundColor = "#FFFFFF";
       
-      // Add highlighter to the mini wrapper
       miniWrapper.appendChild(highlighter);
       
-      // Clear and set up the thumbnail wrapper
       this.thumbnailWrapper.innerHTML = "";
       this.thumbnailWrapper.appendChild(miniWrapper);
   
-      // Disconnect the observer after the first successful capture
       observer.disconnect();
     };
 
-    // Helper function to ensure iframe is loaded
     const ensureIframeLoaded = (iframe: HTMLIFrameElement): Promise<void> => {
       return new Promise((resolve) => {
         if (iframe.contentDocument?.readyState === 'complete') {
@@ -153,7 +151,6 @@ export class EditorThumbs {
       });
     };
     
-    // Helper function to wait for all resources in the iframe to load
     const waitForIframeResources = (iframe: HTMLIFrameElement): Promise<void> => {
       return new Promise((resolve) => {
         if (!iframe.contentDocument || !iframe.contentWindow) {
@@ -163,20 +160,15 @@ export class EditorThumbs {
         
         const doc = iframe.contentDocument;
         
-        // Check if document is already loaded
         if (doc.readyState === 'complete') {
-          // Additional wait for any dynamic content
           setTimeout(resolve, 500);
           return;
         }
         
-        // Wait for document load
         iframe.contentWindow.addEventListener('load', () => {
-          // Additional wait for any dynamic content
           setTimeout(resolve, 500);
         }, { once: true });
         
-        // Fallback timeout
         setTimeout(resolve, 3000);
       });
     };
@@ -203,7 +195,6 @@ export class EditorThumbs {
     };
   
     const observer = new MutationObserver(() => {
-      // Debounce multiple rapid calls to updateMirror
       if (updateTimeoutId) clearTimeout(updateTimeoutId);
       updateTimeoutId = setTimeout(updateMirror, 300);
     });

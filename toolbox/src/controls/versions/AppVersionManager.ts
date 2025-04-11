@@ -15,14 +15,24 @@ export class AppVersionManager {
   public async getActiveVersion() {
     const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
     const versions = await toolboxService.getVersions();
-    (globalThis as any).activeVersion = versions?.AppVersions?.find((version: any) => version.IsActive) || null
+    (globalThis as any).activeVersion =
+      versions?.AppVersions?.find((version: any) => version.IsActive) || null;
     return (globalThis as any).activeVersion;
   }
 
   public getPages() {
-    return (
-      (globalThis as any).activeVersion?.Pages || null
+    return (globalThis as any).activeVersion?.Pages || null;
+  }
+
+  public async preDefinedPages() {
+    const res = this.getPages() || [];
+    const pages = res.filter(
+      (page: any) =>
+        page.PageType == "Maps" ||
+        page.PageType == "MyActivity" ||
+        (page.PageType == "Calendar" && page.PageName !== "Home")
     );
+    return pages;
   }
 
   async getActiveVersionId() {
@@ -53,8 +63,8 @@ export class AppVersionManager {
         PageName: pageTitle,
       };
       await toolboxService.updatePageTitle(pageData);
-      selectedTileMapper.updateTile(tileId, 'Name', pageTitle);
-      selectedTileMapper.updateTile(tileId, 'Text', pageTitle);
+      selectedTileMapper.updateTile(tileId, "Name", pageTitle);
+      selectedTileMapper.updateTile(tileId, "Text", pageTitle);
     }
 
     // await toolboxService.updatePageTitle(pageId, pageTitle);

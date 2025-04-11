@@ -1,5 +1,7 @@
+
 export class FrameEvent {
     frameId: any;
+  pageData: any;
 
     constructor(frameId: any) {
         this.frameId = frameId;

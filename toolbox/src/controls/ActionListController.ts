@@ -27,7 +27,7 @@ export class ActionListController {
   async getMenuCategories(): Promise<MenuItem[][] | null> {
     const categoryData = await this.actionList.getCategoryData();
     const activePage = (globalThis as any).pageData;
-  
+
     // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
     
@@ -94,11 +94,14 @@ export class ActionListController {
     const category = categoryData.find((cat: any) => cat.name === type);
     const itemsList = category?.options || [];
 
-    return itemsList.map((item: any) => ({
-      id: item.PageId,
-      label: item.PageName,
-      action: () => this.handleSubMenuItemSelection(item, type),
-    }));
+    return itemsList.map((item: any) => {
+      return({
+        id: item.PageId,
+        label: item.PageName,
+        url: item.PageUrl,
+        action: () => this.handleSubMenuItemSelection(item, type),
+      })
+  });
   }
 
   async createNewPage(title: string): Promise<void> {
@@ -144,13 +147,12 @@ export class ActionListController {
           const version = (globalThis as any).activeVersion; 
           const childPage = version?.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
   
-          const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
           const updates = [
               ["Text", form.PageName],
               ["Name", form.PageName],
               ["Action.ObjectType", "WebLink"],
               ["Action.ObjectId", childPage?.PageId],
-              ["Action.ObjectUrl", formUrl],
+              ["Action.ObjectUrl", form.PageUrl],
           ];
   
         //  this.updateActionListDropDown("Dynamic Form", form.PageName);

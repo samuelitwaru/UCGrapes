@@ -31,7 +31,7 @@ export class CategoryView {
     summary.innerText = `${this.categoryData.displayName}`;
     const icon = document.createElement("i");
     icon.className = "fa fa-angle-right";
-    if (this.categoryData.name !== "Web Link") summary.appendChild(icon);
+    if (this.categoryData.name !== "WebLink") summary.appendChild(icon);
 
     const searchContainer = document.createElement("div");
     searchContainer.className = "search-container";
@@ -106,7 +106,7 @@ export class CategoryView {
     list.appendChild(noItem);
 
     this.details.addEventListener("toggle", (e) => {
-      if (this.categoryData.name !== "Web Link") {
+      if (this.categoryData.name !== "WebLink") {
         const icon = summary.querySelector("i");
         if (icon) {
           icon.classList.toggle("fa-angle-right");
@@ -122,7 +122,7 @@ export class CategoryView {
       }
     });
 
-    if (this.categoryData.name === "Web Link") {
+    if (this.categoryData.name === "WebLink") {
       this.details.appendChild(summary);
     } else {
       this.details.appendChild(summary);

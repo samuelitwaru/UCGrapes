@@ -2547,3 +2547,27 @@ details .tb_debug_details-content {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
 }
+
+
+.delete-page-icon {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color:#3c4c7a;
+  border-color: #3c4c7a;
+}
+
+.delete-page-icon:hover {
+  background-color: #ee404f;
+  border-color: #ee404f;
+  color:#ffffff;
+}

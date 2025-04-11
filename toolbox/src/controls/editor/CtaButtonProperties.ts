@@ -1,4 +1,6 @@
 import { ActionInput } from "../../ui/components/tools-section/content-section/ActionInput";
+import { TextColor } from "../../ui/components/tools-section/title-section/TextColor";
+import { TileAlignmentSection } from "../../ui/components/tools-section/title-section/TileAlignmentSection";
 import { truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
@@ -14,14 +16,28 @@ export class CtaButtonProperties {
     }
 
     public setctaAttributes() {
-        this.displayButtonLayouts();
-        this.ctaColorAttributes();
-        this.ctaActionDisplay();
-        this.selectedButtonLayout();
+        this.waitForButtonLayoutContainer(() => {
+            this.displayButtonLayouts();
+            this.ctaColorAttributes();
+            this.ctaActionDisplay();
+            this.selectedButtonLayout();
+            this.ctaLabelColor();
+        });        
     }
 
+    private waitForButtonLayoutContainer(callback: () => void) {
+        const interval = setInterval(() => {
+            const buttonLayoutContainer = document?.querySelector(".cta-button-layout-container");
+            const contentSection = document?.querySelector("#content-page-section");
+            if (buttonLayoutContainer && contentSection) {
+                clearInterval(interval);
+                callback();
+            }
+        }, 100);
+    }    
+
     private displayButtonLayouts() {
-        const buttonLayoutContainer = document.querySelector(".cta-button-layout-container") as HTMLElement;
+        const buttonLayoutContainer = document?.querySelector(".cta-button-layout-container") as HTMLElement;
         if (this.selectedComponent.parent().getClasses().includes("cta-button-container")) {
             if (buttonLayoutContainer) {
                 buttonLayoutContainer.style.display = "flex";
@@ -49,7 +65,7 @@ export class CtaButtonProperties {
         }
     }
 
-    ctaColorAttributes() {        
+    private ctaColorAttributes() {        
         const contentSection = document.querySelector("#content-page-section");
         const colorItems = contentSection?.querySelectorAll(".color-item > input");
         let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes.CtaBGColor);
@@ -61,10 +77,28 @@ export class CtaButtonProperties {
         });
     }  
     
-    ctaActionDisplay () {
+    private ctaActionDisplay () {
         const contentSection = document.querySelector("#content-page-section");
         const value = this.ctaAttributes.CtaLabel;
         const actionInput = new ActionInput(value, this.ctaAttributes);
         actionInput.render(contentSection as HTMLElement);
+    }
+
+    private ctaLabelColor() {
+        const contentSection = document.querySelector("#content-page-section");
+        const labelColor = new TextColor("cta");
+        labelColor.render(contentSection as HTMLElement);
+
+        const color = this.ctaAttributes.CtaColor;
+
+        const ctaColorSection = contentSection?.querySelector("#text-color-palette");
+        const ctaColorsOptions = ctaColorSection?.querySelectorAll("input");
+        ctaColorsOptions?.forEach((option) => {
+          if (option.value === color) {
+            option.checked = true;
+          } else {
+            option.checked = false;
+          }
+        });
     }
 }

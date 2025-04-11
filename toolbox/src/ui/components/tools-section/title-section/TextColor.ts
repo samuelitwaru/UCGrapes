@@ -1,7 +1,11 @@
+import { ContentMapper } from "../../../../controls/editor/ContentMapper";
+
 export class TextColor {
   container: HTMLElement;
+  private type: "tile" | "cta";
 
-  constructor() {
+  constructor(type: "tile" | "cta") {
+    this.type = type;
     this.container = document.createElement("div");
     this.init();
   }
@@ -39,29 +43,76 @@ export class TextColor {
         e.preventDefault();
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
-
-        const iconPath = selectedComponent.find("path")[0];
-
-        if (iconPath) {
-          iconPath.addAttributes({"fill": colorValue});
-        }
-
-        selectedComponent.addStyle({
-          color: colorValue,
-        });
-
-        (globalThis as any).tileMapper.updateTile(
-          selectedComponent.parent().getId(),
-          "Color",
-          colorValue
-        );
+        if (this.type === "tile") {
+          this.tileStyle(selectedComponent, colorValue)
+        } else if (this.type === "cta") {
+          this.ctaStyle(selectedComponent, colorValue)
+        }       
 
         radioInput.checked = true;
       };
     });
   }
 
+  private tileStyle(selectedComponent: any, colorValue: string) {
+    const iconPath = selectedComponent.find("path")[0];
+
+    if (iconPath) {
+      iconPath.addAttributes({"fill": colorValue});
+    }
+
+    selectedComponent.addStyle({
+      color: colorValue,
+    });
+
+    (globalThis as any).tileMapper.updateTile(
+      selectedComponent.parent().getId(),
+      "Color",
+      colorValue
+    );
+  }
+
+  private ctaStyle(selectedComponent: any, colorValue: string) {
+    const iconPath = selectedComponent.find(".img-button-icon > svg > path")[0];
+    if (iconPath) {
+      iconPath.addAttributes({"fill": colorValue});
+    }
+
+    const buttonLabel = selectedComponent.find(".label")[0];
+    if (buttonLabel) {
+      buttonLabel.addStyle({
+        color: colorValue,
+      });
+    }
+
+    const arrowIcon = selectedComponent.find(".fa.fa-angle-right")[0];
+    if (arrowIcon) {
+      arrowIcon.addStyle({
+        color: colorValue,
+      });
+    }
+
+    const roundButtonIcon = selectedComponent.find(".cta-button > svg > path")[0];
+
+    if (roundButtonIcon) {
+      roundButtonIcon.addAttributes({"fill": colorValue});
+      buttonLabel.addStyle({
+        color: "#333333",
+      });
+    }    
+
+    const pageId = (globalThis as any).currentPageId;
+    new ContentMapper(pageId).updateContentCtaColor(
+      selectedComponent.getId(),
+      colorValue
+    );
+  }
+
   render(container: HTMLElement) {
+    const existingTextColor = container.querySelector("#text-color-palette");
+    if (existingTextColor) {
+      existingTextColor.remove();
+    }
     container.appendChild(this.container);
   }
 }

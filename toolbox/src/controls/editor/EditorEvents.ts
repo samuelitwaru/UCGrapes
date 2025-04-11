@@ -77,7 +77,7 @@ export class EditorEvents {
             (globalThis as any).pageData = this.pageData;
             new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
-            this.activateEditor(this.frameId,);
+            this.activateEditor(this.frameId);
           });
 
           wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
@@ -310,6 +310,7 @@ export class EditorEvents {
       this.pageData?.PageType === "Reception"
     ) {
       new ContentSection(this.pageData);
+      this.clearCtaProperties();
     } else {
       const menuSection = document.getElementById(
         "menu-page-section"
@@ -347,7 +348,7 @@ export class EditorEvents {
       selectedComponent.getId()
     );
 
-    if (ctaAttributes) {
+    if (ctaAttributes && selectedComponent) {
       const ctaProperties = new CtaButtonProperties(
         selectedComponent,
         ctaAttributes
@@ -356,8 +357,24 @@ export class EditorEvents {
     }
   }
 
+  clearCtaProperties() {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (selectedComponent && selectedComponent.find(".cta-styled-btn")[0]) {        
+      return;
+    }
+    const buttonLayoutContainer = document?.querySelector(
+      ".cta-button-layout-container"
+    ) as HTMLElement;
+    if (buttonLayoutContainer) buttonLayoutContainer.style.display = "none";
+    const contentSection = document.querySelector("#content-page-section");
+    const colorItems = contentSection?.querySelectorAll(".color-item > input");
+    colorItems?.forEach((input: any) => (input.checked = false));
+
+    const buttonLabel = contentSection?.querySelector("#cta-action-title");
+    if (buttonLabel) buttonLabel.remove();
+  }
+
   async createChildEditor() {
-    console.log("createChildEditor");
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();

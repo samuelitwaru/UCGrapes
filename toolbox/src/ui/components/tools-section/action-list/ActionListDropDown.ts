@@ -128,31 +128,30 @@ export class ActionListDropDown {
   //   return services;
   // }
 
-  async getContentPages() {
-    try {
-      const versions = await this.appVersion.getActiveVersion();
-      const res = versions?.Pages || [];
-      const pages = res.filter(
-        (page: any) => 
-          page.PageType == "Content"
-      ).map((page: any) => ({
-        PageId: page.PageId,
-        PageName: page.PageName,
-        TileName: page.PageName
-      }))
+  // async getContentPages() {
+  //   try {
+  //     const versions = await this.appVersion.getActiveVersion();
+  //     const res = versions?.Pages || [];
+  //     const pages = res.filter(
+  //       (page: any) => 
+  //         page.PageType == "Content"
+  //     ).map((page: any) => ({
+  //       PageId: page.PageId,
+  //       PageName: page.PageName,
+  //       TileName: page.PageName
+  //     }))
 
-      return pages;
-    } catch (error) {
-      console.error("Error fetching pages:", error);
-      throw error;
-    }
-  }
+  //     return pages;
+  //   } catch (error) {
+  //     console.error("Error fetching pages:", error);
+  //     throw error;
+  //   }
+  // }
 
   async getPages() {
     try {
-      const versions = await this.appVersion.getActiveVersion();
-      const res = versions?.Pages || [];
-      const pages = res.filter(
+      const versions = this.appVersion.getPages() || [];
+      const pages = versions.filter(
         (page: any) => 
           page.PageType == "Menu"
           && (page.PageName !== "Home"
@@ -174,15 +173,8 @@ export class ActionListDropDown {
 
   async getPredefinedPages() {
     try {
-      const version = await this.appVersion.getActiveVersion();
-      const res = version?.Pages || [];
-      const pages = res.filter(
-        (page: any) => 
-          page.PageType == "Map" ||
-          page.PageType == "MyActivity" ||
-          page.PageType == "Calendar"
-          && page.PageName !== "Home"
-      ).map((page: any) => ({
+      const version = await this.appVersion.preDefinedPages() || [];
+      const pages = version.map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
         TileName: page.PageName,

@@ -1,5 +1,6 @@
 import { AppVersion } from "../../interfaces/AppVersion ";
 import { baseURL, ToolBoxService } from "../../services/ToolBoxService";
+import { Alert } from "../../ui/components/Alert";
 import { Modal } from "../../ui/components/Modal";
 import { AppVersionManager } from "./AppVersionManager";
 
@@ -69,6 +70,20 @@ export class AppVersionController {
             return result;
         } catch (error) {
             console.error("Version creation failed:", error);
+            return null;
+        }
+    }
+
+    async deleteVersion(appVersionId: any): Promise<any | null> {
+        try {
+            await this.toolboxService.deleteVersion(appVersionId).then((deleteVersion: any) => {
+                if (deleteVersion.result == "OK") {
+                    new Alert("success", "Version deleted successfully");
+                }
+            })
+            
+        } catch (error) {
+            console.error("Version deletion failed:", error);
             return null;
         }
     }

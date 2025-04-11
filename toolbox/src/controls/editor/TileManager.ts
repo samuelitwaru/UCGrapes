@@ -210,7 +210,13 @@ export class TileManager {
         while (nextElement) {
           const elementToRemove = nextElement;
           nextElement = nextElement.nextElementSibling;
-          if (elementToRemove) {  // Add this check
+          if (elementToRemove) {  
+            const thumbsList = document.querySelector(".editor-thumbs-list") as HTMLElement;
+            const thumbToRemove = thumbsList.querySelector(`div[id="${elementToRemove.id}"]`);
+            if (thumbToRemove) {  
+              thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+            } 
+
             elementToRemove.remove();
             new EditorEvents().activateNavigators();
           }

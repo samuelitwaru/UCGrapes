@@ -50,14 +50,12 @@ export class MapsPageEditor {
               }
             };
           }
-
-          // Fallback in case onload doesn't trigger
           setTimeout(() => {
             const preloader = component.find('#map-preloader')[0];
             if (preloader) {
               preloader.getEl().style.display = 'none';
             }
-          }, 5000); // Remove after 5 secondbs max
+          }, 2000); 
         },
         (error) => {
           console.error("Geolocation error:", error.message);

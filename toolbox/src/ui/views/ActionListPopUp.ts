@@ -16,11 +16,7 @@ export class ActionListPopUp {
     this.menuContainer = document.createElement("div");
     this.menuList = document.createElement("ul");
     this.menuItemManager = new MenuItemManager(this.menuContainer, this.controller);
-    
-    this.controller.handleSubMenuAction = (type: string) => {
-      this.showSubMenu(type);
-    };
-    
+        
     this.init();
   }
 
@@ -94,9 +90,11 @@ export class ActionListPopUp {
     
     const effectiveMenuHeight = popupRect.height > 0 ? popupRect.height : 200; 
     
-    if (spaceBelow >= effectiveMenuHeight + 10) {
-      this.menuContainer.style.top = `${relTriggerBottom - 10}px`;
-    } else if (spaceAbove >= effectiveMenuHeight + 10) {
+    // if (spaceBelow >= effectiveMenuHeight + 10) {
+    //   console.log()
+    //   this.menuContainer.style.top = `${relTriggerBottom - 10}px`;
+    // } else 
+    if (spaceAbove >= effectiveMenuHeight + 10) {
       this.menuContainer.style.top = `${relTriggerTop - effectiveMenuHeight - 0}px`;
     } else {
       this.menuContainer.style.top = "10px";
@@ -115,33 +113,5 @@ export class ActionListPopUp {
   
     this.menuContainer.style.visibility = "visible";
     this.menuContainer.style.opacity = "1";
-  }
-  
-  hideMenu() {
-    if (this.menuContainer.parentNode) {
-      this.menuContainer.parentNode.removeChild(this.menuContainer);
-    }
-  }
-
-  hideSubMenu() {
-    this.menuItemManager.hideSubMenu();
-  }
-
-  async showSubMenu(type: string) {
-    // await this.menuItemManager.showSubMenu(type);
-  }
-
-  private filterMenuItems(searchTerm: string) {
-    const menuItems = Array.from(
-      this.menuList.querySelectorAll(".menu-item")
-    ) as HTMLElement[];
-    const filteredItems = this.controller.filterMenuItems(
-      menuItems,
-      searchTerm
-    );
-
-    menuItems.forEach((item) => {
-      item.style.display = filteredItems.includes(item) ? "flex" : "none";
-    });
   }
 }

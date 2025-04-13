@@ -16,7 +16,6 @@ export class AppVersionManager {
     const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
     
     const appVersion = await toolboxService.getVersion();
-    console.log('current', appVersion)
     const versions = await toolboxService.getVersions();
     
     (globalThis as any).activeVersion = 

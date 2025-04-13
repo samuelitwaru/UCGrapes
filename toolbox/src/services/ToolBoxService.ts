@@ -212,19 +212,13 @@ export class ToolBoxService {
   }
 
   async publishAppVersion(appVersionId: string, notify=false) {
-    const response = await this.fetchAPI(
-      "/api/toolbox/v2/publish-appversion",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          AppVersionId: appVersionId,
-          Notify: notify,
-        }),
-      },
-      true
-    );
-
-    return response;
+    return await this.fetchAPI("/api/toolbox/v2/publish-appversion", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        Notify: notify,
+      }),
+    });
   }
 
   // Pages API methods

@@ -32,7 +32,7 @@ export class ChildEditor {
 
   init(tileAttributes: any) {
     let editorId: any = `gjs-${this.getEditorId()}`;
-    this.pageTitle = tileAttributes.Text;
+    this.pageTitle = this.pageData?.PageName;
     this.createNewEditor(editorId);
     const childEditor = this.editorManager.initializeGrapesEditor(editorId);
 
@@ -76,7 +76,7 @@ export class ChildEditor {
       const urlPageEditor = new UrlPageEditor(childEditor);
       urlPageEditor.initialise(tileAttributes.Action);
     }else if (
-      this.pageData?.PageType === "Maps"
+      this.pageData?.PageType === "Map"
     ) {
       const mapsPageEditor = new MapsPageEditor(childEditor);
       mapsPageEditor.initialise(tileAttributes.Action);
@@ -139,5 +139,10 @@ export class ChildEditor {
       </div>
       `);
     }
+  }
+
+  private updateFrame() {
+    this.editorEvents.removeOtherEditors();
+    this.editorEvents.activateNavigators();
   }
 }

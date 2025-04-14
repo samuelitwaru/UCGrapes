@@ -86,6 +86,7 @@ export class ToolboxManager {
   }
 
   async savePages(publish = false) {
+    console.log('auto saving...')
     try {
       const lastSavedStates = new Map<string, string>();
       const activeVersion = await this.appVersions.getActiveVersion();
@@ -176,33 +177,73 @@ export class ToolboxManager {
   unDoReDo() {
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
-    const pageId = (globalThis as any).currentPageId;
-    if (!pageId) {
-      console.log("No pageId found")
+    const editor = (globalThis as any).activeEditor;
+    if (!editor) {
+      console.log("No editor found")
       return;
     }
+    const um = editor.UndoManager;
 
-    const tileMapper = new TileMapper(pageId);
-    // console.log("TileMapper created")
-    // console.log("TileMapper history", tileMapper.history)
-    // console.log("TileMapper future", tileMapper.future);
-    undoButton.disabled = !tileMapper.history.length;
+    // const tileMapper = new TileMapper(pageId);
+    
+    undoButton.disabled = um.hasUndo();
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
-        const undoResult = tileMapper.undo();
+        const undoResult = um.undo();
         if (undoResult) {
-          // console.log("Affected tiles:", undoResult.affectedTiles);
-          // console.log("Affected rows:", undoResult.affectedRows);
+
         }
       };
     }
 
+    redoButton.disabled = um.hasRedo();
     if (redoButton) {
       redoButton.onclick = (e) => {
         e.preventDefault();
-        tileMapper.redo();
+        const undoResult = um.redo();
+        if (undoResult) {
+          //
+        }
       };
     }
   }
+
+  // unDoReDo() {
+  //   const undoButton = document.getElementById("undo") as HTMLButtonElement;
+  //   const redoButton = document.getElementById("redo") as HTMLButtonElement;
+  //   const pageId = (globalThis as any).currentPageId;
+  //   if (!pageId) {
+  //     console.log("No pageId found")
+  //     return;
+  //   }
+
+  //   const tileMapper = new TileMapper(pageId);
+  //   // console.log("TileMapper created")
+  //   // console.log("TileMapper history", tileMapper.history)
+  //   // console.log("TileMapper future", tileMapper.future);
+  //   undoButton.disabled = !tileMapper.history.length;
+  //   if (undoButton) {
+  //     undoButton.onclick = (e) => {
+  //       e.preventDefault();
+  //       const undoResult = tileMapper.undo();
+  //       if (undoResult) {
+  //         console.log("Affected tiles:", undoResult.affectedTiles);
+  //         console.log("Affected rows:", undoResult.affectedRows);
+  //       }
+  //     };
+  //   }
+
+  //   redoButton.disabled = !tileMapper.future.length;
+  //   if (redoButton) {
+  //     redoButton.onclick = (e) => {
+  //       e.preventDefault();
+  //       const undoResult = tileMapper.redo();
+  //       if (undoResult) {
+  //         console.log("Affected tiles:", undoResult.affectedTiles);
+  //         console.log("Affected rows:", undoResult.affectedRows);
+  //       }
+  //     };
+  //   }
+  // }
 }

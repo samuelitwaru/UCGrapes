@@ -52,7 +52,7 @@ export class ActionListDropDown {
         activePage.PageType === "MyLiving"
       )
         ? {
-          name: "Services",
+          name: "Content",
           displayName: i18n.t("sidebar.action_list.services"),
           label: i18n.t("sidebar.action_list.services"),
           options: this.getServices(activePage),
@@ -60,7 +60,7 @@ export class ActionListDropDown {
         }
         : null,
       {
-        name: "Forms",
+        name: "DynamicForm",
         displayName: i18n.t("sidebar.action_list.forms"),
         label: i18n.t("sidebar.action_list.forms"),
         options: this.getDynamicForms(),
@@ -81,7 +81,7 @@ export class ActionListDropDown {
       //   canCreatePage: true,
       // },
       {
-        name: "Web Link",
+        name: "WebLink",
         displayName: i18n.t("sidebar.action_list.weblink"),
         label: i18n.t("sidebar.action_list.weblink"),
         options: [],
@@ -98,7 +98,8 @@ export class ActionListDropDown {
     const forms = (this.toolBoxService.forms || []).map((form) => ({
         PageId: form.FormId,
         PageName: form.ReferenceName,
-        TileName: form.ReferenceName
+        TileName: form.ReferenceName,
+        PageUrl: form.FormUrl,
       }));
     return forms;
   }
@@ -115,6 +116,7 @@ export class ActionListDropDown {
         TileName: service.ProductServiceTileName || service.ProductServiceName,
         TileCategory: service.ProductServiceClass
       }));
+    console.log("services", services);
     return services;
   }
   // getServices(activePage: any) {
@@ -128,31 +130,30 @@ export class ActionListDropDown {
   //   return services;
   // }
 
-  async getContentPages() {
-    try {
-      const versions = await this.appVersion.getActiveVersion();
-      const res = versions?.Pages || [];
-      const pages = res.filter(
-        (page: any) => 
-          page.PageType == "Content"
-      ).map((page: any) => ({
-        PageId: page.PageId,
-        PageName: page.PageName,
-        TileName: page.PageName
-      }))
+  // async getContentPages() {
+  //   try {
+  //     const versions = await this.appVersion.getActiveVersion();
+  //     const res = versions?.Pages || [];
+  //     const pages = res.filter(
+  //       (page: any) => 
+  //         page.PageType == "Content"
+  //     ).map((page: any) => ({
+  //       PageId: page.PageId,
+  //       PageName: page.PageName,
+  //       TileName: page.PageName
+  //     }))
 
-      return pages;
-    } catch (error) {
-      console.error("Error fetching pages:", error);
-      throw error;
-    }
-  }
+  //     return pages;
+  //   } catch (error) {
+  //     console.error("Error fetching pages:", error);
+  //     throw error;
+  //   }
+  // }
 
   async getPages() {
     try {
-      const versions = await this.appVersion.getActiveVersion();
-      const res = versions?.Pages || [];
-      const pages = res.filter(
+      const versions = this.appVersion.getPages() || [];
+      const pages = versions.filter(
         (page: any) => 
           page.PageType == "Menu"
           && (page.PageName !== "Home"
@@ -174,15 +175,8 @@ export class ActionListDropDown {
 
   async getPredefinedPages() {
     try {
-      const version = await this.appVersion.getActiveVersion();
-      const res = version?.Pages || [];
-      const pages = res.filter(
-        (page: any) => 
-          page.PageType == "Maps" ||
-          page.PageType == "MyActivity" ||
-          page.PageType == "Calendar"
-          && page.PageName !== "Home"
-      ).map((page: any) => ({
+      const version = await this.appVersion.preDefinedPages() || [];
+      const pages = version.map((page: any) => ({
         PageId: page.PageId,
         PageName: page.PageName,
         TileName: page.PageName,

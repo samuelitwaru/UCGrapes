@@ -5,6 +5,7 @@ import { PageCreationService } from "./PageCreationService";
 import { Alert } from "../../Alert";
 import { AppConfig } from "../../../../AppConfig";
 import { i18n } from "../../../../i18n/i18n";
+import { ActionListController } from "../../../../controls/ActionListController";
 
 export class CategoryView {
   details: HTMLDetailsElement;
@@ -31,7 +32,7 @@ export class CategoryView {
     summary.innerText = `${this.categoryData.displayName}`;
     const icon = document.createElement("i");
     icon.className = "fa fa-angle-right";
-    if (this.categoryData.name !== "Web Link") summary.appendChild(icon);
+    if (this.categoryData.name !== "WebLink") summary.appendChild(icon);
 
     const searchContainer = document.createElement("div");
     searchContainer.className = "search-container";
@@ -82,10 +83,8 @@ export class CategoryView {
           return;
         }
 
-        
-
-        if (this.categoryData.name === "Dynamic Forms") {
-          // this.pageCreationService.handleDynamicForms(page);
+        if (this.categoryData.name === "DynamicForm") {
+          new ActionListController().handleDynamicForms(page);
         } 
         else if (this.categoryData.name == "Modules") {
           this.pageAttacher.attachToTile(page, page.PageType, this.categoryData.label);
@@ -106,7 +105,7 @@ export class CategoryView {
     list.appendChild(noItem);
 
     this.details.addEventListener("toggle", (e) => {
-      if (this.categoryData.name !== "Web Link") {
+      if (this.categoryData.name !== "WebLink") {
         const icon = summary.querySelector("i");
         if (icon) {
           icon.classList.toggle("fa-angle-right");
@@ -122,7 +121,7 @@ export class CategoryView {
       }
     });
 
-    if (this.categoryData.name === "Web Link") {
+    if (this.categoryData.name === "WebLink") {
       this.details.appendChild(summary);
     } else {
       this.details.appendChild(summary);

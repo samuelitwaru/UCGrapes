@@ -12,7 +12,7 @@ export class TitleStyleSection {
   init() {
     this.container.classList.add("title-style");
 
-    const textColorSection = new TextColor();
+    const textColorSection = new TextColor("tile");
     const tileAlignmentSection = new TileAlignmentSection();
 
     textColorSection.render(this.container);    

@@ -4,6 +4,9 @@ import { Form } from "../components/Form";
 import { AppVersion } from "../../interfaces/AppVersion ";
 import { AppVersionController } from "../../controls/versions/AppVersionController";
 import { i18n } from "../../i18n/i18n";
+import { ConfirmationBox } from "../components/ConfirmationBox";
+import { Alert } from "../components/Alert";
+import { truncateString } from "../../utils/helpers";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -73,7 +76,8 @@ export class VersionSelectionView {
   private addNewVersionButton() {
     const newVersionBtn = document.createElement("div");
     newVersionBtn.className = "theme-option";
-    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> ${i18n.t(
+    newVersionBtn.style.justifyContent = "start"
+    newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> &nbsp; ${i18n.t(
       "navbar.appversion.create_new"
     )}`;
     newVersionBtn.onclick = () => {
@@ -100,12 +104,22 @@ export class VersionSelectionView {
     versionOption.setAttribute("data-value", version.AppVersionName);
     versionOption.textContent = version.AppVersionName;
 
-    const duplicateBtn = this.createDuplicateButton(version);
-    versionOption.append(duplicateBtn);
+    const optionButtons = document.createElement("div");
+    optionButtons.className = "option-buttons";
 
+    const duplicateBtn = this.createDuplicateButton(version);
+    optionButtons.append(duplicateBtn);
+
+    if (!version.IsActive) {
+      const deleteBtn = this.createDeleteButton(version);
+      optionButtons.append(deleteBtn);
+    }   
+
+    versionOption.append(optionButtons);
+    
     if (version.IsActive) {
       versionOption.classList.add("selected");
-      this.activeVersion.textContent = version.AppVersionName;
+      this.activeVersion.textContent = truncateString(version.AppVersionName, 15);
     }
 
     versionOption.addEventListener("click", (e) =>
@@ -132,6 +146,33 @@ export class VersionSelectionView {
     return duplicateBtn;
   }
 
+  private createDeleteButton(version: AppVersion): HTMLSpanElement {
+    const deleteBtn = document.createElement("span");
+    deleteBtn.className = "delete-version fa fa-trash";
+    deleteBtn.title = `${i18n.t("navbar.appversion.delete")}`;
+
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const title = "Delete version";
+      const message = "Are you sure you want to delete this version?";
+  
+      const handleConfirmation = async () => {
+          this.versionController.deleteVersion(version.AppVersionId).then(async(res: any) => {
+            await this.refreshVersionList();
+          });
+      }
+      const confirmationBox = new ConfirmationBox(
+          message,
+          title,
+          handleConfirmation,
+      );
+      confirmationBox.render(document.body);
+    });
+
+    return deleteBtn;
+  }
+
   private async handleVersionSelection(e: Event, version: AppVersion) {
     // Prevent selection if duplicate button was clicked
     if ((e.target as HTMLElement).classList.contains("clone-version")) {
@@ -144,7 +185,7 @@ export class VersionSelectionView {
     const selectedOption = e.currentTarget as HTMLElement;
     selectedOption.classList.add("selected");
 
-    this.activeVersion.textContent = version.AppVersionName;
+    this.activeVersion.textContent = truncateString(version.AppVersionName, 15);
 
     const activationResult = await this.versionController.activateVersion(
       version.AppVersionId
@@ -226,21 +267,13 @@ export class VersionSelectionView {
       const newVersion = inputValue.value;
 
       if (newVersion) {
-        const result = await this.versionController.createVersion(newVersion, isDuplicating);
-        modal.close();
-        await this.refreshVersionList();
-        if (result) {
-          this.clearActiveTheme();
-        }
-        // const appVersionId = result?.AppVersion.AppVersionId;
-        // console.log("appVersionId", appVersionId);
-        // console.log("result", result);
-        // // const activationResult = await this.versionController.activateVersion(
-        // //   appVersionId
-        // // );
-        // // if (activationResult) {
-        // //   this.clearActiveTheme();
-        // // }
+        await this.versionController.createVersion(newVersion, isDuplicating).then(async (result) => {
+          modal.close();
+          await this.refreshVersionList();
+          if (result) {
+            this.clearActiveTheme();
+          }
+        });        
       }
     });
 

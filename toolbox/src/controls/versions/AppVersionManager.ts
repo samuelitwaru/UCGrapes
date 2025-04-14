@@ -14,15 +14,31 @@ export class AppVersionManager {
 
   public async getActiveVersion() {
     const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
+    
+    const appVersion = await toolboxService.getVersion();
     const versions = await toolboxService.getVersions();
-    (globalThis as any).activeVersion = versions?.AppVersions?.find((version: any) => version.IsActive) || null
+    
+    (globalThis as any).activeVersion = 
+    appVersion.AppVersion
+    // versions?.AppVersions?.find((version: any) => version.IsActive) || null
+
     return (globalThis as any).activeVersion;
   }
 
   public getPages() {
-    return (
-      (globalThis as any).activeVersion?.Pages || null
+    return (globalThis as any).activeVersion?.Pages || null;
+  }
+
+  public async preDefinedPages() {
+    const res = this.getPages() || [];
+    const pages = res.filter(
+      (page: any) =>
+        page.PageType == "Maps" ||
+        page.PageType == "Map" ||
+        page.PageType == "MyActivity" ||
+        (page.PageType == "Calendar" && page.PageName !== "Home")
     );
+    return pages;
   }
 
   async getActiveVersionId() {
@@ -39,22 +55,19 @@ export class AppVersionManager {
 
     const toolboxService = new ToolBoxService();
 
-    if (selectedComponent && selectedTileMapper) {
-      const tileId = selectedComponent.parent().getId();
-      const tileTitle = selectedComponent.find(".tile-title")[0];
-      if (!tileTitle) return;
-      tileTitle.setAttributes({ title: pageTitle });
-      tileTitle.empty();
-      tileTitle.append(pageTitle, { at: 0 });
-
-      const pageData = {
-        AppVersionId: await this.getActiveVersionId(),
-        PageId: pageId,
-        PageName: pageTitle,
-      };
-      await toolboxService.updatePageTitle(pageData);
-      selectedTileMapper.updateTile(tileId, 'Name', pageTitle);
-      selectedTileMapper.updateTile(tileId, 'Text', pageTitle);
+    const pageData = {
+      AppVersionId: await this.getActiveVersionId(),
+      PageId: pageId,
+      PageName: pageTitle,
+    };
+    const res = await toolboxService.updatePageTitle(pageData);
+    if (res) {
+      const data = localStorage.getItem(`data-${pageId}`);
+      if (data) {
+        const page = JSON.parse(data);
+        page.PageName = pageTitle;
+        localStorage.setItem(`data-${pageId}`, JSON.stringify(page));        
+      }
     }
 
     // await toolboxService.updatePageTitle(pageId, pageTitle);

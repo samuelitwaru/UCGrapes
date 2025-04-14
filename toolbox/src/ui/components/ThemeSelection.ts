@@ -58,7 +58,8 @@ export class ThemeSelection extends ThemeManager{
 
         themes.forEach((theme) => {
             const themeOption = document.createElement('div') as HTMLElement;
-            themeOption.className = "theme-option";
+            themeOption.classList.add("theme-option");
+            themeOption.classList.add("theme");
             themeOption.role = "option";
             themeOption.setAttribute('data-value', theme.ThemeName);
             themeOption.textContent = theme.ThemeName;

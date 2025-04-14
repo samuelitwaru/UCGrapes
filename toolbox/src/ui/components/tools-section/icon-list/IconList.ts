@@ -19,7 +19,7 @@ export class IconList {
     this.icons = [];
     const themeIcons: ThemeIcon[] = this.themeManager.getActiveThemeIcons();
     // Filter icons by category and theme
-    themeIcons
+    themeIcons 
       .filter((icon) => icon.IconCategory === this.iconsCategory)
       .forEach((themeIcon) => {
         const icon = document.createElement("div");

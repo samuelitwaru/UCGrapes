@@ -49,12 +49,32 @@ export class EditorManager {
     const rightNavigatorButton = new RightNavigatorButton();
     const frameList = new FrameList(`gjs-0`);
 
+    
+    const thumbsContainer = document.createElement("div");
+    thumbsContainer.style.justifyContent = "center";
+    thumbsContainer.style.display = "flex";
+    thumbsContainer.style.flexDirection = "row";
+    thumbsContainer.style.alignItems = "center";
+    thumbsContainer.style.gap = "0.4rem"
+    thumbsContainer.className = "editor-thumbs-list";
+    thumbsContainer.id = "editor-thumbs-list";
+
     const editorFrameArea = document.getElementById(
       "main-content"
     ) as HTMLElement;
 
+    const mainEditorSection = document.createElement("div");
+    mainEditorSection.className = "editor-main-section";
+    mainEditorSection.style.display = "flex";
+    mainEditorSection.style.justifyContent = "center";
+    mainEditorSection.style.alignItems = "center";
+    mainEditorSection.style.flexDirection = "column";
+    frameList.render(mainEditorSection);
+    mainEditorSection.appendChild(thumbsContainer);
+
     leftNavigatorButton.render(editorFrameArea);
-    frameList.render(editorFrameArea);
+    editorFrameArea.appendChild(mainEditorSection);
+    
     rightNavigatorButton.render(editorFrameArea);
     this.setClientWidth(frameList.container);
   }
@@ -80,7 +100,7 @@ export class EditorManager {
     const htmlOutput = converter.generateHTML();
 
     editor.setComponents(htmlOutput);
-    this.editorEvents.init(editor, this.homepage, `gjs-0`);
+    this.editorEvents.init(editor, this.homepage, `gjs-0`, true);
     localStorage.setItem(
       `data-${this.homepage?.PageId}`,
       JSON.stringify(this.homepage)

@@ -2,6 +2,7 @@ import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 import { ThemeIcon } from "../../../../models/Theme";
 import { IconList } from "./IconList";
 import { i18n } from "../../../../i18n/i18n";
+import { Category } from "../../../../models/Category";
 
 export class IconListCategories {
   container: HTMLElement;
@@ -9,9 +10,11 @@ export class IconListCategories {
   categoryOptions: HTMLElement;
   selectedCategory: HTMLSpanElement;
   private themeManager: ThemeManager;
+  categoryTitle: string;
   // icons: string[];
 
-  constructor() {
+  constructor(categoryTitle: string = "General") {
+    this.categoryTitle = categoryTitle;
     this.container = document.createElement("div") as HTMLElement;
     this.selectionDiv = document.createElement("div") as HTMLElement;
     this.categoryOptions = document.createElement("div") as HTMLElement;
@@ -24,7 +27,7 @@ export class IconListCategories {
 
   init() {
     this.container.className = "sidebar-section services-section";
-    this.container.id = "dropdownMenu";
+    this.container.id = "icon-categories-list";
 
     this.selectionDiv.className = "tb-custom-category-selection";
 
@@ -54,7 +57,7 @@ export class IconListCategories {
     this.container.appendChild(this.selectionDiv);
 
     this.initializeCategoryOptions();
-    this.loadThemeIcons();
+    this.loadThemeIcons(this.categoryTitle);
   }
 
   initializeCategoryOptions() {
@@ -118,13 +121,13 @@ export class IconListCategories {
     }
   }
 
-  loadThemeIcons(iconsCategory = "General") {
+  loadThemeIcons(iconsCategory: string) {
     document.querySelectorAll("#icons-list").forEach((el) => el.remove());
     const iconsList = document.createElement("div") as HTMLElement;
     iconsList.classList.add("icons-list");
     iconsList.id = "icons-list";
 
-    const themeIcons = new IconList(this.themeManager, iconsCategory);
+    const themeIcons = new IconList(this.themeManager, iconsCategory || this.categoryTitle);
     themeIcons.render(iconsList);
 
     this.container.appendChild(iconsList);
@@ -139,7 +142,12 @@ export class IconListCategories {
     }
   }
 
-  render(container: HTMLElement) {
+  render(container: HTMLElement) {    
+    const existingCategory = container.querySelector("#icon-categories-list");
+    if (existingCategory) {
+      existingCategory.replaceWith(this.container);
+      return;
+    }
     container.appendChild(this.container);
   }
 }

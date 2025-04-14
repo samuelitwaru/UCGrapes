@@ -1,3 +1,4 @@
+import { DeletePageButton } from "../../../controls/editor/DeletePageButton";
 import { FrameHeader } from "./FrameHeader";
 import { HomeAppBar } from "./HomeAppBar";
 import { PageAppBar } from "./PageAppBar";
@@ -34,10 +35,11 @@ export class EditorFrame {
             pageAppBar.render(this.container);
         }
         
-
         const editor = document.createElement('div');
         editor.id = this.id;
         this.container.appendChild(editor);
+
+        const deletePageButton = new DeletePageButton(this.pageData, this.container);
     }
 
     render(container: HTMLElement) {

@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/Comforta_version2_Development7NETPostgreSQL";
+const environment = "/ComfortaKBDevelopmentNETSQLServer";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -77,6 +77,11 @@ export class ToolBoxService {
     return response;
   }
 
+  async getVersion() {
+    const response = await this.fetchAPI("/api/toolbox/v2/appversion", {}, true);
+    return response;
+  }
+
   async createVersion(versionName: any) {
     const response = await this.fetchAPI("/api/toolbox/v2/create-appversion", {
       method: "POST",
@@ -110,6 +115,15 @@ export class ToolBoxService {
     });
 
     return response;
+  }
+
+  async deleteVersion(appVersionId:string) {
+    return await this.fetchAPI("/api/toolbox/v2/delete-version", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId
+      }),
+    });
   }
 
   async createMenuPage(appVersionId: string, pageName: string) {
@@ -168,7 +182,7 @@ export class ToolBoxService {
       },
     );
     console.log(response)
-    return response;    
+    return response;
   }
 
   async autoSavePage(pageData: any) {
@@ -198,19 +212,13 @@ export class ToolBoxService {
   }
 
   async publishAppVersion(appVersionId: string, notify=false) {
-    const response = await this.fetchAPI(
-      "/api/toolbox/v2/publish-appversion",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          AppVersionId: appVersionId,
-          Notify: notify,
-        }),
-      },
-      true
-    );
-
-    return response;
+    return await this.fetchAPI("/api/toolbox/v2/publish-appversion", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        Notify: notify,
+      }),
+    });
   }
 
   // Pages API methods
@@ -230,12 +238,6 @@ export class ToolBoxService {
   }
 
   async deletePage(appVersionId:string, pageId:string) {
-    console.log(
-      {
-        AppVersionId: appVersionId,
-        PageId: pageId,
-      }
-    )
     return await this.fetchAPI("/api/toolbox/V2/delete-page", {
       method: "POST",
       body: JSON.stringify({

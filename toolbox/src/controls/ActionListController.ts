@@ -27,7 +27,7 @@ export class ActionListController {
   async getMenuCategories(): Promise<MenuItem[][] | null> {
     const categoryData = await this.actionList.getCategoryData();
     const activePage = (globalThis as any).pageData;
-  
+
     // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
     
@@ -37,17 +37,17 @@ export class ActionListController {
                        activePage.PageType === "MyLiving")) {
       secondCategory.push({
         id: "list-services",
-        name: "Services",
+        name: "Content",
         label: "Services",
         expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Services"),
+        action: () => this.getSubMenuItems(categoryData, "Content"),
       });
     }
     
     // Always add Forms and Modules
     secondCategory.push({
       id: "list-form",
-      name: "Forms",
+      name: "DynamicForm",
       label: "Forms",
       expandable: true,
       action: () => this.getSubMenuItems(categoryData, "Forms"),
@@ -90,19 +90,17 @@ export class ActionListController {
     ];
   }
 
-  handleSubMenuAction(type: string): void {
-    throw new Error("Submenu action handler not implemented in UI layer");
-  }
-
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
     const category = categoryData.find((cat: any) => cat.name === type);
     const itemsList = category?.options || [];
-
-    return itemsList.map((item: any) => ({
-      id: item.PageId,
-      label: item.PageName,
-      action: () => this.handleSubMenuItemSelection(item, type),
-    }));
+    return itemsList.map((item: any) => {
+      return({
+        id: item.PageId,
+        label: item.PageName,
+        url: item.PageUrl,
+        action: () => this.handleSubMenuItemSelection(item, type),
+      })
+  });
   }
 
   async createNewPage(title: string): Promise<void> {
@@ -126,9 +124,8 @@ export class ActionListController {
   }
 
   private handleSubMenuItemSelection(item: any, type: string): void {
-    // Implement logic for handling submenu item selection
-    console.log(`Selected ${type} item:`, item);
-    if (type === "Forms") {
+    this.pageAttacher.removeOtherEditors();
+    if (type === "DynamicForm") {
         this.handleDynamicForms(item);
     } else if (type === "Modules") {
         this.pageAttacher.attachToTile(item, item.PageType, item.PageName);
@@ -148,13 +145,13 @@ export class ActionListController {
   
           const version = (globalThis as any).activeVersion; 
           const childPage = version?.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
-  
+
           const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
           const updates = [
               ["Text", form.PageName],
               ["Name", form.PageName],
-              ["Action.ObjectType", "Web Link"],
-              ["Action.ObjectId", childPage?.PageId],
+              ["Action.ObjectType", "DynamicForm"],
+              ["Action.ObjectId", form.PageId],
               ["Action.ObjectUrl", formUrl],
           ];
   
@@ -167,7 +164,6 @@ export class ActionListController {
               rowId,
               tileId
           );
-          this.pageAttacher.removeOtherEditors();
           
           new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
       }

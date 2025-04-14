@@ -37,15 +37,15 @@ export class CtaManager {
                 CtaAction: ctaAction
             }
             
-            if (this.checkIfExisting(ctaButtonEl)) {
-                const selectedComponent = (globalThis as any).selectedComponent
-                if (selectedComponent && selectedComponent.parent().getClasses().includes("cta-button-container")) {
-                    this.contentMapper.removeContentCta(selectedComponent.getId());
-                    selectedComponent.replaceWith(ctaButtonEl);
-                    this.contentMapper.addContentCta(ctaMapper);
-                }
-                return;
-            };
+            // if (this.checkIfExisting(ctaButtonEl)) {
+            //     const selectedComponent = (globalThis as any).selectedComponent
+            //     if (selectedComponent && selectedComponent.parent().getClasses().includes("cta-button-container")) {
+            //         this.contentMapper.removeContentCta(selectedComponent.getId());
+            //         selectedComponent.replaceWith(ctaButtonEl);
+            //         this.contentMapper.addContentCta(ctaMapper);
+            //     }
+            //     return;
+            // };
             
             ctaContainer.append(ctaButtonEl);
             
@@ -86,7 +86,7 @@ export class CtaManager {
             this.contentMapper.updateContentCtaBGColor(ctaButtonComponent.getId(), color.CtaColorName);
         }
     }
-
+ 
     changeToPlainButton () {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
@@ -102,7 +102,7 @@ export class CtaManager {
                         <div ${DefaultAttributes} id="ihd0f" class="cta-badge">
                                 <i ${DefaultAttributes} id="i7o62" data-gjs-type="default" class="fa fa-minus"></i>
                         </div>
-                        <span ${DefaultAttributes} class="label">${ctaButtonAttributes.CtaLabel}</span> 
+                        <span ${DefaultAttributes} class="label" style="color:${ctaButtonAttributes.CtaColor ? ctaButtonAttributes.CtaColor : "#ffffff"}"> ${ctaButtonAttributes.CtaLabel}</span> 
                     </button>
                 </div>
             `;
@@ -118,7 +118,7 @@ export class CtaManager {
         if (!selectedComponent) return;
         const ctaButtonAttributes = this.contentMapper.getContentCta(selectedComponent.getId());
 
-        const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes?.CtaType);
+        const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes?.CtaType, ctaButtonAttributes);
         
         if (ctaButtonAttributes && selectedComponent) {
             const iconButton = `
@@ -135,8 +135,8 @@ export class CtaManager {
                         <div${DefaultAttributes} class="cta-badge">
                             <i ${DefaultAttributes} class="fa fa-minus"></i>
                         </div>
-                        <span ${DefaultAttributes} class="img-button-label label">${ctaButtonAttributes.CtaLabel}</span>
-                        <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
+                        <span ${DefaultAttributes} class="img-button-label label" style="color:${ctaButtonAttributes.CtaColor ? ctaButtonAttributes.CtaColor : "#ffffff"}">${ctaButtonAttributes.CtaLabel}</span>
+                        <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${ctaButtonAttributes.CtaColor ? ctaButtonAttributes.CtaColor : "#ffffff"}"></i>
                     </div>
                 </div>
             `;
@@ -193,8 +193,8 @@ export class CtaManager {
                         <div${DefaultAttributes} class="cta-badge">
                             <i ${DefaultAttributes} class="fa fa-minus"></i>
                         </div>
-                        <span ${DefaultAttributes} class="img-button-label label">${ctaButtonAttributes.CtaLabel}</span>
-                        <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow"></i>
+                        <span ${DefaultAttributes} class="img-button-label label" style="color:${ctaButtonAttributes.CtaColor ? ctaButtonAttributes.CtaColor : "#ffffff"}">${ctaButtonAttributes.CtaLabel}</span>
+                        <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${ctaButtonAttributes.CtaColor ? ctaButtonAttributes.CtaColor : "#ffffff"}"></i>
                     </div>
                 </div>
             `;

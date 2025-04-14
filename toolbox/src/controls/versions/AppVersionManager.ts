@@ -34,6 +34,7 @@ export class AppVersionManager {
     const pages = res.filter(
       (page: any) =>
         page.PageType == "Maps" ||
+        page.PageType == "Map" ||
         page.PageType == "MyActivity" ||
         (page.PageType == "Calendar" && page.PageName !== "Home")
     );
@@ -54,22 +55,19 @@ export class AppVersionManager {
 
     const toolboxService = new ToolBoxService();
 
-    if (selectedComponent && selectedTileMapper) {
-      const tileId = selectedComponent.parent().getId();
-      const tileTitle = selectedComponent.find(".tile-title")[0];
-      if (!tileTitle) return;
-      tileTitle.setAttributes({ title: pageTitle });
-      tileTitle.empty();
-      tileTitle.append(pageTitle, { at: 0 });
-
-      const pageData = {
-        AppVersionId: await this.getActiveVersionId(),
-        PageId: pageId,
-        PageName: pageTitle,
-      };
-      await toolboxService.updatePageTitle(pageData);
-      selectedTileMapper.updateTile(tileId, "Name", pageTitle);
-      selectedTileMapper.updateTile(tileId, "Text", pageTitle);
+    const pageData = {
+      AppVersionId: await this.getActiveVersionId(),
+      PageId: pageId,
+      PageName: pageTitle,
+    };
+    const res = await toolboxService.updatePageTitle(pageData);
+    if (res) {
+      const data = localStorage.getItem(`data-${pageId}`);
+      if (data) {
+        const page = JSON.parse(data);
+        page.PageName = pageTitle;
+        localStorage.setItem(`data-${pageId}`, JSON.stringify(page));        
+      }
     }
 
     // await toolboxService.updatePageTitle(pageId, pageTitle);

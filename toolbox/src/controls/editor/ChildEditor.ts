@@ -32,7 +32,7 @@ export class ChildEditor {
 
   init(tileAttributes: any) {
     let editorId: any = `gjs-${this.getEditorId()}`;
-    this.pageTitle = tileAttributes.Text;
+    this.pageTitle = this.pageData?.PageName;
     this.createNewEditor(editorId);
     const childEditor = this.editorManager.initializeGrapesEditor(editorId);
 

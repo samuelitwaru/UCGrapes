@@ -5,6 +5,7 @@ import { PageCreationService } from "./PageCreationService";
 import { Alert } from "../../Alert";
 import { AppConfig } from "../../../../AppConfig";
 import { i18n } from "../../../../i18n/i18n";
+import { ActionListController } from "../../../../controls/ActionListController";
 
 export class CategoryView {
   details: HTMLDetailsElement;
@@ -82,10 +83,8 @@ export class CategoryView {
           return;
         }
 
-        
-
-        if (this.categoryData.name === "Dynamic Forms") {
-          // this.pageCreationService.handleDynamicForms(page);
+        if (this.categoryData.name === "DynamicForm") {
+          new ActionListController().handleDynamicForms(page);
         } 
         else if (this.categoryData.name == "Modules") {
           this.pageAttacher.attachToTile(page, page.PageType, this.categoryData.label);

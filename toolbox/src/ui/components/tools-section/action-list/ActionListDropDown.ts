@@ -52,7 +52,7 @@ export class ActionListDropDown {
         activePage.PageType === "MyLiving"
       )
         ? {
-          name: "Services",
+          name: "Content",
           displayName: i18n.t("sidebar.action_list.services"),
           label: i18n.t("sidebar.action_list.services"),
           options: this.getServices(activePage),
@@ -60,7 +60,7 @@ export class ActionListDropDown {
         }
         : null,
       {
-        name: "Forms",
+        name: "DynamicForm",
         displayName: i18n.t("sidebar.action_list.forms"),
         label: i18n.t("sidebar.action_list.forms"),
         options: this.getDynamicForms(),

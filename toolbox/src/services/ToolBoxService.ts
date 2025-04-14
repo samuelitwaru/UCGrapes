@@ -6,7 +6,7 @@ import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 
-const environment = "/ComfortaKBDevelopmentNETSQLServer";
+const environment = "/Comforta_version20DevelopmentNETPostgreSQL";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -212,19 +212,13 @@ export class ToolBoxService {
   }
 
   async publishAppVersion(appVersionId: string, notify=false) {
-    const response = await this.fetchAPI(
-      "/api/toolbox/v2/publish-appversion",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          AppVersionId: appVersionId,
-          Notify: notify,
-        }),
-      },
-      true
-    );
-
-    return response;
+    return await this.fetchAPI("/api/toolbox/v2/publish-appversion", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        Notify: notify,
+      }),
+    });
   }
 
   // Pages API methods

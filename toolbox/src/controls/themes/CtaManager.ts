@@ -37,15 +37,15 @@ export class CtaManager {
                 CtaAction: ctaAction
             }
             
-            if (this.checkIfExisting(ctaButtonEl)) {
-                const selectedComponent = (globalThis as any).selectedComponent
-                if (selectedComponent && selectedComponent.parent().getClasses().includes("cta-button-container")) {
-                    this.contentMapper.removeContentCta(selectedComponent.getId());
-                    selectedComponent.replaceWith(ctaButtonEl);
-                    this.contentMapper.addContentCta(ctaMapper);
-                }
-                return;
-            };
+            // if (this.checkIfExisting(ctaButtonEl)) {
+            //     const selectedComponent = (globalThis as any).selectedComponent
+            //     if (selectedComponent && selectedComponent.parent().getClasses().includes("cta-button-container")) {
+            //         this.contentMapper.removeContentCta(selectedComponent.getId());
+            //         selectedComponent.replaceWith(ctaButtonEl);
+            //         this.contentMapper.addContentCta(ctaMapper);
+            //     }
+            //     return;
+            // };
             
             ctaContainer.append(ctaButtonEl);
             

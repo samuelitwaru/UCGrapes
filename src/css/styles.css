@@ -201,7 +201,7 @@ button#open-mapping {
   display: flex;
   overflow-x: scroll;
   gap: 2.5rem;
-  padding: 10px;
+  padding: 25px;
   scroll-behavior: smooth;
   align-items: center;
   margin: 0 auto;
@@ -2589,25 +2589,27 @@ details .tb_debug_details-content {
 
 .delete-page-icon {
   position: absolute;
-  top: -20px;
-  right: -20px;
+  top: -22px;
+  right: -22px;
   background-color: white;
   border: 2px solid #ddd;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color:#3c4c7a;
-  border-color: #3c4c7a;
+  color:#4f6ba5;
+  border-color: #4f6ba5;
 }
 
 .delete-page-icon:hover {
-  background-color: #ee404f;
-  border-color: #ee404f;
+  background-color: #cb4545;
+  border-color: #cb4545;
   color:#ffffff;
-  border-bottom-left-radius: 9px;
-  border-bottom-right-radius: 9px;
+}
+
+.delete-page-icon:hover path {
+  fill:#ffffff;
 }

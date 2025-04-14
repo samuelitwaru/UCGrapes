@@ -59,11 +59,15 @@ export class MenuItemManager {
       menuItem.addEventListener("mouseenter", (e) => {
         e.stopPropagation();
         if (!menuItem.classList.contains("sub-menu-item")) {
-          const allItems = this.menuContainer.querySelectorAll(
-            ".menu-item.expandable"
+          const allExpandableItems = this.menuContainer.querySelectorAll(
+            ".expandable"
           );
-          allItems.forEach((el) => el.classList.remove("expandable"));
-          menuItem.classList.add("expandable");
+
+          const subMenuContainer = this.menuContainer.querySelectorAll(
+            ".sub-menu-container"
+          );
+          allExpandableItems.forEach((el) => el.classList.remove("expandable"));
+          subMenuContainer.forEach((el) => el.remove());
         }
       });
     }

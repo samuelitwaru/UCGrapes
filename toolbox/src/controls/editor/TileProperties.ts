@@ -141,8 +141,6 @@ export class TileProperties {
       const categoryTitle = this.themeManager.getIconCategory(tileIcon);
       this.themeManager.updateThemeIcons(categoryTitle);
 
-      console.log("tileIcon", tileIcon);
-      console.log("categoryTitle", categoryTitle)
       const categoryContainer = document.querySelector("#icon-categories-list") as HTMLElement;
       const allOptions =
       categoryContainer.querySelectorAll(".category-option");

@@ -605,17 +605,16 @@ span#scroll-right:hover {
 
 .theme-option {
   padding: 8px 16px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .theme-option.theme {
-  font-size: 
-  14px;
+  font-size: 14px;
 }
 .theme-option .option-buttons {
   display: flex;
@@ -1224,7 +1223,8 @@ h5#current-page-title {
   background-color: #e9e9e9;
 }
 
-#icon-button-layout, #image-button-layout {
+#icon-button-layout,
+#image-button-layout {
   height: 54px;
   border-radius: 12px;
   display: flex;
@@ -1252,7 +1252,7 @@ h5#current-page-title {
 
 #icon-button-layout span,
 #image-button-layout span {
-  min-width: 35px;  
+  min-width: 35px;
 }
 
 #icon-button-layout:hover,
@@ -2484,7 +2484,6 @@ details .tb_debug_details-content {
   background-color: #f0f0f0;
 }
 
-
 .menu-container .menu-item.no-items {
   display: flex;
   justify-content: center;
@@ -2586,30 +2585,29 @@ details .tb_debug_details-content {
   border-bottom-right-radius: 6px;
 }
 
-
 .delete-page-icon {
   position: absolute;
-  top: -22px;
-  right: -22px;
+  top: -20px;
+  right: -16px;
   background-color: white;
   border: 2px solid #ddd;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color:#4f6ba5;
+  color: #4f6ba5;
   border-color: #4f6ba5;
 }
 
 .delete-page-icon:hover {
   background-color: #cb4545;
   border-color: #cb4545;
-  color:#ffffff;
+  color: #ffffff;
 }
 
 .delete-page-icon:hover path {
-  fill:#ffffff;
+  fill: #ffffff;
 }

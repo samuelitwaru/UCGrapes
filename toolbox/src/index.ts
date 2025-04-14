@@ -19,6 +19,7 @@ class App {
     organisationLogo: string | null,
     currentLanguage: string,
     addServiceButtonEvent: any,
+    addTemplatesButtonEvent: any
   ) {
     const config = AppConfig.getInstance();
     config.init(
@@ -31,6 +32,7 @@ class App {
       organisationLogo,
       currentLanguage,
       addServiceButtonEvent,
+      addTemplatesButtonEvent
     );
     
     this.toolboxApp = new ToolboxApp();

@@ -37,10 +37,10 @@ export class ActionListController {
                        activePage.PageType === "MyLiving")) {
       secondCategory.push({
         id: "list-services",
-        name: "Services",
+        name: "Content",
         label: "Services",
         expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Services"),
+        action: () => this.getSubMenuItems(categoryData, "Content"),
       });
     }
     
@@ -93,7 +93,6 @@ export class ActionListController {
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
     const category = categoryData.find((cat: any) => cat.name === type);
     const itemsList = category?.options || [];
-    console.log(type, itemsList)
     return itemsList.map((item: any) => {
       return({
         id: item.PageId,

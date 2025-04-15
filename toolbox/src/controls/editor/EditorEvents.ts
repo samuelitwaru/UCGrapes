@@ -4,6 +4,7 @@ import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
+import { InfoSectionPopup } from "../../ui/views/InfoSectionPopup";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -109,6 +110,35 @@ export class EditorEvents {
               // const activateNav = this.activateNavigators();
               // activateNav.scrollBy(50)
             }
+            if (target.closest(".add-new-info-section svg")) {
+              const menuBtn = target.closest(".add-new-info-section svg") as HTMLElement;
+              const templateContainer = menuBtn.closest(
+                ".container-column"
+              ) as HTMLElement;
+
+              this.clearAllMenuContainers();
+              // Get the mobileFrame for positioning context
+              const mobileFrame = document.getElementById(
+                `${this.frameId}-frame`
+              ) as HTMLElement;
+              const iframe = mobileFrame?.querySelector(
+                "iframe"
+              ) as HTMLIFrameElement;
+              const iframeRect = iframe?.getBoundingClientRect();
+
+              // Pass the mobileFrame to the ActionListPopUp constructor
+              const menu = new InfoSectionPopup(templateContainer, mobileFrame);
+
+              const triggerRect = menuBtn.getBoundingClientRect();
+
+              menu.render(triggerRect, iframeRect);
+              
+              (globalThis as any).activeEditor = this.editor;
+              (globalThis as any).currentPageId = this.pageId;
+              (globalThis as any).pageData = this.pageData;
+              this.activateEditor(this.frameId);
+            }
+
           });
         } else {
           console.error("Wrapper not found!");

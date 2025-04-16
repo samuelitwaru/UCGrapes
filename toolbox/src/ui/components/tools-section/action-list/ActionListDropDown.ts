@@ -116,6 +116,7 @@ export class ActionListDropDown {
         TileName: service.ProductServiceTileName || service.ProductServiceName,
         TileCategory: service.ProductServiceClass
       }));
+    console.log("services", services);
     return services;
   }
   // getServices(activePage: any) {

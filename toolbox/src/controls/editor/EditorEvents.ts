@@ -77,39 +77,16 @@ export class EditorEvents {
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
+
+            this.openMenu(e);
+
             new ToolboxManager().unDoReDo();
             new ContentDataUi(e, this.editor, this.pageData);
             this.activateEditor(this.frameId);
           });
 
           wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            if (target.closest(".tile-open-menu")) {
-              const menuBtn = target.closest(".tile-open-menu") as HTMLElement;
-              const templateContainer = menuBtn.closest(
-                ".template-wrapper"
-              ) as HTMLElement;
-
-              this.clearAllMenuContainers();
-
-              // Get the mobileFrame for positioning context
-              const mobileFrame = document.getElementById(
-                `${this.frameId}-frame`
-              ) as HTMLElement;
-              const iframe = mobileFrame?.querySelector(
-                "iframe"
-              ) as HTMLIFrameElement;
-              const iframeRect = iframe?.getBoundingClientRect();
-
-              // Pass the mobileFrame to the ActionListPopUp constructor
-              const menu = new ActionListPopUp(templateContainer, mobileFrame);
-
-              const triggerRect = menuBtn.getBoundingClientRect();
-
-              menu.render(triggerRect, iframeRect);
-              // const activateNav = this.activateNavigators();
-              // activateNav.scrollBy(50)
-            }
+            const target = e.target as HTMLElement;            
             if (target.closest(".add-new-info-section svg")) {
               const menuBtn = target.closest(".add-new-info-section svg") as HTMLElement;
               const templateContainer = menuBtn.closest(
@@ -154,6 +131,35 @@ export class EditorEvents {
         this.frameEventListener();
         this.activateNavigators();
       });
+    }
+  }
+
+  private openMenu(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    if (target.closest(".tile-open-menu")) {
+      e.stopPropagation();
+      const menuBtn = target.closest(".tile-open-menu") as HTMLElement;
+      const templateContainer = menuBtn.closest(
+        ".template-wrapper"
+      ) as HTMLElement;
+
+      this.clearAllMenuContainers();
+
+      // Get the mobileFrame for positioning context
+      const mobileFrame = document.getElementById(
+        `${this.frameId}-frame`
+      ) as HTMLElement;
+      const iframe = mobileFrame?.querySelector(
+        "iframe"
+      ) as HTMLIFrameElement;
+      const iframeRect = iframe?.getBoundingClientRect();
+
+      // Pass the mobileFrame to the ActionListPopUp constructor
+      const menu = new ActionListPopUp(templateContainer, mobileFrame);
+
+      const triggerRect = menuBtn.getBoundingClientRect();
+
+      menu.render(triggerRect, iframeRect);
     }
   }
 
@@ -338,7 +344,8 @@ export class EditorEvents {
     if (
       this.pageData?.PageType === "Content" ||
       this.pageData?.PageType === "Location" ||
-      this.pageData?.PageType === "Reception"
+      this.pageData?.PageType === "Reception" || 
+      this.pageData?.PageType === "Information"
     ) {
       new ContentSection(this.pageData);
       this.clearCtaProperties();

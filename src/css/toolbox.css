@@ -773,7 +773,7 @@ img.content-page-block {
 #contentDescription p {
   margin: 0;
 }
-/* QUill */
+
 .tb-edit-image-icon,
 .tb-delete-image-icon,
 .tb-edit-content-icon {
@@ -1026,14 +1026,101 @@ img.content-page-block {
 }
 
 .add-new-info-section {
-  display: flex;
-  justify-content: center;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  min-height: 30px;
+  margin-top: 20px;
+}
+
+.add-new-info-section hr {
+  border-top: 1.5px dashed #c0c0c0;
+    position: absolute;
+    top: 46%;
+    width: 100%;
+    height: 1px;
+    padding: 0;
+    margin: 0;
+}
+
+.add-new-info-section svg {
+  position: absolute;
+  left: calc(50% - 15px);
 }
 
 .add-new-info-section svg:hover {
   cursor: pointer;
 }
 
+.add-new-info-section svg:hover g {
+  fill: #5068a8;
+  stroke: #5068a8;
+}
+
+.add-new-info-section svg:hover path {
+  fill: #fff;
+}
+
 .default-section-image {
   border: 1px dashed #222f54;
+}
+
+.container-column-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.container-column-info .img-button-container,
+.container-column-info .plain-button-container {
+  margin-bottom: 0;
+}
+
+.container-column-info .info-image-section img {
+  max-height: 156px;
+  min-height: 156px;
+  width: 100%;
+  border-radius: 13px;
+  object-fit: cover;
+  display: block;
+  border: 1px dashed #222f54;
+}
+
+.info-image-section {
+  position: relative;
+}
+
+.info-image-section:hover .tb-delete-image-icon,
+.info-image-section:hover .tb-edit-image-icon {
+  display: flex !important;
+}
+
+.info-desc-section {
+  position: relative;
+}
+
+.info-desc-section:hover {
+  border: 1px dashed #5068a8;
+}
+
+.info-desc-section .tb-edit-content-icon {
+  right: 10px;
+}
+
+.info-desc-section:hover .tb-edit-content-icon,
+.info-desc-section:hover .tb-delete-image-icon {
+  display: flex;
+}
+
+.info-desc-section .info-desc-content {
+  padding: 2px;
+}
+
+.info-desc-section .info-desc-content p {
+  margin: 0;
+}
+
+.container-column-info .info-desc-content:hover,
+.container-column-info .info-image-section:hover {
+  cursor: move;
 }

@@ -73,7 +73,7 @@ export class PageAttacher {
         tileId
       );
         
-      const version = await this.appVersionManager.getActiveVersion(); 
+      const version = await this.appVersionManager.getUpdatedActiveVersion();
       this.attachPage(page, version, tileAttributes);
 
       // set tile properties
@@ -94,8 +94,8 @@ export class PageAttacher {
         ) || null;
 
     this.removeOtherEditors();
-
     if (childPage) {
+        console.log("childPage", childPage);
         new ChildEditor(page.PageId, childPage).init(tileAttributes);
     } else{
         this.toolboxService.createServicePage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  

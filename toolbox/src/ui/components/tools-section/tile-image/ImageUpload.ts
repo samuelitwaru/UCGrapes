@@ -5,13 +5,15 @@ import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { SingleImageFile } from "./SingleImageFile";
 
 export class ImageUpload {
-  private type: "tile" | "cta" | "content";
+  private type: "tile" | "cta" | "content" | "info";
   modalContent: HTMLElement;
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
+  infoId?: string;
 
-  constructor(type: any) {
+  constructor(type: any, infoId?: string) {
     this.type = type;
+    this.infoId = infoId;
     this.modalContent = document.createElement("div");
     this.toolboxService = new ToolBoxService();
     this.init();
@@ -113,7 +115,7 @@ export class ImageUpload {
         // Render each media item
         if (media && media.length > 0) {
           media.forEach((item: Media) => {
-            const singleImageFile = new SingleImageFile(item, this.type);
+            const singleImageFile = new SingleImageFile(item, this.type, this.infoId);
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
         }
@@ -332,7 +334,7 @@ export class ImageUpload {
   }
 
   private displayMediaFile(fileList: HTMLElement, file: Media): void {
-    const singleImageFile = new SingleImageFile(file, this.type);
+    const singleImageFile = new SingleImageFile(file, this.type, this.infoId);
     singleImageFile.render(fileList);
     fileList.insertBefore(singleImageFile.getElement(), fileList.firstChild);
   }

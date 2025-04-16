@@ -12,16 +12,28 @@ export class AppVersionManager {
     this.config = AppConfig.getInstance();
   }
 
-  public async getActiveVersion() {
-    const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
+  // public async getActiveVersion() {
+  //   const toolboxService = new ToolBoxService(); // No need to reassign `this.toolboxService`
+  //   console.log("AppVersionManager: getActiveVersion called");
+  //   const appVersion = await toolboxService.getVersion();
+  //   const versions = await toolboxService.getVersions();
     
-    const appVersion = await toolboxService.getVersion();
-    const versions = await toolboxService.getVersions();
-    
-    (globalThis as any).activeVersion = 
-    appVersion.AppVersion
-    // versions?.AppVersions?.find((version: any) => version.IsActive) || null
+  //   (globalThis as any).activeVersion = 
+  //   appVersion.AppVersion
+  //   // versions?.AppVersions?.find((version: any) => version.IsActive) || null
 
+  //   return (globalThis as any).activeVersion;
+  // }
+
+  public async getActiveVersion() {    
+    (globalThis as any).activeVersion = this.config.currentVersion
+    return (globalThis as any).activeVersion;
+  }
+
+  public async getUpdatedActiveVersion() {  
+    const toolboxService = new ToolBoxService(); //  
+    const appVersion = await toolboxService.getVersion();
+    (globalThis as any).activeVersion = appVersion.AppVersion
     return (globalThis as any).activeVersion;
   }
 

@@ -1,3 +1,4 @@
+import { InfoType } from "../../interfaces/InfoType";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
@@ -14,6 +15,7 @@ import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
 import { DeletePageButton } from "./DeletePageButton";
 import { FrameEvent } from "./FrameEvent";
+import { InfoContentMapper } from "./InfoContentMapper";
 import { NewPageButton } from "./NewPageButton";
 import { TileManager } from "./TileManager";
 import { TileMapper } from "./TileMapper";
@@ -237,9 +239,11 @@ export class EditorEvents {
     this.editor.on("component:selected", (component: any) => {
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = new TileMapper(this.pageId);
+      (globalThis as any).infoContentMapper = new InfoContentMapper(this.pageId);
 
       (globalThis as any).frameId = this.frameId;
       this.setTileProperties();
+      this.setInfoTileProperties();
       this.setCtaProperties();
       this.createChildEditor();
     });
@@ -347,8 +351,7 @@ export class EditorEvents {
     if (
       this.pageData?.PageType === "Content" ||
       this.pageData?.PageType === "Location" ||
-      this.pageData?.PageType === "Reception" || 
-      this.pageData?.PageType === "Information"
+      this.pageData?.PageType === "Reception" 
     ) {
       new ContentSection(this.pageData);
       this.clearCtaProperties();
@@ -375,6 +378,24 @@ export class EditorEvents {
     );
 
     if (selectedComponent && tileAttributes) {
+      this.tileProperties = new TileProperties(
+        selectedComponent,
+        tileAttributes
+      );
+      this.tileProperties.setTileAttributes();
+    }
+  }
+
+  setInfoTileProperties() {
+    if (this.pageData.PageType !== "Information") return;
+
+    const selectedComponent = (globalThis as any).selectedComponent;
+    const tileWrapper = selectedComponent.parent();
+    const rowComponent = tileWrapper.parent();
+    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(rowComponent.getId()); 
+
+    if (selectedComponent && tileInfoSectionAttributes) {
+      const tileAttributes = tileInfoSectionAttributes?.Tiles?.find((tile: any) => tile.Id === tileWrapper.getId());
       this.tileProperties = new TileProperties(
         selectedComponent,
         tileAttributes

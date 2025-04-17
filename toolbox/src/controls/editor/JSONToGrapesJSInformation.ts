@@ -15,6 +15,7 @@ import {
 } from "../../utils/default-attributes";
 import { randomIdGenerator, truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
+import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 
 export class JSONToGrapesJSInformation {
   private data: any;
@@ -193,8 +194,15 @@ export class JSONToGrapesJSInformation {
       content.InfoType === "Cta" &&
       content.CtaAttributes
     ) {
-      return this.generateCta(content);
-    }else {
+       return this.generateCta(content);
+    } else if (
+      content.InfoType === "TileRow" &&
+      content.Tiles
+    ) {
+      const getTileHtml = new JSONToGrapesJSMenu(this.data).generateInfoRow(content);
+      console.log("getTileHtml", getTileHtml);
+      return getTileHtml;
+    } else {
       return "";
     }
   }

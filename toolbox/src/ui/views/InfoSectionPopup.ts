@@ -60,13 +60,6 @@ export class InfoSectionPopup {
           this.addTile();
         },
       },
-      {
-        name: "WebLink",
-        label: "Web Link",
-        action: () => {
-          // this.addButton();
-        },
-      },
     ];
 
     sectionItems?.forEach((item) => {
@@ -115,7 +108,6 @@ export class InfoSectionPopup {
   }
 
   addImage() {
-    // this.infoSectionUi.openImageUpload();
     this.controller.addImage();
   }
 

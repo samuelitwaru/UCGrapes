@@ -30,11 +30,14 @@ export class ActionListController {
 
     // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
-    
+
     // Only add Services if the page type matches
-    if (activePage && (activePage.PageType === "MyCare" || 
-                       activePage.PageType === "MyService" || 
-                       activePage.PageType === "MyLiving")) {
+    if (
+      activePage &&
+      (activePage.PageType === "MyCare" ||
+        activePage.PageType === "MyService" ||
+        activePage.PageType === "MyLiving")
+    ) {
       secondCategory.push({
         id: "list-services",
         name: "Content",
@@ -43,24 +46,26 @@ export class ActionListController {
         action: () => this.getSubMenuItems(categoryData, "Content"),
       });
     }
-    
-    // Always add Forms and Modules
-    secondCategory.push({
-      id: "list-form",
-      name: "DynamicForm",
-      label: "Forms",
-      expandable: true,
-      action: () => this.getSubMenuItems(categoryData, "Forms"),
-    });
-    
-    secondCategory.push({
-      id: "list-module",
-      name: "Modules",
-      label: "Modules",
-      expandable: true,
-      action: () => this.getSubMenuItems(categoryData, "Modules"),
-    });
-  
+
+    if (activePage && activePage.PageType !== "Information") {
+      secondCategory.push({
+        id: "list-form",
+        name: "DynamicForm",
+        label: "Forms",
+        expandable: true,
+        action: () => this.getSubMenuItems(categoryData, "Forms"),
+      });
+    }
+    if (activePage && activePage.PageType !== "Information") {
+      secondCategory.push({
+        id: "list-module",
+        name: "Modules",
+        label: "Modules",
+        expandable: true,
+        action: () => this.getSubMenuItems(categoryData, "Modules"),
+      });
+    }
+
     return [
       [
         {
@@ -70,7 +75,8 @@ export class ActionListController {
           action: async () => {
             this.createNewPage("Untitled");
           },
-        },{
+        },
+        {
           id: "add-info-page",
           label: "Information Page",
           name: "",
@@ -84,15 +90,36 @@ export class ActionListController {
           name: "",
           action: () => {
             const config = AppConfig.getInstance();
-            config.addServiceButtonEvent()
+            config.addServiceButtonEvent();
           },
         },
       ],
       secondCategory,
       [
-        { id: "add-email", label: "Email", name: "", action: () => {this.pageCreationService.handleEmail()} },
-        { id: "add-phone", label: "Phone", name: "", action: () => {this.pageCreationService.handlePhone()} },
-        { id: "add-web-link", label: "Web link", name: "", action: () => {this.pageCreationService.handleWebLinks()} },
+        {
+          id: "add-email",
+          label: "Email",
+          name: "",
+          action: () => {
+            this.pageCreationService.handleEmail();
+          },
+        },
+        {
+          id: "add-phone",
+          label: "Phone",
+          name: "",
+          action: () => {
+            this.pageCreationService.handlePhone();
+          },
+        },
+        {
+          id: "add-web-link",
+          label: "Web link",
+          name: "",
+          action: () => {
+            this.pageCreationService.handleWebLinks();
+          },
+        },
       ],
     ];
   }
@@ -101,13 +128,13 @@ export class ActionListController {
     const category = categoryData.find((cat: any) => cat.name === type);
     const itemsList = category?.options || [];
     return itemsList.map((item: any) => {
-      return({
+      return {
         id: item.PageId,
         label: item.PageName,
         url: item.PageUrl,
         action: () => this.handleSubMenuItemSelection(item, type),
-      })
-  });
+      };
+    });
   }
 
   async createNewPage(title: string): Promise<void> {
@@ -130,7 +157,7 @@ export class ActionListController {
     }
   }
 
-  async createNewInfoPage (title: string): Promise<void> {
+  async createNewInfoPage(title: string): Promise<void> {
     const appVersion = await this.appVersionManager.getActiveVersion();
     const res = await this.toolboxService.createInfoPage(
       appVersion.AppVersionId,
@@ -153,47 +180,50 @@ export class ActionListController {
   private handleSubMenuItemSelection(item: any, type: string): void {
     this.pageAttacher.removeOtherEditors();
     if (type === "DynamicForm") {
-        this.handleDynamicForms(item);
+      this.handleDynamicForms(item);
     } else if (type === "Modules") {
-        this.pageAttacher.attachToTile(item, item.PageType, item.PageName);
+      this.pageAttacher.attachToTile(item, item.PageType, item.PageName);
     } else {
-        this.pageAttacher.attachToTile(item, type, item.PageName);
+      this.pageAttacher.attachToTile(item, type, item.PageName);
     }
   }
 
   async handleDynamicForms(form: any) {
-          const selectedComponent = (globalThis as any).selectedComponent;
-          if (!selectedComponent) return;
-          const tileTitle = selectedComponent.find(".tile-title")[0];
-          if (tileTitle) tileTitle.components(form.PageName);
-  
-          const tileId = selectedComponent.parent().getId();
-          const rowId = selectedComponent.parent().parent().getId();
-  
-          const version = (globalThis as any).activeVersion; 
-          const childPage = version?.Pages.find((page: any) => (page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"));
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (!selectedComponent) return;
+    const tileTitle = selectedComponent.find(".tile-title")[0];
+    if (tileTitle) tileTitle.components(form.PageName);
 
-          const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
-          const updates = [
-              ["Text", form.PageName],
-              ["Name", form.PageName],
-              ["Action.ObjectType", "DynamicForm"],
-              ["Action.ObjectId", form.PageId],
-              ["Action.ObjectUrl", formUrl],
-          ];
-  
-        //  this.updateActionListDropDown("Dynamic Form", form.PageName);
-  
-          for (const [property, value] of updates) {
-              (globalThis as any).tileMapper.updateTile(tileId, property, value);
-          } 
-          const tileAttributes = (globalThis as any).tileMapper.getTile(
-              rowId,
-              tileId
-          );
-          
-          new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
-      }
+    const tileId = selectedComponent.parent().getId();
+    const rowId = selectedComponent.parent().parent().getId();
+
+    const version = (globalThis as any).activeVersion;
+    const childPage = version?.Pages.find(
+      (page: any) =>
+        page.PageName === "Dynamic Form" && page.PageType === "DynamicForm"
+    );
+
+    const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
+    const updates = [
+      ["Text", form.PageName],
+      ["Name", form.PageName],
+      ["Action.ObjectType", "DynamicForm"],
+      ["Action.ObjectId", form.PageId],
+      ["Action.ObjectUrl", formUrl],
+    ];
+
+    //  this.updateActionListDropDown("Dynamic Form", form.PageName);
+
+    for (const [property, value] of updates) {
+      (globalThis as any).tileMapper.updateTile(tileId, property, value);
+    }
+    const tileAttributes = (globalThis as any).tileMapper.getTile(
+      rowId,
+      tileId
+    );
+
+    new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
+  }
 
   filterMenuItems(items: HTMLElement[], searchTerm: string): HTMLElement[] {
     return items.filter((item) => {

@@ -1,4 +1,6 @@
 import { TileMapper } from "../../../controls/editor/TileMapper";
+import { InfoSectionController } from "../../../controls/InfoSectionController";
+import { InfoType } from "../../../interfaces/InfoType";
 import { ThemeColors } from "../../../models/Theme";
 
 export class ColorPalette {
@@ -34,6 +36,8 @@ export class ColorPalette {
       colorItem.addEventListener("click", (e) => {
         e.preventDefault();
         const selectedComponent = (globalThis as any).selectedComponent;
+        const pageData = (globalThis as any).pageData;
+
         if (!selectedComponent) return;
 
         const tileWrapper = selectedComponent.parent();
@@ -43,7 +47,6 @@ export class ColorPalette {
           rowComponent.getId(),
           tileWrapper.getId()
         );
-
         if (tileAttributes?.BGImageUrl) {
           return;
         }
@@ -56,13 +59,24 @@ export class ColorPalette {
         });
 
         console.log("Tile Attributes", colorValue);
-        selectedComponent.getEl().style.backgroundColor = currentColor === colorValue ? "transparent" : colorValue,
+        selectedComponent.getEl().style.backgroundColor = currentColor === colorValue ? "transparent" : colorValue;
 
-        (globalThis as any).tileMapper.updateTile(
-          selectedComponent.parent().getId(),
-          "BGColor",
-          colorName
-        );
+        
+        if (pageData.PageType === "Information") {
+          const infoSectionController =  new InfoSectionController();
+          infoSectionController.updateInfoTileAttributes(
+            rowComponent.getId(),
+            tileWrapper.getId(),
+            "BGColor",
+            colorName
+          );    
+        } else {
+          (globalThis as any).tileMapper.updateTile(
+            selectedComponent.parent().getId(),
+            "BGColor",
+            colorName
+          );
+        }
 
         input.checked = currentColor !== colorValue;
       });

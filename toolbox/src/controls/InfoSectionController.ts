@@ -1,4 +1,5 @@
 import { InfoType } from "../interfaces/InfoType";
+import { Tile } from "../interfaces/Tile";
 import { baseURL } from "../services/ToolBoxService";
 import { InfoSectionUI } from "../ui/views/InfoSectionUI";
 import {
@@ -36,7 +37,6 @@ export class InfoSectionController {
         ?.parentElement as HTMLElement;
       infoMenuContainer.remove();
     });
-
     menuItem.id = item.id;
     return menuItem;
   }
@@ -98,7 +98,23 @@ export class InfoSectionController {
   }
 
   addTile(tile: string) {
-    this.appendComponent(tile);
+    const append = this.appendComponent(tile);
+    if (append) {
+      const infoType: InfoType = {
+        InfoId: randomIdGenerator(15),
+        InfoType: "TileRow",
+        Tiles: [
+          {
+            Id: randomIdGenerator(15),
+            Name: "Title",
+            Text: "Title",
+            Color: "#333333",
+            Align: "left",
+          }
+        ],
+      };
+      this.addToMapper(infoType);
+    }
   }
 
   updateDescription(updatedDescription: string, infoId: string) {
@@ -190,7 +206,29 @@ export class InfoSectionController {
     infoMapper.addInfoType(infoType);
   }
 
-  private updateInfoMapper(infoId: string, infoType: InfoType) {
+  updateInfoTileAttributes<Key extends keyof Tile>(
+    infoId: string,
+    tileId: string,
+    attribute: Key,
+    value: Tile[Key]
+  ) {
+    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(infoId);
+  
+    if (tileInfoSectionAttributes) {
+      const tile: Tile | undefined = tileInfoSectionAttributes.Tiles?.find(tile => tile.Id === tileId);
+      if (tile) {
+        tile[attribute] = value;
+      }
+  
+      this.updateInfoMapper(
+        infoId,
+        tileInfoSectionAttributes
+      );
+    }
+  }
+  
+
+  updateInfoMapper(infoId: string, infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId)
     infoMapper.updateInfoContent(infoId, infoType);

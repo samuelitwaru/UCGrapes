@@ -4,6 +4,7 @@ import { ctaTileDEfaultAttributes, DefaultAttributes, tileDefaultAttributes } fr
 import { randomIdGenerator } from "../../utils/helpers";
 import { ContentMapper } from "../editor/ContentMapper";
 import { CtaButtonProperties } from "../editor/CtaButtonProperties";
+import { InfoSectionController } from "../InfoSectionController";
 import { CtaSvgManager } from "./CtaSvgManager";
 import { ThemeManager } from "./ThemeManager";
 
@@ -12,11 +13,12 @@ export class CtaManager {
     contentMapper: any;
     themeManager: any;
     ctaSvgManager: any;
+    pageId: any;
 
     constructor() {
         this.editor = (globalThis as any).activeEditor;
-        const pageId = (globalThis as any).currentPageId;
-        this.contentMapper = new ContentMapper(pageId);
+        this.pageId = (globalThis as any).currentPageId;
+        this.contentMapper = new ContentMapper(this.pageId);
         this.themeManager = new ThemeManager();
         this.ctaSvgManager = new CtaSvgManager();
     }
@@ -223,6 +225,12 @@ export class CtaManager {
             "#" + ctaBadgeParent?.id
         )[0];
         if (ctaBadgeParentComponent) {
+            const page = (globalThis as any).pageData;
+            if (page && page.PageType === "Information") {
+                const infoSectionController = new InfoSectionController();
+                infoSectionController.deleteCtaButton(ctaBadgeParentComponent.parent().getId());
+                return;
+            }
             const ctaButtonComponent = ctaBadgeParentComponent.parent();
             ctaButtonComponent?.remove();
 

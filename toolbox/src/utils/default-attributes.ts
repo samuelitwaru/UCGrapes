@@ -85,3 +85,12 @@ export const ctaContainerDefaultAttributes: string = `
     data-gjs-highlightable="true"
     data-gjs-droppable="[data-gjs-type='cta-buttons']"
 `;
+
+export const DefaultInfoColumnAttributes: string = `
+    data-gjs-type="template-wrapper"
+    data-gjs-draggable="false"
+    data-gjs-selectable="false"
+    data-gjs-editable="false"
+    data-gjs-highlightable="true"
+    data-gjs-droppable="[data-gjs-type='info-desc-section'], [data-gjs-type='info-image-section'], [data-gjs-type='info-cta-section']"
+`;

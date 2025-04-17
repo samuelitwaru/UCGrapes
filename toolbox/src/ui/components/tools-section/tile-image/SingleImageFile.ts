@@ -1,5 +1,6 @@
 import { ContentDataManager } from "../../../../controls/editor/ContentDataManager";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { Media } from "../../../../models/Media"; // Fixed typo in import name
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { ConfirmationBox } from "../../ConfirmationBox";
@@ -10,10 +11,12 @@ export class SingleImageFile {
   private mediaFile: Media;
   private toolboxService: ToolBoxService;
   type: any;
+  infoId?: string;
 
-  constructor(mediaFile: Media, type: any) {
+  constructor(mediaFile: Media, type: any, infoId?: string) {
     this.mediaFile = mediaFile;
     this.type = type;
+    this.infoId = infoId;
     this.toolboxService = new ToolBoxService();
     this.container = document.createElement("div");
     this.init();
@@ -130,8 +133,12 @@ export class SingleImageFile {
         this.addImageToTile();
       } else if (this.type === "content") {
         this.addImageToContentPage();
+      } else if (this.type === "cta" && this.infoId) {
+        this.updateInfoCtaButtonImage();
       } else if (this.type === "cta") {
         this.updateCtaButtonImage();
+      } else if (this.type === "info") {
+        this.updateInfoImage();
       }
       modal.style.display = "none";
       modal.remove();
@@ -205,6 +212,18 @@ export class SingleImageFile {
     const activePage =(globalThis as any).pageData;
     const contentManager = new ContentDataManager(activeEditor, activePage);
     contentManager.updateCtaButtonImage(safeMediaUrl);
+  }
+
+  private async updateInfoImage() {
+    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
+    const infoSectionController = new InfoSectionController();
+    infoSectionController.updateInfoImage(safeMediaUrl, this.infoId);
+  }
+
+  private updateInfoCtaButtonImage() {
+    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
+    const infoSectionController = new InfoSectionController();
+    infoSectionController.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
   }
 
   private deleteEvent() {

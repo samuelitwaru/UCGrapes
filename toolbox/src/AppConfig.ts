@@ -10,6 +10,7 @@ export class AppConfig {
     private _services: ProductService[] = [];
     private _forms: Form[] = [];
     private _media: Media[] = [];
+    private _currentVersion: string | null = null;
     private _currentThemeId: string | null = null;
     private _organisationLogo: string | null = null;
     currentLanguage: string = "en";
@@ -37,6 +38,7 @@ export class AppConfig {
       forms: Form[],
       media: Media[],
       currentThemeId: string | null,
+      currentVersion: string | null,
       organisationLogo: string | null,
       currentLanguage: string,
       addServiceButtonEvent: any,
@@ -52,6 +54,7 @@ export class AppConfig {
       this._forms = forms;
       this._media = media;
       this._currentThemeId = currentThemeId,
+      this._currentVersion = currentVersion;
       this._organisationLogo = organisationLogo;
       this.addServiceButtonEvent = addServiceButtonEvent;
       this.addTemplatesButtonEvent = addTemplatesButtonEvent;
@@ -84,6 +87,9 @@ export class AppConfig {
       return this._currentThemeId;
     }
     
+    get currentVersion(): string | null {
+      return this._currentVersion;
+    }
 
     set currentThemeId(value: string | null) {
       this._currentThemeId = value;

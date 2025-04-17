@@ -9,7 +9,7 @@ export class TileUpdate {
     }
 
     updateTile(rowComponent: any, isDragging: boolean = false) {
-        console.log("updateTile")
+        alert()
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
         const length = tiles.length;
@@ -37,6 +37,22 @@ export class TileUpdate {
             }
         });
       }
+
+    //   updateTileButtons(tile: any) {
+    //     console.log("calling updateTileButtons: ", tile.getId());
+    //     // if a page is info page, remove the bottom add buttons
+    //     const page = (globalThis as any).pageData;
+    //     console.log("Page: ", page);
+    //     if (page.PageType === "Information") {
+    //         console.log("Page type is Information, removing bottom add buttons.");
+    //         const belowButton = tile.find(".action-button.add-button-bottom")[0];
+    //         if (belowButton) {
+    //             belowButton.addStyle({
+    //                 "display": "none"
+    //             });
+    //         }  
+    //     }     
+    //   }
 
       private updateTileHeight(tile: any, length: number) {
         const templateBlock = tile.find(".template-block")[0];

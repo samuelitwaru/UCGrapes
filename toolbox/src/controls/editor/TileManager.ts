@@ -17,13 +17,15 @@ export class TileManager {
   editor: any;
   pageId: any;
   frameId: any;
+  pageData: any;
   tileUpdate: TileUpdate;
 
-  constructor(e: MouseEvent, editor: any, pageId: any, frameId: any) {
+  constructor(e: MouseEvent, editor: any, pageId: any, frameId: any, pageData: any) {
     this.event = e;
     this.editor = editor;
     this.pageId = pageId;
     this.frameId = frameId;
+    this.pageData = pageData;
     this.tileUpdate = new TileUpdate(pageId);
     (globalThis as any).tileMapper = new TileMapper(this.pageId);
     this.init();
@@ -233,6 +235,8 @@ export class TileManager {
   }
 
   private getTile() {
+    const page = (globalThis as any).pageData;
+    console.log("Paggger: ", page);
     return `
       <div ${tileWrapperDefaultAttributes} class="template-wrapper" id="${randomIdGenerator(
       8
@@ -249,7 +253,7 @@ export class TileManager {
         </div>
         <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>
         <button ${DefaultAttributes} id="ifvvi" data-gjs-type="default" title="Add template right" class="action-button add-button-right">+</button>
-        <button ${DefaultAttributes} id="i4ubt" data-gjs-type="default" title="Delete template" class="action-button add-button-bottom">&plus;</button>
+        <button ${DefaultAttributes} id="i4ubt" data-gjs-type="default" title="Add template bottom" class="action-button add-button-bottom">&plus;</button>
         <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
           <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
             <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">

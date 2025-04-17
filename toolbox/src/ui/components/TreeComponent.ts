@@ -20,7 +20,7 @@ export class TreeComponent {
         this.addPageCreationEvent()
         this.appVersionManager = appVersionManager
         this.toolboxService = new ToolBoxService()
-        this.appVersionManager.getActiveVersion().then(res=>{
+        this.appVersionManager.getUpdatedActiveVersion().then(res=>{
             this.version = res
             this.pages = res.Pages
             this.homePage = res.Pages?.find((page: any)=>page.PageName=="Home")

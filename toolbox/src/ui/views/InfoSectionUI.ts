@@ -5,6 +5,9 @@ import {
   contentDefaultAttributes,
   ctaTileDEfaultAttributes,
   DefaultAttributes,
+  rowDefaultAttributes,
+  tileDefaultAttributes,
+  tileWrapperDefaultAttributes,
 } from "../../utils/default-attributes";
 import { ThemeManager } from "../../controls/themes/ThemeManager";
 import { InfoSectionController } from "../../controls/InfoSectionController";
@@ -99,31 +102,31 @@ export class InfoSectionUI {
 
   infoTileUi() {
     return `
-      <div data-gjs-highlightable="true" data-gjs-type="template-wrapper" class="container-row">
-        <div id="RAyFCkUccOaehdf" data-gjs-type="tile-wrapper" class="template-wrapper">
-          <div data-gjs-type="default" class="template-block">
-              <div data-gjs-type="default" class="tile-icon-section">
-                <span id="inds5" data-gjs-type="text" class="tile-close-icon top-right">×</span>
-                <span id="i7y2i" data-gjs-type="text" title="" class="tile-icon">
-                undefined
-                </span>
-              </div>
-              <div data-gjs-type="default" class="tile-title-section">
-                <span data-gjs-type="text" class="tile-close-title top-right">×</span>
-                <span data-gjs-type="text" title="Location" class="tile-title">Location</span>
-              </div>
-          </div>
-          <button data-gjs-type="text" title="Delete tile" class="action-button delete-button">−</button>
-          <button id="ixaqx" data-gjs-type="text" title="Add tile right" class="action-button add-button-right">+</button>
-          <svg data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27" class="tile-open-menu">
-              <g id="Group_2383-4" data-gjs-type="svg-in" data-name="Group 2383" transform="translate(-921 -417.999)">
-                <g id="Group_2382-4" data-gjs-type="svg-in" data-name="Group 2382" transform="translate(921 418)">
-                    <circle id="Ellipse_534-4" data-gjs-type="svg-in" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"></circle>
+      <div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(8)}">
+        <div ${tileWrapperDefaultAttributes} class="template-wrapper" id="${randomIdGenerator(
+          8
+        )}">
+            <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #333333; justify-content: left">
+                <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
+                  <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
+                  <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" class="tile-icon">Title</span>
+                </div>
+                <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
+                  <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
+                  <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Title" class="tile-title">Title</span>
+                </div>
+            </div>
+            <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>
+            <button ${DefaultAttributes} id="ifvvi" data-gjs-type="default" title="Add template right" class="action-button add-button-right">+</button>
+            <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
+              <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
+                <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
+                  <circle ${DefaultAttributes} id="Ellipse_534" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"/>
                 </g>
-                <path id="Path_2320-4" data-gjs-type="svg-in" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"></path>
+                <path ${DefaultAttributes} id="Path_2320" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"/>
               </g>
-          </svg>
-        </div>
+            </svg>
+          </div>
       </div>
     `;
   }

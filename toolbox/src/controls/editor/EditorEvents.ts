@@ -68,15 +68,18 @@ export class EditorEvents {
             }
 
             this.clearAllMenuContainers();
+            
+            (globalThis as any).activeEditor = this.editor;
+            (globalThis as any).currentPageId = this.pageId;
+            (globalThis as any).pageData = this.pageData;
+
             this.tileManager = new TileManager(
               e,
               this.editor,
               this.pageId,
-              this.frameId
+              this.frameId,
+              this.pageData
             );
-            (globalThis as any).activeEditor = this.editor;
-            (globalThis as any).currentPageId = this.pageId;
-            (globalThis as any).pageData = this.pageData;
 
             this.openMenu(e);
 

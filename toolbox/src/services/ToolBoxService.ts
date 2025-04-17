@@ -145,6 +145,25 @@ export class ToolBoxService {
     return response;    
   }
 
+  async createInfoPage(appVersionId: string, pageName: string) {
+    console.log({ 
+      appVersionId: appVersionId,
+      pageName: pageName
+    })
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-info-page",
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          appVersionId: appVersionId,
+          pageName: pageName
+        }),
+      }
+    );
+
+    return response;    
+  }
+
   async createServicePage(appVersionId: string, productServiceId: string) {
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-service-page",

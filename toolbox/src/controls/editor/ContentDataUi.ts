@@ -38,7 +38,7 @@ export class ContentDataUi {
             submitSection.style.marginBottom = '-12px';
 
             const saveBtn = this.createButton('submit_form', 'tb-btn-primary', 'Save');
-            const cancelBtn = this.createButton('cancel_form', 'tb-btn-secondary', 'Cancel');
+            const cancelBtn = this.createButton('cancel_form', 'tb-btn-outline', 'Cancel');
 
             submitSection.appendChild(saveBtn);
             submitSection.appendChild(cancelBtn);

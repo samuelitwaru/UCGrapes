@@ -70,6 +70,13 @@ export class ActionListController {
           action: async () => {
             this.createNewPage("Untitled");
           },
+        },{
+          id: "add-info-page",
+          label: "Information Page",
+          name: "",
+          action: async () => {
+            this.createNewInfoPage("Untitled");
+          },
         },
         {
           id: "add-content-page",
@@ -118,6 +125,26 @@ export class ActionListController {
         PageType: res.MenuPage.PageType,
       };
       this.pageAttacher.attachToTile(page, "Menu", "Menu");
+    } else {
+      console.error("error", res.error.message);
+    }
+  }
+
+  async createNewInfoPage (title: string): Promise<void> {
+    const appVersion = await this.appVersionManager.getActiveVersion();
+    const res = await this.toolboxService.createInfoPage(
+      appVersion.AppVersionId,
+      title
+    );
+
+    if (!res.error.message) {
+      const page = {
+        PageId: res.MenuPage.PageId,
+        PageName: res.MenuPage.PageName,
+        TileName: res.MenuPage.PageName,
+        PageType: res.MenuPage.PageType,
+      };
+      this.pageAttacher.attachToTile(page, "Information", "Information");
     } else {
       console.error("error", res.error.message);
     }

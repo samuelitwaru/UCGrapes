@@ -245,6 +245,7 @@ export class EditorEvents {
       this.setTileProperties();
       this.setInfoTileProperties();
       this.setCtaProperties();
+      this.setInfoCtaProperties();
       this.createChildEditor();
     });
 
@@ -419,6 +420,37 @@ export class EditorEvents {
     }
   }
 
+  setInfoCtaProperties() {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (this.pageData.PageType !== "Information") return;
+
+    if (!selectedComponent.is('info-cta-section')) return;
+
+    const toolSection = document.getElementById(
+      "tools-section"
+    ) as HTMLDivElement;
+
+    const mappingSection = document.querySelector(
+      "#mapping-section"
+    ) as HTMLDListElement;
+    toolSection.style.display = "block";
+    mappingSection.style.display = "none";
+
+    new ContentSection(this.pageData);
+    this.clearCtaProperties();
+
+    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(selectedComponent.getId()); 
+
+    if (selectedComponent && tileInfoSectionAttributes) {
+      const ctaAttributes = tileInfoSectionAttributes?.CtaAttributes;
+      const ctaProperties = new CtaButtonProperties(
+        selectedComponent,
+        ctaAttributes
+      );
+      ctaProperties.setctaAttributes();
+    }
+  }
+
   clearCtaProperties() {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (selectedComponent && selectedComponent.find(".cta-styled-btn")[0]) {        
@@ -440,10 +472,23 @@ export class EditorEvents {
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
-    const tileAttributes = (globalThis as any).tileMapper.getTile(
-      rowComponent.getId(),
-      tileWrapper.getId()
-    );
+    let tileAttributes;
+    
+    if (this.pageData.PageType === "Information") {
+      const tileInfoSectionAttributes: InfoType = (
+        globalThis as any
+      ).infoContentMapper.getInfoContent(rowComponent.getId());
+      
+      tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+        (tile: any) => tile.Id === tileWrapper.getId()
+      );
+    } else {
+      tileAttributes = (globalThis as any).tileMapper.getTile(
+        rowComponent.getId(),
+        tileWrapper.getId()
+      );
+    }
+
     this.removeOtherEditors();
     if (tileAttributes?.Action?.ObjectId) {
       if (

@@ -1,6 +1,7 @@
 import { ContentDataManager } from "../../../../controls/editor/ContentDataManager";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoType } from "../../../../interfaces/InfoType";
 import { Media } from "../../../../models/Media"; // Fixed typo in import name
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { ConfirmationBox } from "../../ConfirmationBox";
@@ -161,31 +162,50 @@ export class SingleImageFile {
 
       selectedComponent.getEl().style.backgroundColor = "transparent";
 
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
-        "BGImageUrl",
-        safeMediaUrl
-      );
+      const updates = [
+        ["BGImageUrl", safeMediaUrl],
+        ["Opacity", "0"],
+        ["BGColor", "transparent"],
+      ];
 
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
-        "Opacity",
-        "0"
-      );
-
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
-        "BGColor",
-        "transparent"
-      );
-
+      let tileAttributes;
       const tileWrapper = selectedComponent.parent();
       const rowComponent = tileWrapper.parent();
+      const pageData = (globalThis as any).pageData;
+      if (pageData.PageType === "Information") {
+        const infoSectionController = new InfoSectionController();
+        for (const [property, value] of updates) {
+          infoSectionController.updateInfoTileAttributes(
+            rowComponent.getId(),
+            tileWrapper.getId(),
+            property,
+            value
+          );
+        }
 
-      const tileAttributes = (globalThis as any).tileMapper.getTile(
-        rowComponent.getId(),
-        tileWrapper.getId()
-      );
+        const tileInfoSectionAttributes: InfoType = (
+          globalThis as any
+        ).infoContentMapper.getInfoContent(
+          rowComponent.getId()
+        );
+
+        tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+          (tile: any) => tile.Id ===  tileWrapper.getId()
+        );
+      } else {
+        for (const [property, value] of updates) {
+          (globalThis as any).tileMapper.updateTile(
+            rowComponent.getId(),
+            property,
+            value
+          );
+        }
+        tileAttributes = (globalThis as any).tileMapper.getTile(
+          rowComponent.getId(),
+          tileWrapper.getId()
+        );
+      }
+
       if (selectedComponent && tileAttributes) {
         const tileProperties = new TileProperties(
           selectedComponent,
@@ -201,7 +221,7 @@ export class SingleImageFile {
   private async addImageToContentPage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
     const activeEditor = (globalThis as any).activeEditor;
-    const activePage =(globalThis as any).pageData;
+    const activePage = (globalThis as any).pageData;
     const contentManager = new ContentDataManager(activeEditor, activePage);
     contentManager.updateContentImage(safeMediaUrl);
   }
@@ -209,7 +229,7 @@ export class SingleImageFile {
   private async updateCtaButtonImage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
     const activeEditor = (globalThis as any).activeEditor;
-    const activePage =(globalThis as any).pageData;
+    const activePage = (globalThis as any).pageData;
     const contentManager = new ContentDataManager(activeEditor, activePage);
     contentManager.updateCtaButtonImage(safeMediaUrl);
   }
@@ -233,27 +253,29 @@ export class SingleImageFile {
     const handleConfirmation = async () => {
       try {
         await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
-        let media =await this.toolboxService.getMediaFiles();
+        let media = await this.toolboxService.getMediaFiles();
         media = media.filter(
-            (item: Media) => item.MediaId !== this.mediaFile.MediaId
+          (item: Media) => item.MediaId !== this.mediaFile.MediaId
         );
-        const mediaItem = document.getElementById(this.mediaFile.MediaId);                
+        const mediaItem = document.getElementById(this.mediaFile.MediaId);
         if (mediaItem) {
-            mediaItem.remove();
-        }                
-        
+          mediaItem.remove();
+        }
+
         if (media.length === 0) {
-            const modalFooter = document.querySelector(".modal-actions") as HTMLElement;
-            modalFooter.style.display = "none";
+          const modalFooter = document.querySelector(
+            ".modal-actions"
+          ) as HTMLElement;
+          modalFooter.style.display = "none";
         }
       } catch (error) {
-          console.error("Error deleting media:", error);
+        console.error("Error deleting media:", error);
       }
-    }
+    };
     const confirmationBox = new ConfirmationBox(
       message,
       title,
-      handleConfirmation,
+      handleConfirmation
     );
     confirmationBox.render(document.body);
   }

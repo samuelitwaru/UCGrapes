@@ -36,6 +36,8 @@ export class TileUpdate {
                 this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
             }
         });
+
+        this.removeEmptyRows();
       }
 
       private updateTileHeight(tile: any, length: number) {
@@ -107,8 +109,17 @@ export class TileUpdate {
         );
         } else {
             tileAttributes.updateTile(tileId, attribute, align)
-        }
-        
+        }        
+    }
+
+    removeEmptyRows() {
+        const container = this.rowComponent.parent();
+        const rows = container.components();
+        rows.forEach((row: any) => {
+            if (row?.components()?.length === 0) {
+                row?.remove();
+            }
+        });
     }
     
 }

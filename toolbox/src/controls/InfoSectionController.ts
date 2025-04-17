@@ -58,8 +58,8 @@ export class InfoSectionController {
           CtaColor: "#ffffff",
           CtaBGColor: "CtaColorOne",
           CtaButtonType: "Image",
-          CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png"
-        }
+          CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+        },
       };
 
       this.addToMapper(infoType);
@@ -110,7 +110,7 @@ export class InfoSectionController {
             Text: "Title",
             Color: "#333333",
             Align: "left",
-          }
+          },
         ],
       };
       this.addToMapper(infoType);
@@ -127,7 +127,7 @@ export class InfoSectionController {
         InfoType: "Description",
         InfoValue: updatedDescription,
       });
-    }    
+    }
   }
 
   updateInfoImage(imageUrl: string, infoId?: string) {
@@ -148,7 +148,7 @@ export class InfoSectionController {
     if (ctaEditor) {
       const img = ctaEditor.find("img")[0];
       if (img) {
-        img.setAttributes({"src":imageUrl});
+        img.setAttributes({ src: imageUrl });
         const infoType: InfoType = {
           InfoId: infoId || randomIdGenerator(15),
           InfoType: "Cta",
@@ -160,8 +160,8 @@ export class InfoSectionController {
             CtaColor: "#ffffff",
             CtaBGColor: "CtaColorOne",
             CtaButtonType: "Image",
-            CtaButtonImgUrl: imageUrl
-          }
+            CtaButtonImgUrl: imageUrl,
+          },
         };
         this.updateInfoMapper(infoId || "", infoType);
       }
@@ -202,41 +202,58 @@ export class InfoSectionController {
 
   private addToMapper(infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId)
+    const infoMapper = new InfoContentMapper(pageId);
     infoMapper.addInfoType(infoType);
   }
 
-  updateInfoTileAttributes<Key extends keyof Tile>(
+  updateInfoTileAttributes(
     infoId: string,
     tileId: string,
-    attribute: Key,
-    value: Tile[Key]
+    attributePath: string, // accepts dot notation
+    value: any
   ) {
-    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(infoId);
-  
+    const tileInfoSectionAttributes: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(infoId);
+
     if (tileInfoSectionAttributes) {
-      const tile: Tile | undefined = tileInfoSectionAttributes.Tiles?.find(tile => tile.Id === tileId);
-      if (tile) {
-        tile[attribute] = value;
-      }
-  
-      this.updateInfoMapper(
-        infoId,
-        tileInfoSectionAttributes
+      const tile = tileInfoSectionAttributes.Tiles?.find(
+        (tile) => tile.Id === tileId
       );
+      if (tile) {
+        this.setNestedProperty(tile, attributePath, value);
+      }
+
+      this.updateInfoMapper(infoId, tileInfoSectionAttributes);
     }
   }
-  
+
+  setNestedProperty(obj: any, path: string, value: any) {
+    const keys = path.split(".");
+    let current = obj;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+
+      if (!(key in current)) {
+        current[key] = {}; // create if not exists
+      }
+
+      current = current[key];
+    }
+
+    current[keys[keys.length - 1]] = value;
+  }
 
   updateInfoMapper(infoId: string, infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId)
+    const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);
   }
 
   private removeInfoMapper(infoId: string) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId)
+    const infoMapper = new InfoContentMapper(pageId);
     infoMapper.removeInfoContent(infoId);
   }
 }

@@ -8,6 +8,8 @@ import { PageCreationService } from "./PageCreationService";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { i18n } from "../../../../i18n/i18n";
 import { ActionSelectContainer } from "./ActionSelectContainer";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoType } from "../../../../interfaces/InfoType";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;
@@ -18,30 +20,41 @@ export class PageAttacher {
     this.toolboxService = new ToolBoxService();
   }
 
-  async attachNewServiceToTile(serviceId:string) {
-    const services = await this.toolboxService.getServices()
-    const newService = services.find(service => service.ProductServiceId==serviceId)
+  async attachNewServiceToTile(serviceId: string) {
+    const services = await this.toolboxService.getServices();
+    const newService = services.find(
+      (service) => service.ProductServiceId == serviceId
+    );
     if (newService) {
       const page = {
-        "PageId": serviceId,
-        "PageName": newService.ProductServiceName,
-        "TileName": newService.ProductServiceTileName,
-        "PageType": "Content"
-      }
-      this.attachToTile(page, "Content", i18n.t("sidebar.action_list.services"))
-      
+        PageId: serviceId,
+        PageName: newService.ProductServiceName,
+        TileName: newService.ProductServiceTileName,
+        PageType: "Content",
+      };
+      this.attachToTile(
+        page,
+        "Content",
+        i18n.t("sidebar.action_list.services")
+      );
+
       // reload the action list container
-      const menuSection = document.getElementById('menu-page-section') as HTMLElement;
-      const contentection = document.getElementById('content-page-section');
-      if (menuSection) menuSection.style.display = 'block';
+      const menuSection = document.getElementById(
+        "menu-page-section"
+      ) as HTMLElement;
+      const contentection = document.getElementById("content-page-section");
+      if (menuSection) menuSection.style.display = "block";
       if (contentection) contentection.remove();
       const actionListContainer = new ActionSelectContainer();
       actionListContainer.render(menuSection);
-
     }
   }
 
-  async attachToTile(page: ActionPage, categoryName: string, categoryLabel: string) {
+  async attachToTile(
+    page: ActionPage,
+    categoryName: string,
+    categoryLabel: string
+  ) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -58,48 +71,69 @@ export class PageAttacher {
       return;
     }
     const updates = [
-        ["Text", page.PageName],
-        ["Name", page.PageName],
-        ["Action.ObjectType", `${categoryName}`],
-        ["Action.ObjectId", page.PageId],
-      ];
-      
+      ["Text", page.PageName],
+      ["Name", page.PageName],
+      ["Action.ObjectType", `${categoryName}`],
+      ["Action.ObjectId", page.PageId],
+    ];
+
+    let tileAttributes;
+
+    const pageData = (globalThis as any).pageData;
+    if (pageData.PageType === "Information") {
+      const infoSectionController = new InfoSectionController();
+      for (const [property, value] of updates) {
+        infoSectionController.updateInfoTileAttributes(
+          selectedComponent.parent().parent().getId(),
+          selectedComponent.parent().getId(),
+          property,
+          value
+        );
+      }
+
+      const tileInfoSectionAttributes: InfoType = (
+        globalThis as any
+      ).infoContentMapper.getInfoContent(rowId);
+
+      tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+        (tile: any) => tile.Id === tileId
+      );
+    } else {
       for (const [property, value] of updates) {
         (globalThis as any).tileMapper.updateTile(tileId, property, value);
       }
+      tileAttributes = (globalThis as any).tileMapper.getTile(rowId, tileId);
+    }
 
-      const tileAttributes = (globalThis as any).tileMapper.getTile(
-        rowId,
-        tileId
+    const version = await this.appVersionManager.getUpdatedActiveVersion();
+    this.attachPage(page, version, tileAttributes);
+
+    // set tile properties
+    if (selectedComponent && tileAttributes) {
+      const tileProperties = new TileProperties(
+        selectedComponent,
+        tileAttributes
       );
-        
-      const version = await this.appVersionManager.getUpdatedActiveVersion();
-      this.attachPage(page, version, tileAttributes);
-
-      // set tile properties
-      if (selectedComponent && tileAttributes) {
-        const tileProperties = new TileProperties(
-          selectedComponent,
-          tileAttributes
-        );
-        tileProperties.setTileAttributes();
-      }
+      tileProperties.setTileAttributes();
+    }
   }
 
   attachPage(page: ActionPage, version: any, tileAttributes: any) {
     const selectedItemPageId = page.PageId;
     const childPage =
-        version?.Pages.find(
-            (page: any) => page.PageId === selectedItemPageId
-        ) || null;
+      version?.Pages.find((page: any) => page.PageId === selectedItemPageId) ||
+      null;
 
     this.removeOtherEditors();
     if (childPage) {
-        console.log("childPage", childPage);
-        new ChildEditor(page.PageId, childPage).init(tileAttributes);
-    } else{
-        this.toolboxService.createServicePage(version.AppVersionId, selectedItemPageId).then((newPage: any) => {  
-          new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init(tileAttributes);
+      new ChildEditor(page.PageId, childPage).init(tileAttributes);
+    } else {
+      this.toolboxService
+        .createServicePage(version.AppVersionId, selectedItemPageId)
+        .then((newPage: any) => {
+          new ChildEditor(newPage.ContentPage.PageId, newPage.ContentPage).init(
+            tileAttributes
+          );
         });
     }
   }
@@ -110,10 +144,14 @@ export class PageAttacher {
   }
 
   updateActionProperty(type: string, pageName: string) {
-    const actionHeaderLabel = document.querySelector('#sidebar_select_action_label') as HTMLElement;
+    const actionHeaderLabel = document.querySelector(
+      "#sidebar_select_action_label"
+    ) as HTMLElement;
 
     if (actionHeaderLabel) {
-        actionHeaderLabel.innerText = `${type}, ${pageName.length > 10 ? pageName.substring(0, 10) + "..." : pageName}`
-    }     
+      actionHeaderLabel.innerText = `${type}, ${
+        pageName.length > 10 ? pageName.substring(0, 10) + "..." : pageName
+      }`;
+    }
   }
 }

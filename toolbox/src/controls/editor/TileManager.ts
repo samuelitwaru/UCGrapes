@@ -170,7 +170,7 @@ export class TileManager {
           Name: "Title",
           Text: "Title",
           Color: "#333333",
-          Align: "Left",
+          Align: "left",
         });
       } else if (method === "delete") {
         const tile = tileSection.Tiles?.find((tile: any) => tile.Id === tileId);
@@ -259,10 +259,20 @@ export class TileManager {
   checkTileHasIconOrTitle(component: any): boolean {
     const parentComponent = component.parent();
     if (!parentComponent) return false;
-    const tileAttributes = (globalThis as any).tileMapper.getTile(
-      parentComponent.getId(),
-      component.getId()
-    );
+    let tileAttributes;
+    if (this.pageData.PageType === "Information") {
+      const tileInfoSectionAttributes: InfoType = (
+        globalThis as any
+      ).infoContentMapper.getInfoContent(parentComponent.getId());
+      tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+        (tile: any) => tile.Id === component.getId()
+      );
+    } else {
+      tileAttributes = (globalThis as any).tileMapper.getTile(
+        parentComponent.getId(),
+        component.getId()
+      );
+    }
     if (tileAttributes) {
       if (tileAttributes.Icon && tileAttributes.Text) {
         return true;

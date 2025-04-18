@@ -91,7 +91,7 @@ export class ContentDataUi {
             modal.classList.add("tb-modal");
             modal.style.display = "flex";
             const type = this.page.PageType === "Information" ? "info" : "content";
-            const modalContent = new ImageUpload(type, (image as HTMLElement).id);
+            const modalContent = new ImageUpload(type, (image as HTMLElement)?.id);
             modalContent.render(modal);
     
             const uploadInput = document.createElement("input");

@@ -120,13 +120,8 @@ export class TextColor {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      // const infoSectionController = new InfoSectionController();
-      // infoSectionController.updateInfoTileAttributes(
-      //   selectedComponent.parent().getId(),
-      //   selectedComponent.getId(),
-      //   "Color",
-      //   colorValue
-      // );
+      const infoSectionController = new InfoSectionController();
+      infoSectionController.updateInfoCtaAttributes(selectedComponent.getId(), 'CtaColor', colorValue);  
     } else {
       new ContentMapper(pageId).updateContentCtaColor(
         selectedComponent.getId(),

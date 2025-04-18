@@ -68,6 +68,7 @@ export class CtaButtonProperties {
     }
 
     private ctaColorAttributes() {        
+        console.log("ctaAttributes", this.ctaAttributes);
         const contentSection = document.querySelector("#content-page-section");
         const colorItems = contentSection?.querySelectorAll(".color-item > input");
         let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes?.CtaBGColor);

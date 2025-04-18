@@ -86,6 +86,14 @@ export class InfoSectionUI {
                     }
                 </span>
             </span>
+            <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
+              <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
+                <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
+                  <circle ${DefaultAttributes} id="Ellipse_534" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"/>
+                </g>
+                <path ${DefaultAttributes} id="Path_2320" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"/>
+              </g>
+            </svg>
             <div${DefaultAttributes} class="cta-badge">
                 <i ${DefaultAttributes} class="fa fa-minus"></i>
             </div>

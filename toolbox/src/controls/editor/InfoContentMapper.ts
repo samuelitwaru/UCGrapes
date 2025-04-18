@@ -52,9 +52,7 @@ export class InfoContentMapper {
         if (!data?.PageInfoStructure?.InfoContent) return false;
         const contentArray = data.PageInfoStructure.InfoContent;
         const contentRowIndex = contentArray.findIndex((row: InfoType) => row.InfoId === infoId);
-        console.log("contentRowIndex", contentRowIndex);
         if (contentRowIndex === -1) return false;
-        console.log("newContent", newContent);
         contentArray[contentRowIndex] = newContent;
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
         return true;

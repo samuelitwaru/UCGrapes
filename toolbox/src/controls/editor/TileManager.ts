@@ -114,7 +114,7 @@ export class TileManager {
       containerRowComponent.append(newTileComponent, { at: index + 1 });
 
       if (this.page?.PageType === "Information") {
-        this.updateInfoTileRow(containerRowComponent.getId(), "add");
+        this.updateInfoTileRow(containerRowComponent.getId(), "add", newTileComponent.getId());
       } else {
         (globalThis as any).tileMapper.addTile(
           currentTile?.parentElement?.id as string,
@@ -158,7 +158,7 @@ export class TileManager {
   private updateInfoTileRow(
     tileRowId: any,
     method: "add" | "delete" = "add",
-    tileId?: string
+    tileId: string
   ) {
     const infoContentMapper = new InfoContentMapper(this.pageId);
     const tileSection: InfoType | null =
@@ -166,7 +166,7 @@ export class TileManager {
     if (tileSection) {
       if (method === "add") {
         tileSection.Tiles?.push({
-          Id: randomIdGenerator(15),
+          Id: tileId,
           Name: "Title",
           Text: "Title",
           Color: "#333333",

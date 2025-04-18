@@ -194,8 +194,8 @@ button#open-mapping {
 }
 
 .frame-list {
-  max-width: 950px;
-  min-width: 500px;
+  /* max-width: 950px;
+  min-width: 500px; */
   overflow: hidden;
   align-content: center;
   display: flex;
@@ -1950,7 +1950,7 @@ button.add-new-service i {
 @media (max-width: 1440px) {
   .frame-list {
     gap: 1.2em;
-    max-width: 600px;
+    /* max-width: 600px; */
   }
 
   /* .main-content {
@@ -2013,7 +2013,7 @@ button.add-new-service i {
 
 #child-container {
   height: 100%;
-  width: 100%;
+  width: 98%;
   /* justify-items: center; */
   justify-content: center;
 }

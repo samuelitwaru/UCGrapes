@@ -1,3 +1,4 @@
+import { CtaAttributes } from "../interfaces/CtaAttributes";
 import { InfoType } from "../interfaces/InfoType";
 import { Tile } from "../interfaces/Tile";
 import { baseURL } from "../services/ToolBoxService";
@@ -44,16 +45,17 @@ export class InfoSectionController {
   addCtaButton(buttonHTML: string) {
     const ctaContainer = document.createElement("div");
     ctaContainer.innerHTML = buttonHTML;
+    const ctaComponent = ctaContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(buttonHTML);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: ctaComponent.id,
         InfoType: "Cta",
         CtaAttributes: {
           CtaId: randomIdGenerator(15),
           CtaType: "Phone",
-          CtaLabel: "Phone",
+          CtaLabel: "Call Us",
           CtaAction: "",
           CtaColor: "#ffffff",
           CtaBGColor: "CtaColorOne",
@@ -69,11 +71,14 @@ export class InfoSectionController {
   addImage() {
     const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imgUrl);
+    const imageContainer = document.createElement("div");
+    imageContainer.innerHTML = imgContainer;
+    const imageComponent = imageContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(imgContainer);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: imageComponent.id,
         InfoType: "Image",
         InfoValue: "Resources/UCGrapes1/toolbox/public/images/default.jpg",
       };
@@ -84,11 +89,14 @@ export class InfoSectionController {
 
   addDescription(description: string) {
     const descContainer = this.infoSectionUI.getDescription(description);
+    const descTempContainer = document.createElement("div");
+    descTempContainer.innerHTML = descContainer;
+    const descTempComponent = descTempContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(descContainer);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: descTempComponent.id,
         InfoType: "Description",
         InfoValue: description,
       };
@@ -97,15 +105,20 @@ export class InfoSectionController {
     }
   }
 
-  addTile(tile: string) {
-    const append = this.appendComponent(tile);
+  addTile(tileHTML: string) {
+    const tileWrapper = document.createElement("div");
+    tileWrapper.innerHTML = tileHTML;
+    const tileWrapperComponent = tileWrapper.firstElementChild as HTMLElement;
+    const tileId = tileWrapperComponent.querySelector(".template-wrapper")?.id
+
+    const append = this.appendComponent(tileHTML);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: tileWrapperComponent.id,
         InfoType: "TileRow",
         Tiles: [
           {
-            Id: randomIdGenerator(15),
+            Id: tileId || randomIdGenerator(15),
             Name: "Title",
             Text: "Title",
             Color: "#333333",
@@ -204,6 +217,20 @@ export class InfoSectionController {
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.addInfoType(infoType);
+  }
+
+  updateInfoCtaAttributes(infoId: string, attribute: string, value: any) {
+    const infoType: InfoType = (globalThis as any).infoContentMapper.getInfoContent(
+      infoId
+    );
+
+    if (infoType) {
+      const ctaAttributes = infoType.CtaAttributes;
+      if (ctaAttributes) {
+        this.setNestedProperty(ctaAttributes, attribute, value);
+        this.updateInfoMapper(infoId, infoType);
+      }
+    }
   }
 
   updateInfoTileAttributes(

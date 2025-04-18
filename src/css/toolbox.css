@@ -1124,3 +1124,7 @@ img.content-page-block {
 .container-column-info .info-image-section:hover {
   cursor: move;
 }
+
+[data-gjs-type="info-cta-section"].gjs-selected .tile-open-menu {
+  display: block;
+}

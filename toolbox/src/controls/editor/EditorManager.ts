@@ -69,13 +69,14 @@ export class EditorManager {
     mainEditorSection.style.justifyContent = "center";
     mainEditorSection.style.alignItems = "center";
     mainEditorSection.style.flexDirection = "column";
+    mainEditorSection.style.width = "100%";
     frameList.render(mainEditorSection);
     mainEditorSection.appendChild(thumbsContainer);
 
-    leftNavigatorButton.render(editorFrameArea);
-    editorFrameArea.appendChild(mainEditorSection);
-    
-    rightNavigatorButton.render(editorFrameArea);
+    // leftNavigatorButton.render(editorFrameArea);
+    editorFrameArea.appendChild(mainEditorSection);    
+    // rightNavigatorButton.render(editorFrameArea);
+
     this.setClientWidth(frameList.container);
   }
 

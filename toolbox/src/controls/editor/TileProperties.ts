@@ -79,7 +79,7 @@ export class TileProperties {
           const opacityValue = opactySection.querySelector(
             "#valueDisplay"
           ) as HTMLElement;
-          opacityValue.textContent = tileBgImageAttrOpacity + "%";
+          opacityValue.textContent = input.value + "%";
           const tileImageSection = opactySection.querySelector(
             "#tile-img-container"
           ) as HTMLElement;
@@ -108,7 +108,6 @@ export class TileProperties {
   }
 
   private setTitleStyleProperties() {
-    console.log("setTitleStyleProperties called", this.tileAttributes);
     const title = document.querySelector("#tile-title") as HTMLInputElement;
     const tileTitle = this.tileAttributes?.Text;
     title.value = tileTitle;

@@ -56,10 +56,13 @@ export class TextColor {
   }
 
   private tileStyle(selectedComponent: any, colorValue: string) {
-    const iconPath = selectedComponent.find("path")[0];
+    const iconPath = selectedComponent.find('.tile-icon')[0];
 
     if (iconPath) {
-      iconPath.addAttributes({ fill: colorValue });
+      const svgElement = iconPath && iconPath.view.el.querySelector('svg');
+      if (svgElement) {
+        svgElement.querySelector('path')?.setAttribute('fill', colorValue); 
+      }   
     }
 
     selectedComponent.addStyle({

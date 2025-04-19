@@ -65,6 +65,21 @@ export class EditorEvents {
               return;
             }
 
+            // if (targetElement.closest("[data-gjs-type='tile-wrapper']")) {
+            //   const tileWrapper = targetElement.closest(
+            //     "[data-gjs-type='tile-wrapper']"
+            //   ) as HTMLElement;
+              
+            //   const tileWrapperComponent = wrapper.find("#" + tileWrapper?.id)[0];
+            //   if (tileWrapperComponent) {
+            //     (globalThis as any).selectedComponent = null;
+            //     this.editor.select(tileWrapperComponent);
+            //     console.log("Tile wrapper selected:", this.editor.getSelected().getHTML());
+            //     this.onSelected();              
+            //   }
+
+            // }
+
             this.uiManager.clearAllMenuContainers();
             
             (globalThis as any).activeEditor = this.editor;
@@ -166,6 +181,15 @@ export class EditorEvents {
   };
 
   setPageFocus(editor: any, frameId: string, pageId: string, pageData: any) {
+    if (!this.uiManager) {
+      this.uiManager = new EditorUIManager(
+        this.editor,
+        this.pageId,
+        this.frameId,
+        this.pageData,
+        this.appVersionManager
+      );      
+    }
     this.uiManager.setPageFocus(editor, frameId, pageId, pageData);
   }
 

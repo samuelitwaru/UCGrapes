@@ -1,5 +1,7 @@
 import ToolboxApp from "../../app";
 import { AppConfig } from "../../AppConfig";
+import { InfoType } from "../../interfaces/InfoType";
+import { Tile } from "../../interfaces/Tile";
 import { Theme, ThemeColors, ThemeCtaColor, ThemeIcon } from "../../models/Theme";
 import { ColorPalette } from "../../ui/components/tools-section/ColorPalette";
 import { CtaColorPalette } from "../../ui/components/tools-section/content-section/CtaColorPalette";
@@ -151,6 +153,7 @@ export class ThemeManager {
             iframes.forEach((iframe) => {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
               if (iframeDoc) {
+                this.updateFontFamily(iframeDoc, theme.ThemeFontFamily);
                 const ctaElement = iframeDoc.querySelector(`#${cta.CtaId}`) as HTMLElement;
 
                 if (ctaElement) {
@@ -163,6 +166,42 @@ export class ThemeManager {
             });
           });
         }
+
+        if (pageData.PageInfoStructure) {
+          const infoContents = pageData.PageInfoStructure?.InfoContent;
+          infoContents?.forEach((info: InfoType, index: number) => {
+            iframes.forEach((iframe) => {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+              if (iframeDoc) {
+                this.updateFontFamily(iframeDoc, theme.ThemeFontFamily);
+                const infoElement = iframeDoc.querySelector(`#${info.InfoId}`) as HTMLElement;
+
+                if (infoElement) {
+                  if (info.InfoType === "Cta") {
+                    const ctaButton = infoElement.querySelector('.cta-styled-btn') as HTMLElement;
+                    ctaButton.style.backgroundColor = this.getThemeCtaColor(info?.CtaAttributes?.CtaBGColor!);
+                  } else if (info.InfoType === "TileRow") {
+                    const tiles = info?.Tiles;
+                    tiles?.forEach((tile: Tile) => {
+                      const tileWrapper = iframeDoc.getElementById(tile.Id);
+                      if (tileWrapper) {
+                        const tileEl = tileWrapper.querySelector('.template-block') as HTMLElement;
+                        if (tileEl) {
+                          tileEl.style.backgroundColor = theme?.ThemeColors?.[tile.BGColor as keyof ThemeColors];
+                        }   
+                        this.updateTileIcon(tile, tileWrapper);
+                      }
+                    });
+                    
+                  }
+                  
+                }
+                this.updateFrameColor(iframeDoc);
+              }
+            });
+          });
+        }
+
       });
     }
   }

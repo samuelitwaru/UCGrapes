@@ -198,6 +198,8 @@ export class TileManager {
 
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoTileAttributes(tileComponent.parent().getId(), tileComponent.getId(), 'Icon', "");
           } else {
             (globalThis as any).tileMapper.updateTile(
               tileComponent.getId(),
@@ -229,25 +231,18 @@ export class TileManager {
 
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
-            // (globalThis as any).tileMapper.updateTile(
-            //   tileComponent.getId(),
-            //   "Text",
-            //   ""
-            // );
-            const tileSection = tileComponent.find(".tile-title-section")[0];
-            if (tileSection) {
-              tileSection.addStyle({ display: "none" });
-            }
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoTileAttributes(tileComponent.parent().getId(), tileComponent.getId(), 'Text', "");
           } else {
             (globalThis as any).tileMapper.updateTile(
               tileComponent.getId(),
               "Text",
               ""
             );
-            const tileSection = tileComponent.find(".tile-title-section")[0];
-            if (tileSection) {
-              tileSection.addStyle({ display: "none" });
-            }
+          }
+          const tileSection = tileComponent.find(".tile-title-section")[0];
+          if (tileSection) {
+            tileSection.addStyle({ display: "none" });
           }
         } else {
           console.warn("Tile has no icon or title");
@@ -273,6 +268,7 @@ export class TileManager {
         component.getId()
       );
     }
+    console.log("tileAttributes", tileAttributes);
     if (tileAttributes) {
       if (tileAttributes.Icon && tileAttributes.Text) {
         return true;

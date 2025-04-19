@@ -335,7 +335,7 @@ export class TileManager {
               <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" class="tile-icon">Title</span>
             </div>
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
-              <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
+              <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-title top-right selected-tile-title">×</span>
               <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Title" class="tile-title">Title</span>
             </div>
         </div>

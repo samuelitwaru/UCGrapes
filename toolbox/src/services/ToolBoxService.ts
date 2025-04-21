@@ -93,8 +93,7 @@ export class ToolBoxService {
     return response;
   }
 
-  async duplicateVersion(appVersionId: string, versionName: any) {
-    console.log("AppVersionId:", appVersionId, "versionName: ", versionName)   
+  async duplicateVersion(appVersionId: string, versionName: any) {  
     const response = await this.fetchAPI("/api/toolbox/v2/copy-appversion", {
       method: "POST",
       body: JSON.stringify({ 
@@ -133,6 +132,25 @@ export class ToolBoxService {
     })
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-menu-page",
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          appVersionId: appVersionId,
+          pageName: pageName
+        }),
+      }
+    );
+
+    return response;    
+  }
+
+  async createInfoPage(appVersionId: string, pageName: string) {
+    console.log({ 
+      appVersionId: appVersionId,
+      pageName: pageName
+    })
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-info-page",
       {
         method: "POST",
         body: JSON.stringify({ 
@@ -194,9 +212,22 @@ export class ToolBoxService {
       },
       true
     );
-
     return response;
   }
+
+  async savePageThumbnail(data: any) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/save-page-thumbnail",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+      true
+    );
+    return response;
+  }
+
+  
 
   async updatePageTitle(pageData: any) {
     const response = await this.fetchAPI(

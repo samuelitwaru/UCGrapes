@@ -6,6 +6,7 @@ import { UndoRedoManager } from "../toolbox/UndoRedoManager";
 import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJSContent } from "./JSONToGrapesJSContent";
+import { JSONToGrapesJSInformation } from "./JSONToGrapesJSInformation";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { LoadCalendarData } from "./LoadCalendarData";
 import { LoadLocationData } from "./LoadLocationData";
@@ -59,6 +60,9 @@ export class ChildEditor {
         this.pageData?.PageType === "MyService" 
       ) {
       converter = new JSONToGrapesJSMenu(this.pageData);
+      setUpEditor(converter);
+    } else if (this.pageData?.PageType === "Information") {
+      converter = new JSONToGrapesJSInformation(this.pageData);
       setUpEditor(converter);
     } else if (this.pageData?.PageType === "Location") {
       const locationEditor = new LoadLocationData(childEditor, this.pageData);

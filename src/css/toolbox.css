@@ -1024,3 +1024,16 @@ img.content-page-block {
 .hidden {
   display: none;
 }
+
+.add-new-info-section {
+  display: flex;
+  justify-content: center;
+}
+
+.add-new-info-section svg:hover {
+  cursor: pointer;
+}
+
+.default-section-image {
+  border: 1px dashed #222f54;
+}

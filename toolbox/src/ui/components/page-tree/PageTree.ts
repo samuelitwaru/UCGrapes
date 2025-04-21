@@ -1,191 +1,354 @@
-import * as d3 from 'd3';
+import { AppConfig } from '../../../AppConfig';
+import { ThemeManager } from '../../../controls/themes/ThemeManager';
+import { PageTreeRenderer } from './PageTreeRenderer';
 
-// Define types for your nodes and links
-interface NodeData {
-  id: string;
-  title: string;
-  parentId: string | null;
-  status: string;
-  created: string;
-  lastModified: string;
-  views: number;
-  x: number;
-  y: number;
-  children: string[];
-  index: number;
-  vy: number;
-  vx: number;
-  fx: number;
-  fy: number;
-  // Will be added for hierarchy
-  childrenNodes?: NodeData[];
+interface PageNode {
+    id: string;
+    title: string;
+    structure: string;
+    thumbnail: string;
+    children: string[]; // recursive type for nested structure
+    x: Number,
+    y: Number
 }
 
-interface LinkData {
-  source: NodeData;
-  target: NodeData;
-  index: number;
-}
+type D3Node = {
+    id: string;
+    title: string;
+    structure: string;
+    thumbnail: string;
+    parentId: string | null;
+    x: Number,
+    y: Number
+};
 
-interface GraphData {
-  nodes: NodeData[];
-  links: LinkData[];
-}
-
+type D3Link = {
+    source: string;
+    target: string;
+};
 
 export class PageTree {
     sampleData: any;
     graphData: { nodes: unknown[]; links: any[]; };
     graphContainer: HTMLDivElement;
+    link: any;
+    node: any;
+    simulation: any;
+    simulationActive: boolean | undefined;
+    d3: any;
+    pages: any;
+    themeManager: ThemeManager;
+    pageTreeRenderer: PageTreeRenderer;
     constructor(){
+        this.pageTreeRenderer = new PageTreeRenderer()
+        this.themeManager = new ThemeManager();
+        const appVersionManager = this.themeManager.appVersionManager
+        this.pages = appVersionManager.getPages()
+        const processsedPages = this.processPageData()
+        console.log('pages', processsedPages)
+        const config = AppConfig.getInstance();
+        this.d3 = config.UC.d3
+        this.graphData = this.convertPagesToD3Data(processsedPages)
+        console.log('graph Data: ', this.graphData)
         this.graphContainer = this.build();
-        // this.build2();
-        
-        this.sampleData = 
-        {
-            "pages": 
-            [
-                {"id": "1", "title": "Home Page", "parentId": null, "status": "Published", "created": "2023-01-10", "lastModified": "2023-04-01", "views": 12500},
-                {"id": "2", "title": "Products", "parentId": "1", "status": "Published", "created": "2023-01-15", "lastModified": "2023-03-20", "views": 8750},
-                {"id": "3", "title": "Services", "parentId": "1", "status": "Published", "created": "2023-01-15", "lastModified": "2023-03-18", "views": 7300},
-                {"id": "4", "title": "About Us", "parentId": "1", "status": "Published", "created": "2023-01-12", "lastModified": "2023-02-28", "views": 5200},
-                {"id": "5", "title": "Product A", "parentId": "2", "status": "Published", "created": "2023-01-20", "lastModified": "2023-03-25", "views": 4800},
-                {"id": "6", "title": "Product B", "parentId": "2", "status": "Published", "created": "2023-01-22", "lastModified": "2023-03-27", "views": 3650},
-                {"id": "7", "title": "Service X", "parentId": "3", "status": "Published", "created": "2023-01-25", "lastModified": "2023-03-10", "views": 2800},
-                {"id": "8", "title": "Service Y", "parentId": "3", "status": "Draft", "created": "2023-01-27", "lastModified": "2023-03-15", "views": 0},
-                {"id": "9", "title": "Team", "parentId": "4", "status": "Published", "created": "2023-02-05", "lastModified": "2023-02-20", "views": 1950},
-                {"id": "10", "title": "History", "parentId": "4", "status": "Published", "created": "2023-02-08", "lastModified": "2023-02-25", "views": 1200},
-                {"id": "11", "title": "Team Member 1", "parentId": "9", "status": "Published", "created": "2023-02-10", "lastModified": "2023-02-22", "views": 980},
-                {"id": "12", "title": "Team Member 2", "parentId": "9", "status": "Published", "created": "2023-02-12", "lastModified": "2023-02-24", "views": 850}
-            ]
-        };
-
-        // Process the data
-        this.graphData = this.processData(this.sampleData);
-
-        // this.createGraph()
+        this.buildTree();
     }
+
+    processPageData()  {
+        const linkPages: PageNode[] = []
+        const pages = this.pages.map((page:any)=>{
+            let ret:PageNode = {
+                id: page.PageId,
+                title:page.PageName,
+                structure: "",
+                thumbnail: page.PageThumbnailUrl,
+                children: [],
+                x: 0,
+                y: 0,
+            }
+            if (page.PageType === "Menu" || page.PageType === "MyCare" || page.PageType === "MyLiving" || page.PageType === "MyService") {
+                ret.structure = this.pageTreeRenderer.createMenuHTML(page)
+                page.PageMenuStructure.Rows.forEach((row:any) => {
+                    row.Tiles.forEach((tile:any) => {
+                        if (tile.Action.ObjectType == "DynamicForm" || tile.Action.ObjectType == "WebLink") {
+                            const title = tile.Action.ObjectType == "DynamicForm" ? "Dynamic Form" : "Web Link"
+                            linkPages.push({
+                                id: tile.Action.ObjectId,
+                                title: title,
+                                structure: this.pageTreeRenderer.createLinkHTML(title, tile.Action.ObjectUrl),
+                                thumbnail: "",
+                                children: [],
+                                x: 0,
+                                y: 0,
+                            })
+                            ret.children.push(tile.Action.ObjectId)
+                        } else if (tile.Action.ObjectId) {
+                            console.log('    tile:', tile.Action.ObjectType)
+                            ret.children.push(tile.Action.ObjectId)
+                        }
+                    })
+                })
+            } else if (page.PageType == "Content" || page.PageType == "Location" || page.PageType == "Reception") {
+                ret.structure = this.pageTreeRenderer.createContentHTML(page);
+            } else if (page.PageType == "Calendar") {
+                ret.structure = this.pageTreeRenderer.createAgendaHTML(page);
+            } else if (page.PageType == "MyActivity") {
+                ret.structure = this.pageTreeRenderer.createMyActivityHTML(page);
+            } else if (page.PageType == "Map") {
+                ret.structure = this.pageTreeRenderer.createMapHTML(page);
+            }
+
+            return ret
+        })
+
+        console.log('processed: ', pages.concat(linkPages))
+        // return pages
+        return this.assignCoordinates(pages.concat(linkPages))
+    }
+
+    addFormPage(){
+
+    }
+
+    convertPagesToD3Data(pages: PageNode[]) {
+        const idToNode: Record<string, D3Node> = {};
+        const links: D3Link[] = [];
+      
+        // Step 1: Create basic nodes
+        pages.forEach(page => {
+            idToNode[page.id] = {
+                id: page.id,
+                title: page.title,
+                structure: page.structure,
+                thumbnail: page.thumbnail,
+                parentId: null,
+                x: page.x,
+                y: page.y
+            };
+        });
+      
+        // Step 2: Assign parentIds and build links
+        pages.forEach(parent => {
+          parent.children.forEach(childId => {
+            if (idToNode[childId]) {
+              idToNode[childId].parentId = parent.id;
+              links.push({ source: parent.id, target: childId });
+            }
+          });
+        });
+      
+        // Final D3 format
+        const nodes = Object.values(idToNode);
+        return { nodes, links };
+      }
 
     build() {
         const mainContainer = document.getElementById("main-content") as HTMLDivElement;
-        this.graphContainer = document.createElement("div");
-        this.graphContainer.id = "graph-container-1";
-        
-        // add an iframe to the graphContainer
-        const iframe = document.createElement("iframe");
-        iframe.src = "http://localhost:8083/Comforta_version20DevelopmentNETPostgreSQL/wp_toolboxtree.aspx"; // Replace with your URL
-        iframe.width = "100%";
-        iframe.height = "100%";
-        this.graphContainer.appendChild(iframe);
+
+        this.graphContainer = document.getElementById("graph-container-1") as HTMLDivElement
+
+        if (!this.graphContainer) {
+            this.graphContainer = document.createElement("div");
+            this.graphContainer.id = "graph-container-1";
+        } else {
+            this.graphContainer.innerHTML = ""
+        }
+
+        // const iframe = document.createElement("iframe");
+        // iframe.src = "http://localhost:8083/Comforta_version20DevelopmentNETPostgreSQL/wp_toolboxtree.aspx"; // Replace with your URL
+        // iframe.width = "100%";
+        // iframe.height = "100%";
+        // this.graphContainer.appendChild(iframe);
+
         mainContainer.appendChild(this.graphContainer);
         this.graphContainer.setAttribute("style", "display:none;")
         return this.graphContainer;
     }
 
-    build2 () {
-        // Your input data
-        const graphData: GraphData = {"nodes":[{"id":"1","title":"Home Page","parentId":null,"status":"Published","created":"2023-01-10","lastModified":"2023-04-01","views":12500,"x":160.3810881801417,"y":241.49175563767668,"children":["2","3","4"],"index":0,"vy":0,"vx":0,"fx":-610,"fy":102},{"id":"2","title":"Products","parentId":"1","status":"Published","created":"2023-01-15","lastModified":"2023-03-20","views":8750,"x":234.21713414452663,"y":203.9996885862305,"children":[],"index":1,"vy":0,"vx":0,"fx":-300,"fy":-152},{"id":"3","title":"Services","parentId":"1","status":"Published","created":"2023-01-15","lastModified":"2023-03-18","views":7300,"x":152.57869477016035,"y":139.69278572792626,"children":[],"index":2,"vy":0,"vx":0,"fx":152.57869477016035,"fy":139.69278572792626},{"id":"4","title":"About Us","parentId":"1","status":"Published","created":"2023-01-12","lastModified":"2023-02-28","views":5200,"x":492.61037418345535,"y":496.46783876381375,"children":[],"index":3,"vy":0,"vx":0,"fx":492.61037418345535,"fy":496.46783876381375}],"links":[{"source":{"id":"1","title":"Home Page","parentId":null,"status":"Published","created":"2023-01-10","lastModified":"2023-04-01","views":12500,"x":160.3810881801417,"y":241.49175563767668,"children":["2","3","4"],"index":0,"vy":0,"vx":0,"fx":160.3810881801417,"fy":241.49175563767668},"target":{"id":"2","title":"Products","parentId":"1","status":"Published","created":"2023-01-15","lastModified":"2023-03-20","views":8750,"x":234.21713414452663,"y":203.9996885862305,"children":[],"index":1,"vy":0,"vx":0,"fx":234.21713414452663,"fy":203.9996885862305},"index":0},{"source":{"id":"1","title":"Home Page","parentId":null,"status":"Published","created":"2023-01-10","lastModified":"2023-04-01","views":12500,"x":160.3810881801417,"y":241.49175563767668,"children":["2","3","4"],"index":0,"vy":0,"vx":0,"fx":160.3810881801417,"fy":241.49175563767668},"target":{"id":"3","title":"Services","parentId":"1","status":"Published","created":"2023-01-15","lastModified":"2023-03-18","views":7300,"x":152.57869477016035,"y":139.69278572792626,"children":[],"index":2,"vy":0,"vx":0,"fx":152.57869477016035,"fy":139.69278572792626},"index":1},{"source":{"id":"1","title":"Home Page","parentId":null,"status":"Published","created":"2023-01-10","lastModified":"2023-04-01","views":12500,"x":160.3810881801417,"y":241.49175563767668,"children":["2","3","4"],"index":0,"vy":0,"vx":0,"fx":160.3810881801417,"fy":241.49175563767668},"target":{"id":"4","title":"About Us","parentId":"1","status":"Published","created":"2023-01-12","lastModified":"2023-02-28","views":5200,"x":492.61037418345535,"y":496.46783876381375,"children":[],"index":3,"vy":0,"vx":0,"fx":492.61037418345535,"fy":496.46783876381375},"index":2}]}
-
-        // Step 1: Create a map for quick node access
-        const nodeMap = new Map<string, NodeData>();
-        graphData.nodes.forEach((node) => {
-            node.childrenNodes = []; // initialize children container
-            nodeMap.set(node.id, node);
-        });
-
-        // Step 2: Build hierarchy from root
-        let rootNode: NodeData;
-        rootNode = graphData.nodes.find(node => node.parentId === null) as NodeData; // Find the root node (no parentId)
-        graphData.nodes.forEach((node) => {
-            console.log(node)
-            if (node.parentId) {
-              const parent = nodeMap.get(node.parentId);
-              if (parent) {
-                parent.childrenNodes?.push(node);
-              }
-            } else {
-              rootNode = node;
-            }
-        });
-
-        // Step 3: Convert to D3 hierarchy
-        const rootHierarchy = d3.hierarchy<NodeData>(rootNode, d => d.childrenNodes);
-
-        // Step 4: Apply D3 tree layout (or use another layout if desired)
-        // const treeLayout = d3.tree<NodeData>().size([800, 600]);
-        // treeLayout(rootHierarchy);
-
-        // Done! You can now use `rootHierarchy` for rendering
-        console.log(rootHierarchy);
-
-        // Create an SVG inside the container div
-        const width = 800;
-        const height = 600;
-        const svg = d3.select("#graph-container-1")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .call(d3.zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.5, 2]) // zoom limits
-            .on("zoom", (event) => {
-                g.attr("transform", event.transform); // zoom/pan all content
-            }))
-        .append("g");
-
-        const g = svg.append("g")
-        .attr("transform", "translate(50, 50)"); // initial offset
+    buildTree() {
+        // Set up the SVG container
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
 
-        // Generate tree layout
-        const treeLayout = d3.tree<NodeData>().size([width - 100, height - 100]);
-        treeLayout(rootHierarchy);
+        const svg = this.d3.select("#graph-container-1")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+            // Add arrowhead marker definition
+        svg.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 20)
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", "#adb5bd");
 
-        // Draw links (edges)
-        g.selectAll(".link")
-        .data(rootHierarchy.links())
-        .enter()
-        .append("line")
-        .attr("class", "link")
-        .attr("x1", d => d.source.x || 0)
-        .attr("y1", d => d.source.y || 0)
-        .attr("x2", d => d.target.x || 0)
-        .attr("y2", d => d.target.y || 0)
-        .attr("stroke", "#ccc")
-        .attr("stroke-width", 2);
-
-        // Create nodes (group for circle + text)
+        // Create a group for the graph that will be transformed for zooming
+        const g = svg.append("g");
         
-        const nodes = g.selectAll(".node")
-        .data(rootHierarchy.descendants())
+        // Set up zoom behavior
+        const zoom = this.d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", (event:any) => {
+                g.attr("transform", event.transform);
+                // Hide popover when zooming
+                this.closePopover();
+            });
+        
+        svg.call(zoom);
+
+        // Create nodes
+        this.node = g.selectAll(".node")
+        .data(this.graphData.nodes)
         .enter()
         .append("g")
         .attr("class", "node")
-        .attr("transform", d => `translate(${d.x},${d.y})`)
+        .attr("transform", (d: { x: any; y: any; }) => `translate(${d.x},${d.y})`)
+        .on("click", (event:any , d:any) => {
+            // this.showPopover(event, d)
+            this.d3.select(event.currentTarget).raise();
+        })
+        .call(this.d3.drag()
+            .on("start", (event:any , d:any) => {this.dragStarted(event, d)})
+            .on("drag", (event:any , d:any) => {this.dragged(event, d)})
+            .on("end", (event:any , d:any) => {this.dragEnded(event, d)}));
 
-        // Draw circles
-        nodes.append("circle")
-        .attr("r", 20)
-        .attr("fill", "#69b3a2")
+        // Add rectangles to nodes
+        this.node.append("rect")
+            .attr("width", 250)
+            .attr("height", 500)
+            .attr("x", (d:any) => -Math.max(d.title.length * 8, 100) / 2)
+            .attr("y", -20)
+            .style("stroke", (d:any) => this.getNodeColor(d.status))
+            .style("background", "#EFEEEC");
+    
+        
+        // Add text to nodes
+        this.node.append("foreignObject")
+        .attr("height", 500)
+        .attr("width", 250)
+        .attr("y", -20)
+        .attr("x", -50)
+        .html((d:any)=>`
+        <div xmlns="http://www.w3.org/1999/xhtml">
+            ${d.structure }
+        </div>
+        `);
 
-        // Draw labels
-        nodes.append("text")
-        .text(d => d.data.title)
-        .attr("dy", 5)
-        .attr("x", d => d.children ? -25 : 25)
-        .style("text-anchor", d => d.children ? "end" : "start")
-        .style("font-size", "12px");
+        // Create links
+        this.link = g.selectAll(".link")
+            .data(this.graphData.links)
+            .enter()
+            .append("path")
+            .attr("class", "link");
+        
+         // Force simulation
+        this.simulation = this.d3.forceSimulation(this.graphData.nodes)
+            .force("link", this.d3.forceLink(this.graphData.links).id((d:any) => d.id).distance(150))
+            .force("charge", this.d3.forceManyBody().strength(-300))
+            .force("center", this.d3.forceCenter(width / 2, height / 2))
+            .on("tick", () => {this.ticked()})
+            .alphaDecay(0.028);
 
+        this.simulationActive = true;
+        this.updateNodeCounter();
+
+        // Control buttons
+        this.d3.select("#zoom-in").on("click", () => {
+            svg.transition().duration(300).call(zoom.scaleBy, 1.3);
+        });
+        
+        this.d3.select("#zoom-out").on("click", () => {
+            svg.transition().duration(300).call(zoom.scaleBy, 0.7);
+        });
+        
+        this.d3.select("#reset").on("click", () => {
+            svg.transition().duration(700).call(
+                zoom.transform,
+                this.d3.zoomIdentity.translate(width / 2, height / 2).scale(0.8)
+            );
+        });
+        
+        // Toggle layout
+        this.d3.select("#toggle-layout").on("click", () => {
+            this.toggleLayout()
+        });
+
+        // Add random node
+        this.d3.select("#add-node").on("click", () => {
+            // Generate random node
+            const parentIndex = Math.floor(Math.random() * this.graphData.nodes.length);
+            const parentNode:any = this.graphData.nodes[parentIndex];
+            const newId:string = (Math.max(...this.graphData.nodes.map((n:any)=> parseInt(n.id))) + 1).toString();
+            
+            const newNode = {
+                id: newId,
+                title: "New Page " + newId,
+                parentId: parentNode.id,
+                status: Math.random() > 0.3 ? "Published" : "Draft",
+                created: "2023-04-13",
+                lastModified: "2023-04-13",
+                views: 0,
+                x: parentNode.x + (Math.random() * 100 - 50),
+                y: parentNode.y + (Math.random() * 100 - 50),
+                children: []
+            };
+            
+            // Add to parent's children array
+            parentNode.children.push(newId);
+            
+            // Create new link
+            const newLink = {
+                source: parentNode.id,
+                target: newId
+            };
+            
+            // Add to data
+            this.graphData.nodes.push(newNode);
+            this.graphData.links.push(newLink);
+            
+            // Update simulation
+            this.simulation.nodes(this.graphData.nodes);
+            this.simulation.force("link").links(this.graphData.links);
+            
+            // Update visualization
+            this.updateVisualization();
+            
+            // Restart simulation
+            this.simulation.alpha(1).restart();
+        });
+
+        // Initial view adjustment
+        svg.call(
+            zoom.transform,
+            this.d3.zoomIdentity.translate(width / 2, height / 2).scale(0.8)
+        );
+        this.toggleLayout()
+        
     }
 
     show(){
-        const editorSection = document.getElementsByClassName("editor-main-section")
+        const editorSections = document.getElementsByClassName("editor-main-section")
         //set display to none for editor section
-        if (editorSection.length > 0) {
-            editorSection[0].setAttribute("style", "display:none;")
-        }    
-        this.graphContainer.style.display = "block";
-        this.graphContainer.style.width = "100%";
-        this.graphContainer.style.height = "100%";
+        if (editorSections.length > 0) {
+            // toggle display
+            const div = editorSections[0] as HTMLDivElement
+            if (div.style.display === "none") {
+                div.style.display = "block";
+                this.graphContainer.style.display = "none";
+              } else {
+                div.style.display = "none";
+                this.graphContainer.style.display = "block";
+                this.graphContainer.style.width = "100%";
+                this.graphContainer.style.height = "100%";
+              }
+            // editorSections[0].setAttribute("style", "display:none;")
+        }        
     }
 
     // Function to convert flat data to hierarchical structure
@@ -232,53 +395,214 @@ export class PageTree {
         };
     }
 
-    createGraph() {
-        const width = 800;
-        const height = 600;
-
-        const svg = d3.select(this.graphContainer)
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        // const simulation = d3.forceSimulation(this.graphData.nodes)
-        //     .force("link", d3.forceLink().id((d: any) => d.id).distance(100))
-        //     .force("charge", d3.forceManyBody().strength(-300))
-        //     .force("center", d3.forceCenter(width / 2, height / 2));
-
-        const link = svg.append("g")
-            .attr("class", "links")
-            .selectAll("line")
-            .data(this.graphData.links)
-            .enter()
-            .append("line")
-            .attr("stroke-width", 2)
-            .attr("stroke", "#999");
-
-        const node = svg.append("g")
-            .attr("class", "nodes")
-            .selectAll("circle")
-            .data(this.graphData.nodes)
-            .enter()
-            .append("circle")
-            .attr("r", 5)
-            .attr("fill", "#69b3a2");
-
-        node.append("title").text((d: any) => d.title);
-
-        // simulation
-        //     .nodes(this.graphData.nodes)
-        //     .on("tick", () => {
-        //         link.attr("x1", (d: { source: { x: any; }; }) => d.source.x)
-        //             .attr("y1", (d: { source: { y: any; }; }) => d.source.y)
-        //             .attr("x2", (d: { target: { x: any; }; }) => d.target.x)
-        //             .attr("y2", (d: { target: { y: any; }; }) => d.target.y);
-
-        //         node.attr("cx", (d: { x: any; }) => d.x)
-        //             .attr("cy", (d: { y: any; }) => d.y);
-        //     });
-       
+    // Define node color based on status
+    getNodeColor(status:string) {
+        switch(status) {
+            case "Published": return "#28a745";
+            case "Draft": return "#ffc107";
+            case "Archived": return "#6c757d";
+            default: return "#007bff";
+        }
     }
 
+    ticked() {
+        this.link.attr("d", (d:any) => {
+            const sourceNode:any = this.graphData.nodes.find((node:any) => node.id === d.source.id || node.id === d.source);
+            const targetNode:any = this.graphData.nodes.find((node:any) => node.id === d.target.id || node.id === d.target);
+            
+            if (!sourceNode || !targetNode) return "";
+            
+            // Calculate rectangle dimensions
+            const sourceWidth = Math.max(sourceNode.title.length * 8, 100);
+            const sourceHeight = 40;
+            const targetWidth = Math.max(targetNode.title.length * 8, 100);
+            const targetHeight = 40;
+            
+            // Calculate path
+            const sourceX = sourceNode.x;
+            const sourceY = sourceNode.y;
+            const targetX = targetNode.x;
+            const targetY = targetNode.y;
+            
+            // Calculate direction vector
+            const dx = targetX - sourceX;
+            const dy = targetY - sourceY;
+            const angle = Math.atan2(dy, dx);
+            
+            // Calculate intersection points with rectangles
+            const sourceIntersectX = sourceX + Math.cos(angle) * (sourceWidth / 2);
+            const sourceIntersectY = sourceY + Math.sin(angle) * (sourceHeight / 2);
+            const targetIntersectX = targetX - Math.cos(angle) * (targetWidth / 2);
+            const targetIntersectY = targetY - Math.sin(angle) * (targetHeight / 2);
+            
+            return `M${sourceIntersectX},${sourceIntersectY} L${targetIntersectX},${targetIntersectY}`;
+        });
+        
+        this.node.attr("transform", (d:any) => `translate(${d.x},${d.y})`);
+    }
     
+    // Drag functions
+    dragStarted(event:any, d:any) {
+        this.d3.select(event.currentTarget).raise();
+        if (!event.active) this.simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+        this.closePopover();
+    }
+    
+    dragged(event:any, d:any) {
+        this.d3.select(event.currentTarget).raise();
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+    
+    dragEnded(event:any, d:any) {
+        this.d3.select(event.currentTarget).raise();
+        if (!event.active) this.simulation.alphaTarget(0);
+        // Don't reset position - this keeps the node where it was dragged
+        // d.fx = null;
+        // d.fy = null;
+    }
+    
+    showPopover(event:any, d:any) {
+        event.stopPropagation(); // Prevent triggering container clicks
+        
+        // Get parent node title if exists
+        let parentTitle = "None";
+        if (d.parentId) {
+            const parentNode:any = this.graphData.nodes.find((node:any) => node.id === d.parentId);
+            if (parentNode) parentTitle = parentNode.title;
+        }
+        
+        // Update popover content
+        this.d3.select("#popover-title").text(d.title);
+        this.d3.select("#popover-id").text(d.id);
+        this.d3.select("#popover-parent").text(parentTitle);
+        this.d3.select("#popover-children").text(d.children.length);
+        this.d3.select("#popover-created").text(d.created);
+        this.d3.select("#popover-status").text(d.status);
+        
+        // Position and show popover
+        const popover = this.d3.select("#popover");
+        popover
+            .style("left", (event.pageX + 15) + "px")
+            .style("top", (event.pageY - 15) + "px")
+            .classed("active", true);
+        
+        // Close popover when clicking outside
+        document.addEventListener("click", this.closePopoverOnClick);
+    }
+    
+    closePopoverOnClick(event:any) {
+        if (!event.target.closest("#popover") && !event.target.closest(".node")) {
+            this.closePopover();
+        }
+    }
+    
+    closePopover() {
+        this.d3.select("#popover").classed("active", false);
+        document.removeEventListener("click", this.closePopoverOnClick);
+    }
+    
+    // Update node counter
+    updateNodeCounter() {
+        this.d3.select("#node-count").text(this.graphData.nodes.length);
+    }
+
+    toggleLayout() {
+        this.simulationActive = !this.simulationActive;
+        if (this.simulationActive) {
+            // Release fixed positions
+            this.graphData.nodes.forEach((node:any) => {
+                node.fx = null;
+                node.fy = null;
+            });
+            this.simulation.alphaTarget(0.3).restart();
+            setTimeout(() => this.simulation.alphaTarget(0), 1000);
+        } else {
+            // Fix all nodes in current positions
+            this.graphData.nodes.forEach((node:any) => {
+                node.fx = node.x;
+                node.fy = node.y;
+            });
+            this.simulation.alphaTarget(0);
+        }
+    }
+
+    updateVisualization() {
+        // Update links
+        this.link = this.link.data(this.graphData.links);
+        this.link.exit().remove();
+        this.link = this.link.enter()
+            .append("path")
+            .attr("class", "link")
+            .merge(this.link);
+        
+        // Update nodes
+        this.node = this.node.data(this.graphData.nodes);
+        this.node.exit().remove();
+        
+        const nodeEnter = this.node.enter()
+            .append("g")
+            .attr("class", "node")
+            .attr("transform", (d:any) => `translate(${d.x},${d.y})`)
+            .on("click", (event:any , d:any) => {this.showPopover(event, d)})
+            .call(this.d3.drag()
+                .on("start", (event:any , d:any) => {this.dragStarted(event, d)})
+                .on("drag", (event:any , d:any) => {this.dragged(event, d)})
+                .on("end", (event:any , d:any) => {this.dragEnded(event, d)}));
+        
+        nodeEnter.append("rect")
+            .attr("width", (d:any) => Math.max(d.title.length * 8, 100))
+            .attr("height", 40)
+            .attr("x", (d:any) => -Math.max(d.title.length * 8, 100) / 2)
+            .attr("y", -20)
+            .style("stroke", (d:any) => this.getNodeColor(d.status));
+        
+        nodeEnter.append("circle")
+            .attr("r", 5)
+            .attr("cx", (d:any) => Math.max(d.title.length * 8, 100) / 2 - 10)
+            .attr("cy", -10)
+            .attr("fill", (d:any) => this.getNodeColor(d.status));
+        
+        nodeEnter.append("text")
+            .text((d:any) => d.title)
+            .attr("dy", 5);
+        
+        this.node = nodeEnter.merge(this.node);
+        
+        // Update counter
+        this.updateNodeCounter();
+    }
+
+    assignCoordinates(nodes:any[]) {
+        const nodeMap = new Map();
+        nodes.forEach((node) => nodeMap.set(node.id, { ...node }));
+
+        const roots = nodes.filter(
+          (node) => !nodes.some((n) => n.children.includes(node.id))
+        );
+
+        let yCounter = -500;
+
+        function setPosition(nodeId:string, depth:number, offsetX?:number) {
+            console.log('    depth', depth)    
+            const node = nodeMap.get(nodeId);
+            node.x = -1000 + (depth * 400);
+            node.y = yCounter;
+            yCounter += 100;
+
+            node.children.forEach((childId:string, index:number) => {
+                yCounter = node.y + (100 * index)
+                setPosition(childId, depth + 1, 100);
+            });
+        }
+
+        roots.forEach((root) => {
+            console.log(root.title)
+            setPosition(root.id, 0, 400)
+        });
+
+        return Array.from(nodeMap.values());
+    }
 }

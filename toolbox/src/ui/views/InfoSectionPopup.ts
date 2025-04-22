@@ -53,6 +53,13 @@ export class InfoSectionPopup {
           this.addButton();
         },
       },
+      {
+        name: "Tile",
+        label: "Tile",
+        action: () => {
+          this.addTile();
+        },
+      },
     ];
 
     sectionItems?.forEach((item) => {
@@ -95,13 +102,19 @@ export class InfoSectionPopup {
     this.controller.addCtaButton(button);
   }
 
+  addTile() {
+    const tile = this.infoSectionUi.infoTileUi();
+    this.controller.addTile(tile);
+  }
+
   addImage() {
-    // this.infoSectionUi.openImageUpload();
     this.controller.addImage();
   }
 
   addDescription () {
-    this.infoSectionUi.openContentEditModal();
+    const content: string = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...</p>`
+    this.controller.addDescription(content);
+    // this.infoSectionUi.openContentEditModal();
   }
 
   private displayMenu(triggerRect: DOMRect, iframeRect?: DOMRect) {
@@ -158,16 +171,9 @@ export class InfoSectionPopup {
       }
     }
 
-    if (relTriggerLeft + popupRect.width <= containerWidth - 10) {
-      this.menuContainer.style.left = `${relTriggerLeft + 16}px`;
-    } else {
-      const rightAlignedPos = containerWidth - popupRect.width - 10;
-      this.menuContainer.style.left = `${Math.max(10, rightAlignedPos + 16)}px`;
-    }
+    this.menuContainer.style.left = `calc(50% - ${this.menuContainer.clientWidth / 2}px)`;
 
     this.menuContainer.style.visibility = "visible";
     this.menuContainer.style.opacity = "1";
   }
-
-  
 }

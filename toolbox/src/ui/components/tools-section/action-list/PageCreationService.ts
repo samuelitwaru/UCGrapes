@@ -1,7 +1,9 @@
 import { ChildEditor } from "../../../../controls/editor/ChildEditor";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { i18n } from "../../../../i18n/i18n";
 import { ActionPage } from "../../../../interfaces/ActionPage";
+import { InfoType } from "../../../../interfaces/InfoType";
 import { baseURL, ToolBoxService } from "../../../../services/ToolBoxService";
 import { Alert } from "../../Alert";
 import { ActionListDropDown } from "./ActionListDropDown";
@@ -46,7 +48,7 @@ export class PageCreationService {
     this.formModalService.createModal({
       title: "Add Phone Number",
       form,
-      onSave: () => this.processFormData(form.getData(), 'Phone'),
+      onSave: () => this.processFormData(form.getData(), "Phone"),
     });
   }
 
@@ -77,7 +79,7 @@ export class PageCreationService {
     this.formModalService.createModal({
       title: "Add Email Address",
       form,
-      onSave: () => this.processFormData(form.getData(), 'Email'),
+      onSave: () => this.processFormData(form.getData(), "Email"),
     });
   }
 
@@ -108,7 +110,7 @@ export class PageCreationService {
     this.formModalService.createModal({
       title: "Add Web Link",
       form,
-      onSave: () => this.processFormData(form.getData(), 'WebLink'),
+      onSave: () => this.processFormData(form.getData(), "WebLink"),
     });
   }
 
@@ -118,7 +120,10 @@ export class PageCreationService {
     new ChildEditor(pageData.PageId, pageData).init(tileAttributes);
   }
 
-  private async processFormData(formData: Record<string, string>, type: string) {
+  private async processFormData(
+    formData: Record<string, string>,
+    type: string
+  ) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -132,13 +137,13 @@ export class PageCreationService {
     let objectId = "";
     let childPage: any;
     if (type === "WebLink") {
-        childPage = version?.Pages.find(
-            (page: any) => page.PageName === "Web Link" && page.PageType === "WebLink"
-          );   
-        objectId = childPage?.PageId;     
+      childPage = version?.Pages.find(
+        (page: any) =>
+          page.PageName === "Web Link" && page.PageType === "WebLink"
+      );
+      objectId = childPage?.PageId;
     }
-    console.log("childPage", childPage);
-    
+
     const updates = [
       ["Text", formData.field_label],
       ["Name", formData.field_label],
@@ -147,15 +152,36 @@ export class PageCreationService {
       ["Action.ObjectUrl", formData.field_value],
     ];
 
-    for (const [property, value] of updates) {
-      (globalThis as any).tileMapper.updateTile(tileId, property, value);
+    let tileAttributes;
+
+    const pageData = (globalThis as any).pageData;
+    if (pageData.PageType === "Information") {
+      const infoSectionController = new InfoSectionController();
+      for (const [property, value] of updates) {
+        infoSectionController.updateInfoTileAttributes(
+          rowId,
+          tileId,
+          property,
+          value
+        );
+      }
+
+      const tileInfoSectionAttributes: InfoType = (
+        globalThis as any
+      ).infoContentMapper.getInfoContent(rowId);
+      tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+        (tile: any) => tile.Id === tileId
+      );
+    } else {
+      for (const [property, value] of updates) {
+        (globalThis as any).tileMapper.updateTile(tileId, property, value);
+      }
+      tileAttributes = (globalThis as any).tileMapper.getTile(rowId, tileId);
     }
-    const tileAttributes = (globalThis as any).tileMapper.getTile(
-      rowId,
-      tileId
-    );
 
     new PageAttacher().removeOtherEditors();
-    if (childPage) new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
+    console.log("tileAttributes: --> ", tileAttributes);
+    if (childPage)
+      new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
   }
 }

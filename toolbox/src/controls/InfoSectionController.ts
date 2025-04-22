@@ -1,10 +1,22 @@
+import { CtaAttributes } from "../interfaces/CtaAttributes";
+import { InfoType } from "../interfaces/InfoType";
+import { Tile } from "../interfaces/Tile";
 import { baseURL } from "../services/ToolBoxService";
-import { contentColumnDefaultAttributes, contentDefaultAttributes, DefaultAttributes } from "../utils/default-attributes";
+import { InfoSectionUI } from "../ui/views/InfoSectionUI";
+import {
+  contentColumnDefaultAttributes,
+  contentDefaultAttributes,
+  DefaultAttributes,
+} from "../utils/default-attributes";
 import { randomIdGenerator } from "../utils/helpers";
+import { InfoContentMapper } from "./editor/InfoContentMapper";
 
 export class InfoSectionController {
   editor: any;
+  infoSectionUI: InfoSectionUI;
+
   constructor() {
+    this.infoSectionUI = new InfoSectionUI();
     this.editor = (globalThis as any).activeEditor;
   }
 
@@ -22,10 +34,10 @@ export class InfoSectionController {
           onCloseCallback();
         }
       }
-      const infoMenuContainer = menuItem.parentElement?.parentElement as HTMLElement;
+      const infoMenuContainer = menuItem.parentElement
+        ?.parentElement as HTMLElement;
       infoMenuContainer.remove();
     });
-
     menuItem.id = item.id;
     return menuItem;
   }
@@ -33,120 +45,242 @@ export class InfoSectionController {
   addCtaButton(buttonHTML: string) {
     const ctaContainer = document.createElement("div");
     ctaContainer.innerHTML = buttonHTML;
-    
-    const ctaComponent = this.editor.DomComponents.addComponent({
-      type: 'default',
-      tagName: 'div',
-      classes: ['cta-button-container'],
-      content: ctaContainer.innerHTML
-    });
-    
-    this.appendComponent(ctaComponent);      
+    const ctaComponent = ctaContainer.firstElementChild as HTMLElement;
+
+    const append = this.appendComponent(buttonHTML);
+    if (append) {
+      const infoType: InfoType = {
+        InfoId: ctaComponent.id,
+        InfoType: "Cta",
+        CtaAttributes: {
+          CtaId: randomIdGenerator(15),
+          CtaType: "Phone",
+          CtaLabel: "Call Us",
+          CtaAction: "",
+          CtaColor: "#ffffff",
+          CtaBGColor: "CtaColorOne",
+          CtaButtonType: "Image",
+          CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+        },
+      };
+
+      this.addToMapper(infoType);
+    }
   }
 
   addImage() {
-    const imgContainer = this.getImage();
-    
-    const imgComponent = this.editor.DomComponents.addComponent({
-      type: 'default',
-      tagName: 'div',
-      classes: ['content-page-wrapper'],
-      content: imgContainer
-    });
+    const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
+    const imgContainer = this.infoSectionUI.getImage(imgUrl);
+    const imageContainer = document.createElement("div");
+    imageContainer.innerHTML = imgContainer;
+    const imageComponent = imageContainer.firstElementChild as HTMLElement;
 
-    this.appendComponent(imgComponent);
+    const append = this.appendComponent(imgContainer);
+    if (append) {
+      const infoType: InfoType = {
+        InfoId: imageComponent.id,
+        InfoType: "Image",
+        InfoValue: "Resources/UCGrapes1/toolbox/public/images/default.jpg",
+      };
+
+      this.addToMapper(infoType);
+    }
   }
 
   addDescription(description: string) {
-    const descContainer = this.getDescription(description);
-    
-    const descComponent = this.editor.DomComponents.addComponent({
-      type: 'default',
-      tagName: 'div',
-      classes: ['description-container'],
-      content: descContainer
-    });
+    const descContainer = this.infoSectionUI.getDescription(description);
+    const descTempContainer = document.createElement("div");
+    descTempContainer.innerHTML = descContainer;
+    const descTempComponent = descTempContainer.firstElementChild as HTMLElement;
 
-    this.appendComponent(descComponent);
+    const append = this.appendComponent(descContainer);
+    if (append) {
+      const infoType: InfoType = {
+        InfoId: descTempComponent.id,
+        InfoType: "Description",
+        InfoValue: description,
+      };
+
+      this.addToMapper(infoType);
+    }
   }
 
-  appendComponent(component: any) {
-    const containerColumn = this.editor.getWrapper().find('.container-column')[0];
-    
+  addTile(tileHTML: string) {
+    const tileWrapper = document.createElement("div");
+    tileWrapper.innerHTML = tileHTML;
+    const tileWrapperComponent = tileWrapper.firstElementChild as HTMLElement;
+    const tileId = tileWrapperComponent.querySelector(".template-wrapper")?.id
+
+    const append = this.appendComponent(tileHTML);
+    if (append) {
+      const infoType: InfoType = {
+        InfoId: tileWrapperComponent.id,
+        InfoType: "TileRow",
+        Tiles: [
+          {
+            Id: tileId || randomIdGenerator(15),
+            Name: "Title",
+            Text: "Title",
+            Color: "#333333",
+            Align: "left",
+          },
+        ],
+      };
+      this.addToMapper(infoType);
+    }
+  }
+
+  updateDescription(updatedDescription: string, infoId: string) {
+    const descContainer = this.infoSectionUI.getDescription(updatedDescription);
+    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    if (component) {
+      component.replaceWith(descContainer);
+      this.updateInfoMapper(infoId, {
+        InfoId: infoId,
+        InfoType: "Description",
+        InfoValue: updatedDescription,
+      });
+    }
+  }
+
+  updateInfoImage(imageUrl: string, infoId?: string) {
+    const imgContainer = this.infoSectionUI.getImage(imageUrl);
+    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    if (component) {
+      component.replaceWith(imgContainer);
+      this.updateInfoMapper(infoId || "", {
+        InfoId: infoId || randomIdGenerator(15),
+        InfoType: "Image",
+        InfoValue: imageUrl,
+      });
+    }
+  }
+
+  updateInfoCtaButtonImage(imageUrl: string, infoId?: string) {
+    const ctaEditor = this.editor.getWrapper().find(`#${infoId}`)[0];
+    if (ctaEditor) {
+      const img = ctaEditor.find("img")[0];
+      if (img) {
+        img.setAttributes({ src: imageUrl });
+        const infoType: InfoType = {
+          InfoId: infoId || randomIdGenerator(15),
+          InfoType: "Cta",
+          CtaAttributes: {
+            CtaId: randomIdGenerator(15),
+            CtaType: "Phone",
+            CtaLabel: "Phone",
+            CtaAction: "",
+            CtaColor: "#ffffff",
+            CtaBGColor: "CtaColorOne",
+            CtaButtonType: "Image",
+            CtaButtonImgUrl: imageUrl,
+          },
+        };
+        this.updateInfoMapper(infoId || "", infoType);
+      }
+    }
+  }
+
+  deleteInfoImageOrDesc(infoId: string) {
+    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    if (component) {
+      component.remove();
+      this.removeInfoMapper(infoId);
+    }
+  }
+
+  deleteCtaButton(infoId: string) {
+    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    if (component) {
+      component.remove();
+      this.removeInfoMapper(infoId);
+    }
+  }
+
+  appendComponent(componentDiv: any) {
+    const containerColumn = this.editor
+      .getWrapper()
+      .find(".container-column-info")[0];
+
     if (containerColumn) {
-      const position = containerColumn.components().length - 1;
-      containerColumn.append(component, { at: position >= 0 ? position : 0 });
-    } else {
-        this.editor.getWrapper().append(component);
+      const component = this.editor.addComponents(componentDiv);
+      const position = containerColumn.components().length + 1;
+      containerColumn.append(component, { at: position });
+
+      return true;
+    }
+
+    return false;
+  }
+
+  private addToMapper(infoType: InfoType) {
+    const pageId = (globalThis as any).currentPageId;
+    const infoMapper = new InfoContentMapper(pageId);
+    infoMapper.addInfoType(infoType);
+  }
+
+  updateInfoCtaAttributes(infoId: string, attribute: string, value: any) {
+    const infoType: InfoType = (globalThis as any).infoContentMapper.getInfoContent(
+      infoId
+    );
+
+    if (infoType) {
+      const ctaAttributes = infoType.CtaAttributes;
+      if (ctaAttributes) {
+        this.setNestedProperty(ctaAttributes, attribute, value);
+        this.updateInfoMapper(infoId, infoType);
+      }
     }
   }
 
-  getDescription(description: string) {
-      return `
-      <div
-              style="flex: 1; padding: 0; margin: 0; height: auto; white-space: normal;"
-              class="content-page-block"
-              ${contentDefaultAttributes} 
-              id="${randomIdGenerator(15)}"
-              data-gjs-type="product-service-description"
-          >
-            <button ${DefaultAttributes} class="tb-edit-content-icon">
-              <svg ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path ${DefaultAttributes} fill-rule="evenodd" clip-rule="evenodd" d="M18.4324 4C18.2266 4 18.0227 4.04055 17.8325 4.11933C17.6423 4.19811 17.4695 4.31358 17.3239 4.45914L5.25659 16.5265L4.42524 19.5748L7.47353 18.7434L19.5409 6.67608C19.6864 6.53051 19.8019 6.3577 19.8807 6.16751C19.9595 5.97732 20 5.77348 20 5.56761C20 5.36175 19.9595 5.1579 19.8807 4.96771C19.8019 4.77752 19.6864 4.60471 19.5409 4.45914C19.3953 4.31358 19.2225 4.19811 19.0323 4.11933C18.8421 4.04055 18.6383 4 18.4324 4ZM17.0671 2.27157C17.5 2.09228 17.9639 2 18.4324 2C18.9009 2 19.3648 2.09228 19.7977 2.27157C20.2305 2.45086 20.6238 2.71365 20.9551 3.04493C21.2864 3.37621 21.5492 3.7695 21.7285 4.20235C21.9077 4.63519 22 5.09911 22 5.56761C22 6.03611 21.9077 6.50003 21.7285 6.93288C21.5492 7.36572 21.2864 7.75901 20.9551 8.09029L8.69996 20.3454C8.57691 20.4685 8.42387 20.5573 8.25597 20.6031L3.26314 21.9648C2.91693 22.0592 2.54667 21.9609 2.29292 21.7071C2.03917 21.4534 1.94084 21.0831 2.03526 20.7369L3.39694 15.7441C3.44273 15.5762 3.53154 15.4231 3.6546 15.3001L15.9097 3.04493C16.241 2.71365 16.6343 2.45086 17.0671 2.27157Z" fill="#5068a8"/>
-              </svg>
-            </button>
-            ${this.addGrapesAttributes(`<div ${DefaultAttributes} id="contentDescription">${description}</div>`)}      
-          </div>
-      `
+  updateInfoTileAttributes(
+    infoId: string,
+    tileId: string,
+    attributePath: string, // accepts dot notation
+    value: any
+  ) {
+    const tileInfoSectionAttributes: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(infoId);
+
+    if (tileInfoSectionAttributes) {
+      const tile = tileInfoSectionAttributes.Tiles?.find(
+        (tile) => tile.Id === tileId
+      );
+      if (tile) {
+        this.setNestedProperty(tile, attributePath, value);
+      }
+
+      this.updateInfoMapper(infoId, tileInfoSectionAttributes);
+    }
   }
 
-  getImage() {
-    return `
-    <div ${contentDefaultAttributes} class="content-image" id="${randomIdGenerator(15)}" data-gjs-type="product-service-image">
-          <button ${DefaultAttributes} data-gjs-type="default" class="tb-edit-image-icon" style="right: 20px">
-            <svg ${DefaultAttributes} data-gjs-type="svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path ${DefaultAttributes} data-gjs-type="svg-in" fill-rule="evenodd" clip-rule="evenodd" d="M18.4324 4C18.2266 4 18.0227 4.04055 17.8325 4.11933C17.6423 4.19811 17.4695 4.31358 17.3239 4.45914L5.25659 16.5265L4.42524 19.5748L7.47353 18.7434L19.5409 6.67608C19.6864 6.53051 19.8019 6.3577 19.8807 6.16751C19.9595 5.97732 20 5.77348 20 5.56761C20 5.36175 19.9595 5.1579 19.8807 4.96771C19.8019 4.77752 19.6864 4.60471 19.5409 4.45914C19.3953 4.31358 19.2225 4.19811 19.0323 4.11933C18.8421 4.04055 18.6383 4 18.4324 4ZM17.0671 2.27157C17.5 2.09228 17.9639 2 18.4324 2C18.9009 2 19.3648 2.09228 19.7977 2.27157C20.2305 2.45086 20.6238 2.71365 20.9551 3.04493C21.2864 3.37621 21.5492 3.7695 21.7285 4.20235C21.9077 4.63519 22 5.09911 22 5.56761C22 6.03611 21.9077 6.50003 21.7285 6.93288C21.5492 7.36572 21.2864 7.75901 20.9551 8.09029L8.69996 20.3454C8.57691 20.4685 8.42387 20.5573 8.25597 20.6031L3.26314 21.9648C2.91693 22.0592 2.54667 21.9609 2.29292 21.7071C2.03917 21.4534 1.94084 21.0831 2.03526 20.7369L3.39694 15.7441C3.44273 15.5762 3.53154 15.4231 3.6546 15.3001L15.9097 3.04493C16.241 2.71365 16.6343 2.45086 17.0671 2.27157Z" fill="#5068a8"></path>
-            </svg>
-          </button>
-        <button ${DefaultAttributes} class="tb-delete-image-icon" style="right: -10px">
-            <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <title ${DefaultAttributes}>delete</title>
-                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
-                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
-                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
-                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
-                <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
-            </svg>
-        </button>
-        <img
-            id="product-service-image"
-            ${DefaultAttributes}
-            src="${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg"
-            data-gjs-type="default"
-            alt="Full-width Image"
-        />
-      </div>
-    `;
-  }
+  setNestedProperty(obj: any, path: string, value: any) {
+    const keys = path.split(".");
+    let current = obj;
 
-  addGrapesAttributes(descContainerHtml: string) {
-    const descContainer = document.createElement("div");
-    if (typeof descContainerHtml === "string") {
-      descContainer.innerHTML = descContainerHtml;
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+
+      if (!(key in current)) {
+        current[key] = {}; // create if not exists
+      }
+
+      current = current[key];
     }
 
-    const allElements = descContainer.querySelectorAll("*");
-    allElements.forEach((element) => {
-      element.setAttribute("data-gjs-draggable", "false");
-      element.setAttribute("data-gjs-selectable", "false");
-      element.setAttribute("data-gjs-editable", "false");
-      element.setAttribute("data-gjs-highlightable", "false");
-      element.setAttribute("data-gjs-droppable", "false");
-      element.setAttribute("data-gjs-resizable", "false");
-      element.setAttribute("data-gjs-hoverable", "false");
-    });
-
-    return descContainer.innerHTML;
+    current[keys[keys.length - 1]] = value;
   }
-  
+
+  updateInfoMapper(infoId: string, infoType: InfoType) {
+    const pageId = (globalThis as any).currentPageId;
+    const infoMapper = new InfoContentMapper(pageId);
+    infoMapper.updateInfoContent(infoId, infoType);
+  }
+
+  private removeInfoMapper(infoId: string) {
+    const pageId = (globalThis as any).currentPageId;
+    const infoMapper = new InfoContentMapper(pageId);
+    infoMapper.removeInfoContent(infoId);
+  }
 }

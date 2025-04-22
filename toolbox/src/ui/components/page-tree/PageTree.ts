@@ -18,6 +18,7 @@ type D3Node = {
     structure: string;
     thumbnail: string;
     parentId: string | null;
+    children: string[];
     x: Number,
     y: Number
 };
@@ -122,6 +123,7 @@ export class PageTree {
                 structure: page.structure,
                 thumbnail: page.thumbnail,
                 parentId: null,
+                children: page.children,
                 x: page.x,
                 y: page.y
             };
@@ -138,7 +140,8 @@ export class PageTree {
         });
       
         // Final D3 format
-        const nodes = Object.values(idToNode);
+        const nodes = Object.values(idToNode).filter((node) => node.parentId || node.children.length > 0);
+        console.log('nodes: ', nodes)
         return { nodes, links };
       }
 
@@ -235,7 +238,7 @@ export class PageTree {
         .attr("y", -20)
         .attr("x", -50)
         .html((d:any)=>`
-        <div xmlns="http://www.w3.org/1999/xhtml">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%;">
             ${d.structure }
         </div>
         `);
@@ -585,8 +588,7 @@ export class PageTree {
 
         let yCounter = -500;
 
-        function setPosition(nodeId:string, depth:number, offsetX?:number) {
-            console.log('    depth', depth)    
+        function setPosition(nodeId:string, depth:number) {   
             const node = nodeMap.get(nodeId);
             node.x = -1000 + (depth * 400);
             node.y = yCounter;
@@ -594,13 +596,13 @@ export class PageTree {
 
             node.children.forEach((childId:string, index:number) => {
                 yCounter = node.y + (100 * index)
-                setPosition(childId, depth + 1, 100);
+                setPosition(childId, depth + 1);
             });
         }
 
         roots.forEach((root) => {
             console.log(root.title)
-            setPosition(root.id, 0, 400)
+            setPosition(root.id, 0)
         });
 
         return Array.from(nodeMap.values());

@@ -1,13 +1,16 @@
 import { ContentMapper } from "../../../../controls/editor/ContentMapper";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 
 export class ActionInput {
     input: HTMLInputElement;
     value: string;
     ctaAttributes: any;
+    pageData: any;
 
     constructor(value: string, ctaAttributes: any) {
       this.value = value;
       this.ctaAttributes = ctaAttributes;
+      this.pageData = (globalThis as any).pageData;
       this.input = document.createElement("input");
       this.init();
     }
@@ -40,8 +43,13 @@ export class ActionInput {
   
         const ctaButtonComponent = ctaButton.parent();
         const currentPageId = (globalThis as any).currentPageId;
-        const contentMapper = new ContentMapper(currentPageId);
-        contentMapper.updateContentCtaLabel(ctaButtonComponent.getId(), this.input.value.trim());
+        if (this.pageData.PageType === "Information") {
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoCtaAttributes(selectedComponent.getId(), 'CtaLabel', this.input.value.trim());                
+        } else {
+          const contentMapper = new ContentMapper(currentPageId);
+          contentMapper.updateContentCtaLabel(ctaButtonComponent.getId(), this.input.value.trim());
+        }         
       });
     }
   

@@ -1,3 +1,4 @@
+import { InfoSectionController } from "../InfoSectionController";
 import { TileMapper } from "./TileMapper";
 
 export class TileUpdate {
@@ -9,7 +10,6 @@ export class TileUpdate {
     }
 
     updateTile(rowComponent: any, isDragging: boolean = false) {
-        console.log("updateTile")
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
         const length = tiles.length;
@@ -36,6 +36,8 @@ export class TileUpdate {
                 this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
             }
         });
+
+        this.removeEmptyRows();
       }
 
       private updateTileHeight(tile: any, length: number) {
@@ -94,7 +96,30 @@ export class TileUpdate {
         if (value === "start") {
             align = "left"
         }
-        tileAttributes.updateTile(tileId, attribute, align)
+
+        const pageData = (globalThis as any).pageData;
+        
+        if (pageData.PageType === "Information") {
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.updateInfoTileAttributes(
+            this.rowComponent.getId(),
+            tileId,
+            "Align",
+            align
+        );
+        } else {
+            tileAttributes.updateTile(tileId, attribute, align)
+        }        
+    }
+
+    removeEmptyRows() {
+        const container = this.rowComponent.parent();
+        const rows = container.components();
+        rows.forEach((row: any) => {
+            if (row?.components()?.length === 0) {
+                row?.remove();
+            }
+        });
     }
     
 }

@@ -223,7 +223,7 @@ export class PageTreeRenderer {
       container.appendChild(header)
       const body = document.createElement("div")
       body.innerHTML = `
-      <iframe src="${url}" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      <iframe src="${url}" style="pointer-events: none;" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
       `
       container.appendChild(body)
       return  container.outerHTML

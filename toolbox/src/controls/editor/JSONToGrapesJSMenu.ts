@@ -1,6 +1,7 @@
 import {
   DefaultAttributes,
   firstTileWrapperDefaultAttributes,
+  infoRowDefaultAttributes,
   rowDefaultAttributes,
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
@@ -9,6 +10,7 @@ import {
   ThemeManager
 } from "../themes/ThemeManager";
 import { i18n } from "../../i18n/i18n";
+import { InfoType } from "../../interfaces/InfoType";
 
 export class JSONToGrapesJSMenu {
   private data: any;
@@ -23,7 +25,8 @@ export class JSONToGrapesJSMenu {
   private generateTile(
       tile: any,
       isFirstSingleTile: boolean,
-      isThreeTiles: boolean
+      isThreeTiles: boolean,
+      isInfoPage?: boolean
   ): string {
       return `
       <div ${
@@ -35,7 +38,7 @@ export class JSONToGrapesJSMenu {
               isFirstSingleTile ? " first-tile high-priority-template" : ""
           }" 
           style="color: ${
-        tile.Color
+        tile.Color ? tile.Color : "#333333"
       }; text-align: ${tile.Align};
         ${
           isThreeTiles ? "align-items: center; justify-content: center;" 
@@ -77,8 +80,8 @@ export class JSONToGrapesJSMenu {
           : `
         <button ${DefaultAttributes} title="${i18n.t("tile.delete_tile")}" class="action-button delete-button">−</button>`
       }
-      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_right")}" class="action-button add-button-right">+</button>
-      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_bottom")}" class="action-button add-button-bottom">+</button>
+      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_right")}" ${(isThreeTiles && isInfoPage) ? `style="display: none;"` : ""} class="action-button add-button-right">+</button>
+      ${isInfoPage ? "" : `<button ${DefaultAttributes} title="${i18n.t("tile.add_template_bottom")}" class="action-button add-button-bottom">+</button>`}
       <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
         <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
           <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
@@ -158,6 +161,15 @@ export class JSONToGrapesJSMenu {
           this.generateTile(tile, isFirstSingleTile && index === 0, isThreeTiles)
       ).join("");
       return `<div id="${row.Id}" ${rowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
+  }
+
+  public generateInfoRow(infoTilesRow: InfoType): string {
+      const isFirstSingleTile = false;
+      const isThreeTiles = infoTilesRow?.Tiles?.length === 3;
+      const tilesHTML = infoTilesRow?.Tiles?.map((tile: any) =>
+          this.generateTile(tile, isFirstSingleTile, isThreeTiles, true)
+      ).join("");
+      return infoTilesRow?.Tiles?.length === 0 ? `` :`<div id="${infoTilesRow.InfoId}" ${infoRowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
   }
 
   public generateHTML(): any {

@@ -86,10 +86,9 @@ export class ToolboxManager {
   }
 
   async savePages(publish = false) {
-    console.log('auto saving...')
     try {
       const lastSavedStates = new Map<string, string>();
-      const activeVersion = await this.appVersions.getActiveVersion();
+      const activeVersion = await this.appVersions.getUpdatedActiveVersion();
       const pages = activeVersion.Pages;
       
       await Promise.all(pages.map(async (page: any) => {
@@ -109,8 +108,11 @@ export class ToolboxManager {
           page.PageType === "Content" ||
           page.PageType === "Location" ||
           page.PageType === "Reception"
-        )
+        ) {
           localStructureProperty = "PageContentStructure";
+        } else if (page.PageType === "Information") {
+          localStructureProperty = "PageInfoStructure";
+        }
       
         if (!localStructureProperty || !pageData[localStructureProperty]) return;
       
@@ -136,6 +138,8 @@ export class ToolboxManager {
           };
       
           try {
+            // console.log(`Saving page: ${page.PageName}`);
+            // console.log('Data: ', JSON.stringify(pageInfo, null, 2));
             await this.toolboxService.autoSavePage(pageInfo);
             lastSavedStates.set(pageId, localStructureString);
             // if (!publish) this.openToastMessage();

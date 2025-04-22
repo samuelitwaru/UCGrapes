@@ -8,11 +8,13 @@ export class CtaButtonProperties {
     ctaAttributes: any;
     selectedComponent: any;
     themeManager: any;
+    pageData: any;
 
     constructor(selectedComponent: any, ctaAttributes: any) {
         this.selectedComponent = selectedComponent;
         this.ctaAttributes = ctaAttributes;
         this.themeManager = new ThemeManager();
+        this.pageData = (globalThis as any).pageData;
     }
 
     public setctaAttributes() {
@@ -38,13 +40,13 @@ export class CtaButtonProperties {
 
     private displayButtonLayouts() {
         const buttonLayoutContainer = document?.querySelector(".cta-button-layout-container") as HTMLElement;
-        if (this.selectedComponent.parent().getClasses().includes("cta-button-container")) {
-            if (buttonLayoutContainer) {
-                buttonLayoutContainer.style.display = "flex";
-            }
-        } else {
-            if (buttonLayoutContainer) buttonLayoutContainer.style.display = "none";
-        }
+        if (!buttonLayoutContainer) return;
+        
+        const shouldDisplay = this.pageData.PageType === "Information" 
+            ? this.selectedComponent.is('info-cta-section')
+            : this.selectedComponent.parent().getClasses().includes("cta-button-container");
+        
+        buttonLayoutContainer.style.display = shouldDisplay ? "flex" : "none";
     }
 
     private selectedButtonLayout() {
@@ -66,9 +68,10 @@ export class CtaButtonProperties {
     }
 
     private ctaColorAttributes() {        
+        console.log("ctaAttributes", this.ctaAttributes);
         const contentSection = document.querySelector("#content-page-section");
         const colorItems = contentSection?.querySelectorAll(".color-item > input");
-        let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes.CtaBGColor);
+        let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes?.CtaBGColor);
 
         colorItems?.forEach((input: any) => {
             if (input.value === ctaColorAttribute) {
@@ -79,7 +82,7 @@ export class CtaButtonProperties {
     
     private ctaActionDisplay () {
         const contentSection = document.querySelector("#content-page-section");
-        const value = this.ctaAttributes.CtaLabel;
+        const value = this.ctaAttributes?.CtaLabel;
         const actionInput = new ActionInput(value, this.ctaAttributes);
         actionInput.render(contentSection as HTMLElement);
     }
@@ -89,7 +92,7 @@ export class CtaButtonProperties {
         const labelColor = new TextColor("cta");
         labelColor.render(contentSection as HTMLElement);
 
-        const color = this.ctaAttributes.CtaColor;
+        const color = this.ctaAttributes?.CtaColor;
 
         const ctaColorSection = contentSection?.querySelector("#text-color-palette");
         const ctaColorsOptions = ctaColorSection?.querySelectorAll("input");

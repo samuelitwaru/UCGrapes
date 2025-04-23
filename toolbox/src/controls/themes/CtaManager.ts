@@ -1,4 +1,5 @@
 import { CallToAction } from "../../interfaces/CallToAction";
+import { CtaAttributes } from "../../interfaces/CtaAttributes";
 import { InfoType } from "../../interfaces/InfoType";
 import { ThemeCtaColor } from "../../models/Theme";
 import { ctaTileDEfaultAttributes, DefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
@@ -293,6 +294,13 @@ export class CtaManager {
                     style="background-color: ${bgColor}">
                     <span ${DefaultAttributes} class="img-button-icon">
                         ${ctaSVG} 
+                        <svg class="icon-edit-button" title="Change icon" ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="20" height="20" viewBox="0 0 33 33">
+                            <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                                <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                                <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                            </g>
+                            <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                        </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>
@@ -370,5 +378,49 @@ export class CtaManager {
                 </div>
             </div>
         `;
+    }
+
+    public changeCtaButtonIcon(icon: any, ctaId: string, ctaAttributes: CtaAttributes): void {
+        if (ctaAttributes && ctaId) {
+            if (this.isInformationPage()) {
+                const selectedComponent = this.getSelectedComponent();
+                if (selectedComponent) {
+                    const iconComponent = selectedComponent.find(".img-button-icon")[0];
+                    if (iconComponent) {
+                        const tempElement = document.createElement('div');
+                        tempElement.innerHTML = icon.svg;
+                        const newSvgElement = tempElement.querySelector('svg');
+                        
+                        if (newSvgElement) {
+                            newSvgElement.setAttribute('height', '32');
+                            newSvgElement.setAttribute('width', '32');
+                            
+                            const pathElements = newSvgElement.querySelectorAll('path');
+                            pathElements.forEach(path => {
+                                path.setAttribute('fill',  ctaAttributes?.CtaColor || '#fff');
+                            });
+                            
+                            const updatedSvg = tempElement.innerHTML;
+                            
+                            const svgComponent = iconComponent.find("svg")[0];
+                            if (svgComponent) {
+                                svgComponent.replaceWith(updatedSvg);
+                            }
+                            this.updateCtaIconMapper(ctaId, icon);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private updateCtaIconMapper(ctaId: string, icon: any): void {
+        if (this.isInformationPage()) {
+            const selectedComponent = this.getSelectedComponent();
+            if (selectedComponent) {
+                const infoSectionController = new InfoSectionController();
+                infoSectionController.updateInfoCtaAttributes(ctaId, 'CtaButtonIcon', icon.name);
+            }
+        }
     }
 }

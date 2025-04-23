@@ -4,6 +4,7 @@ import { ContentDataManager } from "./ContentDataManager";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { ConfirmationBox } from "../../ui/components/ConfirmationBox";
 import { InfoSectionController } from "../InfoSectionController";
+import { CtaIconsListPopup } from "../../ui/views/CtaIconsListPopup";
 
 export class ContentDataUi {
     e: any;
@@ -26,6 +27,7 @@ export class ContentDataUi {
         this.openImageEditModal();
         this.openDeleteModal();
         this.updateCtaButtonImage();
+        this.updateCtaButtonIcon();
     }
 
     private openContentEditModal() {
@@ -160,6 +162,35 @@ export class ContentDataUi {
     
             document.body.appendChild(modal);
             document.body.appendChild(uploadInput);
+        }
+    }
+
+    private updateCtaButtonIcon () {
+        const ctaIconEditButton = (this.e.target as Element).closest('.icon-edit-button');
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (ctaIconEditButton && selectedComponent && selectedComponent.getClasses().includes("img-button-container")) {
+            this.e.preventDefault();
+            this.e.stopPropagation();
+            const editButton = ctaIconEditButton.closest(".icon-edit-button") as HTMLElement;
+            const templateContainer = editButton.closest(
+            "[data-gjs-type='info-cta-section']"
+            ) as HTMLElement;
+        
+            // Get the mobileFrame for positioning context
+            const mobileFrame = document.getElementById(
+            `${(globalThis as any).frameId}-frame`
+            ) as HTMLElement;
+            const iframe = mobileFrame?.querySelector(
+            "iframe"
+            ) as HTMLIFrameElement;
+            const iframeRect = iframe?.getBoundingClientRect();
+    
+            // Pass the mobileFrame to the ActionListPopUp constructor
+            const list = new CtaIconsListPopup(templateContainer, mobileFrame);
+    
+            const triggerRect = editButton.getBoundingClientRect();
+    
+            list.render();
         }
     }
 

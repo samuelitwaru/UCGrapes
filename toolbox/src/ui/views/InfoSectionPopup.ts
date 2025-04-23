@@ -119,60 +119,63 @@ export class InfoSectionPopup {
 
   private displayMenu(triggerRect: DOMRect, iframeRect?: DOMRect) {
     const parentRect = this.parentContainer.getBoundingClientRect();
-
+  
     if (!iframeRect) {
       return;
     }
-
+  
     this.menuContainer.style.position = "absolute";
     this.menuContainer.style.left = "-9999px";
     this.menuContainer.style.top = "-9999px";
     this.menuContainer.style.opacity = "0";
     this.menuContainer.style.visibility = "visible";
     this.parentContainer.appendChild(this.menuContainer);
-
+  
     void this.menuContainer.offsetHeight;
-
+  
     const popupRect = this.menuContainer.getBoundingClientRect();
-
+  
     const relTriggerLeft = 0.28 * iframeRect.width;
     const relTriggerTop =
       iframeRect.top - parentRect.top + triggerRect.top - 15;
     const relTriggerRight = relTriggerLeft + triggerRect.width;
     const relTriggerBottom = relTriggerTop + triggerRect.height;
-
+  
     const containerWidth = parentRect.width;
     const containerHeight = parentRect.height;
-
+  
     this.menuContainer.style.left = "";
     this.menuContainer.style.top = "";
     this.menuContainer.style.right = "";
     this.menuContainer.style.bottom = "";
     this.menuContainer.style.width = "max-content";
-
+  
     const spaceBelow = containerHeight - relTriggerBottom;
     const spaceAbove = relTriggerTop;
-
+  
     const effectiveMenuHeight = popupRect.height > 0 ? popupRect.height : 200;
-
-    // if (spaceBelow >= effectiveMenuHeight + 10) {
-    //   console.log()
-    //   this.menuContainer.style.top = `${relTriggerBottom - 10}px`;
-    // } else
-    if (spaceAbove >= effectiveMenuHeight + 10) {
+  
+    // First priority: show at the bottom if there's enough space
+    if (spaceBelow >= effectiveMenuHeight + 10) {
+      this.menuContainer.style.top = `${relTriggerBottom + 20}px`;
+    } 
+    // Second priority: show at the top if there's enough space
+    else if (spaceAbove >= effectiveMenuHeight + 10) {
       this.menuContainer.style.top = `${
         relTriggerTop - effectiveMenuHeight - 0
       }px`;
-    } else {
+    } 
+    // Last resort: show at the top with scroll if needed
+    else {
       this.menuContainer.style.top = "10px";
       if (effectiveMenuHeight > containerHeight - 20) {
         this.menuContainer.style.maxHeight = `${containerHeight - 20}px`;
         this.menuContainer.style.overflowY = "auto";
       }
     }
-
+  
     this.menuContainer.style.left = `calc(50% - ${this.menuContainer.clientWidth / 2}px)`;
-
+  
     this.menuContainer.style.visibility = "visible";
     this.menuContainer.style.opacity = "1";
   }

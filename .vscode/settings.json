@@ -1,3 +1,4 @@
 {
-    "autoHide.autoHidePanel": false
+  "autoHide.autoHidePanel": false,
+  "liveServer.settings.port": 5501
 }

@@ -218,4 +218,28 @@ export class EditorEvents {
     }
     this.uiManager.removeOtherEditors();
   }
+
+  reAlignEditor(editorDiv: HTMLDivElement) {
+    // const childContainer = document.getElementById("child-container") as HTMLDivElement;
+  
+    //   if (childContainer && editorDiv) {
+    //     const editorFrames = Array.from(childContainer.children);
+    //     const isFirstItem = editorFrames[0] === editorDiv;
+    //     const isLastItem = editorFrames[editorFrames.length - 1] === editorDiv;
+  
+    //     if (isFirstItem) {
+    //       childContainer.scrollLeft = 0;
+    //       if (childContainer.children.length > 2) {
+    //         childContainer.style.justifyContent = "start"
+    //       }
+    //     } else if (isLastItem) {
+    //       childContainer.scrollLeft = childContainer.scrollWidth - childContainer.clientWidth;
+    //     } else {
+    //       const editorDivLeft = editorDiv.offsetLeft;
+    //       const editorDivWidth = editorDiv.offsetWidth;
+    //       const targetScrollPosition = editorDivLeft - (childContainer.offsetWidth / 2) + (editorDivWidth / 2);
+    //       childContainer.scrollLeft = targetScrollPosition;
+    //     }
+    //   }
+  }
 }

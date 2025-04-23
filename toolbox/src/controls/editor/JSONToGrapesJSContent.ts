@@ -91,6 +91,13 @@ export class JSONToGrapesJSContent {
                     style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <span ${DefaultAttributes} class="img-button-icon">
                       ${this.ctaIcon(cta)}
+                      <svg class="icon-edit-button" title="Change icon" ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="20" height="20" viewBox="0 0 33 33">
+                        <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                          <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                          <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                        </g>
+                        <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                      </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>

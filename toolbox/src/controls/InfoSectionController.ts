@@ -223,7 +223,6 @@ export class InfoSectionController {
     const infoType: InfoType = (globalThis as any).infoContentMapper.getInfoContent(
       infoId
     );
-
     if (infoType) {
       const ctaAttributes = infoType.CtaAttributes;
       if (ctaAttributes) {

@@ -32,21 +32,6 @@ export class ActionListController {
     const secondCategory: MenuItem[] = [];
 
     // Only add Services if the page type matches
-    if (
-      activePage &&
-      (activePage.PageType === "MyCare" ||
-        activePage.PageType === "MyService" ||
-        activePage.PageType === "MyLiving")
-    ) {
-      secondCategory.push({
-        id: "list-services",
-        name: "Content",
-        label: "Services",
-        expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Content"),
-      });
-    }
-
     if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-form",
@@ -83,16 +68,7 @@ export class ActionListController {
           action: async () => {
             this.createNewInfoPage("Untitled");
           },
-        },
-        {
-          id: "add-content-page",
-          label: "Add content page",
-          name: "",
-          action: () => {
-            const config = AppConfig.getInstance();
-            config.addServiceButtonEvent();
-          },
-        },
+        }
       ],
       secondCategory,
       [

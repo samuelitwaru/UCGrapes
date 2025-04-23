@@ -1,6 +1,7 @@
 import { CallToAction } from "../../interfaces/CallToAction";
 import { InfoType } from "../../interfaces/InfoType";
 import { baseURL } from "../../services/ToolBoxService";
+import { ctaIcons } from "../../utils/cta-icons";
 import {
   contentColumnDefaultAttributes,
   contentDefaultAttributes,
@@ -112,6 +113,13 @@ export class JSONToGrapesJSInformation {
                     style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <span ${DefaultAttributes} class="img-button-icon">
                       ${this.ctaIcon(cta)}
+                      <svg class="icon-edit-button" title="Change icon" ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="20" height="20" viewBox="0 0 33 33">
+                        <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                          <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                          <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                        </g>
+                        <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                      </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>
@@ -168,6 +176,25 @@ export class JSONToGrapesJSInformation {
   }
   
   ctaIcon(cta: any) {
+    if (cta.CtaButtonIcon) {
+      const svg = ctaIcons.find(icon => icon.name === cta.CtaButtonIcon)?.svg;
+      const tempElement = document.createElement('div') as HTMLElement;
+      tempElement.innerHTML = svg || ``;
+      const newSvgElement = tempElement.querySelector('svg');
+      
+      if (newSvgElement) {
+          newSvgElement.setAttribute('height', '32');
+          newSvgElement.setAttribute('width', '32');
+          
+          const pathElements = newSvgElement.querySelectorAll('path');
+          pathElements.forEach(path => {
+              path.setAttribute('fill',  cta?.CtaColor || '#fff');
+          });
+          
+          const updatedSvg = this.addGrapesAttributes(tempElement.innerHTML);
+          return updatedSvg;
+      }
+    } else {
     let icon;
     switch (cta.CtaType) {
       case "Phone":
@@ -212,6 +239,8 @@ export class JSONToGrapesJSInformation {
     }
     
     return icon;
+    }
+    
   }
 
   private generateInfoContent(content: InfoType): any {
@@ -232,7 +261,6 @@ export class JSONToGrapesJSInformation {
       content.Tiles
     ) {
       const getTileHtml = new JSONToGrapesJSMenu(this.data).generateInfoRow(content);
-      console.log("getTileHtml", getTileHtml);
       return getTileHtml;
     } else {
       return "";
@@ -256,34 +284,32 @@ export class JSONToGrapesJSInformation {
                 <div ${DefaultInfoColumnAttributes} class="container-column-info">
                     ${
                         contentHtml ? contentHtml : ''
-                    } 
-                    ${
-                    ctaHtml
-                    ? `
-                    <div ${ctaContainerDefaultAttributes} class="cta-button-container-info">
-                        ${ctaHtml}
-                    </div>`
-                    : ``
-                    }  
-                </div>       
-                <div ${contentHtml ? '': `style="margin-top: 0"`} ${DefaultAttributes} class="add-new-info-section">
-                    <hr ${DefaultAttributes} class="add-new-info-hr" />
-                    <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_67_2" data-name="Component 67 – 2" width="30" height="30" viewBox="0 0 30 30">
-                    <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
-                      <g ${DefaultAttributes} id="Group_2307" data-name="Group 2307">
-                        <g ${DefaultAttributes} id="Ellipse_6" data-name="Ellipse 6" fill="#fdfdfd" stroke="#5068a8" stroke-width="1">
-                          <circle ${DefaultAttributes} cx="15" cy="15" r="15" stroke="none"/>
-                          <circle ${DefaultAttributes} cx="15" cy="15" r="14.5" fill="none"/>
-                        </g>
-                      </g>
-                    </g>
-                    <path ${DefaultAttributes} id="Icon_ionic-ios-add" data-name="Icon ionic-ios-add" d="M21.895,15H16.717V9.823a.858.858,0,1,0-1.717,0V15H9.823a.858.858,0,0,0,0,1.717H15v5.177a.858.858,0,1,0,1.717,0V16.717h5.177a.858.858,0,1,0,0-1.717Z" transform="translate(-0.692 -1.025)" fill="#5068a8"/>
-                  </svg>
-                </div>
+                    }
+                </div>  
+                ${this.addNewInfoSection()}
             </div>
         `;
 
     return htmlData;
+  }
+
+  private addNewInfoSection() {
+    return `
+    <div style="margin-top: 0" ${DefaultAttributes} class="add-new-info-section">
+          <hr ${DefaultAttributes} class="add-new-info-hr" />
+          <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_67_2" data-name="Component 67 – 2" width="30" height="30" viewBox="0 0 30 30">
+          <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
+            <g ${DefaultAttributes} id="Group_2307" data-name="Group 2307">
+              <g ${DefaultAttributes} id="Ellipse_6" data-name="Ellipse 6" fill="#fdfdfd" stroke="#5068a8" stroke-width="1">
+                <circle ${DefaultAttributes} cx="15" cy="15" r="15" stroke="none"/>
+                <circle ${DefaultAttributes} cx="15" cy="15" r="14.5" fill="none"/>
+              </g>
+            </g>
+          </g>
+          <path ${DefaultAttributes} id="Icon_ionic-ios-add" data-name="Icon ionic-ios-add" d="M21.895,15H16.717V9.823a.858.858,0,1,0-1.717,0V15H9.823a.858.858,0,0,0,0,1.717H15v5.177a.858.858,0,1,0,1.717,0V16.717h5.177a.858.858,0,1,0,0-1.717Z" transform="translate(-0.692 -1.025)" fill="#5068a8"/>
+        </svg>
+      </div>
+    `;
   }
 
   addGrapesAttributes(descContainerHtml: string) {

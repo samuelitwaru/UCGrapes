@@ -113,16 +113,76 @@ export class FormModalService {
 
   private appendSupplierSelection(formBody: HTMLDivElement, form: Form): void {
     const supplierItemsList = this.config.suppliers;
+    const itemsSelect = new SupplierSelectionComponent(supplierItemsList);
 
     const formSupplierField = document.createElement("div");
     formSupplierField.classList.add("form-field");
     formSupplierField.style.marginBottom = "10px";
 
+    // Create a flex container to hold label and checkbox
+    const labelContainer = document.createElement("div");
+    labelContainer.style.display = "flex";
+    labelContainer.style.justifyContent = "space-between";
+    labelContainer.style.alignItems = "center";
+
+    // Create the label text
     const label = document.createElement("label");
     label.innerText = "Connect Supplier (optional)";
-    formSupplierField.appendChild(label);
+    
+    labelContainer.appendChild(label);
 
-    const itemsSelect = new SupplierSelectionComponent(supplierItemsList);
+    // Check if there's a last connected supplier
+    const lastConnectedSupplier = this.findLastConnectedSupplier();
+    
+    // Only show clear selection if there's a previously connected supplier
+    if (lastConnectedSupplier) {
+      // Create the checkbox and its label
+      const clearLabel = document.createElement("label");
+      clearLabel.style.display = "flex";
+      clearLabel.style.alignItems = "center";
+      clearLabel.style.fontSize = "13px";
+      clearLabel.style.cursor = "pointer";
+      clearLabel.style.userSelect = "none";
+      clearLabel.style.gap = "22px";
+
+      const clearCheckbox = document.createElement("input");
+      clearCheckbox.style.marginBottom = "8px";
+      clearCheckbox.type = "checkbox";
+      
+      const clearText = document.createTextNode("Clear Selection");
+      
+      clearLabel.appendChild(clearCheckbox);
+      clearLabel.appendChild(clearText);
+      
+      // Add the clear checkbox label to the container
+      labelContainer.appendChild(clearLabel);
+      
+      // Set up toggle functionality
+      clearCheckbox.addEventListener("change", () => {
+        if (clearCheckbox.checked) {
+          itemsSelect.removeSelection();
+          const valueField = formBody.querySelector("#field_value") as HTMLInputElement;
+          if (valueField) {
+            valueField.value = "";
+            valueField.disabled = false;
+          }
+          form.setSelectedSupplierId("");
+        } else {
+          const supplierId = lastConnectedSupplier.CtaAttributes?.CtaConnectedSupplierId;
+          if (supplierId) {
+            itemsSelect.setValue(supplierId);
+            this.updateFieldWithSupplierData(
+              formBody,
+              supplierItemsList.find(item => item.SupplierGenId === supplierId),
+              form
+            );
+          }
+        }
+      });
+    }
+
+    formSupplierField.appendChild(labelContainer);
+
     const selectElement = itemsSelect.getElement();
     
     this.setupSupplierSelection(itemsSelect, formBody, form);
@@ -150,7 +210,6 @@ export class FormModalService {
       );
     }
 
-    // Setup onChange handler
     itemsSelect.onChange((selectedOption) => {
       this.updateFieldWithSupplierData(formBody, selectedOption, form);
     });

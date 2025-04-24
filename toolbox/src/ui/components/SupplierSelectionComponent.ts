@@ -54,20 +54,6 @@ import { SupplierList } from "../../interfaces/SupplierList";
       const optionsContainer = document.createElement('div');
       optionsContainer.className = 'options-container';
 
-      const removeSelected = document.createElement('div');
-      removeSelected.className = 'select-option';
-      removeSelected.textContent = 'Remove selected supplier';
-      removeSelected.dataset.value = 'remove';
-
-      removeSelected.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.removeSelection();
-        dropdown.classList.remove('show');
-        selectField.classList.remove('active');
-      });
-
-      optionsContainer.appendChild(removeSelected);
-      
       this.options.forEach(option => {
         const optionEl = document.createElement('div');
         optionEl.className = 'select-option';
@@ -179,7 +165,7 @@ import { SupplierList } from "../../interfaces/SupplierList";
       }
     }
 
-    private removeSelection(): void {
+    public removeSelection(): void {
         const popup = document.querySelector(".popup-modal-link") as HTMLDivElement;
         const valueField = popup?.querySelector("#field_value") as HTMLInputElement;
         if (valueField) {

@@ -525,6 +525,10 @@ span#scroll-right:hover {
   font-size: 14px;
 }
 
+.form-field #field_value, .form-field #field_label {
+  margin-top: 0;
+}
+
 .custom-selection {
   height: 35px;
   min-width: 200px;

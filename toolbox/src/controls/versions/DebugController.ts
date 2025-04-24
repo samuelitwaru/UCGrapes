@@ -1,4 +1,5 @@
 import { DebugResults } from "../../interfaces/DebugResults";
+import { Tile } from "../../interfaces/Tile";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { AppVersionManager } from "./AppVersionManager";
 import { DebugUIManager } from "./DebugUIManager";
@@ -58,29 +59,28 @@ export class DebugController {
             }
 
             // Process content items
-            const content = page.PageContentStructure?.Content;
+            const content = page.PageInfoStructure?.InfoContent;
             if (content) {
                 for (const item of content) {
-                    if (item.ContentType === "Image" && item.ContentValue) {
-                        urls.push({ url: item.ContentValue, affectedType: "Content", affectedName: item.ContentType || "Unnamed Content" });
-                    }
-                }
-            }
+                    if (item.InfoType === "Image" && item.InfoValue) {
+                        urls.push({ url: item.InfoValue, affectedType: "Content", affectedName: item.InfoType || "Unnamed Content" });
+                    } 
+                    if (item.InfoType === "Cta" && item.CtaAttributes) {
+                        urls.push({ url: item.CtaAttributes?.CtaButtonImgUrl, affectedType: "Cta", affectedName: item.InfoType || "Unnamed Cta" });
+                        if (item.CtaAttributes?.CtaType === "WebLink" || item.CtaAttributes?.CtaType === "Form") {
+                            urls.push({ url: item.CtaAttributes?.CtaAction, affectedType: "Cta", affectedName: item.InfoType || "Unnamed Cta" });                            
+                        }
+                    } 
+                    if (item.InfoType === "TileRow" && item.Tiles) {
+                        item.Tiles?.forEach((tile: Tile) => {
+                            if (tile.Action?.ObjectUrl) {
+                                urls.push({ url: tile.Action.ObjectUrl, affectedType: "Tile", affectedName: tile.Name || "Unnamed Tile" });
+                            }
 
-            // Process call-to-action (CTA) buttons
-            const ctas = page.PageContentStructure?.Cta;
-            if (ctas) {
-                for (const cta of ctas) {
-                    if (cta.CtaButtonImgUrl) {
-                        urls.push({ url: cta.CtaButtonImgUrl, affectedType: "Cta", affectedName: cta.CtaLabel || "Unnamed CTA" });
-                    }
-
-                    if (cta.CtaType == "WebLink" && cta.CtaAction) {
-                        urls.push({ url: cta.CtaAction, affectedType: "Cta", affectedName: cta.CtaLabel || "Unnamed CTA" });
-                    }
-
-                    if (cta.CtaType == "Form" && cta.CtaAction) {
-                        urls.push({ url: cta.CtaAction, affectedType: "Cta", affectedName: cta.CtaLabel || "Unnamed CTA" });
+                            if (tile.BGImageUrl) {
+                                urls.push({ url: tile.BGImageUrl, affectedType: "Tile", affectedName: tile.Name || "Unnamed Tile" });
+                            } 
+                        });
                     }
                 }
             }

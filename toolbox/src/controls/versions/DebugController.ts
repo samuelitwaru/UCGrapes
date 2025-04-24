@@ -75,7 +75,7 @@ export class DebugController {
                         urls.push({ url: cta.CtaButtonImgUrl, affectedType: "Cta", affectedName: cta.CtaLabel || "Unnamed CTA" });
                     }
 
-                    if (cta.CtaType == "SiteUrl" && cta.CtaAction) {
+                    if (cta.CtaType == "WebLink" && cta.CtaAction) {
                         urls.push({ url: cta.CtaAction, affectedType: "Cta", affectedName: cta.CtaLabel || "Unnamed CTA" });
                     }
 

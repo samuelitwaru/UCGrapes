@@ -265,7 +265,6 @@ export class CreateCTAComponent {
 
         const res = this.validateCta(data)
         if (res.isValid) {
-            console.log(payload)
             this.toolboxService.createServiceCTA(payload).then(res=>{
                 console.log(res)
             })

@@ -95,8 +95,6 @@ export class JSONToGrapesJSMenu {
   }
 
   private translateTileLabel(tile: any, tileTitle: string) {
-    console.log("tile", tile);
-    console.log("tile", tile.Action.ObjectType);
     const tileActionType = tile.Action.ObjectType;
     if (tileActionType === "Map") {
       return i18n.t("default.map");

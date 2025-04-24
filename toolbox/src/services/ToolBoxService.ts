@@ -7,7 +7,6 @@ import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 import { environment } from "../utils/env";
 
-
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");

@@ -107,7 +107,7 @@ export class CtaManager {
         const ctaButtonAttributes = this.getCtaButtonAttributes(selectedComponent);
         if (!ctaButtonAttributes) return;
 
-        const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes?.CtaType, ctaButtonAttributes);
+        const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes);
         if (!ctaSVG) return;
         const iconButton = this.createIconButtonHTML(selectedComponent.getId(), ctaButtonAttributes, ctaSVG);
         
@@ -177,7 +177,7 @@ export class CtaManager {
                 ctaButtonEl = this.ctaSvgManager.emailCta(ctaButton, id);
                 ctaAction = ctaButton?.CallToActionEmail;
                 break;
-            case "SiteUrl":
+            case "WebLink":
                 ctaButtonEl = this.ctaSvgManager.urlCta(ctaButton, id);
                 ctaAction = ctaButton?.CallToActionUrl;
                 break;
@@ -214,6 +214,7 @@ export class CtaManager {
     }
 
     private updateCtaButtonType(componentId: string, buttonType: string): void {
+        console.log('iconButton');
         if (this.isInformationPage()) {
             const infoSectionController = new InfoSectionController();
             infoSectionController.updateInfoCtaAttributes(componentId, 'CtaButtonType', buttonType); 

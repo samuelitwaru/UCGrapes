@@ -8,7 +8,7 @@ import {
   ctaTileDEfaultAttributes,
   DefaultAttributes,
   firstTileWrapperDefaultAttributes,
-  rowDefaultAttributes,
+  infoRowDefaultAttributes,
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
   ctaContainerDefaultAttributes,

@@ -96,7 +96,7 @@ export const DefaultInfoColumnAttributes: string = `
 `;
 
 export const infoRowDefaultAttributes: string = `
-    data-gjs-type="template-wrapper"
+    data-gjs-type="info-tiles-section"
     data-gjs-draggable="false"
     data-gjs-selectable="false"
     data-gjs-editable="false"

@@ -114,7 +114,11 @@ export class TileManager {
       containerRowComponent.append(newTileComponent, { at: index + 1 });
 
       if (this.page?.PageType === "Information") {
-        this.updateInfoTileRow(containerRowComponent.getId(), "add", newTileComponent.getId());
+        this.updateInfoTileRow(
+          containerRowComponent.getId(),
+          "add",
+          newTileComponent.getId()
+        );
       } else {
         (globalThis as any).tileMapper.addTile(
           currentTile?.parentElement?.id as string,
@@ -140,9 +144,13 @@ export class TileManager {
         tileComponent.remove();
 
         this.tileUpdate.updateTile(parentComponent);
-        
+
         if (this.page?.PageType === "Information") {
-          this.updateInfoTileRow(parentComponent.getId(), "delete", tileComponent.getId());
+          this.updateInfoTileRow(
+            parentComponent.getId(),
+            "delete",
+            tileComponent.getId()
+          );
         } else {
           (globalThis as any).tileMapper.removeTile(
             tileComponent.getId() as string,
@@ -199,7 +207,12 @@ export class TileManager {
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
             const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoTileAttributes(tileComponent.parent().getId(), tileComponent.getId(), 'Icon', "");
+            infoSectionController.updateInfoTileAttributes(
+              tileComponent.parent().getId(),
+              tileComponent.getId(),
+              "Icon",
+              ""
+            );
           } else {
             (globalThis as any).tileMapper.updateTile(
               tileComponent.getId(),
@@ -232,7 +245,12 @@ export class TileManager {
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
             const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoTileAttributes(tileComponent.parent().getId(), tileComponent.getId(), 'Text', "");
+            infoSectionController.updateInfoTileAttributes(
+              tileComponent.parent().getId(),
+              tileComponent.getId(),
+              "Text",
+              ""
+            );
           } else {
             (globalThis as any).tileMapper.updateTile(
               tileComponent.getId(),
@@ -340,12 +358,20 @@ export class TileManager {
             </div>
         </div>
         <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>
-        <button ${DefaultAttributes} id="ifvvi" data-gjs-type="default" title="Add template right" class="action-button add-button-right">+</button>
+        <button ${DefaultAttributes} id="ifvvi" data-gjs-type="default" title="Add template right" class="action-button add-button-right">
+          <svg ${DefaultAttributes} fill="#fff" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
+          </svg>
+        </button>
         ${
           this.page?.PageType === "Information"
             ? ``
             : `
-          <button ${DefaultAttributes} id="i4ubt" data-gjs-type="default" title="Add template bottom" class="action-button add-button-bottom">&plus;</button>
+          <button ${DefaultAttributes} id="i4ubt" data-gjs-type="default" title="Add template bottom" class="action-button add-button-bottom">
+          <svg ${DefaultAttributes} fill="#fff" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
+          </svg>
+          </button>
         `
         }
         <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">

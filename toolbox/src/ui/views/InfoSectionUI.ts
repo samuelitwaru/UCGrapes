@@ -5,7 +5,7 @@ import {
   contentDefaultAttributes,
   ctaTileDEfaultAttributes,
   DefaultAttributes,
-  rowDefaultAttributes,
+  infoRowDefaultAttributes,
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
 } from "../../utils/default-attributes";
@@ -110,7 +110,7 @@ export class InfoSectionUI {
 
   infoTileUi() {
     return `
-      <div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(8)}">
+      <div class="container-row" ${infoRowDefaultAttributes} id="${randomIdGenerator(8)}">
         <div ${tileWrapperDefaultAttributes} class="template-wrapper" id="${randomIdGenerator(
           8
         )}">

@@ -1,5 +1,4 @@
 import { EditorEvents } from "../../../controls/editor/EditorEvents";
-import { EditorFrame } from "./EditorFrame";
 import html2canvas from "html2canvas";
 
 export class EditorThumbs {
@@ -10,6 +9,7 @@ export class EditorThumbs {
   pageData: any;
   thumbnailWrapper: HTMLElement;
   isHome?: boolean;
+  appVersion: any;
 
   constructor(frameId: any, pageId:any, editor: any, pageData: any, isHome: boolean = false) {
     this.frameId = frameId;

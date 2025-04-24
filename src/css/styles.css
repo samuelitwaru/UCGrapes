@@ -2658,7 +2658,7 @@ details .tb_debug_details-content {
 
 .link {
   fill: none;
-  stroke: #adb5bd;
+  stroke: #FFFFFF;
   stroke-width: 1.5px;
   stroke-dasharray: 5, 5;
   marker-end: url(#arrowhead);

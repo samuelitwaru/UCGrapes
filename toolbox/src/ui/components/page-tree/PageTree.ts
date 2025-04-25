@@ -107,10 +107,6 @@ export class PageTree {
         return this.assignCoordinates(pages.concat(linkPages))
     }
 
-    addFormPage(){
-
-    }
-
     convertPagesToD3Data(pages: PageNode[]) {
         const idToNode: Record<string, D3Node> = {};
         const links: D3Link[] = [];

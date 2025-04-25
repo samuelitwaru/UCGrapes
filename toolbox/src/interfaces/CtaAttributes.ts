@@ -7,4 +7,7 @@ export interface CtaAttributes {
     CtaBGColor?: string;
     CtaButtonType?: string;
     CtaButtonImgUrl?: string;
+    CtaButtonIcon?: string;
+    CtaSupplierIsConnected?: boolean;
+    CtaConnectedSupplierId?: string;
 }

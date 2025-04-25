@@ -42,7 +42,7 @@ export class InfoSectionController {
     return menuItem;
   }
 
-  addCtaButton(buttonHTML: string) {
+  addCtaButton(buttonHTML: string, ctaAttributes: CtaAttributes) {
     const ctaContainer = document.createElement("div");
     ctaContainer.innerHTML = buttonHTML;
     const ctaComponent = ctaContainer.firstElementChild as HTMLElement;
@@ -52,16 +52,7 @@ export class InfoSectionController {
       const infoType: InfoType = {
         InfoId: ctaComponent.id,
         InfoType: "Cta",
-        CtaAttributes: {
-          CtaId: randomIdGenerator(15),
-          CtaType: "Phone",
-          CtaLabel: "Call Us",
-          CtaAction: "",
-          CtaColor: "#ffffff",
-          CtaBGColor: "CtaColorOne",
-          CtaButtonType: "Image",
-          CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
-        },
+        CtaAttributes: ctaAttributes,
       };
 
       this.addToMapper(infoType);
@@ -223,7 +214,6 @@ export class InfoSectionController {
     const infoType: InfoType = (globalThis as any).infoContentMapper.getInfoContent(
       infoId
     );
-
     if (infoType) {
       const ctaAttributes = infoType.CtaAttributes;
       if (ctaAttributes) {

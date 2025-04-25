@@ -37,6 +37,7 @@ export class EditorManager {
 
   async init() {
     const version = await this.appVersion.getActiveVersion();
+    console.log('>>>', version)
     this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement
     mainContainer.innerHTML = ""

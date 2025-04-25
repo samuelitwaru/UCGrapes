@@ -1,4 +1,5 @@
 import { CallToAction } from "../../interfaces/CallToAction";
+import { CtaAttributes } from "../../interfaces/CtaAttributes";
 import { InfoType } from "../../interfaces/InfoType";
 import { ThemeCtaColor } from "../../models/Theme";
 import { ctaTileDEfaultAttributes, DefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
@@ -263,14 +264,6 @@ export class CtaManager {
                             <i ${DefaultAttributes} id="i7o62" data-gjs-type="default" class="fa fa-minus"></i>
                     </div>
                     <span ${DefaultAttributes} class="label" style="color:${textColor}"> ${attributes.CtaLabel}</span> 
-                    <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
-                        <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
-                            <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
-                            <circle ${DefaultAttributes} id="Ellipse_534" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"/>
-                            </g>
-                            <path ${DefaultAttributes} id="Path_2320" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"/>
-                        </g>
-                    </svg>
                 </button>
             </div>
         `;
@@ -293,18 +286,17 @@ export class CtaManager {
                     style="background-color: ${bgColor}">
                     <span ${DefaultAttributes} class="img-button-icon">
                         ${ctaSVG} 
+                        <svg class="icon-edit-button" title="Change icon" ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="20" height="20" viewBox="0 0 33 33">
+                            <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                                <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                                <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                            </g>
+                            <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                        </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>
                     </div>
-                    <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
-                        <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
-                            <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
-                            <circle ${DefaultAttributes} id="Ellipse_534" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"/>
-                            </g>
-                            <path ${DefaultAttributes} id="Path_2320" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"/>
-                        </g>
-                    </svg>
                     <span ${DefaultAttributes} class="img-button-label label" style="color:${textColor}">${attributes.CtaLabel}</span>
                     <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${textColor}"></i>
                 </div>
@@ -357,18 +349,54 @@ export class CtaManager {
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>
                     </div>
-                    <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
-                        <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
-                            <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
-                            <circle ${DefaultAttributes} id="Ellipse_534" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"/>
-                            </g>
-                            <path ${DefaultAttributes} id="Path_2320" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"/>
-                        </g>
-                    </svg>
                     <span ${DefaultAttributes} class="img-button-label label" style="color:${textColor}">${attributes.CtaLabel}</span>
                     <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${textColor}"></i>
                 </div>
             </div>
         `;
+    }
+
+    public changeCtaButtonIcon(icon: any, ctaId: string, ctaAttributes: CtaAttributes): void {
+        if (ctaAttributes && ctaId) {
+            if (this.isInformationPage()) {
+                const selectedComponent = this.getSelectedComponent();
+                if (selectedComponent) {
+                    const iconComponent = selectedComponent.find(".img-button-icon")[0];
+                    if (iconComponent) {
+                        const tempElement = document.createElement('div');
+                        tempElement.innerHTML = icon.svg;
+                        const newSvgElement = tempElement.querySelector('svg');
+                        
+                        if (newSvgElement) {
+                            newSvgElement.setAttribute('height', '32');
+                            newSvgElement.setAttribute('width', '32');
+                            
+                            const pathElements = newSvgElement.querySelectorAll('path');
+                            pathElements.forEach(path => {
+                                path.setAttribute('fill',  ctaAttributes?.CtaColor || '#fff');
+                            });
+                            
+                            const updatedSvg = tempElement.innerHTML;
+                            
+                            const svgComponent = iconComponent.find("svg")[0];
+                            if (svgComponent) {
+                                svgComponent.replaceWith(updatedSvg);
+                            }
+                            this.updateCtaIconMapper(ctaId, icon);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private updateCtaIconMapper(ctaId: string, icon: any): void {
+        if (this.isInformationPage()) {
+            const selectedComponent = this.getSelectedComponent();
+            if (selectedComponent) {
+                const infoSectionController = new InfoSectionController();
+                infoSectionController.updateInfoCtaAttributes(ctaId, 'CtaButtonIcon', icon.name);
+            }
+        }
     }
 }

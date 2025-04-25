@@ -9,6 +9,7 @@ import { VersionSelectionView } from "../views/VersionSelectionView";
 import { i18n } from "../../i18n/i18n";
 import { TreeComponent } from "./TreeComponent";
 import { PageTree } from "./page-tree/PageTree";
+import { PageBubbleTree } from "./page-tree/PageBubbleTree";
 
 export class NavbarButtons {
   container: HTMLElement;
@@ -42,10 +43,10 @@ export class NavbarButtons {
       toolSection.style.display = "none"
       mappingSection.style.display = "block"
 
-      const pageTree = new PageTree()
-      pageTree.show()
+      const pageBubbleTree = new PageBubbleTree()
+      pageBubbleTree.show()
 
-      const treeComp = new TreeComponent(this.appVersions) 
+      // const treeComp = new TreeComponent(this.appVersions) 
   
     })
 

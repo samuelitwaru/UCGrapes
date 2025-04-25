@@ -59,7 +59,10 @@ export class PageAttacher {
     if (!selectedComponent) return;
 
     const tileTitle = selectedComponent.find(".tile-title")[0];
-    if (tileTitle) tileTitle.components(page.PageName);
+    if (tileTitle) {
+      tileTitle.addAttributes({ 'title': page.PageName });
+      tileTitle.components(page.PageName)
+    };
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();
@@ -82,22 +85,26 @@ export class PageAttacher {
     const pageData = (globalThis as any).pageData;
     if (pageData.PageType === "Information") {
       const infoSectionController = new InfoSectionController();
-      for (const [property, value] of updates) {
-        infoSectionController.updateInfoTileAttributes(
-          selectedComponent.parent().parent().getId(),
-          selectedComponent.parent().getId(),
-          property,
-          value
+      if (selectedComponent.is('info-cta-section')) {
+        
+      } else if (selectedComponent.parent().is('info-tiles-section')) {
+        for (const [property, value] of updates) {
+          infoSectionController.updateInfoTileAttributes(
+            selectedComponent.parent().parent().getId(),
+            selectedComponent.parent().getId(),
+            property,
+            value
+          );
+        }
+  
+        const tileInfoSectionAttributes: InfoType = (
+          globalThis as any
+        ).infoContentMapper.getInfoContent(rowId);
+  
+        tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+          (tile: any) => tile.Id === tileId
         );
-      }
-
-      const tileInfoSectionAttributes: InfoType = (
-        globalThis as any
-      ).infoContentMapper.getInfoContent(rowId);
-
-      tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
-        (tile: any) => tile.Id === tileId
-      );
+      }      
     } else {
       for (const [property, value] of updates) {
         (globalThis as any).tileMapper.updateTile(tileId, property, value);

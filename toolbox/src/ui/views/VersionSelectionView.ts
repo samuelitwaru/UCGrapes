@@ -95,7 +95,7 @@ export class VersionSelectionView {
     this.versionSelection.appendChild(selectFromTemplateBtn);
   }
 
-  private createVersionOption(version: AppVersion) {
+  private async createVersionOption(version: AppVersion) {
     const versionOption = document.createElement("div");
     versionOption.className = "theme-option";
     versionOption.role = "option";
@@ -108,14 +108,16 @@ export class VersionSelectionView {
     const duplicateBtn = this.createDuplicateButton(version);
     optionButtons.append(duplicateBtn);
 
-    if (!version.IsActive) {
+    const activeVersion = (window as any).app.currentVersion;
+    const isActive = (version.AppVersionId == activeVersion.AppVersionId) 
+    if (!isActive) {
       const deleteBtn = this.createDeleteButton(version);
       optionButtons.append(deleteBtn);
     }   
-
+    
     versionOption.append(optionButtons);
     
-    if (version.IsActive) {
+    if (isActive) {
       versionOption.classList.add("selected");
       this.activeVersion.textContent = truncateString(version.AppVersionName, 15);
     }

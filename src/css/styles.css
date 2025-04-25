@@ -2620,6 +2620,35 @@ details .tb_debug_details-content {
   fill: #ffffff;
 }
 
+.cta-icons-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  justify-content: center;
+  align-items: center;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+.cta-icons-list .cta-icon-item {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.cta-icons-list .cta-icon-item svg {
+  height: 30px;
+  width: 30px;
+}
+
+.cta-icons-list .cta-icon-item svg:hover path {
+  fill: #4f6ba5;
+}
+
 /* TREE */
 #graph-container {
   width: 100%;

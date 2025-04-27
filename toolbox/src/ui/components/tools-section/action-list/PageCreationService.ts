@@ -1,8 +1,13 @@
 import { ChildEditor } from "../../../../controls/editor/ChildEditor";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { i18n } from "../../../../i18n/i18n";
 import { ActionPage } from "../../../../interfaces/ActionPage";
+import { CtaAttributes } from "../../../../interfaces/CtaAttributes";
+import { InfoType } from "../../../../interfaces/InfoType";
 import { baseURL, ToolBoxService } from "../../../../services/ToolBoxService";
+import { randomIdGenerator } from "../../../../utils/helpers";
+import { InfoSectionUI } from "../../../views/InfoSectionUI";
 import { Alert } from "../../Alert";
 import { ActionListDropDown } from "./ActionListDropDown";
 import { ActionSelectContainer } from "./ActionSelectContainer";
@@ -13,11 +18,17 @@ export class PageCreationService {
   appVersionManager: any;
   toolBoxService: any;
   formModalService: FormModalService;
+  private infoSectionUi: InfoSectionUI;
+  private infoSectionController: InfoSectionController;
+  isInfoCtaSection: boolean;
 
-  constructor() {
+  constructor(isInfoCtaSection: boolean = false, type?: "Email" | "Phone" | "WebLink" | "Map") {
+    this.isInfoCtaSection = isInfoCtaSection;
     this.appVersionManager = new AppVersionManager();
     this.toolBoxService = new ToolBoxService();
-    this.formModalService = new FormModalService();
+    this.formModalService = new FormModalService(isInfoCtaSection, type);
+    this.infoSectionUi = new InfoSectionUI();
+    this.infoSectionController = new InfoSectionController();
   }
 
   handlePhone() {
@@ -33,7 +44,7 @@ export class PageCreationService {
         validate: (value: string) => formModalService.isValidPhone(value),
       },
       {
-        label: "Tile Label",
+        label: "Label",
         type: "",
         id: "field_label",
         placeholder: "Call us now",
@@ -46,7 +57,7 @@ export class PageCreationService {
     this.formModalService.createModal({
       title: "Add Phone Number",
       form,
-      onSave: () => this.processFormData(form.getData(), 'Phone'),
+      onSave: () => this.processFormData(form.getData(), "Phone"),
     });
   }
 
@@ -64,7 +75,7 @@ export class PageCreationService {
         validate: (value: string) => formModalService.isValidEmail(value),
       },
       {
-        label: "Tile Label",
+        label: "Label",
         type: "text",
         id: "field_label",
         placeholder: "Get in touch",
@@ -77,7 +88,7 @@ export class PageCreationService {
     this.formModalService.createModal({
       title: "Add Email Address",
       form,
-      onSave: () => this.processFormData(form.getData(), 'Email'),
+      onSave: () => this.processFormData(form.getData(), "Email"),
     });
   }
 
@@ -95,7 +106,7 @@ export class PageCreationService {
         validate: (value: string) => formModalService.isValidUrl(value),
       },
       {
-        label: "Link Label",
+        label: "Label",
         type: "text",
         id: "field_label",
         placeholder: "Example Link",
@@ -108,54 +119,123 @@ export class PageCreationService {
     this.formModalService.createModal({
       title: "Add Web Link",
       form,
-      onSave: () => this.processFormData(form.getData(), 'WebLink'),
+      onSave: () => this.processFormData(form.getData(), "WebLink"),
     });
   }
 
-  private attachPage(pageData: any, version: any, tileAttributes: any) {
-    new PageAttacher().removeOtherEditors();
+  handleAddress() {
+    const formModalService = this.formModalService;
+    const form = this.formModalService.createForm("address-form", [
+      {
+        label: "Address",
+        type: "text",
+        id: "field_value",
+        placeholder: "Address",
+        required: true,
+        errorMessage: "Please enter a Address",
+        validate: (value: string) => formModalService.isValidAddress(value),
+      },
+      {
+        label: "Label",
+        type: "text",
+        id: "field_label",
+        placeholder: "Visit us",
+        required: true,
+        errorMessage: "Please enter a label for your address",
+        minLength: 5,
+      },
+    ]);
 
-    new ChildEditor(pageData.PageId, pageData).init(tileAttributes);
+    this.formModalService.createModal({
+      title: "Add Address",
+      form,
+      onSave: () => this.processFormData(form.getData(), "Map"),
+    });
   }
 
-  private async processFormData(formData: Record<string, string>, type: string) {
-    const selectedComponent = (globalThis as any).selectedComponent;
-    if (!selectedComponent) return;
+  private async processFormData(
+    formData: Record<string, string>,
+    type: string
+  ) {
+    if (this.isInfoCtaSection) {
+      this.addCtaButtonSection(type, formData);
+      return;
+    } else {
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
 
-    const tileTitle = selectedComponent.find(".tile-title")[0];
-    if (tileTitle) tileTitle.components(formData.field_label);
+      const tileTitle = selectedComponent.find(".tile-title")[0];
+      if (tileTitle) tileTitle.components(formData.field_label);
 
-    const tileId = selectedComponent.parent().getId();
-    const rowId = selectedComponent.parent().parent().getId();
+      const tileId = selectedComponent.parent().getId();
+      const rowId = selectedComponent.parent().parent().getId();
 
-    const version = (globalThis as any).activeVersion;
-    let objectId = "";
-    let childPage: any;
-    if (type === "WebLink") {
+      const version = (globalThis as any).activeVersion;
+      let objectId = "";
+      let childPage: any;
+      if (type === "WebLink") {
         childPage = version?.Pages.find(
-            (page: any) => page.PageName === "Web Link" && page.PageType === "WebLink"
-          );   
-        objectId = childPage?.PageId;     
-    }
-    console.log("childPage", childPage);
-    
-    const updates = [
-      ["Text", formData.field_label],
-      ["Name", formData.field_label],
-      ["Action.ObjectType", type],
-      ["Action.ObjectId", objectId],
-      ["Action.ObjectUrl", formData.field_value],
-    ];
+          (page: any) =>
+            page.PageName === "Web Link" && page.PageType === "WebLink"
+        );
+        objectId = childPage?.PageId;
+      }
 
-    for (const [property, value] of updates) {
-      (globalThis as any).tileMapper.updateTile(tileId, property, value);
-    }
-    const tileAttributes = (globalThis as any).tileMapper.getTile(
-      rowId,
-      tileId
-    );
+      const updates = [
+        ["Text", formData.field_label],
+        ["Name", formData.field_label],
+        ["Action.ObjectType", type],
+        ["Action.ObjectId", objectId],
+        ["Action.ObjectUrl", formData.field_value],
+      ];
 
-    new PageAttacher().removeOtherEditors();
-    if (childPage) new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
+      let tileAttributes;
+      const pageData = (globalThis as any).pageData;
+      if (pageData.PageType === "Information") {
+        const infoSectionController = new InfoSectionController();
+        for (const [property, value] of updates) {
+          infoSectionController.updateInfoTileAttributes(
+            rowId,
+            tileId,
+            property,
+            value
+          );
+        }
+
+        const tileInfoSectionAttributes: InfoType = (
+          globalThis as any
+        ).infoContentMapper.getInfoContent(rowId);
+        tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+          (tile: any) => tile.Id === tileId
+        );
+      } else {
+        for (const [property, value] of updates) {
+          (globalThis as any).tileMapper.updateTile(tileId, property, value);
+        }
+        tileAttributes = (globalThis as any).tileMapper.getTile(rowId, tileId);
+      }
+
+      new PageAttacher().removeOtherEditors();
+      if (childPage) {
+        new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
+      }
+    }
+  }
+
+  addCtaButtonSection(type: string = "Phone", formData: any = {}) {
+    const cta: CtaAttributes = {
+      CtaId: randomIdGenerator(15),
+      CtaType: type,
+      CtaLabel: formData.field_label || "Call Us",
+      CtaAction: formData.field_value,
+      CtaColor: "",
+      CtaBGColor: "",
+      CtaButtonType: "Image",
+      CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+      CtaSupplierIsConnected: formData.supplier_id ? true : false,
+      CtaConnectedSupplierId: formData.supplier_id ? formData.supplier_id : "",
+    };
+    const button = this.infoSectionUi.addCtaButton(cta);
+    this.infoSectionController.addCtaButton(button, cta);
   }
 }

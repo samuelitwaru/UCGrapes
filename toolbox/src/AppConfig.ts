@@ -7,6 +7,7 @@ export class AppConfig {
     private static instance: AppConfig | null = null;
     
     private _themes: Theme[] = [];
+    private _suppliers: any[] = [];
     private _services: ProductService[] = [];
     private _forms: Form[] = [];
     private _media: Media[] = [];
@@ -34,6 +35,7 @@ export class AppConfig {
     public init(
       UC: any,
       themes: Theme[],
+      suppliers: any[],
       services: ProductService[],
       forms: Form[],
       media: Media[],
@@ -50,6 +52,7 @@ export class AppConfig {
       }
       this.UC = UC;
       this._themes = themes;
+      this._suppliers = suppliers;
       this._services = services;
       this._forms = forms;
       this._media = media;
@@ -65,6 +68,10 @@ export class AppConfig {
     // Getters
     get themes(): Theme[] {
       return this._themes;
+    }
+
+    get suppliers(): any[] {
+      return this._suppliers;
     }
 
     get services(): ProductService[] {

@@ -206,8 +206,8 @@ button {
 
 .action-button {
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-color: #5068a8;
   border-radius: 50%;
   display: flex;
@@ -217,6 +217,7 @@ button {
   display: none;
   transition: all 0.2s ease;
   z-index: 1;
+  padding: 0;
 }
 
 .action-button:hover {
@@ -236,7 +237,7 @@ button {
 }
 
 .add-button-bottom {
-  bottom: -12px;
+  bottom: -10px;
   left: 50%;
   border: 1px solid #5068a8;
   transform: translate(-50%, 0);
@@ -245,7 +246,7 @@ button {
 
 .add-button-right {
   top: 50%;
-  right: -12px;
+  right: -10px;
   border: 1px solid #5068a8;
   transform: translate(0, -50%);
   color: #fff;
@@ -267,11 +268,11 @@ button {
 }
 
 .template-wrapper:hover .add-button-right {
-  display: block;
+  display: flex;
 }
 
 .template-wrapper:hover .add-button-bottom {
-  display: block;
+  display: flex;
 }
 
 .tile-open-menu:hover {
@@ -532,6 +533,7 @@ img.content-page-block {
 .img-button-container .cta-badge {
   top: -12px;
   right: -12px;
+  cursor: pointer;
 }
 .cta-button:hover .cta-badge,
 .plain-button:hover .cta-badge,
@@ -574,6 +576,7 @@ img.content-page-block {
 .img-button-container .img-button-icon {
   font-size: 24px;
   margin: 0.5rem;
+  position: relative;
 }
 
 .img-button-container .img-button-label {
@@ -1035,12 +1038,12 @@ img.content-page-block {
 
 .add-new-info-section hr {
   border-top: 1.5px dashed #c0c0c0;
-    position: absolute;
-    top: 46%;
-    width: 100%;
-    height: 1px;
-    padding: 0;
-    margin: 0;
+  position: absolute;
+  top: 46%;
+  width: 100%;
+  height: 1px;
+  padding: 0;
+  margin: 0;
 }
 
 .add-new-info-section svg {
@@ -1124,3 +1127,40 @@ img.content-page-block {
 .container-column-info .info-image-section:hover {
   cursor: move;
 }
+
+[data-gjs-type="info-cta-section"].gjs-selected .tile-open-menu {
+  display: block;
+}
+
+/* Image edit styles */
+.img-button-container .icon-edit-button {
+  position: absolute;
+  bottom: 0;
+  right: -15px;
+  display: none;
+}
+.img-button-container.gjs-selected .img-button:hover .icon-edit-button {
+  display: block;
+}
+
+.img-button-container .icon-edit-button svg path {
+  fill: #fdfdfd;
+}
+
+.img-button-container .icon-edit-button:hover {
+  cursor: pointer;
+}
+
+.img-button-container .icon-edit-button svg g {
+  fill: #5068a8;
+}
+
+.img-button-container .icon-edit-button:hover path {
+  fill: #fdfdfd;
+}
+
+.img-button-container .icon-edit-button:hover g {
+  fill: #5068a8;
+  stroke: #fdfdfd;
+}
+

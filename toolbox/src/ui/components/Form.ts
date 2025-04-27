@@ -3,31 +3,41 @@ import { FormField } from "./FormField";
 export class Form {
     private form: HTMLFormElement;
     private fields: FormField[];
-
+    private selectedSupplierId: string | null = null;
+    
     constructor(id: string) {
         this.form = document.createElement('form');
         this.form.id = id;
         this.fields = [];
     }
-
+    
     addField(config: ConstructorParameters<typeof FormField>[0]) {
         const field = new FormField(config);
         this.fields.push(field);
         this.form.appendChild(field.getElement());
         return field;
     }
-
-    render (container: HTMLElement) {
+    
+    render(container: HTMLElement) {
         container.appendChild(this.form);
     }
-
+    
+    setSelectedSupplierId(id: string) {
+        this.selectedSupplierId = id;
+    }
+    
     getData(): Record<string, string> {
         const data: Record<string, string> = {};
         this.fields.forEach(field => {
             const input = field.getElement().querySelector('input') as HTMLInputElement;
             data[input.id] = input.value;
         });
-
+        
+        // Add supplier ID if one was selected
+        if (this.selectedSupplierId) {
+            data['supplier_id'] = this.selectedSupplierId;
+        }
+        
         return data;
     }
 }

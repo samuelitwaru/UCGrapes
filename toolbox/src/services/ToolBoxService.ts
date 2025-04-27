@@ -5,8 +5,8 @@ import { Media } from "../models/Media";
 import { Page } from "../models/Page";
 import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
+import { environment } from "../utils/env";
 
-const environment = "/Comforta_version2_Development7NETPostgreSQL3";
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -93,8 +93,7 @@ export class ToolBoxService {
     return response;
   }
 
-  async duplicateVersion(appVersionId: string, versionName: any) {
-    console.log("AppVersionId:", appVersionId, "versionName: ", versionName)   
+  async duplicateVersion(appVersionId: string, versionName: any) {  
     const response = await this.fetchAPI("/api/toolbox/v2/copy-appversion", {
       method: "POST",
       body: JSON.stringify({ 
@@ -213,9 +212,22 @@ export class ToolBoxService {
       },
       true
     );
-
     return response;
   }
+
+  async savePageThumbnail(data: any) {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/save-page-thumbnail",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+      true
+    );
+    return response;
+  }
+
+  
 
   async updatePageTitle(pageData: any) {
     const response = await this.fetchAPI(

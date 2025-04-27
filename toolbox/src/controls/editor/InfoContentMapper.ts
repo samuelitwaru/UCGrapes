@@ -8,20 +8,18 @@ export class InfoContentMapper {
 
     public contentRow (content: InfoType): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
-        console.log("content", content);
         const row = {
             "InfoId": content.InfoId,
             "InfoType": content.InfoType || "",
             "InfoValue": content.InfoValue || "",
             "CtaAttributes": content?.CtaAttributes,
+            "Tiles": content?.Tiles,
         }
 
         return row;
     }
 
-    public addInfoType(content: InfoType): any {
-        console.log("content", content);
-    
+    public addInfoType(content: InfoType): any {    
         const storageKey = `data-${this.pageId}`;
         const data: any = JSON.parse(localStorage.getItem(storageKey) || "{}");
     
@@ -54,9 +52,7 @@ export class InfoContentMapper {
         if (!data?.PageInfoStructure?.InfoContent) return false;
         const contentArray = data.PageInfoStructure.InfoContent;
         const contentRowIndex = contentArray.findIndex((row: InfoType) => row.InfoId === infoId);
-        console.log("contentRowIndex", contentRowIndex);
         if (contentRowIndex === -1) return false;
-        console.log("newContent", newContent);
         contentArray[contentRowIndex] = newContent;
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
         return true;
@@ -76,7 +72,7 @@ export class InfoContentMapper {
         return true;
     }
 
-    getInfoContent(infoId: any): InfoType[] | null {
+    getInfoContent(infoId: any): InfoType | null {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageInfoStructure?.InfoContent) return null;
 
@@ -85,6 +81,6 @@ export class InfoContentMapper {
 
         if (contentRowIndex === -1) return null;
 
-        return contentArray[contentRowIndex].InfoContent;
+        return contentArray[contentRowIndex];
     }
 }

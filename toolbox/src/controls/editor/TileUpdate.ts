@@ -1,3 +1,5 @@
+import { InfoType } from "../../interfaces/InfoType";
+import { InfoSectionController } from "../InfoSectionController";
 import { TileMapper } from "./TileMapper";
 
 export class TileUpdate {
@@ -9,50 +11,60 @@ export class TileUpdate {
     }
 
     updateTile(rowComponent: any, isDragging: boolean = false) {
-        alert()
         this.rowComponent = rowComponent;
         const tiles = rowComponent.components();
         const length = tiles.length;
         tiles.forEach((tile: any) => {
+            const tileAttributes = this.getTileAttributes(rowComponent, tile);
             const rightButton = tile.find(".add-button-right")[0];
             if (rightButton) {
                 rightButton.addStyle({
                     "display": length >= 3 ? "none" : "flex"
                 });
             }
+            
+            const alignValue = length === 3 ? "center" : tileAttributes.Align;
+            const cssAlignValue = alignValue === "left" ? "start" : alignValue;
+            
             const tileAlignment = {
-                "justify-content": length === 3 ? "center" : "start",
-                "align-items": length === 3 ? "center" : "start"
-            }
+                "justify-content": cssAlignValue,
+                "align-items": cssAlignValue
+            };
     
             const titleAlignment = {
-                "text-align": length === 3 ? "center" : "left"
-            }
+                "text-align": alignValue  
+            };
             
             this.updateTileHeight(tile, length);
             this.updateAlignment(tile, tileAlignment, titleAlignment);
             this.updateTileTitleLength(tile, length);
             if (!isDragging) {
-                this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
+                this.updateTileAttributes(tile.getId(), 'Align', alignValue);
             }
         });
-      }
+    
+        this.removeEmptyRows();
+    }
 
-    //   updateTileButtons(tile: any) {
-    //     console.log("calling updateTileButtons: ", tile.getId());
-    //     // if a page is info page, remove the bottom add buttons
-    //     const page = (globalThis as any).pageData;
-    //     console.log("Page: ", page);
-    //     if (page.PageType === "Information") {
-    //         console.log("Page type is Information, removing bottom add buttons.");
-    //         const belowButton = tile.find(".action-button.add-button-bottom")[0];
-    //         if (belowButton) {
-    //             belowButton.addStyle({
-    //                 "display": "none"
-    //             });
-    //         }  
-    //     }     
-    //   }
+      getTileAttributes(rowComponent: any, tileWrapper: any) {
+        const pageData = (globalThis as any).pageData;
+        let tileAttributes;
+        if (pageData.PageType === "Information") {
+              const tileInfoSectionAttributes: InfoType = (
+                globalThis as any
+              ).infoContentMapper.getInfoContent(rowComponent.getId());
+              
+              tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+                (tile: any) => tile.Id === tileWrapper.getId()
+              );
+            } else {
+              tileAttributes = (globalThis as any).tileMapper.getTile(
+                rowComponent.getId(),
+                tileWrapper.getId()
+              );
+            }
+        return tileAttributes;
+      }
 
       private updateTileHeight(tile: any, length: number) {
         const templateBlock = tile.find(".template-block")[0];
@@ -110,7 +122,29 @@ export class TileUpdate {
         if (value === "start") {
             align = "left"
         }
-        tileAttributes.updateTile(tileId, attribute, align)
+
+        const pageData = (globalThis as any).pageData;
+        
+        if (pageData.PageType === "Information") {
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoTileAttributes(
+                this.rowComponent.getId(),
+                tileId,
+                "Align",
+                align
+            );
+        } else {
+            tileAttributes.updateTile(tileId, attribute, align)
+        }        
     }
-    
+
+    removeEmptyRows() {
+        const container = this.rowComponent.parent();
+        const rows = container.components();
+        rows.forEach((row: any) => {
+            if (row?.components()?.length === 0) {
+                row?.remove();
+            }
+        });
+    }    
 }

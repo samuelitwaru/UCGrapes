@@ -92,5 +92,14 @@ export const DefaultInfoColumnAttributes: string = `
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="true"
-    data-gjs-droppable="[data-gjs-type='info-desc-section'], [data-gjs-type='info-image-section'], [data-gjs-type='info-cta-section']"
+    data-gjs-droppable="[data-gjs-type='info-desc-section'], [data-gjs-type='info-image-section'], [data-gjs-type='info-cta-section'], [data-gjs-type='info-tiles-section']"
+`;
+
+export const infoRowDefaultAttributes: string = `
+    data-gjs-type="info-tiles-section"
+    data-gjs-draggable="false"
+    data-gjs-selectable="false"
+    data-gjs-editable="false"
+    data-gjs-highlightable="true"
+    data-gjs-droppable="[data-gjs-type='info-tiles-section']"
 `;

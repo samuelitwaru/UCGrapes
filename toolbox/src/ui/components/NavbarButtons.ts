@@ -8,6 +8,7 @@ import { ThemeSelection } from "./ThemeSelection";
 import { VersionSelectionView } from "../views/VersionSelectionView";
 import { i18n } from "../../i18n/i18n";
 import { TreeComponent } from "./TreeComponent";
+import { PageTree } from "./page-tree/PageTree";
 
 export class NavbarButtons {
   container: HTMLElement;
@@ -40,6 +41,9 @@ export class NavbarButtons {
       const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
       toolSection.style.display = "none"
       mappingSection.style.display = "block"
+
+      const pageTree = new PageTree()
+      pageTree.show()
 
       const treeComp = new TreeComponent(this.appVersions) 
   

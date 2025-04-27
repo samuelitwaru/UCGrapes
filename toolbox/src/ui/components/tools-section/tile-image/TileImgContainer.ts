@@ -2,11 +2,13 @@ export class TileImgContainer {
   container: HTMLElement;
   positionX: number = 50;
   positionY: number = 50;
+  zoomLevel: number = 1;
 
   constructor() {
     this.container = document.createElement("div");
     this.init();
-     }
+   }
+
 
   init() {
     this.container.classList.add("tile-img-container");
@@ -31,6 +33,7 @@ export class TileImgContainer {
     controls.style.alignItems = "left";
     controls.style.marginTop = "10px";
     controls.style.marginBottom = "20px";
+    controls.style.backgroundColor = "#ffffff"
 
     const row1 = document.createElement("div");
     const row2 = document.createElement("div");
@@ -39,6 +42,38 @@ export class TileImgContainer {
     const down = this.createArrow("↓", () => this.moveImage(0, 5));
     const left = this.createArrow("←", () => this.moveImage(-5, 0));
     const right = this.createArrow("→", () => this.moveImage(5, 0));
+
+    const zoomIn = document.createElement("button");
+    zoomIn.type = "button";
+    zoomIn.innerHTML = '<i class="fa fa-magnifying-glass-plus"></i>'; 
+    zoomIn.style.margin = "10px";
+    zoomIn.style.padding = "10px";
+    zoomIn.style.cursor = "pointer";
+
+    zoomIn.onclick = () => {
+      this.zoomLevel += 0.1;
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
+      selectedComponent.addStyle({
+        "background-size":`${this.zoomLevel * 100}%`, 
+        });
+      };
+
+    const zoomOut = document.createElement("button");
+    zoomOut.type = "button";
+    zoomOut.innerHTML = '<i class="fa fa-magnifying-glass-minus"></i>'; // Font Awesome
+    zoomOut.style.margin = "10px";
+    zoomOut.style.padding = "10px";
+    zoomOut.style.cursor = "pointer";
+
+    zoomOut.onclick = () => {
+      this.zoomLevel -= 0.1; 
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
+      selectedComponent.addStyle({
+        "background-size":`${this.zoomLevel * 100}%`, 
+        });
+    };
 
     row1.appendChild(up);
     row2.appendChild(left);
@@ -56,6 +91,8 @@ export class TileImgContainer {
   
     controls.appendChild(row1);
     controls.appendChild(row2);
+    controls.appendChild(zoomIn);
+    controls.appendChild(zoomOut);
 
     let tileAttributes;
     button.addEventListener("click", (e) => {
@@ -73,15 +110,8 @@ export class TileImgContainer {
       const currentStyles = selectedComponent.getStyle();
       delete currentStyles["background-image"];
       currentStyles["background-color"] = tileAttributes.BGColor;
-      currentStyles["background-position"] = `${this.positionX}% ${this.positionY}%`;
-      
-      selectedComponent.addStyle({
-        "background-color": `rgba(0, 0, 0, )`,
-      });
-      
+           
       selectedComponent.setStyle(currentStyles);
-
-      
 
       (globalThis as any).tileMapper.updateTile(
         selectedComponent.parent().getId(),
@@ -97,6 +127,8 @@ export class TileImgContainer {
       
 
       this.container.style.display = "none";
+      this.container.style.position = "relative";
+      this.container.style.overflow = "hidden";
       const slider = document.getElementById("slider-wrapper") as HTMLInputElement;
       slider.style.display = "none";
     });
@@ -123,12 +155,14 @@ export class TileImgContainer {
     this.positionX = Math.max(0, Math.min(100, this.positionX + dx));
     this.positionY = Math.max(0, Math.min(100, this.positionY + dy));
     const selectedComponent = (globalThis as any).selectedComponent;
-      selectedComponent.addStyle({
+    selectedComponent.addStyle({
+        "background-size": `${this.zoomLevel * 100}%`,
         "background-position":`${this.positionX}% ${this.positionY}%`
-      });
-  }
+        });
+      }
 
-  render(container: HTMLElement) {
-    container.appendChild(this.container);
-  }
+   render(container: HTMLElement) {
+     container.appendChild(this.container);
+   }
+  
 }

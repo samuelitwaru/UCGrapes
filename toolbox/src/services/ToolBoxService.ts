@@ -7,10 +7,6 @@ import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 import { environment } from "../utils/env";
 
-<<<<<<< HEAD
-const environment = "/Comforta_version2_Development7NETPostgreSQL";
-=======
->>>>>>> dcc969547f2620170e13f37d07c5bffce4e1d612
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");

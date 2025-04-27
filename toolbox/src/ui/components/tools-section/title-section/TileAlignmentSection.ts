@@ -1,3 +1,5 @@
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
+
 export class TileAlignmentSection {
   container: HTMLElement;
   constructor() {
@@ -55,11 +57,23 @@ export class TileAlignmentSection {
         });
       }
 
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
-        "Align",
-        "left"
-      );
+      const pageData = (globalThis as any).pageData;
+
+      if (pageData.PageType === "Information") {
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.updateInfoTileAttributes(
+          selectedComponent.parent().parent().getId(),
+          selectedComponent.parent().getId(),
+          "Align",
+          "left"
+        );
+      } else {
+        (globalThis as any).tileMapper.updateTile(
+          selectedComponent.parent().getId(),
+          "Align",
+          "left"
+        );
+      }
 
       leftAlignInput.checked = true;
     };
@@ -85,11 +99,23 @@ export class TileAlignmentSection {
         });
       }
 
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
-        "Align",
-        "center"
-      );
+      const pageData = (globalThis as any).pageData;
+
+      if (pageData.PageType === "Information") {
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.updateInfoTileAttributes(
+          selectedComponent.parent().parent().getId(),
+          selectedComponent.parent().getId(),
+          "Align",
+          "center"
+        );
+      } else {
+        (globalThis as any).tileMapper.updateTile(
+          selectedComponent.parent().getId(),
+          "Align",
+          "center"
+        );
+      }
 
       centerAlignInput.checked = true;
     };

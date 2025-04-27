@@ -1,5 +1,7 @@
 import { TileProperties } from "../../../../controls/editor/TileProperties";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
+import { InfoType } from "../../../../interfaces/InfoType";
 import { Theme, ThemeIcon } from "../../../../models/Theme";
 import { DefaultAttributes } from "../../../../utils/default-attributes";
 
@@ -12,14 +14,13 @@ export class IconList {
     this.themeManager = themeManager;
     this.iconsCategory = iconsCategory;
     this.init();
-
   }
 
   init() {
     this.icons = [];
     const themeIcons: ThemeIcon[] = this.themeManager.getActiveThemeIcons();
     // Filter icons by category and theme
-    themeIcons 
+    themeIcons
       .filter((icon) => icon.IconCategory === this.iconsCategory)
       .forEach((themeIcon) => {
         const icon = document.createElement("div");
@@ -47,7 +48,7 @@ export class IconList {
 
           iconComponent.components(iconSVGWithAttributes);
           iconComponent.addAttributes({
-            "title": themeIcon.IconName,
+            title: themeIcon.IconName,
           });
 
           const iconCompParent = iconComponent.parent();
@@ -55,15 +56,39 @@ export class IconList {
             display: "block",
           });
 
-          (globalThis as any).tileMapper.updateTile(
-            selectedComponent.parent().getId(),
-            "Icon",
-            themeIcon.IconName
-          );
-          
           const tileWrapper = selectedComponent.parent();
           const rowComponent = tileWrapper.parent();
-          const tileAttributes = (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId()); 
+          let tileAttributes;
+
+          const pageData = (globalThis as any).pageData;
+          if (pageData.PageType === "Information") {
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoTileAttributes(
+              rowComponent.getId(),
+              tileWrapper.getId(),
+              "Icon",
+              themeIcon.IconName
+            );
+
+            const tileInfoSectionAttributes: InfoType = (
+              globalThis as any
+            ).infoContentMapper.getInfoContent(rowComponent.getId());
+
+            tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+              (tile: any) => tile.Id === tileWrapper.getId()
+            );
+          } else {
+            (globalThis as any).tileMapper.updateTile(
+              selectedComponent.parent().getId(),
+              "Icon",
+              themeIcon.IconName
+            );
+            tileAttributes = (globalThis as any).tileMapper.getTile(
+              rowComponent.getId(),
+              tileWrapper.getId()
+            );
+          }
+
           const tileProperties = new TileProperties(
             selectedComponent,
             tileAttributes

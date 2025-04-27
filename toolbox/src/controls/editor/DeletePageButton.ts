@@ -25,7 +25,6 @@ export class DeletePageButton {
             this.button.title = 'Delete Page';
             this.button.setAttribute('data-id', pageData.PageId);
             this.button.addEventListener('click', (e) => this.handleDelete(e));
-            console.log('pageData', pageData.PageType)
             if (pageData.PageType == "Menu" || pageData.PageType == "Content") {
                 container.insertBefore(this.button, container.firstChild);     
             }

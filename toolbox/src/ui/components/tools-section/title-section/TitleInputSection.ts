@@ -1,3 +1,5 @@
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
+
 export class TitleInputSection {
   input: HTMLInputElement;
 
@@ -35,12 +37,22 @@ export class TitleInputSection {
 
       // if tile is first and high priority, set text to upper case
       if (isFirstTile) this.input.value = this.input.value.toUpperCase();
-
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
-        "Text",
-        this.input.value.trim()
-      );
+      const pageData = this.getPageData();
+      if (pageData.PageType === "Information") {
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoTileAttributes(
+              selectedComponent.parent().parent().getId(),
+              selectedComponent.parent().getId(),
+              "Text",
+              this.input.value.trim()
+            );
+          } else {
+            (globalThis as any).tileMapper.updateTile(
+              selectedComponent.parent().getId(),
+              "Text",
+              this.input.value.trim()
+            );
+          }
 
       const parentComponent = tileTitle.parent();
       if (parentComponent) {
@@ -56,6 +68,10 @@ export class TitleInputSection {
       return this.input.value.substring(0, length) + "..";
     }
     return this.input.value;
+  }
+
+  private getPageData(): any {
+    return (globalThis as any).pageData;
   }
 
   render(container: HTMLElement) {

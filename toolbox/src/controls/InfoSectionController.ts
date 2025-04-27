@@ -1,4 +1,6 @@
+import { CtaAttributes } from "../interfaces/CtaAttributes";
 import { InfoType } from "../interfaces/InfoType";
+import { Tile } from "../interfaces/Tile";
 import { baseURL } from "../services/ToolBoxService";
 import { InfoSectionUI } from "../ui/views/InfoSectionUI";
 import {
@@ -36,30 +38,21 @@ export class InfoSectionController {
         ?.parentElement as HTMLElement;
       infoMenuContainer.remove();
     });
-
     menuItem.id = item.id;
     return menuItem;
   }
 
-  addCtaButton(buttonHTML: string) {
+  addCtaButton(buttonHTML: string, ctaAttributes: CtaAttributes) {
     const ctaContainer = document.createElement("div");
     ctaContainer.innerHTML = buttonHTML;
+    const ctaComponent = ctaContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(buttonHTML);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: ctaComponent.id,
         InfoType: "Cta",
-        CtaAttributes: {
-          CtaId: randomIdGenerator(15),
-          CtaType: "Phone",
-          CtaLabel: "Phone",
-          CtaAction: "",
-          CtaColor: "#ffffff",
-          CtaBGColor: "CtaColorOne",
-          CtaButtonType: "Image",
-          CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png"
-        }
+        CtaAttributes: ctaAttributes,
       };
 
       this.addToMapper(infoType);
@@ -69,11 +62,14 @@ export class InfoSectionController {
   addImage() {
     const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imgUrl);
+    const imageContainer = document.createElement("div");
+    imageContainer.innerHTML = imgContainer;
+    const imageComponent = imageContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(imgContainer);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: imageComponent.id,
         InfoType: "Image",
         InfoValue: "Resources/UCGrapes1/toolbox/public/images/default.jpg",
       };
@@ -84,11 +80,14 @@ export class InfoSectionController {
 
   addDescription(description: string) {
     const descContainer = this.infoSectionUI.getDescription(description);
+    const descTempContainer = document.createElement("div");
+    descTempContainer.innerHTML = descContainer;
+    const descTempComponent = descTempContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(descContainer);
     if (append) {
       const infoType: InfoType = {
-        InfoId: randomIdGenerator(15),
+        InfoId: descTempComponent.id,
         InfoType: "Description",
         InfoValue: description,
       };
@@ -97,8 +96,29 @@ export class InfoSectionController {
     }
   }
 
-  addTile(tile: string) {
-    this.appendComponent(tile);
+  addTile(tileHTML: string) {
+    const tileWrapper = document.createElement("div");
+    tileWrapper.innerHTML = tileHTML;
+    const tileWrapperComponent = tileWrapper.firstElementChild as HTMLElement;
+    const tileId = tileWrapperComponent.querySelector(".template-wrapper")?.id
+
+    const append = this.appendComponent(tileHTML);
+    if (append) {
+      const infoType: InfoType = {
+        InfoId: tileWrapperComponent.id,
+        InfoType: "TileRow",
+        Tiles: [
+          {
+            Id: tileId || randomIdGenerator(15),
+            Name: "Title",
+            Text: "Title",
+            Color: "#333333",
+            Align: "left",
+          },
+        ],
+      };
+      this.addToMapper(infoType);
+    }
   }
 
   updateDescription(updatedDescription: string, infoId: string) {
@@ -111,7 +131,7 @@ export class InfoSectionController {
         InfoType: "Description",
         InfoValue: updatedDescription,
       });
-    }    
+    }
   }
 
   updateInfoImage(imageUrl: string, infoId?: string) {
@@ -132,7 +152,7 @@ export class InfoSectionController {
     if (ctaEditor) {
       const img = ctaEditor.find("img")[0];
       if (img) {
-        img.setAttributes({"src":imageUrl});
+        img.setAttributes({ src: imageUrl });
         const infoType: InfoType = {
           InfoId: infoId || randomIdGenerator(15),
           InfoType: "Cta",
@@ -144,8 +164,8 @@ export class InfoSectionController {
             CtaColor: "#ffffff",
             CtaBGColor: "CtaColorOne",
             CtaButtonType: "Image",
-            CtaButtonImgUrl: imageUrl
-          }
+            CtaButtonImgUrl: imageUrl,
+          },
         };
         this.updateInfoMapper(infoId || "", infoType);
       }
@@ -186,19 +206,85 @@ export class InfoSectionController {
 
   private addToMapper(infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId)
+    const infoMapper = new InfoContentMapper(pageId);
     infoMapper.addInfoType(infoType);
   }
 
-  private updateInfoMapper(infoId: string, infoType: InfoType) {
+  updateInfoCtaAttributes(infoId: string, attribute: string, value: any) {
+    const infoType: InfoType = (globalThis as any).infoContentMapper.getInfoContent(
+      infoId
+    );
+    if (infoType) {
+      const ctaAttributes = infoType.CtaAttributes;
+      if (ctaAttributes) {
+        this.setNestedProperty(ctaAttributes, attribute, value);
+        this.updateInfoMapper(infoId, infoType);
+      }
+    }
+  }
+
+  updateInfoTileAttributes(
+    infoId: string,
+    tileId: string,
+    attributePath: string, // accepts dot notation
+    value: any
+  ) {
+    const tileInfoSectionAttributes: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(infoId);
+
+    if (tileInfoSectionAttributes) {
+      const tile = tileInfoSectionAttributes.Tiles?.find(
+        (tile) => tile.Id === tileId
+      );
+      if (tile) {
+        this.setNestedProperty(tile, attributePath, value);
+      }
+
+      this.updateInfoMapper(infoId, tileInfoSectionAttributes);
+    }
+  }
+
+  setNestedProperty(obj: any, path: string, value: any) {
+    const keys = path.split(".");
+    let current = obj;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+
+      if (!(key in current)) {
+        current[key] = {}; // create if not exists
+      }
+
+      current = current[key];
+    }
+
+    current[keys[keys.length - 1]] = value;
+  }
+
+  updateInfoMapper(infoId: string, infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId)
+    const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);
+    this.removeEmptyRows(pageId);
   }
 
   private removeInfoMapper(infoId: string) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId)
+    const infoMapper = new InfoContentMapper(pageId);
     infoMapper.removeInfoContent(infoId);
+  }
+
+  private removeEmptyRows(pageId: string) {
+    const data: any = JSON.parse(localStorage.getItem(`data-${pageId}`) || "{}");
+    if (data?.PageInfoStructure?.InfoContent) {
+      data.PageInfoStructure.InfoContent.forEach((infoContent: any) => {
+        if (infoContent?.InfoType === "TileRow") {
+          if (!infoContent.Tiles || infoContent.Tiles.length === 0) {
+            this.removeInfoMapper(infoContent.InfoId);
+          }
+        }
+      });
+    }
   }
 }

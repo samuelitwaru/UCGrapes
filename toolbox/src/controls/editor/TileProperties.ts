@@ -30,7 +30,7 @@ export class TileProperties {
       this.selectedComponent.getStyle()?.["background-image"];
 
     const tileBgColorAttr = this.themeManager.getThemeColor(
-      this.tileAttributes.BGColor
+      this.tileAttributes?.BGColor
     );
 
     const colorBoxes: any = themeColors?.children;
@@ -50,8 +50,8 @@ export class TileProperties {
   }
 
   private setOpacityProperties(): void {
-    const tileBgImageAttrUrl = this.tileAttributes.BGImageUrl;
-    const tileBgImageAttrOpacity = this.tileAttributes.Opacity;
+    const tileBgImageAttrUrl = this.tileAttributes?.BGImageUrl;
+    const tileBgImageAttrOpacity = this.tileAttributes?.Opacity;
     const bgImageStyle =
       this.selectedComponent.getStyle()?.["background-image"];
     let tileBGImage = "";
@@ -73,11 +73,13 @@ export class TileProperties {
           const input = opactySection.querySelector(
             "#bg-opacity"
           ) as HTMLInputElement;
-          input.value = tileBgImageAttrOpacity;
+          // remove decimal points from the opacity value
+          const value = Math.round(tileBgImageAttrOpacity * 100) / 100;
+          input.value = value.toString();
           const opacityValue = opactySection.querySelector(
             "#valueDisplay"
           ) as HTMLElement;
-          opacityValue.textContent = tileBgImageAttrOpacity + "%";
+          opacityValue.textContent = input.value + "%";
           const tileImageSection = opactySection.querySelector(
             "#tile-img-container"
           ) as HTMLElement;
@@ -107,10 +109,10 @@ export class TileProperties {
 
   private setTitleStyleProperties() {
     const title = document.querySelector("#tile-title") as HTMLInputElement;
-    const tileTitle = this.tileAttributes.Text;
+    const tileTitle = this.tileAttributes?.Text;
     title.value = tileTitle;
 
-    const tileColor = this.tileAttributes.Color;
+    const tileColor = this.tileAttributes?.Color;
     const tileColorSection = document.querySelector("#text-color-palette");
     const tileColorsOptions = tileColorSection?.querySelectorAll("input");
     tileColorsOptions?.forEach((option) => {
@@ -123,7 +125,7 @@ export class TileProperties {
   }
 
   private setTileActionProperties() {
-    const tileAlign = this.tileAttributes.Align;
+    const tileAlign = this.tileAttributes?.Align;
     const tileAlignSection = document.querySelector(".text-alignment");
     const tileAlignsOption = tileAlignSection?.querySelectorAll("input");
     tileAlignsOption?.forEach((option) => {
@@ -136,7 +138,7 @@ export class TileProperties {
   }
 
   private setTileIconProperties() {
-    const tileIcon = this.tileAttributes.Icon as string;
+    const tileIcon = this.tileAttributes?.Icon as string;
     if (tileIcon) {
       const categoryTitle = this.themeManager.getIconCategory(tileIcon);
       this.themeManager.updateThemeIcons(categoryTitle);
@@ -187,7 +189,7 @@ export class TileProperties {
   }
 
   private setActionProperties(): void {
-    const tileActionType = this.tileAttributes.Action?.ObjectType;
+    const tileActionType = this.tileAttributes?.Action?.ObjectType;
     const tileActionName = this.tileAttributes?.Text;
 
     //   let actionLabel = "";

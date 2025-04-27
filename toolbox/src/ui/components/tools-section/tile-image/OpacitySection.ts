@@ -1,3 +1,4 @@
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { ImageUpload } from "./ImageUpload";
 
 export class OpacitySection {
@@ -85,11 +86,23 @@ export class OpacitySection {
 
     selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
 
-    (globalThis as any).tileMapper.updateTile(
-      selectedComponent.parent().getId(),
-      "Opacity",
-      value
-    );
+    const pageData = (globalThis as any).pageData;
+
+    if (pageData.PageType === "Information") {
+      const infoSectionController = new InfoSectionController();
+      infoSectionController.updateInfoTileAttributes(
+        selectedComponent.parent().parent().getId(),
+        selectedComponent.parent().getId(),
+        "Opacity",
+        value
+      );
+    } else {
+      (globalThis as any).tileMapper.updateTile(
+        selectedComponent.parent().getId(),
+        "Opacity",
+        value
+      );
+    }
   }
 
   render(container: HTMLElement) {

@@ -10,7 +10,6 @@ export class FrameEvent {
     init() {
         const frame = document.getElementById(this.frameId);
         if (frame) {    
-          console.log("frameClickListener", frame)  
           frame.addEventListener("click", (e: MouseEvent) => {
             console.log("frameClickListener", this.frameId);
           })

@@ -1,13 +1,14 @@
 import { CallToAction } from "../../interfaces/CallToAction";
 import { InfoType } from "../../interfaces/InfoType";
 import { baseURL } from "../../services/ToolBoxService";
+import { ctaIcons } from "../../utils/cta-icons";
 import {
   contentColumnDefaultAttributes,
   contentDefaultAttributes,
   ctaTileDEfaultAttributes,
   DefaultAttributes,
   firstTileWrapperDefaultAttributes,
-  rowDefaultAttributes,
+  infoRowDefaultAttributes,
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
   ctaContainerDefaultAttributes,
@@ -15,6 +16,7 @@ import {
 } from "../../utils/default-attributes";
 import { randomIdGenerator, truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
+import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 
 export class JSONToGrapesJSInformation {
   private data: any;
@@ -81,6 +83,14 @@ export class JSONToGrapesJSInformation {
                     <div ${DefaultAttributes} id="iyocy" data-gjs-type="default" class="cta-badge">
                         <i ${DefaultAttributes} id="ifxn6" data-gjs-type="default" class="fa fa-minus"></i>
                     </div>
+                    <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
+                      <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
+                        <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
+                          <circle ${DefaultAttributes} id="Ellipse_534" data-name="Ellipse 534" cx="13.5" cy="13.5" r="13.5" transform="translate(0 -0.001)" fill="#6a747f"/>
+                        </g>
+                        <path ${DefaultAttributes} id="Path_2320" data-name="Path 2320" d="M1.7,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,1.7,0ZM7.346,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,7.346,0ZM13,0a1.7,1.7,0,1,0,1.7,1.7A1.7,1.7,0,0,0,13,0Z" transform="translate(927 430)" fill="#fff"/>
+                      </g>
+                    </svg>
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="label">${this.getCtaLabel(cta)}</span>
                 </button>
             </div>
@@ -95,6 +105,13 @@ export class JSONToGrapesJSInformation {
                     style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <span ${DefaultAttributes} class="img-button-icon">
                       ${this.ctaIcon(cta)}
+                      <svg class="icon-edit-button" title="Change icon" ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="20" height="20" viewBox="0 0 33 33">
+                        <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
+                          <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
+                          <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16" fill="none"/>
+                        </g>
+                        <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                      </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
                         <i ${DefaultAttributes} class="fa fa-minus"></i>
@@ -135,6 +152,25 @@ export class JSONToGrapesJSInformation {
   }
   
   ctaIcon(cta: any) {
+    if (cta.CtaButtonIcon) {
+      const svg = ctaIcons.find(icon => icon.name === cta.CtaButtonIcon)?.svg;
+      const tempElement = document.createElement('div') as HTMLElement;
+      tempElement.innerHTML = svg || ``;
+      const newSvgElement = tempElement.querySelector('svg');
+      
+      if (newSvgElement) {
+          newSvgElement.setAttribute('height', '32');
+          newSvgElement.setAttribute('width', '32');
+          
+          const pathElements = newSvgElement.querySelectorAll('path');
+          pathElements.forEach(path => {
+              path.setAttribute('fill',  cta?.CtaColor || '#fff');
+          });
+          
+          const updatedSvg = this.addGrapesAttributes(tempElement.innerHTML);
+          return updatedSvg;
+      }
+    } else {
     let icon;
     switch (cta.CtaType) {
       case "Phone":
@@ -157,7 +193,7 @@ export class JSONToGrapesJSInformation {
         </svg>
         `;
         break;
-      case "SiteUrl":
+      case "WebLink":
         icon = `
         <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
           <path${DefaultAttributes} id="Path_1213" data-name="Path 1213" d="M15.833,4a4.163,4.163,0,0,0-2.958,1.229l-.979.979a4.168,4.168,0,0,0-1.229,2.958,4.1,4.1,0,0,0,.292,1.521L12.042,9.6a2.857,2.857,0,0,1,.792-2.458l.979-.979a2.853,2.853,0,0,1,2.021-.833,2.805,2.805,0,0,1,2,.833,2.85,2.85,0,0,1,0,4.021l-.979.979A2.853,2.853,0,0,1,14.833,12a2.439,2.439,0,0,1-.437-.042l-1.083,1.083a4.1,4.1,0,0,0,1.521.292A4.163,4.163,0,0,0,17.792,12.1l.979-.979A4.168,4.168,0,0,0,20,8.167,4.2,4.2,0,0,0,15.833,4ZM14.188,8.854,8.854,14.188l.958.958,5.333-5.333ZM9.167,10.667A4.163,4.163,0,0,0,6.208,11.9l-.979.979A4.168,4.168,0,0,0,4,15.833,4.2,4.2,0,0,0,8.167,20a4.163,4.163,0,0,0,2.958-1.229l.979-.979a4.168,4.168,0,0,0,1.229-2.958,4.1,4.1,0,0,0-.292-1.521L11.958,14.4a2.857,2.857,0,0,1-.792,2.458l-.979.979a2.853,2.853,0,0,1-2.021.833,2.805,2.805,0,0,1-2-.833,2.85,2.85,0,0,1,0-4.021l.979-.979A2.853,2.853,0,0,1,9.167,12a2.44,2.44,0,0,1,.438.042l1.083-1.083A4.1,4.1,0,0,0,9.167,10.667Z" transform="translate(-4 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
@@ -179,6 +215,8 @@ export class JSONToGrapesJSInformation {
     }
     
     return icon;
+    }
+    
   }
 
   private generateInfoContent(content: InfoType): any {
@@ -193,8 +231,14 @@ export class JSONToGrapesJSInformation {
       content.InfoType === "Cta" &&
       content.CtaAttributes
     ) {
-      return this.generateCta(content);
-    }else {
+       return this.generateCta(content);
+    } else if (
+      content.InfoType === "TileRow" &&
+      content.Tiles
+    ) {
+      const getTileHtml = new JSONToGrapesJSMenu(this.data).generateInfoRow(content);
+      return getTileHtml;
+    } else {
       return "";
     }
   }
@@ -216,34 +260,32 @@ export class JSONToGrapesJSInformation {
                 <div ${DefaultInfoColumnAttributes} class="container-column-info">
                     ${
                         contentHtml ? contentHtml : ''
-                    } 
-                    ${
-                    ctaHtml
-                    ? `
-                    <div ${ctaContainerDefaultAttributes} class="cta-button-container-info">
-                        ${ctaHtml}
-                    </div>`
-                    : ``
-                    }  
-                </div>       
-                <div ${contentHtml ? '': `style="margin-top: 0"`} ${DefaultAttributes} class="add-new-info-section">
-                    <hr ${DefaultAttributes} class="add-new-info-hr" />
-                    <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_67_2" data-name="Component 67 – 2" width="30" height="30" viewBox="0 0 30 30">
-                    <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
-                      <g ${DefaultAttributes} id="Group_2307" data-name="Group 2307">
-                        <g ${DefaultAttributes} id="Ellipse_6" data-name="Ellipse 6" fill="#fdfdfd" stroke="#5068a8" stroke-width="1">
-                          <circle ${DefaultAttributes} cx="15" cy="15" r="15" stroke="none"/>
-                          <circle ${DefaultAttributes} cx="15" cy="15" r="14.5" fill="none"/>
-                        </g>
-                      </g>
-                    </g>
-                    <path ${DefaultAttributes} id="Icon_ionic-ios-add" data-name="Icon ionic-ios-add" d="M21.895,15H16.717V9.823a.858.858,0,1,0-1.717,0V15H9.823a.858.858,0,0,0,0,1.717H15v5.177a.858.858,0,1,0,1.717,0V16.717h5.177a.858.858,0,1,0,0-1.717Z" transform="translate(-0.692 -1.025)" fill="#5068a8"/>
-                  </svg>
-                </div>
+                    }
+                </div>  
+                ${this.addNewInfoSection()}
             </div>
         `;
 
     return htmlData;
+  }
+
+  private addNewInfoSection() {
+    return `
+    <div style="margin-top: 0" ${DefaultAttributes} class="add-new-info-section">
+          <hr ${DefaultAttributes} class="add-new-info-hr" />
+          <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_67_2" data-name="Component 67 – 2" width="30" height="30" viewBox="0 0 30 30">
+          <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
+            <g ${DefaultAttributes} id="Group_2307" data-name="Group 2307">
+              <g ${DefaultAttributes} id="Ellipse_6" data-name="Ellipse 6" fill="#fdfdfd" stroke="#5068a8" stroke-width="1">
+                <circle ${DefaultAttributes} cx="15" cy="15" r="15" stroke="none"/>
+                <circle ${DefaultAttributes} cx="15" cy="15" r="14.5" fill="none"/>
+              </g>
+            </g>
+          </g>
+          <path ${DefaultAttributes} id="Icon_ionic-ios-add" data-name="Icon ionic-ios-add" d="M21.895,15H16.717V9.823a.858.858,0,1,0-1.717,0V15H9.823a.858.858,0,0,0,0,1.717H15v5.177a.858.858,0,1,0,1.717,0V16.717h5.177a.858.858,0,1,0,0-1.717Z" transform="translate(-0.692 -1.025)" fill="#5068a8"/>
+        </svg>
+      </div>
+    `;
   }
 
   addGrapesAttributes(descContainerHtml: string) {

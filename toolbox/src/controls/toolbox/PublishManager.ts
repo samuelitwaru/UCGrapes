@@ -68,7 +68,6 @@ export class PublishManager {
     saveBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       modal.close();
-      console.log("Publishing...", input.checked);
       this.toolBoxManager.savePages(false).then(res => {
         this.appVersions.getActiveVersion().then(res=>{
           this.toolboxService.publishAppVersion(res.AppVersionId, input.checked)

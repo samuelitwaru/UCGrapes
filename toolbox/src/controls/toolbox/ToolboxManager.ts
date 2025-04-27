@@ -138,8 +138,8 @@ export class ToolboxManager {
           };
       
           try {
-            console.log(`Saving page: ${page.PageName}`);
-            console.log('Data: ', JSON.stringify(pageInfo, null, 2));
+            // console.log(`Saving page: ${page.PageName}`);
+            // console.log('Data: ', JSON.stringify(pageInfo, null, 2));
             await this.toolboxService.autoSavePage(pageInfo);
             lastSavedStates.set(pageId, localStructureString);
             // if (!publish) this.openToastMessage();

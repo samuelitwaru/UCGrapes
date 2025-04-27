@@ -12,6 +12,7 @@ class App {
   constructor(
     UC: any,
     themes: Theme[],
+    suppliers: any[],
     services: ProductService[],
     forms: Form[],
     media: Media[],
@@ -26,6 +27,7 @@ class App {
     config.init(
       UC,
       themes,
+      suppliers,
       services,
       forms,
       media,

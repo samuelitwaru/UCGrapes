@@ -3,6 +3,7 @@ import { i18n } from "../../../../i18n/i18n";
 import { Media } from "../../../../models/Media";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { SingleImageFile } from "./SingleImageFile";
+import { ImageCrop } from "./ImageCrop";
 
 export class ImageUpload {
   private type: "tile" | "cta" | "content" | "info";
@@ -72,9 +73,37 @@ export class ImageUpload {
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
     this.modalContent.appendChild(modalActions);
+    const upload = document.createElement('input');
+    upload.type = 'file';
+    upload.accept = 'image/*';
+    document.body.appendChild(upload);
+    
+    upload.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.src = reader.result as string;
+    
+          img.onload = () => {
+            const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+            const ctx = canvas.getContext('2d')!;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+    
+            // Show the modal
+           // ImageCrop.style.display = 'flex';
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    };
   }
 
   private uploadArea() {
+    
     const uploadArea = document.createElement("div");
     uploadArea.className = "upload-area";
     uploadArea.id = "uploadArea";
@@ -89,6 +118,7 @@ export class ImageUpload {
     this.setupDragAndDrop(uploadArea);
 
     this.modalContent.appendChild(uploadArea);
+
   }
 
   private createFileListElement() {
@@ -372,4 +402,5 @@ export class ImageUpload {
   public render(container: HTMLElement) {
     container.appendChild(this.modalContent);
   }
+  
 }

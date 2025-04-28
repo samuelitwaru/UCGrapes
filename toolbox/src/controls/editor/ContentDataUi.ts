@@ -5,6 +5,7 @@ import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageU
 import { ConfirmationBox } from "../../ui/components/ConfirmationBox";
 import { InfoSectionController } from "../InfoSectionController";
 import { CtaIconsListPopup } from "../../ui/views/CtaIconsListPopup";
+import { i18n } from "../../i18n/i18n";
 
 export class ContentDataUi {
     e: any;
@@ -43,8 +44,9 @@ export class ContentDataUi {
             submitSection.classList.add('popup-footer');
             submitSection.style.marginBottom = '-12px';
 
-            const saveBtn = this.createButton('submit_form', 'tb-btn-primary', 'Save');
-            const cancelBtn = this.createButton('cancel_form', 'tb-btn-outline', 'Cancel');
+            const saveBtn = this.createButton('submit_form', 'tb-btn-primary', i18n.t("tile.save_button"));
+            const cancelBtn = this.createButton('cancel_form', 'tb-btn-outline', i18n.t("tile.cancel_button"));
+
 
             submitSection.appendChild(saveBtn);
             submitSection.appendChild(cancelBtn);
@@ -53,7 +55,7 @@ export class ContentDataUi {
             modalBody.appendChild(submitSection);
 
             const modal = new Modal({
-                title: "Edit Content",
+                title: i18n.t("tile.edit_content"),
                 width: "500px",
                 body: modalBody
             });

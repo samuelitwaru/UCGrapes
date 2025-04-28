@@ -12,6 +12,7 @@ export const i18n = new I18n({
         notify_residents: "Notify residents about the updates made",
         modal_confirm: "Publish",
         modal_cancel: "Cancel",
+        sidebar_mapping_title: "Mapping"
       },
       debug: {
         label: "Debug",
@@ -94,6 +95,21 @@ export const i18n = new I18n({
       add_template_bottom: "Add tile below",
       delete_tile: "Delete tile",
       title: "Title",
+      add_menu_page: "Add menu page",
+      add_content_page: "Add content page",
+      information_page: "Information Page",
+      forms: "Forms",
+      modules: "Modules",
+      email: "Email",
+      phone: "Phone",
+      maps: "Maps",
+      calendar: "Calendar",
+      services: "Services",
+      edit_content: "Edit Content",
+      save_button: "Save",
+      cancel_button: "Cancel"
+      
+
     },
     messages: {
       success: {
@@ -125,6 +141,7 @@ export const i18n = new I18n({
           "Bewoners op de hoogte stellen van de gemaakte updates",
         modal_confirm: "Publiceren",
         modal_cancel: "Annuleren",
+         sidebar_mapping_title: "Indeling",
       },
       debug: {
         label: "Debug",
@@ -203,6 +220,21 @@ export const i18n = new I18n({
       add_template_bottom: "Tegel hieronder toevoegen",
       delete_tile: "Tegel verwijderen",
       title: "Titel",
+      add_menu_page: "Menu­pagina toevoegen",
+      add_content_page: "Inhouds­pagina toevoegen",
+      forms: "formulieren",
+      modules: "modules",
+      email: "e-mail",
+      phone: "telefoon",
+      maps: "kaarten",
+      calendar: "kalender",
+      services: "Diensten",
+      information_page: "informatiepagina",
+      edit_content: "Inhoud Bewerken",
+      save_button: "Bevestig",
+      cancel_button: "Annuleer"
+
+
     },
     messages: {
       success: {

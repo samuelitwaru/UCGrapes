@@ -23,6 +23,7 @@ class App {
     organisationLogo: string | null,
     currentLanguage: string,
     addServiceButtonEvent: any,
+    addTemplatesButtonEvent: any
   ) {
     this.currentVersion = currentVersion
     this.currentThemeId = currentThemeId
@@ -40,6 +41,7 @@ class App {
       organisationLogo,
       currentLanguage,
       addServiceButtonEvent,
+      addTemplatesButtonEvent
     );
 
     (window as any).app = this  

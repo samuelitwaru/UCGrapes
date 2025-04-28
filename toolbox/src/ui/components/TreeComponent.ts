@@ -33,7 +33,7 @@ export class TreeComponent {
 
     renderTitle () {
         const sidebarTitle = document.getElementById("sidebar_mapping_title") as HTMLSpanElement
-        sidebarTitle.textContent = 'MAPPING';
+        sidebarTitle.textContent = i18n.t('navbar.publish.sidebar_mapping_title');
     }
 
     renderHideOrShowPages() {

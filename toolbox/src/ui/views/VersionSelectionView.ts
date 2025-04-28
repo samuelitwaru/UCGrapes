@@ -1,3 +1,4 @@
+import { AppConfig } from "../../AppConfig";
 import { Modal } from "../components/Modal";
 import { Form } from "../components/Form";
 import { AppVersion } from "../../interfaces/AppVersion ";
@@ -68,7 +69,7 @@ export class VersionSelectionView {
     versions.forEach((version: any) => this.createVersionOption(version));
 
     this.addNewVersionButton();
-    // this.selectFromTemplateButton();
+    this.addNewTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
@@ -85,15 +86,16 @@ export class VersionSelectionView {
     this.versionSelection.appendChild(newVersionBtn);
   }
 
-  private selectFromTemplateButton() {
-    const selectFromTemplateBtn = document.createElement("div");
-    selectFromTemplateBtn.className = "theme-option";
-    selectFromTemplateBtn.innerHTML = `<i class="fa fa-plus"></i> Select from template`;
-    // selectFromTemplateBtn.onclick = () => {
-    //   this.selectFromTemplateModal();
-    // };
-    this.versionSelection.appendChild(selectFromTemplateBtn);
-  }
+   private addNewTemplateButton() {
+      const newVersionBtn = document.createElement("div");
+      newVersionBtn.className = "theme-option";
+      newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Select Templates`;
+      newVersionBtn.onclick = () => {
+        const config = AppConfig.getInstance();
+        config.addTemplatesButtonEvent();
+      };
+      this.versionSelection.appendChild(newVersionBtn);
+    }
 
   private async createVersionOption(version: AppVersion) {
     const versionOption = document.createElement("div");

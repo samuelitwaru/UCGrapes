@@ -80,8 +80,17 @@ export class JSONToGrapesJSMenu {
           : `
         <button ${DefaultAttributes} title="${i18n.t("tile.delete_tile")}" class="action-button delete-button">−</button>`
       }
-      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_right")}" ${(isThreeTiles && isInfoPage) ? `style="display: none;"` : ""} class="action-button add-button-right">+</button>
-      ${isInfoPage ? "" : `<button ${DefaultAttributes} title="${i18n.t("tile.add_template_bottom")}" class="action-button add-button-bottom">+</button>`}
+      <button ${DefaultAttributes} title="${i18n.t("tile.add_template_right")}" ${(isThreeTiles && isInfoPage) ? `style="display: none;"` : ""} class="action-button add-button-right">
+        <svg ${DefaultAttributes} fill="#fff" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
+        </svg>
+      </button>
+      ${isInfoPage ? "" : `
+        <button ${DefaultAttributes} title="${i18n.t("tile.add_template_bottom")}" class="action-button add-button-bottom">
+          <svg ${DefaultAttributes} fill="#fff" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
+          </svg>
+        </button>`}
       <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
         <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
           <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">
@@ -95,8 +104,6 @@ export class JSONToGrapesJSMenu {
   }
 
   private translateTileLabel(tile: any, tileTitle: string) {
-    console.log("tile", tile);
-    console.log("tile", tile.Action.ObjectType);
     const tileActionType = tile.Action.ObjectType;
     if (tileActionType === "Map") {
       return i18n.t("default.map");

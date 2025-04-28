@@ -83,11 +83,12 @@ export class PageAttacher {
     let tileAttributes;
 
     const pageData = (globalThis as any).pageData;
+    console.log("pageData,", selectedComponent.parent().is('info-tiles-section'));
     if (pageData.PageType === "Information") {
       const infoSectionController = new InfoSectionController();
       if (selectedComponent.is('info-cta-section')) {
         
-      } else if (selectedComponent.parent().is('info-tiles-section')) {
+      } else if (selectedComponent.parent().parent().is('info-tiles-section')) {
         for (const [property, value] of updates) {
           infoSectionController.updateInfoTileAttributes(
             selectedComponent.parent().parent().getId(),

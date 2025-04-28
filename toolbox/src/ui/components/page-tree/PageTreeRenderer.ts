@@ -140,7 +140,7 @@ export class PageTreeRenderer {
         });
     
         
-        const ctaContainer = this.createCTAs(data.Cta)
+        const ctaContainer = this.createCTAs(data.Cta || [])
 
         container.appendChild(ctaContainer);
         return container.outerHTML

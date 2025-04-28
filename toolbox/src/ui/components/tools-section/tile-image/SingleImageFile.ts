@@ -161,7 +161,7 @@ export class SingleImageFile {
       });
 
       selectedComponent.getEl().style.backgroundColor = "transparent";
-
+      
       const updates = [
         ["BGImageUrl", safeMediaUrl],
         ["Opacity", "0"],
@@ -193,9 +193,10 @@ export class SingleImageFile {
           (tile: any) => tile.Id ===  tileWrapper.getId()
         );
       } else {
+        console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
         for (const [property, value] of updates) {
           (globalThis as any).tileMapper.updateTile(
-            rowComponent.getId(),
+            tileWrapper.getId(),
             property,
             value
           );

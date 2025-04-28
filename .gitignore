@@ -4,3 +4,5 @@ test.html
 range.html
 test1.html
 src/combined.js
+toolbox/src/utils/env.ts
+shimmers-test.html

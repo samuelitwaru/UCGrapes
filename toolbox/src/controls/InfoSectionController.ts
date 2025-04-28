@@ -266,11 +266,25 @@ export class InfoSectionController {
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);
+    this.removeEmptyRows(pageId);
   }
 
   private removeInfoMapper(infoId: string) {
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.removeInfoContent(infoId);
+  }
+
+  private removeEmptyRows(pageId: string) {
+    const data: any = JSON.parse(localStorage.getItem(`data-${pageId}`) || "{}");
+    if (data?.PageInfoStructure?.InfoContent) {
+      data.PageInfoStructure.InfoContent.forEach((infoContent: any) => {
+        if (infoContent?.InfoType === "TileRow") {
+          if (!infoContent.Tiles || infoContent.Tiles.length === 0) {
+            this.removeInfoMapper(infoContent.InfoId);
+          }
+        }
+      });
+    }
   }
 }

@@ -198,8 +198,6 @@ export class ImageUpload {
             MediaSize: file.size,
           };
 
-          console.log(newMedia);
-
           // Display progress indicator
           if (this.fileListElement) {
             this.displayMediaFileProgress(this.fileListElement, newMedia);

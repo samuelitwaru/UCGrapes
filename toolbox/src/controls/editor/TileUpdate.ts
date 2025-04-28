@@ -1,3 +1,4 @@
+import { InfoType } from "../../interfaces/InfoType";
 import { InfoSectionController } from "../InfoSectionController";
 import { TileMapper } from "./TileMapper";
 
@@ -14,30 +15,55 @@ export class TileUpdate {
         const tiles = rowComponent.components();
         const length = tiles.length;
         tiles.forEach((tile: any) => {
+            const tileAttributes = this.getTileAttributes(rowComponent, tile);
             const rightButton = tile.find(".add-button-right")[0];
             if (rightButton) {
                 rightButton.addStyle({
                     "display": length >= 3 ? "none" : "flex"
                 });
             }
+            
+            const alignValue = length === 3 ? "center" : tileAttributes.Align;
+            const cssAlignValue = alignValue === "left" ? "start" : alignValue;
+            
             const tileAlignment = {
-                "justify-content": length === 3 ? "center" : "start",
-                "align-items": length === 3 ? "center" : "start"
-            }
+                "justify-content": cssAlignValue,
+                "align-items": cssAlignValue
+            };
     
             const titleAlignment = {
-                "text-align": length === 3 ? "center" : "left"
-            }
+                "text-align": alignValue  
+            };
             
             this.updateTileHeight(tile, length);
             this.updateAlignment(tile, tileAlignment, titleAlignment);
             this.updateTileTitleLength(tile, length);
             if (!isDragging) {
-                this.updateTileAttributes(tile.getId(), 'Align', tileAlignment["justify-content"])
+                this.updateTileAttributes(tile.getId(), 'Align', alignValue);
             }
         });
-
+    
         this.removeEmptyRows();
+    }
+
+      getTileAttributes(rowComponent: any, tileWrapper: any) {
+        const pageData = (globalThis as any).pageData;
+        let tileAttributes;
+        if (pageData.PageType === "Information") {
+              const tileInfoSectionAttributes: InfoType = (
+                globalThis as any
+              ).infoContentMapper.getInfoContent(rowComponent.getId());
+              
+              tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+                (tile: any) => tile.Id === tileWrapper.getId()
+              );
+            } else {
+              tileAttributes = (globalThis as any).tileMapper.getTile(
+                rowComponent.getId(),
+                tileWrapper.getId()
+              );
+            }
+        return tileAttributes;
       }
 
       private updateTileHeight(tile: any, length: number) {
@@ -100,13 +126,13 @@ export class TileUpdate {
         const pageData = (globalThis as any).pageData;
         
         if (pageData.PageType === "Information") {
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.updateInfoTileAttributes(
-            this.rowComponent.getId(),
-            tileId,
-            "Align",
-            align
-        );
+            const infoSectionController = new InfoSectionController();
+            infoSectionController.updateInfoTileAttributes(
+                this.rowComponent.getId(),
+                tileId,
+                "Align",
+                align
+            );
         } else {
             tileAttributes.updateTile(tileId, attribute, align)
         }        
@@ -120,6 +146,5 @@ export class TileUpdate {
                 row?.remove();
             }
         });
-    }
-    
+    }    
 }

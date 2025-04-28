@@ -23,7 +23,7 @@ export class CtaIconList {
                 iconElement.innerHTML = iconSVGs.phone;
             } else if (icon.CallToActionType === "Email") {
                 iconElement.innerHTML = iconSVGs.email;
-            } else if (icon.CallToActionType === "SiteUrl") {
+            } else if (icon.CallToActionType === "WebLink") {
                 iconElement.innerHTML = iconSVGs.website_url;
             } else if (icon.CallToActionType === "Map") {
                 // iconElement.innerHTML = iconSVGs.location;

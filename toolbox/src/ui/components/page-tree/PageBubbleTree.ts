@@ -40,7 +40,9 @@ export class PageBubbleTree {
         this.themeManager = new ThemeManager();
         const appVersionManager = this.themeManager.appVersionManager
         this.pages = appVersionManager.getPages()
+        console.log('pages',this.pages)
         this.processsedPages = this.processPageData()
+        console.log('pages',this.processsedPages)
         const config = AppConfig.getInstance();
         this.d3 = config.UC.d3
         this.nodes = this.createNodes()
@@ -119,8 +121,10 @@ export class PageBubbleTree {
                             })
                             ret.children.push(tile.Action.ObjectId)
                         } else if (tile.Action.ObjectId) {
-                            console.log('    tile:', tile.Action.ObjectType)
-                            ret.children.push(tile.Action.ObjectId)
+                            console.log('    tile:', tile.Action.ObjectType, tile.Action.ObjectId)
+                            if (this.pages.filter((page:any) => page.PageId === tile.Action.ObjectId)) {
+                                ret.children.push(tile.Action.ObjectId)
+                            }
                         }
                     })
                 })
@@ -133,7 +137,6 @@ export class PageBubbleTree {
             } else if (page.PageType == "Map") {
                 ret.structure = this.pageTreeRenderer.createMapHTML(page);
             }
-
             return ret
         })
         

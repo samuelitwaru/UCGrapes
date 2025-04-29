@@ -4,11 +4,9 @@ import { Media } from "../../../../models/Media";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { SingleImageFile } from "./SingleImageFile";
 
-
 export class ImageUpload {
   private type: "tile" | "cta" | "content" | "info";
   modalContent: HTMLElement;
-  wrapper: HTMLElement; // Declare the wrapper property
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
   infoId?: string;
@@ -16,34 +14,9 @@ export class ImageUpload {
   constructor(type: any, infoId?: string) {
     this.type = type;
     this.infoId = infoId;
-
-      // Create the wrapper that will handle resizing/moving
-    const wrapper = document.createElement("div");
-    wrapper.className = "tb-modal-wrapper"; // <-- NEW WRAPPER
-    wrapper.style.position = "fixed";
-    wrapper.style.top = "50%";
-    wrapper.style.left = "50%";
-    wrapper.style.transform = "translate(-50%, -50%)";
-    wrapper.style.minWidth = "400px";
-    wrapper.style.minHeight = "300px";
-    wrapper.style.background = "#fff";
-    wrapper.style.boxShadow = "0 2px 10px rgba(0,0,0,0.3)";
-    wrapper.style.zIndex = "1000";
-    wrapper.style.resize = "both"; // allow resizing
-    wrapper.style.overflow = "auto"; // so content is scrollable when resized small
-
-    
-   
     this.modalContent = document.createElement("div");
-    this.modalContent.className = "tb-modal-content";
-
-    //wrapper.appendChild(this.modalContent);
-
-    this.wrapper = wrapper; // Save the wrapper for later
-
     this.toolboxService = new ToolBoxService();
     this.init();
-    this.makeDraggable(wrapper);
   }
 
   private init() {
@@ -99,69 +72,9 @@ export class ImageUpload {
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
     this.modalContent.appendChild(modalActions);
-    const upload = document.createElement('input');
-    upload.type = 'file';
-    upload.accept = 'image/*';
-    document.body.appendChild(upload);
-    
-    upload.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const img = new Image();
-          img.src = reader.result as string;
-    
-          img.onload = () => {
-            const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-            const ctx = canvas.getContext('2d')!;
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-    
-            // Show the modal
-           // ImageCrop.style.display = 'flex';
-          };
-        };
-        reader.readAsDataURL(file);
-      }
-    };
   }
-  private makeDraggable(wrapper: HTMLElement) {
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
-  
-    const header = wrapper.querySelector(".tb-modal-header") as HTMLElement;
-  
-    if (!header) return;
-  
-    header.style.cursor = "move"; // Visual feedback
-  
-    header.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      offsetX = e.clientX - wrapper.getBoundingClientRect().left;
-      offsetY = e.clientY - wrapper.getBoundingClientRect().top;
-      document.body.style.userSelect = "none"; // prevent text selection while dragging
-    });
-  
-    document.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        wrapper.style.left = `${e.clientX - offsetX}px`;
-        wrapper.style.top = `${e.clientY - offsetY}px`;
-        wrapper.style.transform = "none"; // cancel initial translate centering
-      }
-    });
-  
-    document.addEventListener("mouseup", () => {
-      isDragging = false;
-      document.body.style.userSelect = "auto";
-    });
-  }
-  
 
   private uploadArea() {
-    
     const uploadArea = document.createElement("div");
     uploadArea.className = "upload-area";
     uploadArea.id = "uploadArea";
@@ -176,11 +89,7 @@ export class ImageUpload {
     this.setupDragAndDrop(uploadArea);
 
     this.modalContent.appendChild(uploadArea);
-
-   
-
   }
-  
 
   private createFileListElement() {
     this.fileListElement = document.createElement("div");
@@ -220,150 +129,118 @@ export class ImageUpload {
     }
   }
 
-  private async setupDragAndDrop(uploadArea: HTMLElement) {
-    // Create hidden file input
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.id = "fileInput";
-    fileInput.multiple = true;
-    fileInput.accept = "image/jpeg, image/jpg, image/png";
-    fileInput.style.display = "none";
-    uploadArea.appendChild(fileInput);
+private async setupDragAndDrop(uploadArea: HTMLElement) {
+  // Create hidden file input
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.id = "fileInput";
+  fileInput.multiple = true;
+  fileInput.accept = "image/jpeg, image/jpg, image/png";
+  fileInput.style.display = "none";
+  uploadArea.appendChild(fileInput);
 
-    // Browse link click handler
-    const browseLink = uploadArea.querySelector("#browseLink");
-   
-
-    uploadArea.addEventListener("click", (e) => {
+  // Prevent the file input from being triggered unintentionally
+  uploadArea.addEventListener("click", (e) => {
+    if (e.target === uploadArea) {
       fileInput.click();
-    });
+    }
+  });
 
-    // File input change handler
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files && fileInput.files.length > 0) {
-        this.handleFiles(fileInput.files);
-      }
-    });
+  // File input change handler
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.handleFiles(fileInput.files);
+    }
+  });
 
-    // Drag and drop events
-    uploadArea.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      uploadArea.classList.add("drag-over");
-    });
+  // Drag and drop events
+  uploadArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadArea.classList.add("drag-over");
+  });
 
-    uploadArea.addEventListener("dragleave", (e) => {
-      e.preventDefault();
-      uploadArea.classList.remove("drag-over");
-    });
+  uploadArea.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove("drag-over");
+  });
 
-    uploadArea.addEventListener("drop", async (e) => {
-      e.preventDefault();
-      uploadArea.classList.remove("drag-over");
+  uploadArea.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove("drag-over");
 
-      if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-        await this.handleFiles(e.dataTransfer.files);
-      }
-    });
-  }
-
- private handleFiles(files: FileList) {
+    if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+      await this.handleFiles(e.dataTransfer.files);
+    }
+  });
+}
+private async handleFiles(files: FileList) {
   const fileArray = Array.from(files);
 
   for (const file of fileArray) {
     if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result as string;
+      try {
+        const dataUrl = await this.readFileAsDataURL(file);
 
-        // Create an image element
-        const img = document.createElement("img");
-        img.src = dataUrl;
-        img.alt = file.name;
-        img.style.maxWidth = "100%";
-        img.style.maxHeight = "100%";
-        img.style.position = "relative";
+        // Replace the upload area with the image editor
+        this.displayImageEditor(dataUrl, file);
 
-        // Clear the wrapper and append the image
-        this.wrapper.innerHTML = "";
-        this.wrapper.appendChild(img);
-
-        // Add resize controls
-        this.addZoomControl(img);
-
-        // Add a draggable frame
-        this.addDraggableFrame(img);
-
-        // Add a Done button
-        this.addDoneButton(img, dataUrl);
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error processing file:", error);
+      }
     }
   }
 }
+private displayImageEditor(dataUrl: string, file: File) {
+  // Clear the upload area
+  const uploadArea = this.modalContent.querySelector(".upload-area") as HTMLElement;
+  if (uploadArea) {
+    uploadArea.innerHTML = "";
+  }
 
-private addZoomControl(img: HTMLImageElement) {
-  const zoomContainer = document.createElement("div");
-  zoomContainer.style.display = "flex";
-  zoomContainer.style.alignItems = "center";
-  zoomContainer.style.marginTop = "10px";
-  zoomContainer.style.width = "200px";
-  zoomContainer.style.height = "10px";
-  zoomContainer.style.background = "#ddd";
-  zoomContainer.style.borderRadius = "5px";
-  zoomContainer.style.position = "relative";
+  // Create the image container
+  const imageContainer = document.createElement("div");
+  imageContainer.className = "image-editor-container";
+  imageContainer.style.position = "relative";
+  imageContainer.style.width = "100%";
+  imageContainer.style.height = "300px";
+  imageContainer.style.overflow = "hidden";
+  imageContainer.style.border = "1px solid #ccc";
 
-  const zoomHandle = document.createElement("div");
-  zoomHandle.style.width = "20px";
-  zoomHandle.style.height = "20px";
-  zoomHandle.style.background = "#007bff";
-  zoomHandle.style.borderRadius = "50%";
-  zoomHandle.style.position = "absolute";
-  zoomHandle.style.top = "-5px";
-  zoomHandle.style.left = "0";
-  zoomHandle.style.cursor = "pointer";
+  // Create the image element
+  const img = document.createElement("img");
+  img.src = dataUrl;
+  img.alt = file.name;
+  img.style.position = "absolute";
+  img.style.top = "50%";
+  img.style.left = "50%";
+  img.style.transform = "translate(-50%, -50%) scale(1)";
+  img.style.transformOrigin = "center center";
+  img.style.maxWidth = "none";
+  img.style.maxHeight = "none";
 
-  zoomContainer.appendChild(zoomHandle);
-  this.wrapper.appendChild(zoomContainer);
+  imageContainer.appendChild(img);
 
-  let isDragging = false;
+  // Add the zoom slider
+  const zoomSlider = document.createElement("input");
+  zoomSlider.type = "range";
+  zoomSlider.min = "1";
+  zoomSlider.max = "3";
+  zoomSlider.step = "0.1";
+  zoomSlider.value = "1";
+  zoomSlider.style.width = "100%";
+  zoomSlider.style.marginTop = "10px";
 
-  zoomHandle.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    document.body.style.userSelect = "none"; // Prevent text selection while dragging
+  zoomSlider.addEventListener("input", () => {
+    const zoomLevel = parseFloat(zoomSlider.value);
+    img.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
   });
 
-  document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
-      const rect = zoomContainer.getBoundingClientRect();
-      let newLeft = e.clientX - rect.left;
-
-      // Limit the handle's movement within the container
-      if (newLeft < 0) newLeft = 0;
-      if (newLeft > rect.width - zoomHandle.offsetWidth) {
-        newLeft = rect.width - zoomHandle.offsetWidth;
-      }
-
-      zoomHandle.style.left = `${newLeft}px`;
-
-      // Calculate the zoom level based on the handle's position
-      const zoomLevel = 1 + (newLeft / rect.width) * 2; // Zoom range: 1x to 3x
-      img.style.transform = `scale(${zoomLevel})`;
-      img.style.transformOrigin = "center center";
-    }
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-    document.body.style.userSelect = "auto";
-  });
-}
-
-private addDraggableFrame(img: HTMLImageElement) {
+  // Add a draggable frame
   const frame = document.createElement("div");
   frame.style.position = "absolute";
   frame.style.border = "2px dashed #000";
-  frame.style.width = "100px";
-  frame.style.height = "100px";
+  frame.style.width = "150px";
+  frame.style.height = "150px";
   frame.style.top = "50%";
   frame.style.left = "50%";
   frame.style.transform = "translate(-50%, -50%)";
@@ -382,19 +259,16 @@ private addDraggableFrame(img: HTMLImageElement) {
 
   document.addEventListener("mousemove", (e) => {
     if (isDragging) {
-      const parentRect = img.getBoundingClientRect();
-      const newLeft = e.clientX - offsetX;
-      const newTop = e.clientY - offsetY;
+      const parentRect = imageContainer.getBoundingClientRect();
+      const newLeft = e.clientX - offsetX - parentRect.left;
+      const newTop = e.clientY - offsetY - parentRect.top;
 
-      // Ensure the frame stays within the image bounds
-      if (
-        newLeft >= parentRect.left &&
-        newLeft + frame.offsetWidth <= parentRect.right &&
-        newTop >= parentRect.top &&
-        newTop + frame.offsetHeight <= parentRect.bottom
-      ) {
-        frame.style.left = `${newLeft - parentRect.left}px`;
-        frame.style.top = `${newTop - parentRect.top}px`;
+      // Ensure the frame stays within the image container
+      if (newLeft >= 0 && newLeft + frame.offsetWidth <= parentRect.width) {
+        frame.style.left = `${newLeft}px`;
+      }
+      if (newTop >= 0 && newTop + frame.offsetHeight <= parentRect.height) {
+        frame.style.top = `${newTop}px`;
       }
     }
   });
@@ -404,103 +278,103 @@ private addDraggableFrame(img: HTMLImageElement) {
     document.body.style.userSelect = "auto";
   });
 
-  this.wrapper.appendChild(frame);
-}
-private resetModal() {
-  // Clear the wrapper content
-  this.wrapper.innerHTML = "";
+  imageContainer.appendChild(frame);
 
-  // Reinitialize the upload area and file list
-  this.uploadArea();
-  this.createFileListElement();
-  
-   // Reload media files if needed
-   if (this.fileListElement) {
-    this.loadMediaFiles();
-  }
-}
+  // Add the "Done" button
+  const doneButton = document.createElement("button");
+  doneButton.innerText = "Done";
+  doneButton.className = "tb-btn tb-btn-primary";
+  doneButton.style.marginTop = "10px";
 
-private addDoneButton(img: HTMLImageElement, dataUrl: string) {
-  const doneBtn = document.createElement("button");
-  doneBtn.innerText = "Done";
-  doneBtn.style.display = "block";
-  doneBtn.style.margin = "10px auto";
-  doneBtn.addEventListener("click", () => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return;
-
-    // Get the frame's position and size
-    const frame = this.wrapper.querySelector("div[style*='dashed']") as HTMLElement;
-    if (!frame) {
-      console.error("Frame not found");
-      return;
-    }
-
-    const frameRect = frame.getBoundingClientRect();
-    const imgRect = img.getBoundingClientRect();
-
-    const scaleX = img.naturalWidth / imgRect.width;
-    const scaleY = img.naturalHeight / imgRect.height;
-
-    const cropX = (frameRect.left - imgRect.left) * scaleX;
-    const cropY = (frameRect.top - imgRect.top) * scaleY;
-    const cropWidth = frameRect.width * scaleX;
-    const cropHeight = frameRect.height * scaleY;
-
-    canvas.width = cropWidth;
-    canvas.height = cropHeight;
-
-    ctx.drawImage(
-      img,
-      cropX,
-      cropY,
-      cropWidth,
-      cropHeight,
-      0,
-      0,
-      cropWidth,
-      cropHeight
-    );
-
-    // Convert the cropped image to a data URL
-    const croppedDataUrl = canvas.toDataURL("image/png");
-
-    // Add the cropped image to the list of images
-    this.addImageToList(croppedDataUrl);
-
-    
-     // Reset the modal to the initial upload area
-     this.resetModal();
+  doneButton.addEventListener("click", () => {
+    console.log("Check if done button is clicked");
+    this.saveCroppedImage(img, frame, file);
   });
 
-  this.wrapper.appendChild(doneBtn);
-}
-
-private addImageToList(dataUrl: string) {
-  if (this.fileListElement) {
-    const img = document.createElement("img");
-    img.src = dataUrl;
-    img.alt = "Cropped Image";
-    img.style.maxWidth = "100px";
-    img.style.maxHeight = "100px";
-    img.style.margin = "5px";
-    img.style.cursor = "pointer";
-
-    this.fileListElement.appendChild(img);
-      // Optionally, add a click event to preview the image
-      img.addEventListener("click", () => {
-        const previewWindow = window.open("", "_blank");
-        if (previewWindow) {
-          previewWindow.document.write(`<img src="${dataUrl}" alt="Cropped Image" style="max-width: 100%;">`);
-        }
-      });
-    } else {
-      console.error("File list element not found");
-    
+  // Append everything to the upload area
+  if (uploadArea) {
+    uploadArea.appendChild(imageContainer);
+    uploadArea.appendChild(zoomSlider);
+    uploadArea.appendChild(doneButton);
   }
-  
+}
+private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: File) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) {
+    console.error("Canvas context is not available.");
+    return;
+  }
+
+  const imgRect = img.getBoundingClientRect();
+  const frameRect = frame.getBoundingClientRect();
+
+  const scaleX = img.naturalWidth / imgRect.width;
+  const scaleY = img.naturalHeight / imgRect.height;
+
+  const cropX = (frameRect.left - imgRect.left) * scaleX;
+  const cropY = (frameRect.top - imgRect.top) * scaleY;
+  const cropWidth = frameRect.width * scaleX;
+  const cropHeight = frameRect.height * scaleY;
+
+  canvas.width = cropWidth;
+  canvas.height = cropHeight;
+
+  ctx.drawImage(
+    img,
+    cropX,
+    cropY,
+    cropWidth,
+    cropHeight,
+    0,
+    0,
+    cropWidth,
+    cropHeight
+  );
+
+  const croppedDataUrl = canvas.toDataURL("image/png");
+
+  // Debugging: Log the cropped image data URL
+  console.log("Cropped Image Data URL:", croppedDataUrl);
+
+  // Add the cropped image to the file list
+  const newMedia: Media = {
+    MediaId: Date.now().toString(),
+    MediaName: file.name,
+    MediaUrl: croppedDataUrl,
+    MediaType: file.type,
+    MediaSize: file.size,
+  };
+
+  const response = await this.toolboxService.uploadFile(
+    newMedia.MediaUrl,
+    newMedia.MediaName,
+    newMedia.MediaSize,
+    newMedia.MediaType
+  );
+
+  const uploadedMedia: Media = response.BC_Trn_Media;
+
+
+  if (this.fileListElement) {
+    console.log("Adding cropped image to the file list...");
+    this.displayMediaFile(this.fileListElement, newMedia);
+  } else {
+    console.error("File list element is not available.");
+  }
+
+  // Reset the modal content
+  this.resetModal();
+}
+private resetModal() {
+
+  console.log("Resetting modal content...");
+
+  this.modalContent.innerHTML = "";
+  this.uploadArea();
+  this.createFileListElement();
+  this.loadMediaFiles();
 }
 
   private displayMediaFileProgress(fileList: HTMLElement, file: Media) {
@@ -635,7 +509,6 @@ private addImageToList(dataUrl: string) {
   }
 
   public render(container: HTMLElement) {
-    container.appendChild(this.wrapper);
+    container.appendChild(this.modalContent);
   }
-  
 }

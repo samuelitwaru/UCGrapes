@@ -21,9 +21,9 @@ export class PageBubbleTree {
     d3: any;
     pages: any;
     themeManager: ThemeManager;
-    processsedPages: { id: number; title: string; children: number[]; }[];
-    nodes: { id: number; name: string; }[];
-    links: { source: number; target: number; }[];
+    processedPages!: { id: number; title: string; children: number[]; }[];
+    nodes!: any[];
+    links!: { source: number; target: number; }[];
     svg: any;
     width: number = 800;
     height: number = 800;
@@ -32,21 +32,26 @@ export class PageBubbleTree {
     container: any;
     selfArcs: any;
     arrows: any;
-    graphContainer: HTMLDivElement;
+    graphContainer!: HTMLDivElement;
     zoom: any;
     pageTreeRenderer: PageTreeRenderer;
     constructor(){
         this.pageTreeRenderer = new PageTreeRenderer()
+        const config = AppConfig.getInstance();
+        this.d3 = config.UC.d3
         this.themeManager = new ThemeManager();
         const appVersionManager = this.themeManager.appVersionManager
         this.pages = appVersionManager.getPages()
-        console.log('pages',this.pages)
-        this.processsedPages = this.processPageData()
-        console.log('pages',this.processsedPages)
-        const config = AppConfig.getInstance();
-        this.d3 = config.UC.d3
+        this.processedPages = this.processPageData(this.pages)
+        console.log('processed pages', this.processedPages.map((page:any) => page.title).sort())
         this.nodes = this.createNodes()
         this.links = this.createLinks()
+        console.log('nodes', this.nodes)
+        console.log('links', this.links)
+        this.init()
+    }
+
+    init() {
         this.graphContainer = this.build();
         this.buildTree();
     }
@@ -78,23 +83,16 @@ export class PageBubbleTree {
             this.graphContainer = document.createElement("div");
             this.graphContainer.id = "graph-container-1";
         }
-
         this.graphContainer.innerHTML = "<svg></svg>"
-
-        // const iframe = document.createElement("iframe");
-        // iframe.src = "http://localhost:8083/Comforta_version20DevelopmentNETPostgreSQL/wp_toolboxtree.aspx"; // Replace with your URL
-        // iframe.width = "100%";
-        // iframe.height = "100%";
-        // this.graphContainer.appendChild(iframe);
-
+        // mainContainer.innerHTML = ""
         mainContainer.appendChild(this.graphContainer);
-        this.graphContainer.setAttribute("style", "display:none;")
+        this.graphContainer.setAttribute("style", "display:block;width:100%;")
         return this.graphContainer;
     }
 
-    processPageData()  {
+    processPageData(pages:any[])  {
         const linkPages: PageNode[] = []
-        const pages = this.pages.map((page:any)=>{
+        pages = pages.map((page:any)=>{
             let ret:PageNode = {
                 id: page.PageId,
                 title: page.PageName,
@@ -121,7 +119,6 @@ export class PageBubbleTree {
                             })
                             ret.children.push(tile.Action.ObjectId)
                         } else if (tile.Action.ObjectId) {
-                            console.log('    tile:', tile.Action.ObjectType, tile.Action.ObjectId)
                             if (this.pages.filter((page:any) => page.PageId === tile.Action.ObjectId)) {
                                 ret.children.push(tile.Action.ObjectId)
                             }
@@ -139,15 +136,15 @@ export class PageBubbleTree {
             }
             return ret
         })
-        
+
         return pages.concat(linkPages)
     }
 
-    createNodes () {
-        return this.processsedPages.map(p => ({ id: p.id, name: p.title }));
+    createNodes (processedPages:any[] = this.processedPages) {
+        return processedPages.map(p => ({ id: p.id, name: p.title, children: p.children }));
     }
-    createLinks() {
-        return this.processsedPages.flatMap(p => p.children.map(childId => ({
+    createLinks(processedPages:any[] = this.processedPages) {
+        return processedPages.flatMap(p => p.children.map((childId:string) => ({
             source: p.id,
             target: childId
         })));
@@ -220,7 +217,6 @@ export class PageBubbleTree {
 
     createSelfArcs () {
         // Self-loop arcs
-        console.log(this.selfLinks)
         this.selfArcs = this.container.append("g")
         .selectAll("path")
         .data(this.selfLinks)
@@ -336,55 +332,29 @@ export class PageBubbleTree {
     }
     
     onNodeClick(event:any, d:any) {
-        this.d3.select(event.currentTarget).raise();
-        const scale = 10;
-        const translateX = (this.width / 2 - d.x * scale);
-        const translateY = (this.height / 2 - d.y * scale);
-
-        console.log(d)
-        console.log(event.currentTarget.innerHTML)
-
-        const clickedNode = this.d3.select(event.currentTarget)
-        console.log(clickedNode)
-        //event.currentTarget.innerHTML = '<circle r="60" fill="#222f54"></circle><text stroke="none" dy="6" font-weight="normal" font-family="Arial" text-anchor="middle">My Living</text>'
-        
-        console.log('fo', clickedNode.select("foreignObject").remove())
-
-        // Add text to nodes
-        clickedNode.append("foreignObject")
-        .attr("height", 80)
-        .attr("width", 80)
-        .attr("y", -40)
-        .attr("x", -40)
-        .html((d:any)=>`
-        <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%;">
-
-        </div>
-        `);
-        
-        
-        // const translateX = d.x;
-        // const translateY = d.y;
-
-        // console.log(translateX, translateY)
-
-        // // Remove any previous labels
-        // g.selectAll("text.label").remove();
-
-        // // Append a label for the clicked node
-        // g.append("text")
-        // .attr("class", "label")
-        // .attr("x", d.x - 8) // offset a bit to the right
-        // .attr("y", d.y) // offset a bit above
-        // .attr("fill", "black")
-        // .attr("font-size", 2)
-        // .attr("text-anchor", "start")
-        // .attr("pointer-events", "none")
-        // .text(d.data.title);
-
-        this.svg.transition()
-            .duration(750)
-            .call(this.zoom.transform, this.d3.zoomIdentity.translate(translateX, translateY).scale(scale));
+        let nodesToAdd:string[] = [d.id]
+        const processedPages = this.processedPages.filter((page:any) => page.id === d.id)
+        const childIds = d.children
+        while (childIds.length > 0) {
+            // for each childId, add to nodesToAdd
+            const childId = childIds.pop()
+            if (nodesToAdd.includes(childId)) continue
+            nodesToAdd.push(childId)
+            const childPage = this.processedPages.find((page:any) => page.id === childId)
+            console.log(childPage?.title)
+            if (childPage && childPage.children) {
+                processedPages.push(childPage)
+                childIds.push(...childPage.children)
+            }
+        }
+        console.log('processed pages', processedPages.map((page:any) => page.title).sort())
+        this.nodes = this.createNodes(processedPages)
+        this.links = this.createLinks(processedPages)
+        console.log('nodes', this.nodes)
+        console.log('links', this.links)
+        this.init()
     }
+
+      
 
 }

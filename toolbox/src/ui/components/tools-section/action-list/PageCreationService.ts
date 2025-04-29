@@ -233,7 +233,7 @@ export class PageCreationService {
       CtaButtonType: "Image",
       CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
       CtaSupplierIsConnected: formData.supplier_id ? true : false,
-      CtaConnectedSupplierId: formData.supplier_id ? formData.supplier_id : "",
+      CtaConnectedSupplierId: formData.supplier_id ? formData.supplier_id : null,
     };
     const button = this.infoSectionUi.addCtaButton(cta);
     this.infoSectionController.addCtaButton(button, cta);

@@ -11,6 +11,7 @@ export class ImageUpload {
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
   infoId?: string;
+  finishedUploads: { [key: string]: Media } = {};
 
   constructor(type: any, infoId?: string) {
     this.type = type;
@@ -243,6 +244,8 @@ export class ImageUpload {
             newMedia.MediaType
           );
 
+          this.finishedUploads[newMedia.MediaId] = response.BC_Trn_Media;
+
           const uploadedMedia: Media = response.BC_Trn_Media;
 
         } catch (error) {
@@ -331,6 +334,7 @@ export class ImageUpload {
         clearInterval(interval);
         if (isValid) {
             fileList.removeChild(fileItem);
+            file = this.finishedUploads[file.MediaId] || file;
             this.displayMediaFile(fileList, file);
         }        
       }

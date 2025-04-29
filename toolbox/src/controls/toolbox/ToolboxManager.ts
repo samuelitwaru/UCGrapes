@@ -136,7 +136,7 @@ export class ToolboxManager {
             PageType: page.PageType,
             PageStructure: localStructureString,
           };
-      
+
           try {
             // console.log(`Saving page: ${page.PageName}`);
             // console.log('Data: ', JSON.stringify(pageInfo, null, 2));

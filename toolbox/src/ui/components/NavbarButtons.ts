@@ -7,8 +7,6 @@ import { Modal } from "./Modal";
 import { ThemeSelection } from "./ThemeSelection";
 import { VersionSelectionView } from "../views/VersionSelectionView";
 import { i18n } from "../../i18n/i18n";
-import { TreeComponent } from "./TreeComponent";
-import { PageTree } from "./page-tree/PageTree";
 import { PageBubbleTree } from "./page-tree/PageBubbleTree";
 
 export class NavbarButtons {

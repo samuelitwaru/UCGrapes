@@ -214,6 +214,13 @@ export class EditorUIManager {
   activateEditor(frameId: any) {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
+      // deselect in active editors
+      const editors = (window as any).app.editors
+      const inactiveEditors = Object.entries(editors).filter(([key]) => key !== frameId);
+      inactiveEditors.forEach(([key, editor]: [string, any]) => {
+        console.log(editor.select(null))
+      })
+
       frame.classList.remove("active-editor");
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");

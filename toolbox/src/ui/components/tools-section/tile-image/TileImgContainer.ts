@@ -24,38 +24,38 @@ export class TileImgContainer {
     button.innerHTML = '<i class="fa fa-xmark"></i>';
 
     // Position control UI 
-    const controls = document.createElement("div");
-    controls.className = "image-controls";
-    controls.style.display = "flex";
-    controls.style.flexDirection = "column";
-    controls.style.alignItems = "left";
-    controls.style.marginTop = "10px";
-    controls.style.marginBottom = "20px";
+    // const controls = document.createElement("div");
+    // controls.className = "image-controls";
+    // controls.style.display = "flex";
+    // controls.style.flexDirection = "column";
+    // controls.style.alignItems = "left";
+    // controls.style.marginTop = "10px";
+    // controls.style.marginBottom = "20px";
 
-    const row1 = document.createElement("div");
-    const row2 = document.createElement("div");
+    // const row1 = document.createElement("div");
+    // const row2 = document.createElement("div");
 
-    const up = this.createArrow("↑", () => this.moveImage(0, -5));
-    const down = this.createArrow("↓", () => this.moveImage(0, 5));
-    const left = this.createArrow("←", () => this.moveImage(-5, 0));
-    const right = this.createArrow("→", () => this.moveImage(5, 0));
+    // const up = this.createArrow("↑", () => this.moveImage(0, -5));
+    // const down = this.createArrow("↓", () => this.moveImage(0, 5));
+    // const left = this.createArrow("←", () => this.moveImage(-5, 0));
+    // const right = this.createArrow("→", () => this.moveImage(5, 0));
 
-    row1.appendChild(up);
-    row2.appendChild(left);
-    row2.appendChild(down);
-    row2.appendChild(right);
+    // row1.appendChild(up);
+    // row2.appendChild(left);
+    // row2.appendChild(down);
+    // row2.appendChild(right);
 
-    row1.style.marginBottom = "4px";
-    row1.style.display = "flex";
-    row1.style.justifyContent = "center";
+    // row1.style.marginBottom = "4px";
+    // row1.style.display = "flex";
+    // row1.style.justifyContent = "center";
 
-    row2.style.display = "flex";
-    row2.style.gap = "6px";
-    row2.style.justifyContent = "center";
-    row2.style.marginBottom = "4px";
+    // row2.style.display = "flex";
+    // row2.style.gap = "6px";
+    // row2.style.justifyContent = "center";
+    // row2.style.marginBottom = "4px";
   
-    controls.appendChild(row1);
-    controls.appendChild(row2);
+    // controls.appendChild(row1);
+    // controls.appendChild(row2);
 
     let tileAttributes;
     button.addEventListener("click", (e) => {
@@ -103,7 +103,7 @@ export class TileImgContainer {
 
     this.container.appendChild(img);
     this.container.appendChild(button);
-    this.container.appendChild(controls);
+    // this.container.appendChild(controls);
   }
 
   createArrow(label: string, onClick: () => void): HTMLButtonElement {

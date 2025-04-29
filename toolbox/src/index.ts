@@ -10,6 +10,7 @@ class App {
   private toolboxApp: ToolboxApp;
   currentVersion: string | null;
   currentThemeId: string | null;
+  editors: { [key: string]: any } = {}
   
   constructor(
     UC: any,
@@ -44,7 +45,7 @@ class App {
       addTemplatesButtonEvent
     );
 
-    (window as any).app = this  
+    (window as any).app = this;
     this.toolboxApp = new ToolboxApp();
   }
 }

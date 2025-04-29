@@ -165,6 +165,8 @@ export class TileMapper {
             ObjectId: "",
             ObjectUrl: "",
           },
+          BGSize: 0,
+          BGPosition: 0
         },
       ],
     };
@@ -190,6 +192,8 @@ export class TileMapper {
         ObjectId: "",
         ObjectUrl: "",
       },
+      BGSize: 0,
+      BGPosition: 0
     };
 
     const data: any = JSON.parse(

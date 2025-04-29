@@ -14,4 +14,6 @@ export interface Tile {
         ObjectId?: string;
         ObjectUrl?: string;
     };
+    BGSize: number,
+    BGPosition: number
 }

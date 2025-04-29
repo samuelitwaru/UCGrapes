@@ -25,74 +25,7 @@ export class TileImgContainer {
     button.id = "tile-img-delete-button";
     button.innerHTML = '<i class="fa fa-xmark"></i>';
 
-    // Position control UI 
-    const controls = document.createElement("div");
-    controls.className = "image-controls";
-    controls.style.display = "flex";
-    controls.style.flexDirection = "column";
-    controls.style.alignItems = "left";
-    controls.style.marginTop = "10px";
-    controls.style.marginBottom = "20px";
-    controls.style.backgroundColor = "#ffffff"
-
-    const row1 = document.createElement("div");
-    const row2 = document.createElement("div");
-
-    const up = this.createArrow("↑", () => this.moveImage(0, -5));
-    const down = this.createArrow("↓", () => this.moveImage(0, 5));
-    const left = this.createArrow("←", () => this.moveImage(-5, 0));
-    const right = this.createArrow("→", () => this.moveImage(5, 0));
-
-    const zoomIn = document.createElement("button");
-    zoomIn.type = "button";
-    zoomIn.innerHTML = '<i class="fa fa-magnifying-glass-plus"></i>'; 
-    zoomIn.style.margin = "10px";
-    zoomIn.style.padding = "10px";
-    zoomIn.style.cursor = "pointer";
-
-    zoomIn.onclick = () => {
-      this.zoomLevel += 0.1;
-      const selectedComponent = (globalThis as any).selectedComponent;
-      if (!selectedComponent) return;
-      selectedComponent.addStyle({
-        "background-size":`${this.zoomLevel * 100}%`, 
-        });
-      };
-
-    const zoomOut = document.createElement("button");
-    zoomOut.type = "button";
-    zoomOut.innerHTML = '<i class="fa fa-magnifying-glass-minus"></i>'; // Font Awesome
-    zoomOut.style.margin = "10px";
-    zoomOut.style.padding = "10px";
-    zoomOut.style.cursor = "pointer";
-
-    zoomOut.onclick = () => {
-      this.zoomLevel -= 0.1; 
-      const selectedComponent = (globalThis as any).selectedComponent;
-      if (!selectedComponent) return;
-      selectedComponent.addStyle({
-        "background-size":`${this.zoomLevel * 100}%`, 
-        });
-    };
-
-    row1.appendChild(up);
-    row2.appendChild(left);
-    row2.appendChild(down);
-    row2.appendChild(right);
-
-    row1.style.marginBottom = "4px";
-    row1.style.display = "flex";
-    row1.style.justifyContent = "center";
-
-    row2.style.display = "flex";
-    row2.style.gap = "6px";
-    row2.style.justifyContent = "center";
-    row2.style.marginBottom = "4px";
-  
-    controls.appendChild(row1);
-    controls.appendChild(row2);
-    controls.appendChild(zoomIn);
-    controls.appendChild(zoomOut);
+ 
 
     let tileAttributes;
     button.addEventListener("click", (e) => {
@@ -135,31 +68,9 @@ export class TileImgContainer {
 
     this.container.appendChild(img);
     this.container.appendChild(button);
-    this.container.appendChild(controls);
+
   }
 
-  createArrow(label: string, onClick: () => void): HTMLButtonElement {
-    const btn = document.createElement("button");
-    btn.type = "button"; 
-    btn.textContent = label;
-    btn.style.padding = "4px 8px";
-    btn.style.cursor = "pointer";
-    btn.onclick = (e) => {
-      e.preventDefault(); 
-      onClick();
-    };
-    return btn;
-  }
-
-  moveImage(dx: number, dy: number) {
-    this.positionX = Math.max(0, Math.min(100, this.positionX + dx));
-    this.positionY = Math.max(0, Math.min(100, this.positionY + dy));
-    const selectedComponent = (globalThis as any).selectedComponent;
-    selectedComponent.addStyle({
-        "background-size": `${this.zoomLevel * 100}%`,
-        "background-position":`${this.positionX}% ${this.positionY}%`
-        });
-      }
 
    render(container: HTMLElement) {
      container.appendChild(this.container);

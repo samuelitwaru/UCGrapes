@@ -3,11 +3,12 @@ import { i18n } from "../../../../i18n/i18n";
 import { Media } from "../../../../models/Media";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { SingleImageFile } from "./SingleImageFile";
-import { ImageCrop } from "./ImageCrop";
+
 
 export class ImageUpload {
   private type: "tile" | "cta" | "content" | "info";
   modalContent: HTMLElement;
+  wrapper: HTMLElement; // Declare the wrapper property
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
   infoId?: string;
@@ -15,9 +16,34 @@ export class ImageUpload {
   constructor(type: any, infoId?: string) {
     this.type = type;
     this.infoId = infoId;
+
+      // Create the wrapper that will handle resizing/moving
+    const wrapper = document.createElement("div");
+    wrapper.className = "tb-modal-wrapper"; // <-- NEW WRAPPER
+    wrapper.style.position = "fixed";
+    wrapper.style.top = "50%";
+    wrapper.style.left = "50%";
+    wrapper.style.transform = "translate(-50%, -50%)";
+    wrapper.style.minWidth = "400px";
+    wrapper.style.minHeight = "300px";
+    wrapper.style.background = "#fff";
+    wrapper.style.boxShadow = "0 2px 10px rgba(0,0,0,0.3)";
+    wrapper.style.zIndex = "1000";
+    wrapper.style.resize = "both"; // allow resizing
+    wrapper.style.overflow = "auto"; // so content is scrollable when resized small
+
+    
+   
     this.modalContent = document.createElement("div");
+    this.modalContent.className = "tb-modal-content";
+
+    //wrapper.appendChild(this.modalContent);
+
+    this.wrapper = wrapper; // Save the wrapper for later
+
     this.toolboxService = new ToolBoxService();
     this.init();
+    this.makeDraggable(wrapper);
   }
 
   private init() {
@@ -101,6 +127,38 @@ export class ImageUpload {
       }
     };
   }
+  private makeDraggable(wrapper: HTMLElement) {
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+  
+    const header = wrapper.querySelector(".tb-modal-header") as HTMLElement;
+  
+    if (!header) return;
+  
+    header.style.cursor = "move"; // Visual feedback
+  
+    header.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - wrapper.getBoundingClientRect().left;
+      offsetY = e.clientY - wrapper.getBoundingClientRect().top;
+      document.body.style.userSelect = "none"; // prevent text selection while dragging
+    });
+  
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        wrapper.style.left = `${e.clientX - offsetX}px`;
+        wrapper.style.top = `${e.clientY - offsetY}px`;
+        wrapper.style.transform = "none"; // cancel initial translate centering
+      }
+    });
+  
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      document.body.style.userSelect = "auto";
+    });
+  }
+  
 
   private uploadArea() {
     
@@ -119,7 +177,10 @@ export class ImageUpload {
 
     this.modalContent.appendChild(uploadArea);
 
+   
+
   }
+  
 
   private createFileListElement() {
     this.fileListElement = document.createElement("div");
@@ -171,10 +232,7 @@ export class ImageUpload {
 
     // Browse link click handler
     const browseLink = uploadArea.querySelector("#browseLink");
-    // browseLink?.addEventListener("click", (e) => {
-    //   e.preventDefault();
-    //   fileInput.click();
-    // });
+   
 
     uploadArea.addEventListener("click", (e) => {
       fileInput.click();
@@ -208,65 +266,242 @@ export class ImageUpload {
     });
   }
 
-  private async handleFiles(files: FileList) {
-    // Convert FileList to array for easier handling
-    const fileArray = Array.from(files);
+ private handleFiles(files: FileList) {
+  const fileArray = Array.from(files);
 
-    // Process each file
-    for (const file of fileArray) {
-      if (file.type.startsWith("image/")) {
-        try {
-          // Create a new Media object using a Promise to handle the FileReader
-          const dataUrl = await this.readFileAsDataURL(file);
-          const fileName: string = file.name.replace(/\s+/g, "-").replace(/[()]/g, '');
+  for (const file of fileArray) {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
 
-          const newMedia: Media = {
-            MediaId: Date.now().toString(),
-            MediaName: fileName,
-            MediaUrl: dataUrl,
-            MediaType: file.type,
-            MediaSize: file.size,
-          };
+        // Create an image element
+        const img = document.createElement("img");
+        img.src = dataUrl;
+        img.alt = file.name;
+        img.style.maxWidth = "100%";
+        img.style.maxHeight = "100%";
+        img.style.position = "relative";
 
-          // Display progress indicator
-          if (this.fileListElement) {
-            this.displayMediaFileProgress(this.fileListElement, newMedia);
-          }
+        // Clear the wrapper and append the image
+        this.wrapper.innerHTML = "";
+        this.wrapper.appendChild(img);
 
-          if (!this.validateFile(newMedia)) return;
+        // Add resize controls
+        this.addZoomControl(img);
 
-          // Call the upload service and wait for the response
-          const response = await this.toolboxService.uploadFile(
-            newMedia.MediaUrl,
-            newMedia.MediaName,
-            newMedia.MediaSize,
-            newMedia.MediaType
-          );
+        // Add a draggable frame
+        this.addDraggableFrame(img);
 
-          const uploadedMedia: Media = response.BC_Trn_Media;
-
-        } catch (error) {
-          console.error("Error processing file:", error);
-
-          // Show error for this particular file
-          if (this.fileListElement) {
-            const errorElement = document.createElement("div");
-            errorElement.className = "upload-error";
-            errorElement.textContent = `Error uploading ${file.name}: ${error}`;
-            this.fileListElement.insertBefore(
-              errorElement,
-              this.fileListElement.firstChild
-            );
-
-            // Remove error message after 5 seconds
-            setTimeout(() => {
-              errorElement.remove();
-            }, 5000);
-          }
-        }
-      }
+        // Add a Done button
+        this.addDoneButton(img, dataUrl);
+      };
+      reader.readAsDataURL(file);
     }
   }
+}
+
+private addZoomControl(img: HTMLImageElement) {
+  const zoomContainer = document.createElement("div");
+  zoomContainer.style.display = "flex";
+  zoomContainer.style.alignItems = "center";
+  zoomContainer.style.marginTop = "10px";
+  zoomContainer.style.width = "200px";
+  zoomContainer.style.height = "10px";
+  zoomContainer.style.background = "#ddd";
+  zoomContainer.style.borderRadius = "5px";
+  zoomContainer.style.position = "relative";
+
+  const zoomHandle = document.createElement("div");
+  zoomHandle.style.width = "20px";
+  zoomHandle.style.height = "20px";
+  zoomHandle.style.background = "#007bff";
+  zoomHandle.style.borderRadius = "50%";
+  zoomHandle.style.position = "absolute";
+  zoomHandle.style.top = "-5px";
+  zoomHandle.style.left = "0";
+  zoomHandle.style.cursor = "pointer";
+
+  zoomContainer.appendChild(zoomHandle);
+  this.wrapper.appendChild(zoomContainer);
+
+  let isDragging = false;
+
+  zoomHandle.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    document.body.style.userSelect = "none"; // Prevent text selection while dragging
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      const rect = zoomContainer.getBoundingClientRect();
+      let newLeft = e.clientX - rect.left;
+
+      // Limit the handle's movement within the container
+      if (newLeft < 0) newLeft = 0;
+      if (newLeft > rect.width - zoomHandle.offsetWidth) {
+        newLeft = rect.width - zoomHandle.offsetWidth;
+      }
+
+      zoomHandle.style.left = `${newLeft}px`;
+
+      // Calculate the zoom level based on the handle's position
+      const zoomLevel = 1 + (newLeft / rect.width) * 2; // Zoom range: 1x to 3x
+      img.style.transform = `scale(${zoomLevel})`;
+      img.style.transformOrigin = "center center";
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    document.body.style.userSelect = "auto";
+  });
+}
+
+private addDraggableFrame(img: HTMLImageElement) {
+  const frame = document.createElement("div");
+  frame.style.position = "absolute";
+  frame.style.border = "2px dashed #000";
+  frame.style.width = "100px";
+  frame.style.height = "100px";
+  frame.style.top = "50%";
+  frame.style.left = "50%";
+  frame.style.transform = "translate(-50%, -50%)";
+  frame.style.cursor = "move";
+
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  frame.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - frame.getBoundingClientRect().left;
+    offsetY = e.clientY - frame.getBoundingClientRect().top;
+    document.body.style.userSelect = "none";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      const parentRect = img.getBoundingClientRect();
+      const newLeft = e.clientX - offsetX;
+      const newTop = e.clientY - offsetY;
+
+      // Ensure the frame stays within the image bounds
+      if (
+        newLeft >= parentRect.left &&
+        newLeft + frame.offsetWidth <= parentRect.right &&
+        newTop >= parentRect.top &&
+        newTop + frame.offsetHeight <= parentRect.bottom
+      ) {
+        frame.style.left = `${newLeft - parentRect.left}px`;
+        frame.style.top = `${newTop - parentRect.top}px`;
+      }
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    document.body.style.userSelect = "auto";
+  });
+
+  this.wrapper.appendChild(frame);
+}
+private resetModal() {
+  // Clear the wrapper content
+  this.wrapper.innerHTML = "";
+
+  // Reinitialize the upload area and file list
+  this.uploadArea();
+  this.createFileListElement();
+  
+   // Reload media files if needed
+   if (this.fileListElement) {
+    this.loadMediaFiles();
+  }
+}
+
+private addDoneButton(img: HTMLImageElement, dataUrl: string) {
+  const doneBtn = document.createElement("button");
+  doneBtn.innerText = "Done";
+  doneBtn.style.display = "block";
+  doneBtn.style.margin = "10px auto";
+  doneBtn.addEventListener("click", () => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    // Get the frame's position and size
+    const frame = this.wrapper.querySelector("div[style*='dashed']") as HTMLElement;
+    if (!frame) {
+      console.error("Frame not found");
+      return;
+    }
+
+    const frameRect = frame.getBoundingClientRect();
+    const imgRect = img.getBoundingClientRect();
+
+    const scaleX = img.naturalWidth / imgRect.width;
+    const scaleY = img.naturalHeight / imgRect.height;
+
+    const cropX = (frameRect.left - imgRect.left) * scaleX;
+    const cropY = (frameRect.top - imgRect.top) * scaleY;
+    const cropWidth = frameRect.width * scaleX;
+    const cropHeight = frameRect.height * scaleY;
+
+    canvas.width = cropWidth;
+    canvas.height = cropHeight;
+
+    ctx.drawImage(
+      img,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      cropWidth,
+      cropHeight
+    );
+
+    // Convert the cropped image to a data URL
+    const croppedDataUrl = canvas.toDataURL("image/png");
+
+    // Add the cropped image to the list of images
+    this.addImageToList(croppedDataUrl);
+
+    
+     // Reset the modal to the initial upload area
+     this.resetModal();
+  });
+
+  this.wrapper.appendChild(doneBtn);
+}
+
+private addImageToList(dataUrl: string) {
+  if (this.fileListElement) {
+    const img = document.createElement("img");
+    img.src = dataUrl;
+    img.alt = "Cropped Image";
+    img.style.maxWidth = "100px";
+    img.style.maxHeight = "100px";
+    img.style.margin = "5px";
+    img.style.cursor = "pointer";
+
+    this.fileListElement.appendChild(img);
+      // Optionally, add a click event to preview the image
+      img.addEventListener("click", () => {
+        const previewWindow = window.open("", "_blank");
+        if (previewWindow) {
+          previewWindow.document.write(`<img src="${dataUrl}" alt="Cropped Image" style="max-width: 100%;">`);
+        }
+      });
+    } else {
+      console.error("File list element not found");
+    
+  }
+  
+}
 
   private displayMediaFileProgress(fileList: HTMLElement, file: Media) {
     const fileItem = document.createElement("div");
@@ -400,7 +635,7 @@ export class ImageUpload {
   }
 
   public render(container: HTMLElement) {
-    container.appendChild(this.modalContent);
+    container.appendChild(this.wrapper);
   }
   
 }

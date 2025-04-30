@@ -249,16 +249,32 @@ export class TileMapper {
     const data: any = JSON.parse(
       localStorage.getItem(`data-${this.pageId}`) || "{}"
     );
-    if (rowId) {
-      const row = data?.PageMenuStructure?.Rows?.find(
-        (r: any) => r.Id === rowId
-      );
-      if (row) {
-        const tile = row.Tiles.find((t: any) => t.Id === tileId);
-        return tile || null;
+    let tile: any = null;
+    // if current page is Information type
+    if (data.PageType === "Information") {
+      data.PageInfoStructure.InfoContent
+      .filter((content:any)=>content.InfoType == "TileRow")
+      .forEach((content: any) => {
+        tile = content.Tiles.find((t: any) => t.Id === tileId)
+        // return tile || null;
+      })
+      return tile
+    }
+
+    // if current page is Menu type
+    else if (data.PageType === "Menu") {
+      if (rowId) {
+        const row = data?.PageMenuStructure?.Rows?.find(
+          (r: any) => r.Id === rowId
+        );
+        if (row) {
+          tile = row.Tiles.find((t: any) => t.Id === tileId);
+          return tile || null;
+        }
       }
     }
-    return null;
+
+    return tile;
   }
 
   moveTile(

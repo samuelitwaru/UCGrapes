@@ -27,13 +27,14 @@ export class ActionListController {
 
   async getMenuCategories(): Promise<MenuItem[][] | null> {
     const categoryData = await this.actionList.getCategoryData();
+    console.log("categoryData", categoryData);
     const activePage = (globalThis as any).pageData;
 
     // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
 
     // Only add Services if the page type matches
-    if (activePage && activePage.PageType !== "Information") {
+    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-form",
         name: "DynamicForm",
@@ -41,8 +42,8 @@ export class ActionListController {
         expandable: true,
         action: () => this.getSubMenuItems(categoryData, "Forms"),
       });
-    }
-    if (activePage && activePage.PageType !== "Information") {
+    // }
+    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-module",
         name: "Modules",
@@ -50,18 +51,26 @@ export class ActionListController {
         expandable: true,
         action: () => this.getSubMenuItems(categoryData, "Modules"),
       });
-    }
+    // }
+
+    secondCategory.push({
+      id: "list-page",
+      name: "Existing Pages",
+      label: i18n.t("tile.existing_pages"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, "Page"),
+    });
   
     return [
       [
-        {
-          id: "add-menu-page",
-          label: i18n.t("tile.add_menu_page"),
-          name: "",
-          action: async () => {
-            this.createNewPage("Untitled");
-          },
-        },
+        // {
+        //   id: "add-menu-page",
+        //   label: i18n.t("tile.add_menu_page"),
+        //   name: "",
+        //   action: async () => {
+        //     this.createNewPage("Untitled");
+        //   },
+        // },
         {
           id: "add-info-page",
           label: i18n.t("tile.information_page"),
@@ -70,15 +79,15 @@ export class ActionListController {
             this.createNewInfoPage("Untitled");
           },
         },
-        {
-          id: "add-content-page",
-          label:  i18n.t("tile.add_content_page"),
-          name: "",
-          action: () => {
-            const config = AppConfig.getInstance();
-            config.addServiceButtonEvent()
-          },
-        },
+        // {
+        //   id: "add-content-page",
+        //   label:  i18n.t("tile.add_content_page"),
+        //   name: "",
+        //   action: () => {
+        //     const config = AppConfig.getInstance();
+        //     config.addServiceButtonEvent()
+        //   },
+        // },
       ],
       secondCategory,
       [
@@ -182,6 +191,7 @@ export class ActionListController {
     for (const [property, value] of updates) {
       (globalThis as any).tileMapper.updateTile(tileId, property, value);
     }
+    alert(tileId + " , " + rowId);
     const tileAttributes = (globalThis as any).tileMapper.getTile(
       rowId,
       tileId

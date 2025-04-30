@@ -218,7 +218,7 @@ export class EditorUIManager {
       const editors = (window as any).app.editors
       const inactiveEditors = Object.entries(editors).filter(([key]) => key !== frameId);
       inactiveEditors.forEach(([key, editor]: [string, any]) => {
-        console.log(editor.select(null))
+        editor.select(null)
       })
 
       frame.classList.remove("active-editor");

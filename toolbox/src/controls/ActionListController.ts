@@ -191,7 +191,6 @@ export class ActionListController {
     for (const [property, value] of updates) {
       (globalThis as any).tileMapper.updateTile(tileId, property, value);
     }
-    alert(tileId + " , " + rowId);
     const tileAttributes = (globalThis as any).tileMapper.getTile(
       rowId,
       tileId

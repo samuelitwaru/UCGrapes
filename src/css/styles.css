@@ -579,7 +579,9 @@ span#scroll-right:hover {
 }
 
 .version-select-button {
-  padding: 8px 12px;
+  padding: 12px 12px;
+  margin-top: 12px; 
+  margin-bottom: 12px;
   background-color: #222f54;
   color: white;
   border: none;
@@ -656,7 +658,7 @@ span#scroll-right:hover {
   position: absolute;
   top: 100%;
   left: 0;
-  max-height: 200px;
+  /* max-height: 200px; */
   min-width: 100%;
   background-color: white;
   border-radius: 6px;

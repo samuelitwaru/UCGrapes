@@ -1638,35 +1638,82 @@ div#cta-selected-actions {
 .file-item {
   display: flex;
   align-items: center;
-  padding: 20px;
-  border-radius: 4px;
   margin-bottom: 10px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.action-column {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: right; /* Center items horizontally */
+  position: absolute;
+  top: 10px; /* Adjust position relative to the container */
+  right: 10px; /* Adjust position relative to the container */
+  gap: 5px; /* Add spacing between statusCheck and deleteSpan */
+  margin-left: 10px;
+}
+.delete-media:hover {
+  color: darkred; /* Darker red on hover */
+}
+.file-item:hover .grid-image {
+  filter: blur(4px); /* Blur the image on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+  transition: all 0.3s ease;
+}
+
+/* .file-item .action-buttons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 10px; 
+  opacity: 0; 
+  transition: opacity 0.3s ease;
+} */
+
+.file-item:hover .action-buttons {
+  opacity: 1; /* Show buttons on hover */
+}
+
+.file-item .action-button {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.file-item .action-button:hover {
+  background-color: #28a745; /* Green background on hover */
+}
+
+.file-item .delete-button:hover {
+  background-color: #dc3545; /* Red background for delete button */
 }
 
 .file-item img {
-  height: 65px;
-  width: 100px;
+  height: 200px;
+  width: 200px;
   margin-right: 10px;
 }
 
 .file-item .file-info {
   flex-grow: 1;
 }
-
-.file-item .file-name {
-  font-weight: bold;
-  margin-bottom: 2px;
-  color: #222f54;
-}
-
-.file-item .file-size {
-  font-size: 0.8em;
-  color: #666;
-}
-
-.file-item.valid {
+/* .file-item.valid {
   background-color: #d9f1fb;
-}
+} */
 
 .file-item.invalid {
   background-color: #f9eceb;
@@ -1679,7 +1726,6 @@ div#cta-selected-actions {
 
 .file-item .delete-media {
   font-size: 16px;
-  margin-left: 10px;
   color: #a00c0c;
   opacity: 0;
   cursor: pointer;
@@ -2965,4 +3011,131 @@ canvas {
 }
 .controls {
   margin-top: 10px;
+}
+.tb-modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-editor-container {
+  flex: 1; /* Take up available space */
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 1px 1px 1px 1px #c0c0c0;
+  border-radius: 6px;
+  padding: 10px;
+  width: 235px;
+  height: 45px;
+  margin-left: 220px;
+  margin-bottom: 40px;
+  margin-top: 20px;
+  border: #c0c0c0 solid 1px;
+}
+
+.modal-footer input[type="range"] {
+  flex: 1; /* Allow the slider to take up available space */
+  margin-left: 0 20px; /* Add spacing around the slider */
+}
+
+.button-container {
+  display: flex;
+  gap: 10px; /* Add spacing between buttons */
+  margin-left: 500px;
+}
+
+.tb-btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tb-btn-outline {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.tb-btn-primary {
+  background: #5068a8;
+  border: none;
+  color: #fff;
+}
+/* Style the slider track */
+input[type="range"] {
+  appearance: none; /* Standard property for compatibility */
+  -webkit-appearance: none; /* Remove default styling */
+  width: 100%; /* Full width */
+  height: 3px; /* Adjust thickness */
+  background: #5c74ad; /* Track color */
+  border-radius: 4px; /* Rounded edges */
+  outline: none; /* Remove outline */
+  transition: background 0.3s ease; /* Smooth color transition */
+}
+/* Style the slider thumb (handle) for WebKit browsers (Chrome, Safari) */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Remove default styling */
+  width: 13px; /* Thumb size */
+  height: 13px; /* Thumb size */
+  background: #5c74ad; /* Thumb color */
+  border-radius: 50%; /* Make it circular */
+  cursor: pointer; /* Pointer cursor on hover */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional shadow */
+  border: none; /* Remove border */
+}
+.file-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+  gap: 10px; /* Spacing between images */
+  padding: 10px;
+}
+
+.grid-image {
+  width: 90%;
+  height: 90%;
+  object-fit: cover; /* Ensure the image fills the container */
+  border-radius: 8px; /* Match the file-item border-radius */
+}
+.file-item {
+  position: relative;
+  border: 2px solid transparent; /* Default border */
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border 0.3s ease;
+}
+
+.file-item.active {
+  border: 2px solid #28a745; /* Green border for active tile */
+}
+
+.file-item .check-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  background-color: #28a745;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10;
+  display: none; /* Hidden by default */
+}
+
+.file-item.active .check-icon {
+  display: flex; /* Show only for active tile */
 }

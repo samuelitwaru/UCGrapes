@@ -707,9 +707,7 @@ private resetModal() {
   }
 
   private displayMediaFile(fileList: HTMLElement, file: Media): void {
-    // const singleImageFile = new SingleImageFile(file, this.type, this.infoId);
-    // singleImageFile.render(fileList);
-    // fileList.insertBefore(singleImageFile.getElement(), fileList.firstChild);
+   
     const fileItem = document.createElement("div");
     fileItem.className = "file-item";
 
@@ -719,8 +717,52 @@ private resetModal() {
     img.alt = "Uploaded Image";
     img.className = "grid-image";
 
-    fileItem.appendChild(img);
-    fileList.appendChild(fileItem);
+    // Create a container for action buttons
+    const actionButtons = document.createElement("div");
+    actionButtons.className = "action-buttons";
+
+      // Add the check button
+    const checkButton = document.createElement("button");
+    checkButton.className = "action-button check-button";
+    checkButton.innerHTML = "✔"; // Check icon
+    checkButton.addEventListener("click", () => {
+      // Handle image selection logic
+      console.log("Image selected:", file.MediaUrl);
+    });
+
+    // Add the delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "action-button delete-button";
+    deleteButton.innerHTML = "✖"; // Delete icon
+    deleteButton.addEventListener("click", () => {
+      // Remove the image from the grid
+      fileItem.remove();
+      console.log("Image deleted:", file.MediaUrl);
+    });
+
+     // Append buttons to the action buttons container
+  actionButtons.appendChild(checkButton);
+  actionButtons.appendChild(deleteButton);
+
+  // Append the image and action buttons to the file item
+  fileItem.appendChild(img);
+  fileItem.appendChild(actionButtons);
+
+  // Append the file item to the file list
+  fileList.appendChild(fileItem);
+
+  
+
+     // Handle tile click
+  fileItem.addEventListener("click", () => {
+    // Remove active class from all tiles
+    const allTiles = fileList.querySelectorAll(".file-item");
+    allTiles.forEach((tile) => tile.classList.remove("active"));
+
+    // Add active class to the clicked tile
+    fileItem.classList.add("active");
+
+  });
   }
 
   // Add this property to the class with the correct type

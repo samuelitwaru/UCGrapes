@@ -32,6 +32,10 @@ export class SingleImageFile {
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
 
+      // Create a wrapper for statusCheck and deleteSpan
+    const actionColumn = document.createElement("div");
+    actionColumn.className = "action-column";
+
     const fileInfo = document.createElement("div");
     fileInfo.className = "file-info";
 
@@ -61,10 +65,15 @@ export class SingleImageFile {
       this.deleteEvent();
     });
 
+    // Append statusCheck and deleteSpan to the action column
+    actionColumn.appendChild(statusCheck);
+    actionColumn.appendChild(deleteSpan);
+
     this.container.appendChild(img);
-    this.container.appendChild(fileInfo);
-    this.container.appendChild(statusCheck);
-    this.container.appendChild(deleteSpan);
+    // this.container.appendChild(fileInfo);
+    // this.container.appendChild(statusCheck);
+    // this.container.appendChild(deleteSpan);
+    this.container.appendChild(actionColumn);
   }
 
   private formatBytes(bytes: number) {

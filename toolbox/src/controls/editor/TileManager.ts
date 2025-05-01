@@ -180,7 +180,7 @@ export class TileManager {
           Color: "#333333",
           Align: "left",
           BGSize: 1,
-          BGPosition: 1
+          BGPosition: 1,
           Action: {
             ObjectType: "",
             ObjectId: "",

@@ -35,35 +35,25 @@ export class ActionListController {
 
     // Only add Services if the page type matches
     // if (activePage && activePage.PageType !== "Information") {
-    if (activePage && (activePage.PageType === "MyCare" || 
-                       activePage.PageType === "MyService" || 
-                       activePage.PageType === "MyLiving")) {
       secondCategory.push({
         id: "list-form",
         name: "DynamicForm",
         label: i18n.t("tile.forms"),
-        id: "list-services",
-        name: "Content",
-        label: "Services",
         expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Forms"),
+        action: () => this.getSubMenuItems(categoryData, "Content"),
       });
-    }
-<<<<<<<<< Temporary merge branch 1
-    if (activePage && activePage.PageType !== "Information") {
+    // }
+    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-module",
         name: "Modules",
-        label: "Modules",
+        label: i18n.t("tile.modules"),
         expandable: true,
         action: () => this.getSubMenuItems(categoryData, "Modules"),
       });
     // }
 
     console.log("categoryData", categoryData);
-    }
-    
-    // Always add Forms and Modules
     secondCategory.push({
       id: "list-page",
       name: "Page",

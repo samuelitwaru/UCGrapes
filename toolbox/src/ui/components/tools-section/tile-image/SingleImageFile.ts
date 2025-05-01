@@ -43,8 +43,8 @@ export class SingleImageFile {
     fileSize.className = "file-size";
     fileSize.innerText = this.formatBytes(this.mediaFile.MediaSize);
 
-    fileInfo.appendChild(fileName);
-    fileInfo.appendChild(fileSize);
+    // fileInfo.appendChild(fileName);
+    // fileInfo.appendChild(fileSize);
 
     const statusCheck = document.createElement("span");
     statusCheck.className = "status-icon";

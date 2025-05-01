@@ -434,6 +434,16 @@ setTimeout(() => {
   imageContainer.appendChild(overlayLeft);
   imageContainer.appendChild(overlayRight);
 }, 0);
+      // Create a wrapper for the slider and buttons
+  const modalFooter = document.createElement("div");
+  modalFooter.className = "modal-footer";
+  
+  // Add the slider to the footer
+    // Create a wrapper for the slider and its label
+    const sliderWrapper = document.createElement("div");
+    sliderWrapper.style.display = "flex";
+    sliderWrapper.style.alignItems = "center";
+    sliderWrapper.style.gap = "10px";
 
     // Add the slider to adjust overlay opacity
     const opacitySlider = document.createElement("input");
@@ -443,11 +453,24 @@ setTimeout(() => {
     opacitySlider.step = "1";
     opacitySlider.value = "60"; // Default 60% opacity
     opacitySlider.style.width = "40%";
-    opacitySlider.style.marginTop = "10px";
+   
+
+    // Create a label to display the opacity percentage
+    const opacityLabel = document.createElement("span");
+    opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
+    opacityLabel.style.fontSize = "14px";
+    opacityLabel.style.color = "#333";
+
+    // Append the slider and label to the wrapper
+    sliderWrapper.appendChild(opacitySlider);
+    sliderWrapper.appendChild(opacityLabel);
+
+    // Append the wrapper to the modal footer
+    modalFooter.appendChild(sliderWrapper);
   
     opacitySlider.addEventListener("input", () => {
       const opacityValue = parseInt(opacitySlider.value, 10) / 100;
-      console.log(`Opacity Slider Value: ${opacityValue}`);
+      opacityLabel.innerText = `${opacityValue}%`; 
        
        // Apply the opacity to the image
     img.style.opacity = `${1 - opacityValue}`; // Invert the opacity (0% = fully visible, 100% = fully black)
@@ -455,12 +478,14 @@ setTimeout(() => {
     // Apply a brightness filter to make the image turn black as opacity increases
     img.style.filter = `brightness(${1 - opacityValue})`;
       });
+       // Create a button container for alignment
+  const buttonContainer = document.createElement("div");
+  buttonContainer.className = "button-container";
+  
 
   // Add the "Done" button   
   const doneButton = document.createElement("button");
-  doneButton.innerText = "Ok";
-  //doneButton.className = "tb-btn tb-btn-primary";
-  doneButton.style.marginLeft = "50px";
+  doneButton.innerText = "OK";  
   doneButton.style.width = "92px";
   doneButton.style.height = "35px"; 
   doneButton.style.background = "#5068A8";
@@ -475,24 +500,41 @@ setTimeout(() => {
    // Add the "Cancel" button
    const cancelButton = document.createElement("button");
    cancelButton.innerText = "Cancel";
-   //cancelButton.className = "tb-btn tb-btn-outline";
-   cancelButton.style.marginTop = "10px";
    cancelButton.style.width = "92px";
    cancelButton.style.height = "35px";
    cancelButton.style.borderRadius = "4px";
-   doneButton.style.border = "none";
+   cancelButton.style.border = "1px solid #5068A8";
+   cancelButton.style.color = "#5068A8";
+   
  
    cancelButton.addEventListener("click", () => {
      console.log("Cancel button clicked");
      this.resetModal();
    });
+   
+  
+ 
+  // Add the "Cancel" and "Save" buttons to the button container
+  buttonContainer.appendChild(cancelButton);
+  buttonContainer.appendChild(doneButton);
+  
+  // Add the button container to the footer
+  modalFooter.appendChild(buttonContainer);
+  
+  // Append the footer to the modal content
+  this.modalContent.appendChild(modalFooter);
 
   // Append everything to the upload area
+  // if (uploadArea) {
+  //   uploadArea.appendChild(imageContainer);
+  //   uploadArea.appendChild(opacitySlider);
+  //   uploadArea.appendChild(doneButton);
+  //   uploadArea.appendChild(cancelButton);
+  // }
   if (uploadArea) {
     uploadArea.appendChild(imageContainer);
-    uploadArea.appendChild(opacitySlider);
-    uploadArea.appendChild(doneButton);
-    uploadArea.appendChild(cancelButton);
+    uploadArea.appendChild(modalFooter);
+    uploadArea.appendChild(buttonContainer);
   }
 }
 private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: File) {
@@ -600,21 +642,6 @@ private resetModal() {
               <img src="${
                 file.MediaUrl
               }" alt="File thumbnail" class="preview-image">
-              <div class="file-info">
-                <div class="file-info-details">
-                  <div>
-                    <div class="file-name">${removeBeforeFirstHyphen(
-                      file.MediaName
-                    )}</div>
-                    <div class="file-size">${this.formatFileSize(
-                      file.MediaSize.toString()
-                    )}</div>
-                  </div>
-                  <div class="progress-text">0%</div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 0%"></div>
-                </div>
                 ${ isValid ? "" : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>` }
               </div>
               <span class="status-icon" style="color: ${
@@ -680,9 +707,20 @@ private resetModal() {
   }
 
   private displayMediaFile(fileList: HTMLElement, file: Media): void {
-    const singleImageFile = new SingleImageFile(file, this.type, this.infoId);
-    singleImageFile.render(fileList);
-    fileList.insertBefore(singleImageFile.getElement(), fileList.firstChild);
+    // const singleImageFile = new SingleImageFile(file, this.type, this.infoId);
+    // singleImageFile.render(fileList);
+    // fileList.insertBefore(singleImageFile.getElement(), fileList.firstChild);
+    const fileItem = document.createElement("div");
+    fileItem.className = "file-item";
+
+    // Add only the image element
+    const img = document.createElement("img");
+    img.src = file.MediaUrl;
+    img.alt = "Uploaded Image";
+    img.className = "grid-image";
+
+    fileItem.appendChild(img);
+    fileList.appendChild(fileItem);
   }
 
   // Add this property to the class with the correct type

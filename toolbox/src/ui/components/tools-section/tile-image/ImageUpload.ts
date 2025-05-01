@@ -228,7 +228,7 @@ private displayImageEditor(dataUrl: string, file: File) {
   zoomSlider.max = "3";
   zoomSlider.step = "0.1";
   zoomSlider.value = "1";
-  zoomSlider.style.width = "100%";
+  zoomSlider.style.width = "40%";
   zoomSlider.style.marginTop = "10px";
 
   zoomSlider.addEventListener("input", () => {
@@ -237,17 +237,81 @@ private displayImageEditor(dataUrl: string, file: File) {
   });
 
   // Add a draggable frame
-  const zoomLevel = parseFloat(zoomSlider.value);
+  //const zoomLevel = parseFloat(zoomSlider.value);
   const frame = document.createElement("div");
   frame.style.position = "absolute";
-  frame.style.border = "2px dashed #000";
+  frame.style.border = "2px dashed #5068A8";
   frame.style.width = "80%";
   frame.style.height = "80%";
   frame.style.top = "10%";
   frame.style.left = "10%";
-  frame.style.transform = `translate(0, 0)`;
   frame.style.cursor = "move";
   frame.style.zIndex = "10";
+
+  
+  // Add resize handles
+  const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
+  handles.forEach((handle) => {
+    const handleDiv = document.createElement("div");
+    handleDiv.className = `resize-handle ${handle}`;
+    handleDiv.style.position = "absolute";
+    handleDiv.style.width = "10px";
+    handleDiv.style.height = "10px";
+    handleDiv.style.backgroundColor = "#000";
+    handleDiv.style.zIndex = "11";
+
+    // Position the handles
+    if (handle.includes("top")) handleDiv.style.top = "-5px";
+    if (handle.includes("bottom")) handleDiv.style.bottom = "-5px";
+    if (handle.includes("left")) handleDiv.style.left = "-5px";
+    if (handle.includes("right")) handleDiv.style.right = "-5px";
+
+    frame.appendChild(handleDiv);
+     // Add resize logic
+     handleDiv.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startWidth = frame.offsetWidth;
+      const startHeight = frame.offsetHeight;
+      const startLeft = frame.offsetLeft;
+      const startTop = frame.offsetTop;
+
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const dx = moveEvent.clientX - startX;
+        const dy = moveEvent.clientY - startY;
+
+        if (handle.includes("right")) {
+          frame.style.width = `${startWidth + dx}px`;
+        }
+        if (handle.includes("bottom")) {
+          frame.style.height = `${startHeight + dy}px`;
+        }
+        if (handle.includes("left")) {
+          frame.style.width = `${startWidth - dx}px`;
+          frame.style.left = `${startLeft + dx}px`;
+        }
+        if (handle.includes("top")) {
+          frame.style.height = `${startHeight - dy}px`;
+          frame.style.top = `${startTop + dy}px`;
+        }
+
+        // Update the overlay positions
+        initializeOverlay();
+      };
+      const onMouseUp = () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      };
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    });
+  });
+
+   
 
   let isDragging = false;
   let offsetX = 0;
@@ -320,7 +384,7 @@ private displayImageEditor(dataUrl: string, file: File) {
 
   const overlayStyle = {
     position: "absolute",
-    backgroundColor: "rgba(255, 252, 252, 0.7)", // 60% grey opacity
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // 60% grey opacity
     zIndex: "5", // Ensure the overlays are below the frame
     pointerEvents: "none", // Allow interactions with the frame
   };
@@ -370,22 +434,64 @@ setTimeout(() => {
   imageContainer.appendChild(overlayRight);
 }, 0);
 
-  // Add the "Done" button
+    // Add the slider to adjust overlay opacity
+    const opacitySlider = document.createElement("input");
+    opacitySlider.type = "range";
+    opacitySlider.min = "0";
+    opacitySlider.max = "100";
+    opacitySlider.step = "1";
+    opacitySlider.value = "60"; // Default 60% opacity
+    opacitySlider.style.width = "40%";
+    opacitySlider.style.marginTop = "10px";
+  
+    opacitySlider.addEventListener("input", () => {
+      const opacityValue = parseInt(opacitySlider.value, 10) / 100;
+      console.log(`Opacity Slider Value: ${opacityValue}`);
+       
+       // Apply the opacity to the image
+    img.style.opacity = `${1 - opacityValue}`; // Invert the opacity (0% = fully visible, 100% = fully black)
+
+    // Apply a brightness filter to make the image turn black as opacity increases
+    img.style.filter = `brightness(${1 - opacityValue})`;
+      });
+
+  // Add the "Done" button   
   const doneButton = document.createElement("button");
-  doneButton.innerText = "Done";
-  doneButton.className = "tb-btn tb-btn-primary";
-  doneButton.style.marginTop = "10px";
+  doneButton.innerText = "Ok";
+  //doneButton.className = "tb-btn tb-btn-primary";
+  doneButton.style.marginLeft = "50px";
+  doneButton.style.width = "92px";
+  doneButton.style.height = "35px"; 
+  doneButton.style.background = "#5068A8";
+  doneButton.style.borderRadius = "4px";
+  doneButton.style.color = "#fff";
+  doneButton.style.border = "none";
 
   doneButton.addEventListener("click", () => {
     console.log("Check if done button is clicked");
     this.saveCroppedImage(img, frame, file);
   });
+   // Add the "Cancel" button
+   const cancelButton = document.createElement("button");
+   cancelButton.innerText = "Cancel";
+   //cancelButton.className = "tb-btn tb-btn-outline";
+   cancelButton.style.marginTop = "10px";
+   cancelButton.style.width = "92px";
+   cancelButton.style.height = "35px";
+   cancelButton.style.borderRadius = "4px";
+   doneButton.style.border = "none";
+ 
+   cancelButton.addEventListener("click", () => {
+     console.log("Cancel button clicked");
+     this.resetModal();
+   });
 
   // Append everything to the upload area
   if (uploadArea) {
     uploadArea.appendChild(imageContainer);
-    uploadArea.appendChild(zoomSlider);
+    uploadArea.appendChild(opacitySlider);
     uploadArea.appendChild(doneButton);
+    uploadArea.appendChild(cancelButton);
   }
 }
 private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: File) {

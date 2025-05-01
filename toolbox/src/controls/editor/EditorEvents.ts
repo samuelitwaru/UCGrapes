@@ -54,6 +54,13 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         if (wrapper) {
+          wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
+          //  const editorId = editor.getConfig().container;
+           // const editorContainerId = `${editorId}-frame`;
+            alert("Double click event triggered!");
+          
+           // this.handleTileDoubleClick(e, editorContainerId);
+          });
           wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             const targetElement = e.target as Element;
             if (

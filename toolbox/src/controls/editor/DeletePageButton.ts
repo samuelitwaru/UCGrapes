@@ -13,6 +13,7 @@ export class DeletePageButton {
         this.toolboxService = new ToolBoxService();
         this.appVersion = new AppVersionManager();
         if (pageData) {
+            console.log('>>>', pageData.IsPredefined)
             this.pageData = pageData;
             this.button = document.createElement('button');
             // add icon
@@ -25,8 +26,9 @@ export class DeletePageButton {
             this.button.title = 'Delete Page';
             this.button.setAttribute('data-id', pageData.PageId);
             this.button.addEventListener('click', (e) => this.handleDelete(e));
-            if (pageData.PageType == "Menu" || pageData.PageType == "Content") {
-                container.insertBefore(this.button, container.firstChild);     
+            
+            if (!pageData.IsPredefined) {
+                container.insertBefore(this.button, container.firstChild);    
             }
 
         }

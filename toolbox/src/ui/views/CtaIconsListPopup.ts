@@ -118,7 +118,7 @@ export class CtaIconsListPopup {
 
     // Set up icons list
     this.iconsList.classList.add("cta-icons-list");
-
+    console.log('cta icons', ctaIcons)
     // Add icons to the list
     ctaIcons?.forEach((item) => {
       const iconItem = document.createElement("div");

@@ -46,6 +46,7 @@ export class MenuItemManager {
     } else {
       // Handle non-expandable items on click
       menuItem.addEventListener("click", (e) => {
+        console.log('action: ', item.action)
         e.stopPropagation();
         if (item.action) {
           item.action();

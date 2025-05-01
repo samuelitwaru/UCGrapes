@@ -10,6 +10,7 @@ export class ImageUpload {
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
   infoId?: string;
+  finishedUploads: { [key: string]: Media } = {};
 
   constructor(type: any, infoId?: string) {
     this.type = type;
@@ -647,6 +648,7 @@ private resetModal() {
         clearInterval(interval);
         if (isValid) {
             fileList.removeChild(fileItem);
+            file = this.finishedUploads[file.MediaId] || file;
             this.displayMediaFile(fileList, file);
         }        
       }

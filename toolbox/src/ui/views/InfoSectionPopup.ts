@@ -153,6 +153,7 @@ export class InfoSectionPopup {
 
   addTile() {
     const tile = this.infoSectionUi.infoTileUi();
+    console.log('adding', tile)
     this.controller.addTile(tile);
   }
 

@@ -25,7 +25,7 @@ export class ThemeManager {
   setThemes(themes: any[]) {
     this.themes = themes;
     this.currentTheme = this.getThemes().find(
-      (theme: Theme) => theme.ThemeId === this.config.currentThemeId
+      (theme: Theme) => theme.ThemeId === (window as any).app.currentThemeId
     );
   }
 

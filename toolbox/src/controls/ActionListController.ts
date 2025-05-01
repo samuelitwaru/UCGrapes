@@ -27,51 +27,61 @@ export class ActionListController {
 
   async getMenuCategories(): Promise<MenuItem[][] | null> {
     const categoryData = await this.actionList.getCategoryData();
+    console.log("categoryData", categoryData);
     const activePage = (globalThis as any).pageData;
 
     // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
 
     // Only add Services if the page type matches
+    // if (activePage && activePage.PageType !== "Information") {
     if (activePage && (activePage.PageType === "MyCare" || 
                        activePage.PageType === "MyService" || 
                        activePage.PageType === "MyLiving")) {
       secondCategory.push({
+        id: "list-form",
+        name: "DynamicForm",
+        label: i18n.t("tile.forms"),
         id: "list-services",
         name: "Content",
         label: "Services",
         expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Content"),
+        action: () => this.getSubMenuItems(categoryData, "Forms"),
       });
+    }
+<<<<<<<<< Temporary merge branch 1
+    if (activePage && activePage.PageType !== "Information") {
+      secondCategory.push({
+        id: "list-module",
+        name: "Modules",
+        label: "Modules",
+        expandable: true,
+        action: () => this.getSubMenuItems(categoryData, "Modules"),
+      });
+    // }
+
+    console.log("categoryData", categoryData);
     }
     
     // Always add Forms and Modules
     secondCategory.push({
-      id: "list-form",
-      name: "DynamicForm",
-      label: i18n.t("tile.forms"),
+      id: "list-page",
+      name: "Page",
+      label: i18n.t("tile.existing_pages"),
       expandable: true,
-      action: () => this.getSubMenuItems(categoryData, "Forms"),
-    });
-    
-    secondCategory.push({
-      id: "list-module",
-      name: "Modules",
-      label: i18n.t("tile.modules"),
-      expandable: true,
-      action: () => this.getSubMenuItems(categoryData, "Modules"),
+      action: () => this.getSubMenuItems(categoryData, ""),
     });
   
     return [
       [
-        {
-          id: "add-menu-page",
-          label: i18n.t("tile.add_menu_page"),
-          name: "",
-          action: async () => {
-            this.createNewPage("Untitled");
-          },
-        },
+        // {
+        //   id: "add-menu-page",
+        //   label: i18n.t("tile.add_menu_page"),
+        //   name: "",
+        //   action: async () => {
+        //     this.createNewPage("Untitled");
+        //   },
+        // },
         {
           id: "add-info-page",
           label: i18n.t("tile.information_page"),
@@ -79,18 +89,16 @@ export class ActionListController {
           action: async () => {
             this.createNewInfoPage("Untitled");
           },
-        }
-      ],
-      secondCategory,
-      [
-        {
-          id: "add-content-page",
-          label:  i18n.t("tile.add_content_page"),
-          name: "",
-          action: () => {
-            this.pageCreationService.handleWebLinks();
-          },
         },
+        // {
+        //   id: "add-content-page",
+        //   label:  i18n.t("tile.add_content_page"),
+        //   name: "",
+        //   action: () => {
+        //     const config = AppConfig.getInstance();
+        //     config.addServiceButtonEvent()
+        //   },
+        // },
       ],
       secondCategory,
       [
@@ -102,14 +110,18 @@ export class ActionListController {
   }
 
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
+    console.log("type ", type);
+    console.log("categoryData", categoryData);
     const category = categoryData.find((cat: any) => cat.name === type);
+    console.log("category", category);
     const itemsList = category?.options || [];
     return itemsList.map((item: any) => {
+      console.log("item", item);
       return {
         id: item.PageId,
         label: item.PageName,
         url: item.PageUrl,
-        action: () => this.handleSubMenuItemSelection(item, type),
+        action: () => this.handleSubMenuItemSelection(item, item.PageType),
       };
     });
   }
@@ -198,6 +210,7 @@ export class ActionListController {
       rowId,
       tileId
     );
+
 
     new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
   }

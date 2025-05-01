@@ -125,13 +125,15 @@ export class EditorUIManager {
         const type = comp.get("type");
         return type === "tile-wrapper";
       });
+      console.log(tileWrappers)
       if (tileWrappers.length > 3) {
         model.target.remove();
         this.editor.UndoManager.undo();
       }
-
+      // return
       const isDragging: boolean = true;
       const tileUpdate = new TileUpdate();
+
       tileUpdate.updateTile(destinationComponent, isDragging);
       tileUpdate.updateTile(sourceComponent, isDragging);
 
@@ -142,6 +144,7 @@ export class EditorUIManager {
         destinationComponent.getId(),
         model.index
       );
+      console.log("tileMapper", tileMapper);
       this.onTileUpdate(destinationComponent);
     } else if (
       parentEl &&
@@ -214,6 +217,13 @@ export class EditorUIManager {
   activateEditor(frameId: any) {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
+      // deselect in active editors
+      const editors = (window as any).app.editors
+      const inactiveEditors = Object.entries(editors).filter(([key]) => key !== frameId);
+      inactiveEditors.forEach(([key, editor]: [string, any]) => {
+        editor.select(null)
+      })
+
       frame.classList.remove("active-editor");
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");
@@ -381,6 +391,7 @@ export class EditorUIManager {
   }
 
   async createChildEditor() {
+    
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
@@ -407,13 +418,13 @@ export class EditorUIManager {
         tileAttributes?.Action?.ObjectType === "Phone" ||
         tileAttributes?.Action?.ObjectType === "Email"
       ) {
+
         return;
       }
       const objectId = tileAttributes.Action.ObjectId;
       const data: any = JSON.parse(
         localStorage.getItem(`data-${objectId}`) || "{}"
       );
-
       let childPage;
       if (Object.keys(data).length > 0) {
         childPage = data;
@@ -429,7 +440,7 @@ export class EditorUIManager {
             ?.find((page: any) => page.PageId === objectId);
         }
       }
-
+      console.log("childPage", childPage);
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }

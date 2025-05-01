@@ -181,6 +181,11 @@ export class TileManager {
           Align: "left",
           BGSize: 1,
           BGPosition: 1
+          Action: {
+            ObjectType: "",
+            ObjectId: "",
+            ObjectUrl: "",
+          }
         });
       } else if (method === "delete") {
         const tile = tileSection.Tiles?.find((tile: any) => tile.Id === tileId);

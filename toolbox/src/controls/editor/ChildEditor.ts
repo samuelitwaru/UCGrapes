@@ -36,6 +36,7 @@ export class ChildEditor {
     this.pageTitle = this.pageData?.PageName;
     this.createNewEditor(editorId);
     const childEditor = this.editorManager.initializeGrapesEditor(editorId);
+    (window as any).app.editors[editorId] = childEditor;
 
     const setUpEditor = (converter: any) => {
       if (converter) {

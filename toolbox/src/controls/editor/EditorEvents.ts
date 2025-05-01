@@ -3,6 +3,7 @@ import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
+import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -54,15 +55,37 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         if (wrapper) {
-          wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
-          //  const editorId = editor.getConfig().container;
-           // const editorContainerId = `${editorId}-frame`;
-            alert("Double click event triggered!");
-          
-           // this.handleTileDoubleClick(e, editorContainerId);
-          });
-          wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
-            const targetElement = e.target as Element;
+            wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
+              const targetElement = e.target as Element;
+              console.log(targetElement)
+              console.log(targetElement.closest(".gjs-selected"))
+              console.log(targetElement.closest(".template-block"))
+              console.log(this.editor.getSelected())
+
+              e.preventDefault();
+              const selectedComponent = (globalThis as any).selectedComponent;
+              if (!selectedComponent) return;
+
+              const modal = document.createElement("div");
+              modal.classList.add("tb-modal");
+              modal.style.display = "flex";
+
+              const modalContent = new ImageUpload("tile");
+              modalContent.render(modal);
+
+              const uploadInput = document.createElement("input");
+              uploadInput.type = "file";
+              uploadInput.multiple = true;
+              uploadInput.accept = "image/jpeg, image/jpg, image/png";
+              uploadInput.id = "fileInput";
+              uploadInput.style.display = "none";
+
+              document.body.appendChild(modal);
+              document.body.appendChild(uploadInput);
+            })
+
+            wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
+              const targetElement = e.target as Element;
             if (
               targetElement.closest(".menu-container") ||
               targetElement.closest(".menu-category") ||

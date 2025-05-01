@@ -35,7 +35,7 @@ export class ContentDataUi {
         if ((this.e.target as Element).closest('.tb-edit-content-icon')) {
             const modalBody = document.createElement('div');
             const infoDescSection = this.e.target.closest('[data-gjs-type="info-desc-section"].info-desc-section');
-
+            console.log("infoDescSection", infoDescSection);
             const modalContent = document.createElement('div');
             modalContent.id = 'editor';
             modalContent.innerHTML = `${this.getDescription()}`;
@@ -70,9 +70,10 @@ export class ContentDataUi {
                 },
                 theme: "snow",
             });
-
+           
             saveBtn.addEventListener('click', () => {
                 const content = document.querySelector("#editor .ql-editor") as HTMLElement;
+
                 if (this.page.PageType === "Information" && infoDescSection) {
                     this.infoSectionController.updateDescription(content.innerHTML, infoDescSection.id);
                     modal.close();
@@ -199,11 +200,9 @@ export class ContentDataUi {
     private getDescription () {
         if (this.page.PageType === "Information") {
             const description = this.e.target.closest('[data-gjs-type="info-desc-section"].info-desc-section');
+            console.log("description", description.querySelector('.info-desc-content'));
             if (description) {
-                const descComponent = this.editor.Components.getWrapper().find(".info-desc-content")[0];
-                if (descComponent) {
-                    return descComponent.getEl().innerHTML;
-                }
+                return description.querySelector('.info-desc-content').innerHTML;
             }
         } else {
             const description = this.e.target.closest(".content-page-block");

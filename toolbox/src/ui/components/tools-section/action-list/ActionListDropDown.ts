@@ -5,6 +5,7 @@ import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 import { i18n } from "../../../../i18n/i18n";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
+import { capitalizeWords } from "../../../../utils/helpers";
 
 export class ActionListDropDown {
   container: HTMLElement;
@@ -100,6 +101,7 @@ export class ActionListDropDown {
         PageName: form.ReferenceName,
         TileName: form.ReferenceName,
         PageUrl: form.FormUrl,
+        PageType: "DynamicForm",
       }));
     return forms;
   }
@@ -155,15 +157,16 @@ export class ActionListDropDown {
       const versions = this.appVersion.getPages() || [];
       const pages = versions.filter(
         (page: any) => 
-          page.PageType == "Menu"
+          (page.PageType == "Menu" || page.PageType == "Information") 
           && (page.PageName !== "Home"
           && page.PageName !== "My Care"
           && page.PageName !== "My Living"
           && page.PageName !== "My Services")
       ).map((page: any) => ({
         PageId: page.PageId,
-        PageName: page.PageName,
-        TileName: page.PageName
+        PageName: capitalizeWords(page.PageName),
+        TileName: capitalizeWords(page.PageName),
+        PageType: page.PageType,
       }))
 
       return pages;

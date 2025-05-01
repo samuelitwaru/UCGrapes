@@ -59,7 +59,10 @@ export class PageAttacher {
     if (!selectedComponent) return;
 
     const tileTitle = selectedComponent.find(".tile-title")[0];
-    if (tileTitle) tileTitle.components(page.PageName);
+    if (tileTitle) {
+      tileTitle.addAttributes({ 'title': page.PageName });
+      tileTitle.components(page.PageName)
+    };
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();

@@ -113,6 +113,7 @@ export class FormModalService {
 
   private appendSupplierSelection(formBody: HTMLDivElement, form: Form): void {
     const supplierItemsList = this.config.suppliers;
+    console.log("supplierItemsList", supplierItemsList);
     const itemsSelect = new SupplierSelectionComponent(supplierItemsList);
 
     const formSupplierField = document.createElement("div");

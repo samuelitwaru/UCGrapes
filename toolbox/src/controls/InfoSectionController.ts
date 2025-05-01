@@ -116,6 +116,11 @@ export class InfoSectionController {
             Align: "left",
             BGSize: 1,
             BGPosition: 1
+            Action: {
+              ObjectType: "",
+              ObjectId: "",
+              ObjectUrl: "",
+            }
           },
         ],
       };

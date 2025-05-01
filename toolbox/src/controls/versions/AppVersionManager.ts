@@ -25,8 +25,9 @@ export class AppVersionManager {
   //   return (globalThis as any).activeVersion;
   // }
 
-  public async getActiveVersion() {    
-    (globalThis as any).activeVersion = this.config.currentVersion
+  public async getActiveVersion() {
+    (globalThis as any).activeVersion = (window as any).app.currentVersion;
+    console.log((globalThis as any).activeVersion)
     return (globalThis as any).activeVersion;
   }
 
@@ -54,7 +55,7 @@ export class AppVersionManager {
   }
 
   async getActiveVersionId() {
-    const activeVersion = (globalThis as any).activeVersion;
+    const activeVersion = (window as any).app.currentVersion;
     return activeVersion.AppVersionId;
   }
 

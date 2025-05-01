@@ -32,3 +32,7 @@ export function rgbToHex(rgb: string): string {
 export function truncateString(str: string, n: number): string {
   return str.length > n ? str.slice(0, n) + "..." : str;
 }
+
+export function capitalizeWords(str:string) {
+  return str.replace(/\b\w/g, char => char.toUpperCase());
+}

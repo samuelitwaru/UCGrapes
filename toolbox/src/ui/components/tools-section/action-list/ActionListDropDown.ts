@@ -5,6 +5,7 @@ import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 import { i18n } from "../../../../i18n/i18n";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
+import { capitalizeWords } from "../../../../utils/helpers";
 
 export class ActionListDropDown {
   container: HTMLElement;
@@ -163,8 +164,8 @@ export class ActionListDropDown {
           && page.PageName !== "My Services")
       ).map((page: any) => ({
         PageId: page.PageId,
-        PageName: page.PageName.toUpperCase(),
-        TileName: page.PageName.toUpperCase(),
+        PageName: capitalizeWords(page.PageName),
+        TileName: capitalizeWords(page.PageName),
         PageType: page.PageType,
       }))
 

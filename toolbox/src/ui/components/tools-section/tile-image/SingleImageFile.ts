@@ -149,7 +149,6 @@ export class SingleImageFile {
   private addImageToTile() {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
-
     try {
       const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
       selectedComponent.addStyle({

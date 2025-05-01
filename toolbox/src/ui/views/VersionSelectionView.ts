@@ -14,12 +14,14 @@ export class VersionSelectionView {
   private versionSelection: HTMLElement;
   private activeVersion: HTMLSpanElement;
   private versionController: AppVersionController;
+  versionList: HTMLDivElement;
 
   constructor() {
     this.versionController = new AppVersionController();
     this.container = document.createElement("div");
     this.selectionDiv = document.createElement("div");
     this.versionSelection = document.createElement("div");
+    this.versionList = document.createElement("div");
     this.activeVersion = document.createElement("span");
 
     this.init();
@@ -38,7 +40,7 @@ export class VersionSelectionView {
 
   private createSelectionButton(): HTMLButtonElement {
     const button = document.createElement("button");
-    button.classList.add("theme-select-button");
+    button.classList.add("version-select-button");
     button.setAttribute("aria-haspopup", "listbox");
 
     this.activeVersion.classList.add("selected-theme-value");
@@ -64,11 +66,15 @@ export class VersionSelectionView {
     this.versionSelection.className = "theme-options-list";
     this.versionSelection.setAttribute("role", "listbox");
     this.versionSelection.innerHTML = ""; // Clear existing options
+    this.versionList.classList.add("tb-version-list");
+    this.versionList.innerHTML = ""
+    
+    this.addNewVersionButton();
+    this.versionSelection.appendChild(this.versionList);
 
     const versions = await this.versionController.getVersions();
     versions.forEach((version: any) => this.createVersionOption(version));
 
-    this.addNewVersionButton();
     this.addNewTemplateButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
@@ -89,7 +95,7 @@ export class VersionSelectionView {
    private addNewTemplateButton() {
       const newVersionBtn = document.createElement("div");
       newVersionBtn.className = "theme-option";
-      newVersionBtn.innerHTML = `<i class="fa fa-plus"></i> Select Templates`;
+      newVersionBtn.innerHTML = `Select Templates`;
       newVersionBtn.onclick = () => {
         const config = AppConfig.getInstance();
         config.addTemplatesButtonEvent();
@@ -99,7 +105,7 @@ export class VersionSelectionView {
 
   private async createVersionOption(version: AppVersion) {
     const versionOption = document.createElement("div");
-    versionOption.className = "theme-option";
+    versionOption.className = "theme-option submenu";
     versionOption.role = "option";
     versionOption.setAttribute("data-value", version.AppVersionName);
     versionOption.textContent = version.AppVersionName;
@@ -107,16 +113,11 @@ export class VersionSelectionView {
     const optionButtons = document.createElement("div");
     optionButtons.className = "option-buttons";
 
-    const duplicateBtn = this.createDuplicateButton(version);
-    optionButtons.append(duplicateBtn);
+    // const duplicateBtn = this.createDuplicateButton(version);
+    // optionButtons.append(duplicateBtn);
 
     const activeVersion = (window as any).app.currentVersion;
-    const isActive = (version.AppVersionId == activeVersion.AppVersionId) 
-    if (!isActive) {
-      const deleteBtn = this.createDeleteButton(version);
-      optionButtons.append(deleteBtn);
-    }   
-    
+    const isActive = (version.AppVersionId == activeVersion.AppVersionId)     
     versionOption.append(optionButtons);
     
     if (isActive) {
@@ -127,7 +128,62 @@ export class VersionSelectionView {
     versionOption.addEventListener("click", (e) =>
       this.handleVersionSelection(e, version)
     );
-    this.versionSelection.appendChild(versionOption);
+
+    const subMenu = document.createElement("div");
+    subMenu.className = "submenu-list";
+    const duplicateOption = document.createElement("div");
+    duplicateOption.classList.add("theme-option");
+    duplicateOption.innerHTML = "Duplicate";
+    subMenu.appendChild(duplicateOption);
+    duplicateOption.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      this.createVersionModal(
+        version.AppVersionName + " - Copy",
+        "Duplicate version",
+        "Duplicate"
+      );
+    });
+
+    const renameOption = document.createElement("div");
+    renameOption.classList.add("theme-option");
+    renameOption.innerHTML = "Rename";
+    subMenu.appendChild(renameOption);
+
+    
+    if (!isActive) {
+      const trashOption = document.createElement("div");
+      trashOption.classList.add("theme-option");
+      trashOption.innerHTML = "Move to Trash";
+      trashOption.addEventListener("click", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const title = "Delete version";
+        const message = "Are you sure you want to delete this version?";
+    
+        const handleConfirmation = async () => {
+            this.versionController.deleteVersion(version.AppVersionId).then(async(res: any) => {
+              await this.refreshVersionList();
+            });
+        }
+        const confirmationBox = new ConfirmationBox(
+            message,
+            title,
+            handleConfirmation,
+        );
+        confirmationBox.render(document.body);
+      });
+      subMenu.appendChild(trashOption);
+    }  
+
+    if (isActive) {
+      subMenu.style.marginTop = "33px";
+    }
+
+    versionOption.appendChild(subMenu);
+
+
+    this.versionList.appendChild(versionOption);
   }
 
   private createDuplicateButton(version: AppVersion): HTMLSpanElement {
@@ -303,7 +359,7 @@ export class VersionSelectionView {
       this.versionSelection.classList.remove("show");
 
       const button = this.container.querySelector(
-        ".theme-select-button"
+        ".version-select-button"
       ) as HTMLElement;
       button.setAttribute("aria-expanded", "false");
       button.classList.toggle("open");
@@ -320,7 +376,7 @@ export class VersionSelectionView {
   }
 
   async refreshVersionList() {
-    await this.initializeVersionOptions();
+    this.initializeVersionOptions();
 
     // Ensure the dropdown is visible
     if (!this.versionSelection.classList.contains("show")) {
@@ -328,7 +384,7 @@ export class VersionSelectionView {
     }
 
     const button = this.container.querySelector(
-      ".theme-select-button"
+      ".version-select-button"
     ) as HTMLElement;
     if (!button.classList.contains("open")) {
       button.classList.add("open");

@@ -114,6 +114,11 @@ export class InfoSectionController {
             Text: "Title",
             Color: "#333333",
             Align: "left",
+            Action: {
+              ObjectType: "",
+              ObjectId: "",
+              ObjectUrl: "",
+            }
           },
         ],
       };

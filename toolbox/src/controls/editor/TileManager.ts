@@ -179,6 +179,11 @@ export class TileManager {
           Text: "Title",
           Color: "#333333",
           Align: "left",
+          Action: {
+            ObjectType: "",
+            ObjectId: "",
+            ObjectUrl: "",
+          }
         });
       } else if (method === "delete") {
         const tile = tileSection.Tiles?.find((tile: any) => tile.Id === tileId);

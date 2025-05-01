@@ -53,12 +53,13 @@ export class ActionListController {
       });
     // }
 
+    console.log("categoryData", categoryData);
     secondCategory.push({
       id: "list-page",
-      name: "Existing Pages",
+      name: "Page",
       label: i18n.t("tile.existing_pages"),
       expandable: true,
-      action: () => this.getSubMenuItems(categoryData, "Page"),
+      action: () => this.getSubMenuItems(categoryData, ""),
     });
   
     return [
@@ -99,14 +100,18 @@ export class ActionListController {
   }
 
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
+    console.log("type ", type);
+    console.log("categoryData", categoryData);
     const category = categoryData.find((cat: any) => cat.name === type);
+    console.log("category", category);
     const itemsList = category?.options || [];
     return itemsList.map((item: any) => {
+      console.log("item", item);
       return {
         id: item.PageId,
         label: item.PageName,
         url: item.PageUrl,
-        action: () => this.handleSubMenuItemSelection(item, type),
+        action: () => this.handleSubMenuItemSelection(item, item.PageType),
       };
     });
   }
@@ -195,6 +200,7 @@ export class ActionListController {
       rowId,
       tileId
     );
+
 
     new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
   }

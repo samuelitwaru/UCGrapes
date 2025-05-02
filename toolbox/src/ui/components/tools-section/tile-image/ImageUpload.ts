@@ -1,4 +1,5 @@
 import { AppConfig } from "../../../../AppConfig";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { i18n } from "../../../../i18n/i18n";
 import { Media } from "../../../../models/Media";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
@@ -222,20 +223,6 @@ private displayImageEditor(dataUrl: string, file: File) {
 
   imageContainer.appendChild(img);
 
-  // Add the zoom slider
-  const zoomSlider = document.createElement("input");
-  zoomSlider.type = "range";
-  zoomSlider.min = "1";
-  zoomSlider.max = "3";
-  zoomSlider.step = "0.1";
-  zoomSlider.value = "1";
-  zoomSlider.style.width = "40%";
-  zoomSlider.style.marginTop = "10px";
-
-  zoomSlider.addEventListener("input", () => {
-    const zoomLevel = parseFloat(zoomSlider.value);
-    img.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`;
-  });
 
   // Add a draggable frame
   //const zoomLevel = parseFloat(zoomSlider.value);
@@ -437,53 +424,64 @@ setTimeout(() => {
       // Create a wrapper for the slider and buttons
   const modalFooter = document.createElement("div");
   modalFooter.className = "modal-footer";
+  // Add the slider to adjust overlay opacity
+  const opacitySlider = document.createElement("input");
+  opacitySlider.type = "range";
+  opacitySlider.min = "0";
+  opacitySlider.max = "100";
+  opacitySlider.step = "1";
+  opacitySlider.value = "0"; // Default 60% opacity
+  opacitySlider.style.width = "40%";
+ 
+  opacitySlider.addEventListener("input", () => {
+    const opacityValue = parseInt(opacitySlider.value, 10) / 100;
+    opacityLabel.innerText = `${opacitySlider.value}%`; 
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (!selectedComponent) return;
   
-  // Add the slider to the footer
-    // Create a wrapper for the slider and its label
-    const sliderWrapper = document.createElement("div");
-    sliderWrapper.style.display = "flex";
-    sliderWrapper.style.alignItems = "center";
-    sliderWrapper.style.gap = "10px";
-
-    // Add the slider to adjust overlay opacity
-    const opacitySlider = document.createElement("input");
-    opacitySlider.type = "range";
-    opacitySlider.min = "0";
-    opacitySlider.max = "100";
-    opacitySlider.step = "1";
-    opacitySlider.value = "60"; // Default 60% opacity
-    opacitySlider.style.width = "40%";
-   
-
-    // Create a label to display the opacity percentage
-    const opacityLabel = document.createElement("span");
-    opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
-    opacityLabel.style.fontSize = "14px";
-    opacityLabel.style.color = "#333";
-
-    // Append the slider and label to the wrapper
-    sliderWrapper.appendChild(opacitySlider);
-    sliderWrapper.appendChild(opacityLabel);
-
-    // Append the wrapper to the modal footer
-    modalFooter.appendChild(sliderWrapper);
+    selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacityValue})`;
   
-    opacitySlider.addEventListener("input", () => {
-      const opacityValue = parseInt(opacitySlider.value, 10) / 100;
-      opacityLabel.innerText = `${opacityValue}%`; 
-       
-       // Apply the opacity to the image
-    img.style.opacity = `${1 - opacityValue}`; // Invert the opacity (0% = fully visible, 100% = fully black)
+    const pageData = (globalThis as any).pageData;
+  
+    if (pageData.PageType === "Information") {
+      const infoSectionController = new InfoSectionController();
+      infoSectionController.updateInfoTileAttributes(
+        selectedComponent.parent().parent().getId(),
+        selectedComponent.parent().getId(),
+        "Opacity",
+        opacitySlider.value
+      );
+    } else {
+      (globalThis as any).tileMapper.updateTile(
+        selectedComponent.parent().getId(),
+        "Opacity",
+        opacitySlider.value
+      );
+    }
+     
+  img.style.opacity = `1`;
+  img.style.filter = `brightness(${1 - opacityValue})`;
+    });
 
-    // Apply a brightness filter to make the image turn black as opacity increases
-    img.style.filter = `brightness(${1 - opacityValue})`;
-      });
-       // Create a button container for alignment
+  // Create a label to display the opacity percentage
+  const opacityLabel = document.createElement("span");
+  opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
+  opacityLabel.style.fontSize = "14px";
+  opacityLabel.style.color = "#333";
+    
+  const sliderWrapper = document.createElement("div");
+  sliderWrapper.style.display = "flex";
+  sliderWrapper.style.alignItems = "center";
+  sliderWrapper.style.gap = "10px";
+    
+  sliderWrapper.appendChild(opacitySlider);
+  sliderWrapper.appendChild(opacityLabel);
+
+  modalFooter.appendChild(sliderWrapper);  
+ 
   const buttonContainer = document.createElement("div");
   buttonContainer.className = "button-container";
   
-
-  // Add the "Done" button   
   const doneButton = document.createElement("button");
   doneButton.innerText = "OK";  
   doneButton.style.width = "92px";
@@ -496,6 +494,7 @@ setTimeout(() => {
   doneButton.addEventListener("click", () => {
     console.log("Check if done button is clicked");
     this.saveCroppedImage(img, frame, file);
+    
   });
    // Add the "Cancel" button
    const cancelButton = document.createElement("button");
@@ -512,25 +511,14 @@ setTimeout(() => {
      this.resetModal();
    });
    
-  
- 
-  // Add the "Cancel" and "Save" buttons to the button container
   buttonContainer.appendChild(cancelButton);
   buttonContainer.appendChild(doneButton);
   
-  // Add the button container to the footer
   modalFooter.appendChild(buttonContainer);
   
-  // Append the footer to the modal content
   this.modalContent.appendChild(modalFooter);
 
-  // Append everything to the upload area
-  // if (uploadArea) {
-  //   uploadArea.appendChild(imageContainer);
-  //   uploadArea.appendChild(opacitySlider);
-  //   uploadArea.appendChild(doneButton);
-  //   uploadArea.appendChild(cancelButton);
-  // }
+
   if (uploadArea) {
     uploadArea.appendChild(imageContainer);
     uploadArea.appendChild(modalFooter);
@@ -560,6 +548,10 @@ private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: 
   canvas.width = cropWidth;
   canvas.height = cropHeight;
 
+  
+
+  //ctx.globalAlpha = selectedOpacity; // Set the opacity for the canvas context
+  ctx.globalAlpha = 1.0;
   ctx.drawImage(
     img,
     cropX,
@@ -571,13 +563,21 @@ private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: 
     cropWidth,
     cropHeight
   );
+  // Apply the selected opacity
+  const opacitySlider = document.querySelector("input[type='range']") as HTMLInputElement;
+  const selectedOpacity = parseInt(opacitySlider.value, 10) / 100;
+  
+
+  // Apply brightness effect to the canvas
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  
+  ctx.putImageData(imageData, 0, 0);
 
   const croppedDataUrl = canvas.toDataURL("image/png");
 
-  // Debugging: Log the cropped image data URL
-  console.log("Cropped Image Data URL:", croppedDataUrl);
 
-  // Add the cropped image to the file list
   const newMedia: Media = {
     MediaId: Date.now().toString(),
     MediaName: file.name,
@@ -592,9 +592,7 @@ private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: 
     newMedia.MediaSize,
     newMedia.MediaType
   );
-
   const uploadedMedia: Media = response.BC_Trn_Media;
-
 
   if (this.fileListElement) {
     console.log("Adding cropped image to the file list...");
@@ -603,7 +601,6 @@ private async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: 
     console.error("File list element is not available.");
   }
 
-  // Reset the modal content
   this.resetModal();
 }
 private resetModal() {

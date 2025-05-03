@@ -172,6 +172,7 @@ export class ActionListController {
     if (!selectedComponent) return;
     const tileTitle = selectedComponent.find(".tile-title")[0];
     if (tileTitle) tileTitle.components(form.PageName);
+    tileTitle.addAttributes({'title': form.PageName})
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();

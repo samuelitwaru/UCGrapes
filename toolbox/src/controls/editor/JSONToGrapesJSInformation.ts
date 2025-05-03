@@ -137,7 +137,7 @@ export class JSONToGrapesJSInformation {
     if (label) {
       label =
       cta.CtaButtonType === "Round"
-          ? truncateString(label, 5)
+          ? truncateString(label, 10)
           : truncateString(label, 14);
       return label;
     }

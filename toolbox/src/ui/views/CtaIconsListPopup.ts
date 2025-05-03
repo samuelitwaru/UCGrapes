@@ -193,7 +193,6 @@ export class CtaIconsListPopup {
         ctaAttributes = contentMapper.getContentCta(selectedComponent.getId());
         ctaId = selectedComponent.getId();
       }
-
       new CtaManager().changeCtaButtonIcon(item, ctaId, ctaAttributes);
     }
   }

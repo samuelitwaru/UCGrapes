@@ -21,17 +21,9 @@ export class ContentSection {
     }
 
     private async initializeContentSection() {
-        try {
-            if (this.checkIfRendered()) return;
-
-            this.toggleSideBar();
-            await this.prepareContentData();
-            this.setupContainerStyles();
-            this.renderComponents();
-            
-        } catch (error) {
-            console.error('Error initializing Content Section:', error);
-        }
+        this.toggleSideBar();
+        this.setupContainerStyles();
+        this.renderComponents();
     }
 
 
@@ -79,16 +71,17 @@ export class ContentSection {
     }
 
     private renderComponents() {
+        // Clear previous content before rendering
+        this.container.innerHTML = '';
+        
         const ctaButtonSection = new CtaButtonLayout();
-        const ctaIconList = new CtaIconList(this.iconsList);
+        // const ctaIconList = new CtaIconList(this.iconsList);
         const activeCtaColors = this.themeManager.currentTheme.ThemeCtaColors;
         const ctaColorList = new CtaColorPalette(activeCtaColors);
 
-        // Clear previous content before rendering
-        this.container.innerHTML = '';
 
         ctaButtonSection.render(this.container);
-        ctaIconList.render(this.container);
+        // ctaIconList.render(this.container);
         ctaColorList.render(this.container);
         
         this.render();

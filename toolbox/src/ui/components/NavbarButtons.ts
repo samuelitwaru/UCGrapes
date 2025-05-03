@@ -36,9 +36,7 @@ export class NavbarButtons {
     treeButton.button.addEventListener("click", (e) => {
       e.preventDefault()
       const toolSection = document.getElementById('tools-section') as HTMLDivElement
-      const mappingSection = document.querySelector('#mapping-section') as HTMLDListElement
       toolSection.style.display = "none"
-      mappingSection.style.display = "block"
 
       const pageBubbleTree = new PageBubbleTree()
       pageBubbleTree.show()

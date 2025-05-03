@@ -112,7 +112,8 @@ export class FormModalService {
   }
 
   private appendSupplierSelection(formBody: HTMLDivElement, form: Form): void {
-    const supplierItemsList = this.config.suppliers;
+    // const supplierItemsList = this.config.suppliers;
+    const supplierItemsList = (window as any).app.suppliers;
     console.log("supplierItemsList", supplierItemsList);
     const itemsSelect = new SupplierSelectionComponent(supplierItemsList);
 
@@ -174,7 +175,7 @@ export class FormModalService {
             itemsSelect.setValue(supplierId);
             this.updateFieldWithSupplierData(
               formBody,
-              supplierItemsList.find(item => item.SupplierGenId === supplierId),
+              supplierItemsList.find((item:any) => item.SupplierGenId === supplierId),
               form
             );
           }

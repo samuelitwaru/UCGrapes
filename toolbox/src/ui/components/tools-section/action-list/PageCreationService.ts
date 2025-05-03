@@ -223,6 +223,15 @@ export class PageCreationService {
   }
 
   addCtaButtonSection(type: string = "Phone", formData: any = {}) {
+    let icon = "Info"
+    if (type == "Phone" || type == "Email" ) {
+      icon = type
+    }
+    else if (type == "WebLink") {
+      icon = "Link"      
+    }else if (type == "Address" ) {
+      icon = "Globe"
+    }
     const cta: CtaAttributes = {
       CtaId: randomIdGenerator(15),
       CtaType: type,
@@ -232,9 +241,11 @@ export class PageCreationService {
       CtaBGColor: "",
       CtaButtonType: "Image",
       CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+      CtaButtonIcon: icon,
       CtaSupplierIsConnected: formData.supplier_id ? true : false,
       CtaConnectedSupplierId: formData.supplier_id ? formData.supplier_id : null,
     };
+    console.log('cta.. ', cta)
     const button = this.infoSectionUi.addCtaButton(cta);
     this.infoSectionController.addCtaButton(button, cta);
   }

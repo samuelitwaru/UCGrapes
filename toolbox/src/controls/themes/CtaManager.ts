@@ -140,6 +140,23 @@ export class CtaManager {
         this.updateProperties();
     }
 
+    changeToElipseButton(): void {
+        const selectedComponent = this.getSelectedComponent();
+        if (!selectedComponent) return;
+        
+        const ctaButtonAttributes = this.getCtaButtonAttributes(selectedComponent);
+        if (!ctaButtonAttributes) return;
+
+        const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes);
+        if (!ctaSVG) return;
+        const elipseButton = this.createElipseButtonHTML(selectedComponent.getId(), ctaButtonAttributes, ctaSVG);
+        this.selectComponentAfterAdd(selectedComponent.getId(), selectedComponent, elipseButton);
+        
+        this.updateCtaButtonType(selectedComponent.getId(), 'Round');
+        
+        this.updateProperties();
+    }
+
     removeCta(ctaBadge: HTMLElement): void {
         const ctaBadgeParent = ctaBadge.parentElement;
         if (!ctaBadgeParent?.id) return;
@@ -206,7 +223,6 @@ export class CtaManager {
             const tileInfoSectionAttributes: InfoType = (
                 globalThis as any
             ).infoContentMapper.getInfoContent(selectedComponent.getId());
-    
             return tileInfoSectionAttributes?.CtaAttributes;
         } 
         
@@ -239,6 +255,7 @@ export class CtaManager {
     private updateProperties(): void {
         const selectedComponent = this.getSelectedComponent();
         const ctaButtonAttributes = this.getCtaButtonAttributes(selectedComponent);
+        if (ctaButtonAttributes.CtaButtonIcon == "") ctaButtonAttributes.CtaButtonIcon = "Email"
 
         if (!ctaButtonAttributes || !selectedComponent) return;
 
@@ -354,6 +371,28 @@ export class CtaManager {
                     <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${textColor}"></i>
                 </div>
             </div>
+        `;
+    }
+
+    private createElipseButtonHTML(componentId: string, attributes: any, ctaSVG: string): string {
+        const bgColor = this.themeManager.getThemeCtaColor(attributes.CtaBGColor);
+        const textColor = attributes.CtaColor || "#ffffff";
+        const pageTypeAttribute = this.isInformationPage() 
+            ? `data-gjs-type="info-cta-section"` 
+            : `data-gjs-type=cta-buttons`;
+        return `
+        <div ${ctaTileDEfaultAttributes} ${pageTypeAttribute}
+          data-gjs-type="cta-buttons" 
+          button-type="${attributes.CtaType}" 
+          class="cta-container-child cta-child"
+          id="${componentId}">              
+            <div class="cta-button cta-styled-btn" ${DefaultAttributes}
+              style="background-color: ${bgColor}">
+                ${ctaSVG}
+                <div class="cta-badge" ${DefaultAttributes}><i ${DefaultAttributes} data-gjs-type="default" class="fa fa-minus"></i></div>
+            </div>
+            <span class="cta-label label" ${DefaultAttributes}>${attributes.CtaLabel}</span>
+        </div>
         `;
     }
 

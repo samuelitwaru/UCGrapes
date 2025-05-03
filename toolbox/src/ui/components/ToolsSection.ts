@@ -14,7 +14,7 @@ export class ToolsSection {
     const pagesTabContent = new TabPageContent();
     const templatesTabContent = new TabTemplateContent();
 
-    tabButtons.render(this.container);
+    // tabButtons.render(this.container);
     pagesTabContent.render(this.container);
     templatesTabContent.render(this.container);
   }

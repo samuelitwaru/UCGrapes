@@ -11,6 +11,7 @@ class App {
   currentVersion: string | null;
   currentThemeId: string | null;
   editors: { [key: string]: any } = {}
+  suppliers: any[];
   
   constructor(
     UC: any,
@@ -28,6 +29,7 @@ class App {
   ) {
     this.currentVersion = currentVersion
     this.currentThemeId = currentThemeId
+    this.suppliers = suppliers
 
     const config = AppConfig.getInstance();
     config.init(

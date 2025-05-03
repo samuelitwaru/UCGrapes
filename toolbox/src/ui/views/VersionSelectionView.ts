@@ -122,7 +122,7 @@ export class VersionSelectionView {
     
     if (isActive) {
       versionOption.classList.add("selected");
-      this.activeVersion.textContent = truncateString(version.AppVersionName, 15);
+      this.activeVersion.textContent = truncateString(version.AppVersionName, 20);
     }
 
     versionOption.addEventListener("click", (e) =>

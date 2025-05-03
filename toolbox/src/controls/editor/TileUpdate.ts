@@ -1,4 +1,6 @@
 import { InfoType } from "../../interfaces/InfoType";
+import { minTileHeight } from "../../utils/default-attributes";
+import { resizeButton } from "../../utils/gjs-components";
 import { InfoSectionController } from "../InfoSectionController";
 import { TileMapper } from "./TileMapper";
 
@@ -24,6 +26,15 @@ export class TileUpdate {
       }
       const alignValue = length === 3 ? "center" : tileAttributes.Align;
       const cssAlignValue = alignValue === "left" ? "start" : alignValue;
+
+      // if tiles are 2 or 3, remove resize button else add the resize button
+      if (length > 1) {
+        console.log('resizer', tile.find('.tile-resize-button'))
+        tile.find('.tile-resize-button').forEach((comp:any) => comp.remove());
+      } else {
+        tile.append(resizeButton("Resize"))
+      }
+      tile.setStyle({height:`${minTileHeight}px`})
 
       const tileAlignment = {
         "justify-content": cssAlignValue,

@@ -4,6 +4,7 @@ import { TabTemplateContent } from "./TabTemplateContent";
 
 export class ToolsSection {
   container: HTMLElement;
+  pagesTabContent: TabPageContent | undefined;
   constructor() {
     this.container = document.getElementById("tools-section") as HTMLElement;
     this.init();
@@ -11,12 +12,14 @@ export class ToolsSection {
 
   init() {
     const tabButtons = new TabButtons();
-    const pagesTabContent = new TabPageContent();
+    this.pagesTabContent = new TabPageContent();
     const templatesTabContent = new TabTemplateContent();
 
     // tabButtons.render(this.container);
-    pagesTabContent.render(this.container);
+    this.pagesTabContent.render(this.container);
     templatesTabContent.render(this.container);
+
+    (window as any).app.toolsSection = this
   }
 
   render(container: HTMLElement) {

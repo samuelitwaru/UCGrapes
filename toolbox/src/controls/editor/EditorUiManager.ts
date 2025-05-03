@@ -267,9 +267,9 @@ export class EditorUIManager {
   }
   
   showTileTools () {
-    this.ctaPropsSection = document.getElementById(
-      "content-page-section"
-    ) as HTMLDivElement;
+    // this.ctaPropsSection = document.getElementById(
+    //   "content-page-section"
+    // ) as HTMLDivElement;
     this.tilePropsSection.style.display = "block"
     this.ctaPropsSection.style.display = "none";
   }
@@ -352,12 +352,14 @@ export class EditorUIManager {
   }
 
   setInfoCtaProperties() {
+    // render cta component
+    (window as any).app.toolsSection.pagesTabContent.contentSection.renderComponents()
+
     const selectedComponent = (globalThis as any).selectedComponent;
     if (this.pageData.PageType !== "Information") return;
 
     if (!selectedComponent.is("info-cta-section")) return;
-  
-    new ContentSection(this.pageData);
+
     this.clearCtaProperties();
 
     const tileInfoSectionAttributes: InfoType = (

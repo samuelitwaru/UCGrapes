@@ -73,18 +73,16 @@ export class ContentDataUi {
            
             saveBtn.addEventListener('click', () => {
                 const content = document.querySelector("#editor .ql-editor") as HTMLElement;
-
+                const correctedContent = this.correctULTagFromQuill(content.innerHTML);
+            
                 if (this.page.PageType === "Information" && infoDescSection) {
-                    this.infoSectionController.updateDescription(content.innerHTML, infoDescSection.id);
+                    this.infoSectionController.updateDescription(correctedContent, infoDescSection.id);
                     modal.close();
                     return;
                 }
-                this.contentDataManager.saveContentDescription(content.innerHTML);
+                this.contentDataManager.saveContentDescription(correctedContent);
                 modal.close();
-            })
-            cancelBtn.addEventListener('click', () => {
-                modal.close();
-            })
+            });
         }
     }
 
@@ -222,4 +220,32 @@ export class ContentDataUi {
         btn.innerText = text;
         return btn;
     }
+
+
+    private correctULTagFromQuill(html: string): string {
+        if (!html) return html;
+    
+        // Replace <ol> blocks containing bullet-style <li> with <ul>
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+    
+        const ols = doc.querySelectorAll("ol");
+    
+        ols.forEach((ol) => {
+            const allBullet = Array.from(ol.children).every((li) =>
+                li.getAttribute("data-list") === "bullet"
+            );
+    
+            if (allBullet) {
+                const ul = document.createElement("ul");
+                Array.from(ol.children).forEach((li) => {
+                    ul.appendChild(li.cloneNode(true));
+                });
+                ol.replaceWith(ul);
+            }
+        });
+    
+        return doc.body.innerHTML;
+    }
+
 }

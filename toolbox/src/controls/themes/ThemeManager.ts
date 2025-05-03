@@ -47,6 +47,7 @@ export class ThemeManager {
 
   setTheme(theme: Theme) {
     this.currentTheme = theme;
+    (window as any).app.currentThemeId = theme.ThemeId; 
     this.config.currentThemeId = theme.ThemeId;
     this.updateColorPallete(theme.ThemeColors);
     this.updateCtaColorPallete(theme.ThemeCtaColors);

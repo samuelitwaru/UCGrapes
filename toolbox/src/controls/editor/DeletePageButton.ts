@@ -13,7 +13,6 @@ export class DeletePageButton {
         this.toolboxService = new ToolBoxService();
         this.appVersion = new AppVersionManager();
         if (pageData) {
-            console.log('>>>', pageData.IsPredefined)
             this.pageData = pageData;
             this.button = document.createElement('button');
             // add icon

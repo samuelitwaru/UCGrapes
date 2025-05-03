@@ -90,8 +90,6 @@ export class ThemeSelection extends ThemeManager{
     saveSelectedTheme(theme: Theme) {
         const toolboxService = new ToolBoxService();
         toolboxService.updateLocationTheme(theme.ThemeId).then((res) => {
-            // check if authenticte
-            
             this.setTheme(theme);
         })
         ;

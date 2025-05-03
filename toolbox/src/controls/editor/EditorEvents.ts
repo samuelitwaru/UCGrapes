@@ -190,12 +190,11 @@ export class EditorEvents {
 
   onSelected() {
     this.editor.on("component:selected", (component: any) => {
+      
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = this.uiManager.createTileMapper();
       (globalThis as any).infoContentMapper = this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
-
-      console.log(component.getClasses())
 
       const isTile = component.getClasses().includes('template-block')
       const isCta = ['img-button-container','plain-button-container','cta-container-child']
@@ -204,11 +203,13 @@ export class EditorEvents {
       if (isCta) {
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools()
-      } else if (isTile) {
+      } 
+      else if (isTile) {
         this.uiManager.setTileProperties();
         this.uiManager.showTileTools()
         this.uiManager.createChildEditor();
       }
+
       // this.uiManager.toggleSidebar()
       // this.uiManager.setInfoTileProperties();
       // this.uiManager.setCtaProperties();

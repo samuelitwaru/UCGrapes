@@ -1593,9 +1593,15 @@ div#cta-selected-actions {
 }
 
 .upload-area img {
-  width: 48px;
-  height: 48px;
+  height: 100%;
   margin-bottom: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  border: 1px solid #11172a;
+  border-radius: 10px;
 }
 
 .upload-area p {
@@ -1705,6 +1711,7 @@ div#cta-selected-actions {
   height: 200px;
   width: 200px;
   margin-right: 10px;
+  object-fit: cover;
 }
 
 .file-item .file-info {

@@ -75,7 +75,14 @@ export class EditorEvents {
               if (this.isResizing) {
                 let newHeight = this.resizingRowHeight + (e.clientY-this.resizeYStart)
                 if (newHeight < minTileHeight) newHeight = minTileHeight;
-                this.resizingRow?.setAttribute("style", `height:${newHeight}px`);
+                // this.resizingRow?.setAttribute("style", `height:${newHeight}px !important`);
+                const comps = wrapper.find(`#${this.resizingRow?.id}`)
+                console.log(comps)
+                if (comps.length) {
+                  comps[0].addStyle({
+                    height: `${newHeight}px`
+                  })
+                }
                 (globalThis as any).tileMapper.updateTile(
                   this.resizingRow?.id,
                   "Size",

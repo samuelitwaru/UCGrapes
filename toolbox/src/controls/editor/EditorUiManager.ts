@@ -443,7 +443,7 @@ export class EditorUIManager {
             ?.find((page: any) => page.PageId === objectId);
         }
       }
-      console.log("childPage", childPage);
+
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }

@@ -40,7 +40,7 @@ export class ActionListController {
         name: "DynamicForm",
         label: i18n.t("tile.forms"),
         expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Forms"),
+        action: () => this.getSubMenuItems(categoryData, "Content"),
       });
     // }
     // if (activePage && activePage.PageType !== "Information") {

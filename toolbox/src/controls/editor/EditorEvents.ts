@@ -10,6 +10,7 @@ import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
+import { PageMapper } from "./PageMapper";
 
 export class EditorEvents {
   editor: any;
@@ -60,6 +61,7 @@ export class EditorEvents {
     if (this.editor !== undefined) {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
+        (globalThis as any).wrapper = wrapper
         if (wrapper) {
             wrapper.view.el.addEventListener("mousedown", (e:MouseEvent) => {
               const targetElement = e.target as Element;
@@ -75,9 +77,7 @@ export class EditorEvents {
               if (this.isResizing) {
                 let newHeight = this.resizingRowHeight + (e.clientY-this.resizeYStart)
                 if (newHeight < minTileHeight) newHeight = minTileHeight;
-                // this.resizingRow?.setAttribute("style", `height:${newHeight}px !important`);
                 const comps = wrapper.find(`#${this.resizingRow?.id}`)
-                console.log(comps)
                 if (comps.length) {
                   comps[0].addStyle({
                     height: `${newHeight}px`
@@ -98,12 +98,6 @@ export class EditorEvents {
               }
             })
 
-            wrapper.view.el.addEventListener("mouseup", (e:MouseEvent) => {
-              if (this.isResizing) {
-                this.isResizing = false
-              }
-            })
-
             wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
               e.preventDefault();
               const selectedComponent = (globalThis as any).selectedComponent;
@@ -113,7 +107,8 @@ export class EditorEvents {
               modal.classList.add("tb-modal");
               modal.style.display = "flex";
 
-              const modalContent = new ImageUpload("tile");
+              const tileComp = selectedComponent.closest('.template-wrapper')
+              const modalContent = new ImageUpload("tile", tileComp.getId());
               modalContent.render(modal);
 
               const uploadInput = document.createElement("input");
@@ -185,24 +180,23 @@ export class EditorEvents {
     let destinationComponent: any;
 
     this.editor.on("component:drag:start", (model: any) => {
-      // sourceComponent = model.parent;
+      sourceComponent = model.parent;
     });
 
     this.editor.on("component:drag:end", (model: any) => {
-      // if (this.isResizing) return
-      // destinationComponent = model.parent;
-      // this.uiManager.handleDragEnd(model, sourceComponent, destinationComponent);
+      if (this.isResizing) return
+      destinationComponent = model.parent;
+      this.uiManager.handleDragEnd(model, sourceComponent, destinationComponent);
     });
   }
 
   onSelected() {
     this.editor.on("component:selected", (component: any) => {
-      
+      const pageMapper = new PageMapper(this.editor);
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = this.uiManager.createTileMapper();
       (globalThis as any).infoContentMapper = this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
-
       const isTile = component.getClasses().includes('template-block')
       const isCta = ['img-button-container','plain-button-container','cta-container-child']
                       .some(cls => component.getClasses().includes(cls))
@@ -213,12 +207,11 @@ export class EditorEvents {
       } 
       else if (isTile) {
         this.uiManager.setTileProperties();
+        this.uiManager.setInfoTileProperties();
         this.uiManager.showTileTools()
         this.uiManager.createChildEditor();
       }
-
       // this.uiManager.toggleSidebar()
-      // this.uiManager.setInfoTileProperties();
       // this.uiManager.setCtaProperties();
     });
 

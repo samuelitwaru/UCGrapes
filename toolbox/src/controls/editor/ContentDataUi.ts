@@ -46,8 +46,7 @@ export class ContentDataUi {
 
             const saveBtn = this.createButton('submit_form', 'tb-btn-primary', i18n.t("tile.save_button"));
             const cancelBtn = this.createButton('cancel_form', 'tb-btn-outline', i18n.t("tile.cancel_button"));
-
-
+            
             submitSection.appendChild(saveBtn);
             submitSection.appendChild(cancelBtn);
 
@@ -83,6 +82,11 @@ export class ContentDataUi {
                 this.contentDataManager.saveContentDescription(correctedContent);
                 modal.close();
             });
+
+            cancelBtn.addEventListener('click', () => {
+                modal.close();
+            })
+
         }
     }
 

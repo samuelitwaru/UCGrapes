@@ -35,13 +35,8 @@ export class NavbarButtons {
 
     treeButton.button.addEventListener("click", (e) => {
       e.preventDefault()
-      const toolSection = document.getElementById('tools-section') as HTMLDivElement
-      toolSection.style.display = "none"
-
       const pageBubbleTree = new PageBubbleTree()
       pageBubbleTree.show()
-
-      // const treeComp = new TreeComponent(this.appVersions) 
   
     })
 

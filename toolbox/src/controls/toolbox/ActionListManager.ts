@@ -15,7 +15,7 @@ export class ActionListManager {
     }
 
     setForms () {
-        this.forms = this.config.forms;
+        this.forms = (window as any).app.forms;
     }
 
     setPages () {

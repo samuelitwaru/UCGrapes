@@ -159,22 +159,11 @@ export class InfoSectionController {
     if (ctaEditor) {
       const img = ctaEditor.find("img")[0];
       if (img) {
-        img.setAttributes({ src: imageUrl });
-        const infoType: InfoType = {
-          InfoId: infoId || randomIdGenerator(15),
-          InfoType: "Cta",
-          CtaAttributes: {
-            CtaId: randomIdGenerator(15),
-            CtaType: "Phone",
-            CtaLabel: "Phone",
-            CtaAction: "",
-            CtaColor: "#ffffff",
-            CtaBGColor: "CtaColorOne",
-            CtaButtonType: "Image",
-            CtaButtonImgUrl: imageUrl,
-          },
-        };
-        this.updateInfoMapper(infoId || "", infoType);
+        if (infoId) {
+          img.setAttributes({ src: imageUrl });
+          this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image")
+          this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl)
+        }
       }
     }
   }

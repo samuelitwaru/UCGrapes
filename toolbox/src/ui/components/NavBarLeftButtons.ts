@@ -5,6 +5,7 @@ import { DebugController } from "../../controls/versions/DebugController";
 import { i18n } from "../../i18n/i18n";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { ShareLinkView } from "../views/ShareLinkView";
+import { TrashView } from "../views/TrashView";
 import { VersionSelectionView } from "../views/VersionSelectionView";
 import { Button } from "./Button";
 import { EditActions } from "./EditActions";
@@ -63,17 +64,43 @@ export class NavbarLeftButtons {
     shareButton.innerHTML = shareButtonSvg;
     shareButton.classList.add("tb-icon-button")
 
+    
+    const trashButtonSvg = `
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+      width="20" height="24" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+      <g>
+        <polyline fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" points="25,8 25,1 39,1 39,8 	"/>
+        <polyline fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" points="14,10 14,63 50,63 50,10 	"/>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" x1="26" y1="20" x2="26" y2="54"/>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" x1="38" y1="20" x2="38" y2="54"/>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" x1="10" y1="9" x2="54" y2="9"/>
+      </g>
+    </svg>
+    `;
+
+    let trashButton = document.createElement("button")
+    trashButton.setAttribute("title", i18n.t("navbar.trash.label"));
+    trashButton.innerHTML = trashButtonSvg;
+    trashButton.classList.add("tb-icon-button");
+
     const versionSelection = new VersionSelectionView();
     
     versionSelection.render(this.container);
     this.container.appendChild(debugButton);
     this.container.appendChild(shareButton)
+    this.container.appendChild(trashButton);
     // shareButton.render(this.container);
 
     shareButton.addEventListener("click", (e) => {
       e.preventDefault();
       new ShareLinkView().openShareLinkModal();
     });
+
+    trashButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      new TrashView().openTrashModal();
+    })
+
   }
 
   initialiseDebug() {

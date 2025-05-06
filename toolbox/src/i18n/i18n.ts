@@ -36,6 +36,15 @@ export const i18n = new I18n({
         close: "Close",
         copied: "Linked copied to clipboard",
       },
+      trash: {
+        label: "Trash",
+        modal_title: "Trash",
+        modal_description:
+          "A shareable link has been generated for you. Copy it and share for previews!",
+        copy: "Copy",
+        close: "Close",
+        copied: "Linked copied to clipboard",
+      },
       appversion: {
         create_new: "Create new version",
         duplicate: "Duplicate version",

@@ -75,8 +75,6 @@ export class TileUpdate {
         (tile: any) => tile.Id === tileWrapper.getId()
       );
     } else {
-        console.log("rowComponent", rowComponent.getId());
-        console.log("tileWrapper", tileWrapper.getId());
         tileAttributes = (globalThis as any).tileMapper.getTile(
             rowComponent.getId(),
             tileWrapper.getId()

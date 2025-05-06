@@ -25,7 +25,7 @@ export class ToolBoxService {
 
   init() {
     this.services = this.config.services;
-    this.forms = this.config.forms;
+    this.forms = (window as any).app.forms;
     this.loadingManager = new LoadingManager(this.preloaderEl);
   }
   // Helper method to handle API calls

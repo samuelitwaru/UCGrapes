@@ -12,8 +12,13 @@ export class ImageUpload {
   fileListElement: HTMLElement | null = null;
   infoId?: string;
   finishedUploads: { [key: string]: Media } = {};
+  cropContainer!: HTMLDivElement;
+  bgImage: any;
+  opacity: any;
 
   constructor(type: any, infoId?: string) {
+    console.log('type', type)
+    console.log('infoId', infoId)
     this.type = type;
     this.infoId = infoId;
     this.modalContent = document.createElement("div");
@@ -69,15 +74,19 @@ export class ImageUpload {
 
     modalActions.appendChild(cancelBtn);
     modalActions.appendChild(saveBtn);
-
-    console.log("modalHeader");
     this.modalContent.appendChild(modalHeader);
     this.uploadArea();
+    
+    // cropper container
+    this.cropContainer = document.createElement("div")
+    this.cropContainer.id = 'crop-container'
+    this.modalContent.appendChild(this.cropContainer);
+
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
-
-    console.log("modalActions");
     this.modalContent.appendChild(modalActions);
+
+    
   }
 
   private uploadArea() {
@@ -153,8 +162,8 @@ export class ImageUpload {
 
     // Prevent the file input from being triggered unintentionally
     uploadArea.addEventListener("click", (e) => {
+      fileInput.click();
       if (e.target === uploadArea) {
-        fileInput.click();
       }
     });
 
@@ -242,13 +251,12 @@ export class ImageUpload {
       file = await this.getFile(dataUrl)
     }
 
-    // console.log('image-editor', file)
-    // Clear the upload area
+    // hide upload area
     const uploadArea = this.modalContent.querySelector(
       ".upload-area"
     ) as HTMLElement;
     if (uploadArea) {
-      uploadArea.innerHTML = "";
+      uploadArea.style.display = "none";
     }
 
     // Create the image container
@@ -282,10 +290,6 @@ export class ImageUpload {
     frame.id = "crop-frame"
     frame.style.position = "absolute";
     frame.style.border = "2px dashed #5068A8";
-    
-    const rect = imageContainer.getBoundingClientRect()
-    console.log(rect.x)
-
     
 
 
@@ -478,7 +482,7 @@ export class ImageUpload {
 
     // Create a wrapper for the slider and buttons
     const modalFooter = document.createElement("div");
-    modalFooter.className = "modal-footer";
+    modalFooter.className = "tb-modal-footer";
     // Add the slider to adjust overlay opacity
     const opacitySlider = document.createElement("input");
     opacitySlider.type = "range";
@@ -505,7 +509,7 @@ export class ImageUpload {
           selectedComponent.parent().parent().getId(),
           selectedComponent.parent().getId(),
           "Opacity",
-          opacitySlider.value
+          parseInt(opacitySlider.value)
         );
       } else {
         (globalThis as any).tileMapper.updateTile(
@@ -539,10 +543,9 @@ export class ImageUpload {
     console.log("modalFooter");
     this.modalContent.appendChild(modalFooter);
 
-    if (uploadArea) {
-      uploadArea.appendChild(imageContainer);
-      uploadArea.appendChild(modalFooter);
-    }
+    this.cropContainer.appendChild(imageContainer);
+    this.cropContainer.appendChild(modalFooter);
+    
   }
 
   private async saveCroppedImage(
@@ -613,10 +616,6 @@ export class ImageUpload {
       newMedia.MediaSize,
       newMedia.MediaType
     );
-
-    console.log('response', response)
-    // alert('response')
-    // const uploadedMedia: Media = response.BC_Trn_Media;
 
     if (this.fileListElement) {
       console.log("Adding cropped image to the file list...");

@@ -60,8 +60,8 @@ export class PageAttacher {
 
     const tileTitle = selectedComponent.find(".tile-title")[0];
     if (tileTitle) {
-      tileTitle.addAttributes({ 'title': page.PageName });
-      tileTitle.components(page.PageName)
+      // tileTitle.addAttributes({ 'title': page.PageName });
+      // tileTitle.components(page.PageName)
     };
 
     const tileId = selectedComponent.parent().getId();
@@ -74,8 +74,8 @@ export class PageAttacher {
       return;
     }
     const updates = [
-      ["Text", page.PageName],
-      ["Name", page.PageName],
+      // ["Text", page.PageName],
+      // ["Name", page.PageName],
       ["Action.ObjectType", `${categoryName}`],
       ["Action.ObjectId", page.PageId],
     ];

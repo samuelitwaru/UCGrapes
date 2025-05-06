@@ -27,18 +27,15 @@ export class TileUpdate {
       const alignValue = length === 3 ? "center" : tileAttributes.Align;
       const cssAlignValue = alignValue === "left" ? "start" : alignValue;
 
-      tile.setStyle({height:`${minTileHeight}px !important`});
-      (globalThis as any).tileMapper.updateTile(
-        tile.getId(),
-        "Size",
-        minTileHeight
-      )
-
-      console.log(tile.getId(), tile.getStyle())
-
+      
       // if tiles are 2 or 3, remove resize button else add the resize button
       if (length > 1) {
-        console.log('resizer', tile.find('.tile-resize-button'))
+        tile.addStyle({height:`${minTileHeight}px`});
+        (globalThis as any).tileMapper.updateTile(
+          tile.getId(),
+          "Size",
+          minTileHeight
+        )
         tile.find('.tile-resize-button').forEach((comp:any) => comp.remove());
       } else {
         tile.append(resizeButton("Resize"))

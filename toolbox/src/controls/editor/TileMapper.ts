@@ -142,7 +142,7 @@ export class TileMapper {
     };
   }
 
-  public addFreshRow(rowId: string, tileId: string): void {
+  public addFreshRow(rowId: string, tileId: string, index:number): void {
     this.saveState();
     const data: any = JSON.parse(
       localStorage.getItem(`data-${this.pageId}`) || "{}"
@@ -170,8 +170,8 @@ export class TileMapper {
         },
       ],
     };
-
-    data.PageMenuStructure?.Rows?.push(newRow);
+    data.PageMenuStructure?.Rows.splice(index, 0, newRow);
+    // data.PageMenuStructure?.Rows?.push(newRow);
     localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
   }
 

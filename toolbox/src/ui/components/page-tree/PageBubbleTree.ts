@@ -42,8 +42,11 @@ export class PageBubbleTree {
         this.themeManager = new ThemeManager();
         const appVersionManager = this.themeManager.appVersionManager
         this.pages = appVersionManager.getPages()
+
+
         this.processedPages = this.processPageData(this.pages)
-        console.log('processed pages', this.processedPages.map((page:any) => page.title).sort())
+
+        console.log('processed pages', this.processedPages)
         this.nodes = this.createNodes()
         this.links = this.createLinks()
         console.log('nodes', this.nodes)
@@ -58,6 +61,7 @@ export class PageBubbleTree {
 
     show(){
         const editorSections = document.getElementsByClassName("editor-main-section")
+        const toolSection = document.getElementById('tools-section') as HTMLDivElement
         //set display to none for editor section
         if (editorSections.length > 0) {
             // toggle display
@@ -65,14 +69,16 @@ export class PageBubbleTree {
             if (div.style.display === "none") {
                 div.style.display = "block";
                 this.graphContainer.style.display = "none";
-              } else {
+                toolSection.style.display = "block";
+            } else { 
+                toolSection.style.display = "none";
                 div.style.display = "none";
                 this.graphContainer.style.display = "block";
                 this.graphContainer.style.width = "100%";
                 this.graphContainer.style.height = "100%";
               }
             // editorSections[0].setAttribute("style", "display:none;")
-        }        
+        }   
     }
 
     build() {

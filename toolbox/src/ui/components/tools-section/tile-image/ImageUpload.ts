@@ -46,7 +46,7 @@ export class ImageUpload {
 
     modalHeader.appendChild(h2);
     modalHeader.appendChild(closeBtn);
-
+    
     const modalActions = document.createElement("div");
     modalActions.className = "modal-actions";
 
@@ -60,7 +60,7 @@ export class ImageUpload {
       modal.style.display = "none";
       modal?.remove();
     });
-
+    
     const saveBtn = document.createElement("button");
     saveBtn.className = "tb-btn tb-btn-primary";
     saveBtn.id = "save-modal";
@@ -69,15 +69,42 @@ export class ImageUpload {
 
     modalActions.appendChild(cancelBtn);
     modalActions.appendChild(saveBtn);
+ 
 
     console.log("modalHeader");
     this.modalContent.appendChild(modalHeader);
+
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (selectedComponent) {
+      // Get the tile element
+      const tileElement = selectedComponent.getStyle();
+     // Retrieve the background image
+      const backgroundImage = tileElement["background-image"];
+      console.log("Background image:", backgroundImage);  
+     
+        if (backgroundImage !== undefined) {  
+          const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
+          console.log("Background image exists:", dataUrl);
+          this.displayImageEditor(dataUrl);
+          this.createFileListElement();
+          this.loadMediaFiles(); // Loa
+          if (!dataUrl) {
+            console.error("No image data available to display.");
+            return;
+          }
+        }else{
+        //this.uploadArea();
+       // this.createFileListElement();
+        this.loadMediaFiles(); // Loa
+      }
+      
+    }
     this.uploadArea();
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
+    
 
-    console.log("modalActions");
-    this.modalContent.appendChild(modalActions);
+   // this.modalContent.appendChild(modalActions);
   }
 
   private uploadArea() {
@@ -95,6 +122,55 @@ export class ImageUpload {
     this.setupDragAndDrop(uploadArea);
     console.log("uploadArea");
     this.modalContent.appendChild(uploadArea);
+
+    // Create the modal footer
+  const modalFooter = document.createElement("div");
+  modalFooter.className = "modal-footer-buttons";
+
+  // Create the Save button
+  const saveBtn = document.createElement("button");
+  saveBtn.className = "tb-btn tb-btn-primary";
+  saveBtn.id = "save-modal";
+  saveBtn.innerText = "Save";
+  saveBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    console.log("Save button clicked");
+    // Get the image element
+  const img = document.getElementById("selected-image") as HTMLImageElement;
+  if (!img) {
+    console.error("Image element not found.");
+    return;
+  }
+    // Add save functionality here
+    const frame = document.getElementById("crop-frame") as HTMLElement;
+    if (frame) {
+      const file = new File([img.src], "cropped-image.png", { type: "image/png" }); // Example file
+      await this.saveCroppedImage(img, frame, file);
+
+
+    }
+  });
+
+  // Create the Cancel button
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "tb-btn tb-btn-outline";
+  cancelBtn.id = "cancel-modal";
+  cancelBtn.innerText = "Cancel";
+  cancelBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    console.log("Cancel button clicked");
+    const modal = this.modalContent.parentElement as HTMLElement;
+    modal.style.display = "none";
+    modal?.remove();
+  });
+
+  // Append buttons to the modal footer
+  modalFooter.appendChild(cancelBtn);
+  modalFooter.appendChild(saveBtn);
+
+  // Append the modal footer to the modal content
+  this.modalContent.appendChild(modalFooter);
+
   }
 
   private createFileListElement() {
@@ -105,7 +181,7 @@ export class ImageUpload {
     // Add a loading indicator initially
     const loadingElement = document.createElement("div");
     loadingElement.className = "loading-media";
-    loadingElement.textContent = "Loading media files...";
+   // loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
 
     console.log("this.fileListElement");
@@ -209,7 +285,7 @@ export class ImageUpload {
           );
           this.init()
           // Replace the upload area with the image editor
-          // this.displayImageEditor(dataUrl, file);
+           this.displayImageEditor(dataUrl, file);
         } catch (error) {
           console.error("Error processing file:", error);
         }
@@ -238,12 +314,34 @@ export class ImageUpload {
   }
 
   public async displayImageEditor(dataUrl: string, file?: File) {
-    if(!file) {
-      file = await this.getFile(dataUrl)
-    }
 
-    // console.log('image-editor', file)
-    // Clear the upload area
+    // const selectedComponent = (globalThis as any).selectedComponent;
+    // if (selectedComponent) {
+    //   // Get the tile element
+    //   const tileElement = selectedComponent.getStyle();
+    //  // Retrieve the background image
+    //   const backgroundImage = tileElement["background-image"];
+    //     if (backgroundImage !== undefined) {  
+    //     const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
+        console.log("Background image in display function:", dataUrl);
+        if (!dataUrl) {
+          console.error("No image data available to display.");
+          return;
+        }
+      
+        if (!file) {
+          file = await this.getFile(dataUrl);
+        }
+      
+    //     const uploadArea = this.modalContent.querySelector(".upload-area") as HTMLElement;
+    //     // if (uploadArea) {
+    //     //   uploadArea.innerHTML = "";
+    //     // }
+    //     }
+    // }else{
+    //   return
+    // }
+    
     const uploadArea = this.modalContent.querySelector(
       ".upload-area"
     ) as HTMLElement;
@@ -264,6 +362,7 @@ export class ImageUpload {
     const img = document.createElement("img");
     img.id = 'selected-image'
     img.src = dataUrl;
+    //img.src = tileImage;
     img.onload = () => {
       const frameHeight = 400
       const frameWidth = frameHeight * (img.naturalWidth/img.naturalHeight)
@@ -285,9 +384,6 @@ export class ImageUpload {
     
     const rect = imageContainer.getBoundingClientRect()
     console.log(rect.x)
-
-    
-
 
     // Add resize handles
     const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
@@ -432,11 +528,6 @@ export class ImageUpload {
       const frameRect = frame.getBoundingClientRect();
       const parentRect = imageContainer.getBoundingClientRect();
 
-      console.log(img.getBoundingClientRect())
-
-      console.log('frameRect', frameRect)
-      console.log('parentRect', parentRect)
-
       Object.assign(overlayTop.style, overlayStyle, {
         top: "0",
         left: "0",
@@ -490,7 +581,7 @@ export class ImageUpload {
 
     opacitySlider.addEventListener("input", () => {
       const opacityValue = parseInt(opacitySlider.value, 10) / 100;
-      console.log('opacity:', opacityValue)
+
       opacityLabel.innerText = `${opacitySlider.value}%`;
       const selectedComponent = (globalThis as any).selectedComponent;
       if (!selectedComponent) return;
@@ -513,7 +604,6 @@ export class ImageUpload {
           "Opacity",
           opacitySlider.value
         );
-        console.log('updated tile opacity', opacitySlider.value)
       }
 
       img.style.opacity = `1`;
@@ -535,8 +625,8 @@ export class ImageUpload {
     sliderWrapper.appendChild(opacityLabel);
 
     modalFooter.appendChild(sliderWrapper);
+    
 
-    console.log("modalFooter");
     this.modalContent.appendChild(modalFooter);
 
     if (uploadArea) {
@@ -554,7 +644,6 @@ export class ImageUpload {
     const ctx = canvas.getContext("2d");
 
     if (!ctx) {
-      console.error("Canvas context is not available.");
       return;
     }
 
@@ -572,8 +661,6 @@ export class ImageUpload {
     canvas.width = cropWidth;
     canvas.height = cropHeight;
 
-    //ctx.globalAlpha = selectedOpacity; // Set the opacity for the canvas context
-    ctx.globalAlpha = 1.0;
     ctx.drawImage(
       img,
       cropX,
@@ -585,6 +672,11 @@ export class ImageUpload {
       cropWidth,
       cropHeight
     );
+    const croppedDataUrl = canvas.toDataURL("image/png");
+      // Generate a unique file name
+  const uniqueId = Date.now().toString(); // Use timestamp as a unique identifier
+  const uniqueFileName = `${file.name.split(".")[0]}-${uniqueId}.png`;
+
     // Apply the selected opacity
     const opacitySlider = document.querySelector(
       "input[type='range']"
@@ -597,36 +689,50 @@ export class ImageUpload {
 
     ctx.putImageData(imageData, 0, 0);
 
-    const croppedDataUrl = canvas.toDataURL("image/png");
-
-    const newMedia: Media = {
-      MediaId: Date.now().toString(),
-      MediaName: file.name,
+     const newMedia: Media = {
+      MediaId: Date.now().toString(), // Use the unique identifier as the MediaId
+      MediaName: file.name, 
       MediaUrl: croppedDataUrl,
       MediaType: file.type,
       MediaSize: file.size,
     };
-    console.log('newMedia', newMedia)
     const response = await this.toolboxService.uploadFile(
       newMedia.MediaUrl,
       newMedia.MediaName,
       newMedia.MediaSize,
       newMedia.MediaType
     );
+    console.log("Cropped image uploaded successfully:", response);
+    
+        // Add the cropped image to the selected tile
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (selectedComponent) {
+          const tileElement = selectedComponent.getEl();
+          tileElement.style.backgroundImage = `url(${croppedDataUrl})`;
+          tileElement.style.backgroundSize = "cover";
+          tileElement.style.backgroundPosition = "center";
+          console.log("Cropped image added to the tile.");
+          }
+          // if (this.fileListElement) {
+          //   this.displayMediaFile(this.fileListElement, newMedia);
+          // } 
+          // else {
+          // }
+        // Close the modal
+        const modal = this.modalContent.parentElement as HTMLElement;
+        if (modal) {
+          modal.style.display = "none";
+          modal.remove();
+        }
+    
+        console.log("Cropped image saved successfully:", newMedia.MediaName);
+      } catch (error: any) {
+        console.error("Error saving cropped image:", error);
+      }
 
-    console.log('response', response)
-    // alert('response')
-    // const uploadedMedia: Media = response.BC_Trn_Media;
-
-    if (this.fileListElement) {
-      console.log("Adding cropped image to the file list...");
-      this.displayMediaFile(this.fileListElement, newMedia);
-    } else {
-      console.error("File list element is not available.");
-    }
-
-    this.resetModal();
-  }
+    
+  //   this.resetModal();
+   
 
   private resetModal() {
     this.modalContent.innerHTML = "";

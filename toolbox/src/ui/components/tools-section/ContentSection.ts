@@ -12,26 +12,17 @@ export class ContentSection {
     createCTAComponent: CreateCTAComponent | undefined;
     page: any;
 
-    constructor(page: any) {
-        this.page = page;
+    constructor() {
         this.themeManager = new ThemeManager();
-        this.container = document.createElement('div');
-        
+        this.container = document.createElement("div") as HTMLElement
+        this.container.id = "content-page-section"
         this.initializeContentSection();
     }
 
     private async initializeContentSection() {
-        try {
-            if (this.checkIfRendered()) return;
-
-            this.toggleSideBar();
-            await this.prepareContentData();
-            this.setupContainerStyles();
-            this.renderComponents();
-            
-        } catch (error) {
-            console.error('Error initializing Content Section:', error);
-        }
+        this.toggleSideBar();
+        this.setupContainerStyles();
+        // this.renderComponents();
     }
 
 
@@ -74,24 +65,24 @@ export class ContentSection {
 
     private setupContainerStyles() {
         this.container.classList.add('sidebar-section', 'content-page-section');
-        this.container.id = 'content-page-section';
         this.container.style.display = 'block';
     }
 
-    private renderComponents() {
+    public renderComponents() {
+        // Clear previous content before rendering
+        this.container.innerHTML = '';
+        
         const ctaButtonSection = new CtaButtonLayout();
-        const ctaIconList = new CtaIconList(this.iconsList);
+        // const ctaIconList = new CtaIconList(this.iconsList);
         const activeCtaColors = this.themeManager.currentTheme.ThemeCtaColors;
         const ctaColorList = new CtaColorPalette(activeCtaColors);
 
-        // Clear previous content before rendering
-        this.container.innerHTML = '';
 
         ctaButtonSection.render(this.container);
-        ctaIconList.render(this.container);
+        // ctaIconList.render(this.container);
         ctaColorList.render(this.container);
         
-        this.render();
+        // this.render();
     }
 
     private toggleSideBar() {
@@ -101,17 +92,7 @@ export class ContentSection {
         }
     }
 
-    render() {
-        const sidebar = document.getElementById('pages-content');
-        if (sidebar) {
-            // Remove existing content section if it exists
-            const existingContent = sidebar.querySelector('#content-page-section');
-            if (existingContent) {
-                sidebar.removeChild(existingContent);
-            }
-            
-            // Append the new container
-            sidebar.appendChild(this.container);
-        }
+    render(container:HTMLElement) {
+        container.append(this.container)
     }
 }

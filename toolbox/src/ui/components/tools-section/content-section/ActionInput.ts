@@ -34,7 +34,7 @@ export class ActionInput {
         if (ctaTitle) {
           const truncatedTitle =
           isRoundButton === "Round"
-              ? this.truncate(5)
+              ? this.truncate(10)
               : this.truncate(14);
 
               ctaTitle.components(truncatedTitle);

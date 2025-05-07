@@ -25,8 +25,9 @@ export class DeletePageButton {
             this.button.title = 'Delete Page';
             this.button.setAttribute('data-id', pageData.PageId);
             this.button.addEventListener('click', (e) => this.handleDelete(e));
-            if (pageData.PageType == "Menu" || pageData.PageType == "Content") {
-                container.insertBefore(this.button, container.firstChild);     
+            
+            if (!pageData.IsPredefined) {
+                container.insertBefore(this.button, container.firstChild);    
             }
 
         }
@@ -84,6 +85,8 @@ export class DeletePageButton {
                     deleteModal.close();
                     localStorage.removeItem(`data-${this.pageData.PageId}`);
                     (window as any).app.toolboxApp.editor.init()
+                    const versionManager = new AppVersionManager();
+                    versionManager.refreshVersion();
                 }else {
                     new Alert("error", res.error.message)
                 }

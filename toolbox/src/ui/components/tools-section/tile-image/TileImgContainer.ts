@@ -1,10 +1,14 @@
 export class TileImgContainer {
   container: HTMLElement;
+  positionX: number = 50;
+  positionY: number = 50;
+  zoomLevel: number = 1;
 
   constructor() {
     this.container = document.createElement("div");
     this.init();
-  }
+   }
+
 
   init() {
     this.container.classList.add("tile-img-container");
@@ -20,7 +24,9 @@ export class TileImgContainer {
     button.className = "tile-img-delete-button";
     button.id = "tile-img-delete-button";
     button.innerHTML = '<i class="fa fa-xmark"></i>';
-    
+
+ 
+
     let tileAttributes;
     button.addEventListener("click", (e) => {
       e.preventDefault();
@@ -37,7 +43,7 @@ export class TileImgContainer {
       const currentStyles = selectedComponent.getStyle();
       delete currentStyles["background-image"];
       currentStyles["background-color"] = tileAttributes.BGColor;
-
+           
       selectedComponent.setStyle(currentStyles);
 
       (globalThis as any).tileMapper.updateTile(
@@ -51,19 +57,23 @@ export class TileImgContainer {
         "Opacity",
         "0"
       );
+      
 
       this.container.style.display = "none";
-      const slider = document.getElementById(
-        "slider-wrapper"
-      ) as HTMLInputElement;
+      this.container.style.position = "relative";
+      this.container.style.overflow = "hidden";
+      const slider = document.getElementById("slider-wrapper") as HTMLInputElement;
       slider.style.display = "none";
     });
 
     this.container.appendChild(img);
     this.container.appendChild(button);
+
   }
 
-  render(container: HTMLElement) {
-    container.appendChild(this.container);
-  }
+
+   render(container: HTMLElement) {
+     container.appendChild(this.container);
+   }
+  
 }

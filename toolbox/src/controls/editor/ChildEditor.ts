@@ -22,10 +22,12 @@ export class ChildEditor {
   pageData: any;
   themeManager: any;
   pageTitle: any;
+  isNewPage: boolean;
 
-  constructor(pageId: any, pageData?: any) {
+  constructor(pageId: any, pageData?: any, isNewPage: boolean = false) {
     this.pageId = pageId;
     this.pageData = pageData;
+    this.isNewPage = isNewPage;
     this.themeManager = new ThemeManager();
     this.editorManager = new EditorManager();
     this.editorEvents = new EditorEvents();
@@ -36,6 +38,7 @@ export class ChildEditor {
     this.pageTitle = this.pageData?.PageName;
     this.createNewEditor(editorId);
     const childEditor = this.editorManager.initializeGrapesEditor(editorId);
+    (window as any).app.editors[editorId] = childEditor;
 
     const setUpEditor = (converter: any) => {
       if (converter) {
@@ -62,7 +65,7 @@ export class ChildEditor {
       converter = new JSONToGrapesJSMenu(this.pageData);
       setUpEditor(converter);
     } else if (this.pageData?.PageType === "Information") {
-      converter = new JSONToGrapesJSInformation(this.pageData);
+      converter = new JSONToGrapesJSInformation(this.pageData, this.isNewPage);
       setUpEditor(converter);
     } else if (this.pageData?.PageType === "Location") {
       const locationEditor = new LoadLocationData(childEditor, this.pageData);
@@ -102,7 +105,7 @@ export class ChildEditor {
     const frameContainer = document.getElementById(
       "child-container"
     ) as HTMLElement;
-    const newEditor = new EditorFrame(editorId, false, this.pageData, this.pageTitle);
+    const newEditor = new EditorFrame(editorId, false, this.pageData, this.pageTitle, this.isNewPage);
     newEditor.render(frameContainer);
   }
 
@@ -113,6 +116,10 @@ export class ChildEditor {
       id++;
     });
     return id;
+  }
+
+  refreshPage() {
+    
   }
 
   addImageContent(editor: any) {

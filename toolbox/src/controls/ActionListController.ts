@@ -6,6 +6,7 @@ import { PageAttacher } from "../ui/components/tools-section/action-list/PageAtt
 import { PageCreationService } from "../ui/components/tools-section/action-list/PageCreationService";
 import { ChildEditor } from "./editor/ChildEditor";
 import { AppVersionManager } from "./versions/AppVersionManager";
+import { i18n } from "../i18n/i18n";
 
 export class ActionListController {
   private toolboxService: ToolBoxService;
@@ -26,89 +27,91 @@ export class ActionListController {
 
   async getMenuCategories(): Promise<MenuItem[][] | null> {
     const categoryData = await this.actionList.getCategoryData();
+    console.log("categoryData", categoryData);
     const activePage = (globalThis as any).pageData;
 
     // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
 
     // Only add Services if the page type matches
-    if (activePage && activePage.PageType !== "Information") {
+    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-form",
         name: "DynamicForm",
-        label: "Forms",
+        label: i18n.t("tile.forms"),
         expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Forms"),
+        action: () => this.getSubMenuItems(categoryData, "Content"),
       });
-    }
-    if (activePage && activePage.PageType !== "Information") {
+    // }
+    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-module",
         name: "Modules",
-        label: "Modules",
+        label: i18n.t("tile.modules"),
         expandable: true,
         action: () => this.getSubMenuItems(categoryData, "Modules"),
       });
-    }
+    // }
 
+    console.log("categoryData", categoryData);
+    secondCategory.push({
+      id: "list-page",
+      name: "Page",
+      label: i18n.t("tile.existing_pages"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, ""),
+    });
+  
     return [
       [
-        {
-          id: "add-menu-page",
-          label: "Add menu page",
-          name: "",
-          action: async () => {
-            this.createNewPage("Untitled");
-          },
-        },
+        // {
+        //   id: "add-menu-page",
+        //   label: i18n.t("tile.add_menu_page"),
+        //   name: "",
+        //   action: async () => {
+        //     this.createNewPage("Untitled");
+        //   },
+        // },
         {
           id: "add-info-page",
-          label: "Information Page",
+          label: i18n.t("tile.information_page"),
           name: "",
           action: async () => {
             this.createNewInfoPage("Untitled");
           },
-        }
+        },
+        // {
+        //   id: "add-content-page",
+        //   label:  i18n.t("tile.add_content_page"),
+        //   name: "",
+        //   action: () => {
+        //     const config = AppConfig.getInstance();
+        //     config.addServiceButtonEvent()
+        //   },
+        // },
       ],
       secondCategory,
       [
-        {
-          id: "add-email",
-          label: "Email",
-          name: "",
-          action: () => {
-            this.pageCreationService.handleEmail();
-          },
-        },
-        {
-          id: "add-phone",
-          label: "Phone",
-          name: "",
-          action: () => {
-            this.pageCreationService.handlePhone();
-          },
-        },
-        {
-          id: "add-web-link",
-          label: "Web link",
-          name: "",
-          action: () => {
-            this.pageCreationService.handleWebLinks();
-          },
-        },
+        { id: "add-email", label: i18n.t("tile.email"), name: "", action: () => {this.pageCreationService.handleEmail()} },
+        { id: "add-phone", label: i18n.t("tile.phone"), name: "", action: () => {this.pageCreationService.handlePhone()} },
+        { id: "add-web-link", label: "Web link", name: "", action: () => {this.pageCreationService.handleWebLinks()} },
       ],
     ];
   }
 
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
+    console.log("type ", type);
+    console.log("categoryData", categoryData);
     const category = categoryData.find((cat: any) => cat.name === type);
+    console.log("category", category);
     const itemsList = category?.options || [];
     return itemsList.map((item: any) => {
+      console.log("item", item);
       return {
         id: item.PageId,
         label: item.PageName,
         url: item.PageUrl,
-        action: () => this.handleSubMenuItemSelection(item, type),
+        action: () => this.handleSubMenuItemSelection(item, item.PageType),
       };
     });
   }
@@ -147,7 +150,7 @@ export class ActionListController {
         TileName: res.MenuPage.PageName,
         PageType: res.MenuPage.PageType,
       };
-      this.pageAttacher.attachToTile(page, "Information", "Information");
+      this.pageAttacher.attachToTile(page, "Information", "Information", true);
     } else {
       console.error("error", res.error.message);
     }
@@ -169,6 +172,7 @@ export class ActionListController {
     if (!selectedComponent) return;
     const tileTitle = selectedComponent.find(".tile-title")[0];
     if (tileTitle) tileTitle.components(form.PageName);
+    tileTitle.addAttributes({'title': form.PageName})
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();
@@ -197,6 +201,7 @@ export class ActionListController {
       rowId,
       tileId
     );
+
 
     new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
   }

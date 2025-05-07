@@ -2,10 +2,12 @@ import { InfoType } from "../../interfaces/InfoType";
 import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
 import {
   DefaultAttributes,
+  minTileHeight,
   rowDefaultAttributes,
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
 } from "../../utils/default-attributes";
+import { resizeButton } from "../../utils/gjs-components";
 import { randomIdGenerator } from "../../utils/helpers";
 import { InfoSectionController } from "../InfoSectionController";
 import { CtaManager } from "../themes/CtaManager";
@@ -79,9 +81,11 @@ export class TileManager {
 
       if (this.page?.PageType === "Information") {
       } else {
+        console.log('index', index);
         (globalThis as any).tileMapper.addFreshRow(
           newRowComponent.getId() as string,
-          tileId as string
+          tileId as string,
+          index + 1
         );
       }
     }
@@ -179,6 +183,13 @@ export class TileManager {
           Text: "Title",
           Color: "#333333",
           Align: "left",
+          BGSize: 1,
+          BGPosition: 1,
+          Action: {
+            ObjectType: "",
+            ObjectId: "",
+            ObjectUrl: "",
+          }
         });
       } else if (method === "delete") {
         const tile = tileSection.Tiles?.find((tile: any) => tile.Id === tileId);
@@ -336,15 +347,16 @@ export class TileManager {
   }
 
   private getTileRow() {
-    const tile = this.getTile();
+    const isSingleTile = true
+    const tile = this.getTile(isSingleTile);
     return `<div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(
       8
     )}">${tile}</div>`;
   }
 
-  private getTile() {
+  private getTile(isSingleTile:boolean=false) {
     return `
-      <div ${tileWrapperDefaultAttributes} class="template-wrapper" id="${randomIdGenerator(
+      <div ${tileWrapperDefaultAttributes} ${isSingleTile ? `style="height:${minTileHeight}px"`:``} class="template-wrapper" id="${randomIdGenerator(
       8
     )}">
         <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #333333; justify-content: left">
@@ -363,6 +375,9 @@ export class TileManager {
             <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
           </svg>
         </button>
+        ${isSingleTile ? `
+            ${resizeButton ("Resize")}
+          `:``}
         ${
           this.page?.PageType === "Information"
             ? ``

@@ -24,10 +24,14 @@ class TileMapper {
     const bgColor = this.component.getStyle()["background-color"] || "#ffffff";
     const bgImage = this.component.getStyle()["background-image"] || "";
     const textColor = this.component.getStyle()["color"] || "#ffffff";
+    const bgSize = this.component.getStyle()["background-size"] || "";
+    const bgPosition = this.component.getStyle()["background-position"] || "";
     this.component.addAttributes({
       "tile-bgcolor": bgColor,
       "tile-bg-image-url": bgImage,
       "tile-text-color": textColor,
+      "tile-bgsize": bgSize,
+      "tile-bgposition": bgPosition,
     });
 
     let icon = "";
@@ -167,6 +171,8 @@ function mapTemplateToPageData(templateData, page) {
         TileBGColor: `${tileBG}` || "",
         TileBGImageUrl: attributes["tile-bg-image-url"] || "",
         TileBGImageOpacity: attributes["tile-bg-image-opacity"] || "",
+        TileBGSize: attributes["tile-bgsize"],
+        TileBGPosition: ["tile-bgposition"],
 
         TileAction: {
           ObjectType: attributes["tile-action-object"],
@@ -353,6 +359,8 @@ function generateNewPage(theme) {
                                     "tile-bg-image-opacity": "100",
                                     "tile-action-object": "Page",
                                     "tile-action-object-id": "",
+                                    "tile-bgsize": "",
+                                    "tile-bgposition": "",
                                   },
                                   _undoexc: ["status", "open"],
                                   components: [

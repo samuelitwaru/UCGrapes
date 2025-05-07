@@ -5,6 +5,7 @@ import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageU
 import { ConfirmationBox } from "../../ui/components/ConfirmationBox";
 import { InfoSectionController } from "../InfoSectionController";
 import { CtaIconsListPopup } from "../../ui/views/CtaIconsListPopup";
+import { i18n } from "../../i18n/i18n";
 
 export class ContentDataUi {
     e: any;
@@ -34,31 +35,37 @@ export class ContentDataUi {
         if ((this.e.target as Element).closest('.tb-edit-content-icon')) {
             const modalBody = document.createElement('div');
             const infoDescSection = this.e.target.closest('[data-gjs-type="info-desc-section"].info-desc-section');
-
             const modalContent = document.createElement('div');
             modalContent.id = 'editor';
             modalContent.innerHTML = `${this.getDescription()}`;
-
+            modalContent.style.minHeight = "150px";
+    
             const submitSection = document.createElement('div');
             submitSection.classList.add('popup-footer');
             submitSection.style.marginBottom = '-12px';
-
-            const saveBtn = this.createButton('submit_form', 'tb-btn-primary', 'Save');
-            const cancelBtn = this.createButton('cancel_form', 'tb-btn-outline', 'Cancel');
-
+    
+            const saveBtn = this.createButton('submit_form', 'tb-btn-primary', i18n.t("tile.save_button"));
+            const hasContent = modalContent.innerHTML !== '<p><br></p>' && modalContent.innerHTML.trim() !== '';
+            if (!hasContent) {
+                saveBtn.disabled = true; 
+                saveBtn.style.opacity = "0.6";
+                saveBtn.style.cursor = "not-allowed";                
+            }
+            const cancelBtn = this.createButton('cancel_form', 'tb-btn-outline', i18n.t("tile.cancel_button"));
+            
             submitSection.appendChild(saveBtn);
             submitSection.appendChild(cancelBtn);
-
+    
             modalBody.appendChild(modalContent);
             modalBody.appendChild(submitSection);
-
+    
             const modal = new Modal({
-                title: "Edit Content",
+                title: i18n.t("tile.edit_content"),
                 width: "500px",
                 body: modalBody
             });
             modal.open();
-
+    
             const quill = new Quill("#editor", {
                 modules: {
                     toolbar: [
@@ -67,21 +74,50 @@ export class ContentDataUi {
                     ],
                 },
                 theme: "snow",
+                placeholder: "Start typing here...",
             });
-
+    
+            setTimeout(() => {
+                // First focus the editor
+                quill.focus();
+                
+                // Then move the cursor to the end
+                const length = quill.getLength();
+                quill.setSelection(length, 0);
+            }, 0);
+           
+            quill.on('text-change', () => {
+                const editorContent = quill.root.innerHTML;
+                // Check if editor has meaningful content (not just empty paragraphs)
+                const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
+                saveBtn.disabled = !hasContent;
+                
+                // Update button styling based on disabled state
+                if (saveBtn.disabled) {
+                  saveBtn.style.opacity = "0.6";
+                  saveBtn.style.cursor = "not-allowed";
+                } else {
+                  saveBtn.style.opacity = "1";
+                  saveBtn.style.cursor = "pointer";
+                }
+              });
+    
             saveBtn.addEventListener('click', () => {
                 const content = document.querySelector("#editor .ql-editor") as HTMLElement;
+                const correctedContent = this.correctULTagFromQuill(content.innerHTML);
+            
                 if (this.page.PageType === "Information" && infoDescSection) {
-                    this.infoSectionController.updateDescription(content.innerHTML, infoDescSection.id);
+                    this.infoSectionController.updateDescription(correctedContent, infoDescSection.id);
                     modal.close();
                     return;
                 }
-                this.contentDataManager.saveContentDescription(content.innerHTML);
+                this.contentDataManager.saveContentDescription(correctedContent);
                 modal.close();
-            })
+            });
+    
             cancelBtn.addEventListener('click', () => {
                 modal.close();
-            })
+            });
         }
     }
 
@@ -197,11 +233,9 @@ export class ContentDataUi {
     private getDescription () {
         if (this.page.PageType === "Information") {
             const description = this.e.target.closest('[data-gjs-type="info-desc-section"].info-desc-section');
+            console.log("description", description.querySelector('.info-desc-content'));
             if (description) {
-                const descComponent = this.editor.Components.getWrapper().find(".info-desc-content")[0];
-                if (descComponent) {
-                    return descComponent.getEl().innerHTML;
-                }
+                return description.querySelector('.info-desc-content').innerHTML;
             }
         } else {
             const description = this.e.target.closest(".content-page-block");
@@ -221,4 +255,32 @@ export class ContentDataUi {
         btn.innerText = text;
         return btn;
     }
+
+
+    private correctULTagFromQuill(html: string): string {
+        if (!html) return html;
+    
+        // Replace <ol> blocks containing bullet-style <li> with <ul>
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+    
+        const ols = doc.querySelectorAll("ol");
+    
+        ols.forEach((ol) => {
+            const allBullet = Array.from(ol.children).every((li) =>
+                li.getAttribute("data-list") === "bullet"
+            );
+    
+            if (allBullet) {
+                const ul = document.createElement("ul");
+                Array.from(ol.children).forEach((li) => {
+                    ul.appendChild(li.cloneNode(true));
+                });
+                ol.replaceWith(ul);
+            }
+        });
+    
+        return doc.body.innerHTML;
+    }
+
 }

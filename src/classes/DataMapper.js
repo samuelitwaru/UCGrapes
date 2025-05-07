@@ -42,6 +42,8 @@ class DataMapper {
           // Extract the required style properties (if they exist)
           const backgroundImage = style['background-image'] || null;
           const backgroundColor = style['background-color'] || null;
+          const backgroundSize = style['background-size'] || null;
+          const backgroundPosition = style['background-position'] || null;
           const color = style['color'] || null;
           const textAlign = style['text-align'] || null;
           const alignSelf = style['align-self'] || null;
@@ -52,7 +54,9 @@ class DataMapper {
             backgroundColor: backgroundColor,
             textAlign: textAlign,
             alignSelf: alignSelf,
-            color: color
+            color: color,
+            backgroundSize: backgroundSize,
+            backgroundPosition: backgroundPosition,
           };
         });
     }
@@ -68,6 +72,8 @@ class DataMapper {
         tileData.TileIconAlignment = this.getTileIconAlignment(tile)
         tileData.TileBGImageUrl = this.getTileBGImage(tile)
         tileData.TileBGColor = this.getTileBGColor(tile)
+        tileData.TileBGSize = this.getTileBGSize(tile)
+        tileData.TileBGPosition = this.getTileBGPosition(tile)
         tile.TileBGImageOpacity = 100
         return tileData
     }
@@ -149,6 +155,16 @@ class DataMapper {
     getTileBGColor (tile) {
       let id = tile.components.find(comp => comp.classes.includes('template-block'))?.attributes?.id
       let val = this.getStyle(id, 'backgroundColor')
+      return val
+    }
+    getTileBGSize (tile) {
+      let id = tile.components.find(comp => comp.classes.includes('template-block'))?.attributes?.id
+      let val = this.getStyle(id, 'backgroundSize')
+      return val
+    }
+    getTileBGPosition (tile) {
+      let id = tile.components.find(comp => comp.classes.includes('template-block'))?.attributes?.id
+      let val = this.getStyle(id, 'backgroundPosition')
       return val
     }
 

@@ -13,13 +13,16 @@ export class SingleImageFile {
   private toolboxService: ToolBoxService;
   type: any;
   infoId?: string;
+  imageUpload: ImageUpload;
+  fileListContainer: HTMLElement | undefined;
 
-  constructor(mediaFile: Media, type: any, infoId?: string) {
+  constructor(mediaFile: Media, type: any, imageUpload:ImageUpload, infoId?: string) {
     this.mediaFile = mediaFile;
     this.type = type;
     this.infoId = infoId;
     this.toolboxService = new ToolBoxService();
     this.container = document.createElement("div");
+    this.imageUpload = imageUpload
     this.init();
   }
 
@@ -32,6 +35,10 @@ export class SingleImageFile {
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
 
+      // Create a wrapper for statusCheck and deleteSpan
+    const actionColumn = document.createElement("div");
+    actionColumn.className = "action-column";
+
     const fileInfo = document.createElement("div");
     fileInfo.className = "file-info";
 
@@ -43,8 +50,8 @@ export class SingleImageFile {
     fileSize.className = "file-size";
     fileSize.innerText = this.formatBytes(this.mediaFile.MediaSize);
 
-    fileInfo.appendChild(fileName);
-    fileInfo.appendChild(fileSize);
+    // fileInfo.appendChild(fileName);
+    // fileInfo.appendChild(fileSize);
 
     const statusCheck = document.createElement("span");
     statusCheck.className = "status-icon";
@@ -61,10 +68,15 @@ export class SingleImageFile {
       this.deleteEvent();
     });
 
+    // Append statusCheck and deleteSpan to the action column
+    actionColumn.appendChild(statusCheck);
+    actionColumn.appendChild(deleteSpan);
+
     this.container.appendChild(img);
-    this.container.appendChild(fileInfo);
-    this.container.appendChild(statusCheck);
-    this.container.appendChild(deleteSpan);
+    // this.container.appendChild(fileInfo);
+    // this.container.appendChild(statusCheck);
+    // this.container.appendChild(deleteSpan);
+    this.container.appendChild(actionColumn);
   }
 
   private formatBytes(bytes: number) {
@@ -77,6 +89,9 @@ export class SingleImageFile {
 
   private setupItemClickEvent(statusCheck: HTMLElement) {
     this.container.addEventListener("click", () => {
+      this.fileListContainer = document.getElementById('fileList') as HTMLElement
+      this.fileListContainer.style.display = "none";
+      this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl)
       document.querySelectorAll(".file-item").forEach((el) => {
         el.classList.remove("selected");
         const icon = el.querySelector(".status-icon");
@@ -149,22 +164,17 @@ export class SingleImageFile {
   private addImageToTile() {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
-
     try {
       const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
       selectedComponent.addStyle({
         "background-image": `url(${safeMediaUrl})`,
-        "background-color": "transparent",
         "background-size": "cover",
         "background-position": "center",
         "background-blend-mode": "overlay",
       });
-
-      selectedComponent.getEl().style.backgroundColor = "transparent";
       
       const updates = [
         ["BGImageUrl", safeMediaUrl],
-        ["Opacity", "0"],
         ["BGColor", "transparent"],
       ];
 

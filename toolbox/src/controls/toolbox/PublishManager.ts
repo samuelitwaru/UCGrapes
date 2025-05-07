@@ -90,10 +90,7 @@ export class PublishManager {
     // process the data from here
   }
 
-  publishAppVersion() {
-
-  }
-
+  
   private createButton(id: string, className: string, text: string): HTMLButtonElement {
     const btn = document.createElement('button');
     btn.id = id;

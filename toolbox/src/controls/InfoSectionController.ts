@@ -1,7 +1,9 @@
+import Quill from "quill";
 import { CtaAttributes } from "../interfaces/CtaAttributes";
 import { InfoType } from "../interfaces/InfoType";
 import { Tile } from "../interfaces/Tile";
 import { baseURL } from "../services/ToolBoxService";
+import { Modal } from "../ui/components/Modal";
 import { InfoSectionUI } from "../ui/views/InfoSectionUI";
 import {
   contentColumnDefaultAttributes,
@@ -59,9 +61,9 @@ export class InfoSectionController {
     }
   }
 
-  addImage() {
+  addImage(imageUrl: string,) {
     const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
-    const imgContainer = this.infoSectionUI.getImage(imgUrl);
+    const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;
     const imageComponent = imageContainer.firstElementChild as HTMLElement;
@@ -71,11 +73,92 @@ export class InfoSectionController {
       const infoType: InfoType = {
         InfoId: imageComponent.id,
         InfoType: "Image",
-        InfoValue: "Resources/UCGrapes1/toolbox/public/images/default.jpg",
+        InfoValue: imageUrl,
       };
 
       this.addToMapper(infoType);
     }
+  }
+
+  openContentEditModal() {
+    const modalBody = document.createElement("div");
+
+    const modalContent = document.createElement("div");
+    modalContent.id = "editor";
+    modalContent.innerHTML = ""; // Empty content to start with
+    modalContent.style.minHeight = "150px"; // Set minimum height for about three paragraphs
+
+    const submitSection = document.createElement("div");
+    submitSection.classList.add("popup-footer");
+    submitSection.style.marginBottom = "-12px";
+
+    const saveBtn = this.createButton("submit_form", "tb-btn-primary", "Save");
+    saveBtn.disabled = true; // Disable save button initially
+    saveBtn.style.opacity = "0.6";
+    saveBtn.style.cursor = "not-allowed";
+    
+    const cancelBtn = this.createButton(
+      "cancel_form",
+      "tb-btn-outline",
+      "Cancel"
+    );
+
+    submitSection.appendChild(saveBtn);
+    submitSection.appendChild(cancelBtn);
+
+    modalBody.appendChild(modalContent);
+    modalBody.appendChild(submitSection);
+
+    const modal = new Modal({
+      title: "Description",
+      width: "500px",
+      body: modalBody,
+    });
+    modal.open();
+
+    const quill = new Quill("#editor", {
+      modules: {
+        toolbar: [
+          ["bold", "italic", "underline", "link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+      },
+      theme: "snow",
+      placeholder: "Start typing here...",
+    });
+
+    // Set focus to the editor
+    setTimeout(() => {
+      quill.focus();
+    }, 0);
+
+    // Monitor content changes to enable/disable save button
+    quill.on('text-change', () => {
+      const editorContent = quill.root.innerHTML;
+      // Check if editor has meaningful content (not just empty paragraphs)
+      const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
+      saveBtn.disabled = !hasContent;
+      
+      // Update button styling based on disabled state
+      if (saveBtn.disabled) {
+        saveBtn.style.opacity = "0.6";
+        saveBtn.style.cursor = "not-allowed";
+      } else {
+        saveBtn.style.opacity = "1";
+        saveBtn.style.cursor = "pointer";
+      }
+    });
+
+    saveBtn.addEventListener("click", () => {
+      const content = document.querySelector(
+        "#editor .ql-editor"
+      ) as HTMLElement;
+      this.addDescription(content.innerHTML);
+      modal.close();
+    });
+    cancelBtn.addEventListener("click", () => {
+      modal.close();
+    });
   }
 
   addDescription(description: string) {
@@ -114,6 +197,13 @@ export class InfoSectionController {
             Text: "Title",
             Color: "#333333",
             Align: "left",
+            BGSize: 1,
+            BGPosition: 1,
+            Action: {
+              ObjectType: "",
+              ObjectId: "",
+              ObjectUrl: "",
+            }
           },
         ],
       };
@@ -144,6 +234,8 @@ export class InfoSectionController {
         InfoType: "Image",
         InfoValue: imageUrl,
       });
+    } else {
+      this.addImage(imageUrl);
     }
   }
 
@@ -152,22 +244,11 @@ export class InfoSectionController {
     if (ctaEditor) {
       const img = ctaEditor.find("img")[0];
       if (img) {
-        img.setAttributes({ src: imageUrl });
-        const infoType: InfoType = {
-          InfoId: infoId || randomIdGenerator(15),
-          InfoType: "Cta",
-          CtaAttributes: {
-            CtaId: randomIdGenerator(15),
-            CtaType: "Phone",
-            CtaLabel: "Phone",
-            CtaAction: "",
-            CtaColor: "#ffffff",
-            CtaBGColor: "CtaColorOne",
-            CtaButtonType: "Image",
-            CtaButtonImgUrl: imageUrl,
-          },
-        };
-        this.updateInfoMapper(infoId || "", infoType);
+        if (infoId) {
+          img.setAttributes({ src: imageUrl });
+          this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image")
+          this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl)
+        }
       }
     }
   }
@@ -286,5 +367,17 @@ export class InfoSectionController {
         }
       });
     }
+  }
+
+  private createButton(
+    id: string,
+    className: string,
+    text: string
+  ): HTMLButtonElement {
+    const btn = document.createElement("button");
+    btn.id = id;
+    btn.classList.add("tb-btn", className);
+    btn.innerText = text;
+    return btn;
   }
 }

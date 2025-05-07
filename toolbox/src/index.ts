@@ -8,6 +8,11 @@ import { Theme } from './models/Theme';
 
 class App {
   private toolboxApp: ToolboxApp;
+  currentVersion: string | null;
+  currentThemeId: string | null;
+  editors: { [key: string]: any } = {}
+  suppliers: any[];
+  forms: Form[];
   
   constructor(
     UC: any,
@@ -23,6 +28,11 @@ class App {
     addServiceButtonEvent: any,
     addTemplatesButtonEvent: any
   ) {
+    this.currentVersion = currentVersion
+    this.currentThemeId = currentThemeId
+    this.suppliers = suppliers
+    this.forms = forms
+
     const config = AppConfig.getInstance();
     config.init(
       UC,
@@ -38,7 +48,8 @@ class App {
       addServiceButtonEvent,
       addTemplatesButtonEvent
     );
-    
+
+    (window as any).app = this;
     this.toolboxApp = new ToolboxApp();
   }
 }

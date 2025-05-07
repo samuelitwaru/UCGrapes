@@ -3,11 +3,14 @@ import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
 import { PageSelector } from "../../ui/components/page-selector/PageSelector";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
+import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
+import { minTileHeight } from "../../utils/default-attributes";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
+import { PageMapper } from "./PageMapper";
 
 export class EditorEvents {
   editor: any;
@@ -20,6 +23,11 @@ export class EditorEvents {
   themeManager: any;
   uiManager!: EditorUIManager;
   isHome?: boolean;
+  isResizing: boolean = false;
+  resizingRowHeight: number = 0;
+  resizingRow: HTMLDivElement | undefined;
+  resizeYStart: number = 0;
+  selectedComponent: any;
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
@@ -53,50 +61,93 @@ export class EditorEvents {
     if (this.editor !== undefined) {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
+        (globalThis as any).wrapper = wrapper
         if (wrapper) {
-          wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
-            const targetElement = e.target as Element;
-            if (
-              targetElement.closest(".menu-container") ||
-              targetElement.closest(".menu-category") ||
-              targetElement.closest(".sub-menu-header")
-            ) {
-              e.stopPropagation();
-              return;
-            }
+            wrapper.view.el.addEventListener("mousedown", (e:MouseEvent) => {
+              const targetElement = e.target as Element;
+              if (targetElement.closest('.tile-resize-button')) {
+                this.isResizing = true;
+                this.resizingRow = targetElement.closest('.template-wrapper') as HTMLDivElement
+                this.resizingRowHeight = this.resizingRow.offsetHeight
+                this.resizeYStart = e.clientY
+              }
+            })
 
-            // if (targetElement.closest("[data-gjs-type='tile-wrapper']")) {
-            //   const tileWrapper = targetElement.closest(
-            //     "[data-gjs-type='tile-wrapper']"
-            //   ) as HTMLElement;
+            document.addEventListener("mousemove", (e:MouseEvent) => {
+              if (this.isResizing) {
+                let newHeight = this.resizingRowHeight + (e.clientY-this.resizeYStart)
+                if (newHeight < minTileHeight) newHeight = minTileHeight;
+                const comps = wrapper.find(`#${this.resizingRow?.id}`)
+                if (comps.length) {
+                  comps[0].addStyle({
+                    height: `${newHeight}px`
+                  })
+                }
+                (globalThis as any).tileMapper.updateTile(
+                  this.resizingRow?.id,
+                  "Size",
+                  newHeight
+                )
+                
+              }
+            })
+
+            document.addEventListener("mouseup", (e:MouseEvent) => {
+              if (this.isResizing) {
+                this.isResizing = false
+              }
+            })
+
+            wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
+              e.preventDefault();
+              const selectedComponent = (globalThis as any).selectedComponent;
+              if (!selectedComponent) return;
+
+              const modal = document.createElement("div");
+              modal.classList.add("tb-modal");
+              modal.style.display = "flex";
+
+              const tileComp = selectedComponent.closest('.template-wrapper')
+              const modalContent = new ImageUpload("tile", tileComp.getId());
+              modalContent.render(modal);
+
+              const uploadInput = document.createElement("input");
+              uploadInput.type = "file";
+              uploadInput.multiple = true;
+              uploadInput.accept = "image/jpeg, image/jpg, image/png";
+              uploadInput.id = "fileInput";
+              uploadInput.style.display = "none";
+
+              document.body.appendChild(modal);
+              document.body.appendChild(uploadInput);
+            })
+
+            wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
+              const targetElement = e.target as Element;
+              if (
+                targetElement.closest(".menu-container") ||
+                targetElement.closest(".menu-category") ||
+                targetElement.closest(".sub-menu-header")
+              ) {
+                e.stopPropagation();
+                return;
+              }
+
+              this.uiManager.clearAllMenuContainers();
               
-            //   const tileWrapperComponent = wrapper.find("#" + tileWrapper?.id)[0];
-            //   if (tileWrapperComponent) {
-            //     (globalThis as any).selectedComponent = null;
-            //     this.editor.select(tileWrapperComponent);
-            //     console.log("Tile wrapper selected:", this.editor.getSelected().getHTML());
-            //     this.onSelected();              
-            //   }
+              (globalThis as any).activeEditor = this.editor;
+              (globalThis as any).currentPageId = this.pageId;
+              (globalThis as any).pageData = this.pageData;
 
-            // }
+              this.uiManager.handleTileManager(e);
+              this.uiManager.openMenu(e);
 
-            this.uiManager.clearAllMenuContainers();
-            
-            (globalThis as any).activeEditor = this.editor;
-            (globalThis as any).currentPageId = this.pageId;
-            (globalThis as any).pageData = this.pageData;
-
-            this.uiManager.handleTileManager(e);
-            this.uiManager.openMenu(e);
-
-            new ToolboxManager().unDoReDo();
-            this.uiManager.initContentDataUi(e);
-            this.uiManager.activateEditor(this.frameId);
+              new ToolboxManager().unDoReDo();
+              this.uiManager.initContentDataUi(e);
+              this.uiManager.activateEditor(this.frameId);
+              this.uiManager.handleInfoSectionHover(e);
           });
 
-          wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
-            this.uiManager.handleInfoSectionHover(e);
-          });
         } else {
           console.error("Wrapper not found!");
         }
@@ -133,6 +184,7 @@ export class EditorEvents {
     });
 
     this.editor.on("component:drag:end", (model: any) => {
+      if (this.isResizing) return
       destinationComponent = model.parent;
       this.uiManager.handleDragEnd(model, sourceComponent, destinationComponent);
     });
@@ -140,16 +192,27 @@ export class EditorEvents {
 
   onSelected() {
     this.editor.on("component:selected", (component: any) => {
+      const pageMapper = new PageMapper(this.editor);
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = this.uiManager.createTileMapper();
       (globalThis as any).infoContentMapper = this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
+      const isTile = component.getClasses().includes('template-block')
+      const isCta = ['img-button-container','plain-button-container','cta-container-child']
+                      .some(cls => component.getClasses().includes(cls))
       
-      this.uiManager.setTileProperties();
-      this.uiManager.setInfoTileProperties();
-      this.uiManager.setCtaProperties();
-      this.uiManager.setInfoCtaProperties();
-      this.uiManager.createChildEditor();
+      if (isCta) {
+        this.uiManager.setInfoCtaProperties();
+        this.uiManager.showCtaTools()
+      } 
+      else if (isTile) {
+        this.uiManager.setTileProperties();
+        this.uiManager.setInfoTileProperties();
+        this.uiManager.showTileTools()
+        this.uiManager.createChildEditor();
+      }
+      // this.uiManager.toggleSidebar()
+      // this.uiManager.setCtaProperties();
     });
 
     this.editor.on("component:deselected", () => {
@@ -241,5 +304,19 @@ export class EditorEvents {
     //       childContainer.scrollLeft = targetScrollPosition;
     //     }
     //   }
+  }
+
+  activateEditor(frameId: any) {
+    if (!this.uiManager) {
+      this.uiManager = new EditorUIManager(
+        this.editor,
+        this.pageId,
+        this.frameId,
+        this.pageData,
+        this.appVersionManager
+      );      
+    }
+    
+    this.uiManager.activateEditor(frameId);
   }
 }

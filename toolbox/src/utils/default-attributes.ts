@@ -103,3 +103,5 @@ export const infoRowDefaultAttributes: string = `
     data-gjs-highlightable="true"
     data-gjs-droppable="[data-gjs-type='info-tiles-section']"
 `;
+
+export const minTileHeight = 80

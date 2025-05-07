@@ -53,13 +53,17 @@ export class PageAttacher {
   async attachToTile(
     page: ActionPage,
     categoryName: string,
-    categoryLabel: string
+    categoryLabel: string,
+    isNewPage: boolean = false
   ) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
     const tileTitle = selectedComponent.find(".tile-title")[0];
-    if (tileTitle) tileTitle.components(page.PageName);
+    if (tileTitle) {
+      // tileTitle.addAttributes({ 'title': page.PageName });
+      // tileTitle.components(page.PageName)
+    };
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();
@@ -71,8 +75,8 @@ export class PageAttacher {
       return;
     }
     const updates = [
-      ["Text", page.PageName],
-      ["Name", page.PageName],
+      // ["Text", page.PageName],
+      // ["Name", page.PageName],
       ["Action.ObjectType", `${categoryName}`],
       ["Action.ObjectId", page.PageId],
     ];
@@ -80,7 +84,6 @@ export class PageAttacher {
     let tileAttributes;
 
     const pageData = (globalThis as any).pageData;
-    console.log("pageData,", selectedComponent.parent().is('info-tiles-section'));
     if (pageData.PageType === "Information") {
       const infoSectionController = new InfoSectionController();
       if (selectedComponent.is('info-cta-section')) {
@@ -111,7 +114,7 @@ export class PageAttacher {
     }
 
     const version = await this.appVersionManager.getUpdatedActiveVersion();
-    this.attachPage(page, version, tileAttributes);
+    this.attachPage(page, version, tileAttributes, isNewPage);
 
     // set tile properties
     if (selectedComponent && tileAttributes) {
@@ -123,7 +126,7 @@ export class PageAttacher {
     }
   }
 
-  attachPage(page: ActionPage, version: any, tileAttributes: any) {
+  attachPage(page: ActionPage, version: any, tileAttributes: any, isNewPage: boolean) {
     const selectedItemPageId = page.PageId;
     const childPage =
       version?.Pages.find((page: any) => page.PageId === selectedItemPageId) ||
@@ -131,7 +134,7 @@ export class PageAttacher {
 
     this.removeOtherEditors();
     if (childPage) {
-      new ChildEditor(page.PageId, childPage).init(tileAttributes);
+      new ChildEditor(page.PageId, childPage, isNewPage).init(tileAttributes);
     } else {
       this.toolboxService
         .createServicePage(version.AppVersionId, selectedItemPageId)

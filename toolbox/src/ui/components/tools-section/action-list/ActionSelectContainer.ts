@@ -32,7 +32,7 @@ export class ActionSelectContainer {
         this.dropDownHeader.addEventListener('click', (e: any) => {
             e.stopPropagation(); // Stop event from bubbling up
             e.preventDefault();
-            this.toggleDropdown();
+            // this.toggleDropdown();
         });
         
         div.appendChild(this.dropDownHeader);

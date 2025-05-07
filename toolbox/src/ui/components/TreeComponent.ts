@@ -8,12 +8,10 @@ export class TreeComponent {
     appVersionManager: AppVersionManager
     pages: any;
     treeContainer: HTMLElement | null | undefined;
-    mainContainer: HTMLElement | null;
     homePage: any;
     toolboxService: ToolBoxService;
     version: any;
     constructor(appVersionManager:AppVersionManager) {
-        this.mainContainer = document.getElementById('mapping-section')
         this.treeContainer = document.getElementById('tree-container')
         this.renderTitle()
         this.renderHideOrShowPages()
@@ -33,7 +31,7 @@ export class TreeComponent {
 
     renderTitle () {
         const sidebarTitle = document.getElementById("sidebar_mapping_title") as HTMLSpanElement
-        sidebarTitle.textContent = 'MAPPING';
+        sidebarTitle.textContent = i18n.t('navbar.publish.sidebar_mapping_title');
     }
 
     renderHideOrShowPages() {

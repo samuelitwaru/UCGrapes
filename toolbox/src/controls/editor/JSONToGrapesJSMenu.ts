@@ -5,12 +5,14 @@ import {
   rowDefaultAttributes,
   tileDefaultAttributes,
   tileWrapperDefaultAttributes,
+  minTileHeight
 } from "../../utils/default-attributes";
 import {
   ThemeManager
 } from "../themes/ThemeManager";
 import { i18n } from "../../i18n/i18n";
 import { InfoType } from "../../interfaces/InfoType";
+import { resizeButton } from "../../utils/gjs-components";
 
 export class JSONToGrapesJSMenu {
   private data: any;
@@ -24,6 +26,7 @@ export class JSONToGrapesJSMenu {
 
   private generateTile(
       tile: any,
+      row: any,
       isFirstSingleTile: boolean,
       isThreeTiles: boolean,
       isInfoPage?: boolean
@@ -33,7 +36,7 @@ export class JSONToGrapesJSMenu {
         isFirstSingleTile
           ? firstTileWrapperDefaultAttributes
           : tileWrapperDefaultAttributes
-      } class="template-wrapper" id="${tile.Id}">
+      } class="template-wrapper" id="${tile.Id}" style="height:${tile.Size || minTileHeight}px;">
         <div ${tileDefaultAttributes} class="template-block${
               isFirstSingleTile ? " first-tile high-priority-template" : ""
           }" 
@@ -85,6 +88,12 @@ export class JSONToGrapesJSMenu {
           <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
         </svg>
       </button>
+      ${
+        (row.Tiles.length === 1) ? `
+          ${resizeButton("Resize")}
+        ` : 
+        ``
+      }
       ${isInfoPage ? "" : `
         <button ${DefaultAttributes} title="${i18n.t("tile.add_template_bottom")}" class="action-button add-button-bottom">
           <svg ${DefaultAttributes} fill="#fff" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -165,7 +174,7 @@ export class JSONToGrapesJSMenu {
       const isFirstSingleTile = rowIndex === 0 && row.Tiles.length === 1;
       const isThreeTiles = row.Tiles.length === 3;
       const tilesHTML = row.Tiles.map((tile: any, index: number) =>
-          this.generateTile(tile, isFirstSingleTile && index === 0, isThreeTiles)
+          this.generateTile(tile, row, isFirstSingleTile && index === 0, isThreeTiles)
       ).join("");
       return `<div id="${row.Id}" ${rowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
   }
@@ -174,7 +183,7 @@ export class JSONToGrapesJSMenu {
       const isFirstSingleTile = false;
       const isThreeTiles = infoTilesRow?.Tiles?.length === 3;
       const tilesHTML = infoTilesRow?.Tiles?.map((tile: any) =>
-          this.generateTile(tile, isFirstSingleTile, isThreeTiles, true)
+          this.generateTile(tile, infoTilesRow, isFirstSingleTile, isThreeTiles, true)
       ).join("");
       return infoTilesRow?.Tiles?.length === 0 ? `` :`<div id="${infoTilesRow.InfoId}" ${infoRowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
   }

@@ -21,6 +21,8 @@ export class EditorUIManager {
   tileManager: any;
   tileProperties: any;
   appVersionManager: any;
+  tilePropsSection: HTMLElement;
+  ctaPropsSection: HTMLDivElement;
 
   constructor(
     editor: any,
@@ -34,6 +36,12 @@ export class EditorUIManager {
     this.frameId = frameId;
     this.pageData = pageData;
     this.appVersionManager = appVersionManager;
+
+    this.tilePropsSection = document.getElementById(
+      "menu-page-section") as HTMLElement
+    this.ctaPropsSection = document.getElementById(
+      "content-page-section"
+    ) as HTMLDivElement;
   }
 
   handleTileManager(e: MouseEvent) {
@@ -72,9 +80,7 @@ export class EditorUIManager {
       const mobileFrame = document.getElementById(
         `${this.frameId}-frame`
       ) as HTMLElement;
-      const iframe = mobileFrame?.querySelector(
-        "iframe"
-      ) as HTMLIFrameElement;
+      const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
       const iframeRect = iframe?.getBoundingClientRect();
 
       // Pass the mobileFrame to the ActionListPopUp constructor
@@ -87,9 +93,11 @@ export class EditorUIManager {
   }
 
   handleInfoSectionHover(e: MouseEvent) {
-    const target = e.target as HTMLElement;            
+    const target = e.target as HTMLElement;
     if (target.closest(".add-new-info-section svg")) {
-      const menuBtn = target.closest(".add-new-info-section svg") as HTMLElement;
+      const menuBtn = target.closest(
+        ".add-new-info-section svg"
+      ) as HTMLElement;
       const templateContainer = menuBtn.closest(
         ".container-column"
       ) as HTMLElement;
@@ -99,9 +107,7 @@ export class EditorUIManager {
       const mobileFrame = document.getElementById(
         `${this.frameId}-frame`
       ) as HTMLElement;
-      const iframe = mobileFrame?.querySelector(
-        "iframe"
-      ) as HTMLIFrameElement;
+      const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
       const iframeRect = iframe?.getBoundingClientRect();
 
       // Pass the mobileFrame to the InfoSectionPopup constructor
@@ -110,7 +116,7 @@ export class EditorUIManager {
       const triggerRect = menuBtn.getBoundingClientRect();
 
       menu.render(triggerRect, iframeRect);
-      
+
       (globalThis as any).activeEditor = this.editor;
       (globalThis as any).currentPageId = this.pageId;
       (globalThis as any).pageData = this.pageData;
@@ -125,13 +131,15 @@ export class EditorUIManager {
         const type = comp.get("type");
         return type === "tile-wrapper";
       });
+      console.log(tileWrappers);
       if (tileWrappers.length > 3) {
         model.target.remove();
         this.editor.UndoManager.undo();
       }
-
+      // return
       const isDragging: boolean = true;
       const tileUpdate = new TileUpdate();
+
       tileUpdate.updateTile(destinationComponent, isDragging);
       tileUpdate.updateTile(sourceComponent, isDragging);
 
@@ -142,6 +150,7 @@ export class EditorUIManager {
         destinationComponent.getId(),
         model.index
       );
+      console.log("tileMapper", tileMapper);
       this.onTileUpdate(destinationComponent);
     } else if (
       parentEl &&
@@ -193,6 +202,14 @@ export class EditorUIManager {
           this.activateEditor(this.frameId);
           this.clearAllMenuContainers();
         });
+        
+        frame.addEventListener("input", (event: MouseEvent) => {
+          (globalThis as any).activeEditor = this.editor;
+          (globalThis as any).currentPageId = this.pageId;
+          (globalThis as any).pageData = this.pageData;
+          (globalThis as any).frameId = this.frameId;
+          this.activateEditor(this.frameId);
+        });
       }
     });
   }
@@ -212,13 +229,22 @@ export class EditorUIManager {
   }
 
   activateEditor(frameId: any) {
+    console.log("activateEditor frameId: ", frameId)
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
+      // deselect in active editors
+      const editors = (window as any).app.editors;
+      const inactiveEditors = Object.entries(editors).filter(
+        ([key]) => key !== frameId
+      );
+      inactiveEditors.forEach(([key, editor]: [string, any]) => {
+        editor.select(null);
+      });
+
       frame.classList.remove("active-editor");
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");
         this.activateMiniatureFrame(frame.id);
-        this.toggleSidebar();
       }
     });
   }
@@ -244,33 +270,31 @@ export class EditorUIManager {
     }
   }
 
+  showCtaTools () {
+    this.ctaPropsSection.style.display = "block";
+    this.tilePropsSection.style.display = "none"
+  }
+  
+  showTileTools () {
+    // this.ctaPropsSection = document.getElementById(
+    //   "content-page-section"
+    // ) as HTMLDivElement;
+    this.tilePropsSection.style.display = "block"
+    this.ctaPropsSection.style.display = "none";
+  }
+
   async toggleSidebar() {
     const toolSection = document.getElementById(
       "tools-section"
     ) as HTMLDivElement;
-    const mappingSection = document.querySelector(
-      "#mapping-section"
-    ) as HTMLDListElement;
     toolSection.style.display = "block";
-    mappingSection.style.display = "none";
-    if (
-      this.pageData?.PageType === "Content" ||
-      this.pageData?.PageType === "Location" ||
-      this.pageData?.PageType === "Reception" 
-    ) {
-      new ContentSection(this.pageData);
-      this.clearCtaProperties();
-    } else {
-      const menuSection = document.getElementById(
-        "menu-page-section"
-      ) as HTMLElement;
-      const contentection = document.getElementById("content-page-section");
-      if (menuSection) menuSection.style.display = "block";
-      if (contentection) contentection.remove();
 
-      const actionListContainer = new ActionSelectContainer();
-      actionListContainer.render(menuSection);
-    }
+    const menuSection = document.getElementById(
+      "menu-page-section"
+    ) as HTMLElement;
+    const contentection = document.getElementById("content-page-section");
+    if (menuSection) menuSection.style.display = "block";
+    // if (contentection) contentection.remove();
   }
 
   createTileMapper() {
@@ -301,14 +325,17 @@ export class EditorUIManager {
 
   setInfoTileProperties() {
     if (this.pageData.PageType !== "Information") return;
-
     const selectedComponent = (globalThis as any).selectedComponent;
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
-    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(rowComponent.getId()); 
+    const tileInfoSectionAttributes: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(rowComponent.getId());
 
     if (selectedComponent && tileInfoSectionAttributes) {
-      const tileAttributes = tileInfoSectionAttributes?.Tiles?.find((tile: any) => tile.Id === tileWrapper.getId());
+      const tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
+        (tile: any) => tile.Id === tileWrapper.getId()
+      );
       this.tileProperties = new TileProperties(
         selectedComponent,
         tileAttributes
@@ -334,24 +361,19 @@ export class EditorUIManager {
   }
 
   setInfoCtaProperties() {
+    // render cta component
+    (window as any).app.toolsSection.pagesTabContent.contentSection.renderComponents()
+
     const selectedComponent = (globalThis as any).selectedComponent;
     if (this.pageData.PageType !== "Information") return;
 
-    if (!selectedComponent.is('info-cta-section')) return;
-    const toolSection = document.getElementById(
-      "tools-section"
-    ) as HTMLDivElement;
+    if (!selectedComponent.is("info-cta-section")) return;
 
-    const mappingSection = document.querySelector(
-      "#mapping-section"
-    ) as HTMLDListElement;
-    toolSection.style.display = "block";
-    mappingSection.style.display = "none";
-
-    new ContentSection(this.pageData);
     this.clearCtaProperties();
 
-    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(selectedComponent.getId());
+    const tileInfoSectionAttributes: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(selectedComponent.getId());
 
     if (selectedComponent && tileInfoSectionAttributes) {
       const ctaAttributes = tileInfoSectionAttributes?.CtaAttributes;
@@ -365,7 +387,7 @@ export class EditorUIManager {
 
   clearCtaProperties() {
     const selectedComponent = (globalThis as any).selectedComponent;
-    if (selectedComponent && selectedComponent.find(".cta-styled-btn")[0]) {        
+    if (selectedComponent && selectedComponent.find(".cta-styled-btn")[0]) {
       return;
     }
     const buttonLayoutContainer = document?.querySelector(
@@ -385,12 +407,12 @@ export class EditorUIManager {
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     let tileAttributes;
-    
+
     if (this.pageData.PageType === "Information") {
       const tileInfoSectionAttributes: InfoType = (
         globalThis as any
       ).infoContentMapper.getInfoContent(rowComponent.getId());
-      
+
       tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
         (tile: any) => tile.Id === tileWrapper.getId()
       );
@@ -413,17 +435,18 @@ export class EditorUIManager {
       const data: any = JSON.parse(
         localStorage.getItem(`data-${objectId}`) || "{}"
       );
-
       let childPage;
       if (Object.keys(data).length > 0) {
         childPage = data;
       } else {
-        const pages = this.appVersionManager.getPages()
+        const pages = this.appVersionManager.getPages();
         if (tileAttributes.Action.ObjectType === "WebLink") {
-          childPage = pages?.find((page: any) => page.PageName === 'Web Link');
-        }else if (tileAttributes.Action.ObjectType === "DynamicForm") {
-          childPage = pages?.find((page: any) => page.PageName === "Dynamic Form");
-        }else {
+          childPage = pages?.find((page: any) => page.PageName === "Web Link");
+        } else if (tileAttributes.Action.ObjectType === "DynamicForm") {
+          childPage = pages?.find(
+            (page: any) => page.PageName === "Dynamic Form"
+          );
+        } else {
           childPage = this.appVersionManager
             .getPages()
             ?.find((page: any) => page.PageId === objectId);
@@ -480,7 +503,7 @@ export class EditorUIManager {
     const menuContainer = document.querySelector(
       ".menu-container"
     ) as HTMLElement;
-    
+
     // Show navigation buttons only when content overflows
     const menuWidth = menuContainer ? menuContainer.clientWidth : 0;
     const totalFramesWidth =

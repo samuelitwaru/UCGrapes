@@ -142,7 +142,7 @@ export class TileMapper {
     };
   }
 
-  public addFreshRow(rowId: string, tileId: string): void {
+  public addFreshRow(rowId: string, tileId: string, index:number): void {
     this.saveState();
     const data: any = JSON.parse(
       localStorage.getItem(`data-${this.pageId}`) || "{}"
@@ -165,11 +165,13 @@ export class TileMapper {
             ObjectId: "",
             ObjectUrl: "",
           },
+          BGSize: 0,
+          BGPosition: 0
         },
       ],
     };
-
-    data.PageMenuStructure?.Rows?.push(newRow);
+    data.PageMenuStructure?.Rows.splice(index, 0, newRow);
+    // data.PageMenuStructure?.Rows?.push(newRow);
     localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
   }
 
@@ -190,6 +192,8 @@ export class TileMapper {
         ObjectId: "",
         ObjectUrl: "",
       },
+      BGSize: 0,
+      BGPosition: 0
     };
 
     const data: any = JSON.parse(
@@ -226,22 +230,69 @@ export class TileMapper {
     const data: any = JSON.parse(
       localStorage.getItem(`data-${this.pageId}`) || "{}"
     );
-    data?.PageMenuStructure?.Rows?.forEach((row: any) => {
-      row.Tiles.forEach((tile: any) => {
-        if (tile.Id === tileId) {
-          if (attribute.includes(".")) {
-            const parts = attribute.split(".");
-            let current = tile;
-            for (let i = 0; i < parts.length - 1; i++) {
-              current = current[parts[i]];
+
+    // if current page is Information type
+    if (data.PageType === "Information") {
+      data.PageInfoStructure.InfoContent
+      .filter((content:any)=>content.InfoType == "TileRow")
+      .forEach((content: any) => {
+        content.Tiles.forEach((tile: any) => {
+          if (tile.Id === tileId) {
+            if (attribute.includes(".")) {
+              const parts = attribute.split(".");
+              let current = tile;
+              for (let i = 0; i < parts.length - 1; i++) {
+                current = current[parts[i]];
+              }
+              current[parts[parts.length - 1]] = value;
+            } else {
+              tile[attribute] = value;
             }
-            current[parts[parts.length - 1]] = value;
-          } else {
-            tile[attribute] = value;
           }
-        }
+        });
       });
-    });
+      localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+      return;
+    }
+
+    // if current page is Menu type
+    else if (data.PageType === "Menu" || data.PageType === "MyCare"  || data.PageType === "MyLiving"  || data.PageType === "MyServices") {
+      const row = data?.PageMenuStructure?.Rows?.find(
+        (r: any) => r.Tiles.some((t: any) => t.Id === tileId)
+      );
+      if (row) {
+        row.Tiles.forEach((tile: any) => {
+          if (tile.Id === tileId) {
+            if (attribute.includes(".")) {
+              const parts = attribute.split(".");
+              let current = tile;
+              for (let i = 0; i < parts.length - 1; i++) {
+                current = current[parts[i]];
+              }
+              current[parts[parts.length - 1]] = value;
+            } else {
+              tile[attribute] = value;
+            }
+          }
+        });
+      }
+    }
+    // data?.PageMenuStructure?.Rows?.forEach((row: any) => {
+    //   row.Tiles.forEach((tile: any) => {
+    //     if (tile.Id === tileId) {
+    //       if (attribute.includes(".")) {
+    //         const parts = attribute.split(".");
+    //         let current = tile;
+    //         for (let i = 0; i < parts.length - 1; i++) {
+    //           current = current[parts[i]];
+    //         }
+    //         current[parts[parts.length - 1]] = value;
+    //       } else {
+    //         tile[attribute] = value;
+    //       }
+    //     }
+    //   });
+    // });
     localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
   }
 
@@ -249,16 +300,31 @@ export class TileMapper {
     const data: any = JSON.parse(
       localStorage.getItem(`data-${this.pageId}`) || "{}"
     );
-    if (rowId) {
-      const row = data?.PageMenuStructure?.Rows?.find(
-        (r: any) => r.Id === rowId
-      );
-      if (row) {
-        const tile = row.Tiles.find((t: any) => t.Id === tileId);
-        return tile || null;
+    let tile: any = null;
+    // if current page is Information type
+    if (data.PageType === "Information") {
+      data.PageInfoStructure.InfoContent
+      .filter((content:any)=>content.InfoType == "TileRow")
+      .forEach((content: any) => {
+        tile = content.Tiles.find((t: any) => t.Id === tileId)
+      })
+      return tile
+    }
+
+    // if current page is Menu type
+    else if (data.PageType === "Menu" || data.PageType === "MyCare"  || data.PageType === "MyLiving"  || data.PageType === "MyServices") {
+      if (rowId) {
+        const row = data?.PageMenuStructure?.Rows?.find(
+          (r: any) => r.Id === rowId
+        );
+        if (row) {
+          tile = row.Tiles.find((t: any) => t.Id === tileId);
+          return tile || null;
+        }
       }
     }
-    return null;
+
+    return tile;
   }
 
   moveTile(

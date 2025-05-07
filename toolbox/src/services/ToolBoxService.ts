@@ -25,7 +25,7 @@ export class ToolBoxService {
 
   init() {
     this.services = this.config.services;
-    this.forms = this.config.forms;
+    this.forms = (window as any).app.forms;
     this.loadingManager = new LoadingManager(this.preloaderEl);
   }
   // Helper method to handle API calls
@@ -440,6 +440,30 @@ export class ToolBoxService {
     return await this.fetchAPI('/api/toolbox/v2/update-location', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async getTrashItems() {
+    return await this.fetchAPI('/api/toolbox/v2/get-trash', {}, true);
+  }
+
+  async restoreTrash(type: string, trashId: any) {
+    return await this.fetchAPI("/api/toolbox/v2/restore-trash", {
+      method: "POST",
+      body: JSON.stringify({
+        Type: type,
+        TrashId: trashId,
+      }),
+    });
+  }
+
+  async deleteTrashForver(type: string, trashId: any) {
+    return await this.fetchAPI("/api/toolbox/v2/delete-trash", {
+      method: "POST",
+      body: JSON.stringify({
+        Type: type,
+        TrashId: trashId,
+      }),
     });
   }
 }

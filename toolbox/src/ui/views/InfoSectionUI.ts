@@ -18,27 +18,29 @@ import { resizeButton } from "../../utils/gjs-components";
 
 export class InfoSectionUI {
   themeManager: any;
+  controller: any;
 
   constructor() {
     this.themeManager = new ThemeManager();
+    // this.controller = new InfoSectionController();
   }
 
   openImageUpload() {
-    // const modal = document.createElement("div");
-    // modal.classList.add("tb-modal");
-    // modal.style.display = "flex";
+    const modal = document.createElement("div");
+    modal.classList.add("tb-modal");
+    modal.style.display = "flex";
 
-    // // const modalContent = new ImageUpload("content");
-    // modalContent.render(modal);
-    // const uploadInput = document.createElement("input");
-    // uploadInput.type = "file";
-    // uploadInput.multiple = true;
-    // uploadInput.accept = "image/jpeg, image/jpg, image/png";
-    // uploadInput.id = "fileInput";
-    // uploadInput.style.display = "none";
+    const modalContent = new ImageUpload("content");
+    modalContent.render(modal);
+    const uploadInput = document.createElement("input");
+    uploadInput.type = "file";
+    uploadInput.multiple = true;
+    uploadInput.accept = "image/jpeg, image/jpg, image/png";
+    uploadInput.id = "fileInput";
+    uploadInput.style.display = "none";
 
-    // document.body.appendChild(modal);
-    // document.body.appendChild(uploadInput);
+    document.body.appendChild(modal);
+    document.body.appendChild(uploadInput);
   }
 
   addCtaButton(cta: any) {
@@ -227,5 +229,58 @@ export class InfoSectionUI {
     btn.classList.add("tb-btn", className);
     btn.innerText = text;
     return btn;
+  }
+
+  openContentEditModal() {
+    const modalBody = document.createElement("div");
+
+    const modalContent = document.createElement("div");
+    modalContent.id = "editor";
+    modalContent.innerHTML = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...</p>`;
+
+    const submitSection = document.createElement("div");
+    submitSection.classList.add("popup-footer");
+    submitSection.style.marginBottom = "-12px";
+
+    const saveBtn = this.createButton("submit_form", "tb-btn-primary", "Save");
+    const cancelBtn = this.createButton(
+      "cancel_form",
+      "tb-btn-outline",
+      "Cancel"
+    );
+
+    submitSection.appendChild(saveBtn);
+    submitSection.appendChild(cancelBtn);
+
+    modalBody.appendChild(modalContent);
+    modalBody.appendChild(submitSection);
+
+    const modal = new Modal({
+      title: "Edit Content",
+      width: "500px",
+      body: modalBody,
+    });
+    modal.open();
+
+    const quill = new Quill("#editor", {
+      modules: {
+        toolbar: [
+          ["bold", "italic", "underline", "link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+      },
+      theme: "snow",
+    });
+
+    saveBtn.addEventListener("click", () => {
+      const content = document.querySelector(
+        "#editor .ql-editor"
+      ) as HTMLElement;
+      // this.controller.addDescription(content.innerHTML);
+      modal.close();
+    });
+    cancelBtn.addEventListener("click", () => {
+      modal.close();
+    });
   }
 }

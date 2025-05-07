@@ -5,6 +5,7 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { Modal } from "../components/Modal";
 import { formatDistanceToNow } from 'date-fns';
 import { VersionSelectionView } from "./VersionSelectionView";
+import { AppVersionManager } from "../../controls/versions/AppVersionManager";
 
 export class TrashView {
     constructor() {}
@@ -374,6 +375,8 @@ export class TrashView {
                 if (confirm(`Restore ${checkedItems.length} selected item(s)?`)) {
                     this.removeSelectedItems(checkedItems, "restore");
                     this.updateActionButtonsVisibility(container, actionButtons, emptyTrashBtn);
+                    const versionManager = new AppVersionManager();
+                     versionManager.refreshVersion();
                 }
             }
         });
@@ -411,11 +414,31 @@ export class TrashView {
                     item.remove();
                     const versionSelectList = new VersionSelectionView();
                     versionSelectList.refreshVersionList();
+                    this.createModalContent();
                 }
             }
+
+            this.refreshTabContent();
         });
     }
     
+    private refreshTabContent() {
+        const activeTab = document.querySelector('.trash-tab.active');
+        if (activeTab) {
+            const tabId = activeTab.getAttribute('data-tab');
+            if (tabId) {
+                const activeContent = document.querySelector(`#${tabId}-tab`);
+                if (activeContent) {
+                    const remainingItems = activeContent.querySelectorAll('.trash-item');
+                    // If no items remain, show empty trash content
+                    if (remainingItems.length === 0) {
+                        activeContent.innerHTML = '';
+                        activeContent.appendChild(this.createEmptyTrashContent());
+                    }
+                }
+            }
+        }
+    }
     private setupEmptyTrashButton(container: HTMLDivElement, emptyTrashBtn: Element): void {
         emptyTrashBtn.addEventListener('click', () => {
             const activeTab = container.querySelector('.trash-tab.active');

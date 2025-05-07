@@ -85,6 +85,8 @@ export class DeletePageButton {
                     deleteModal.close();
                     localStorage.removeItem(`data-${this.pageData.PageId}`);
                     (window as any).app.toolboxApp.editor.init()
+                    const versionManager = new AppVersionManager();
+                    versionManager.refreshVersion();
                 }else {
                     new Alert("error", res.error.message)
                 }

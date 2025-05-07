@@ -196,7 +196,6 @@ export class ImageUpload {
   }
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
-    console.log('filearray', fileArray)
     for (const file of fileArray) {
       if (file.type.startsWith("image/")) {
         try {

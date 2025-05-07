@@ -316,7 +316,7 @@ export class EditorEvents {
         this.appVersionManager
       );      
     }
-    console.log("activateEditor: ", frameId);
+    
     this.uiManager.activateEditor(frameId);
   }
 }

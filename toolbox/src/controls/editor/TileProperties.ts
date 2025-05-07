@@ -18,7 +18,7 @@ export class TileProperties {
     this.setOpacityProperties();
     this.setTitleStyleProperties();
     this.setTileActionProperties();
-    this.setActionProperties();
+    // this.setActionProperties();
     this.setTileIconProperties();
   }
 
@@ -188,46 +188,46 @@ export class TileProperties {
     });
   }
 
-  private setActionProperties(): void {
-    const tileActionType = this.tileAttributes?.Action?.ObjectType;
-    const tileActionName = this.tileAttributes?.Text;
+  // private setActionProperties(): void {
+  //   // const tileActionType = this.tileAttributes?.Action?.ObjectType;
+  //   // const tileActionName = this.tileAttributes?.Text;
 
-    //   let actionLabel = "";
-    //   if (tileActionType == "Page") {
-    //     actionLabel = i18n.t("sidebar.action_list.page");
-    //   } else if (tileActionType == "Web Link") {
-    //     actionLabel = i18n.t("sidebar.action_list.services");
-    //   } else if (tileActionType == "Service/Product Page") {
-    //     actionLabel = i18n.t("sidebar.action_list.weblink");
-    //   } else if (tileActionType == "Dynamic Form") {
-    //     actionLabel = i18n.t("sidebar.action_list.forms");
-    //   } else if (tileActionType == "Module") {
-    //     actionLabel = i18n.t("sidebar.action_list.module");
-    //   } else if (tileActionType == "Content") {
-    //     actionLabel = i18n.t("sidebar.action_list.content");
-    //   }
+  //   //   let actionLabel = "";
+  //   //   if (tileActionType == "Page") {
+  //   //     actionLabel = i18n.t("sidebar.action_list.page");
+  //   //   } else if (tileActionType == "Web Link") {
+  //   //     actionLabel = i18n.t("sidebar.action_list.services");
+  //   //   } else if (tileActionType == "Service/Product Page") {
+  //   //     actionLabel = i18n.t("sidebar.action_list.weblink");
+  //   //   } else if (tileActionType == "Dynamic Form") {
+  //   //     actionLabel = i18n.t("sidebar.action_list.forms");
+  //   //   } else if (tileActionType == "Module") {
+  //   //     actionLabel = i18n.t("sidebar.action_list.module");
+  //   //   } else if (tileActionType == "Content") {
+  //   //     actionLabel = i18n.t("sidebar.action_list.content");
+  //   //   }
 
-    const actionHeader = document.querySelector(
-      ".tb-dropdown-header"
-    ) as HTMLElement;
-    const actionHeaderLabel = actionHeader.querySelector(
-      "#sidebar_select_action_label"
-    ) as HTMLElement;
+  //   // const actionHeader = document.querySelector(
+  //   //   ".tb-dropdown-header"
+  //   // ) as HTMLElement;
+  //   // const actionHeaderLabel = actionHeader.querySelector(
+  //   //   "#sidebar_select_action_label"
+  //   // ) as HTMLElement;
 
-    if (actionHeaderLabel) {
-      if (!tileActionType) {
-        actionHeaderLabel.innerText = "Select Action";
-      } else {
-        actionHeaderLabel.innerText = `${
-          tileActionName.length > 10
-            ? tileActionName.substring(0, 14) + ""
-            : tileActionName
-        }, ${
-          tileActionName.length > 10
-            ? tileActionName.substring(0, 14) + "..."
-            : tileActionName
-        }`;
-      }
-    }
-  }
+  //   // if (actionHeaderLabel) {
+  //   //   if (!tileActionType) {
+  //   //     actionHeaderLabel.innerText = "Select Action";
+  //   //   } else {
+  //   //     actionHeaderLabel.innerText = `${
+  //   //       tileActionName.length > 10
+  //   //         ? tileActionName.substring(0, 14) + ""
+  //   //         : tileActionName
+  //   //     }, ${
+  //   //       tileActionName.length > 10
+  //   //         ? tileActionName.substring(0, 14) + "..."
+  //   //         : tileActionName
+  //   //     }`;
+  //   //   }
+  //   // }
+  // }
 }

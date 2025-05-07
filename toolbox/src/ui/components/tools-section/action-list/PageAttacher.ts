@@ -45,8 +45,8 @@ export class PageAttacher {
       const contentection = document.getElementById("content-page-section");
       if (menuSection) menuSection.style.display = "block";
       if (contentection) contentection.remove();
-      const actionListContainer = new ActionSelectContainer();
-      actionListContainer.render(menuSection);
+      // const actionListContainer = new ActionSelectContainer();
+      // actionListContainer.render(menuSection);
     }
   }
 

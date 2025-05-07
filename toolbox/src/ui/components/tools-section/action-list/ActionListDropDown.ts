@@ -98,11 +98,12 @@ export class ActionListDropDown {
   getDynamicForms() {
     const forms = (this.toolBoxService.forms || []).map((form) => ({
         PageId: form.FormId,
-        PageName: form.ReferenceName,
-        TileName: form.ReferenceName,
+        PageName: form.PageName,
+        TileName: form.PageName,
         PageUrl: form.FormUrl,
         PageType: "DynamicForm",
       }));
+    console.log('forms', forms)
     return forms;
   }
 

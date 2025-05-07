@@ -172,20 +172,23 @@ export class PageCreationService {
 
       const version = (globalThis as any).activeVersion;
       let objectId = "";
-      let childPage: any;
-      if (type === "WebLink") {
-        childPage = version?.Pages.find(
-          (page: any) =>
-            page.PageName === "Web Link" && page.PageType === "WebLink"
-        );
-        objectId = childPage?.PageId;
+      // let childPage: any;
+
+      let childPage = version?.Pages.find((page:any)=>{
+        if(page.PageType=="WebLink") console.log('page', page)
+        return page.PageType=="WebLink" && page.PageLinkStructure.Url == formData.field_value
+      })
+      if (!childPage) {
+        const appVersion = await this.appVersionManager.getActiveVersion();
+        childPage = await this.toolBoxService.createLinkPage(appVersion.AppVersionId, formData.field_label, formData.field_value, null)
+        childPage = childPage.MenuPage
       }
 
       const updates = [
         ["Text", formData.field_label],
         ["Name", formData.field_label],
         ["Action.ObjectType", type],
-        ["Action.ObjectId", objectId],
+        ["Action.ObjectId", childPage.PageId],
         ["Action.ObjectUrl", formData.field_value],
       ];
 

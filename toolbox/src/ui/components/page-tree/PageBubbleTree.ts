@@ -76,7 +76,7 @@ export class PageBubbleTree {
                 this.graphContainer.style.display = "block";
                 this.graphContainer.style.width = "100%";
                 this.graphContainer.style.height = "100%";
-              }
+            }
             // editorSections[0].setAttribute("style", "display:none;")
         }   
     }

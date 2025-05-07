@@ -163,6 +163,29 @@ export class ToolBoxService {
     return response;    
   }
 
+  async createLinkPage(appVersionId: string, pageName: string, url:string, formId:number) {
+    console.log({ 
+      appVersionId: appVersionId,
+      pageName: pageName,
+      url: url,
+      WWPForm: formId
+    })
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/create-link-page",
+      {
+        method: "POST",
+        body: JSON.stringify({ 
+          appVersionId: appVersionId,
+          pageName: pageName,
+          url: url,
+          WWPFormId: formId
+        }),
+      }
+    );
+
+    return response;    
+  }
+
   async createServicePage(appVersionId: string, productServiceId: string) {
     const response = await this.fetchAPI(
       "/api/toolbox/v2/create-service-page",

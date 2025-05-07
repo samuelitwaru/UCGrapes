@@ -30,7 +30,7 @@ export class InfoSectionUI {
     modal.classList.add("tb-modal");
     modal.style.display = "flex";
 
-    const modalContent = new ImageUpload("content");
+    const modalContent = new ImageUpload("info");
     modalContent.render(modal);
     const uploadInput = document.createElement("input");
     uploadInput.type = "file";
@@ -236,13 +236,18 @@ export class InfoSectionUI {
 
     const modalContent = document.createElement("div");
     modalContent.id = "editor";
-    modalContent.innerHTML = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...</p>`;
+    modalContent.innerHTML = ""; // Empty content to start with
+    modalContent.style.minHeight = "150px"; // Set minimum height for about three paragraphs
 
     const submitSection = document.createElement("div");
     submitSection.classList.add("popup-footer");
     submitSection.style.marginBottom = "-12px";
 
     const saveBtn = this.createButton("submit_form", "tb-btn-primary", "Save");
+    saveBtn.disabled = true; // Disable save button initially
+    saveBtn.style.opacity = "0.6";
+    saveBtn.style.cursor = "not-allowed";
+    
     const cancelBtn = this.createButton(
       "cancel_form",
       "tb-btn-outline",
@@ -270,6 +275,29 @@ export class InfoSectionUI {
         ],
       },
       theme: "snow",
+      placeholder: "Start typing here...",
+    });
+
+    // Set focus to the editor
+    setTimeout(() => {
+      quill.focus();
+    }, 0);
+
+    // Monitor content changes to enable/disable save button
+    quill.on('text-change', () => {
+      const editorContent = quill.root.innerHTML;
+      // Check if editor has meaningful content (not just empty paragraphs)
+      const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
+      saveBtn.disabled = !hasContent;
+      
+      // Update button styling based on disabled state
+      if (saveBtn.disabled) {
+        saveBtn.style.opacity = "0.6";
+        saveBtn.style.cursor = "not-allowed";
+      } else {
+        saveBtn.style.opacity = "1";
+        saveBtn.style.cursor = "pointer";
+      }
     });
 
     saveBtn.addEventListener("click", () => {

@@ -163,8 +163,8 @@ export class InfoSectionPopup {
 
   addDescription() {
     // const content: string = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...</p>`;
-    // this.controller.addDescription(content);
-    this.infoSectionUi.openContentEditModal();
+    this.controller.openContentEditModal();
+    // this.infoSectionUi.openContentEditModal();
   }
 
   private displayMenu(triggerRect: DOMRect, iframeRect?: DOMRect) {

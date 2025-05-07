@@ -21,9 +21,11 @@ import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 export class JSONToGrapesJSInformation {
   private data: any;
   themeManager: any;
+  isNewPage: boolean;
 
-  constructor(json: any) {
+  constructor(json: any, isNewPage: boolean = false) {
     this.data = json;
+    this.isNewPage = isNewPage;
     this.themeManager = new ThemeManager();
   }
 
@@ -264,7 +266,9 @@ export class JSONToGrapesJSInformation {
 
   private addNewInfoSection() {
     return `
-    <div style="margin-top: 0" ${DefaultAttributes} class="add-new-info-section">
+    <div style="margin-top: 0; 
+      ${this.isNewPage || this.data.PageName === 'Untitled' ? 'display: none;' : ''}" 
+      ${DefaultAttributes} class="add-new-info-section">
           <hr ${DefaultAttributes} class="add-new-info-hr" />
           <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_67_2" data-name="Component 67 – 2" width="30" height="30" viewBox="0 0 30 30">
           <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">

@@ -17,8 +17,6 @@ export class ImageUpload {
   opacity: any;
 
   constructor(type: any, infoId?: string) {
-    console.log('type', type)
-    console.log('infoId', infoId)
     this.type = type;
     this.infoId = infoId;
     this.modalContent = document.createElement("div");

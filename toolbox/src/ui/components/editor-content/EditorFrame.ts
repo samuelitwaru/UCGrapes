@@ -9,13 +9,15 @@ export class EditorFrame {
     private isHome: boolean;
     private pageName?: string;
     pageData: any;
+    isNewPage: boolean = false;
 
-    constructor(id: string, isHome: boolean = false, pageData?:any, pageName?: string) {
+    constructor(id: string, isHome: boolean = false, pageData?:any, pageName?: string, isNewPage: boolean = false) {
         this.container = document.createElement('div');
         this.id = id;
         this.isHome = isHome
         this.pageName = pageName;
         this.pageData = pageData
+        this.isNewPage = isNewPage
         this.init();
     }
 
@@ -26,7 +28,7 @@ export class EditorFrame {
 
         const frameHeader = new FrameHeader();
         const homeAppBar = new HomeAppBar();
-        const pageAppBar = new PageAppBar(this.id, this.pageName); 
+        const pageAppBar = new PageAppBar(this.id, this.pageName, this.isNewPage); 
 
         frameHeader.render(this.container);
         if (this.isHome) {

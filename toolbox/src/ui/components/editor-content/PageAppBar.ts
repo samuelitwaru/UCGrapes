@@ -8,10 +8,12 @@ export class PageAppBar {
     private title: string;
     private id: string;
     editorWidth: number;
+    isNewPage: boolean;
 
-    constructor(id: string, title?: string) {
+    constructor(id: string, title?: string, isNewPage: boolean = false) {
         this.title = title || "Page Name";
         this.id = id;
+        this.isNewPage = isNewPage;
         this.container = document.createElement("div");
         this.editor = new EditorManager();
         this.editorWidth = (globalThis as any).deviceWidth;
@@ -100,10 +102,9 @@ export class PageAppBar {
         iconContainer.appendChild(editHeader);
         iconContainer.appendChild(saveChange);
     
-        editHeader.addEventListener('click', () => {
-            // make pageTitle editable
+        const enterEditMode = () => {
             pageTitle.contentEditable = 'true';
-            pageTitle.textContent = pageTitle.title
+            pageTitle.textContent = this.isNewPage || this.title === "Untitled"  ? '' : pageTitle.title;
             pageTitle.focus();
             
             const range = document.createRange();
@@ -112,6 +113,7 @@ export class PageAppBar {
             const selection = window.getSelection();
             selection?.removeAllRanges();
             selection?.addRange(range);
+            
             // Remove focus border
             pageTitle.style.outline = "none";
             pageTitle.style.whiteSpace = "nowrap";
@@ -120,26 +122,44 @@ export class PageAppBar {
             editHeader.style.display = "none";
             saveChange.style.display = "block";
             titleDiv.style.borderWidth = "1px";
-        });
-    
-        pageTitle.addEventListener("input", (e) => {
-            pageTitle.title = pageTitle.textContent || ""
+        };
+        
+        editHeader.addEventListener('click', enterEditMode);
+
+        saveChange.style.pointerEvents = "none";
+        saveChange.style.opacity = "0.5";
+
+        pageTitle.addEventListener("input", (e) => {            
+            pageTitle.title = pageTitle.textContent || "";
+
+            if (pageTitle.title.length > 1) {
+                saveChange.style.pointerEvents = "all";
+                saveChange.style.opacity = "1";                
+            }
         });
     
         saveChange.addEventListener("click", (e) => {
             e.preventDefault();
             const appVersionManager = new AppVersionManager();
             appVersionManager.updatePageTitle(pageTitle.title);
-            this.resetTitle(pageTitle, editHeader, saveChange, titleDiv)
-        })
+            this.resetTitle(pageTitle, editHeader, saveChange, titleDiv);
+            // refresh Page
+            this.refreshPage();
+        });
     
-        
         // Append elements
         if (backButton) this.container.appendChild(backButton);
         titleDiv.appendChild(pageTitle);
         titleDiv.appendChild(editHeader);
         titleDiv.appendChild(saveChange);
         this.container.appendChild(titleDiv);
+        
+        // Auto-focus title field if this is a new page or if title is "Untitled"
+        if (this.isNewPage || this.title === "Untitled") {
+            setTimeout(() => {
+                enterEditMode();
+            }, 0);
+        }
     }
 
     resetTitle (pageTitle: HTMLHeadingElement, editHeader: SVGSVGElement, saveChange: SVGSVGElement, titleDiv: HTMLDivElement) {
@@ -157,8 +177,17 @@ export class PageAppBar {
             pageTitle.textContent = pageTitle.textContent.substring(0, length) + "...";
         }
     }
-    
 
+    private refreshPage () {
+        const edditor = (globalThis as any).activeEditor;
+        if (edditor) {
+            const newInfoSectionButton = edditor.getWrapper().find(".add-new-info-section")[0];
+            if (newInfoSectionButton) {
+                newInfoSectionButton.addStyle({display: "block"});
+            }
+        }        
+    }
+    
     render(container: HTMLElement) {
         container.appendChild(this.container);
     }

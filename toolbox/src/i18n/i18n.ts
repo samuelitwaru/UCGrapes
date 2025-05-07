@@ -68,7 +68,7 @@ export const i18n = new I18n({
       confirmation_accept: "Confirm",
       confirmation_cancel: "Cancel",
       image_upload: {
-        modal_title: "Upload",
+        modal_title: "Upload Image",
         cancel: "Cancel",
         save: "Save",
         upload_message:
@@ -194,7 +194,7 @@ export const i18n = new I18n({
       confirmation_accept: "Bevestigen",
       confirmation_cancel: "Annuleren",
       image_upload: {
-        modal_title: "Uploaden",
+        modal_title: "Uploaden Image",
         cancel: "Annuleren",
         save: "Opslaan",
         upload_message:

@@ -20,8 +20,6 @@ export class ImageUpload {
   public selectedImageUrls: string[] = [];
 
   constructor(type: any, infoId?: string) {
-    console.log('type', type)
-    console.log('infoId', infoId)
     this.type = type;
     this.infoId = infoId;
     this.modalContent = document.createElement("div");
@@ -217,7 +215,6 @@ export class ImageUpload {
   }
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
-    console.log('filearray', fileArray)
     for (const file of fileArray) {
       if (file.type.startsWith("image/")) {
         try {

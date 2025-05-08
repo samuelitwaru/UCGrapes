@@ -18,7 +18,7 @@ export class TileProperties {
     this.setOpacityProperties();
     this.setTitleStyleProperties();
     this.setTileActionProperties();
-    this.setActionProperties();
+    // this.setActionProperties();
     this.setTileIconProperties();
   }
 
@@ -110,6 +110,7 @@ export class TileProperties {
   private setTitleStyleProperties() {
     const title = document.querySelector("#tile-title") as HTMLInputElement;
     const tileTitle = this.tileAttributes?.Text;
+    title.focus()
     title.value = tileTitle;
 
     const tileColor = this.tileAttributes?.Color;

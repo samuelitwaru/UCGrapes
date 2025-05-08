@@ -61,7 +61,11 @@ export class EditorEvents {
     if (this.editor !== undefined) {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
-        (globalThis as any).wrapper = wrapper
+        (globalThis as any).wrapper = wrapper;
+        (globalThis as any).activeEditor = this.editor;
+        (globalThis as any).currentPageId = this.pageId;
+        (globalThis as any).pageData = this.pageData;
+
         if (wrapper) {
             wrapper.view.el.addEventListener("mousedown", (e:MouseEvent) => {
               const targetElement = e.target as Element;
@@ -124,29 +128,29 @@ export class EditorEvents {
 
             wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
               const targetElement = e.target as Element;
-            if (
-              targetElement.closest(".menu-container") ||
-              targetElement.closest(".menu-category") ||
-              targetElement.closest(".sub-menu-header")
-            ) {
-              e.stopPropagation();
-              return;
-            }
+              if (
+                targetElement.closest(".menu-container") ||
+                targetElement.closest(".menu-category") ||
+                targetElement.closest(".sub-menu-header")
+              ) {
+                e.stopPropagation();
+                return;
+              }
 
-            this.uiManager.clearAllMenuContainers();
-            
-            (globalThis as any).activeEditor = this.editor;
-            (globalThis as any).currentPageId = this.pageId;
-            (globalThis as any).pageData = this.pageData;
+              this.uiManager.clearAllMenuContainers();
+              
+              (globalThis as any).activeEditor = this.editor;
+              (globalThis as any).currentPageId = this.pageId;
+              (globalThis as any).pageData = this.pageData;
 
-            this.uiManager.handleTileManager(e);
-            this.uiManager.openMenu(e);
+              this.uiManager.handleTileManager(e);
+              this.uiManager.openMenu(e);
 
-            new ToolboxManager().unDoReDo();
-            this.uiManager.initContentDataUi(e);
-            this.uiManager.activateEditor(this.frameId);
-            this.uiManager.handleInfoSectionHover(e);
-          });
+              this.uiManager.initContentDataUi(e);
+              this.uiManager.activateEditor(this.frameId);
+              this.uiManager.handleInfoSectionHover(e);
+          }); 
+          new ToolboxManager().unDoReDo();
 
         } else {
           console.error("Wrapper not found!");
@@ -304,5 +308,19 @@ export class EditorEvents {
     //       childContainer.scrollLeft = targetScrollPosition;
     //     }
     //   }
+  }
+
+  activateEditor(frameId: any) {
+    if (!this.uiManager) {
+      this.uiManager = new EditorUIManager(
+        this.editor,
+        this.pageId,
+        this.frameId,
+        this.pageData,
+        this.appVersionManager
+      );      
+    }
+    
+    this.uiManager.activateEditor(frameId);
   }
 }

@@ -91,7 +91,7 @@ export class ColorPalette {
     this.updateTileData(pageData, rowComponent, tileWrapper, selectedComponent, colorName);
     
     // Toggle radio button state
-    input.checked = selectedComponent.getStyle()["background-color"] !== colorValue;
+    input.checked = selectedComponent.getStyle()["background-color"] == colorValue;
   }
 
   private getSelectedComponent(): any {

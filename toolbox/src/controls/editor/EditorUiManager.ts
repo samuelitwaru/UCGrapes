@@ -202,6 +202,14 @@ export class EditorUIManager {
           this.activateEditor(this.frameId);
           this.clearAllMenuContainers();
         });
+        
+        frame.addEventListener("input", (event: MouseEvent) => {
+          (globalThis as any).activeEditor = this.editor;
+          (globalThis as any).currentPageId = this.pageId;
+          (globalThis as any).pageData = this.pageData;
+          (globalThis as any).frameId = this.frameId;
+          this.activateEditor(this.frameId);
+        });
       }
     });
   }
@@ -221,6 +229,7 @@ export class EditorUIManager {
   }
 
   activateEditor(frameId: any) {
+    console.log("activateEditor frameId: ", frameId)
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       // deselect in active editors

@@ -24,7 +24,7 @@ export class MenuSection {
       themeSection.render(this.container);
       tileImgSection.render(this.container);
       titleSection.render(this.container);
-      actionListContainer.render(this.container);
+      // actionListContainer.render(this.container);
       iconListCategories.render(this.container);
   }
 

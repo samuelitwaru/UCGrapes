@@ -16,9 +16,10 @@ export class InfoSectionPopup {
   private submenuContainer: HTMLDivElement;
   private parentContainer: HTMLElement;
   private infoSectionUi: InfoSectionUI;
+  private sectionId: string;
   pageCreationService!: PageCreationService;
 
-  constructor(templateContainer: HTMLElement, parentContainer: HTMLElement) {
+  constructor(templateContainer: HTMLElement, parentContainer: HTMLElement, sectionId: string) {
     this.templateContainer = templateContainer;
     this.parentContainer = parentContainer;
     this.menuContainer = document.createElement("div");
@@ -26,6 +27,7 @@ export class InfoSectionPopup {
     this.menuList = document.createElement("ul");
     this.submenuContainer = document.createElement("div");
     this.infoSectionUi = new InfoSectionUI();
+    this.sectionId = sectionId;
 
     this.init();
   }
@@ -44,17 +46,17 @@ export class InfoSectionPopup {
       {
         name: "Tile",
         label: "Tile",
-        handler: () => this.addTile(),
+        handler: (sectionId: string | undefined) => this.addTile(sectionId),
       },
       {
         name: "Image",
         label: "Image",
-        handler: () => this.addImage(),
+        handler: (sectionId?: string) => this.addImage(sectionId),
       },
       {
         name: "Description",
         label: "Description",
-        handler: () => this.addDescription(),
+        handler: (sectionId?: string) => this.addDescription(sectionId),
       },
     ];
 
@@ -82,7 +84,7 @@ export class InfoSectionPopup {
           );
           if (existingSubmenu) {
             existingSubmenu.remove();
-          }      
+          }
           menuItem.classList.add("expandable");
 
           // Create submenu
@@ -109,7 +111,7 @@ export class InfoSectionPopup {
 
             subMenuItem.addEventListener("click", (e) => {
               e.stopPropagation();
-              subItem.action();
+              subItem.action(this.sectionId);
               this.menuContainer.remove();
             });
 
@@ -123,7 +125,7 @@ export class InfoSectionPopup {
         // For non-expandable items, just perform the action on click
         menuItem.addEventListener("click", () => {
           if (item.handler) {
-            item.handler();
+            item.handler(this.sectionId);
           }
           this.menuContainer.remove();
         });
@@ -143,7 +145,7 @@ export class InfoSectionPopup {
   render(triggerRect?: DOMRect, iframeRect?: DOMRect) {
     if (!triggerRect) {
       const trigger = this.templateContainer.querySelector(
-        ".add-new-info-section"
+        ".tb-add-new-info-section, .add-new-info-section"
       ) as HTMLElement;
       if (!trigger) return;
 
@@ -153,17 +155,17 @@ export class InfoSectionPopup {
     this.displayMenu(triggerRect, iframeRect);
   }
 
-  addTile() {
+  addTile(sectionId?: string) {
     const tile = this.infoSectionUi.infoTileUi();
-    this.controller.addTile(tile);
+    this.controller.addTile(tile, sectionId);
   }
 
-  addImage() {
+  addImage(sectionId?: string) {
     // this.controller.addImage();
     this.infoSectionUi.openImageUpload();
   }
 
-  addDescription() {
+  addDescription(sectionId?: string) {
     // const content: string = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...</p>`;
     this.controller.openContentEditModal();
     // this.infoSectionUi.openContentEditModal();
@@ -171,7 +173,6 @@ export class InfoSectionPopup {
 
   private displayMenu(triggerRect: DOMRect, iframeRect?: DOMRect) {
     const parentRect = this.parentContainer.getBoundingClientRect();
-
     if (!iframeRect) {
       return;
     }
@@ -213,9 +214,8 @@ export class InfoSectionPopup {
     }
     // Second priority: show at the top if there's enough space
     else if (spaceAbove >= effectiveMenuHeight + 10) {
-      this.menuContainer.style.top = `${
-        relTriggerTop - effectiveMenuHeight - 0
-      }px`;
+      this.menuContainer.style.top = `${relTriggerTop - effectiveMenuHeight - 0
+        }px`;
     }
     // Last resort: show at the top with scroll if needed
     else {
@@ -226,9 +226,8 @@ export class InfoSectionPopup {
       }
     }
 
-    this.menuContainer.style.left = `calc(50% - ${
-      this.menuContainer.clientWidth / 2
-    }px)`;
+    this.menuContainer.style.left = `calc(50% - ${this.menuContainer.clientWidth / 2
+      }px)`;
 
     this.menuContainer.style.visibility = "visible";
     this.menuContainer.style.opacity = "1";
@@ -279,7 +278,7 @@ export class InfoSectionPopup {
         name: item.name,
         label: item.label,
         type: item.type,
-        action: () => {
+        action: (sectionId: string | undefined) => {
           const service = new PageCreationService(true, item.type);
           item.handler(service);
         },

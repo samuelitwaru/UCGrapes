@@ -95,35 +95,77 @@ export class EditorUIManager {
 
   handleInfoSectionHover(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    if (target.closest(".add-new-info-section svg")) {
-      const menuBtn = target.closest(
-        ".add-new-info-section svg"
-      ) as HTMLElement;
-      const templateContainer = menuBtn.closest(
-        ".container-column"
-      ) as HTMLElement;
-
-      this.clearAllMenuContainers();
-      // Get the mobileFrame for positioning context
-      const mobileFrame = document.getElementById(
-        `${this.frameId}-frame`
-      ) as HTMLElement;
-      const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
-      const iframeRect = iframe?.getBoundingClientRect();
-
-      // Pass the mobileFrame to the InfoSectionPopup constructor
-      const menu = new InfoSectionPopup(templateContainer, mobileFrame);
-
-      const triggerRect = menuBtn.getBoundingClientRect();
-
-      menu.render(triggerRect, iframeRect);
-
-      (globalThis as any).activeEditor = this.editor;
-      (globalThis as any).currentPageId = this.pageId;
-      (globalThis as any).pageData = this.pageData;
-      this.activateEditor(this.frameId);
+  
+    // Check if the target is within a '.tb-add-new-info-section svg' or '.add-new-info-section svg'
+    const svgTrigger = target.closest(".tb-add-new-info-section svg, .add-new-info-section svg") as HTMLElement;
+  
+    if (svgTrigger) {
+      console.log("SVG Trigger Found:", svgTrigger);
+  
+      // Case 1: If the svg is inside '.tb-add-new-info-section', we want to get the sectionId
+      if (svgTrigger.closest(".tb-add-new-info-section")) {
+        let el: HTMLElement | null = svgTrigger;
+        const sectionContainer = (() => {
+          while (el) {
+            if (/^info-.*-section$/.test(el.getAttribute('data-gjs-type') || '')) return el;
+            el = el.parentElement;
+          }
+          return null;
+        })();
+        
+        if (!sectionContainer) {
+          console.warn("No parent info section found.");
+          return;
+        }
+  
+        const sectionId = sectionContainer.id;
+        console.log("sectionId:", sectionId);
+  
+        const templateContainer = sectionContainer.querySelector(".tb-add-new-info-section") as HTMLElement;
+        if (!templateContainer) {
+          console.warn("No .tb-add-new-info-section found in section.");
+          return;
+        }
+  
+        this.clearAllMenuContainers();
+  
+        // Get mobile frame and iframe positioning
+        const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
+        const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
+        const iframeRect = iframe?.getBoundingClientRect();
+  
+        // Pass the sectionId to InfoSectionPopup
+        const menu = new InfoSectionPopup(templateContainer, mobileFrame, sectionId);
+        const triggerRect = svgTrigger.getBoundingClientRect();
+  
+        menu.render(triggerRect, iframeRect);
+  
+        (globalThis as any).activeEditor = this.editor;
+        (globalThis as any).currentPageId = this.pageId;
+        (globalThis as any).pageData = this.pageData;
+        this.activateEditor(this.frameId);
+      }
+  
+      // Case 2: If the svg is inside '.add-new-info-section', we do NOT need to get the sectionId
+      else if (svgTrigger.closest(".add-new-info-section")) {
+        // Handle the logic specific to `.add-new-info-section` here if needed
+        console.log("Clicked on .add-new-info-section svg (no sectionId required).");
+  
+        // Optional: You can still trigger menu actions or other behaviors if necessary
+        this.clearAllMenuContainers();
+        const templateContainer = svgTrigger.closest(".add-new-info-section") as HTMLElement;
+        const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
+        const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
+        const iframeRect = iframe?.getBoundingClientRect();
+  
+        const menu = new InfoSectionPopup(templateContainer, mobileFrame, '');
+        const triggerRect = svgTrigger.getBoundingClientRect();
+  
+        menu.render(triggerRect, iframeRect);
+      }
     }
   }
+
 
   handleDragEnd(model: any, sourceComponent: any, destinationComponent: any) {
     const parentEl = destinationComponent.getEl();

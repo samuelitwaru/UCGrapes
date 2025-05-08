@@ -187,13 +187,12 @@ export class ToolboxManager {
       return;
     }
     const um = editor.UndoManager;
-
-    // const tileMapper = new TileMapper(pageId);
     
     undoButton.disabled = um.hasUndo();
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
+        console.log("Undo button clicked", um.hasUndo());
         const undoResult = um.undo();
         if (undoResult) {
 

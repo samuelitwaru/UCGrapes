@@ -18,7 +18,7 @@ export class TileProperties {
     this.setOpacityProperties();
     this.setTitleStyleProperties();
     this.setTileActionProperties();
-    this.setActionProperties();
+    // this.setActionProperties();
     this.setTileIconProperties();
   }
 

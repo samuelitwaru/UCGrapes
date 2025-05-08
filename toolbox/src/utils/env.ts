@@ -1,1 +1,1 @@
-export const environment = "/ComfortaKBDevelopmentNETSQLServer";
+export const environment = "/Comforta_version232DevelopmentNETPostgreSQL";

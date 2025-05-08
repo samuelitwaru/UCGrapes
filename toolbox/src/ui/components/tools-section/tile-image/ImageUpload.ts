@@ -16,6 +16,9 @@ export class ImageUpload {
   bgImage: any;
   opacity: any;
 
+    // Add the selectedImageUrls array
+  public selectedImageUrls: string[] = [];
+
   constructor(type: any, infoId?: string) {
     console.log('type', type)
     console.log('infoId', infoId)
@@ -38,10 +41,10 @@ export class ImageUpload {
     const closeBtn = document.createElement("span");
     closeBtn.className = "close";
     closeBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
-              <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"></path>
-            </svg>
-        `;
+      <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
+        <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"></path>
+      </svg>
+  `;
     closeBtn.addEventListener("click", (e) => {
       e.preventDefault();
       const modal = this.modalContent.parentElement as HTMLElement;
@@ -70,23 +73,41 @@ export class ImageUpload {
     saveBtn.className = "tb-btn tb-btn-primary";
     saveBtn.id = "save-modal";
     saveBtn.innerText = i18n.t("sidebar.image_upload.save");
-    // Add save functionality here
 
     modalActions.appendChild(cancelBtn);
     modalActions.appendChild(saveBtn);
     this.modalContent.appendChild(modalHeader);
     this.uploadArea();
-    
+
     // cropper container
-    this.cropContainer = document.createElement("div")
-    this.cropContainer.id = 'crop-container'
+    this.cropContainer = document.createElement("div");
+    this.cropContainer.id = "crop-container";
     this.modalContent.appendChild(this.cropContainer);
 
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
     this.modalContent.appendChild(modalActions);
 
-    
+    // Add a bottom button
+    const bottomButton = document.createElement("button");
+    bottomButton.className = "tb-btn tb-btn-secondary";
+    bottomButton.id = "bottom-button";
+    bottomButton.innerText = "Create slide";
+    //bottomButton.style.marginTop = "20px"; // Add some spacing
+    bottomButton.addEventListener("click", () => {
+      const modal = this.modalContent.parentElement as HTMLElement;
+      if (modal) {
+        modal.style.display = "none";
+        modal.remove();
+      }
+
+      // Call addMultipleImages after the modal is removed
+      const infoSectionController = new InfoSectionController();
+      infoSectionController.addMultipleImages(this.selectedImageUrls);
+    });
+
+    // Append the button to the modal content
+    this.modalContent.appendChild(bottomButton);
   }
 
   private uploadArea() {

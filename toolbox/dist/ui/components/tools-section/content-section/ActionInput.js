@@ -1,0 +1,58 @@
+import { ContentMapper } from "../../../../controls/editor/ContentMapper";
+import { InfoSectionController } from "../../../../controls/InfoSectionController";
+export class ActionInput {
+    constructor(value, ctaAttributes) {
+        this.value = value;
+        this.ctaAttributes = ctaAttributes;
+        this.pageData = globalThis.pageData;
+        this.input = document.createElement("input");
+        this.init();
+    }
+    init() {
+        this.input.type = "text";
+        this.input.placeholder = "Action";
+        this.input.classList.add("tb-form-control");
+        this.input.id = "cta-action-title";
+        this.input.style.marginTop = "10px";
+        this.input.value = this.value;
+        this.input.addEventListener("input", (e) => {
+            const selectedComponent = globalThis.selectedComponent;
+            if (!selectedComponent)
+                return;
+            const isRoundButton = this.ctaAttributes.CtaButtonType;
+            const ctaButton = selectedComponent.find(".cta-styled-btn")[0];
+            const ctaTitle = selectedComponent.find(".label")[0];
+            if (ctaTitle) {
+                const truncatedTitle = isRoundButton === "Round"
+                    ? this.truncate(5)
+                    : this.truncate(14);
+                ctaTitle.components(truncatedTitle);
+                ctaTitle.addAttributes({ title: this.input.value });
+            }
+            const ctaButtonComponent = ctaButton.parent();
+            const currentPageId = globalThis.currentPageId;
+            if (this.pageData.PageType === "Information") {
+                const infoSectionController = new InfoSectionController();
+                infoSectionController.updateInfoCtaAttributes(selectedComponent.getId(), 'CtaLabel', this.input.value.trim());
+            }
+            else {
+                const contentMapper = new ContentMapper(currentPageId);
+                contentMapper.updateContentCtaLabel(ctaButtonComponent.getId(), this.input.value.trim());
+            }
+        });
+    }
+    truncate(length) {
+        if (this.input.value.length > length) {
+            return this.input.value.substring(0, length) + "..";
+        }
+        return this.input.value;
+    }
+    render(container) {
+        const existingInput = container.querySelector("#cta-action-title");
+        if (existingInput) {
+            existingInput.remove();
+        }
+        container.appendChild(this.input);
+    }
+}
+//# sourceMappingURL=ActionInput.js.map

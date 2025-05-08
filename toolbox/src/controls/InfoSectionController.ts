@@ -77,6 +77,88 @@ export class InfoSectionController {
       this.addToMapper(infoType);
     }
   }
+  addMultipleImages(imgUrl: string[]) {
+   // const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
+    const imgContainer = this.infoSectionUI.getMultipleImages(imgUrl);
+    const imageContainer = document.createElement("div");
+    imageContainer.innerHTML = imgContainer;
+    const imageComponent = imageContainer.firstElementChild as HTMLElement;
+
+    const append = this.appendComponent(imgContainer);
+    if (append) {
+      let slideIndex = 0;
+      showSlides();
+      
+      function showSlides() {
+        let i;
+        let slides = (globalThis as any).wrapper.find(".mySlides");
+        console.log((globalThis as any).wrapper)
+        for (i = 0; i < slides.length; i++) {
+          slides[i].getEl().style.display = "none";
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) {slideIndex = 1}
+        slides[slideIndex-1].getEl().style.display = "block";
+        setTimeout(showSlides, 2000); // Change image every 2 seconds
+      }
+      const infoType: InfoType = {
+        InfoId: imageComponent.id,
+        InfoType: "Image",
+        InfoValue: "Resources/UCGrapes1/toolbox/public/images/default.jpg",
+      };
+
+      this.addToMapper(infoType);
+       /*  let slideIndex: number = 1;
+      showSlides(slideIndex);
+      
+      // Next/previous controls
+      function plusSlides(n:number) {
+        showSlides(slideIndex += n);
+      }
+      
+      // Thumbnail image controls
+      function currentSlide(n:number) {
+        showSlides(slideIndex = n);
+      } */
+      
+    /*   function showSlides(n:number) {
+        let i;
+        //console.log((globalThis as any).wrapper.find(".mySlides"))
+
+        (globalThis as any).wrapper.find(".mySlides").forEach((slide: any) => {
+          slide.getEl()
+        })
+
+
+        let slides = (globalThis as any).wrapper.find(".mySlides");
+        console.log(slides[1].getEl())
+        //let slides = document.getElementsByClassName("mySlides");
+        console.log(slides.length)
+        //let dots = document.getElementsByClassName("dot");
+        let dots = (globalThis as any).wrapper.find(".dot")
+        
+        if (n > slides.length) {slideIndex = 1}
+  
+        if (n < 1) {slideIndex = slides.length}
+        
+        for (i = 0; i < slides.length; i++) {
+          slides[i].getEl().style.display = "none";
+          console.log(slides[i].getEl().style.display)
+        }
+        for (i = 0; i < dots.length; i++) {
+          dots[i].className = dots[i].getEl().className.replace(" active", "");
+        }
+        //slides[slideIndex-1].getEl().className += 'visible';
+        slides[slideIndex-1].getEl().style.display = "block";
+        console.log(slides[slideIndex-1].getEl().style.display)
+        //dots[slideIndex-1].getEl().className += " active";
+      } */
+
+
+    }
+  }
+
+  
 
   addDescription(description: string) {
     const descContainer = this.infoSectionUI.getDescription(description);

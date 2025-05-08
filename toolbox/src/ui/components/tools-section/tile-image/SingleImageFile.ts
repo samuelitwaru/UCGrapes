@@ -11,18 +11,19 @@ export class SingleImageFile {
   private container: HTMLElement;
   private mediaFile: Media;
   private toolboxService: ToolBoxService;
+  private selectedImageUrls: string[] = []; // Array to store selected image URLs
   type: any;
   infoId?: string;
   imageUpload: ImageUpload;
   fileListContainer: HTMLElement | undefined;
 
-  constructor(mediaFile: Media, type: any, imageUpload:ImageUpload, infoId?: string) {
+  constructor(mediaFile: Media, type: any, imageUpload: ImageUpload, infoId?: string) {
     this.mediaFile = mediaFile;
     this.type = type;
     this.infoId = infoId;
     this.toolboxService = new ToolBoxService();
     this.container = document.createElement("div");
-    this.imageUpload = imageUpload
+    this.imageUpload = imageUpload;
     this.init();
   }
 
@@ -35,7 +36,6 @@ export class SingleImageFile {
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
 
-      // Create a wrapper for statusCheck and deleteSpan
     const actionColumn = document.createElement("div");
     actionColumn.className = "action-column";
 
@@ -49,9 +49,6 @@ export class SingleImageFile {
     const fileSize = document.createElement("div");
     fileSize.className = "file-size";
     fileSize.innerText = this.formatBytes(this.mediaFile.MediaSize);
-
-    // fileInfo.appendChild(fileName);
-    // fileInfo.appendChild(fileSize);
 
     const statusCheck = document.createElement("span");
     statusCheck.className = "status-icon";
@@ -68,14 +65,34 @@ export class SingleImageFile {
       this.deleteEvent();
     });
 
-    // Append statusCheck and deleteSpan to the action column
+    // Add a checkbox
+    const checkboxDiv = document.createElement("div");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "select-media-checkbox";
+    checkbox.title = "Select image";
+    checkboxDiv.appendChild(checkbox);
+    // Add event listener to the checkbox
+    checkbox.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent triggering the container's click event
+      if (checkbox.checked) {
+        // Add the URL to the selectedImageUrls array in ImageUpload
+        this.imageUpload.selectedImageUrls.push(this.mediaFile.MediaUrl);
+      } else {
+        // Remove the URL from the selectedImageUrls array in ImageUpload
+        this.imageUpload.selectedImageUrls = this.imageUpload.selectedImageUrls.filter(
+          (url) => url !== this.mediaFile.MediaUrl
+        );
+      }
+      console.log("Selected Image URLs in ImageUpload:", this.imageUpload.selectedImageUrls); // Debugging output
+    });
+
+    // Append statusCheck, deleteSpan, and checkbox to the action column
     actionColumn.appendChild(statusCheck);
     actionColumn.appendChild(deleteSpan);
+    actionColumn.appendChild(checkboxDiv);
 
     this.container.appendChild(img);
-    // this.container.appendChild(fileInfo);
-    // this.container.appendChild(statusCheck);
-    // this.container.appendChild(deleteSpan);
     this.container.appendChild(actionColumn);
   }
 

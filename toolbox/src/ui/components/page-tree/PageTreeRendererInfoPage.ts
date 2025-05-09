@@ -1,7 +1,7 @@
 import { ThemeManager } from "../../../controls/themes/ThemeManager";
 import { AppConfig } from "../../../AppConfig";
 
-export class PageTreeRenderer {
+export class PageTreeRendererInfoPage {
   themeManager: any;
   currentTheme: any;
   logo: any;
@@ -35,57 +35,61 @@ export class PageTreeRenderer {
   }
 
   createMenuHTML(page: any) {
-    const json = page.PageMenuStructure;
+    const json = page.PageInfoStructure;
     const container = document.createElement("div");
     container.style.padding = "5px";
-
     const header = this.createHeaderHTML(page);
     container.appendChild(header);
 
-    json.Rows.forEach((row: any) => {
-      const rowDiv = document.createElement("div");
-      rowDiv.style.display = "flex";
-      rowDiv.style.flexWrap = "wrap";
-      rowDiv.style.margin = "5px 5px";
-      rowDiv.style.gap = "5px";
+    json.InfoContent.forEach((row: any) => {
+      if (row.InfoType === "TileRow") {
+        const rowDiv = document.createElement("div");
+        rowDiv.style.display = "flex";
+        rowDiv.style.flexWrap = "wrap";
+        rowDiv.style.margin = "5px 5px";
+        rowDiv.style.gap = "5px";
 
-      row.Tiles.forEach((tile: any) => {
-        const tileDiv = document.createElement("div");
-        tileDiv.id = tile.Id;
-        // tileDiv.innerHTML = tile.Text;
+        row.Tiles.forEach((tile: any) => {
+          const tileDiv = document.createElement("div");
+          tileDiv.id = tile.Id;
+          tileDiv.style.justifyContent =
+            tile.Align === "center" ? "center" : "flex-start";
+          let bgImage = tile.BGImageUrl ? `url('${tile.BGImageUrl}')` : "none";
 
-        const contentDiv = document.createElement("div");
-        contentDiv.style.display = "flex";
-        contentDiv.style.flexDirection = "column";
-        contentDiv.style.alignItems = tile.Align?.toLowerCase() || "left";
-        contentDiv.style.justifyContent = "center";
-        contentDiv.style.color = tile.Color;
+          let textAlign = tile.Align;
+          const icondiv = document.createElement("div");
+          icondiv.style.color = tile.Color;
+          if (tile.Icon) {
+            icondiv.innerHTML = this.themeManager
+              .getThemeIcon(tile.Icon)
+              .replace(/fill="[^"]*"/g, 'fill="currentColor"')
+              .replace(/style="[^"]*background[^"]*"/g, "")
+              .replace(/<rect[^>]*fill="[^"]*"/g, '<rect fill="none"')
+              .replace("<svg", '<svg style="width: 30px; height: 30px;"');
+          }
 
-        // const iconSvg = svgIcons[tile.Icon];
-        if (tile.Icon) {
-          const iconWrapper = document.createElement("div");
-          iconWrapper.innerHTML = this.themeManager.getThemeIcon(tile.Icon);
-          // iconWrapper.style.marginBottom = "4px";
-          iconWrapper.style.display = "inline-block";
-          iconWrapper.style.color = tile.Color;
-          contentDiv.appendChild(iconWrapper);
-        }
+          const titlediv = document.createElement("div");
+          titlediv.style.color = tile.Color;
+          titlediv.style.textAlign = tile.Align;
+          if (tile.Text) {
+            titlediv.innerHTML = tile.Text;
+          }
 
-        const textSpan = document.createElement("span");
-        textSpan.textContent = tile.Text;
-        contentDiv.appendChild(textSpan);
+          tileDiv.appendChild(icondiv);
+          tileDiv.appendChild(titlediv);
 
-        let bgImage = tile.BGImageUrl ? `url('${tile.BGImageUrl}')` : "none";
-        let textAlign = ["left", "right", "center"].includes(
-          tile.Align?.toLowerCase()
-        )
-          ? tile.Align.toLowerCase()
-          : "left";
-
-        tileDiv.style.cssText = `
+          tileDiv.style.cssText = `
+          display: flex; /* Ensures flexbox layout */
+          flex-direction: column; /* Aligns icon and title vertically */
+          align-items: ${
+            tile.Align === "center" ? "center" : "flex-start"
+          }; /* Aligns content horizontally */
+          justify-content: ${
+            tile.Align === "center" ? "center" : "flex-start"
+          }; /* Aligns content vertically */
           padding: 2px;
           min-width: 50px;
-          height: 70px;
+          height: ${tile.size ?? 80}px;
           flex: 1;
           color: ${tile.Color};
           background-color: ${this.currentTheme.ThemeColors[tile.BGColor]};
@@ -93,18 +97,66 @@ export class PageTreeRenderer {
           background-size: cover;
           background-repeat: no-repeat;
           background-position: center;
-          text-align: ${textAlign};
+          text-align: ${tile.Align};
           border-radius: 10px;
           opacity: ${1 - tile.Opacity};
           border: 0.5px solid #999;
           font-size: 10px;
         `;
 
-        tileDiv.appendChild(contentDiv);
-        rowDiv.appendChild(tileDiv);
-      });
+          rowDiv.appendChild(tileDiv);
 
-      container?.appendChild(rowDiv);
+          container?.appendChild(rowDiv);
+        });
+      } else if (row.InfoType === "Description") {
+        const descriptionDiv = document.createElement("div");
+        descriptionDiv.style.margin = "5px";
+        descriptionDiv.style.padding = "10px";
+        descriptionDiv.style.borderRadius = "8px";
+        descriptionDiv.style.color = "#333";
+        descriptionDiv.style.fontSize = "12px";
+        descriptionDiv.innerHTML = row.InfoValue;
+        descriptionDiv.style.fontFamily = this.currentTheme.ThemeFontFamily;
+
+        container.appendChild(descriptionDiv);
+      } else if (row.InfoType === "Image") {
+        const imageDiv = document.createElement("div");
+        imageDiv.style.margin = "5px";
+        imageDiv.style.borderRadius = "8px";
+        imageDiv.style.overflow = "hidden";
+        imageDiv.style.display = "flex";
+        imageDiv.style.justifyContent = "center";
+        imageDiv.style.alignItems = "center";
+
+        const img = document.createElement("img");
+        img.src = row.InfoValue;
+        img.alt = "Image description";
+        img.style.width = "100%";
+        img.style.height = "100px";
+        img.style.objectFit = "cover";
+
+        imageDiv.appendChild(img);
+        container.appendChild(imageDiv);
+      } else if (row.InfoType === "Cta") {
+        const CtaDiv = document.createElement("div");
+        if (row.CtaAttributes.CtaType === "Round") {
+          CtaDiv.setAttribute(
+            "style",
+            `
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: ${this.getCtaColor(
+                row.CtaAttributes.CtaBGColor
+              )};
+              border-radius: 50%;
+              width: 50px;
+              height: 50px;
+            `
+          );
+        }
+        container.appendChild(CtaDiv);
+      }
     });
     return container.outerHTML;
   }
@@ -171,7 +223,7 @@ export class PageTreeRenderer {
         contentDiv.setAttribute(
           "style",
           `
-            `
+          `
         );
         contentDiv.innerHTML = item.ContentValue;
       }

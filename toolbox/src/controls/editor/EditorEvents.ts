@@ -61,7 +61,11 @@ export class EditorEvents {
     if (this.editor !== undefined) {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
-        (globalThis as any).wrapper = wrapper
+        (globalThis as any).wrapper = wrapper;
+        (globalThis as any).activeEditor = this.editor;
+        (globalThis as any).currentPageId = this.pageId;
+        (globalThis as any).pageData = this.pageData;
+
         if (wrapper) {
             wrapper.view.el.addEventListener("mousedown", (e:MouseEvent) => {
               const targetElement = e.target as Element;
@@ -142,11 +146,11 @@ export class EditorEvents {
               this.uiManager.handleTileManager(e);
               this.uiManager.openMenu(e);
 
-              new ToolboxManager().unDoReDo();
               this.uiManager.initContentDataUi(e);
               this.uiManager.activateEditor(this.frameId);
               this.uiManager.handleInfoSectionHover(e);
-          });
+          }); 
+          new ToolboxManager().unDoReDo();
 
         } else {
           console.error("Wrapper not found!");
@@ -316,7 +320,7 @@ export class EditorEvents {
         this.appVersionManager
       );      
     }
-    console.log("activateEditor: ", frameId);
+    
     this.uiManager.activateEditor(frameId);
   }
 }

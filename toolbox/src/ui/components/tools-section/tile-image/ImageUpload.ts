@@ -12,6 +12,10 @@ export class ImageUpload {
   fileListElement: HTMLElement | null = null;
   infoId?: string;
   finishedUploads: { [key: string]: Media } = {};
+  cropContainer!: HTMLDivElement;
+  bgImage: any;
+  opacity: any;
+  croppedUrl: any;
 
   constructor(type: any, infoId?: string) {
     this.type = type;
@@ -46,7 +50,7 @@ export class ImageUpload {
 
     modalHeader.appendChild(h2);
     modalHeader.appendChild(closeBtn);
-    
+
     const modalActions = document.createElement("div");
     modalActions.className = "modal-actions";
 
@@ -60,7 +64,7 @@ export class ImageUpload {
       modal.style.display = "none";
       modal?.remove();
     });
-    
+
     const saveBtn = document.createElement("button");
     saveBtn.className = "tb-btn tb-btn-primary";
     saveBtn.id = "save-modal";
@@ -69,42 +73,35 @@ export class ImageUpload {
 
     modalActions.appendChild(cancelBtn);
     modalActions.appendChild(saveBtn);
- 
-
-    console.log("modalHeader");
     this.modalContent.appendChild(modalHeader);
+    this.uploadArea();
 
     const selectedComponent = (globalThis as any).selectedComponent;
     if (selectedComponent) {
       // Get the tile element
       const tileElement = selectedComponent.getStyle();
-     // Retrieve the background image
+      // Retrieve the background image
       const backgroundImage = tileElement["background-image"];
-      console.log("Background image:", backgroundImage);  
-     
-        if (backgroundImage !== undefined) {  
-          const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
-          console.log("Background image exists:", dataUrl);
-          this.displayImageEditor(dataUrl);
-          this.createFileListElement();
-          this.loadMediaFiles(); // Loa
-          if (!dataUrl) {
-            console.error("No image data available to display.");
-            return;
-          }
-        }else{
-        //this.uploadArea();
-       // this.createFileListElement();
+      console.log("Background image:", backgroundImage);
+
+      if (backgroundImage !== undefined) {
+        const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
+        console.log("Background image exists:", dataUrl);
+        this.displayImageEditor(dataUrl);
+        this.createFileListElement();
+        this.loadMediaFiles(); // Loa
+        if (!dataUrl) {
+          console.error("No image data available to display.");
+          return;
+        }
+      } else {
         this.loadMediaFiles(); // Loa
       }
-      
+
     }
-    this.uploadArea();
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
-    
-
-   // this.modalContent.appendChild(modalActions);
+    this.modalContent.appendChild(modalActions);
   }
 
   private uploadArea() {
@@ -124,52 +121,52 @@ export class ImageUpload {
     this.modalContent.appendChild(uploadArea);
 
     // Create the modal footer
-  const modalFooter = document.createElement("div");
-  modalFooter.className = "modal-footer-buttons";
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "modal-footer-buttons";
 
-  // Create the Save button
-  const saveBtn = document.createElement("button");
-  saveBtn.className = "tb-btn tb-btn-primary";
-  saveBtn.id = "save-modal";
-  saveBtn.innerText = "Save";
-  saveBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    console.log("Save button clicked");
-    // Get the image element
-  const img = document.getElementById("selected-image") as HTMLImageElement;
-  if (!img) {
-    console.error("Image element not found.");
-    return;
-  }
-    // Add save functionality here
-    const frame = document.getElementById("crop-frame") as HTMLElement;
-    if (frame) {
-      const file = new File([img.src], "cropped-image.png", { type: "image/png" }); // Example file
-      await this.saveCroppedImage(img, frame, file);
+    // Create the Save button
+    const saveBtn = document.createElement("button");
+    saveBtn.className = "tb-btn tb-btn-primary";
+    saveBtn.id = "save-modal-image";
+    saveBtn.innerText = "Ok";
+    saveBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      // Get the image element
+      const img = document.getElementById("selected-image") as HTMLImageElement;
+      if (!img) {
+        console.error("Image element not found.");
+        return;
+      }
+      // Add save functionality here
+      const frame = document.getElementById("crop-frame") as HTMLElement;
+      if (frame) {
+        const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
+        const file = new File([img.src], uniqueFileName, { type: "image/png" });
+        await this.saveCroppedImage(img, frame, file);
 
 
-    }
-  });
+      }
+    });
 
-  // Create the Cancel button
-  const cancelBtn = document.createElement("button");
-  cancelBtn.className = "tb-btn tb-btn-outline";
-  cancelBtn.id = "cancel-modal";
-  cancelBtn.innerText = "Cancel";
-  cancelBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    console.log("Cancel button clicked");
-    const modal = this.modalContent.parentElement as HTMLElement;
-    modal.style.display = "none";
-    modal?.remove();
-  });
+    // Create the Cancel button
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "tb-btn tb-btn-outline";
+    cancelBtn.id = "cancel-modal";
+    cancelBtn.innerText = "Cancel";
+    cancelBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("Cancel button clicked");
+      const modal = this.modalContent.parentElement as HTMLElement;
+      modal.style.display = "none";
+      modal?.remove();
+    });
 
-  // Append buttons to the modal footer
-  modalFooter.appendChild(cancelBtn);
-  modalFooter.appendChild(saveBtn);
+    // Append buttons to the modal footer
+    modalFooter.appendChild(cancelBtn);
+    modalFooter.appendChild(saveBtn);
 
-  // Append the modal footer to the modal content
-  this.modalContent.appendChild(modalFooter);
+    // Append the modal footer to the modal content
+    this.modalContent.appendChild(modalFooter);
 
   }
 
@@ -181,7 +178,7 @@ export class ImageUpload {
     // Add a loading indicator initially
     const loadingElement = document.createElement("div");
     loadingElement.className = "loading-media";
-   // loadingElement.textContent = "Loading media files...";
+    loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
 
     console.log("this.fileListElement");
@@ -285,7 +282,7 @@ export class ImageUpload {
           );
           this.init()
           // Replace the upload area with the image editor
-           this.displayImageEditor(dataUrl, file);
+          //this.displayImageEditor(dataUrl, file);
         } catch (error) {
           console.error("Error processing file:", error);
         }
@@ -293,55 +290,31 @@ export class ImageUpload {
     }
   }
 
-  private dataUriToFile(dataUri:string, filename = 'image.png') {
+  private dataUriToFile(dataUri: string, filename = 'image.png') {
     const [header, base64] = dataUri.split(',');
     const mimeMatch = header.match(/:(.*?);/);
     const mime = mimeMatch ? mimeMatch[1] : 'image/png';
-  
+
     const binary = atob(base64);
     const array = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       array[i] = binary.charCodeAt(i);
     }
-  
+
     return new File([array], filename, { type: mime });
   }
 
-  private async getFile(url:string) {
+  private async getFile(url: string) {
     const response = await fetch(url);
     const blob = await response.blob();
     return new File([blob], 'image.jpg', { type: blob.type });
   }
 
   public async displayImageEditor(dataUrl: string, file?: File) {
+    if (!file) {
+      file = await this.getFile(dataUrl);
+    }
 
-    // const selectedComponent = (globalThis as any).selectedComponent;
-    // if (selectedComponent) {
-    //   // Get the tile element
-    //   const tileElement = selectedComponent.getStyle();
-    //  // Retrieve the background image
-    //   const backgroundImage = tileElement["background-image"];
-    //     if (backgroundImage !== undefined) {  
-    //     const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
-        console.log("Background image in display function:", dataUrl);
-        if (!dataUrl) {
-          console.error("No image data available to display.");
-          return;
-        }
-      
-        if (!file) {
-          file = await this.getFile(dataUrl);
-        }
-      
-    //     const uploadArea = this.modalContent.querySelector(".upload-area") as HTMLElement;
-    //     // if (uploadArea) {
-    //     //   uploadArea.innerHTML = "";
-    //     // }
-    //     }
-    // }else{
-    //   return
-    // }
-    
     const uploadArea = this.modalContent.querySelector(
       ".upload-area"
     ) as HTMLElement;
@@ -362,13 +335,12 @@ export class ImageUpload {
     const img = document.createElement("img");
     img.id = 'selected-image'
     img.src = dataUrl;
-    //img.src = tileImage;
     img.onload = () => {
       const frameHeight = 400
-      const frameWidth = frameHeight * (img.naturalWidth/img.naturalHeight)
+      const frameWidth = frameHeight * (img.naturalWidth / img.naturalHeight)
       console.log(frameHeight, frameWidth)
-      frame.style.width = `${0.8*frameWidth}px`;
-      frame.style.height = `${0.8*frameHeight}px`;
+      frame.style.width = `${0.8 * frameWidth}px`;
+      frame.style.height = `${0.8 * frameHeight}px`;
       initializeOverlay()
     }
 
@@ -381,7 +353,7 @@ export class ImageUpload {
     frame.id = "crop-frame"
     frame.style.position = "absolute";
     frame.style.border = "2px dashed #5068A8";
-    
+
     const rect = imageContainer.getBoundingClientRect()
     console.log(rect.x)
 
@@ -485,18 +457,16 @@ export class ImageUpload {
         // Update the grey overlay positions
         overlayTop.style.height = `${newTop}px`;
         overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
-        overlayBottom.style.height = `${
-          parentRect.height - (newTop + frame.offsetHeight)
-        }px`;
+        overlayBottom.style.height = `${parentRect.height - (newTop + frame.offsetHeight)
+          }px`;
         overlayLeft.style.top = `${newTop}px`;
         overlayLeft.style.height = `${frame.offsetHeight}px`;
         overlayLeft.style.width = `${newLeft}px`;
         overlayRight.style.top = `${newTop}px`;
         overlayRight.style.height = `${frame.offsetHeight}px`;
         overlayRight.style.left = `${newLeft + frame.offsetWidth}px`;
-        overlayRight.style.width = `${
-          parentRect.width - (newLeft + frame.offsetWidth)
-        }px`;
+        overlayRight.style.width = `${parentRect.width - (newLeft + frame.offsetWidth)
+          }px`;
       }
     });
 
@@ -587,6 +557,8 @@ export class ImageUpload {
       if (!selectedComponent) return;
 
       selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacityValue})`;
+      selectedComponent.getEl().style.backgroundImage = `url(${img.src})`;
+      selectedComponent.getEl().style.backgroundSize = "cover";
 
       const pageData = (globalThis as any).pageData;
 
@@ -596,7 +568,7 @@ export class ImageUpload {
           selectedComponent.parent().parent().getId(),
           selectedComponent.parent().getId(),
           "Opacity",
-          opacitySlider.value
+          parseInt(opacitySlider.value)
         );
       } else {
         (globalThis as any).tileMapper.updateTile(
@@ -625,7 +597,7 @@ export class ImageUpload {
     sliderWrapper.appendChild(opacityLabel);
 
     modalFooter.appendChild(sliderWrapper);
-    
+
 
     this.modalContent.appendChild(modalFooter);
 
@@ -635,7 +607,7 @@ export class ImageUpload {
     }
   }
 
-  private async saveCroppedImage(
+  public async saveCroppedImage(
     img: HTMLImageElement,
     frame: HTMLElement,
     file: File
@@ -673,9 +645,9 @@ export class ImageUpload {
       cropHeight
     );
     const croppedDataUrl = canvas.toDataURL("image/png");
-      // Generate a unique file name
-  const uniqueId = Date.now().toString(); // Use timestamp as a unique identifier
-  const uniqueFileName = `${file.name.split(".")[0]}-${uniqueId}.png`;
+    // Generate a unique file name
+    const uniqueId = Date.now().toString(); // Use timestamp as a unique identifier
+    const uniqueFileName = `${file.name.split(".")[0]}-${uniqueId}.png`;
 
     // Apply the selected opacity
     const opacitySlider = document.querySelector(
@@ -689,9 +661,9 @@ export class ImageUpload {
 
     ctx.putImageData(imageData, 0, 0);
 
-     const newMedia: Media = {
+    const newMedia: Media = {
       MediaId: Date.now().toString(), // Use the unique identifier as the MediaId
-      MediaName: file.name, 
+      MediaName: file.name,
       MediaUrl: croppedDataUrl,
       MediaType: file.type,
       MediaSize: file.size,
@@ -703,36 +675,39 @@ export class ImageUpload {
       newMedia.MediaType
     );
     console.log("Cropped image uploaded successfully:", response);
+    this.croppedUrl = response.BC_Trn_Media.MediaUrl ;
     
-        // Add the cropped image to the selected tile
-        const selectedComponent = (globalThis as any).selectedComponent;
-        if (selectedComponent) {
-          const tileElement = selectedComponent.getEl();
-          tileElement.style.backgroundImage = `url(${croppedDataUrl})`;
-          tileElement.style.backgroundSize = "cover";
-          tileElement.style.backgroundPosition = "center";
-          console.log("Cropped image added to the tile.");
-          }
-          // if (this.fileListElement) {
-          //   this.displayMediaFile(this.fileListElement, newMedia);
-          // } 
-          // else {
-          // }
-        // Close the modal
-        const modal = this.modalContent.parentElement as HTMLElement;
-        if (modal) {
-          modal.style.display = "none";
-          modal.remove();
-        }
-    
-        console.log("Cropped image saved successfully:", newMedia.MediaName);
-      } catch (error: any) {
-        console.error("Error saving cropped image:", error);
-      }
 
-    
+    // Add the cropped image to the selected tile
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (selectedComponent) {
+      const tileElement = selectedComponent.getEl();
+      tileElement.style.backgroundImage = `url(${croppedDataUrl})`;
+      tileElement.style.backgroundSize = "cover";
+      tileElement.style.backgroundPosition = "center";
+      console.log("Cropped image added to the tile.");
+
+
+    }
+    if (this.fileListElement) {
+      this.displayMediaFile(this.fileListElement, newMedia);
+    }
+    else {
+    }
+    const modal = this.modalContent.parentElement as HTMLElement;
+    if (modal) {
+      modal.style.display = "none";
+      modal.remove();
+    }
+
+    console.log("Cropped image saved successfully:", newMedia.MediaName);
+  } catch(error: any) {
+    console.error("Error saving cropped image:", error);
+  }
+
+
   //   this.resetModal();
-   
+
 
   private resetModal() {
     this.modalContent.innerHTML = "";
@@ -742,9 +717,8 @@ export class ImageUpload {
 
   private displayMediaFileProgress(fileList: HTMLElement, file: Media) {
     const fileItem = document.createElement("div");
-    fileItem.className = `file-item ${
-      this.validateFile(file) ? "valid" : "invalid"
-    }`;
+    fileItem.className = `file-item ${this.validateFile(file) ? "valid" : "invalid"
+      }`;
     fileItem.setAttribute("data-mediaid", file.MediaId);
 
     const removeBeforeFirstHyphen = (str: string) =>
@@ -752,25 +726,21 @@ export class ImageUpload {
 
     const isValid = this.validateFile(file);
     fileItem.innerHTML = `
-              <img src="${
-                file.MediaUrl
-              }" alt="File thumbnail" class="preview-image">
-                ${
-                  isValid
-                    ? ""
-                    : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>`
-                }
+              <img src="${file.MediaUrl
+      }" alt="File thumbnail" class="preview-image">
+                ${isValid
+        ? ""
+        : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>`
+      }
               </div>
-              <span class="status-icon" style="color: ${
-                isValid ? "green" : "red"
-              }">
+              <span class="status-icon" style="color: ${isValid ? "green" : "red"
+      }">
                 ${isValid ? "" : "⚠"}
               </span>
-              ${
-                isValid
-                  ? ""
-                  : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
-              }
+              ${isValid
+        ? ""
+        : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
+      }
             `;
     fileList.insertBefore(fileItem, fileList.firstChild);
 

@@ -16,7 +16,7 @@ export class SingleImageFile {
   imageUpload: ImageUpload;
   fileListContainer: HTMLElement | undefined;
 
-  constructor(mediaFile: Media, type: any, imageUpload:ImageUpload, infoId?: string) {
+  constructor(mediaFile: Media, type: any, imageUpload: ImageUpload, infoId?: string) {
     this.mediaFile = mediaFile;
     this.type = type;
     this.infoId = infoId;
@@ -35,7 +35,7 @@ export class SingleImageFile {
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
 
-      // Create a wrapper for statusCheck and deleteSpan
+    // Create a wrapper for statusCheck and deleteSpan
     const actionColumn = document.createElement("div");
     actionColumn.className = "action-column";
 
@@ -119,7 +119,6 @@ export class SingleImageFile {
       ".modal-actions"
     ) as HTMLElement;
     if (!modalActions) return;
-
     modalActions.style.display = "flex";
 
     // Remove existing event listeners by cloning and replacing elements
@@ -129,7 +128,6 @@ export class SingleImageFile {
     const saveBtn = modalActions.querySelector("#save-modal") as HTMLElement;
 
     if (!cancelBtn || !saveBtn) return;
-
     const newCancelBtn = cancelBtn.cloneNode(true) as HTMLElement;
     const newSaveBtn = saveBtn.cloneNode(true) as HTMLElement;
 
@@ -143,8 +141,19 @@ export class SingleImageFile {
       modal.style.display = "none";
       modal.remove();
     });
+    newSaveBtn.addEventListener("click", async () => {
+      const img = document.getElementById("selected-image") as HTMLImageElement;
+      if (!img) {
+        console.error("Image element not found.");
+        return;
+      }
+      const frame = document.getElementById("crop-frame") as HTMLElement;
+      if (frame) {
+        const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
+        const file = new File([img.src], uniqueFileName, { type: "image/png" });
+        await this.imageUpload.saveCroppedImage(img, frame, file);
 
-    newSaveBtn.addEventListener("click", () => {
+      }
       if (this.type === "tile") {
         this.addImageToTile();
       } else if (this.type === "content") {
@@ -165,17 +174,18 @@ export class SingleImageFile {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
     try {
-      const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
+      const safeMediaUrl = encodeURI(this.imageUpload.croppedUrl);
       selectedComponent.addStyle({
         "background-image": `url(${safeMediaUrl})`,
         "background-size": "cover",
         "background-position": "center",
         "background-blend-mode": "overlay",
       });
-      
+
       const updates = [
         ["BGImageUrl", safeMediaUrl],
         ["BGColor", "transparent"],
+       // ["Opacity", this.imageUpload.opacity],
       ];
 
       let tileAttributes;
@@ -200,7 +210,7 @@ export class SingleImageFile {
         );
 
         tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
-          (tile: any) => tile.Id ===  tileWrapper.getId()
+          (tile: any) => tile.Id === tileWrapper.getId()
         );
       } else {
         console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)

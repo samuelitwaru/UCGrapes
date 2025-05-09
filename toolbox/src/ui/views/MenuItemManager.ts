@@ -118,13 +118,28 @@ export class MenuItemManager {
     `;
     menuHeader.appendChild(searchContainer);
 
-    subMenuContainer.appendChild(menuHeader);
+    if(type !== 'CallToActions') {
+      subMenuContainer.appendChild(menuHeader);
+    }
+
 
     const submenuList = document.createElement("ul");
     submenuList.classList.add("menu-list");
 
     const categoryData = await this.controller.actionList.getCategoryData();
     const items = await this.controller.getSubMenuItems(categoryData, type);
+
+    // Sort items alphabetically by label
+    items.sort((a, b) => a.label.localeCompare(b.label));
+
+    // Limit height only if there are more than 10 items
+    if (items.length > 10) {
+      submenuList.style.maxHeight = "400px"; // Adjust height to fit approx. 10 items
+      submenuList.style.overflowY = "auto";
+    } else {
+      submenuList.style.maxHeight = "unset";
+      submenuList.style.overflowY = "unset";
+    }
 
     if (items && items.length > 0) {
       items.forEach((item) => {

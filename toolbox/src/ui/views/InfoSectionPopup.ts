@@ -58,6 +58,7 @@ export class InfoSectionPopup {
       },
     ];
 
+    sectionItems.sort((a, b) => a.label.localeCompare(b.label))
     sectionItems?.forEach((item) => {
       const menuCategory = document.createElement("div");
       menuCategory.classList.add("menu-category");
@@ -94,6 +95,7 @@ export class InfoSectionPopup {
           this.submenuContainer.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.2)";
           this.submenuContainer.style.borderRadius = "9px";
           this.submenuContainer.style.width = "100px";
+          this.submenuContainer.style.minHeight = "fit-content"
           this.submenuContainer.style.zIndex = "1001";
 
           // Get submenu items
@@ -235,11 +237,25 @@ export class InfoSectionPopup {
   async getSubMenuItems(categoryData: any, type: any) {
     const itemsList = [
       {
+        id: "add-address",
+        label: "Address",
+        type: "Map",
+        name: "",
+        handler: (service: any) => service.handleWebLinks(),
+      },
+      {
         id: "add-email",
         label: "Email",
         type: "Email",
         name: "",
         handler: (service: any) => service.handleEmail(),
+      },
+      {
+        id: "add-form",
+        label: "Form",
+        type: "Form",
+        name: "",
+        handler: (service: any) => service.handleForm(),
       },
       {
         id: "add-phone",
@@ -255,15 +271,8 @@ export class InfoSectionPopup {
         name: "",
         handler: (service: any) => service.handleWebLinks(),
       },
-      {
-        id: "add-address",
-        label: "Address",
-        type: "Map",
-        name: "",
-        handler: (service: any) => service.handleWebLinks(), // maybe change this if it's supposed to be map-specific
-      },
     ];
-  
+
     return itemsList.map((item: any) => {
       return {
         id: item.id,

@@ -30,6 +30,9 @@ export class ActionListPopUp {
       const menuCategory = document.createElement("div");
       menuCategory.classList.add("menu-category");
 
+      // sort menu options alphabetically
+      category.sort((a, b) => a.label.localeCompare(b.label))
+
       category.forEach((item) => {
         const menuItem = this.menuItemManager.createMenuItem(item, () => {
           this.menuContainer.remove();

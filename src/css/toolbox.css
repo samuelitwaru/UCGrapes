@@ -485,7 +485,8 @@ img.content-page-block {
   position: absolute;
   top: -8px;
   right: -12px;
-  background-color: #d32f2f;
+  background-color: white;
+  border: 1px solid #5068a8;
   color: white;
   border-radius: 50%;
   width: 25px;
@@ -534,7 +535,8 @@ img.content-page-block {
   position: absolute;
   top: 1px;
   right: -8px;
-  background-color: #d32f2f;
+  background-color: white;
+  border: 1px solid #5068a8;
   color: white;
   border-radius: 50%;
   width: 25px;

@@ -12,10 +12,11 @@ export class TreeComponent {
     toolboxService: ToolBoxService;
     version: any;
     constructor(appVersionManager:AppVersionManager) {
-        this.treeContainer = document.getElementById('tree-container')
-        this.renderTitle()
-        this.renderHideOrShowPages()
-        this.addPageCreationEvent()
+        this.treeContainer = document.getElementById('tree-container') as HTMLElement;
+        this.treeContainer.style.display = "block"
+        // this.renderTitle()
+        // this.renderHideOrShowPages()
+        // this.addPageCreationEvent()
         this.appVersionManager = appVersionManager
         this.toolboxService = new ToolBoxService()
         this.appVersionManager.getUpdatedActiveVersion().then(res=>{
@@ -117,9 +118,10 @@ export class TreeComponent {
     }
 
     buildListItem(rootPageId:string, page:any, isOpenable=true) {
+        console.log('hello', page.PageType, isOpenable)
+        if (page.PageType != "MyCare") isOpenable = false
 
-        if (page.PageType != "Menu") isOpenable = false
-
+        console.log('isOpenable', isOpenable)
         const listItem = document.createElement("li");
         listItem.classList.add("tb-custom-list-item");
         listItem.dataset.parentPageId = rootPageId;

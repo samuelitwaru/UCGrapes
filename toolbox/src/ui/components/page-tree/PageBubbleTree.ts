@@ -1,5 +1,6 @@
 import { AppConfig } from "../../../AppConfig";
 import { ThemeManager } from "../../../controls/themes/ThemeManager";
+import { TreeComponent } from "../TreeComponent";
 import { PageTreeRenderer } from "./PageTreeRenderer";
 import { PageTreeRendererInfoPage } from "./PageTreeRendererInfoPage";
 interface PageNode {
@@ -37,6 +38,7 @@ export class PageBubbleTree {
   pageTreeRenderer: PageTreeRenderer;
   PageTreeRendererInfoPage: PageTreeRendererInfoPage;
   primaryNodeId: string | null = null;
+  appVersionManager: any;
 
   constructor() {
     this.pageTreeRenderer = new PageTreeRenderer();
@@ -45,6 +47,7 @@ export class PageBubbleTree {
     this.d3 = config.UC.d3;
     this.themeManager = new ThemeManager();
     const appVersionManager = this.themeManager.appVersionManager;
+    this.appVersionManager = appVersionManager
     this.pages = appVersionManager.getPages();
 
     this.processedPages = this.processPageData(this.pages);
@@ -69,6 +72,10 @@ export class PageBubbleTree {
     const toolSection = document.getElementById(
       "tools-section"
     ) as HTMLDivElement;
+
+    const treeSection = document.getElementById(
+      "tree-container"
+    ) as HTMLDivElement;
     //set display to none for editor section
     if (editorSections.length > 0) {
       // toggle display
@@ -77,12 +84,14 @@ export class PageBubbleTree {
         div.style.display = "block";
         this.graphContainer.style.display = "none";
         toolSection.style.display = "block";
+        treeSection.style.display = "none";
       } else {
         toolSection.style.display = "none";
         div.style.display = "none";
         this.graphContainer.style.display = "block";
         this.graphContainer.style.width = "100%";
         this.graphContainer.style.height = "100%";
+        const tree = new TreeComponent(this.appVersionManager)
       }
       // editorSections[0].setAttribute("style", "display:none;")
     }

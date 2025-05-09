@@ -7,6 +7,7 @@ import { PageAttacher } from "../../ui/components/tools-section/action-list/Page
 import { NavbarLeftButtons } from "../../ui/components/NavBarLeftButtons";
 import { UndoRedoManager } from "./UndoRedoManager";
 import { TileMapper } from "../editor/TileMapper";
+import { TreeComponent } from "../../ui/components/TreeComponent";
 
 export class ToolboxManager {
   appVersions: any;
@@ -39,7 +40,6 @@ export class ToolboxManager {
   public setUpSideBar() {
     const sideBar = document.getElementById("tb-sidebar") as HTMLElement;
     const toolsSection = new ToolsSection();
-
     toolsSection.render(sideBar);
   }
 

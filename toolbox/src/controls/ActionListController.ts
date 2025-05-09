@@ -150,7 +150,7 @@ export class ActionListController {
         TileName: res.MenuPage.PageName,
         PageType: res.MenuPage.PageType,
       };
-      this.pageAttacher.attachToTile(page, "Information", "Information");
+      this.pageAttacher.attachToTile(page, "Information", "Information", true);
     } else {
       console.error("error", res.error.message);
     }

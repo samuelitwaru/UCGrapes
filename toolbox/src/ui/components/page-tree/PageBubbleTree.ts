@@ -255,8 +255,6 @@ export class PageBubbleTree {
         .attr("text-anchor", "middle")
         .attr("stroke", "none")
         .attr("fill", "#fff");
-
-        
     }
 
     onTick () {

@@ -18,27 +18,29 @@ import { resizeButton } from "../../utils/gjs-components";
 
 export class InfoSectionUI {
   themeManager: any;
+  controller: any;
 
   constructor() {
     this.themeManager = new ThemeManager();
+    // this.controller = new InfoSectionController();
   }
 
   openImageUpload() {
-    // const modal = document.createElement("div");
-    // modal.classList.add("tb-modal");
-    // modal.style.display = "flex";
+    const modal = document.createElement("div");
+    modal.classList.add("tb-modal");
+    modal.style.display = "flex";
 
-    // // const modalContent = new ImageUpload("content");
-    // modalContent.render(modal);
-    // const uploadInput = document.createElement("input");
-    // uploadInput.type = "file";
-    // uploadInput.multiple = true;
-    // uploadInput.accept = "image/jpeg, image/jpg, image/png";
-    // uploadInput.id = "fileInput";
-    // uploadInput.style.display = "none";
+    const modalContent = new ImageUpload("info");
+    modalContent.render(modal);
+    const uploadInput = document.createElement("input");
+    uploadInput.type = "file";
+    uploadInput.multiple = true;
+    uploadInput.accept = "image/jpeg, image/jpg, image/png";
+    uploadInput.id = "fileInput";
+    uploadInput.style.display = "none";
 
-    // document.body.appendChild(modal);
-    // document.body.appendChild(uploadInput);
+    document.body.appendChild(modal);
+    document.body.appendChild(uploadInput);
   }
 
   addCtaButton(cta: any) {
@@ -227,5 +229,86 @@ export class InfoSectionUI {
     btn.classList.add("tb-btn", className);
     btn.innerText = text;
     return btn;
+  }
+
+  openContentEditModal() {
+    const modalBody = document.createElement("div");
+
+    const modalContent = document.createElement("div");
+    modalContent.id = "editor";
+    modalContent.innerHTML = ""; // Empty content to start with
+    modalContent.style.minHeight = "150px"; // Set minimum height for about three paragraphs
+
+    const submitSection = document.createElement("div");
+    submitSection.classList.add("popup-footer");
+    submitSection.style.marginBottom = "-12px";
+
+    const saveBtn = this.createButton("submit_form", "tb-btn-primary", "Save");
+    saveBtn.disabled = true; // Disable save button initially
+    saveBtn.style.opacity = "0.6";
+    saveBtn.style.cursor = "not-allowed";
+    
+    const cancelBtn = this.createButton(
+      "cancel_form",
+      "tb-btn-outline",
+      "Cancel"
+    );
+
+    submitSection.appendChild(saveBtn);
+    submitSection.appendChild(cancelBtn);
+
+    modalBody.appendChild(modalContent);
+    modalBody.appendChild(submitSection);
+
+    const modal = new Modal({
+      title: "Edit Content",
+      width: "500px",
+      body: modalBody,
+    });
+    modal.open();
+
+    const quill = new Quill("#editor", {
+      modules: {
+        toolbar: [
+          ["bold", "italic", "underline", "link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+      },
+      theme: "snow",
+      placeholder: "Start typing here...",
+    });
+
+    // Set focus to the editor
+    setTimeout(() => {
+      quill.focus();
+    }, 0);
+
+    // Monitor content changes to enable/disable save button
+    quill.on('text-change', () => {
+      const editorContent = quill.root.innerHTML;
+      // Check if editor has meaningful content (not just empty paragraphs)
+      const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
+      saveBtn.disabled = !hasContent;
+      
+      // Update button styling based on disabled state
+      if (saveBtn.disabled) {
+        saveBtn.style.opacity = "0.6";
+        saveBtn.style.cursor = "not-allowed";
+      } else {
+        saveBtn.style.opacity = "1";
+        saveBtn.style.cursor = "pointer";
+      }
+    });
+
+    saveBtn.addEventListener("click", () => {
+      const content = document.querySelector(
+        "#editor .ql-editor"
+      ) as HTMLElement;
+      // this.controller.addDescription(content.innerHTML);
+      modal.close();
+    });
+    cancelBtn.addEventListener("click", () => {
+      modal.close();
+    });
   }
 }

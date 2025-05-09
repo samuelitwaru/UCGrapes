@@ -36,6 +36,15 @@ export const i18n = new I18n({
         close: "Close",
         copied: "Linked copied to clipboard",
       },
+      trash: {
+        label: "Trash",
+        modal_title: "Trash",
+        modal_description:
+          "A shareable link has been generated for you. Copy it and share for previews!",
+        copy: "Copy",
+        close: "Close",
+        copied: "Linked copied to clipboard",
+      },
       appversion: {
         create_new: "Create new version",
         duplicate: "Duplicate version",
@@ -59,7 +68,7 @@ export const i18n = new I18n({
       confirmation_accept: "Confirm",
       confirmation_cancel: "Cancel",
       image_upload: {
-        modal_title: "Upload",
+        modal_title: "Upload Image",
         cancel: "Cancel",
         save: "Save",
         upload_message:
@@ -185,7 +194,7 @@ export const i18n = new I18n({
       confirmation_accept: "Bevestigen",
       confirmation_cancel: "Annuleren",
       image_upload: {
-        modal_title: "Uploaden",
+        modal_title: "Uploaden Image",
         cancel: "Annuleren",
         save: "Opslaan",
         upload_message:

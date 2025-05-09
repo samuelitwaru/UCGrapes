@@ -1,5 +1,6 @@
 import { EditorEvents } from "../../../controls/editor/EditorEvents";
 import html2canvas from "html2canvas";
+import { ToolBoxService } from "../../../services/ToolBoxService";
 
 export class EditorThumbs {
   container: HTMLElement;
@@ -80,11 +81,17 @@ export class EditorThumbs {
               logging: false
             });
             
+            const dataUrl = canvas.toDataURL("image/png"); 
             const img = document.createElement("img");
-            img.src = canvas.toDataURL("image/png");
+            img.src = dataUrl
+
             img.style.width = iframe.offsetWidth + "px";
             img.style.height = iframe.offsetHeight + "px";
             img.style.display = "block";
+
+            const toolboxService = new ToolBoxService()
+            toolboxService.savePageThumbnail(dataUrl)
+            
             
             const iframeClone = clone.querySelector("iframe");
             if (iframeClone?.parentNode) {

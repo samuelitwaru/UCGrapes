@@ -465,4 +465,28 @@ export class ToolBoxService {
       body: JSON.stringify(data),
     });
   }
+
+  async getTrashItems() {
+    return await this.fetchAPI('/api/toolbox/v2/get-trash', {}, true);
+  }
+
+  async restoreTrash(type: string, trashId: any) {
+    return await this.fetchAPI("/api/toolbox/v2/restore-trash", {
+      method: "POST",
+      body: JSON.stringify({
+        Type: type,
+        TrashId: trashId,
+      }),
+    });
+  }
+
+  async deleteTrashForver(type: string, trashId: any) {
+    return await this.fetchAPI("/api/toolbox/v2/delete-trash", {
+      method: "POST",
+      body: JSON.stringify({
+        Type: type,
+        TrashId: trashId,
+      }),
+    });
+  }
 }

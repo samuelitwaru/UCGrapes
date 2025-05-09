@@ -75,6 +75,10 @@ export class PageTreeRenderer {
         return container.outerHTML
     }
 
+    createInformationHTML (page:any) {
+      
+    }
+
     createHeaderHTML(page: any) {
         const header = document.createElement("div");
         let appBar = `

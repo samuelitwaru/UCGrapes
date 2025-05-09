@@ -123,7 +123,6 @@ export class AllPagesComponent {
 
         deleteButton.addEventListener('click', (e)=>{
             this.toolboxService.deletePage(this.appVersion.AppVersionId, pageId).then((res)=>{
-                console.log(res)
                 if(!res.error.message) {
                     this.appVersion = res.AppVersion
                     this.pages = this.appVersion.Pages

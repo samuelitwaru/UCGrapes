@@ -124,28 +124,28 @@ export class EditorEvents {
 
             wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
               const targetElement = e.target as Element;
-            if (
-              targetElement.closest(".menu-container") ||
-              targetElement.closest(".menu-category") ||
-              targetElement.closest(".sub-menu-header")
-            ) {
-              e.stopPropagation();
-              return;
-            }
+              if (
+                targetElement.closest(".menu-container") ||
+                targetElement.closest(".menu-category") ||
+                targetElement.closest(".sub-menu-header")
+              ) {
+                e.stopPropagation();
+                return;
+              }
 
-            this.uiManager.clearAllMenuContainers();
-            
-            (globalThis as any).activeEditor = this.editor;
-            (globalThis as any).currentPageId = this.pageId;
-            (globalThis as any).pageData = this.pageData;
+              this.uiManager.clearAllMenuContainers();
+              
+              (globalThis as any).activeEditor = this.editor;
+              (globalThis as any).currentPageId = this.pageId;
+              (globalThis as any).pageData = this.pageData;
 
-            this.uiManager.handleTileManager(e);
-            this.uiManager.openMenu(e);
+              this.uiManager.handleTileManager(e);
+              this.uiManager.openMenu(e);
 
-            new ToolboxManager().unDoReDo();
-            this.uiManager.initContentDataUi(e);
-            this.uiManager.activateEditor(this.frameId);
-            this.uiManager.handleInfoSectionHover(e);
+              new ToolboxManager().unDoReDo();
+              this.uiManager.initContentDataUi(e);
+              this.uiManager.activateEditor(this.frameId);
+              this.uiManager.handleInfoSectionHover(e);
           });
 
         } else {
@@ -304,5 +304,19 @@ export class EditorEvents {
     //       childContainer.scrollLeft = targetScrollPosition;
     //     }
     //   }
+  }
+
+  activateEditor(frameId: any) {
+    if (!this.uiManager) {
+      this.uiManager = new EditorUIManager(
+        this.editor,
+        this.pageId,
+        this.frameId,
+        this.pageData,
+        this.appVersionManager
+      );      
+    }
+    console.log("activateEditor: ", frameId);
+    this.uiManager.activateEditor(frameId);
   }
 }

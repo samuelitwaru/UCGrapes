@@ -27,7 +27,6 @@ export class AppVersionManager {
 
   public async getActiveVersion() {
     (globalThis as any).activeVersion = (window as any).app.currentVersion;
-    console.log((globalThis as any).activeVersion)
     return (globalThis as any).activeVersion;
   }
 
@@ -36,6 +35,12 @@ export class AppVersionManager {
     const appVersion = await toolboxService.getVersion();
     (globalThis as any).activeVersion = appVersion.AppVersion
     return (globalThis as any).activeVersion;
+  }
+
+  public async refreshVersion() {
+    const toolboxService = new ToolBoxService(); //
+    const appVersion = await toolboxService.getVersion();
+    (globalThis as any).activeVersion = appVersion.AppVersion
   }
 
   public getPages() {
@@ -73,6 +78,7 @@ export class AppVersionManager {
       PageId: pageId,
       PageName: pageTitle,
     };
+    console.log("pageData", pageData);
     const res = await toolboxService.updatePageTitle(pageData);
     if (res) {
       const data = localStorage.getItem(`data-${pageId}`);
@@ -83,6 +89,7 @@ export class AppVersionManager {
       }
     }
 
+    this.refreshVersion();
     // await toolboxService.updatePageTitle(pageId, pageTitle);
   }
 }

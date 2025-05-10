@@ -40,7 +40,7 @@ export class EditorThumbs {
     thumbnail.addEventListener("click", (event: MouseEvent) => {
       const childContainer = document.getElementById(
         "child-container"
-      ) as HTMLDivElement;
+      ) as HTMLDivElement; 
 
       if (childContainer && editorDiv) {
         const editorFrames = Array.from(childContainer.children);

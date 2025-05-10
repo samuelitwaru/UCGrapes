@@ -37,7 +37,7 @@ export class PageBubbleTree {
   zoom: any;
   pageTreeRenderer: PageTreeRenderer;
   PageTreeRendererInfoPage: PageTreeRendererInfoPage;
-  primaryNodeId: string | null = null;
+  primaryNodeId: any | null = null;
   appVersionManager: any;
 
   constructor() {
@@ -47,16 +47,21 @@ export class PageBubbleTree {
     this.d3 = config.UC.d3;
     this.themeManager = new ThemeManager();
     const appVersionManager = this.themeManager.appVersionManager;
-    this.appVersionManager = appVersionManager
+    this.appVersionManager = appVersionManager;
     this.pages = appVersionManager.getPages();
 
     this.processedPages = this.processPageData(this.pages);
+    const homePage = this.processedPages.find((page) => page.title === "Home");
+    if (homePage) {
+      this.primaryNodeId = homePage.id;
+    }
 
-    console.log("processed pages", this.processedPages);
+    // console.log("processed pages", this.processedPages);
     this.nodes = this.createNodes();
     this.links = this.createLinks();
-    console.log("nodes", this.nodes);
-    console.log("links", this.links);
+    // console.log("nodes", this.nodes);
+    // console.log("links", this.links);
+
     this.init();
   }
 
@@ -91,7 +96,7 @@ export class PageBubbleTree {
         this.graphContainer.style.display = "block";
         this.graphContainer.style.width = "100%";
         this.graphContainer.style.height = "100%";
-        const tree = new TreeComponent(this.appVersionManager)
+        const tree = new TreeComponent(this.appVersionManager);
       }
       // editorSections[0].setAttribute("style", "display:none;")
     }
@@ -119,11 +124,11 @@ export class PageBubbleTree {
   processPageData(pages: any[]) {
     const linkPages: PageNode[] = [];
     pages = pages.map((page: any) => {
-      console.log(
-        "PageThumbnailUrl for page:",
-        page.PageName,
-        page.PageThumbnailUrl
-      );
+      // console.log(
+      //   "PageThumbnailUrl for page:",
+      //   page.PageName,
+      //   page.PageThumbnailUrl
+      // );
 
       let ret: PageNode = {
         id: page.PageId,
@@ -359,7 +364,7 @@ export class PageBubbleTree {
     // Nodes
     this.node = this.container
       .append("g")
-      // .attr("stroke", "#222f54")
+      .attr("stroke", "#222f54")
       .attr("stroke-width", 1.5)
       .selectAll("g")
       .data(this.nodes)
@@ -370,13 +375,13 @@ export class PageBubbleTree {
     this.node
       .append("rect")
       .attr("width", 200)
-      .attr("height", 400)
+      .attr("height", 350)
       .attr("x", (d: any) => -Math.max(d.name.length * 8, 100) / 2)
       .attr("y", -20)
       .attr("stroke", (d: any) =>
         d.id === this.primaryNodeId ? "#FF5722" : "#222f54"
       )
-      .attr("fill", "#fff");
+      .attr("fill", "#efeeec");
     // .style("background", "#EFEEEC");
 
     // this.node
@@ -389,27 +394,27 @@ export class PageBubbleTree {
 
     this.node
       .append("foreignObject")
-      .attr("height", 400)
+      .attr("height", 350)
       .attr("width", 200)
       .attr("y", -20)
       .attr("x", -50)
+      .attr("fill", "#efeeec")
       .html(
         (d: any) => `
-        <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%;">
-            <div style="display:flex; padding:2px">
-            <svg xmlns="http://www.w3.org/2000/svg" data-name="Group 14" viewBox="0 0 47 47" class="content-back-butto" width="30" height="30">
-                <g id="Ellipse_6" data-name="Ellipse 6" fill="none" stroke="#262626" stroke-width="1">
-                <circle cx="23.5" cy="23.5" r="23.5" stroke="none"></circle>
-                <circle cx="23.5" cy="23.5" r="23" fill="none"></circle>
-                </g>
-                <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"></path>
-            </svg>
-            <div class="">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; padding:2px">
+            <div style="display:flex; ">
+              <svg xmlns="http://www.w3.org/2000/svg" data-name="Group 14" viewBox="0 0 47 47" class="content-back-butto" width="30" height="30">
+                  <g id="Ellipse_6" data-name="Ellipse 6" fill="none" stroke="#262626" stroke-width="1">
+                  <circle cx="23.5" cy="23.5" r="23.5" stroke="none"></circle>
+                  <circle cx="23.5" cy="23.5" r="23" fill="none"></circle>
+                  </g>
+                  <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"></path>
+              </svg>
+              <div class="">
                 <div style="padding: 5px; text-transform: uppercase;">${d.name}</div>
+              </div>
             </div>
-        </div>
-           <img src="${d.thumbnail}" alt="${d.name}" style="width: 100%; height: 100%; text-transform: uppercase; border-radius: 10px; object-fit: cover;" />
-           
+           <img src="${d.thumbnail}" alt="${d.name}" style="max-width: 100%; margin-top:0px; height: auto; text-transform: uppercase;" />
         </div>
         `
       );
@@ -523,7 +528,7 @@ export class PageBubbleTree {
       }
     }
 
-    console.log("nodes page", processedPages);
+    // console.log("nodes page", processedPages);
 
     this.nodes = this.createNodes(processedPages);
     this.links = this.createLinks(processedPages);

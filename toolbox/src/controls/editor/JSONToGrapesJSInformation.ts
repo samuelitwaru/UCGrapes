@@ -289,7 +289,7 @@ export class JSONToGrapesJSInformation {
                     ${contentHtml ? contentHtml : ''
       }
                 </div>  
-                ${this.addNewInfoSection()}
+                ${this.addNewInfoSection(true)}
             </div>
         `;
 

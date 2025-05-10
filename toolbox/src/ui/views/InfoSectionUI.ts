@@ -25,12 +25,13 @@ export class InfoSectionUI {
     // this.controller = new InfoSectionController();
   }
 
-  openImageUpload() {
+  openImageUpload(sectionId?: string) {
+    // console.log('openImageUpload sectionId :>> ', sectionId);
     const modal = document.createElement("div");
     modal.classList.add("tb-modal");
     modal.style.display = "flex";
 
-    const modalContent = new ImageUpload("info");
+    const modalContent = new ImageUpload("info", undefined, sectionId);
     modalContent.render(modal);
     const uploadInput = document.createElement("input");
     uploadInput.type = "file";

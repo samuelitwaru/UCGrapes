@@ -350,7 +350,6 @@ export class FormModalService {
     saveBtn.addEventListener("click", (e) => {
       e.preventDefault();
       if (this.validateFields(form)) {
-        console.log('submitted form :>> ', form);
         onSave();
         document.querySelector(".popup-modal-link")?.remove();
       }

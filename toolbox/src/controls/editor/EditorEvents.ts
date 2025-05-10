@@ -41,7 +41,7 @@ export class EditorEvents {
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
     this.isHome = isHome;
-    
+
     this.uiManager = new EditorUIManager(
       this.editor,
       this.pageId,
@@ -49,7 +49,7 @@ export class EditorEvents {
       this.pageData,
       this.appVersionManager
     );
-    
+
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
@@ -67,89 +67,89 @@ export class EditorEvents {
         (globalThis as any).pageData = this.pageData;
 
         if (wrapper) {
-            wrapper.view.el.addEventListener("mousedown", (e:MouseEvent) => {
-              const targetElement = e.target as Element;
-              if (targetElement.closest('.tile-resize-button')) {
-                this.isResizing = true;
-                this.resizingRow = targetElement.closest('.template-wrapper') as HTMLDivElement
-                this.resizingRowHeight = this.resizingRow.offsetHeight
-                this.resizeYStart = e.clientY
+          wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
+            const targetElement = e.target as Element;
+            if (targetElement.closest('.tile-resize-button')) {
+              this.isResizing = true;
+              this.resizingRow = targetElement.closest('.template-wrapper') as HTMLDivElement
+              this.resizingRowHeight = this.resizingRow.offsetHeight
+              this.resizeYStart = e.clientY
+            }
+          })
+
+          document.addEventListener("mousemove", (e: MouseEvent) => {
+            if (this.isResizing) {
+              let newHeight = this.resizingRowHeight + (e.clientY - this.resizeYStart)
+              if (newHeight < minTileHeight) newHeight = minTileHeight;
+              const comps = wrapper.find(`#${this.resizingRow?.id}`)
+              if (comps.length) {
+                comps[0].addStyle({
+                  height: `${newHeight}px`
+                })
               }
-            })
+              (globalThis as any).tileMapper.updateTile(
+                this.resizingRow?.id,
+                "Size",
+                newHeight
+              )
 
-            document.addEventListener("mousemove", (e:MouseEvent) => {
-              if (this.isResizing) {
-                let newHeight = this.resizingRowHeight + (e.clientY-this.resizeYStart)
-                if (newHeight < minTileHeight) newHeight = minTileHeight;
-                const comps = wrapper.find(`#${this.resizingRow?.id}`)
-                if (comps.length) {
-                  comps[0].addStyle({
-                    height: `${newHeight}px`
-                  })
-                }
-                (globalThis as any).tileMapper.updateTile(
-                  this.resizingRow?.id,
-                  "Size",
-                  newHeight
-                )
-                
-              }
-            })
+            }
+          })
 
-            document.addEventListener("mouseup", (e:MouseEvent) => {
-              if (this.isResizing) {
-                this.isResizing = false
-              }
-            })
+          document.addEventListener("mouseup", (e: MouseEvent) => {
+            if (this.isResizing) {
+              this.isResizing = false
+            }
+          })
 
-            wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
-              e.preventDefault();
-              const selectedComponent = (globalThis as any).selectedComponent;
-              if (!selectedComponent) return;
+          wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
+            e.preventDefault();
+            const selectedComponent = (globalThis as any).selectedComponent;
+            if (!selectedComponent) return;
 
-              const modal = document.createElement("div");
-              modal.classList.add("tb-modal");
-              modal.style.display = "flex";
+            const modal = document.createElement("div");
+            modal.classList.add("tb-modal");
+            modal.style.display = "flex";
 
-              const tileComp = selectedComponent.closest('.template-wrapper')
-              const modalContent = new ImageUpload("tile", tileComp.getId());
-              modalContent.render(modal);
+            const tileComp = selectedComponent.closest('.template-wrapper')
+            const modalContent = new ImageUpload("tile", tileComp.getId());
+            modalContent.render(modal);
 
-              const uploadInput = document.createElement("input");
-              uploadInput.type = "file";
-              uploadInput.multiple = true;
-              uploadInput.accept = "image/jpeg, image/jpg, image/png";
-              uploadInput.id = "fileInput";
-              uploadInput.style.display = "none";
+            const uploadInput = document.createElement("input");
+            uploadInput.type = "file";
+            uploadInput.multiple = true;
+            uploadInput.accept = "image/jpeg, image/jpg, image/png";
+            uploadInput.id = "fileInput";
+            uploadInput.style.display = "none";
 
-              document.body.appendChild(modal);
-              document.body.appendChild(uploadInput);
-            })
+            document.body.appendChild(modal);
+            document.body.appendChild(uploadInput);
+          })
 
-            wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
-              const targetElement = e.target as Element;
-              if (
-                targetElement.closest(".menu-container") ||
-                targetElement.closest(".menu-category") ||
-                targetElement.closest(".sub-menu-header")
-              ) {
-                e.stopPropagation();
-                return;
-              }
+          wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
+            const targetElement = e.target as Element;
+            if (
+              targetElement.closest(".menu-container") ||
+              targetElement.closest(".menu-category") ||
+              targetElement.closest(".sub-menu-header")
+            ) {
+              e.stopPropagation();
+              return;
+            }
 
-              this.uiManager.clearAllMenuContainers();
-              
-              (globalThis as any).activeEditor = this.editor;
-              (globalThis as any).currentPageId = this.pageId;
-              (globalThis as any).pageData = this.pageData;
+            this.uiManager.clearAllMenuContainers();
 
-              this.uiManager.handleTileManager(e);
-              this.uiManager.openMenu(e);
+            (globalThis as any).activeEditor = this.editor;
+            (globalThis as any).currentPageId = this.pageId;
+            (globalThis as any).pageData = this.pageData;
 
-              this.uiManager.initContentDataUi(e);
-              this.uiManager.activateEditor(this.frameId);
-              this.uiManager.handleInfoSectionHover(e);
-          }); 
+            this.uiManager.handleTileManager(e);
+            this.uiManager.openMenu(e);
+
+            this.uiManager.initContentDataUi(e);
+            this.uiManager.activateEditor(this.frameId);
+            this.uiManager.handleInfoSectionHover(e);
+          });
         } else {
           console.error("Wrapper not found!");
         }
@@ -176,7 +176,7 @@ export class EditorEvents {
       );
     });
   }
-  
+
   onDragAndDrop() {
     let sourceComponent: any;
     let destinationComponent: any;
@@ -200,18 +200,22 @@ export class EditorEvents {
       (globalThis as any).infoContentMapper = this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
       const isTile = component.getClasses().includes('template-block')
-      const isCta = ['img-button-container','plain-button-container','cta-container-child']
-                      .some(cls => component.getClasses().includes(cls))
-      
+      const isCta = ['img-button-container', 'plain-button-container', 'cta-container-child']
+        .some(cls => component.getClasses().includes(cls))
+
       if (isCta) {
+        this.uiManager.toggleSidebar(true)
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools()
-      } 
+      }
       else if (isTile) {
+        this.uiManager.toggleSidebar(true)
         this.uiManager.setTileProperties();
         this.uiManager.setInfoTileProperties();
         this.uiManager.showTileTools()
         this.uiManager.createChildEditor();
+      } else {
+        this.uiManager.toggleSidebar(false);
       }
       // this.uiManager.toggleSidebar()
       // this.uiManager.setCtaProperties();
@@ -219,6 +223,7 @@ export class EditorEvents {
 
     this.editor.on("component:deselected", () => {
       (globalThis as any).selectedComponent = null;
+      this.uiManager.toggleSidebar(false)
     });
   }
 
@@ -253,7 +258,7 @@ export class EditorEvents {
         this.frameId,
         this.pageData,
         this.appVersionManager
-      );      
+      );
     }
     this.uiManager.setPageFocus(editor, frameId, pageId, pageData);
   }
@@ -266,7 +271,7 @@ export class EditorEvents {
         this.frameId,
         this.pageData,
         this.appVersionManager
-      );      
+      );
     }
     this.uiManager.activateNavigators();
   }
@@ -279,19 +284,19 @@ export class EditorEvents {
         this.frameId,
         this.pageData,
         this.appVersionManager
-      );      
+      );
     }
     this.uiManager.removeOtherEditors();
   }
 
   reAlignEditor(editorDiv: HTMLDivElement) {
     // const childContainer = document.getElementById("child-container") as HTMLDivElement;
-  
+
     //   if (childContainer && editorDiv) {
     //     const editorFrames = Array.from(childContainer.children);
     //     const isFirstItem = editorFrames[0] === editorDiv;
     //     const isLastItem = editorFrames[editorFrames.length - 1] === editorDiv;
-  
+
     //     if (isFirstItem) {
     //       childContainer.scrollLeft = 0;
     //       if (childContainer.children.length > 2) {
@@ -316,9 +321,9 @@ export class EditorEvents {
         this.frameId,
         this.pageData,
         this.appVersionManager
-      );      
+      );
     }
-    
+
     this.uiManager.activateEditor(frameId);
   }
 }

@@ -133,11 +133,8 @@ export class TileManager {
       this.tileUpdate.updateTile(containerRowComponent);
 
       if (newTileComponent) {
-        console.log('newTileComponent :>> ', newTileComponent);
         const tileComponent = newTileComponent.find('.template-block')[0];
-        console.log('tileComponent :>> ', tileComponent);
         if (tileComponent) {
-          // const activeEditor = (globalThis as any).activeEditor;
           this.editor.select(tileComponent);
         }
       }

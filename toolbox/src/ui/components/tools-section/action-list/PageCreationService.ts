@@ -21,9 +21,11 @@ export class PageCreationService {
   private infoSectionUi: InfoSectionUI;
   private infoSectionController: InfoSectionController;
   isInfoCtaSection: boolean;
+  sectionId: string | undefined;
 
-  constructor(isInfoCtaSection: boolean = false, type?: "Email" | "Phone" | "WebLink" | "Map" | "Form") {
+  constructor(isInfoCtaSection: boolean = false, type?: "Email" | "Phone" | "WebLink" | "Map" | "Form", sectionId?: string) {
     this.isInfoCtaSection = isInfoCtaSection;
+    this.sectionId = sectionId;
     this.appVersionManager = new AppVersionManager();
     this.toolBoxService = new ToolBoxService();
     this.formModalService = new FormModalService(isInfoCtaSection, type);
@@ -204,9 +206,9 @@ export class PageCreationService {
       let objectId = "";
       // let childPage: any;
 
-      let childPage = version?.Pages.find((page:any)=>{
-        if(page.PageType=="WebLink") console.log('page', page)
-        return page.PageType=="WebLink" && page.PageLinkStructure.Url == formData.field_value
+      let childPage = version?.Pages.find((page: any) => {
+        if (page.PageType == "WebLink") console.log('page', page)
+        return page.PageType == "WebLink" && page.PageLinkStructure.Url == formData.field_value
       })
       if (!childPage) {
         const appVersion = await this.appVersionManager.getActiveVersion();
@@ -282,6 +284,6 @@ export class PageCreationService {
     };
     console.log('cta.. ', cta)
     const button = this.infoSectionUi.addCtaButton(cta);
-    this.infoSectionController.addCtaButton(button, cta);
+    this.infoSectionController.addCtaButton(button, cta, this.sectionId);
   }
 }

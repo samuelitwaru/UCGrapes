@@ -570,6 +570,27 @@ img.content-page-block {
   font-size: 14px;
   opacity: 0;
 }
+
+.cta-button .tb-add-new-info-section,
+.plain-button .tb-add-new-info-section,
+.plain-button-container .tb-add-new-info-section,
+.img-button-container .tb-add-new-info-section {
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  width: 26px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  padding: 4px;
+  border: 1px solid #5068a8;
+  border-radius: 50%;
+  background-color: white;
+  z-index: 1;
+}
+
 .plain-button .cta-badge {
   top: -12px;
   right: -12px;
@@ -584,6 +605,12 @@ img.content-page-block {
 .plain-button:hover .cta-badge,
 .img-button-container:hover .cta-badge {
   opacity: 1;
+}
+.cta-button:hover .tb-add-new-info-section,
+.plain-button:hover .tb-add-new-info-section,
+.plain-button-container:hover .tb-add-new-info-section,
+.img-button-container:hover .tb-add-new-info-section {
+  display: flex;
 }
 .plain-button:hover,
 .img-button:hover,
@@ -1170,6 +1197,7 @@ img.content-page-block {
 .container-column-info .img-button-container,
 .container-column-info .plain-button-container {
   margin-bottom: 0;
+  position: relative;
 }
 
 .container-column-info .info-image-section img {

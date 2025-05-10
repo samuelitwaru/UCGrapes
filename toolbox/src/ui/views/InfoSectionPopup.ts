@@ -111,7 +111,7 @@ export class InfoSectionPopup {
 
             subMenuItem.addEventListener("click", (e) => {
               e.stopPropagation();
-              subItem.action(this.sectionId);
+              subItem.action();
               this.menuContainer.remove();
             });
 
@@ -162,12 +162,12 @@ export class InfoSectionPopup {
 
   addImage(sectionId?: string) {
     // this.controller.addImage();
-    this.infoSectionUi.openImageUpload();
+    this.infoSectionUi.openImageUpload(sectionId);
   }
 
   addDescription(sectionId?: string) {
     // const content: string = `<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...</p>`;
-    this.controller.openContentEditModal();
+    this.controller.openContentEditModal(sectionId);
     // this.infoSectionUi.openContentEditModal();
   }
 
@@ -278,8 +278,8 @@ export class InfoSectionPopup {
         name: item.name,
         label: item.label,
         type: item.type,
-        action: (sectionId: string | undefined) => {
-          const service = new PageCreationService(true, item.type);
+        action: () => {
+          const service = new PageCreationService(true, item.type, this.sectionId);
           item.handler(service);
         },
       };

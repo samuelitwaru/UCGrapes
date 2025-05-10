@@ -95,13 +95,13 @@ export class EditorUIManager {
 
   handleInfoSectionHover(e: MouseEvent) {
     const target = e.target as HTMLElement;
-  
+
     // Check if the target is within a '.tb-add-new-info-section svg' or '.add-new-info-section svg'
     const svgTrigger = target.closest(".tb-add-new-info-section svg, .add-new-info-section svg") as HTMLElement;
-  
+
     if (svgTrigger) {
-      console.log("SVG Trigger Found:", svgTrigger);
-  
+      // console.log("SVG Trigger Found:", svgTrigger);
+
       // Case 1: If the svg is inside '.tb-add-new-info-section', we want to get the sectionId
       if (svgTrigger.closest(".tb-add-new-info-section")) {
         let el: HTMLElement | null = svgTrigger;
@@ -112,55 +112,55 @@ export class EditorUIManager {
           }
           return null;
         })();
-        
+
         if (!sectionContainer) {
           console.warn("No parent info section found.");
           return;
         }
-  
+
         const sectionId = sectionContainer.id;
-        console.log("sectionId:", sectionId);
-  
+        // console.log("sectionId:", sectionId);
+
         const templateContainer = sectionContainer.querySelector(".tb-add-new-info-section") as HTMLElement;
         if (!templateContainer) {
           console.warn("No .tb-add-new-info-section found in section.");
           return;
         }
-  
+
         this.clearAllMenuContainers();
-  
+
         // Get mobile frame and iframe positioning
         const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
         const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
         const iframeRect = iframe?.getBoundingClientRect();
-  
+
         // Pass the sectionId to InfoSectionPopup
         const menu = new InfoSectionPopup(templateContainer, mobileFrame, sectionId);
         const triggerRect = svgTrigger.getBoundingClientRect();
-  
+
         menu.render(triggerRect, iframeRect);
-  
+
         (globalThis as any).activeEditor = this.editor;
         (globalThis as any).currentPageId = this.pageId;
         (globalThis as any).pageData = this.pageData;
         this.activateEditor(this.frameId);
       }
-  
+
       // Case 2: If the svg is inside '.add-new-info-section', we do NOT need to get the sectionId
       else if (svgTrigger.closest(".add-new-info-section")) {
         // Handle the logic specific to `.add-new-info-section` here if needed
-        console.log("Clicked on .add-new-info-section svg (no sectionId required).");
-  
+        // console.log("Clicked on .add-new-info-section svg (no sectionId required).");
+
         // Optional: You can still trigger menu actions or other behaviors if necessary
         this.clearAllMenuContainers();
         const templateContainer = svgTrigger.closest(".add-new-info-section") as HTMLElement;
         const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
         const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
         const iframeRect = iframe?.getBoundingClientRect();
-  
+
         const menu = new InfoSectionPopup(templateContainer, mobileFrame, '');
         const triggerRect = svgTrigger.getBoundingClientRect();
-  
+
         menu.render(triggerRect, iframeRect);
       }
     }
@@ -174,7 +174,7 @@ export class EditorUIManager {
         const type = comp.get("type");
         return type === "tile-wrapper";
       });
-      console.log(tileWrappers);
+      // console.log(tileWrappers);
       if (tileWrappers.length > 3) {
         model.target.remove();
         this.editor.UndoManager.undo();
@@ -193,7 +193,7 @@ export class EditorUIManager {
         destinationComponent.getId(),
         model.index
       );
-      console.log("tileMapper", tileMapper);
+      // console.log("tileMapper", tileMapper);
       this.onTileUpdate(destinationComponent);
     } else if (
       parentEl &&
@@ -245,7 +245,7 @@ export class EditorUIManager {
           this.activateEditor(this.frameId);
           this.clearAllMenuContainers();
         });
-        
+
         frame.addEventListener("input", (event: MouseEvent) => {
           (globalThis as any).activeEditor = this.editor;
           (globalThis as any).currentPageId = this.pageId;
@@ -256,7 +256,7 @@ export class EditorUIManager {
       }
     });
 
-    document.addEventListener("click", (event: MouseEvent) =>{
+    document.addEventListener("click", (event: MouseEvent) => {
       this.clearAllMenuContainers();
     })
   }
@@ -293,7 +293,7 @@ export class EditorUIManager {
         this.activateMiniatureFrame(frame.id);
       }
     });
-    
+
     new ToolboxManager().unDoReDo();
     console.log("activateEditor: ")
   }
@@ -319,12 +319,12 @@ export class EditorUIManager {
     }
   }
 
-  showCtaTools () {
+  showCtaTools() {
     this.ctaPropsSection.style.display = "block";
     this.tilePropsSection.style.display = "none"
   }
-  
-  showTileTools () {
+
+  showTileTools() {
     // this.ctaPropsSection = document.getElementById(
     //   "content-page-section"
     // ) as HTMLDivElement;
@@ -332,18 +332,22 @@ export class EditorUIManager {
     this.ctaPropsSection.style.display = "none";
   }
 
-  async toggleSidebar() {
+  toggleSidebar(show: boolean = false) {
     const toolSection = document.getElementById(
       "tools-section"
     ) as HTMLDivElement;
-    toolSection.style.display = "block";
+    // hide sidebar if no active content to work with
+    if (show) {
+      // console.log('show sidebar :>> ', show);
+      toolSection.style.display = "block";
+      const menuSection = document.getElementById(
+        "menu-page-section"
+      ) as HTMLElement;
+      const contentection = document.getElementById("content-page-section");
+      if (menuSection) menuSection.style.display = "block";
+      // if (contentection) contentection.remove();
+    } else toolSection.style.display = "none";
 
-    const menuSection = document.getElementById(
-      "menu-page-section"
-    ) as HTMLElement;
-    const contentection = document.getElementById("content-page-section");
-    if (menuSection) menuSection.style.display = "block";
-    // if (contentection) contentection.remove();
   }
 
   createTileMapper() {
@@ -556,8 +560,8 @@ export class EditorUIManager {
           ? "center"
           : "center"
         : frames.length > 3
-        ? "center"
-        : "center";
+          ? "center"
+          : "center";
 
     scrollContainer.style.setProperty("justify-content", alignment);
 

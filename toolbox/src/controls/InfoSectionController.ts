@@ -69,6 +69,7 @@ export class InfoSectionController {
   }
 
   addImage(imageUrl: string, nextSectionId?: string) {
+    // console.log('addImage sectionId :>> ', nextSectionId);
     const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
@@ -88,7 +89,7 @@ export class InfoSectionController {
     }
   }
 
-  openContentEditModal() {
+  openContentEditModal(sectionId?: string) {
     const modalBody = document.createElement("div");
 
     const modalContent = document.createElement("div");
@@ -161,7 +162,7 @@ export class InfoSectionController {
       const content = document.querySelector(
         "#editor .ql-editor"
       ) as HTMLElement;
-      this.addDescription(content.innerHTML);
+      this.addDescription(content.innerHTML, sectionId);
       modal.close();
     });
     cancelBtn.addEventListener("click", () => {
@@ -244,7 +245,8 @@ export class InfoSectionController {
     }
   }
 
-  updateInfoImage(imageUrl: string, infoId?: string) {
+  updateInfoImage(imageUrl: string, infoId?: string, sectionId?: string) {
+    // console.log('updateInfoImage sectionId :>> ', sectionId);
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const component = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (component) {
@@ -255,7 +257,7 @@ export class InfoSectionController {
         InfoValue: imageUrl,
       });
     } else {
-      this.addImage(imageUrl);
+      this.addImage(imageUrl, sectionId);
     }
   }
 

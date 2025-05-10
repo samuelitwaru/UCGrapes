@@ -87,6 +87,7 @@ export const i18n = new I18n({
         weblink: "Web link",
         module: "Modules",
         content: "Content",
+        call_to_action: "Call to Action",
       },
     },
     default: {
@@ -108,6 +109,7 @@ export const i18n = new I18n({
       add_content_page: "Add content page",
       information_page: "New Page",
       existing_pages: "Existing Pages",
+      call_to_action: "Call to Action",
       forms: "Forms",
       modules: "Modules",
       email: "Email",
@@ -235,6 +237,7 @@ export const i18n = new I18n({
       forms: "Formulieren",
       modules: "Modules",
       existing_pages: "Bestaande pagina's",
+      call_to_action: "Call to Action",
       email: "e-mail",
       phone: "Telefoon",
       maps: "Kaarten",

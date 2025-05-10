@@ -32,6 +32,7 @@ export class ActionListDropDown {
 
   async getCategoryData(): Promise<Category[]> {
     const activePage = (globalThis as any).pageData;
+  
     const categories = [
       {
         name: "Page",
@@ -40,25 +41,19 @@ export class ActionListDropDown {
         options: await this.getPages(),
         canCreatePage: true,
       },
-      // {
-      //       name: "Services",
-      //       displayName: i18n.t("sidebar.action_list.services"),
-      //       label: i18n.t("sidebar.action_list.services"),
-      //       options: this.getServices(activePage),
-      //       canCreatePage: true,
-      //     },
-      (activePage) && (
-        activePage.PageType === "MyCare" || 
+      (activePage) &&
+      (
+        activePage.PageType === "MyCare" ||
         activePage.PageType === "MyService" ||
         activePage.PageType === "MyLiving"
       )
         ? {
-          name: "Content",
-          displayName: i18n.t("sidebar.action_list.services"),
-          label: i18n.t("sidebar.action_list.services"),
-          options: this.getServices(activePage),
-          canCreatePage: true,
-        }
+            name: "Content",
+            displayName: i18n.t("sidebar.action_list.services"),
+            label: i18n.t("sidebar.action_list.services"),
+            options: this.getServices(activePage),
+            canCreatePage: true,
+          }
         : null,
       {
         name: "DynamicForm",
@@ -74,13 +69,6 @@ export class ActionListDropDown {
         options: await this.getPredefinedPages(),
         canCreatePage: false,
       },
-      // {
-      //   name: "Content",
-      //   displayName: i18n.t("sidebar.action_list.services"),
-      //   label: i18n.t("sidebar.action_list.services"),
-      //   options: await this.getContentPages(),
-      //   canCreatePage: true,
-      // },
       {
         name: "WebLink",
         displayName: i18n.t("sidebar.action_list.weblink"),
@@ -88,12 +76,25 @@ export class ActionListDropDown {
         options: [],
         canCreatePage: false,
       },
+      {
+        name: "CallToActions",
+        displayName: i18n.t("sidebar.action_list.call_to_action"),
+        label: i18n.t("sidebar.action_list.call_to_action"),
+        options:
+        [
+          { PageId: "add-email", PageName: i18n.t("tile.email"), TileName: "", PageType: "CtaEmail", },
+          { PageId: "add-phone", PageName: i18n.t("tile.phone"), TileName: "", PageType: "CtaPhone", },
+          { PageId: "add-web-link", PageName: "Web link", TileName: "", PageType: "CtaWebLink", },
+        ],
+        canCreatePage: false,
+      },
     ];
-
-    return categories.filter((category): category is Category => 
-      category !== null
-    );
+  
+    return categories
+      .filter((category): category is Category => category !== null)
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
+  
 
   getDynamicForms() {
     const forms = (this.toolBoxService.forms || []).map((form) => ({

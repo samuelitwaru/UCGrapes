@@ -58,6 +58,12 @@ export class InfoSectionController {
       };
 
       this.addToMapper(infoType);
+
+      // Select the component after appending
+      const component = this.editor.getWrapper().find(`#${ctaComponent.id}`)[0];
+      if (component) {
+        this.editor.select(component);
+      }
     }
   }
 
@@ -96,7 +102,7 @@ export class InfoSectionController {
     saveBtn.disabled = true; // Disable save button initially
     saveBtn.style.opacity = "0.6";
     saveBtn.style.cursor = "not-allowed";
-    
+
     const cancelBtn = this.createButton(
       "cancel_form",
       "tb-btn-outline",
@@ -138,7 +144,7 @@ export class InfoSectionController {
       // Check if editor has meaningful content (not just empty paragraphs)
       const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
       saveBtn.disabled = !hasContent;
-      
+
       // Update button styling based on disabled state
       if (saveBtn.disabled) {
         saveBtn.style.opacity = "0.6";
@@ -208,6 +214,16 @@ export class InfoSectionController {
         ],
       };
       this.addToMapper(infoType);
+
+      // Select the tile
+      const component = this.editor.getWrapper().find(`#${tileId}`)[0];
+
+      if (component) {
+        const tileComponent = component.find('.template-block')[0];
+        if (tileComponent) {
+          this.editor.select(tileComponent);
+        }
+      }
     }
   }
 

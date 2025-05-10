@@ -57,7 +57,14 @@ export class JSONToGrapesJSContent {
                             </span>
                         </span>
                         <div${DefaultAttributes} class="cta-badge">
-                            <i ${DefaultAttributes} class="fa fa-minus"></i>
+                        <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title ${DefaultAttributes}>delete</title>
+                            <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                            <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                            <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                            <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                            <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                        </svg>
                         </div>
                         <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="img-button-label label">${this.getCtaLabel(cta)}</span>
                         <i ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="fa fa-angle-right img-button-arrow"></i>
@@ -75,7 +82,14 @@ export class JSONToGrapesJSContent {
                 <button ${DefaultAttributes} id="ibob6" data-gjs-type="default" class="plain-button cta-styled-btn"
                   style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <div ${DefaultAttributes} id="iyocy" data-gjs-type="default" class="cta-badge">
-                        <i ${DefaultAttributes} id="ifxn6" data-gjs-type="default" class="fa fa-minus"></i>
+                        <svg fill="#5068a8" id="ifxn6" data-gjs-type="default" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title ${DefaultAttributes}>delete</title>
+                            <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                            <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                            <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                            <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                            <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                        </svg>
                     </div>
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="label">${this.getCtaLabel(cta)}</span>
                 </button>
@@ -100,7 +114,14 @@ export class JSONToGrapesJSContent {
                       </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
-                        <i ${DefaultAttributes} class="fa fa-minus"></i>
+                        <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                          <title ${DefaultAttributes}>delete</title>
+                          <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                          <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                          <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                          <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                          <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                      </svg>
                     </div>
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="img-button-label label">${this.getCtaLabel(cta)}</span>
                     <i ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="fa fa-angle-right img-button-arrow"></i>
@@ -117,7 +138,16 @@ export class JSONToGrapesJSContent {
                 <div class="cta-button cta-styled-btn" ${DefaultAttributes}
                   style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     ${this.ctaIcon(cta)}
-                    <div class="cta-badge" ${DefaultAttributes}><i ${DefaultAttributes} data-gjs-type="default" class="fa fa-minus"></i></div>
+                    <div class="cta-badge" ${DefaultAttributes}>
+                      <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                          <title ${DefaultAttributes}>delete</title>
+                          <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                          <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                          <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                          <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                          <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                      </svg>
+                    </div>
                 </div>
                 <span class="cta-label label" ${DefaultAttributes}>${this.getCtaLabel(cta)}</span>
             </div>
@@ -129,14 +159,14 @@ export class JSONToGrapesJSContent {
     let label = cta.CtaLabel;
     if (label) {
       label =
-      cta.CtaButtonType === "Round"
+        cta.CtaButtonType === "Round"
           ? truncateString(label, 5)
           : truncateString(label, 14);
       return label;
     }
     return '';
   }
-  
+
   ctaIcon(cta: any) {
     let icon;
     switch (cta.CtaType) {
@@ -180,7 +210,7 @@ export class JSONToGrapesJSContent {
       default:
         break;
     }
-    
+
     return icon;
   }
 
@@ -229,15 +259,14 @@ export class JSONToGrapesJSContent {
                             </div>
                         </div>
                     </div> 
-                    ${
-                      ctaHtml
-                        ? `
+                    ${ctaHtml
+        ? `
                       <div ${ctaContainerDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;">
                           ${ctaHtml}
                       </div>`
-                        : `
+        : `
                       <div ${ctaContainerDefaultAttributes} class="cta-button-container" style="gap: 0.2rem;"></div>`
-                    }         
+      }         
                       <i class="fa fa-pencil></i>
                 </div>
             </div>

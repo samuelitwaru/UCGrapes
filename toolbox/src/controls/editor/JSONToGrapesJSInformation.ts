@@ -65,7 +65,14 @@ export class JSONToGrapesJSInformation {
                             </span>
                         </span>
                         <div${DefaultAttributes} class="cta-badge">
-                            <i ${DefaultAttributes} class="fa fa-minus"></i>
+                            <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <title ${DefaultAttributes}>delete</title>
+                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+            </svg>
                         </div>
                         <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="img-button-label label">${this.getCtaLabel(cta)}</span>
                         <i ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="fa fa-angle-right img-button-arrow"></i>
@@ -83,7 +90,14 @@ export class JSONToGrapesJSInformation {
                 <button ${DefaultAttributes} id="ibob6" data-gjs-type="default" class="plain-button cta-styled-btn"
                   style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <div ${DefaultAttributes} id="iyocy" data-gjs-type="default" class="cta-badge">
-                        <i ${DefaultAttributes} id="ifxn6" data-gjs-type="default" class="fa fa-minus"></i>
+                    <svg id="ifxn6" fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title ${DefaultAttributes}>delete</title>
+                        <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                        <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                        <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                        <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                        <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                    </svg>
                     </div>
                     
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="label">${this.getCtaLabel(cta)}</span>
@@ -109,7 +123,14 @@ export class JSONToGrapesJSInformation {
                       </svg>
                     </span>
                     <div${DefaultAttributes} class="cta-badge">
-                        <i ${DefaultAttributes} class="fa fa-minus"></i>
+                        <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                          <title ${DefaultAttributes}>delete</title>
+                          <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                          <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                          <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                          <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                          <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                      </svg>
                     </div>
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="img-button-label label">${this.getCtaLabel(cta)}</span>
                     <i ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"}" class="fa fa-angle-right img-button-arrow"></i>
@@ -126,7 +147,16 @@ export class JSONToGrapesJSInformation {
                 <div class="cta-button cta-styled-btn" ${DefaultAttributes}
                   style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     ${this.ctaIcon(cta)}
-                    <div class="cta-badge" ${DefaultAttributes}><i ${DefaultAttributes} data-gjs-type="default" class="fa fa-minus"></i></div>
+                    <div class="cta-badge" ${DefaultAttributes}>
+                    <svg fill="#5068a8" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <title ${DefaultAttributes}>delete</title>
+                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+            </svg>
+                    </div>
                 </div>
                 <span class="cta-label label" ${DefaultAttributes}>${this.getCtaLabel(cta)}</span>
             </div>
@@ -138,38 +168,38 @@ export class JSONToGrapesJSInformation {
     let label = cta.CtaLabel;
     if (label) {
       label =
-      cta.CtaButtonType === "Round"
+        cta.CtaButtonType === "Round"
           ? truncateString(label, 10)
           : truncateString(label, 14);
       return label;
     }
     return '';
   }
-  
+
   ctaIcon(cta: any) {
     if (cta.CtaButtonIcon) {
       const svg = ctaIcons.find(icon => icon.name === cta.CtaButtonIcon)?.svg;
       const tempElement = document.createElement('div') as HTMLElement;
       tempElement.innerHTML = svg || ``;
       const newSvgElement = tempElement.querySelector('svg');
-      
+
       if (newSvgElement) {
-          newSvgElement.setAttribute('height', '32');
-          newSvgElement.setAttribute('width', '32');
-          
-          const pathElements = newSvgElement.querySelectorAll('path');
-          pathElements.forEach(path => {
-              path.setAttribute('fill',  cta?.CtaColor || '#fff');
-          });
-          
-          const updatedSvg = this.addGrapesAttributes(tempElement.innerHTML);
-          return updatedSvg;
+        newSvgElement.setAttribute('height', '32');
+        newSvgElement.setAttribute('width', '32');
+
+        const pathElements = newSvgElement.querySelectorAll('path');
+        pathElements.forEach(path => {
+          path.setAttribute('fill', cta?.CtaColor || '#fff');
+        });
+
+        const updatedSvg = this.addGrapesAttributes(tempElement.innerHTML);
+        return updatedSvg;
       }
     } else {
-    let icon;
-    switch (cta.CtaType) {
-      case "Phone":
-        icon = `
+      let icon;
+      switch (cta.CtaType) {
+        case "Phone":
+          icon = `
         <svg ${DefaultAttributes} id="ixdtl" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                     viewBox="0 0 49.417 49.418">
             <path ${DefaultAttributes} id="call" data-gjs-type="svg-in"
@@ -177,9 +207,9 @@ export class JSONToGrapesJSInformation {
                 transform="translate(-4 -3)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
         </svg>
         `;
-        break;
-      case "Email":
-        icon = `
+          break;
+        case "Email":
+          icon = `
         <svg ${DefaultAttributes} id="inavf" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32"
             height="28" viewBox="0 0 41 32.8">
             <path ${DefaultAttributes} id="Path_1218" data-gjs-type="svg-in" data-name="Path 1218"
@@ -187,16 +217,16 @@ export class JSONToGrapesJSInformation {
                 transform="translate(-2 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
         </svg>
         `;
-        break;
-      case "WebLink":
-        icon = `
+          break;
+        case "WebLink":
+          icon = `
         <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
           <path${DefaultAttributes} id="Path_1213" data-name="Path 1213" d="M15.833,4a4.163,4.163,0,0,0-2.958,1.229l-.979.979a4.168,4.168,0,0,0-1.229,2.958,4.1,4.1,0,0,0,.292,1.521L12.042,9.6a2.857,2.857,0,0,1,.792-2.458l.979-.979a2.853,2.853,0,0,1,2.021-.833,2.805,2.805,0,0,1,2,.833,2.85,2.85,0,0,1,0,4.021l-.979.979A2.853,2.853,0,0,1,14.833,12a2.439,2.439,0,0,1-.437-.042l-1.083,1.083a4.1,4.1,0,0,0,1.521.292A4.163,4.163,0,0,0,17.792,12.1l.979-.979A4.168,4.168,0,0,0,20,8.167,4.2,4.2,0,0,0,15.833,4ZM14.188,8.854,8.854,14.188l.958.958,5.333-5.333ZM9.167,10.667A4.163,4.163,0,0,0,6.208,11.9l-.979.979A4.168,4.168,0,0,0,4,15.833,4.2,4.2,0,0,0,8.167,20a4.163,4.163,0,0,0,2.958-1.229l.979-.979a4.168,4.168,0,0,0,1.229-2.958,4.1,4.1,0,0,0-.292-1.521L11.958,14.4a2.857,2.857,0,0,1-.792,2.458l-.979.979a2.853,2.853,0,0,1-2.021.833,2.805,2.805,0,0,1-2-.833,2.85,2.85,0,0,1,0-4.021l.979-.979A2.853,2.853,0,0,1,9.167,12a2.44,2.44,0,0,1,.438.042l1.083-1.083A4.1,4.1,0,0,0,9.167,10.667Z" transform="translate(-4 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
         </svg>
         `;
-        break;
-      case "Form":
-        icon = `
+          break;
+        case "Form":
+          icon = `
         <svg ${DefaultAttributes} id="igqdh" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="26" height="30"
               viewBox="0 0 13 16">
               <path ${DefaultAttributes} id="Path_1209" data-gjs-type="svg-in" data-name="Path 1209"
@@ -204,14 +234,14 @@ export class JSONToGrapesJSInformation {
                   transform="translate(-8 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
           </svg>
         `;
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
+
+      return icon;
     }
-    
-    return icon;
-    }
-    
+
   }
 
   private generateInfoContent(content: InfoType): any {
@@ -226,7 +256,7 @@ export class JSONToGrapesJSInformation {
       content.InfoType === "Cta" &&
       content.CtaAttributes
     ) {
-       return this.generateCta(content);
+      return this.generateCta(content);
     } else if (
       content.InfoType === "TileRow" &&
       content.Tiles
@@ -253,9 +283,8 @@ export class JSONToGrapesJSInformation {
     const htmlData = `
             <div ${DefaultAttributes} id="frame-container" data-gjs-type="template-wrapper" class="content-frame-container">
                 <div ${DefaultInfoColumnAttributes} class="container-column-info">
-                    ${
-                        contentHtml ? contentHtml : ''
-                    }
+                    ${contentHtml ? contentHtml : ''
+      }
                 </div>  
                 ${this.addNewInfoSection()}
             </div>
@@ -362,8 +391,8 @@ export class JSONToGrapesJSInformation {
                 </svg>
             </button>
             ${this.addGrapesAttributes(
-              `<div ${DefaultAttributes} class="info-desc-content">${content?.InfoValue}</div>`
-            )}      
+      `<div ${DefaultAttributes} class="info-desc-content">${content?.InfoValue}</div>`
+    )}      
           </div>
     `;
   }

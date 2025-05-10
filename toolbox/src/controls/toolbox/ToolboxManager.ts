@@ -7,6 +7,8 @@ import { PageAttacher } from "../../ui/components/tools-section/action-list/Page
 import { NavbarLeftButtons } from "../../ui/components/NavBarLeftButtons";
 import { UndoRedoManager } from "./UndoRedoManager";
 import { TileMapper } from "../editor/TileMapper";
+import { HistoryManager } from "../HistoryManager";
+import { JSONToGrapesJSInformation } from "../editor/JSONToGrapesJSInformation";
 
 export class ToolboxManager {
   appVersions: any;
@@ -181,72 +183,80 @@ export class ToolboxManager {
   unDoReDo() {
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
-    const editor = (globalThis as any).activeEditor;
-    if (!editor) {
-      console.log("No editor found")
+    const pageId = (globalThis as any).currentPageId;
+    
+    if (!pageId) {
+      console.log("No editor found");
       return;
     }
-    const um = editor.UndoManager;
     
-    undoButton.disabled = um.hasUndo();
+    const historyManager = new HistoryManager(pageId);
+    
+    const updateButtonStates = () => {
+      if (undoButton) {
+        undoButton.disabled = !historyManager.canUndo();
+      }
+      
+      if (redoButton) {
+        redoButton.disabled = !historyManager.canRedo();
+      }
+    }
+
+    updateButtonStates();
+    
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
-        console.log("Undo button clicked", um.hasUndo());
-        const undoResult = um.undo();
+        const undoResult = historyManager.undo();
+        
         if (undoResult) {
-
+          this.applyNewState(undoResult, pageId);
         }
+        updateButtonStates();
       };
     }
-
-    redoButton.disabled = um.hasRedo();
+  
     if (redoButton) {
       redoButton.onclick = (e) => {
         e.preventDefault();
-        const undoResult = um.redo();
-        if (undoResult) {
-          //
+        const redoResult = historyManager.redo();
+        
+        if (redoResult) {
+          this.applyNewState(redoResult, pageId);
         }
+        updateButtonStates();
       };
-    }
+    } 
   }
 
-  // unDoReDo() {
-  //   const undoButton = document.getElementById("undo") as HTMLButtonElement;
-  //   const redoButton = document.getElementById("redo") as HTMLButtonElement;
-  //   const pageId = (globalThis as any).currentPageId;
-  //   if (!pageId) {
-  //     console.log("No pageId found")
-  //     return;
-  //   }
-
-  //   const tileMapper = new TileMapper(pageId);
-  //   // console.log("TileMapper created")
-  //   // console.log("TileMapper history", tileMapper.history)
-  //   // console.log("TileMapper future", tileMapper.future);
-  //   undoButton.disabled = !tileMapper.history.length;
-  //   if (undoButton) {
-  //     undoButton.onclick = (e) => {
-  //       e.preventDefault();
-  //       const undoResult = tileMapper.undo();
-  //       if (undoResult) {
-  //         console.log("Affected tiles:", undoResult.affectedTiles);
-  //         console.log("Affected rows:", undoResult.affectedRows);
-  //       }
-  //     };
-  //   }
-
-  //   redoButton.disabled = !tileMapper.future.length;
-  //   if (redoButton) {
-  //     redoButton.onclick = (e) => {
-  //       e.preventDefault();
-  //       const undoResult = tileMapper.redo();
-  //       if (undoResult) {
-  //         console.log("Affected tiles:", undoResult.affectedTiles);
-  //         console.log("Affected rows:", undoResult.affectedRows);
-  //       }
-  //     };
-  //   }
-  // }
+  applyNewState(stateData: any, pageId: string) {
+    const jsonFormatter = new JSONToGrapesJSInformation(stateData);
+    const updatedHtml = jsonFormatter.generateHTML();
+    const storageKey = `data-${pageId}`;
+  
+    const editor = (globalThis as any).activeEditor;
+    if (!editor) return;
+  
+    const selectedComponent = (globalThis as any).selectedComponent;
+    const selectedComponentId = selectedComponent ? selectedComponent.getId() : null;
+  
+    const frameContainer = editor.getWrapper().find('#frame-container')[0];
+    if (frameContainer) {
+      frameContainer.replaceWith(updatedHtml);
+      localStorage.setItem(storageKey, JSON.stringify(stateData));
+      
+      if (selectedComponentId) {
+        const newFrameContainer = editor.getWrapper().find('#frame-container')[0];
+        if (newFrameContainer) {
+          const newComponent = editor.getWrapper().find(`#${selectedComponentId}`)[0];
+          if (newComponent) {
+            editor.select(newComponent);
+            (globalThis as any).selectedComponent = newComponent;
+          } else {
+            console.log('Previously selected component no longer exists');
+          }
+        }
+      }
+    }
+  }
 }

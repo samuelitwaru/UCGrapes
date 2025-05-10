@@ -150,8 +150,6 @@ export class EditorEvents {
               this.uiManager.activateEditor(this.frameId);
               this.uiManager.handleInfoSectionHover(e);
           }); 
-          new ToolboxManager().unDoReDo();
-
         } else {
           console.error("Wrapper not found!");
         }

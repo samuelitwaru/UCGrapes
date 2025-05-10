@@ -12,6 +12,7 @@ import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
 import { InfoSectionPopup } from "../../ui/views/InfoSectionPopup";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
+import { ToolboxManager } from "../toolbox/ToolboxManager";
 
 export class EditorUIManager {
   editor: any;
@@ -212,6 +213,10 @@ export class EditorUIManager {
         });
       }
     });
+
+    document.addEventListener("click", (event: MouseEvent) =>{
+      this.clearAllMenuContainers();
+    })
   }
 
   setPageFocus(editor: any, frameId: string, pageId: string, pageData: any) {
@@ -229,7 +234,6 @@ export class EditorUIManager {
   }
 
   activateEditor(frameId: any) {
-    console.log("activateEditor frameId: ", frameId)
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       // deselect in active editors
@@ -247,6 +251,9 @@ export class EditorUIManager {
         this.activateMiniatureFrame(frame.id);
       }
     });
+    
+    new ToolboxManager().unDoReDo();
+    console.log("activateEditor: ")
   }
 
   activateMiniatureFrame(frameId: string) {

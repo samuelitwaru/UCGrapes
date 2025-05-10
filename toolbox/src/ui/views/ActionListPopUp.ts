@@ -25,7 +25,6 @@ export class ActionListPopUp {
     this.menuList.innerHTML = "";
 
     const menuCategories = await this.controller.getMenuCategories();
-    console.log("Menu Categories:", menuCategories);
     menuCategories?.forEach((category) => {
       const menuCategory = document.createElement("div");
       menuCategory.classList.add("menu-category");

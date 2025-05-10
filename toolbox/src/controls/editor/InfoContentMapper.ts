@@ -1,9 +1,12 @@
 import { InfoType } from "../../interfaces/InfoType";
+import { HistoryManager } from "../HistoryManager";
 
 export class InfoContentMapper {
     pageId: any;
+    historyManager: HistoryManager;
     constructor(pageId: any) {
         this.pageId = pageId;
+        this.historyManager = new HistoryManager(this.pageId);
     }
 
     public contentRow (content: InfoType): any {
@@ -30,6 +33,8 @@ export class InfoContentMapper {
         data.PageInfoStructure.InfoContent.push(this.contentRow(content));
     
         localStorage.setItem(storageKey, JSON.stringify(data));
+
+        this.historyManager.addState(data);
     }
     
     moveContentRow(contentId: any, newIndex: number): void {
@@ -45,6 +50,7 @@ export class InfoContentMapper {
     
         contentArray.splice(newIndex, 0, contentRow);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+        this.historyManager.addState(data);
     }
 
     updateInfoContent(infoId: any, newContent: InfoType): boolean {
@@ -55,6 +61,7 @@ export class InfoContentMapper {
         if (contentRowIndex === -1) return false;
         contentArray[contentRowIndex] = newContent;
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+        this.historyManager.addState(data);
         return true;
     }
 
@@ -69,6 +76,7 @@ export class InfoContentMapper {
 
         contentArray.splice(contentRowIndex, 1);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+        this.historyManager.addState(data);
         return true;
     }
 

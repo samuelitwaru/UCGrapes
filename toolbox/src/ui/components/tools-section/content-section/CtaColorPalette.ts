@@ -25,6 +25,7 @@ export class CtaColorPalette {
         this.colorList.forEach((color: any) => {
             const colorItem = document.createElement("div");
             colorItem.classList.add("color-item");
+            colorItem.title = color.CtaColorName;
 
             const input = document.createElement("input");
             input.type = "radio";

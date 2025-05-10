@@ -269,7 +269,6 @@ export class CtaManager {
         const pageTypeAttribute = this.isInformationPage() 
             ? `data-gjs-type="info-cta-section"` 
             : `data-gjs-type=cta-buttons`;
-
         return `
             <div id="${componentId}" 
                 button-type="${attributes.CtaType}"

@@ -447,19 +447,9 @@ export class EditorUIManager {
         childPage = data;
       } else {
         const pages = this.appVersionManager.getPages();
-        if (tileAttributes.Action.ObjectType === "WebLink") {
-          childPage = pages?.find((page: any) => page.PageName === "Web Link");
-        } else if (tileAttributes.Action.ObjectType === "DynamicForm") {
-          childPage = pages?.find(
-            (page: any) => page.PageName === "Dynamic Form"
-          );
-        } else {
-          childPage = this.appVersionManager
-            .getPages()
-            ?.find((page: any) => page.PageId === objectId);
-        }
+        childPage = pages?.find((page: any) => page.PageId === objectId);
       }
-
+      console.log(childPage)
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }

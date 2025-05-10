@@ -1602,7 +1602,7 @@ div#cta-selected-actions {
   cursor: pointer;
 }
 
-.upload-area img {
+.image-editor-container img {
   height: 100%;
   margin-bottom: 10px;
   position: absolute;
@@ -1610,8 +1610,6 @@ div#cta-selected-actions {
   left: 50%;
   transform: translate(-50%, -50%) scale(1);
   transform-origin: center center;
-  border: 1px solid #11172a;
-  border-radius: 10px;
 }
 
 .upload-area p {
@@ -1633,6 +1631,10 @@ div#cta-selected-actions {
 .upload-text {
   margin-top: 15px;
   color: #666;
+}
+.preview-image {
+  border: 1px solid #11172a;
+  border-radius: 10px;
 }
 
 .empty-message {
@@ -3042,7 +3044,7 @@ canvas {
   align-items: center;
 }
 
-.modal-footer {
+.tb-modal-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3058,7 +3060,7 @@ canvas {
   border: #c0c0c0 solid 1px;
 }
 
-.modal-footer input[type="range"] {
+.tb-modal-footer input[type="range"] {
   flex: 1; /* Allow the slider to take up available space */
   margin-left: 0 20px; /* Add spacing around the slider */
 }
@@ -3081,11 +3083,7 @@ canvas {
   color: #333;
 }
 
-.tb-btn-primary {
-  background: #5068a8;
-  border: none;
-  color: #fff;
-}
+
 /* Style the slider track */
 input[type="range"] {
   appearance: none; /* Standard property for compatibility */

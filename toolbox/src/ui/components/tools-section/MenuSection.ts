@@ -17,7 +17,7 @@ export class MenuSection {
       const themeSection = new ThemeSection();
       const tileImgSection = new TileImgSection();
       const titleSection = new TitleSection();
-      const actionListContainer = new ActionSelectContainer();
+      // const actionListContainer = new ActionSelectContainer();
       const iconListCategories = new IconListCategories()
 
 

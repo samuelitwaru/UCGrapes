@@ -14,21 +14,17 @@ export class TileImgContainer {
     this.container.classList.add("tile-img-container");
     this.container.id = "tile-img-container";
     
-    const img = document.createElement("img");
-    img.alt = "Tile Image";
-    img.src =
-      "https://staging.comforta.yukon.software/media/receptie-197@3x.png";
-    img.className = "tile-img-thumbnail";
-
-    const button = document.createElement("button");
-    button.className = "tile-img-delete-button";
-    button.id = "tile-img-delete-button";
-    button.innerHTML = '<i class="fa fa-xmark"></i>';
-
- 
+    this.container.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#4C5357" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter">
+      <line x1="2" y1="6" x2="22" y2="6"></line>
+      <polyline points="8 6 8 2 16 2 16 6"></polyline>
+      <line x1="9" y1="10" x2="9" y2="18"></line><line x1="15" y1="10" x2="15" y2="18"></line>
+      <polyline points="20 6 20 22 4 22 4 6"></polyline>
+    </svg>
+    `;
 
     let tileAttributes;
-    button.addEventListener("click", (e) => {
+    this.container.addEventListener("click", (e) => {
       e.preventDefault();
       const selectedComponent = (globalThis as any).selectedComponent;
       if (!selectedComponent) return;
@@ -57,7 +53,6 @@ export class TileImgContainer {
         "Opacity",
         "0"
       );
-      
 
       this.container.style.display = "none";
       this.container.style.position = "relative";
@@ -65,10 +60,6 @@ export class TileImgContainer {
       const slider = document.getElementById("slider-wrapper") as HTMLInputElement;
       slider.style.display = "none";
     });
-
-    this.container.appendChild(img);
-    this.container.appendChild(button);
-
   }
 
 

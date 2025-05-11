@@ -61,6 +61,13 @@ export class ActionListController {
       expandable: true,
       action: () => this.getSubMenuItems(categoryData, ""),
     });
+    secondCategory.push({
+      id: "cta-list",
+      name: "CallToActions",
+      label: i18n.t("tile.call_to_action"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, "CallToActions"),
+    });
   
     return [
       [
@@ -91,11 +98,6 @@ export class ActionListController {
         // },
       ],
       secondCategory,
-      [
-        { id: "add-email", label: i18n.t("tile.email"), name: "", action: () => {this.pageCreationService.handleEmail()} },
-        { id: "add-phone", label: i18n.t("tile.phone"), name: "", action: () => {this.pageCreationService.handlePhone()} },
-        { id: "add-web-link", label: "Web link", name: "", action: () => {this.pageCreationService.handleWebLinks()} },
-      ],
     ];
   }
 
@@ -162,6 +164,12 @@ export class ActionListController {
       this.handleDynamicForms(item);
     } else if (type === "Modules") {
       this.pageAttacher.attachToTile(item, item.PageType, item.PageName);
+    } else if (type === "CtaEmail") {
+      this.pageCreationService.handleEmail()
+    } else if (type === "CtaPhone") {
+      this.pageCreationService.handlePhone()
+    } else if (type === "CtaWebLink") {
+      this.pageCreationService.handleWebLinks()
     } else {
       this.pageAttacher.attachToTile(item, type, item.PageName);
     }

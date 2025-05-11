@@ -21,9 +21,11 @@ export class PageCreationService {
   private infoSectionUi: InfoSectionUI;
   private infoSectionController: InfoSectionController;
   isInfoCtaSection: boolean;
+  sectionId: string | undefined;
 
-  constructor(isInfoCtaSection: boolean = false, type?: "Email" | "Phone" | "WebLink" | "Map") {
+  constructor(isInfoCtaSection: boolean = false, type?: "Email" | "Phone" | "WebLink" | "Map" | "Form", sectionId?: string) {
     this.isInfoCtaSection = isInfoCtaSection;
+    this.sectionId = sectionId;
     this.appVersionManager = new AppVersionManager();
     this.toolBoxService = new ToolBoxService();
     this.formModalService = new FormModalService(isInfoCtaSection, type);
@@ -89,6 +91,36 @@ export class PageCreationService {
       title: "Add Email Address",
       form,
       onSave: () => this.processFormData(form.getData(), "Email"),
+    });
+  }
+
+  // Updated handleForm method
+  handleForm() {
+    const formModalService = this.formModalService;
+    const form = this.formModalService.createForm("form-form", [{
+      label: "Form Url",
+      type: "url",
+      id: "field_value",
+      placeholder: "https://example.com",
+      required: true,
+      hidden: true,
+      errorMessage: "Please select a form",
+      validate: (value: string) => formModalService.isValidUrl(value),
+    },
+    {
+      label: "Label",
+      type: "text",
+      id: "field_label",
+      placeholder: "Fill Form",
+      required: true,
+      errorMessage: "Please enter a label for your form",
+      minLength: 5,
+    },]);
+
+    this.formModalService.createModal({
+      title: "Add Form",
+      form,
+      onSave: () => this.processFormData(form.getData(), "Form"),
     });
   }
 
@@ -174,9 +206,9 @@ export class PageCreationService {
       let objectId = "";
       // let childPage: any;
 
-      let childPage = version?.Pages.find((page:any)=>{
-        if(page.PageType=="WebLink") console.log('page', page)
-        return page.PageType=="WebLink" && page.PageLinkStructure.Url == formData.field_value
+      let childPage = version?.Pages.find((page: any) => {
+        if (page.PageType == "WebLink") console.log('page', page)
+        return page.PageType == "WebLink" && page.PageLinkStructure.Url == formData.field_value
       })
       if (!childPage) {
         const appVersion = await this.appVersionManager.getActiveVersion();
@@ -227,13 +259,15 @@ export class PageCreationService {
 
   addCtaButtonSection(type: string = "Phone", formData: any = {}) {
     let icon = "Info"
-    if (type == "Phone" || type == "Email" ) {
+    if (type == "Phone" || type == "Email") {
       icon = type
     }
     else if (type == "WebLink") {
-      icon = "Link"      
-    }else if (type == "Address" ) {
+      icon = "Link"
+    } else if (type == "Address") {
       icon = "Globe"
+    } else if (type == "Form") {
+      icon = "Document"
     }
     const cta: CtaAttributes = {
       CtaId: randomIdGenerator(15),
@@ -250,6 +284,6 @@ export class PageCreationService {
     };
     console.log('cta.. ', cta)
     const button = this.infoSectionUi.addCtaButton(cta);
-    this.infoSectionController.addCtaButton(button, cta);
+    this.infoSectionController.addCtaButton(button, cta, this.sectionId);
   }
 }

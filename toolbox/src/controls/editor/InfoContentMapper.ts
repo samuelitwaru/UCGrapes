@@ -1,9 +1,12 @@
 import { InfoType } from "../../interfaces/InfoType";
+import { HistoryManager } from "../HistoryManager";
 
 export class InfoContentMapper {
     pageId: any;
+    historyManager: HistoryManager;
     constructor(pageId: any) {
         this.pageId = pageId;
+        this.historyManager = new HistoryManager(this.pageId);
     }
 
     public contentRow (content: InfoType): any {
@@ -12,6 +15,7 @@ export class InfoContentMapper {
             "InfoId": content.InfoId,
             "InfoType": content.InfoType || "",
             "InfoValue": content.InfoValue || "",
+            "InfoNextSectionId": content.InfoPositionId || "",
             "CtaAttributes": content?.CtaAttributes,
             "Tiles": content?.Tiles,
         }
@@ -19,7 +23,7 @@ export class InfoContentMapper {
         return row;
     }
 
-    public addInfoType(content: InfoType): any {    
+    public addInfoType(content: InfoType): any {
         const storageKey = `data-${this.pageId}`;
         const data: any = JSON.parse(localStorage.getItem(storageKey) || "{}");
     
@@ -27,10 +31,32 @@ export class InfoContentMapper {
     
         data.PageInfoStructure.InfoContent ??= [];
     
-        data.PageInfoStructure.InfoContent.push(this.contentRow(content));
+        const newSection = this.contentRow(content);
+        const nextSectionId = newSection.InfoNextSectionId;
+
+        // Find the index of the section with id matching InfoNextSection
+        const targetIndex = data.PageInfoStructure.InfoContent.findIndex(
+            (section: any) => section.InfoId === nextSectionId
+        );
+
+        delete newSection.InfoNextSectionId
+    
+        if (targetIndex !== -1) {
+            // Insert at the target index
+            delete newSection.InfoNextSectionId
+            data.PageInfoStructure.InfoContent.splice(targetIndex, 0, newSection);
+        } else {
+            // If no match found, fallback to push
+            data.PageInfoStructure.InfoContent.push(newSection);
+        }
+
+        // console.log('data.PageInfoStructure.InfoContent :>> ', data.PageInfoStructure.InfoContent);
     
         localStorage.setItem(storageKey, JSON.stringify(data));
+
+        this.historyManager.addState(data);
     }
+    
     
     moveContentRow(contentId: any, newIndex: number): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
@@ -45,6 +71,7 @@ export class InfoContentMapper {
     
         contentArray.splice(newIndex, 0, contentRow);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+        this.historyManager.addState(data);
     }
 
     updateInfoContent(infoId: any, newContent: InfoType): boolean {
@@ -55,6 +82,7 @@ export class InfoContentMapper {
         if (contentRowIndex === -1) return false;
         contentArray[contentRowIndex] = newContent;
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+        this.historyManager.addState(data);
         return true;
     }
 
@@ -69,6 +97,7 @@ export class InfoContentMapper {
 
         contentArray.splice(contentRowIndex, 1);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+        this.historyManager.addState(data);
         return true;
     }
 

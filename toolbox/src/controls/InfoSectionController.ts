@@ -44,43 +44,52 @@ export class InfoSectionController {
     return menuItem;
   }
 
-  addCtaButton(buttonHTML: string, ctaAttributes: CtaAttributes) {
+  addCtaButton(buttonHTML: string, ctaAttributes: CtaAttributes, nextSectionId?: string) {
     const ctaContainer = document.createElement("div");
     ctaContainer.innerHTML = buttonHTML;
     const ctaComponent = ctaContainer.firstElementChild as HTMLElement;
 
-    const append = this.appendComponent(buttonHTML);
+    const append = this.appendComponent(buttonHTML, nextSectionId);
     if (append) {
       const infoType: InfoType = {
         InfoId: ctaComponent.id,
         InfoType: "Cta",
+        InfoPositionId: nextSectionId,
         CtaAttributes: ctaAttributes,
       };
 
       this.addToMapper(infoType);
+
+      // Select the component after appending
+      const component = this.editor.getWrapper().find(`#${ctaComponent.id}`)[0];
+      if (component) {
+        this.editor.select(component);
+      }
     }
   }
 
-  addImage(imageUrl: string,) {
+  addImage(imageUrl: string, nextSectionId?: string) {
+    // console.log('addImage sectionId :>> ', nextSectionId);
     const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;
     const imageComponent = imageContainer.firstElementChild as HTMLElement;
 
-    const append = this.appendComponent(imgContainer);
+    const append = this.appendComponent(imgContainer, nextSectionId);
     if (append) {
       const infoType: InfoType = {
         InfoId: imageComponent.id,
         InfoType: "Image",
         InfoValue: imageUrl,
+        InfoPositionId: nextSectionId,
       };
 
       this.addToMapper(infoType);
     }
   }
 
-  openContentEditModal() {
+  openContentEditModal(sectionId?: string) {
     const modalBody = document.createElement("div");
 
     const modalContent = document.createElement("div");
@@ -96,7 +105,7 @@ export class InfoSectionController {
     saveBtn.disabled = true; // Disable save button initially
     saveBtn.style.opacity = "0.6";
     saveBtn.style.cursor = "not-allowed";
-    
+
     const cancelBtn = this.createButton(
       "cancel_form",
       "tb-btn-outline",
@@ -138,7 +147,7 @@ export class InfoSectionController {
       // Check if editor has meaningful content (not just empty paragraphs)
       const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
       saveBtn.disabled = !hasContent;
-      
+
       // Update button styling based on disabled state
       if (saveBtn.disabled) {
         saveBtn.style.opacity = "0.6";
@@ -153,7 +162,7 @@ export class InfoSectionController {
       const content = document.querySelector(
         "#editor .ql-editor"
       ) as HTMLElement;
-      this.addDescription(content.innerHTML);
+      this.addDescription(content.innerHTML, sectionId);
       modal.close();
     });
     cancelBtn.addEventListener("click", () => {
@@ -161,17 +170,18 @@ export class InfoSectionController {
     });
   }
 
-  addDescription(description: string) {
+  addDescription(description: string, nextSectionId?: string) {
     const descContainer = this.infoSectionUI.getDescription(description);
     const descTempContainer = document.createElement("div");
     descTempContainer.innerHTML = descContainer;
     const descTempComponent = descTempContainer.firstElementChild as HTMLElement;
 
-    const append = this.appendComponent(descContainer);
+    const append = this.appendComponent(descContainer, nextSectionId);
     if (append) {
       const infoType: InfoType = {
         InfoId: descTempComponent.id,
         InfoType: "Description",
+        InfoPositionId: nextSectionId,
         InfoValue: description,
       };
 
@@ -179,17 +189,18 @@ export class InfoSectionController {
     }
   }
 
-  addTile(tileHTML: string) {
+  addTile(tileHTML: string, nextSectionId?: string) {
     const tileWrapper = document.createElement("div");
     tileWrapper.innerHTML = tileHTML;
     const tileWrapperComponent = tileWrapper.firstElementChild as HTMLElement;
     const tileId = tileWrapperComponent.querySelector(".template-wrapper")?.id
 
-    const append = this.appendComponent(tileHTML);
+    const append = this.appendComponent(tileHTML, nextSectionId);
     if (append) {
       const infoType: InfoType = {
         InfoId: tileWrapperComponent.id,
         InfoType: "TileRow",
+        InfoPositionId: nextSectionId,
         Tiles: [
           {
             Id: tileId || randomIdGenerator(15),
@@ -208,6 +219,16 @@ export class InfoSectionController {
         ],
       };
       this.addToMapper(infoType);
+
+      // Select the tile
+      const component = this.editor.getWrapper().find(`#${tileId}`)[0];
+
+      if (component) {
+        const tileComponent = component.find('.template-block')[0];
+        if (tileComponent) {
+          this.editor.select(tileComponent);
+        }
+      }
     }
   }
 
@@ -224,7 +245,8 @@ export class InfoSectionController {
     }
   }
 
-  updateInfoImage(imageUrl: string, infoId?: string) {
+  updateInfoImage(imageUrl: string, infoId?: string, sectionId?: string) {
+    // console.log('updateInfoImage sectionId :>> ', sectionId);
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const component = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (component) {
@@ -235,7 +257,7 @@ export class InfoSectionController {
         InfoValue: imageUrl,
       });
     } else {
-      this.addImage(imageUrl);
+      this.addImage(imageUrl, sectionId);
     }
   }
 
@@ -269,15 +291,15 @@ export class InfoSectionController {
     }
   }
 
-  appendComponent(componentDiv: any) {
+  appendComponent(componentDiv: any, nextSectionId?: string) {
     const containerColumn = this.editor
       .getWrapper()
       .find(".container-column-info")[0];
 
     if (containerColumn) {
       const component = this.editor.addComponents(componentDiv);
-      const position = containerColumn.components().length + 1;
-      containerColumn.append(component, { at: position });
+      const nextSectionIndex = containerColumn.components().models.findIndex((comp: any) => comp.getId() === nextSectionId);
+      containerColumn.append(component, { at: nextSectionIndex });
 
       return true;
     }
@@ -286,6 +308,7 @@ export class InfoSectionController {
   }
 
   private addToMapper(infoType: InfoType) {
+    // console.log('infoType :>> ', infoType);
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.addInfoType(infoType);

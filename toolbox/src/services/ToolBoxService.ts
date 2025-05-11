@@ -296,6 +296,15 @@ export class ToolBoxService {
     return this.services;
   }
 
+  // get forms of a supplier
+  async getSupplierForms(supplierId: string | number) {
+    return await this.fetchAPI(
+      `/api/toolbox/v2/supplier-forms?Supplierid=${supplierId}`,
+      {},
+      true
+    );
+  }
+
   async getSinglePage(pageId: string | number) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }

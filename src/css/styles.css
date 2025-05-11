@@ -1172,6 +1172,9 @@ h5#current-page-title {
 
 .tile-img-container {
   position: relative;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   width: 45px;
   height: 37px;
   background-color: #f0f0f0;
@@ -1179,6 +1182,10 @@ h5#current-page-title {
   border: 1px solid #b4b9bd;
   border-radius: 8px;
   display: none;
+}
+
+.tile-img-container:hover svg {
+  stroke: #5068A8;
 }
 
 .tile-img-container img {
@@ -1378,7 +1385,7 @@ div#cta-selected-actions {
 
 .text-color-palette .color-item {
   display: flex;
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.1rem;
   align-items: center;
 }
 
@@ -2039,7 +2046,7 @@ div#cta-selected-actions {
 }
 
 .search-container input[type="text"] {
-  padding: 4px 4px 4px 30px !important;
+  /* padding: 4px 4px 4px 30px !important; */
   border-radius: 6px !important;
   width: 95% !important;
   border: 1px solid #b4b9bd !important;

@@ -12,11 +12,11 @@ export class CreateCTAComponent {
     phoneInput: HTMLInputElement | undefined;
     emailInput: HTMLInputElement | undefined;
     urlInput: HTMLInputElement | undefined;
-    formSelect: HTMLSelectElement  | undefined;
+    formSelect: HTMLSelectElement | undefined;
     errorLabel: HTMLLabelElement | undefined;
     countrySelect: HTMLSelectElement | undefined;
     serviceId: string;
-    constructor(serviceId:string) {
+    constructor(serviceId: string) {
         this.serviceId = serviceId
         this.toolboxService = new ToolBoxService();
     }
@@ -28,7 +28,7 @@ export class CreateCTAComponent {
 
         // error Label
         const errorDiv = document.createElement("div")
-        this.errorLabel = document.createElement("label") 
+        this.errorLabel = document.createElement("label")
         this.errorLabel.style.color = "red"
         errorDiv.appendChild(this.errorLabel)
         form.appendChild(errorDiv)
@@ -230,7 +230,7 @@ export class CreateCTAComponent {
     addCtaToPage() {
         let payload = {
             ProductServiceId: this.serviceId,
-            CallToActionName:this.ctaLabelInput?.value,
+            CallToActionName: this.ctaLabelInput?.value,
             CallToActionType: "",
             CallToActionPhone: "",
             CallToActionPhoneCode: "",
@@ -251,49 +251,49 @@ export class CreateCTAComponent {
         if (this.ctaSelectInput?.value === "Form") {
             payload.LocationDynamicFormId = this.formSelect?.value || "";
             data.CtaValue = payload.LocationDynamicFormId
-        }else if (this.ctaSelectInput?.value === "Phone") {
+        } else if (this.ctaSelectInput?.value === "Phone") {
             payload.CallToActionPhoneNumber = this.phoneInput?.value || "";
             payload.CallToActionPhoneCode = this.countrySelect?.value || "";
             data.CtaValue = payload.CallToActionPhoneNumber
-        }else if (this.ctaSelectInput?.value === "Email") {
+        } else if (this.ctaSelectInput?.value === "Email") {
             payload.CallToActionEmail = this.emailInput?.value || "";
             data.CtaValue = payload.CallToActionEmail
-        }else if (this.ctaSelectInput?.value === "Url") {
+        } else if (this.ctaSelectInput?.value === "Url") {
             payload.CallToActionUrl = this.urlInput?.value || "";
             data.CtaValue = payload.CallToActionUrl
         }
 
         const res = this.validateCta(data)
         if (res.isValid) {
-            this.toolboxService.createServiceCTA(payload).then(res=>{
+            this.toolboxService.createServiceCTA(payload).then(res => {
                 console.log(res)
             })
             return
             const editor = (globalThis as any).activeEditor
             if (editor) {
                 const components = editor.DomComponents.getWrapper().find('.content-page-wrapper')
-                if(components.length > 0) {
+                if (components.length > 0) {
                     const contentWrapper = components[0];
                     contentWrapper.append(this.generateCta(data))
                 }
                 this.modal?.close();
             }
-        }else{
+        } else {
             if (this.errorLabel) {
                 this.errorLabel.textContent = res.message
             }
         }
     }
 
-    validateCta(data:any) {
+    validateCta(data: any) {
         const phoneRegex = /^\d{10}$/;
         const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
+
         if (!data.CtaLabel || !data.CtaType || !data.CtaValue) {
             return { isValid: false, message: `Type, Label, and ${data.CtaType} are required.` };
         }
-        
+
         switch (data.CtaType) {
             case "Phone":
                 if (!phoneRegex.test(data.CtaValue)) {
@@ -314,12 +314,12 @@ export class CreateCTAComponent {
             default:
                 return { isValid: false, message: "Invalid CtaType." };
         }
-        
+
         return { isValid: true, message: "Validation successful." };
     }
 
-    generateCta(cta:any) {
-        let icon:string = ""
+    generateCta(cta: any) {
+        let icon: string = ""
         switch (cta.CtaType) {
             case "Phone":
                 icon = ""
@@ -336,12 +336,21 @@ export class CreateCTAComponent {
             default:
                 break;
         }
-        
+
         return `
         <div ${tileDefaultAttributes} data-gjs-type="cta-buttons" cta-button-label="${cta.CtaLabel}" cta-button-type="${cta.CtaType}" cta-button-action="${cta.CtaValue}" cta-background-color="#b2b997" class="cta-container-child cta-child">
             <div class="cta-button" ${DefaultAttributes}>
                 ${icon}
-                <div class="cta-badge" ${DefaultAttributes}><i ${DefaultAttributes} data-gjs-type="default" class="fa fa-minus"></i></div>
+                <div class="cta-badge" ${DefaultAttributes}>
+                    <svg fill="#5068a8" data-gjs-type="default" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title ${DefaultAttributes}>delete</title>
+                        <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                        <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                        <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                        <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                        <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                    </svg>
+                </div>
             </div>
             <div class="cta-label" ${DefaultAttributes}>${cta.CtaLabel}</div>
         </div>

@@ -1,2 +1,2 @@
-export const environment = "/Comforta_version2DevelopmentNETPostgreSQL";
+export const environment = "/Comforta_version20DevelopmentNETPostgreSQL1";
 

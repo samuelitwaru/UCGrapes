@@ -83,7 +83,7 @@ export class TileProperties {
           const tileImageSection = opactySection.querySelector(
             "#tile-img-container"
           ) as HTMLElement;
-          tileImageSection.style.display = "block";
+          tileImageSection.style.display = "flex";
           const imageThumbnail = tileImageSection.querySelector(
             ".tile-img-thumbnail"
           ) as HTMLImageElement;

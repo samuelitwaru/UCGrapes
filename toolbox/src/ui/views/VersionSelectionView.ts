@@ -40,7 +40,7 @@ export class VersionSelectionView {
 
   private createSelectionButton(): HTMLButtonElement {
     const button = document.createElement("button");
-    button.classList.add("version-select-button");
+    button.classList.add("theme-select-button");
     button.setAttribute("aria-haspopup", "listbox");
 
     this.activeVersion.classList.add("selected-theme-value");
@@ -108,7 +108,7 @@ export class VersionSelectionView {
     versionOption.className = "theme-option submenu";
     versionOption.role = "option";
     versionOption.setAttribute("data-value", version.AppVersionName);
-    versionOption.textContent = version.AppVersionName;
+    versionOption.textContent = truncateString(version.AppVersionName, 15);
 
     const optionButtons = document.createElement("div");
     optionButtons.className = "option-buttons";
@@ -122,7 +122,7 @@ export class VersionSelectionView {
     
     if (isActive) {
       versionOption.classList.add("selected");
-      this.activeVersion.textContent = truncateString(version.AppVersionName, 20);
+      this.activeVersion.textContent = truncateString(version.AppVersionName, 15);
     }
 
     versionOption.addEventListener("click", (e) =>
@@ -359,7 +359,7 @@ export class VersionSelectionView {
       this.versionSelection.classList.remove("show");
 
       const button = this.container.querySelector(
-        ".version-select-button"
+        ".theme-select-button"
       ) as HTMLElement;
       button.setAttribute("aria-expanded", "false");
       button.classList.toggle("open");
@@ -384,7 +384,7 @@ export class VersionSelectionView {
     }
 
     const button = this.container.querySelector(
-      ".version-select-button"
+      ".theme-select-button"
     ) as HTMLElement;
     if (!button.classList.contains("open")) {
       button.classList.add("open");

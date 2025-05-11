@@ -162,11 +162,11 @@ export class ImageUpload {
     });
 
     // Append buttons to the modal footer
-    modalFooter.appendChild(cancelBtn);
-    modalFooter.appendChild(saveBtn);
+   // modalFooter.appendChild(cancelBtn);
+   // modalFooter.appendChild(saveBtn);
 
     // Append the modal footer to the modal content
-    this.modalContent.appendChild(modalFooter);
+   // this.modalContent.appendChild(modalFooter);
 
   }
 

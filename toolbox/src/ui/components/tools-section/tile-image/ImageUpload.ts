@@ -335,24 +335,45 @@ export class ImageUpload {
     const img = document.createElement("img");
     img.id = 'selected-image'
     img.src = dataUrl;
+
+    
+    const frame = document.createElement("div");
+    frame.id = "crop-frame"
+    frame.style.position = "absolute";
+    frame.style.border = "2px dashed #5068A8"; 
+
+     // Determine the aspect ratio based on the number of tiles in the row
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (selectedComponent) {
+      const tileElement = selectedComponent.getEl();
+      const parentRow = tileElement.parentElement; // Get the parent row
+      const numberOfTiles = parentRow?.children.length || 1; // Count the number of tiles
+
+      let aspectRatio = 1; // Default to square (1:1)
+      if (numberOfTiles === 2) {
+        aspectRatio = 2; // 2:1 aspect ratio
+      } else if (numberOfTiles === 1) {
+        aspectRatio = 3; // 3:1 aspect ratio
+      }
+
+
+    // Adjust the cropper dimensions based on the aspect ratio
     img.onload = () => {
-      const frameHeight = 400
-      const frameWidth = frameHeight * (img.naturalWidth / img.naturalHeight)
-      console.log(frameHeight, frameWidth)
-      frame.style.width = `${0.8 * frameWidth}px`;
-      frame.style.height = `${0.8 * frameHeight}px`;
-      initializeOverlay()
-    }
+      const frameHeight = 400; // Fixed height for the cropper
+      const frameWidth = frameHeight * aspectRatio; // Calculate width based on aspect ratio
+      frame.style.width = `${frameWidth}px`;
+      frame.style.height = `${frameHeight}px`;
+      frame.style.left = `${(imageContainer.offsetWidth - frameWidth) / 2}px`; // Center horizontally
+      frame.style.top = `${(imageContainer.offsetHeight - frameHeight) / 2}px`; // Center vertically
+      initializeOverlay();
+    };
 
     imageContainer.appendChild(img);
+    imageContainer.appendChild(frame);
 
     // Add a draggable frame
     //const zoomLevel = parseFloat(zoomSlider.value);
 
-    const frame = document.createElement("div");
-    frame.id = "crop-frame"
-    frame.style.position = "absolute";
-    frame.style.border = "2px dashed #5068A8";
 
     const rect = imageContainer.getBoundingClientRect()
     console.log(rect.x)
@@ -605,7 +626,7 @@ export class ImageUpload {
       uploadArea.appendChild(imageContainer);
       uploadArea.appendChild(modalFooter);
     }
-  }
+  }}
 
   public async saveCroppedImage(
     img: HTMLImageElement,

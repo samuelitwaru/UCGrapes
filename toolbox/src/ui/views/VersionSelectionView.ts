@@ -108,7 +108,7 @@ export class VersionSelectionView {
     versionOption.className = "theme-option submenu";
     versionOption.role = "option";
     versionOption.setAttribute("data-value", version.AppVersionName);
-    versionOption.textContent = truncateString(version.AppVersionName, 15);
+    versionOption.textContent = truncateString(version.AppVersionName, 25);
 
     const optionButtons = document.createElement("div");
     optionButtons.className = "option-buttons";

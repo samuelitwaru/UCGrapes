@@ -36,6 +36,7 @@ export class JSONToGrapesJSInformation {
                 ${ctaTileDEfaultAttributes} 
                   button-type="${cta.CtaType}"
                   class="img-button-container">
+                  ${this.addNewInfoSection()}
                     <div ${DefaultAttributes} class="img-button cta-styled-btn"
                         style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                         <span ${DefaultAttributes} class="img-button-section">
@@ -87,6 +88,7 @@ export class JSONToGrapesJSInformation {
                 button-type="${cta.CtaType}"
                 class="plain-button-container"
             >
+            ${this.addNewInfoSection()}
                 <button ${DefaultAttributes} id="ibob6" data-gjs-type="default" class="plain-button cta-styled-btn"
                   style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <div ${DefaultAttributes} id="iyocy" data-gjs-type="default" class="cta-badge">
@@ -110,6 +112,7 @@ export class JSONToGrapesJSInformation {
             ${ctaTileDEfaultAttributes} 
               button-type="${cta.CtaType}"
               class="img-button-container">
+              ${this.addNewInfoSection()}
                 <div ${DefaultAttributes} class="img-button cta-styled-btn"
                     style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     <span ${DefaultAttributes} class="img-button-icon">
@@ -139,11 +142,11 @@ export class JSONToGrapesJSInformation {
       `;
     } else if (cta?.CtaButtonType === "Round") {
       return `
-            <div ${ctaTileDEfaultAttributes} 
-              data-gjs-type="info-cta-section" 
-              button-type="${cta.CtaType}" 
+            <div ${ctaTileDEfaultAttributes}
+              data-gjs-type="info-cta-section"
+              button-type="${cta.CtaType}"
               class="cta-container-child cta-child"
-              id="${infoContent.InfoId}">              
+              id="${infoContent.InfoId}">
                 <div class="cta-button cta-styled-btn" ${DefaultAttributes}
                   style="background-color: ${this.themeManager.getThemeCtaColor(cta.CtaBGColor)}">
                     ${this.ctaIcon(cta)}
@@ -286,18 +289,19 @@ export class JSONToGrapesJSInformation {
                     ${contentHtml ? contentHtml : ''
       }
                 </div>  
-                ${this.addNewInfoSection()}
+                ${this.addNewInfoSection(true)}
             </div>
         `;
 
     return htmlData;
   }
 
-  private addNewInfoSection() {
+  private addNewInfoSection(isDefault = false) {
+    const sectionClass = isDefault ? "add-new-info-section" : "tb-add-new-info-section";
     return `
     <div style="margin-top: 0; 
       ${this.isNewPage || this.data.PageName === 'Untitled' ? 'display: none;' : ''}" 
-      ${DefaultAttributes} class="add-new-info-section">
+      ${DefaultAttributes} class="${sectionClass}">
           <hr ${DefaultAttributes} class="add-new-info-hr" />
           <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_67_2" data-name="Component 67 – 2" width="30" height="30" viewBox="0 0 30 30">
           <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
@@ -337,7 +341,8 @@ export class JSONToGrapesJSInformation {
   contentInfoImage(content: InfoType) {
     return `
     <div ${contentDefaultAttributes} class="info-image-section" id="${content?.InfoId ? content?.InfoId : randomIdGenerator(15)}" data-gjs-type="info-image-section">
-        <button ${DefaultAttributes} class="tb-edit-image-icon"
+    ${this.addNewInfoSection()}
+    <button ${DefaultAttributes} class="tb-edit-image-icon"
         ${(this.data?.PageType === "Location" || this.data?.PageType === "Reception") ? `style="right: -20px"` : ``}>
             <svg ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path ${DefaultAttributes} fill-rule="evenodd" clip-rule="evenodd" d="M18.4324 4C18.2266 4 18.0227 4.04055 17.8325 4.11933C17.6423 4.19811 17.4695 4.31358 17.3239 4.45914L5.25659 16.5265L4.42524 19.5748L7.47353 18.7434L19.5409 6.67608C19.6864 6.53051 19.8019 6.3577 19.8807 6.16751C19.9595 5.97732 20 5.77348 20 5.56761C20 5.36175 19.9595 5.1579 19.8807 4.96771C19.8019 4.77752 19.6864 4.60471 19.5409 4.45914C19.3953 4.31358 19.2225 4.19811 19.0323 4.11933C18.8421 4.04055 18.6383 4 18.4324 4ZM17.0671 2.27157C17.5 2.09228 17.9639 2 18.4324 2C18.9009 2 19.3648 2.09228 19.7977 2.27157C20.2305 2.45086 20.6238 2.71365 20.9551 3.04493C21.2864 3.37621 21.5492 3.7695 21.7285 4.20235C21.9077 4.63519 22 5.09911 22 5.56761C22 6.03611 21.9077 6.50003 21.7285 6.93288C21.5492 7.36572 21.2864 7.75901 20.9551 8.09029L8.69996 20.3454C8.57691 20.4685 8.42387 20.5573 8.25597 20.6031L3.26314 21.9648C2.91693 22.0592 2.54667 21.9609 2.29292 21.7071C2.03917 21.4534 1.94084 21.0831 2.03526 20.7369L3.39694 15.7441C3.44273 15.5762 3.53154 15.4231 3.6546 15.3001L15.9097 3.04493C16.241 2.71365 16.6343 2.45086 17.0671 2.27157Z" fill="#5068a8"/>
@@ -371,10 +376,11 @@ export class JSONToGrapesJSInformation {
     return `<div
               style="flex: 1; padding: 0; margin: 0; height: auto; white-space: normal;"
               class="info-desc-section"
-              ${contentDefaultAttributes} 
+              ${contentDefaultAttributes}
               id="${content?.InfoId ? content?.InfoId : randomIdGenerator(15)}"
               data-gjs-type="info-desc-section"
           >
+          ${this.addNewInfoSection()}
             <button ${DefaultAttributes} class="tb-edit-content-icon">
               <svg ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path ${DefaultAttributes} fill-rule="evenodd" clip-rule="evenodd" d="M18.4324 4C18.2266 4 18.0227 4.04055 17.8325 4.11933C17.6423 4.19811 17.4695 4.31358 17.3239 4.45914L5.25659 16.5265L4.42524 19.5748L7.47353 18.7434L19.5409 6.67608C19.6864 6.53051 19.8019 6.3577 19.8807 6.16751C19.9595 5.97732 20 5.77348 20 5.56761C20 5.36175 19.9595 5.1579 19.8807 4.96771C19.8019 4.77752 19.6864 4.60471 19.5409 4.45914C19.3953 4.31358 19.2225 4.19811 19.0323 4.11933C18.8421 4.04055 18.6383 4 18.4324 4ZM17.0671 2.27157C17.5 2.09228 17.9639 2 18.4324 2C18.9009 2 19.3648 2.09228 19.7977 2.27157C20.2305 2.45086 20.6238 2.71365 20.9551 3.04493C21.2864 3.37621 21.5492 3.7695 21.7285 4.20235C21.9077 4.63519 22 5.09911 22 5.56761C22 6.03611 21.9077 6.50003 21.7285 6.93288C21.5492 7.36572 21.2864 7.75901 20.9551 8.09029L8.69996 20.3454C8.57691 20.4685 8.42387 20.5573 8.25597 20.6031L3.26314 21.9648C2.91693 22.0592 2.54667 21.9609 2.29292 21.7071C2.03917 21.4534 1.94084 21.0831 2.03526 20.7369L3.39694 15.7441C3.44273 15.5762 3.53154 15.4231 3.6546 15.3001L15.9097 3.04493C16.241 2.71365 16.6343 2.45086 17.0671 2.27157Z" fill="#5068a8"/>

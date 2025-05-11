@@ -43,6 +43,10 @@ export class ToolboxManager {
     const sideBar = document.getElementById("tb-sidebar") as HTMLElement;
     const toolsSection = new ToolsSection();
     toolsSection.render(sideBar);
+    const toolSectionElement = document.getElementById(
+      "tools-section"
+    ) as HTMLDivElement;
+    if (toolSectionElement) toolSectionElement.style.display = 'none';
   }
 
   public setUpScrollButtons() {
@@ -92,12 +96,12 @@ export class ToolboxManager {
       const lastSavedStates = new Map<string, string>();
       const activeVersion = await this.appVersions.getUpdatedActiveVersion();
       const pages = activeVersion.Pages;
-      
+
       await Promise.all(pages.map(async (page: any) => {
         const pageId = page.PageId;
         const localStorageKey = `data-${pageId}`;
         const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
-      
+
         let localStructureProperty = null;
         if (
           page.PageType === "Menu" ||
@@ -115,20 +119,20 @@ export class ToolboxManager {
         } else if (page.PageType === "Information") {
           localStructureProperty = "PageInfoStructure";
         }
-      
+
         if (!localStructureProperty || !pageData[localStructureProperty]) return;
-      
+
         const localStructureString = JSON.stringify(pageData[localStructureProperty]);
-        
+
         // Ensure page.PageStructure is a string for comparison
-        const pageStructureString = typeof page.PageStructure === 'string' 
-          ? page.PageStructure 
+        const pageStructureString = typeof page.PageStructure === 'string'
+          ? page.PageStructure
           : JSON.stringify(page.PageStructure);
         // if (page.PageType === "Content") {
         //   console.log(`Saving localStructureProperty ${localStructureString}`);
         //   console.log(`Saving page.PageStructure ${pageStructureString}`);
         // }       
-      
+
         // Compare serialized versions to avoid hidden character differences
         if (localStructureString !== pageStructureString) {
           const pageInfo = {
@@ -151,14 +155,14 @@ export class ToolboxManager {
           }
         }
       }));
-      
+
       return lastSavedStates; // Return something meaningful
     } catch (error) {
       console.error("Error saving pages:", error);
       throw error; // Re-throw so caller knows something went wrong
     }
   }
-  
+
 
   openToastMessage(message?: string) {
     const toast = document.createElement("div") as HTMLElement;
@@ -184,67 +188,67 @@ export class ToolboxManager {
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
     const pageId = (globalThis as any).currentPageId;
-    
+
     if (!pageId) {
       console.log("No editor found");
       return;
     }
-    
+
     const historyManager = new HistoryManager(pageId);
-    
+
     const updateButtonStates = () => {
       if (undoButton) {
         undoButton.disabled = !historyManager.canUndo();
       }
-      
+
       if (redoButton) {
         redoButton.disabled = !historyManager.canRedo();
       }
     }
 
     updateButtonStates();
-    
+
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
         const undoResult = historyManager.undo();
-        
+
         if (undoResult) {
           this.applyNewState(undoResult, pageId);
         }
         updateButtonStates();
       };
     }
-  
+
     if (redoButton) {
       redoButton.onclick = (e) => {
         e.preventDefault();
         const redoResult = historyManager.redo();
-        
+
         if (redoResult) {
           this.applyNewState(redoResult, pageId);
         }
         updateButtonStates();
       };
-    } 
+    }
   }
 
   applyNewState(stateData: any, pageId: string) {
     const jsonFormatter = new JSONToGrapesJSInformation(stateData);
     const updatedHtml = jsonFormatter.generateHTML();
     const storageKey = `data-${pageId}`;
-  
+
     const editor = (globalThis as any).activeEditor;
     if (!editor) return;
-  
+
     const selectedComponent = (globalThis as any).selectedComponent;
     const selectedComponentId = selectedComponent ? selectedComponent.getId() : null;
-  
+
     const frameContainer = editor.getWrapper().find('#frame-container')[0];
     if (frameContainer) {
       frameContainer.replaceWith(updatedHtml);
       localStorage.setItem(storageKey, JSON.stringify(stateData));
-      
+
       if (selectedComponentId) {
         const newFrameContainer = editor.getWrapper().find('#frame-container')[0];
         if (newFrameContainer) {

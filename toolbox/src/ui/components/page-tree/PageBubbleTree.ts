@@ -12,7 +12,6 @@ interface PageNode {
   x: Number;
   y: Number;
 }
-
 export class PageBubbleTree {
   sampleData: any;
   link: any;

@@ -143,13 +143,13 @@ export class InfoSectionUI {
     `;
   }
 
-  getDescription(description: string) {
+  getDescription(description: string, infoId?: string) {
     return `
       <div
               style="flex: 1; padding: 0; margin: 0; height: auto; white-space: normal;"
               class="info-desc-section"
               ${contentDefaultAttributes} 
-              id="${randomIdGenerator(15)}"
+              id="${infoId ? infoId : randomIdGenerator(15)}"
               data-gjs-type="info-desc-section"
           >
           ${this.addNewInfoSection()}

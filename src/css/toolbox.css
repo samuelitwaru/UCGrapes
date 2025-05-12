@@ -255,7 +255,7 @@ button {
 
 .delete-button {
   top: -12px;
-  right: -12px;
+  right: -10px;
   color: #fff;
   background-color: #cb4545;
   border: 1px solid #cb4545 !important;

@@ -37,7 +37,7 @@ export class SupplierSelectionComponent<DropdownOption> {
     dropdown.className = 'select-dropdown';
 
     const searchContainer = document.createElement('div');
-    searchContainer.className = 'search-container';
+    searchContainer.className = 'supplier-search-container';
 
     const searchIcon = document.createElement('div');
     searchIcon.className = 'search-icon';
@@ -232,7 +232,7 @@ export class SupplierSelectionComponent<DropdownOption> {
             display: block;
           }
           
-          .search-container {
+          .supplier-search-container {
             padding: 10px;
             position: relative;
           }

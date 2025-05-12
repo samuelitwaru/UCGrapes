@@ -20,7 +20,7 @@ export class ImageUpload {
     // Add the selectedImageUrls array
   public selectedImageUrls: string[] = [];
 
-  constructor(type: any, infoId?: string) {
+  constructor(type: any, infoId?: string, sectionId?: string) {
     this.type = type;
     this.infoId = infoId;
     this.sectionId = sectionId;

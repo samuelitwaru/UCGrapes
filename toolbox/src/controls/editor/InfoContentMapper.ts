@@ -76,6 +76,8 @@ export class InfoContentMapper {
     }
 
     updateInfoContent(infoId: any, newContent: InfoType): boolean {
+        console.log('infoId :>>', infoId );
+        console.log('newContent :>> ', newContent);
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageInfoStructure?.InfoContent) return false;
         const contentArray = data.PageInfoStructure.InfoContent;

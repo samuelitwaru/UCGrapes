@@ -325,7 +325,7 @@ export class InfoSectionController {
   }
 
   updateDescription(updatedDescription: string, infoId: string) {
-    const descContainer = this.infoSectionUI.getDescription(updatedDescription);
+    const descContainer = this.infoSectionUI.getDescription(updatedDescription, infoId);
     const component = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.replaceWith(descContainer);
@@ -460,6 +460,8 @@ export class InfoSectionController {
 
   updateInfoMapper(infoId: string, infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
+    console.log('infoId :>>', infoId );
+    console.log('newContent :>> ', infoType);
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);
     this.removeEmptyRows(pageId);

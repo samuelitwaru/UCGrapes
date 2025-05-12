@@ -44,10 +44,13 @@ export class ChildEditor {
       if (converter) {
         const htmlOutput = converter.generateHTML();
         childEditor.setComponents(htmlOutput);
+
+       
         localStorage.setItem(
           `data-${this.pageId}`,
           JSON.stringify(this.pageData)
         );
+        
       } else {
         console.error(
           "Invalid PageType or pageData is undefined:",

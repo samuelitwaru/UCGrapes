@@ -86,11 +86,27 @@ export class ImageUpload {
     this.loadMediaFiles(); // Load media files asynchronously
     this.modalContent.appendChild(modalActions);
 
+
+    const modalActionsdown = document.createElement("div");
+    modalActionsdown.className = "modal-actions-slider";
+
+    // Add cancel button
+    const cancelBtn1 = document.createElement("button");
+    cancelBtn1.className = "tb-btn tb-btn-outline";
+    cancelBtn1.id = "cancel-modal-check";
+    cancelBtn1.innerText = ("Cancel");
+    cancelBtn1.addEventListener("click", (e) => {
+      e.preventDefault();
+      const modal = this.modalContent.parentElement as HTMLElement;
+      modal.style.display = "none";
+      modal?.remove();
+    });
+
     // Add a bottom button
     const bottomButton = document.createElement("button");
-    bottomButton.className = "tb-btn tb-btn-secondary";
+    bottomButton.className = "tb-btn tb-btn-primary";
     bottomButton.id = "bottom-button";
-    bottomButton.innerText = "Create slide";
+    bottomButton.innerText = "Save";
     //bottomButton.style.marginTop = "20px"; // Add some spacing
     bottomButton.addEventListener("click", () => {
       const modal = this.modalContent.parentElement as HTMLElement;
@@ -104,8 +120,12 @@ export class ImageUpload {
       infoSectionController.addMultipleImages(this.selectedImageUrls);
     });
 
+    modalActionsdown.appendChild(cancelBtn1);
+    modalActionsdown.appendChild(bottomButton);
     // Append the button to the modal content
-    this.modalContent.appendChild(bottomButton);
+    this.modalContent.appendChild(modalActionsdown);
+    //this.modalContent.appendChild(bottomButton);
+
   }
 
   private uploadArea() {

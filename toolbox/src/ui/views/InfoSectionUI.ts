@@ -220,19 +220,19 @@ export class InfoSectionUI {
 
           <!-- Slideshow container -->
           <div ${DefaultAttributes} class="slideshow-container" id="${randomIdGenerator(15)}">
-            <div class="mySlides fade" ${DefaultAttributes} >
+            
                 ${imageUrls
                   .map(
                     (imageUrl, index) => `
+                  <div ${DefaultAttributes} class="mySlides fade"  >
                   <div ${DefaultAttributes} class="numbertext ">${index + 1} / ${imageUrls.length}</div>
-                  <img
-                          class="product-service-image"
-                          ${DefaultAttributes}
+                  <img  ${DefaultAttributes}
+                          class="product-service-image"                
                           src="${imageUrl}"
                           data-gjs-type="default"
                           alt="Full-width Image"
                   />
-            </div>
+                 </div>
                   `
                   )
                   .join("")}

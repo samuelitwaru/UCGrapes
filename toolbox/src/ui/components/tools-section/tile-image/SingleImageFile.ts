@@ -89,8 +89,8 @@ export class SingleImageFile {
 
     // Append statusCheck, deleteSpan, and checkbox to the action column
     actionColumn.appendChild(statusCheck);
-    actionColumn.appendChild(deleteSpan);
     actionColumn.appendChild(checkboxDiv);
+    actionColumn.appendChild(deleteSpan);
 
     this.container.appendChild(img);
     this.container.appendChild(actionColumn);

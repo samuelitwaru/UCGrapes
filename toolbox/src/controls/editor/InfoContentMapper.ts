@@ -12,6 +12,7 @@ export class InfoContentMapper {
             "InfoId": content.InfoId,
             "InfoType": content.InfoType || "",
             "InfoValue": content.InfoValue || "",
+            "Images": content?.Images || "",
             "CtaAttributes": content?.CtaAttributes,
             "Tiles": content?.Tiles,
         }

@@ -62,43 +62,55 @@ export class ToolBoxService {
   }
 
   async debugApp(urlList: any) {
-    const response = await this.fetchAPI("/api/toolbox/v2/debug", {
-      method: "POST",
-      body: JSON.stringify({ 
-        PageUrlList: urlList
-      }),
-    }, true);
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/debug",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          PageUrlList: urlList,
+        }),
+      },
+      true
+    );
 
     return response;
   }
 
   async getVersions() {
-    const response = await this.fetchAPI("/api/toolbox/v2/appversions", {}, true);
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/appversions",
+      {},
+      true
+    );
     return response;
   }
 
   async getVersion() {
-    const response = await this.fetchAPI("/api/toolbox/v2/appversion", {}, true);
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/appversion",
+      {},
+      true
+    );
     return response;
   }
 
   async createVersion(versionName: any) {
     const response = await this.fetchAPI("/api/toolbox/v2/create-appversion", {
       method: "POST",
-      body: JSON.stringify({ 
-        AppVersionName: versionName
+      body: JSON.stringify({
+        AppVersionName: versionName,
       }),
     });
 
     return response;
   }
 
-  async duplicateVersion(appVersionId: string, versionName: any) {  
+  async duplicateVersion(appVersionId: string, versionName: any) {
     const response = await this.fetchAPI("/api/toolbox/v2/copy-appversion", {
       method: "POST",
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         AppVersionId: appVersionId,
-        AppVersionName: versionName
+        AppVersionName: versionName,
       }),
     });
 
@@ -106,61 +118,83 @@ export class ToolBoxService {
   }
 
   async activateVersion(versionId: any) {
-    const response = await this.fetchAPI("/api/toolbox/v2/activate-appversion", {
+    const response = await this.fetchAPI(
+      "/api/toolbox/v2/activate-appversion",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          AppVersionId: versionId,
+        }),
+      }
+    );
+
+    return response;
+  }
+
+  async deleteVersion(appVersionId: string) {
+    return await this.fetchAPI("/api/toolbox/v2/delete-version", {
       method: "POST",
-      body: JSON.stringify({ 
-        AppVersionId: versionId
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+      }),
+    });
+  }
+
+  async createMenuPage(appVersionId: string, pageName: string) {
+    console.log({
+      appVersionId: appVersionId,
+      pageName: pageName,
+    });
+    const response = await this.fetchAPI("/api/toolbox/v2/create-menu-page", {
+      method: "POST",
+      body: JSON.stringify({
+        appVersionId: appVersionId,
+        pageName: pageName,
       }),
     });
 
     return response;
   }
 
-  async deleteVersion(appVersionId:string) {
-    return await this.fetchAPI("/api/toolbox/v2/delete-version", {
+  async createInfoPage(appVersionId: string, pageName: string) {
+    console.log({
+      appVersionId: appVersionId,
+      pageName: pageName,
+    });
+    const response = await this.fetchAPI("/api/toolbox/v2/create-info-page", {
       method: "POST",
       body: JSON.stringify({
-        AppVersionId: appVersionId
+        appVersionId: appVersionId,
+        pageName: pageName,
       }),
     });
+
+    return response;
   }
 
-  async createMenuPage(appVersionId: string, pageName: string) {
-    console.log({ 
+  async createLinkPage(
+    appVersionId: string,
+    pageName: string,
+    url: string,
+    formId: number
+  ) {
+    console.log({
       appVersionId: appVersionId,
-      pageName: pageName
-    })
-    const response = await this.fetchAPI(
-      "/api/toolbox/v2/create-menu-page",
-      {
-        method: "POST",
-        body: JSON.stringify({ 
-          appVersionId: appVersionId,
-          pageName: pageName
-        }),
-      }
-    );
+      pageName: pageName,
+      url: url,
+      WWPForm: formId,
+    });
+    const response = await this.fetchAPI("/api/toolbox/v2/create-link-page", {
+      method: "POST",
+      body: JSON.stringify({
+        appVersionId: appVersionId,
+        pageName: pageName,
+        url: url,
+        WWPFormId: formId,
+      }),
+    });
 
-    return response;    
-  }
-
-  async createInfoPage(appVersionId: string, pageName: string) {
-    console.log({ 
-      appVersionId: appVersionId,
-      pageName: pageName
-    })
-    const response = await this.fetchAPI(
-      "/api/toolbox/v2/create-info-page",
-      {
-        method: "POST",
-        body: JSON.stringify({ 
-          appVersionId: appVersionId,
-          pageName: pageName
-        }),
-      }
-    );
-
-    return response;    
+    return response;
   }
 
   async createServicePage(appVersionId: string, productServiceId: string) {
@@ -168,13 +202,13 @@ export class ToolBoxService {
       "/api/toolbox/v2/create-service-page",
       {
         method: "POST",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           appVersionId: appVersionId,
           ProductServiceId: productServiceId,
         }),
-      },
+      }
     );
-    return response;    
+    return response;
   }
 
   async createContentPage(appVersionId: string, pageName: string) {
@@ -182,24 +216,21 @@ export class ToolBoxService {
       "/api/toolbox/v2/create-content-page",
       {
         method: "POST",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           appVersionId: appVersionId,
-          PageName: pageName
+          PageName: pageName,
         }),
-      },
+      }
     );
-    return response;    
+    return response;
   }
 
-  async createServiceCTA(payload:any) {
-    const response = await this.fetchAPI(
-      "/api/toolbox/v2/create-service-cta",
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
-      },
-    );
-    console.log(response)
+  async createServiceCTA(payload: any) {
+    const response = await this.fetchAPI("/api/toolbox/v2/create-service-cta", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    console.log(response);
     return response;
   }
 
@@ -215,19 +246,20 @@ export class ToolBoxService {
     return response;
   }
 
-  async savePageThumbnail(data: any) {
+  async savePageThumbnail(PageId: any, PageThumbnailData: any) {
     const response = await this.fetchAPI(
       "/api/toolbox/v2/save-page-thumbnail",
       {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          PageId: PageId,
+          PageThumbnailData: PageThumbnailData,
+        }),
       },
       true
     );
     return response;
   }
-
-  
 
   async updatePageTitle(pageData: any) {
     const response = await this.fetchAPI(
@@ -242,7 +274,7 @@ export class ToolBoxService {
     return response;
   }
 
-  async publishAppVersion(appVersionId: string, notify=false) {
+  async publishAppVersion(appVersionId: string, notify = false) {
     return await this.fetchAPI("/api/toolbox/v2/publish-appversion", {
       method: "POST",
       body: JSON.stringify({
@@ -264,11 +296,20 @@ export class ToolBoxService {
     return this.services;
   }
 
+  // get forms of a supplier
+  async getSupplierForms(supplierId: string | number) {
+    return await this.fetchAPI(
+      `/api/toolbox/v2/supplier-forms?Supplierid=${supplierId}`,
+      {},
+      true
+    );
+  }
+
   async getSinglePage(pageId: string | number) {
     return await this.fetchAPI(`/api/toolbox/singlepage?Pageid=${pageId}`);
   }
 
-  async deletePage(appVersionId:string, pageId:string) {
+  async deletePage(appVersionId: string, pageId: string) {
     return await this.fetchAPI("/api/toolbox/V2/delete-page", {
       method: "POST",
       body: JSON.stringify({
@@ -411,40 +452,40 @@ export class ToolBoxService {
     );
   }
 
-  async updateDescription (data: any) {
-    return await this.fetchAPI('/api/toolbox/v2/update-service', {
-      method: 'POST',
+  async updateDescription(data: any) {
+    return await this.fetchAPI("/api/toolbox/v2/update-service", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async updateContentImage (data: any) {
-    return await this.fetchAPI('/api/toolbox/v2/update-service', {
-      method: 'POST',
+  async updateContentImage(data: any) {
+    return await this.fetchAPI("/api/toolbox/v2/update-service", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async deleteContentImage (data: any) {
-    return await this.fetchAPI('/api/toolbox/v2/delete-service-image', {
-      method: 'POST',
+  async deleteContentImage(data: any) {
+    return await this.fetchAPI("/api/toolbox/v2/delete-service-image", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async getLocationData() {
-    return await this.fetchAPI('/api/toolbox/v2/get-location', {}, true);
+    return await this.fetchAPI("/api/toolbox/v2/get-location", {}, true);
   }
 
-  async updateLocationInfo (data: any) {
-    return await this.fetchAPI('/api/toolbox/v2/update-location', {
-      method: 'POST',
+  async updateLocationInfo(data: any) {
+    return await this.fetchAPI("/api/toolbox/v2/update-location", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async getTrashItems() {
-    return await this.fetchAPI('/api/toolbox/v2/get-trash', {}, true);
+    return await this.fetchAPI("/api/toolbox/v2/get-trash", {}, true);
   }
 
   async restoreTrash(type: string, trashId: any) {

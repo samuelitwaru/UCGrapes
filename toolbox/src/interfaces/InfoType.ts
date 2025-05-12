@@ -6,6 +6,7 @@ export interface InfoType {
   InfoId: string;
   InfoType: string;
   InfoValue?: string;
+  InfoPositionId?: string;
   Images?: Image[];
   CtaAttributes?: CtaAttributes;
   Tiles?:Tile[];

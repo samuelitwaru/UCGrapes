@@ -19,24 +19,24 @@ export class CtaSvgManager {
       const tempElement = document.createElement('div') as HTMLElement;
       tempElement.innerHTML = svg || ``;
       const newSvgElement = tempElement.querySelector('svg');
-      
+
       if (newSvgElement) {
-          newSvgElement.setAttribute('height', '32');
-          newSvgElement.setAttribute('width', '32');
-          
-          const pathElements = newSvgElement.querySelectorAll('path');
-          pathElements.forEach(path => {
-              path.setAttribute('fill',  cta?.CtaColor || '#fff');
-          });
-          
-          const updatedSvg = this.addGrapesAttributes(tempElement.innerHTML);
-          return updatedSvg;
+        newSvgElement.setAttribute('height', '32');
+        newSvgElement.setAttribute('width', '32');
+
+        const pathElements = newSvgElement.querySelectorAll('path');
+        pathElements.forEach(path => {
+          path.setAttribute('fill', cta?.CtaColor || '#fff');
+        });
+
+        const updatedSvg = this.addGrapesAttributes(tempElement.innerHTML);
+        return updatedSvg;
       }
     } else {
-    let icon;
-    switch (cta.CtaType) {
-      case "Phone":
-        icon = `
+      let icon;
+      switch (cta.CtaType) {
+        case "Phone":
+          icon = `
         <svg ${DefaultAttributes} id="ixdtl" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                     viewBox="0 0 49.417 49.418">
             <path ${DefaultAttributes} id="call" data-gjs-type="svg-in"
@@ -44,9 +44,9 @@ export class CtaSvgManager {
                 transform="translate(-4 -3)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
         </svg>
         `;
-        break;
-      case "Email":
-        icon = `
+          break;
+        case "Email":
+          icon = `
         <svg ${DefaultAttributes} id="inavf" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32"
             height="28" viewBox="0 0 41 32.8">
             <path ${DefaultAttributes} id="Path_1218" data-gjs-type="svg-in" data-name="Path 1218"
@@ -54,16 +54,16 @@ export class CtaSvgManager {
                 transform="translate(-2 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
         </svg>
         `;
-        break;
-      case "WebLink":
-        icon = `
+          break;
+        case "WebLink":
+          icon = `
         <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
           <path${DefaultAttributes} id="Path_1213" data-name="Path 1213" d="M15.833,4a4.163,4.163,0,0,0-2.958,1.229l-.979.979a4.168,4.168,0,0,0-1.229,2.958,4.1,4.1,0,0,0,.292,1.521L12.042,9.6a2.857,2.857,0,0,1,.792-2.458l.979-.979a2.853,2.853,0,0,1,2.021-.833,2.805,2.805,0,0,1,2,.833,2.85,2.85,0,0,1,0,4.021l-.979.979A2.853,2.853,0,0,1,14.833,12a2.439,2.439,0,0,1-.437-.042l-1.083,1.083a4.1,4.1,0,0,0,1.521.292A4.163,4.163,0,0,0,17.792,12.1l.979-.979A4.168,4.168,0,0,0,20,8.167,4.2,4.2,0,0,0,15.833,4ZM14.188,8.854,8.854,14.188l.958.958,5.333-5.333ZM9.167,10.667A4.163,4.163,0,0,0,6.208,11.9l-.979.979A4.168,4.168,0,0,0,4,15.833,4.2,4.2,0,0,0,8.167,20a4.163,4.163,0,0,0,2.958-1.229l.979-.979a4.168,4.168,0,0,0,1.229-2.958,4.1,4.1,0,0,0-.292-1.521L11.958,14.4a2.857,2.857,0,0,1-.792,2.458l-.979.979a2.853,2.853,0,0,1-2.021.833,2.805,2.805,0,0,1-2-.833,2.85,2.85,0,0,1,0-4.021l.979-.979A2.853,2.853,0,0,1,9.167,12a2.44,2.44,0,0,1,.438.042l1.083-1.083A4.1,4.1,0,0,0,9.167,10.667Z" transform="translate(-4 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
         </svg>
         `;
-        break;
-      case "Form":
-        icon = `
+          break;
+        case "Form":
+          icon = `
         <svg ${DefaultAttributes} id="igqdh" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="26" height="30"
               viewBox="0 0 13 16">
               <path ${DefaultAttributes} id="Path_1209" data-gjs-type="svg-in" data-name="Path 1209"
@@ -71,12 +71,12 @@ export class CtaSvgManager {
                   transform="translate(-8 -4)" fill="${cta.CtaColor ? cta.CtaColor : "#ffffff"}"></path>
           </svg>
         `;
-        break;
-      default:
-        break;
-    }
-    
-    return icon;
+          break;
+        default:
+          break;
+      }
+
+      return icon;
     }
   }
 
@@ -102,13 +102,12 @@ export class CtaSvgManager {
 
   phoneCta(ctaButton: CallToAction, id: string) {
     return `
-        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons" button-type="${
-            ctaButton.CallToActionType
-            }" class="cta-container-child cta-child" id="${id}">
+        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons" button-type="${ctaButton.CallToActionType
+      }" class="cta-container-child cta-child" id="${id}">
                     <div ${DefaultAttributes} data-gjs-type="default" class="cta-button cta-styled-btn"
                         style="background-color: ${this.themeManager.getThemeCtaColor(
-                        "CtaColorOne"
-                        )}">
+        "CtaColorOne"
+      )}">
                         <svg ${DefaultAttributes} id="ixdtl" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                             viewBox="0 0 49.417 49.418">
                             <path ${DefaultAttributes} id="call" data-gjs-type="svg-in"
@@ -116,25 +115,30 @@ export class CtaSvgManager {
                                 transform="translate(-4 -3)" fill="#fff"></path>
                         </svg>
                         <div ${DefaultAttributes} id="it1cq" data-gjs-type="default" class="cta-badge">
-                            <i ${DefaultAttributes} id="ityrb" data-gjs-type="default" class="fa fa-minus"></i>
+                          <svg fill="#5068a8" id="ityrb" data-gjs-type="default" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                              <title ${DefaultAttributes}>delete</title>
+                              <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                              <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                              <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                              <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                              <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                          </svg>
                         </div>
                     </div>
-                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
-                      ctaButton.CallToActionName
-                    }</div>
+                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${ctaButton.CallToActionName
+      }</div>
         </div>
         `;
   }
 
   emailCta(ctaButton: CallToAction, id: string) {
     return `
-        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons"  button-type="${
-            ctaButton.CallToActionType
-            }" class="cta-container-child cta-child" id="${id}">
+        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons"  button-type="${ctaButton.CallToActionType
+      }" class="cta-container-child cta-child" id="${id}">
                     <div ${DefaultAttributes} id="i4iaf" data-gjs-type="default" class="cta-button cta-styled-btn"
                         style="background-color: ${this.themeManager.getThemeCtaColor(
-                        "CtaColorOne"
-                        )}">
+        "CtaColorOne"
+      )}">
                         <svg ${DefaultAttributes} id="inavf" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="32"
                             height="28" viewBox="0 0 41 32.8">
                             <path ${DefaultAttributes} id="Path_1218" data-gjs-type="svg-in" data-name="Path 1218"
@@ -142,25 +146,30 @@ export class CtaSvgManager {
                                 transform="translate(-2 -4)" fill="#fff"></path>
                         </svg>
                         <div ${DefaultAttributes} id="i2knu" data-gjs-type="default" class="cta-badge">
-                            <i ${DefaultAttributes} id="idkak" data-gjs-type="default" class="fa fa-minus"></i>
+                            <svg fill="#5068a8" id="idkak" data-gjs-type="default" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title ${DefaultAttributes}>delete</title>
+                                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                                <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                            </svg>
                         </div>
                     </div>
-                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
-            ctaButton.CallToActionName
-            }</div>
+                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${ctaButton.CallToActionName
+      }</div>
         </div>
         `;
   }
 
   formCta(ctaButton: CallToAction, id: string) {
     return `
-        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons"  button-type="${
-        ctaButton.CallToActionType
-            }" class="cta-container-child cta-child" id="${id}">
+        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons"  button-type="${ctaButton.CallToActionType
+      }" class="cta-container-child cta-child" id="${id}">
                     <div ${DefaultAttributes} id="i9rww" data-gjs-type="default" class="cta-button cta-styled-btn"
                         style="background-color: ${this.themeManager.getThemeCtaColor(
-                        "CtaColorOne"
-                        )}">
+        "CtaColorOne"
+      )}">
                         <svg ${DefaultAttributes} id="igqdh" data-gjs-type="svg" xmlns="http://www.w3.org/2000/svg" width="26" height="30"
                             viewBox="0 0 13 16">
                             <path ${DefaultAttributes} id="Path_1209" data-gjs-type="svg-in" data-name="Path 1209"
@@ -168,35 +177,46 @@ export class CtaSvgManager {
                                 transform="translate(-8 -4)" fill="#fff"></path>
                         </svg>
                         <div ${DefaultAttributes} id="iina3" data-gjs-type="default" class="cta-badge">
-                            <i ${DefaultAttributes} id="iw1yc" data-gjs-type="default" class="fa fa-minus"></i>
+                            <svg fill="#5068a8" id="iw1yc" data-gjs-type="default" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title ${DefaultAttributes}>delete</title>
+                                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                                <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                                <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                                <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                            </svg>
                         </div>
                     </div>
-                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
-            ctaButton.CallToActionName
-            }</div>
+                    <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${ctaButton.CallToActionName
+      }</div>
         </div>
         `;
   }
 
   urlCta(ctaButton: CallToAction, id: string) {
     return `
-        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons"  button-type="${
-      ctaButton.CallToActionType
-    }" class="cta-container-child cta-child" id="${id}">
+        <div ${ctaTileDEfaultAttributes} data-gjs-type="cta-buttons"  button-type="${ctaButton.CallToActionType
+      }" class="cta-container-child cta-child" id="${id}">
             <div ${DefaultAttributes} id="i4iaf" data-gjs-type="default" class="cta-button cta-styled-btn"
                 style="background-color: ${this.themeManager.getThemeCtaColor(
-                  "CtaColorOne"
-                )}">
+        "CtaColorOne"
+      )}">
                 <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
                     <path${DefaultAttributes} id="Path_1213" data-name="Path 1213" d="M15.833,4a4.163,4.163,0,0,0-2.958,1.229l-.979.979a4.168,4.168,0,0,0-1.229,2.958,4.1,4.1,0,0,0,.292,1.521L12.042,9.6a2.857,2.857,0,0,1,.792-2.458l.979-.979a2.853,2.853,0,0,1,2.021-.833,2.805,2.805,0,0,1,2,.833,2.85,2.85,0,0,1,0,4.021l-.979.979A2.853,2.853,0,0,1,14.833,12a2.439,2.439,0,0,1-.437-.042l-1.083,1.083a4.1,4.1,0,0,0,1.521.292A4.163,4.163,0,0,0,17.792,12.1l.979-.979A4.168,4.168,0,0,0,20,8.167,4.2,4.2,0,0,0,15.833,4ZM14.188,8.854,8.854,14.188l.958.958,5.333-5.333ZM9.167,10.667A4.163,4.163,0,0,0,6.208,11.9l-.979.979A4.168,4.168,0,0,0,4,15.833,4.2,4.2,0,0,0,8.167,20a4.163,4.163,0,0,0,2.958-1.229l.979-.979a4.168,4.168,0,0,0,1.229-2.958,4.1,4.1,0,0,0-.292-1.521L11.958,14.4a2.857,2.857,0,0,1-.792,2.458l-.979.979a2.853,2.853,0,0,1-2.021.833,2.805,2.805,0,0,1-2-.833,2.85,2.85,0,0,1,0-4.021l.979-.979A2.853,2.853,0,0,1,9.167,12a2.44,2.44,0,0,1,.438.042l1.083-1.083A4.1,4.1,0,0,0,9.167,10.667Z" transform="translate(-4 -4)" fill="#fff"></path>
                 </svg>
                 <div ${DefaultAttributes} id="i2knu" data-gjs-type="default" class="cta-badge">
-                    <i ${DefaultAttributes} id="idkak" data-gjs-type="default" class="fa fa-minus"></i>
+                    <svg fill="#5068a8" id="idkak" data-gjs-type="default" ${DefaultAttributes} width="14px" height="14px" viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title ${DefaultAttributes}>delete</title>
+                        <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-1" d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path><path class="clr-i-outline clr-i-outline-path-2" d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                        <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2" height="15"></rect>
+                        <rect fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2" height="15"></rect>
+                        <path fill="#5068a8" ${DefaultAttributes} class="clr-i-outline clr-i-outline-path-5" d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                        <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                    </svg>
                 </div>
             </div>
-            <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${
-      ctaButton.CallToActionName
-    }</div>
+            <div ${DefaultAttributes} id="irtak" data-gjs-type="text" class="cta-label label">${ctaButton.CallToActionName
+      }</div>
         </div>
         `;
   }

@@ -14,13 +14,15 @@ export class SingleImageFile {
   private selectedImageUrls: string[] = []; // Array to store selected image URLs
   type: any;
   infoId?: string;
+  sectionId?: string;
   imageUpload: ImageUpload;
   fileListContainer: HTMLElement | undefined;
 
-  constructor(mediaFile: Media, type: any, imageUpload: ImageUpload, infoId?: string) {
+  constructor(mediaFile: Media, type: any, imageUpload:  ImageUpload, infoId?: string, sectionId?: string) {
     this.mediaFile = mediaFile;
     this.type = type;
     this.infoId = infoId;
+    this.sectionId = sectionId;
     this.toolboxService = new ToolBoxService();
     this.container = document.createElement("div");
     this.imageUpload = imageUpload;
@@ -36,6 +38,7 @@ export class SingleImageFile {
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
 
+    // Create a wrapper for statusCheck and deleteSpan
     const actionColumn = document.createElement("div");
     actionColumn.className = "action-column";
 
@@ -189,7 +192,7 @@ export class SingleImageFile {
         "background-position": "center",
         "background-blend-mode": "overlay",
       });
-      
+
       const updates = [
         ["BGImageUrl", safeMediaUrl],
         ["BGColor", "transparent"],
@@ -217,7 +220,7 @@ export class SingleImageFile {
         );
 
         tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
-          (tile: any) => tile.Id ===  tileWrapper.getId()
+          (tile: any) => tile.Id === tileWrapper.getId()
         );
       } else {
         console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
@@ -265,7 +268,8 @@ export class SingleImageFile {
   private async updateInfoImage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
     const infoSectionController = new InfoSectionController();
-    infoSectionController.updateInfoImage(safeMediaUrl, this.infoId);
+    // console.log('updateInfoImage sectionId :>> ', this.sectionId);
+    infoSectionController.updateInfoImage(safeMediaUrl, this.infoId, this.sectionId);
   }
 
   private updateInfoCtaButtonImage() {

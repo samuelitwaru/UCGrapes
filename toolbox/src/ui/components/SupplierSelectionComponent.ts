@@ -1,192 +1,179 @@
-// SimpleSelect.ts
+import { SelectOptionConfig } from "../../interfaces/SelectOptionConfig";
 
-import { SupplierList } from "../../interfaces/SupplierList";
+export class SupplierSelectionComponent<DropdownOption> {
+  private element: HTMLElement;
+  private options: DropdownOption[];
+  private selectedOption: DropdownOption | null = null;
+  private onChangeCallback: ((option: DropdownOption) => void) | null = null;
+  private config: SelectOptionConfig<DropdownOption>;
+  private placeholder: string;
 
-  
-  export class SupplierSelectionComponent {
-    private element: HTMLElement;
-    private options: SupplierList[];
-    private selectedOption: SupplierList | null = null;
-    private onChangeCallback: ((option: SupplierList) => void) | null = null;
-  
-    constructor(options: SupplierList[]) {
-      this.options = options;
-      this.element = this.createSelectElement();
-      return this;
-    }
-  
-    private createSelectElement(): HTMLElement {
-      const container = document.createElement('div');
-      container.className = 'simple-select-container';
-  
-      const selectField = document.createElement('div');
-      selectField.className = 'select-field';
-      
-      const selectValue = document.createElement('span');
-      selectValue.className = 'select-value';
-      selectValue.textContent = 'Select supplier to connect...';
-      
-      const selectArrow = document.createElement('span');
-      selectArrow.className = 'select-arrow';
-      
-      selectField.appendChild(selectValue);
-      selectField.appendChild(selectArrow);
-  
-      const dropdown = document.createElement('div');
-      dropdown.className = 'select-dropdown';
-      
-      const searchContainer = document.createElement('div');
-      searchContainer.className = 'search-container';
-      
-      const searchIcon = document.createElement('div');
-      searchIcon.className = 'search-icon';
-      searchIcon.innerHTML = '<i class="fas fa-search"></i>';
-      
-      const searchInput = document.createElement('input');
-      searchInput.className = 'search-input';
-      searchInput.type = 'text';
-      searchInput.placeholder = 'Search suppliers...';
-      
-      searchContainer.appendChild(searchIcon);
-      searchContainer.appendChild(searchInput);
-      
-      // Create options container
-      const optionsContainer = document.createElement('div');
-      optionsContainer.className = 'options-container';
+  constructor(options: DropdownOption[], config: SelectOptionConfig<DropdownOption>) {
+    this.options = options;
+    this.config = config;
+    this.placeholder = config.placeholder || 'Select an option...';
+    this.element = this.createSelectElement();
+    return this;
+  }
 
-      this.options.forEach(option => {
-        const optionEl = document.createElement('div');
-        optionEl.className = 'select-option';
-        optionEl.textContent = option.SupplierGenCompanyName;
-        optionEl.dataset.value = option.SupplierGenCompanyName;
-        
-        optionEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.selectOption(option);
-          dropdown.classList.remove('show');
-          selectField.classList.remove('active');
-        });
-        
-        optionsContainer.appendChild(optionEl);
-      });
-      
-      dropdown.appendChild(searchContainer);
-      dropdown.appendChild(optionsContainer);
-  
-      // Add event listeners
-      selectField.addEventListener('click', (e) => {
+  private createSelectElement(): HTMLElement {
+    const container = document.createElement('div');
+    container.className = 'simple-select-container';
+
+    const selectField = document.createElement('div');
+    selectField.className = 'select-field';
+
+    const selectValue = document.createElement('span');
+    selectValue.className = 'select-value';
+    selectValue.textContent = this.placeholder;
+
+    const selectArrow = document.createElement('span');
+    selectArrow.className = 'select-arrow';
+
+    selectField.appendChild(selectValue);
+    selectField.appendChild(selectArrow);
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'select-dropdown';
+
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+
+    const searchIcon = document.createElement('div');
+    searchIcon.className = 'search-icon';
+    searchIcon.innerHTML = '<i class="fas fa-search"></i>&nbsp;&nbsp;';
+
+    const searchInput = document.createElement('input');
+    searchInput.className = 'search-input';
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search...';
+
+    searchContainer.appendChild(searchIcon);
+    searchContainer.appendChild(searchInput);
+
+    const optionsContainer = document.createElement('div');
+    optionsContainer.className = 'options-container';
+
+    this.options.forEach(option => {
+      const optionEl = document.createElement('div');
+      optionEl.className = 'select-option';
+      const label = option[this.config.labelField] as unknown as string;
+      const value = option[this.config.valueField] as unknown as string;
+      optionEl.textContent = label;
+      optionEl.dataset.value = value;
+
+      optionEl.addEventListener('click', (e) => {
         e.stopPropagation();
-        selectField.classList.toggle('active');
-        dropdown.classList.toggle('show');
-        
-        if (dropdown.classList.contains('show')) {
-          searchInput.value = '';
-          this.filterOptions('', optionsContainer);
-          setTimeout(() => searchInput.focus(), 100);
-        }
-      });
-      
-      searchInput.addEventListener('input', (e) => {
-        const target = e.target as HTMLInputElement;
-        this.filterOptions(target.value, optionsContainer);
-      });
-      
-      searchInput.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-      
-      document.addEventListener('click', () => {
+        this.selectOption(option);
         dropdown.classList.remove('show');
         selectField.classList.remove('active');
       });
-  
-      // Add styles
-      this.addStyles();
-  
-      // Assemble the component
-      container.appendChild(selectField);
-      container.appendChild(dropdown);
-      
-      return container;
-    }
-  
-    // Filter options based on search term
-    private filterOptions(searchTerm: string, optionsContainer: HTMLElement): void {
-      const options = optionsContainer.querySelectorAll('.select-option');
-      let hasResults = false;
-      
-      options.forEach(option => {
-        const optionEl = option as HTMLElement;
-        const text = optionEl.textContent?.toLowerCase() || '';
-        
-        if (text.includes(searchTerm.toLowerCase())) {
-          optionEl.style.display = 'block';
-          hasResults = true;
-        } else {
-          optionEl.style.display = 'none';
-        }
-      });
-      
-      // Show or hide "no results" message
-      let noResults = optionsContainer.querySelector('.no-results');
-      
-      if (!hasResults) {
-        if (!noResults) {
-          noResults = document.createElement('div');
-          noResults.className = 'no-results';
-          noResults.textContent = 'No suppliers found';
-          optionsContainer.appendChild(noResults);
-        }
-      } else if (noResults) {
-        optionsContainer.removeChild(noResults);
-      }
-    }
-  
-    // Select an option
-    private selectOption(option: SupplierList): void {
-      this.selectedOption = option;
-      
-      const selectValue = this.element.querySelector('.select-value') as HTMLElement;
-      selectValue.textContent = option.SupplierGenCompanyName;
-      
-      // Highlight selected option
-      const options = this.element.querySelectorAll('.select-option');
-      options.forEach(optionEl => {
-        if (optionEl.getAttribute('data-value') === option.SupplierGenCompanyName) {
-          optionEl.classList.add('selected');
-        } else {
-          optionEl.classList.remove('selected');
-        }
-      });
-      
-      // Call onChange callback if set
-      if (this.onChangeCallback) {
-        this.onChangeCallback(option);
-      }
-    }
 
-    public removeSelection(): void {
-        const popup = document.querySelector(".popup-modal-link") as HTMLDivElement;
-        const valueField = popup?.querySelector("#field_value") as HTMLInputElement;
-        if (valueField) {
-            valueField.value = "";
-            valueField.disabled = false;
-            this.selectedOption = null;
-            const selectValue = this.element.querySelector('.select-value') as HTMLElement;
-            selectValue.textContent = "Select supplier to connect..."; 
-            const options = this.element.querySelectorAll('.select-option');
-            options.forEach(optionEl => {
-                optionEl.classList.remove('selected');
-            });
-        }
+      optionsContainer.appendChild(optionEl);
+    });
+
+    dropdown.appendChild(searchContainer);
+    dropdown.appendChild(optionsContainer);
+
+    // Event Listeners
+    selectField.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectField.classList.toggle('active');
+      dropdown.classList.toggle('show');
+      if (dropdown.classList.contains('show')) {
+        searchInput.value = '';
+        this.filterOptions('', optionsContainer);
+        setTimeout(() => searchInput.focus(), 100);
+      }
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      this.filterOptions(target.value, optionsContainer);
+    });
+
+    searchInput.addEventListener('click', (e) => e.stopPropagation());
+
+    document.addEventListener('click', () => {
+      dropdown.classList.remove('show');
+      selectField.classList.remove('active');
+    });
+
+    this.addStyles();
+    container.appendChild(selectField);
+    container.appendChild(dropdown);
+    return container;
+  }
+
+  private filterOptions(searchTerm: string, optionsContainer: HTMLElement): void {
+    const options = optionsContainer.querySelectorAll('.select-option');
+    let hasResults = false;
+
+    options.forEach(option => {
+      const optionEl = option as HTMLElement;
+      const text = optionEl.textContent?.toLowerCase() || '';
+      if (text.includes(searchTerm.toLowerCase())) {
+        optionEl.style.display = 'block';
+        hasResults = true;
+      } else {
+        optionEl.style.display = 'none';
+      }
+    });
+
+    let noResults = optionsContainer.querySelector('.no-results');
+    if (!hasResults) {
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = 'No records found';
+        optionsContainer.appendChild(noResults);
+      }
+    } else if (noResults) {
+      optionsContainer.removeChild(noResults);
     }
-  
-    // Add styles to the document
-    private addStyles(): void {
-      if (!document.getElementById('simple-select-styles')) {
-        const style = document.createElement('style');
-        style.id = 'simple-select-styles';
-        style.innerHTML = `
+  }
+
+  private selectOption(option: DropdownOption): void {
+    this.selectedOption = option;
+    const label = option[this.config.labelField] as unknown as string;
+    const value = option[this.config.valueField] as unknown as string;
+
+    const selectValue = this.element.querySelector('.select-value') as HTMLElement;
+    selectValue.textContent = label;
+
+    const options = this.element.querySelectorAll('.select-option');
+    options.forEach(optionEl => {
+      if (optionEl.getAttribute('data-value') === value) {
+        optionEl.classList.add('selected');
+      } else {
+        optionEl.classList.remove('selected');
+      }
+    });
+
+    if (this.onChangeCallback) {
+      this.onChangeCallback(option);
+    }
+  }
+
+  public removeSelection(): void {
+    const popup = document.querySelector(".popup-modal-link") as HTMLDivElement;
+    const valueField = document.querySelector("#field_value") as HTMLInputElement;
+    if (valueField) {
+      valueField.value = "";
+      valueField.disabled = false;
+    }
+    this.selectedOption = null;
+    const selectValue = this.element.querySelector('.select-value') as HTMLElement;
+    selectValue.textContent = this.placeholder;
+    const options = this.element.querySelectorAll('.select-option');
+    options.forEach(optionEl => optionEl.classList.remove('selected'));
+  }
+
+  private addStyles(): void {
+    if (!document.getElementById('simple-select-styles')) {
+      const style = document.createElement('style');
+      style.id = 'simple-select-styles';
+      style.innerHTML = `
           .simple-select-container {
             position: relative;
             width: 100%;
@@ -296,34 +283,25 @@ import { SupplierList } from "../../interfaces/SupplierList";
             text-align: center;
           }
         `;
-        document.head.appendChild(style);
-      }
-    }
-  
-    // Public method to get the element
-    public getElement(): HTMLElement {
-      return this.element;
-    }
-  
-    // Public method to get the selected value
-    public getValue(): SupplierList | null {
-      return this.selectedOption;
-    }
-  
-    // Public method to set a value
-    public setValue(value: string | undefined): void {
-      if (value === undefined) {
-          return;
-      }
-      const option = this.options.find(opt => opt.SupplierGenId === value);
-      if (option) {
-        this.selectOption(option);
-      }
-    }
-  
-    // Public method to set an onChange callback
-    public onChange(callback: (option: SupplierList) => void): void {
-      this.onChangeCallback = callback;
+      document.head.appendChild(style);
     }
   }
-  
+
+  public getElement(): HTMLElement {
+    return this.element;
+  }
+
+  public getValue(): DropdownOption | null {
+    return this.selectedOption;
+  }
+
+  public setValue(value: string | undefined): void {
+    if (value === undefined) return;
+    const match = this.options.find(opt => (opt[this.config.valueField] as unknown as string) === value);
+    if (match) this.selectOption(match);
+  }
+
+  public onChange(callback: (option: DropdownOption) => void): void {
+    this.onChangeCallback = callback;
+  }
+}

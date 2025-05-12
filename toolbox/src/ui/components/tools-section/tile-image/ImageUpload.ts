@@ -11,14 +11,16 @@ export class ImageUpload {
   toolboxService: ToolBoxService;
   fileListElement: HTMLElement | null = null;
   infoId?: string;
+  sectionId?: string;
   finishedUploads: { [key: string]: Media } = {};
   cropContainer!: HTMLDivElement;
   bgImage: any;
   opacity: any;
 
-  constructor(type: any, infoId?: string) {
+  constructor(type: any, infoId?: string, sectionId?: string) {
     this.type = type;
     this.infoId = infoId;
+    this.sectionId = sectionId;
     this.modalContent = document.createElement("div");
     this.toolboxService = new ToolBoxService();
     this.init();
@@ -74,7 +76,7 @@ export class ImageUpload {
     modalActions.appendChild(saveBtn);
     this.modalContent.appendChild(modalHeader);
     this.uploadArea();
-    
+
     // cropper container
     this.cropContainer = document.createElement("div")
     this.cropContainer.id = 'crop-container'
@@ -84,7 +86,7 @@ export class ImageUpload {
     this.loadMediaFiles(); // Load media files asynchronously
     this.modalContent.appendChild(modalActions);
 
-    
+
   }
 
   private uploadArea() {
@@ -120,6 +122,7 @@ export class ImageUpload {
   }
 
   private async loadMediaFiles() {
+    // console.log('loadMediaFiles sectionId :>> ', this.sectionId);
     try {
       const media = await this.toolboxService.getMediaFiles();
       console.log('files', media)
@@ -133,7 +136,8 @@ export class ImageUpload {
               item,
               this.type,
               this,
-              this.infoId
+              this.infoId,
+              this.sectionId
             );
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
@@ -223,28 +227,28 @@ export class ImageUpload {
     }
   }
 
-  private dataUriToFile(dataUri:string, filename = 'image.png') {
+  private dataUriToFile(dataUri: string, filename = 'image.png') {
     const [header, base64] = dataUri.split(',');
     const mimeMatch = header.match(/:(.*?);/);
     const mime = mimeMatch ? mimeMatch[1] : 'image/png';
-  
+
     const binary = atob(base64);
     const array = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       array[i] = binary.charCodeAt(i);
     }
-  
+
     return new File([array], filename, { type: mime });
   }
 
-  private async getFile(url:string) {
+  private async getFile(url: string) {
     const response = await fetch(url);
     const blob = await response.blob();
     return new File([blob], 'image.jpg', { type: blob.type });
   }
 
   public async displayImageEditor(dataUrl: string, file?: File) {
-    if(!file) {
+    if (!file) {
       file = await this.getFile(dataUrl)
     }
 
@@ -271,10 +275,10 @@ export class ImageUpload {
     img.src = dataUrl;
     img.onload = () => {
       const frameHeight = 400
-      const frameWidth = frameHeight * (img.naturalWidth/img.naturalHeight)
+      const frameWidth = frameHeight * (img.naturalWidth / img.naturalHeight)
       console.log(frameHeight, frameWidth)
-      frame.style.width = `${0.8*frameWidth}px`;
-      frame.style.height = `${0.8*frameHeight}px`;
+      frame.style.width = `${0.8 * frameWidth}px`;
+      frame.style.height = `${0.8 * frameHeight}px`;
       initializeOverlay()
     }
 
@@ -287,7 +291,7 @@ export class ImageUpload {
     frame.id = "crop-frame"
     frame.style.position = "absolute";
     frame.style.border = "2px dashed #5068A8";
-    
+
 
 
     // Add resize handles
@@ -390,18 +394,16 @@ export class ImageUpload {
         // Update the grey overlay positions
         overlayTop.style.height = `${newTop}px`;
         overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
-        overlayBottom.style.height = `${
-          parentRect.height - (newTop + frame.offsetHeight)
-        }px`;
+        overlayBottom.style.height = `${parentRect.height - (newTop + frame.offsetHeight)
+          }px`;
         overlayLeft.style.top = `${newTop}px`;
         overlayLeft.style.height = `${frame.offsetHeight}px`;
         overlayLeft.style.width = `${newLeft}px`;
         overlayRight.style.top = `${newTop}px`;
         overlayRight.style.height = `${frame.offsetHeight}px`;
         overlayRight.style.left = `${newLeft + frame.offsetWidth}px`;
-        overlayRight.style.width = `${
-          parentRect.width - (newLeft + frame.offsetWidth)
-        }px`;
+        overlayRight.style.width = `${parentRect.width - (newLeft + frame.offsetWidth)
+          }px`;
       }
     });
 
@@ -542,7 +544,7 @@ export class ImageUpload {
 
     this.cropContainer.appendChild(imageContainer);
     this.cropContainer.appendChild(modalFooter);
-    
+
   }
 
   private async saveCroppedImage(
@@ -632,9 +634,8 @@ export class ImageUpload {
 
   private displayMediaFileProgress(fileList: HTMLElement, file: Media) {
     const fileItem = document.createElement("div");
-    fileItem.className = `file-item ${
-      this.validateFile(file) ? "valid" : "invalid"
-    }`;
+    fileItem.className = `file-item ${this.validateFile(file) ? "valid" : "invalid"
+      }`;
     fileItem.setAttribute("data-mediaid", file.MediaId);
 
     const removeBeforeFirstHyphen = (str: string) =>
@@ -642,25 +643,21 @@ export class ImageUpload {
 
     const isValid = this.validateFile(file);
     fileItem.innerHTML = `
-              <img src="${
-                file.MediaUrl
-              }" alt="File thumbnail" class="preview-image">
-                ${
-                  isValid
-                    ? ""
-                    : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>`
-                }
+              <img src="${file.MediaUrl
+      }" alt="File thumbnail" class="preview-image">
+                ${isValid
+        ? ""
+        : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>`
+      }
               </div>
-              <span class="status-icon" style="color: ${
-                isValid ? "green" : "red"
-              }">
+              <span class="status-icon" style="color: ${isValid ? "green" : "red"
+      }">
                 ${isValid ? "" : "⚠"}
               </span>
-              ${
-                isValid
-                  ? ""
-                  : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
-              }
+              ${isValid
+        ? ""
+        : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
+      }
             `;
     fileList.insertBefore(fileItem, fileList.firstChild);
 

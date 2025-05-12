@@ -7,6 +7,9 @@ import { PageAttacher } from "../../ui/components/tools-section/action-list/Page
 import { NavbarLeftButtons } from "../../ui/components/NavBarLeftButtons";
 import { UndoRedoManager } from "./UndoRedoManager";
 import { TileMapper } from "../editor/TileMapper";
+import { TreeComponent } from "../../ui/components/TreeComponent";
+import { HistoryManager } from "../HistoryManager";
+import { JSONToGrapesJSInformation } from "../editor/JSONToGrapesJSInformation";
 
 export class ToolboxManager {
   appVersions: any;
@@ -39,8 +42,11 @@ export class ToolboxManager {
   public setUpSideBar() {
     const sideBar = document.getElementById("tb-sidebar") as HTMLElement;
     const toolsSection = new ToolsSection();
-
     toolsSection.render(sideBar);
+    const toolSectionElement = document.getElementById(
+      "tools-section"
+    ) as HTMLDivElement;
+    if (toolSectionElement) toolSectionElement.style.display = 'none';
   }
 
   public setUpScrollButtons() {
@@ -90,12 +96,12 @@ export class ToolboxManager {
       const lastSavedStates = new Map<string, string>();
       const activeVersion = await this.appVersions.getUpdatedActiveVersion();
       const pages = activeVersion.Pages;
-      
+
       await Promise.all(pages.map(async (page: any) => {
         const pageId = page.PageId;
         const localStorageKey = `data-${pageId}`;
         const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
-      
+
         let localStructureProperty = null;
         if (
           page.PageType === "Menu" ||
@@ -113,20 +119,20 @@ export class ToolboxManager {
         } else if (page.PageType === "Information") {
           localStructureProperty = "PageInfoStructure";
         }
-      
+
         if (!localStructureProperty || !pageData[localStructureProperty]) return;
-      
+
         const localStructureString = JSON.stringify(pageData[localStructureProperty]);
-        
+
         // Ensure page.PageStructure is a string for comparison
-        const pageStructureString = typeof page.PageStructure === 'string' 
-          ? page.PageStructure 
+        const pageStructureString = typeof page.PageStructure === 'string'
+          ? page.PageStructure
           : JSON.stringify(page.PageStructure);
         // if (page.PageType === "Content") {
         //   console.log(`Saving localStructureProperty ${localStructureString}`);
         //   console.log(`Saving page.PageStructure ${pageStructureString}`);
         // }       
-      
+
         // Compare serialized versions to avoid hidden character differences
         if (localStructureString !== pageStructureString) {
           const pageInfo = {
@@ -149,14 +155,14 @@ export class ToolboxManager {
           }
         }
       }));
-      
+
       return lastSavedStates; // Return something meaningful
     } catch (error) {
       console.error("Error saving pages:", error);
       throw error; // Re-throw so caller knows something went wrong
     }
   }
-  
+
 
   openToastMessage(message?: string) {
     const toast = document.createElement("div") as HTMLElement;
@@ -181,73 +187,80 @@ export class ToolboxManager {
   unDoReDo() {
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
-    const editor = (globalThis as any).activeEditor;
-    if (!editor) {
-      console.log("No editor found")
+    const pageId = (globalThis as any).currentPageId;
+
+    if (!pageId) {
+      console.log("No editor found");
       return;
     }
-    const um = editor.UndoManager;
 
-    // const tileMapper = new TileMapper(pageId);
-    
-    undoButton.disabled = um.hasUndo();
+    const historyManager = new HistoryManager(pageId);
+
+    const updateButtonStates = () => {
+      if (undoButton) {
+        undoButton.disabled = !historyManager.canUndo();
+      }
+
+      if (redoButton) {
+        redoButton.disabled = !historyManager.canRedo();
+      }
+    }
+
+    updateButtonStates();
+
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
-        const undoResult = um.undo();
-        if (undoResult) {
+        const undoResult = historyManager.undo();
 
+        if (undoResult) {
+          this.applyNewState(undoResult, pageId);
         }
+        updateButtonStates();
       };
     }
 
-    redoButton.disabled = um.hasRedo();
     if (redoButton) {
       redoButton.onclick = (e) => {
         e.preventDefault();
-        const undoResult = um.redo();
-        if (undoResult) {
-          //
+        const redoResult = historyManager.redo();
+
+        if (redoResult) {
+          this.applyNewState(redoResult, pageId);
         }
+        updateButtonStates();
       };
     }
   }
 
-  // unDoReDo() {
-  //   const undoButton = document.getElementById("undo") as HTMLButtonElement;
-  //   const redoButton = document.getElementById("redo") as HTMLButtonElement;
-  //   const pageId = (globalThis as any).currentPageId;
-  //   if (!pageId) {
-  //     console.log("No pageId found")
-  //     return;
-  //   }
+  applyNewState(stateData: any, pageId: string) {
+    const jsonFormatter = new JSONToGrapesJSInformation(stateData);
+    const updatedHtml = jsonFormatter.generateHTML();
+    const storageKey = `data-${pageId}`;
 
-  //   const tileMapper = new TileMapper(pageId);
-  //   // console.log("TileMapper created")
-  //   // console.log("TileMapper history", tileMapper.history)
-  //   // console.log("TileMapper future", tileMapper.future);
-  //   undoButton.disabled = !tileMapper.history.length;
-  //   if (undoButton) {
-  //     undoButton.onclick = (e) => {
-  //       e.preventDefault();
-  //       const undoResult = tileMapper.undo();
-  //       if (undoResult) {
-  //         console.log("Affected tiles:", undoResult.affectedTiles);
-  //         console.log("Affected rows:", undoResult.affectedRows);
-  //       }
-  //     };
-  //   }
+    const editor = (globalThis as any).activeEditor;
+    if (!editor) return;
 
-  //   redoButton.disabled = !tileMapper.future.length;
-  //   if (redoButton) {
-  //     redoButton.onclick = (e) => {
-  //       e.preventDefault();
-  //       const undoResult = tileMapper.redo();
-  //       if (undoResult) {
-  //         console.log("Affected tiles:", undoResult.affectedTiles);
-  //         console.log("Affected rows:", undoResult.affectedRows);
-  //       }
-  //     };
-  //   }
-  // }
+    const selectedComponent = (globalThis as any).selectedComponent;
+    const selectedComponentId = selectedComponent ? selectedComponent.getId() : null;
+
+    const frameContainer = editor.getWrapper().find('#frame-container')[0];
+    if (frameContainer) {
+      frameContainer.replaceWith(updatedHtml);
+      localStorage.setItem(storageKey, JSON.stringify(stateData));
+
+      if (selectedComponentId) {
+        const newFrameContainer = editor.getWrapper().find('#frame-container')[0];
+        if (newFrameContainer) {
+          const newComponent = editor.getWrapper().find(`#${selectedComponentId}`)[0];
+          if (newComponent) {
+            editor.select(newComponent);
+            (globalThis as any).selectedComponent = newComponent;
+          } else {
+            console.log('Previously selected component no longer exists');
+          }
+        }
+      }
+    }
+  }
 }

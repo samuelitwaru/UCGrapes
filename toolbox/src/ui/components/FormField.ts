@@ -2,7 +2,7 @@ export class FormField {
     private formField: HTMLDivElement;
     private validateFn?: (value: string) => boolean;
 
-    constructor (config: {
+    constructor(config: {
         label?: string,
         type: string,
         id: string,
@@ -12,11 +12,16 @@ export class FormField {
         errorMessage?: string
         validate?: (value: string) => boolean,
         minLength?: number,
+        hidden?: boolean,
     }) {
         this.validateFn = config.validate;
         this.formField = document.createElement('div');
         this.formField.className = 'form-field';
         this.formField.style.marginBottom = '10px';
+
+        if (config.hidden) {
+            this.formField.style.display = "none"; // Hide the entire field (label + input + error)
+        }
 
         // label
         const label = document.createElement('label');
@@ -33,10 +38,10 @@ export class FormField {
         input.value = config.value || '';
 
         // optional attributes
-        if(config.placeholder) {
+        if (config.placeholder) {
             input.placeholder = config.placeholder;
         }
-        if(config.required) {
+        if (config.required) {
             input.required = true;
         }
 

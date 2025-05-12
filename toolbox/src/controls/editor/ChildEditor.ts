@@ -99,6 +99,7 @@ export class ChildEditor {
     this.editorManager.finalizeEditorSetup(childEditor);
     new UndoRedoManager(this.pageData.PageId);
     this.themeManager.applyTheme(this.themeManager.currentTheme);
+    this.updatePositions();
   }
 
   createNewEditor(editorId: string) {
@@ -155,5 +156,13 @@ export class ChildEditor {
   private updateFrame() {
     this.editorEvents.removeOtherEditors();
     this.editorEvents.activateNavigators();
+  }
+
+  private updatePositions() {
+    const childContainer = document.getElementById(
+      "child-container"
+    ) as HTMLDivElement; 
+    childContainer.scrollLeft = childContainer.scrollWidth - childContainer.clientWidth;
+    childContainer.style.justifyContent = "right";
   }
 }

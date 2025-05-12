@@ -24,7 +24,7 @@ export class TileUpdate {
           display: length >= 3 ? "none" : "flex",
         });
       }
-      const alignValue = length === 3 ? "center" : tileAttributes.Align;
+      const alignValue = length === 3 ? "center" : tileAttributes?.Align;
       const cssAlignValue = alignValue === "left" ? "start" : alignValue;
 
       

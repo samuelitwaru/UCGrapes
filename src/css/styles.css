@@ -1172,6 +1172,9 @@ h5#current-page-title {
 
 .tile-img-container {
   position: relative;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   width: 45px;
   height: 37px;
   background-color: #f0f0f0;
@@ -1179,6 +1182,10 @@ h5#current-page-title {
   border: 1px solid #b4b9bd;
   border-radius: 8px;
   display: none;
+}
+
+.tile-img-container:hover svg {
+  stroke: #5068A8;
 }
 
 .tile-img-container img {
@@ -1378,7 +1385,7 @@ div#cta-selected-actions {
 
 .text-color-palette .color-item {
   display: flex;
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.1rem;
   align-items: center;
 }
 
@@ -1602,7 +1609,7 @@ div#cta-selected-actions {
   cursor: pointer;
 }
 
-.upload-area img {
+.image-editor-container img {
   height: 100%;
   margin-bottom: 10px;
   position: absolute;
@@ -1610,8 +1617,6 @@ div#cta-selected-actions {
   left: 50%;
   transform: translate(-50%, -50%) scale(1);
   transform-origin: center center;
-  border: 1px solid #11172a;
-  border-radius: 10px;
 }
 
 .upload-area p {
@@ -1633,6 +1638,10 @@ div#cta-selected-actions {
 .upload-text {
   margin-top: 15px;
   color: #666;
+}
+.preview-image {
+  border: 1px solid #11172a;
+  border-radius: 10px;
 }
 
 .empty-message {
@@ -2037,7 +2046,7 @@ div#cta-selected-actions {
 }
 
 .search-container input[type="text"] {
-  padding: 4px 4px 4px 30px !important;
+  /* padding: 4px 4px 4px 30px !important; */
   border-radius: 6px !important;
   width: 95% !important;
   border: 1px solid #b4b9bd !important;
@@ -3042,7 +3051,7 @@ canvas {
   align-items: center;
 }
 
-.modal-footer {
+.tb-modal-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3058,7 +3067,7 @@ canvas {
   border: #c0c0c0 solid 1px;
 }
 
-.modal-footer input[type="range"] {
+.tb-modal-footer input[type="range"] {
   flex: 1; /* Allow the slider to take up available space */
   margin-left: 0 20px; /* Add spacing around the slider */
 }
@@ -3081,11 +3090,7 @@ canvas {
   color: #333;
 }
 
-.tb-btn-primary {
-  background: #5068a8;
-  border: none;
-  color: #fff;
-}
+
 /* Style the slider track */
 input[type="range"] {
   appearance: none; /* Standard property for compatibility */

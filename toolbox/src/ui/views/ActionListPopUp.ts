@@ -25,10 +25,12 @@ export class ActionListPopUp {
     this.menuList.innerHTML = "";
 
     const menuCategories = await this.controller.getMenuCategories();
-    console.log("Menu Categories:", menuCategories);
     menuCategories?.forEach((category) => {
       const menuCategory = document.createElement("div");
       menuCategory.classList.add("menu-category");
+
+      // sort menu options alphabetically
+      category.sort((a, b) => a.label.localeCompare(b.label))
 
       category.forEach((item) => {
         const menuItem = this.menuItemManager.createMenuItem(item, () => {

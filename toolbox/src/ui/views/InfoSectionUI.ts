@@ -245,8 +245,8 @@ export class InfoSectionUI {
                   )
                   .join("")}
                   <!-- Next and previous buttons -->
-                  <a ${DefaultAttributes} class="prev" onclick="plusSlides(-1)" id="${randomIdGenerator(15)}">&#10094;</a>
-                  <a ${DefaultAttributes} class="next" onclick="plusSlides(1)" id="${randomIdGenerator(15)}">&#10095;</a>
+                  <a ${DefaultAttributes} class="prev-img-slide" onclick="plusSlides(-1)" id="${randomIdGenerator(15)}">&#10094;</a>
+                  <a ${DefaultAttributes} class="next-img-slide" onclick="plusSlides(1)" id="${randomIdGenerator(15)}">&#10095;</a>
            </div>
           <br>
           

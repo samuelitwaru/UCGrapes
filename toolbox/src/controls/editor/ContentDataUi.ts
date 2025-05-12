@@ -29,6 +29,7 @@ export class ContentDataUi {
         this.openDeleteModal();
         this.updateCtaButtonImage();
         this.updateCtaButtonIcon();
+        this.imageSlider();
     }
 
     private openContentEditModal() {
@@ -281,6 +282,14 @@ export class ContentDataUi {
         });
     
         return doc.body.innerHTML;
+    }
+    
+    private imageSlider() {
+        if ((this.e.target as Element).closest('.prev-img-slide')) {
+            console.log('previous')
+        } else if ((this.e.target as Element).closest('.next-img-slide')) {
+            console.log('next');
+        }
     }
 
 }

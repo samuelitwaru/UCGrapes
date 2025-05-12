@@ -89,7 +89,6 @@ export class InfoSectionController {
     }
   }
   addMultipleImages(imgUrl: string[]) {
-    console.log('imgUrl:',imgUrl)
    // const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getMultipleImages(imgUrl);
     const imageContainer = document.createElement("div");
@@ -98,35 +97,16 @@ export class InfoSectionController {
 
     const append = this.appendComponent(imgContainer);
     if (append) {
-
-      /*
-      let slideIndex = 0;
-      showSlides();
-      
-      function showSlides() {
-        let i;
-        let slides = (globalThis as any).activeEditor.DomComponents.getWrapper().find(".mySlides");
-        console.log((globalThis as any).wrapper)
-        console.log('slides:',slides.length)
-        for (i = 0; i < slides.length; i++) {
-          
-          slides[i].getEl().style.display = "none";
-          console.log(slides[i].getEl())
-        }
-        slideIndex++;
-        if (slideIndex > slides.length) {slideIndex = 1}
-        slides[slideIndex-1].getEl().style.display = "block";
-        setTimeout(showSlides, 2000); // Change image every 2 seconds
-      }*/
       const infoType: InfoType = {
         InfoId: imageComponent.id,
         InfoType: "Images",
-        //InfoValue: "Resources/UCGrapes1/toolbox/public/images/default.jpg",
         Images:imgUrl.map((url) => ({
           InfoImageId: randomIdGenerator(15),
           InfoImageValue: url,
       })),
       };
+
+      console.log('infoType: >> ', infoType);
 
       this.addToMapper(infoType);
       let slideIndex: number = 1;

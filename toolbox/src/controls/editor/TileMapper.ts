@@ -327,6 +327,15 @@ export class TileMapper {
     return tile;
   }
 
+  getCta(infoId:string): any {
+    const data: any = JSON.parse(
+      localStorage.getItem(`data-${this.pageId}`) || "{}"
+    );
+    const cta = data.PageInfoStructure.InfoContent.find((row:any) => row.InfoType == 'Cta' && row.InfoId == infoId)
+    console.log(cta)
+    return cta.CtaAttributes || {}
+  }
+
   moveTile(
     sourceTileId: string,
     sourceRowId: string,

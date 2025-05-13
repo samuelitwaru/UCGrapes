@@ -461,6 +461,12 @@ export class EditorUIManager {
     const rowComponent = tileWrapper.parent();
     let tileAttributes;
 
+    const isTile = selectedComponent.getClasses().includes('template-block')
+    const isCta = ['img-button-container', 'plain-button-container', 'cta-container-child']
+      .some(cls => selectedComponent.getClasses().includes(cls))
+
+
+
     if (this.pageData.PageType === "Information") {
       const tileInfoSectionAttributes: InfoType = (
         globalThis as any

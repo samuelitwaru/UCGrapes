@@ -8,6 +8,7 @@ import { minTileHeight } from "../../utils/default-attributes";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
+import { ChildEditor } from "./ChildEditor";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
 import { PageMapper } from "./PageMapper";
@@ -193,7 +194,7 @@ export class EditorEvents {
   }
 
   onSelected() {
-    this.editor.on("component:selected", (component: any) => {
+    this.editor.on("component:selected", async (component: any) => {
       const pageMapper = new PageMapper(this.editor);
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = this.uiManager.createTileMapper();
@@ -207,6 +208,22 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(true)
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools()
+        const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
+        const version = (globalThis as any).activeVersion;
+
+        if (ctaAttrs.CtaAction) {
+          const pageType = ctaAttrs.CtaType=="Form" ?  "DynamicForm" : "WebLink"
+          let childPage = version?.Pages.find((page: any) => {
+            if (page.PageType == pageType) console.log(pageType, page)
+            return page.PageType == pageType && page.PageLinkStructure.Url == ctaAttrs.CtaAction
+          })
+          if (childPage) {
+            this.uiManager.removeOtherEditors();
+            new ChildEditor(childPage?.PageId, childPage).init({});
+          }
+        }
+
+
       }
       else if (isTile) {
         this.uiManager.toggleSidebar(true)

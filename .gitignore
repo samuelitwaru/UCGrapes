@@ -1,8 +1,4 @@
-custom.html
-node_modules
-test.html
-range.html
-test1.html
+html-tests/
 src/combined.js
 toolbox/src/utils/env.ts
 shimmers-test.html

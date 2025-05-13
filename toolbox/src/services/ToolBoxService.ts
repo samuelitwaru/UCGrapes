@@ -7,6 +7,7 @@ import { ProductService } from "../models/Service";
 import { Theme } from "../models/Theme";
 import { environment } from "../utils/env";
 
+
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");
@@ -117,6 +118,18 @@ export class ToolBoxService {
     return response;
   }
 
+  async renameVersion(appVersionId: string, versionName: any) {
+    const response = await this.fetchAPI("/api/toolbox/v2/update-appversion", {
+      method: "POST",
+      body: JSON.stringify({
+        AppVersionId: appVersionId,
+        AppVersionName: versionName,
+      }),
+    });
+
+    return response;
+  }
+
   async activateVersion(versionId: any) {
     const response = await this.fetchAPI(
       "/api/toolbox/v2/activate-appversion",
@@ -139,12 +152,9 @@ export class ToolBoxService {
       }),
     });
   }
+  
 
   async createMenuPage(appVersionId: string, pageName: string) {
-    console.log({
-      appVersionId: appVersionId,
-      pageName: pageName,
-    });
     const response = await this.fetchAPI("/api/toolbox/v2/create-menu-page", {
       method: "POST",
       body: JSON.stringify({

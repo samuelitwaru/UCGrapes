@@ -233,7 +233,7 @@ export class InfoSectionController {
   }
 
   updateDescription(updatedDescription: string, infoId: string) {
-    const descContainer = this.infoSectionUI.getDescription(updatedDescription);
+    const descContainer = this.infoSectionUI.getDescription(updatedDescription, infoId);
     const component = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.replaceWith(descContainer);

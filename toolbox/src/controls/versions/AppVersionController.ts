@@ -58,15 +58,32 @@ export class AppVersionController {
         }
     }
 
-    async createVersion(versionName: string, isDuplicating = false): Promise<any | null> {
+    async createVersion(versionName: string): Promise<any | null> {
         try {
             let result;    
-            if (isDuplicating) {
-                const activeVersionId = await this.appVersion.getActiveVersionId();
-                result = await this.toolboxService.duplicateVersion(activeVersionId, versionName);
-            } else {
-                result = await this.toolboxService.createVersion(versionName);
-            }      
+            result = await this.toolboxService.createVersion(versionName);     
+            return result;
+        } catch (error) {
+            console.error("Version creation failed:", error);
+            return null;
+        }
+    }
+
+    async duplicateVersion(activeVersionId: string, versionName: string): Promise<any | null> {
+        try {
+            let result;    
+            result = await this.toolboxService.duplicateVersion(activeVersionId, versionName);    
+            return result;
+        } catch (error) {
+            console.error("Version creation failed:", error);
+            return null;
+        }
+    }
+
+    async renameVersion(activeVersionId: string, versionName: string): Promise<any | null> {
+        try {
+            let result;    
+            result = await this.toolboxService.renameVersion(activeVersionId, versionName);    
             return result;
         } catch (error) {
             console.error("Version creation failed:", error);

@@ -29,6 +29,7 @@ export class EditorEvents {
   resizingRow: HTMLDivElement | undefined;
   resizeYStart: number = 0;
   selectedComponent: any;
+  initialHeight!: number;
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
@@ -42,6 +43,7 @@ export class EditorEvents {
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
     this.isHome = isHome;
+    this.initialHeight = 80;
 
     this.uiManager = new EditorUIManager(
       this.editor,
@@ -70,38 +72,87 @@ export class EditorEvents {
         if (wrapper) {
           wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
             const targetElement = e.target as Element;
-            if (targetElement.closest('.tile-resize-button')) {
+            if (targetElement.closest(".tile-resize-button")) {
               this.isResizing = true;
-              this.resizingRow = targetElement.closest('.template-wrapper') as HTMLDivElement
-              this.resizingRowHeight = this.resizingRow.offsetHeight
-              this.resizeYStart = e.clientY
+              this.resizingRow = targetElement.closest(
+                ".template-wrapper"
+              ) as HTMLDivElement;
+              this.resizingRowHeight = this.resizingRow.offsetHeight;
+              this.resizeYStart = e.clientY;
+              this.initialHeight = this.resizingRow.offsetHeight;
             }
-          })
+          });
 
           document.addEventListener("mousemove", (e: MouseEvent) => {
             if (this.isResizing) {
-              let newHeight = this.resizingRowHeight + (e.clientY - this.resizeYStart)
-              if (newHeight < minTileHeight) newHeight = minTileHeight;
-              const comps = wrapper.find(`#${this.resizingRow?.id}`)
+              // Calculate how far the mouse has moved
+              const deltaY = e.clientY - this.resizeYStart;
+
+              // Define our snap points
+              const minHeight = 80;
+              const mediumHeight = 120;
+              const maxHeight = 160;
+
+              // Determine which snap point to use based on drag distance
+              let newHeight;
+
+              // Implement snapping logic
+              if (this.initialHeight === minHeight) {
+                // Starting from minimum height
+                if (deltaY > 20) {
+                  newHeight = mediumHeight;
+                } else {
+                  newHeight = minHeight;
+                }
+              } else if (this.initialHeight === mediumHeight) {
+                // Starting from medium height
+                if (deltaY > 20) {
+                  newHeight = maxHeight;
+                } else if (deltaY < -20) {
+                  newHeight = minHeight;
+                } else {
+                  newHeight = mediumHeight;
+                }
+              } else if (this.initialHeight === maxHeight) {
+                // Starting from maximum height
+                if (deltaY < -20) {
+                  newHeight = mediumHeight;
+                } else {
+                  newHeight = maxHeight;
+                }
+              } else {
+                // If we're at a non-standard height, snap to the closest height
+                const draggedHeight = this.initialHeight + deltaY;
+
+                if (draggedHeight < (minHeight + mediumHeight) / 2) {
+                  newHeight = minHeight;
+                } else if (draggedHeight < (mediumHeight + maxHeight) / 2) {
+                  newHeight = mediumHeight;
+                } else {
+                  newHeight = maxHeight;
+                }
+              }
+
+              const comps = wrapper.find(`#${this.resizingRow?.id}`);
               if (comps.length) {
                 comps[0].addStyle({
-                  height: `${newHeight}px`
-                })
+                  height: `${newHeight}px`,
+                });
               }
+
               (globalThis as any).tileMapper.updateTile(
                 this.resizingRow?.id,
                 "Size",
                 newHeight
-              )
-
+              );
             }
-          })
+          });
 
           document.addEventListener("mouseup", (e: MouseEvent) => {
             if (this.isResizing) {
-              this.isResizing = false
+              this.isResizing = false;
             }
-          })
+          });
 
           wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
             e.preventDefault();
@@ -112,7 +163,7 @@ export class EditorEvents {
             modal.classList.add("tb-modal");
             modal.style.display = "flex";
 
-            const tileComp = selectedComponent.closest('.template-wrapper')
+            const tileComp = selectedComponent.closest(".template-wrapper");
             const modalContent = new ImageUpload("tile", tileComp.getId());
             modalContent.render(modal);
 
@@ -125,7 +176,7 @@ export class EditorEvents {
 
             document.body.appendChild(modal);
             document.body.appendChild(uploadInput);
-          })
+          });
 
           wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
             const targetElement = e.target as Element;
@@ -139,10 +190,12 @@ export class EditorEvents {
             }
 
             this.uiManager.clearAllMenuContainers();
+            this.uiManager.resetTitleFromDOM();
 
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
+            (globalThis as any).eventTarget = targetElement;
 
             this.uiManager.handleTileManager(e);
             this.uiManager.openMenu(e);
@@ -187,9 +240,13 @@ export class EditorEvents {
     });
 
     this.editor.on("component:drag:end", (model: any) => {
-      if (this.isResizing) return
+      if (this.isResizing) return;
       destinationComponent = model.parent;
-      this.uiManager.handleDragEnd(model, sourceComponent, destinationComponent);
+      this.uiManager.handleDragEnd(
+        model,
+        sourceComponent,
+        destinationComponent
+      );
     });
   }
 
@@ -198,14 +255,18 @@ export class EditorEvents {
       const pageMapper = new PageMapper(this.editor);
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = this.uiManager.createTileMapper();
-      (globalThis as any).infoContentMapper = this.uiManager.createInfoContentMapper();
+      (globalThis as any).infoContentMapper =
+        this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
-      const isTile = component.getClasses().includes('template-block')
-      const isCta = ['img-button-container', 'plain-button-container', 'cta-container-child']
-        .some(cls => component.getClasses().includes(cls))
+      const isTile = component.getClasses().includes("template-block");
+      const isCta = [
+        "img-button-container",
+        "plain-button-container",
+        "cta-container-child",
+      ].some((cls) => component.getClasses().includes(cls));
 
       if (isCta) {
-        this.uiManager.toggleSidebar(true)
+        this.uiManager.toggleSidebar(true);
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools()
         const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
@@ -225,11 +286,12 @@ export class EditorEvents {
 
 
       }
+     
       else if (isTile) {
-        this.uiManager.toggleSidebar(true)
+        this.uiManager.toggleSidebar(true);
         this.uiManager.setTileProperties();
         this.uiManager.setInfoTileProperties();
-        this.uiManager.showTileTools()
+        this.uiManager.showTileTools();
         this.uiManager.createChildEditor();
       } else {
         this.uiManager.toggleSidebar(false);
@@ -240,7 +302,7 @@ export class EditorEvents {
 
     this.editor.on("component:deselected", () => {
       (globalThis as any).selectedComponent = null;
-      this.uiManager.toggleSidebar(false)
+      this.uiManager.toggleSidebar(false);
     });
   }
 
@@ -308,12 +370,10 @@ export class EditorEvents {
 
   reAlignEditor(editorDiv: HTMLDivElement) {
     // const childContainer = document.getElementById("child-container") as HTMLDivElement;
-
     //   if (childContainer && editorDiv) {
     //     const editorFrames = Array.from(childContainer.children);
     //     const isFirstItem = editorFrames[0] === editorDiv;
     //     const isLastItem = editorFrames[editorFrames.length - 1] === editorDiv;
-
     //     if (isFirstItem) {
     //       childContainer.scrollLeft = 0;
     //       if (childContainer.children.length > 2) {

@@ -344,6 +344,7 @@ export class ImageUpload {
     frame.id = "crop-frame"
     frame.style.position = "absolute";
     frame.style.border = "2px dashed #5068A8"; 
+    //frame.style.height = "80%";
 
      // Determine the aspect ratio based on the number of tiles in the row
     const selectedComponent = (globalThis as any).selectedComponent;
@@ -362,7 +363,7 @@ export class ImageUpload {
 
     // Adjust the cropper dimensions based on the aspect ratio
     img.onload = () => {
-      const frameHeight = 400; // Fixed height for the cropper
+      const frameHeight = 300; // Fixed height for the cropper
       const frameWidth = frameHeight * aspectRatio; // Calculate width based on aspect ratio
       frame.style.width = `${frameWidth}px`;
       frame.style.height = `${frameHeight}px`;

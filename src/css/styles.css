@@ -200,6 +200,15 @@ button#open-mapping {
   /* position: fixed; */
 }
 
+.editor-main-section{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow:hiden;
+}
+
 .frame-list {
   /* max-width: 950px;
   min-width: 500px; */

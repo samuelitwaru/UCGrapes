@@ -241,8 +241,10 @@ export class FormModalService {
     // Update valueField on selection change
     itemsSelect.onChange((selectedForm: any) => {
       const valueField = formBody.querySelector("#field_value") as HTMLInputElement;
-      if (valueField && selectedForm?.FormUrl) {
+      const formIdField = formBody.querySelector("#field_id") as HTMLInputElement;
+      if ((valueField || formIdField) && selectedForm?.FormUrl) {
         valueField.value = selectedForm.FormUrl;
+        formIdField.value = selectedForm.FormId
       }
     });
   }

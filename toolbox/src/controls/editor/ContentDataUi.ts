@@ -35,6 +35,7 @@ export class ContentDataUi {
         if ((this.e.target as Element).closest('.tb-edit-content-icon')) {
             const modalBody = document.createElement('div');
             const infoDescSection = this.e.target.closest('[data-gjs-type="info-desc-section"].info-desc-section');
+            console.log('infoDescSection', infoDescSection)
             const modalContent = document.createElement('div');
             modalContent.id = 'editor';
             modalContent.innerHTML = `${this.getDescription()}`;

@@ -195,7 +195,7 @@ export class JSONToGrapesJSMenu {
     const tilesHTML = infoTilesRow?.Tiles?.map((tile: any) =>
       this.generateTile(tile, infoTilesRow, isFirstSingleTile, isThreeTiles, true)
     ).join("");
-    return infoTilesRow?.Tiles?.length === 0 ? `` : `<div id="${infoTilesRow.InfoId}" ${infoRowDefaultAttributes} class="container-row">${this.addNewInfoSection()}${tilesHTML}</div>`;
+    return infoTilesRow?.Tiles?.length === 0 ? `` : `<div id="${infoTilesRow.InfoId}" ${infoRowDefaultAttributes} class="container-row">${tilesHTML}</div>`;
   }
 
   public generateHTML(): any {

@@ -1104,12 +1104,24 @@ img.content-page-block {
   display: none;
 }
 
-.add-new-info-section {
+/* .add-new-info-section {
   position: relative;
   text-align: center;
   vertical-align: middle;
   min-height: 30px;
   margin-top: 20px;
+  width: 100%;
+} */
+
+.add-new-info-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .add-new-info-section hr {
@@ -1191,7 +1203,7 @@ img.content-page-block {
 .container-column-info {
   display: flex;
   /* flex-direction: column; */
-  gap: 0.8rem;
+  /* gap: 0.8rem; */
   justify-content: center;
   flex-flow: wrap;
 }
@@ -1210,6 +1222,41 @@ img.content-page-block {
   object-fit: cover;
   display: block;
   border: 1px dashed #222f54;
+}
+
+.info-section-spacing-container {
+  width: 100%;
+  height: 0.8rem;
+  transition: height 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-section-spacing-container.first-section {
+  margin-top: -0.8rem;
+}
+
+.content-frame-container.empty-state .info-section-spacing-container.blank-page {
+  height: fit-content;
+}
+
+.untitled-page .add-new-info-section {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.content-frame-container.empty-state:hover .add-new-info-section {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.info-section-spacing-container:hover {
+    height: 3.2rem;
+}
+
+.info-section-spacing-container:hover .add-new-info-section {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .info-image-section {

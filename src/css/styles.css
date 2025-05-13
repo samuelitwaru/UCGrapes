@@ -200,6 +200,15 @@ button#open-mapping {
   /* position: fixed; */
 }
 
+.editor-main-section{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow:hiden;
+}
+
 .frame-list {
   /* max-width: 950px;
   min-width: 500px; */
@@ -1577,6 +1586,10 @@ div#cta-selected-actions {
   width: 815px;
   min-height: 600px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 90vh;         /* Add this */
+  overflow-y: auto;         /* Add this */
+  display: flex;
+  flex-direction: column;
 }
 
 .tb-modal-header {
@@ -1609,13 +1622,15 @@ div#cta-selected-actions {
 }
 
 .image-editor-container img {
+  width: 100%;
   height: 100%;
-  margin-bottom: 10px;
+  object-fit: cover;      /* Ensures the image covers the container */
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(1);
-  transform-origin: center center;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+  margin-bottom: 0;       /* Remove margin if present */
+  transform: none;        /* Remove translate if present */
 }
 
 .upload-area p {
@@ -1638,10 +1653,10 @@ div#cta-selected-actions {
   margin-top: 15px;
   color: #666;
 }
-.preview-image {
+/* .preview-image {
   border: 1px solid #11172a;
   border-radius: 10px;
-}
+} */
 
 .empty-message {
   text-align: center;
@@ -1650,33 +1665,46 @@ div#cta-selected-actions {
   font-size: 18px;
 }
 
-.file-list {
-  margin-bottom: 20px;
-  max-height: 300px;
-  overflow: auto;
-  scrollbar-width: thin;
-  /* scrollbar-color: transparent transparent; */
-}
-
 .file-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
   position: relative;
   border-radius: 8px;
-  overflow: hidden;
+  /* overflow: hidden; */
   cursor: pointer;
-  transition: transform 0.3s ease;
+  /* transition: border 0.3s ease; */
 }
+.file-item::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%; /* Adjust the height of the gradient */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent); /* Dark grey gradient */
+  pointer-events: none; /* Ensure the gradient does not interfere with interactions */
+  z-index: 1; /* Place the gradient above the image */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease; /* Smooth fade-in effect */
+}
+.file-item:hover::after {
+  opacity: 1; /* Show the gradient on hover */
+}
+
 .action-column {
   display: flex;
   flex-direction: column; /* Stack items vertically */
-  align-items: right; /* Center items horizontally */
-  position: absolute;
-  top: 10px; /* Adjust position relative to the container */
-  right: 10px; /* Adjust position relative to the container */
-  gap: 5px; /* Add spacing between statusCheck and deleteSpan */
-  margin-left: 10px;
+  position: absolute; /* Position the action-column over the image */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for centering */
+  gap: 10px; /* Add spacing between buttons */
+  z-index: 2; /* Ensure the action-column is above the image */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease; /* Smooth fade-in effect */
+  margin-top: 15px;
+  margin-left: 25px;
+}
+.file-item:hover .action-column {
+  opacity: 1; /* Show the action-column on hover */
 }
 .delete-media:hover {
   color: darkred; /* Darker red on hover */
@@ -1687,16 +1715,20 @@ div#cta-selected-actions {
   transition: all 0.3s ease;
 }
 
-/* .file-item .action-buttons {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.file-item .action-button {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  color: #fff;
+  border: none;
+  border-radius: 50%;
   display: flex;
-  gap: 10px; 
-  opacity: 0; 
-  transition: opacity 0.3s ease;
-} */
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
 .file-item:hover .action-buttons {
   opacity: 1; /* Show buttons on hover */
@@ -1726,8 +1758,8 @@ div#cta-selected-actions {
 }
 
 .file-item img {
-  height: 200px;
-  width: 200px;
+  height: 110px;
+  width: 110px;
   margin-right: 10px;
   object-fit: cover;
 }
@@ -1749,10 +1781,12 @@ div#cta-selected-actions {
 }
 
 .file-item .delete-media {
-  font-size: 16px;
-  color: #a00c0c;
-  opacity: 0;
+  font-size: 20px;
+  color: #ffffff;
+  opacity: 0; 
   cursor: pointer;
+  margin-top: 40px;
+  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */
 }
 
 .file-info .file-info-details {
@@ -3028,7 +3062,7 @@ details .tb_debug_details-content {
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-}
+ }
 canvas {
   max-width: 100%;
   border: 1px solid #ccc;
@@ -3042,14 +3076,35 @@ canvas {
 }
 
 .image-editor-container {
-  flex: 1; /* Take up available space */
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  flex: 1;
+  overflow-y: auto;
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative; /* Ensure absolute children are relative to this */
+  height: 400px;      /* Or your preferred fixed height */
+}
+/* Reduce cropper frame height */
+.crop-frame {
+  min-width: 80px;
+  min-height: 80px;
+  height: 180px;         /* Reduced height */
+  border: 2px dashed #5068A8;
+  position: absolute;
+  box-sizing: border-box;
+  cursor: move;          /* Default cursor for moving */
 }
 
+/* Edge handles for resizing */
+.crop-frame-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #5068A8;
+  border-radius: 50%;
+  z-index: 10;
+}
 .tb-modal-footer {
   display: flex;
   justify-content: space-between;
@@ -3067,6 +3122,32 @@ canvas {
 }
 
 .tb-modal-footer input[type="range"] {
+  flex: 1; /* Allow the slider to take up available space */
+  margin-left: 0 20px; /* Add spacing around the slider */
+}
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 1px 1px 1px 1px #c0c0c0;
+  border-radius: 6px;
+  padding: 10px;
+  width: 235px;
+  height: 45px;
+  margin-left: 220px;
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+.modal-footer-buttons{
+  display: flex;
+  align-items: right;
+  width: 100%;
+  margin-left: 540px;
+  gap: 10px;
+}
+
+.modal-footer input[type="range"] {
   flex: 1; /* Allow the slider to take up available space */
   margin-left: 0 20px; /* Add spacing around the slider */
 }
@@ -3112,9 +3193,10 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional shadow */
   border: none; /* Remove border */
 }
+
 .file-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+  grid-template-columns: repeat(5, 1fr); /* Responsive grid */
   gap: 10px; /* Spacing between images */
   padding: 10px;
 }
@@ -3125,17 +3207,13 @@ input[type="range"]::-webkit-slider-thumb {
   object-fit: cover; /* Ensure the image fills the container */
   border-radius: 8px; /* Match the file-item border-radius */
 }
-.file-item {
-  position: relative;
-  border: 2px solid transparent; /* Default border */
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border 0.3s ease;
-}
 
 .file-item.active {
   border: 2px solid #28a745; /* Green border for active tile */
+}
+.file-item .delete-media:focus {
+  color: red; /* Turn red when the delete button is focused */
+  outline: none; /* Remove the default focus outline */
 }
 
 .file-item .check-icon {

@@ -8,6 +8,7 @@ import { ThemeManager } from "../themes/ThemeManager";
 import { UndoRedoManager } from "../toolbox/UndoRedoManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorEvents } from "./EditorEvents";
+import { JSONToGrapesJSInformation } from "./JSONToGrapesJSInformation";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { TileMapper } from "./TileMapper";
 
@@ -99,8 +100,17 @@ export class EditorManager {
   }
 
   async loadHomePage(editor: any) {
-    const converter = new JSONToGrapesJSMenu(this.homepage);
+    let converter;
+    if (this.homepage.PageType == "Information") {
+      converter = new JSONToGrapesJSInformation(this.homepage);
+    } else {
+      converter = new JSONToGrapesJSMenu(this.homepage);
+    }
+
     const htmlOutput = converter.generateHTML();
+
+    console.log(this.homepage)
+    console.log(htmlOutput)
 
     editor.setComponents(htmlOutput);
     this.editorEvents.init(editor, this.homepage, `gjs-0`, true);

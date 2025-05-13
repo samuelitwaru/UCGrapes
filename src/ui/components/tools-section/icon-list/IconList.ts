@@ -1,8 +1,7 @@
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
-import { InfoType } from "../../../../interfaces/InfoType";
-import { Theme, ThemeIcon } from "../../../../models/Theme";
+import { InfoType, ThemeIcon } from "../../../../types";
 import { DefaultAttributes } from "../../../../utils/default-attributes";
 
 export class IconList {

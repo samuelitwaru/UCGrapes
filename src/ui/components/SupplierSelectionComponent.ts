@@ -1,4 +1,4 @@
-import { SelectOptionConfig } from "../../interfaces/SelectOptionConfig";
+import { SelectOptionConfig } from "../../types";
 
 export class SupplierSelectionComponent<DropdownOption> {
   private element: HTMLElement;

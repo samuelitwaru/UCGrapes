@@ -130,7 +130,7 @@ export class EditorManager {
       width: "auto",
       canvas: {
         styles: [
-          "/Resources/UCGrapes1/src/css/toolbox.css",
+          "/Resources/UCGrapes/public/css/toolbox.css",
           "/DVelop/Bootstrap/Shared/fontawesome_vlatest/css/all.min.css?202521714271081",
           "https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap",
         ],

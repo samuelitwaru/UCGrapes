@@ -1,11 +1,10 @@
-import { Category } from "../../../../interfaces/Category";
-import { ActionPage } from "../../../../interfaces/ActionPage";
 import { PageAttacher } from "./PageAttacher";
 import { PageCreationService } from "./PageCreationService";
 import { Alert } from "../../Alert";
 import { AppConfig } from "../../../../AppConfig";
 import { i18n } from "../../../../i18n/i18n";
 import { ActionListController } from "../../../../controls/ActionListController";
+import { ActionPage, Category } from "../../../../types";
 
 export class CategoryView {
   details: HTMLDetailsElement;

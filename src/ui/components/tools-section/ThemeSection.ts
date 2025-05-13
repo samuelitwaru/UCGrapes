@@ -1,6 +1,6 @@
 import ToolboxApp from "../../../app";
 import { ThemeManager } from "../../../controls/themes/ThemeManager";
-import { Theme, ThemeColors } from "../../../models/Theme";
+import { ThemeColors } from "../../../types";
 import { ColorPalette } from "./ColorPalette";
 
 export class ThemeSection extends ThemeManager {

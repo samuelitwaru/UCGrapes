@@ -1,8 +1,6 @@
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
-import { ThemeIcon } from "../../../../models/Theme";
 import { IconList } from "./IconList";
 import { i18n } from "../../../../i18n/i18n";
-import { Category } from "../../../../models/Category";
 
 export class IconListCategories {
   container: HTMLElement;

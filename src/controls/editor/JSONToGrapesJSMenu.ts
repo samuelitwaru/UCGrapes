@@ -11,8 +11,8 @@ import {
   ThemeManager
 } from "../themes/ThemeManager";
 import { i18n } from "../../i18n/i18n";
-import { InfoType } from "../../interfaces/InfoType";
 import { resizeButton } from "../../utils/gjs-components";
+import { InfoType } from "../../types";
 
 export class JSONToGrapesJSMenu {
   private data: any;

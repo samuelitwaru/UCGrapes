@@ -1,4 +1,5 @@
-import { InfoType } from "../../interfaces/InfoType";
+
+import { InfoType } from "../../types";
 import { HistoryManager } from "../HistoryManager";
 
 export class InfoContentMapper {

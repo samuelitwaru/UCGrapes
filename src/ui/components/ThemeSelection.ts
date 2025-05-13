@@ -1,6 +1,6 @@
 import { ThemeManager } from "../../controls/themes/ThemeManager";
-import { Theme } from "../../models/Theme";
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { Theme } from "../../types";
 
 export class ThemeSelection extends ThemeManager{
     private container: HTMLElement;

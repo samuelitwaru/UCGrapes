@@ -1,5 +1,4 @@
 import { AppConfig } from "../AppConfig";
-import { MenuItem } from "../interfaces/MenuItem";
 import { baseURL, ToolBoxService } from "../services/ToolBoxService";
 import { ActionListDropDown } from "../ui/components/tools-section/action-list/ActionListDropDown";
 import { PageAttacher } from "../ui/components/tools-section/action-list/PageAttacher";
@@ -7,6 +6,7 @@ import { PageCreationService } from "../ui/components/tools-section/action-list/
 import { ChildEditor } from "./editor/ChildEditor";
 import { AppVersionManager } from "./versions/AppVersionManager";
 import { i18n } from "../i18n/i18n";
+import { MenuItem } from "../types";
 
 export class ActionListController {
   private toolboxService: ToolBoxService;
@@ -27,14 +27,10 @@ export class ActionListController {
 
   async getMenuCategories(): Promise<MenuItem[][] | null> {
     const categoryData = await this.actionList.getCategoryData();
-    console.log("categoryData", categoryData);
     const activePage = (globalThis as any).pageData;
 
-    // Create the second category array with conditional logic
     const secondCategory: MenuItem[] = [];
 
-    // Only add Services if the page type matches
-    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-form",
         name: "DynamicForm",
@@ -42,8 +38,6 @@ export class ActionListController {
         expandable: true,
         action: () => this.getSubMenuItems(categoryData, "Content"),
       });
-    // }
-    // if (activePage && activePage.PageType !== "Information") {
       secondCategory.push({
         id: "list-module",
         name: "Modules",
@@ -71,14 +65,6 @@ export class ActionListController {
   
     return [
       [
-        // {
-        //   id: "add-menu-page",
-        //   label: i18n.t("tile.add_menu_page"),
-        //   name: "",
-        //   action: async () => {
-        //     this.createNewPage("Untitled");
-        //   },
-        // },
         {
           id: "add-info-page",
           label: i18n.t("tile.information_page"),
@@ -87,28 +73,15 @@ export class ActionListController {
             this.createNewInfoPage("Untitled");
           },
         },
-        // {
-        //   id: "add-content-page",
-        //   label:  i18n.t("tile.add_content_page"),
-        //   name: "",
-        //   action: () => {
-        //     const config = AppConfig.getInstance();
-        //     config.addServiceButtonEvent()
-        //   },
-        // },
       ],
       secondCategory,
     ];
   }
 
   async getSubMenuItems(categoryData: any, type: string): Promise<MenuItem[]> {
-    console.log("type ", type);
-    console.log("categoryData", categoryData);
     const category = categoryData.find((cat: any) => cat.name === type);
-    console.log("category", category);
     const itemsList = category?.options || [];
     return itemsList.map((item: any) => {
-      console.log("item", item);
       return {
         id: item.PageId,
         label: item.PageName,
@@ -204,9 +177,6 @@ export class ActionListController {
       ["Action.ObjectId", childPage.PageId],
       ["Action.ObjectUrl", formUrl],
     ];
-
-
-    //  this.updateActionListDropDown("Dynamic Form", form.PageName);
 
     for (const [property, value] of updates) {
       (globalThis as any).tileMapper.updateTile(tileId, property, value);

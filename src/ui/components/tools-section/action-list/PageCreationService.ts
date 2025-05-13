@@ -2,10 +2,8 @@ import { ChildEditor } from "../../../../controls/editor/ChildEditor";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { i18n } from "../../../../i18n/i18n";
-import { ActionPage } from "../../../../interfaces/ActionPage";
-import { CtaAttributes } from "../../../../interfaces/CtaAttributes";
-import { InfoType } from "../../../../interfaces/InfoType";
 import { baseURL, ToolBoxService } from "../../../../services/ToolBoxService";
+import { CtaAttributes, InfoType } from "../../../../types";
 import { randomIdGenerator } from "../../../../utils/helpers";
 import { InfoSectionUI } from "../../../views/InfoSectionUI";
 import { Alert } from "../../Alert";
@@ -282,7 +280,6 @@ export class PageCreationService {
       CtaSupplierIsConnected: formData.supplier_id ? true : false,
       CtaConnectedSupplierId: formData.supplier_id ? formData.supplier_id : null,
     };
-    console.log('cta.. ', cta)
     const button = this.infoSectionUi.addCtaButton(cta);
     this.infoSectionController.addCtaButton(button, cta, this.sectionId);
   }

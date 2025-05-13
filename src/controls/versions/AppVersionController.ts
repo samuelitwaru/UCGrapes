@@ -1,5 +1,5 @@
-import { AppVersion } from "../../interfaces/AppVersion ";
 import { baseURL, ToolBoxService } from "../../services/ToolBoxService";
+import { AppVersion } from "../../types";
 import { Alert } from "../../ui/components/Alert";
 import { Modal } from "../../ui/components/Modal";
 import { AppVersionManager } from "./AppVersionManager";

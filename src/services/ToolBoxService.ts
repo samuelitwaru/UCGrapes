@@ -1,10 +1,6 @@
 import { AppConfig } from "../AppConfig";
 import { LoadingManager } from "../controls/LoadingManager";
-import { Form } from "../models/Form";
-import { Media } from "../models/Media";
-import { Page } from "../models/Page";
-import { ProductService } from "../models/Service";
-import { Theme } from "../models/Theme";
+import { Theme } from "../types";
 import { environment } from "../utils/env";
 
 export const baseURL =

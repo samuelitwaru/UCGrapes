@@ -1,4 +1,3 @@
-import { CallToAction } from "../../interfaces/CallToAction";
 import {
   contentColumnDefaultAttributes,
   contentDefaultAttributes,

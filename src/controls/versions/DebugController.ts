@@ -1,6 +1,5 @@
-import { DebugResults } from "../../interfaces/DebugResults";
-import { Tile } from "../../interfaces/Tile";
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { DebugResults, Tile } from "../../types";
 import { AppVersionManager } from "./AppVersionManager";
 import { DebugUIManager } from "./DebugUIManager";
 

@@ -1,14 +1,12 @@
 import { AppConfig } from "../../AppConfig";
-import { Form } from "../../models/Form";
-import { Page } from "../../models/Page";
 import { ToolBoxService } from "../../services/ToolBoxService";
 
 export class ActionListManager {
     categoryData: any[] = [];
     private config: AppConfig;
     selectedObject: any;
-    pages: Page[] = [];
-    forms: Form[] = [];
+    pages: any[] = [];
+    forms: any[] = [];
 
     constructor() {
         this.config = AppConfig.getInstance();

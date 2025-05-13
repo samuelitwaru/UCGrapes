@@ -1,4 +1,4 @@
-import { InfoType } from "../../interfaces/InfoType";
+import { InfoType } from "../../types";
 import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
 import {
   DefaultAttributes,

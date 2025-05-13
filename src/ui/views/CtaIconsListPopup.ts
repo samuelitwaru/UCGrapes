@@ -7,10 +7,9 @@ import { Modal } from "../components/Modal";
 import { InfoSectionUI } from "./InfoSectionUI";
 import { randomIdGenerator } from "../../utils/helpers";
 import { ctaIcons } from "../../utils/cta-icons";
-import { InfoType } from "../../interfaces/InfoType";
 import { ContentMapper } from "../../controls/editor/ContentMapper";
 import { CtaManager } from "../../controls/themes/CtaManager";
-import { CtaAttributes } from "../../interfaces/CtaAttributes";
+import { InfoType } from "../../types";
 
 export class CtaIconsListPopup {
   private modalContainer: HTMLDivElement;

@@ -1,11 +1,10 @@
 import { i18n } from "../../i18n/i18n";
-import { TrashItem } from "../../interfaces/TrashItem";
-import { TrashItems } from "../../interfaces/TrashItems";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { Modal } from "../components/Modal";
 import { formatDistanceToNow } from 'date-fns';
 import { VersionSelectionView } from "./VersionSelectionView";
 import { AppVersionManager } from "../../controls/versions/AppVersionManager";
+import { TrashItem, TrashItems } from "../../types";
 
 export class TrashView {
     constructor() {}

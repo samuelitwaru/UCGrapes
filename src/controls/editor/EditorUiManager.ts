@@ -1,4 +1,3 @@
-import { InfoType } from "../../interfaces/InfoType";
 import { ContentDataUi } from "./ContentDataUi";
 import { ContentMapper } from "./ContentMapper";
 import { CtaButtonProperties } from "./CtaButtonProperties";
@@ -13,6 +12,7 @@ import { InfoSectionPopup } from "../../ui/views/InfoSectionPopup";
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
+import { InfoType } from "../../types";
 
 export class EditorUIManager {
   editor: any;

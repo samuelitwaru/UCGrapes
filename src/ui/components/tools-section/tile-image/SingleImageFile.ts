@@ -1,9 +1,8 @@
 import { ContentDataManager } from "../../../../controls/editor/ContentDataManager";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
-import { InfoType } from "../../../../interfaces/InfoType";
-import { Media } from "../../../../models/Media"; // Fixed typo in import name
 import { ToolBoxService } from "../../../../services/ToolBoxService";
+import { InfoType, Media } from "../../../../types";
 import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
 

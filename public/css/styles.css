@@ -1190,6 +1190,7 @@ h5#current-page-title {
   border: 1px solid #b4b9bd;
   border-radius: 8px;
   display: none;
+  background-color: #fff;
 }
 
 .tile-img-container:hover svg {

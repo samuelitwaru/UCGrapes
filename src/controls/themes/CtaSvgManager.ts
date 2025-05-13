@@ -1,5 +1,5 @@
-import { CallToAction } from "../../interfaces/CallToAction";
-import { CtaAttributes } from "../../interfaces/CtaAttributes";
+
+import { CallToAction } from "../../types";
 import { ctaIcons } from "../../utils/cta-icons";
 import {
   ctaTileDEfaultAttributes,

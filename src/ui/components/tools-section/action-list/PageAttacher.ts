@@ -1,4 +1,3 @@
-import { ActionPage } from "../../../../interfaces/ActionPage";
 import { ChildEditor } from "../../../../controls/editor/ChildEditor";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { Alert } from "../../Alert";
@@ -9,7 +8,7 @@ import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { i18n } from "../../../../i18n/i18n";
 import { ActionSelectContainer } from "./ActionSelectContainer";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
-import { InfoType } from "../../../../interfaces/InfoType";
+import { ActionPage, InfoType } from "../../../../types";
 
 export class PageAttacher {
   toolboxService: ToolBoxService;

@@ -1,9 +1,6 @@
 import ToolboxApp from './app';
 import { AppConfig } from './AppConfig';
-import { Form } from './models/Form';
-import { Media } from './models/Media';
-import { ProductService } from './models/Service';
-import { Theme } from './models/Theme';
+import { Form, Media, ProductService, Theme } from './types';
 
 
 class App {

@@ -1,11 +1,10 @@
-import { ActionPage } from "../../../../interfaces/ActionPage";
-import { Category } from "../../../../interfaces/Category";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 import { i18n } from "../../../../i18n/i18n";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { capitalizeWords } from "../../../../utils/helpers";
+import { Category } from "../../../../types";
 
 export class ActionListDropDown {
   container: HTMLElement;
@@ -120,39 +119,9 @@ export class ActionListDropDown {
         TileName: service.ProductServiceTileName || service.ProductServiceName,
         TileCategory: service.ProductServiceClass
       }));
-    console.log("services", services);
     return services;
   }
-  // getServices(activePage: any) {
-  //   let services = (this.toolBoxService.services || []);
-  //   services = services.map((service) => ({
-  //       PageId: service.ProductServiceId,
-  //       PageName: service.ProductServiceName,
-  //       TileName: service.ProductServiceTileName || service.ProductServiceName,
-  //       TileCategory: service.ProductServiceClass
-  //     }));
-  //   return services;
-  // }
 
-  // async getContentPages() {
-  //   try {
-  //     const versions = await this.appVersion.getActiveVersion();
-  //     const res = versions?.Pages || [];
-  //     const pages = res.filter(
-  //       (page: any) => 
-  //         page.PageType == "Content"
-  //     ).map((page: any) => ({
-  //       PageId: page.PageId,
-  //       PageName: page.PageName,
-  //       TileName: page.PageName
-  //     }))
-
-  //     return pages;
-  //   } catch (error) {
-  //     console.error("Error fetching pages:", error);
-  //     throw error;
-  //   }
-  // }
 
   async getPages() {
     try {

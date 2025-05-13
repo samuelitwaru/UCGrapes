@@ -1,7 +1,4 @@
-import { CallToAction } from "../../interfaces/CallToAction";
-import { CtaAttributes } from "../../interfaces/CtaAttributes";
-import { InfoType } from "../../interfaces/InfoType";
-import { ThemeCtaColor } from "../../models/Theme";
+import { CallToAction, CtaAttributes, InfoType } from "../../types";
 import { ctaTileDEfaultAttributes, DefaultAttributes, tileDefaultAttributes } from "../../utils/default-attributes";
 import { randomIdGenerator } from "../../utils/helpers";
 import { ContentMapper } from "../editor/ContentMapper";

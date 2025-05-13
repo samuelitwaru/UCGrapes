@@ -1,6 +1,5 @@
-import { CallToAction } from "../../interfaces/CallToAction";
-import { InfoType } from "../../interfaces/InfoType";
 import { baseURL } from "../../services/ToolBoxService";
+import { InfoType } from "../../types";
 import { ctaIcons } from "../../utils/cta-icons";
 import {
   contentColumnDefaultAttributes,

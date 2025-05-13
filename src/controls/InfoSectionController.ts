@@ -1,7 +1,4 @@
 import Quill from "quill";
-import { CtaAttributes } from "../interfaces/CtaAttributes";
-import { InfoType } from "../interfaces/InfoType";
-import { Tile } from "../interfaces/Tile";
 import { baseURL } from "../services/ToolBoxService";
 import { Modal } from "../ui/components/Modal";
 import { InfoSectionUI } from "../ui/views/InfoSectionUI";
@@ -12,6 +9,7 @@ import {
 } from "../utils/default-attributes";
 import { randomIdGenerator } from "../utils/helpers";
 import { InfoContentMapper } from "./editor/InfoContentMapper";
+import { CtaAttributes, InfoType } from "../types";
 
 export class InfoSectionController {
   editor: any;

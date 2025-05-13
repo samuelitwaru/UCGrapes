@@ -1,7 +1,4 @@
-import { Form } from "./models/Form";
-import { Media } from "./models/Media";
-import { ProductService } from "./models/Service";
-import { Theme } from "./models/Theme";
+import { Form, Media, ProductService, Theme } from "./types";
 
 export class AppConfig {
     private static instance: AppConfig | null = null;

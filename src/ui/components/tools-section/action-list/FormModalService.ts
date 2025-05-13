@@ -1,9 +1,6 @@
 import { AppConfig } from "../../../../AppConfig";
-import { CtaAttributes } from "../../../../interfaces/CtaAttributes";
-import { InfoType } from "../../../../interfaces/InfoType";
-import { SupplierList } from "../../../../interfaces/SupplierList";
-import { SelectOptionConfig } from "../../../../interfaces/SelectOptionConfig";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
+import { CtaAttributes, InfoType, SupplierList } from "../../../../types";
 import { Form } from "../../Form";
 import { FormField } from "../../FormField";
 import { Modal } from "../../Modal";

@@ -1,4 +1,4 @@
-import { InfoType } from "../../interfaces/InfoType";
+import { InfoType } from "../../types";
 import { minTileHeight } from "../../utils/default-attributes";
 import { resizeButton } from "../../utils/gjs-components";
 import { InfoSectionController } from "../InfoSectionController";

@@ -1,7 +1,6 @@
 import { TileMapper } from "../../../controls/editor/TileMapper";
 import { InfoSectionController } from "../../../controls/InfoSectionController";
-import { InfoType } from "../../../interfaces/InfoType";
-import { ThemeColors } from "../../../models/Theme";
+import { InfoType, ThemeColors } from "../../../types";
 
 export class ColorPalette {
   private paletteContainer: HTMLDivElement;

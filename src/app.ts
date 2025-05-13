@@ -4,7 +4,6 @@ import { Localisation } from "./controls/Localisation";
 import { ThemeManager } from "./controls/themes/ThemeManager";
 import { ToolboxManager } from "./controls/toolbox/ToolboxManager";
 import { i18n } from "./i18n/i18n";
-import { Theme } from "./models/Theme";
 import { I18n } from "i18n-js";
 
 class ToolboxApp {

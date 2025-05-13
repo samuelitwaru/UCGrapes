@@ -5,7 +5,7 @@ import { AppVersionController } from "../../controls/versions/AppVersionControll
 import { i18n } from "../../i18n/i18n";
 import { ConfirmationBox } from "../components/ConfirmationBox";
 import { truncateString } from "../../utils/helpers";
-import { AppVersion } from "../../interfaces/AppVersion ";
+import { AppVersion } from "../../types";
 
 export class VersionSelectionView {
   private container: HTMLElement;

@@ -1,5 +1,5 @@
 import { i18n } from "../../i18n/i18n";
-import { DebugResults } from "../../interfaces/DebugResults";
+import { DebugResults } from "../../types";
 import { truncateString } from "../../utils/helpers";
 import { AppVersionManager } from "./AppVersionManager";
 

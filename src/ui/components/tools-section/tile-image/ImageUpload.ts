@@ -1,8 +1,8 @@
 import { AppConfig } from "../../../../AppConfig";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
 import { i18n } from "../../../../i18n/i18n";
-import { Media } from "../../../../models/Media";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
+import { Media } from "../../../../types";
 import { SingleImageFile } from "./SingleImageFile";
 
 export class ImageUpload {

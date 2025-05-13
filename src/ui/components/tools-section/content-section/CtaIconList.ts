@@ -1,5 +1,5 @@
 import { CtaManager } from "../../../../controls/themes/CtaManager";
-import { CallToAction } from "../../../../interfaces/CallToAction";
+import { CallToAction } from "../../../../types";
 
 export class CtaIconList {
     iconsList: any;

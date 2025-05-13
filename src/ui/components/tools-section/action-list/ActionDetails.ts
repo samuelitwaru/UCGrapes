@@ -1,4 +1,4 @@
-import { Category } from "../../../../interfaces/Category";
+import { Category } from "../../../../types";
 import { CategoryView } from "./CategoryView";
 
 export class ActionDetails {

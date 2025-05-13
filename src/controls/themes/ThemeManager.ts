@@ -1,8 +1,6 @@
 import ToolboxApp from "../../app";
 import { AppConfig } from "../../AppConfig";
-import { InfoType } from "../../interfaces/InfoType";
-import { Tile } from "../../interfaces/Tile";
-import { Theme, ThemeColors, ThemeCtaColor, ThemeIcon } from "../../models/Theme";
+import { InfoType, Theme, ThemeColors, ThemeCtaColor, Tile } from "../../types";
 import { ColorPalette } from "../../ui/components/tools-section/ColorPalette";
 import { CtaColorPalette } from "../../ui/components/tools-section/content-section/CtaColorPalette";
 import { IconList } from "../../ui/components/tools-section/icon-list/IconList";

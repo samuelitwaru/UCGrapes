@@ -49,7 +49,7 @@ export class TileManager {
     this.addTileRight();
     this.deleteTile();
     this.removeTileIcon();
-    this.removeTileTile();
+    this.removeTileTitle();
     this.removeCTa();
   }
 
@@ -250,7 +250,7 @@ export class TileManager {
     }
   }
 
-  private removeTileTile() {
+  private removeTileTitle() {
     const tileTitle = (this.event.target as Element).closest(
       ".tile-close-title"
     );

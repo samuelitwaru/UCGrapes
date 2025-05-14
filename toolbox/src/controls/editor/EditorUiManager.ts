@@ -147,7 +147,7 @@ export class EditorUIManager {
     // console.log('target :>> ', target);
     // Check if the target has the class 'info-section-spacing-container'
     if (!target.classList.contains('info-section-spacing-container')) {
-      console.warn('Target element does not have the correct class');
+      // console.warn('Target element does not have the correct class');
       return '';
     }
 
@@ -156,9 +156,9 @@ export class EditorUIManager {
 
     // Loop through the sibling elements until we find the next div with the class starting with 'info' and ending with 'section'
     while (nextElement) {
-      console.log('nextElement :>> ', nextElement);
+      // console.log('nextElement :>> ', nextElement);
       if (nextElement instanceof HTMLElement && nextElement.dataset.gjsType?.startsWith('info') && nextElement.dataset.gjsType?.endsWith('section')) {
-        console.log('nextElementId :>> ', nextElement.id);
+        // console.log('nextElementId :>> ', nextElement.id);
         // Return the sectionId of the found element
         return nextElement.id || '';
       }
@@ -167,7 +167,7 @@ export class EditorUIManager {
     }
 
     // If no matching element is found
-    console.warn('No matching info section found');
+    // console.warn('No matching info section found');
     return '';
   }
 
@@ -595,34 +595,34 @@ export class EditorUIManager {
   }
 
   resetTitleFromDOM() {
-        const pageTitle = document.querySelector('.app-bar .title') as HTMLHeadingElement;
-        const editHeader = document.getElementById('edit_page_title') as HTMLElement;
-        const saveChange = document.getElementById('save_page_title') as HTMLElement;
-        const titleDiv = document.querySelector('.app-bar .appbar-title-container') as HTMLDivElement;
-        
-        if (!pageTitle || !editHeader || !saveChange || !titleDiv) {
-            console.warn('resetTitleFromDOM: Required elements not found in DOM');
-            return;
-        }
-                
-        // Reset UI elements
-        pageTitle.contentEditable = "false";
-        editHeader.style.display = "block";
-        saveChange.style.display = "none";
-        titleDiv.style.removeProperty("border-width");
-        pageTitle.style.whiteSpace = "";
-        pageTitle.style.overflow = "";
-        pageTitle.style.textOverflow = "";
-        
-        const editorWidth = (globalThis as any).deviceWidth;
-        const length = editorWidth ? (editorWidth <= 350 ? 16 : 24) : 16;
-        if (pageTitle.textContent && this.pageData.PageName) {
-          pageTitle.title = this.pageData.PageName
-          if (pageTitle.textContent.length > length) {
-            pageTitle.textContent = this.pageData.PageName.substring(0, length) + "...";            
-          } else {
-            pageTitle.textContent = this.pageData.PageName;
-          }
-        }  
+    const pageTitle = document.querySelector('.app-bar .title') as HTMLHeadingElement;
+    const editHeader = document.getElementById('edit_page_title') as HTMLElement;
+    const saveChange = document.getElementById('save_page_title') as HTMLElement;
+    const titleDiv = document.querySelector('.app-bar .appbar-title-container') as HTMLDivElement;
+
+    if (!pageTitle || !editHeader || !saveChange || !titleDiv) {
+      console.warn('resetTitleFromDOM: Required elements not found in DOM');
+      return;
     }
+
+    // Reset UI elements
+    pageTitle.contentEditable = "false";
+    editHeader.style.display = "block";
+    saveChange.style.display = "none";
+    titleDiv.style.removeProperty("border-width");
+    pageTitle.style.whiteSpace = "";
+    pageTitle.style.overflow = "";
+    pageTitle.style.textOverflow = "";
+
+    const editorWidth = (globalThis as any).deviceWidth;
+    const length = editorWidth ? (editorWidth <= 350 ? 16 : 24) : 16;
+    if (pageTitle.textContent && this.pageData.PageName) {
+      pageTitle.title = this.pageData.PageName
+      if (pageTitle.textContent.length > length) {
+        pageTitle.textContent = this.pageData.PageName.substring(0, length) + "...";
+      } else {
+        pageTitle.textContent = this.pageData.PageName;
+      }
+    }
+  }
 }

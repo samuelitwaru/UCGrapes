@@ -302,6 +302,7 @@ export class InfoSectionController {
     if (!containerColumn) return false;
 
     const components = containerColumn.components().models;
+    const isAppendingAtEnd = !nextSectionId;
     const insertionIndex = nextSectionId
       ? components.findIndex((comp: any) => comp.getId() === nextSectionId)
       : components.length;
@@ -324,6 +325,20 @@ export class InfoSectionController {
     this.removeConsecutivePlusButtons();
     this.markFirstPlusButton();
     this.removeEmptyState();
+
+    // Scroll to bottom if we added the section at the end
+    if (isAppendingAtEnd) {
+      setTimeout(() => {
+        const editorFrame = this.editor.getWrapper().find(".content-frame-container")[0];
+        if (editorFrame) {
+          const editorFrameElement = editorFrame.getEl()
+          editorFrameElement.scrollTo({
+            top: editorFrameElement.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }, 0);
+    }
 
     return true;
   }
@@ -493,10 +508,10 @@ export class InfoSectionController {
         if (component) {
           if (prevIsCta && nextIsCta) {
             component.addStyle({ width: 'auto' });
-            console.log(`Setting width: auto for plus button: ${currentId}`);
+            // console.log(`Setting width: auto for plus button: ${currentId}`);
           } else {
             component.removeStyle('width');
-            console.log(`Removing width style from plus button: ${currentId}`);
+            // console.log(`Removing width style from plus button: ${currentId}`);
           }
         }
       }

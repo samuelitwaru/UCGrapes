@@ -42,7 +42,9 @@ export class FormModalService {
 
     if (this.isInfoCtaSection) {
       this.appendSupplierSelection(formBody, form);
-      if (this.type === 'Form') this.appendSupplierFormSelection(formBody, form);
+      if (this.type === 'Form') {
+        this.appendSupplierFormSelection(formBody, form);
+      }
     }
 
     form.render(formBody);
@@ -202,8 +204,8 @@ export class FormModalService {
     formBody.appendChild(formSupplierField);
   }
 
-  private appendSupplierFormSelection(formBody: HTMLDivElement, form: Form): void {
-    const filteredForms = this.selectedSupplierId
+  private appendSupplierFormSelection(formBody: HTMLDivElement, form: Form, isRefresh?: boolean): void {
+    const filteredForms = this.selectedSupplierId && isRefresh
       ? this.toolBoxService.forms.filter((f: any) => f.SupplierId === this.selectedSupplierId)
       : this.toolBoxService.forms;
 
@@ -292,7 +294,7 @@ export class FormModalService {
     }
 
     // Append a fresh one
-    if (this.type === 'Form') this.appendSupplierFormSelection(formBody, form);
+    if (this.type === 'Form') this.appendSupplierFormSelection(formBody, form, true);
   }
 
   private findLastConnectedSupplier(): InfoType | null {

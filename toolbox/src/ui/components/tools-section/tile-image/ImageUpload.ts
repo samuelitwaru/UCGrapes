@@ -21,7 +21,7 @@ export class ImageUpload {
   constructor(type: any, infoId?: string, sectionId?: string) {
     this.type = type;
     this.infoId = infoId;
-     this.sectionId = sectionId;
+    this.sectionId = sectionId;
     this.modalContent = document.createElement("div");
     this.toolboxService = new ToolBoxService();
     this.init();
@@ -99,7 +99,6 @@ export class ImageUpload {
       } else {
         this.loadMediaFiles(); // Loa
       }
-
     }
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
@@ -145,8 +144,6 @@ export class ImageUpload {
         const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
         const file = new File([img.src], uniqueFileName, { type: "image/png" });
         await this.saveCroppedImage(img, frame, file);
-
-
       }
     });
 
@@ -164,12 +161,11 @@ export class ImageUpload {
     });
 
     // Append buttons to the modal footer
-   // modalFooter.appendChild(cancelBtn);
-   // modalFooter.appendChild(saveBtn);
+    // modalFooter.appendChild(cancelBtn);
+    // modalFooter.appendChild(saveBtn);
 
     // Append the modal footer to the modal content
-   // this.modalContent.appendChild(modalFooter);
-
+    // this.modalContent.appendChild(modalFooter);
   }
 
   private createFileListElement() {
@@ -190,7 +186,7 @@ export class ImageUpload {
   private async loadMediaFiles() {
     try {
       const media = await this.toolboxService.getMediaFiles();
-      console.log('files', media)
+      console.log("files", media);
       if (this.fileListElement) {
         this.fileListElement.innerHTML = "";
 
@@ -263,7 +259,7 @@ export class ImageUpload {
   }
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
-    console.log('filearray', fileArray)
+    console.log("filearray", fileArray);
     for (const file of fileArray) {
       if (file.type.startsWith("image/")) {
         try {
@@ -283,7 +279,7 @@ export class ImageUpload {
             newMedia.MediaSize,
             newMedia.MediaType
           );
-          this.init()
+          this.init();
           // Replace the upload area with the image editor
           //this.displayImageEditor(dataUrl, file);
         } catch (error) {
@@ -293,10 +289,10 @@ export class ImageUpload {
     }
   }
 
-  private dataUriToFile(dataUri: string, filename = 'image.png') {
-    const [header, base64] = dataUri.split(',');
+  private dataUriToFile(dataUri: string, filename = "image.png") {
+    const [header, base64] = dataUri.split(",");
     const mimeMatch = header.match(/:(.*?);/);
-    const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+    const mime = mimeMatch ? mimeMatch[1] : "image/png";
 
     const binary = atob(base64);
     const array = new Uint8Array(binary.length);
@@ -310,7 +306,7 @@ export class ImageUpload {
   private async getFile(url: string) {
     const response = await fetch(url);
     const blob = await response.blob();
-    return new File([blob], 'image.jpg', { type: blob.type });
+    return new File([blob], "image.jpg", { type: blob.type });
   }
 
   public async displayImageEditor(dataUrl: string, file?: File) {
@@ -336,298 +332,303 @@ export class ImageUpload {
 
     // Create the image element
     const img = document.createElement("img");
-    img.id = 'selected-image'
+    img.id = "selected-image";
     img.src = dataUrl;
 
-    
     const frame = document.createElement("div");
-    frame.id = "crop-frame"
+    frame.id = "crop-frame";
     frame.style.position = "absolute";
-    frame.style.border = "2px dashed #5068A8"; 
+    frame.style.border = "2px dashed #5068A8";
     //frame.style.height = "80%";
 
-     // Determine the aspect ratio based on the number of tiles in the row
+    // Determine the aspect ratio based on the number of tiles in the row
     const selectedComponent = (globalThis as any).selectedComponent;
     if (selectedComponent) {
-      const parentRow = selectedComponent.parent().parent(); // Get the parent row      
-      const numberOfTiles = parentRow.find('.template-wrapper').length || 1; // Count the number of tiles
+      const parentRow = selectedComponent.parent().parent(); // Get the parent row
+      const numberOfTiles = parentRow.find(".template-wrapper").length || 1; // Count the number of tiles
+
       let aspectRatio = 1; // Default to square (1:1)
-      if (numberOfTiles === 2) {
-        aspectRatio = 2; // 2:1 aspect ratio
-      } else if (numberOfTiles === 1) {
-        aspectRatio = 3; // 3:1 aspect ratio
+      if (numberOfTiles === 1) {
+        aspectRatio = 2;
+      } else if (numberOfTiles === 2) {
+        aspectRatio = 1.5;
+      } else if (numberOfTiles === 3) {
+        aspectRatio = 1;
       }
 
-    // Adjust the cropper dimensions based on the aspect ratio
-    img.onload = () => {
-      const frameHeight = 300; // Fixed height for the cropper
-      const frameWidth = frameHeight * aspectRatio; // Calculate width based on aspect ratio
-      frame.style.width = `${frameWidth}px`;
-      frame.style.height = `${frameHeight}px`;
-      frame.style.left = `${(imageContainer.offsetWidth - frameWidth) / 2}px`; // Center horizontally
-      frame.style.top = `${(imageContainer.offsetHeight - frameHeight) / 2}px`; // Center vertically
-      initializeOverlay();
-    };
+      // Adjust the cropper dimensions based on the aspect ratio
+      img.onload = () => {
+        const frameHeight = 300; // Fixed height for the cropper
+        const frameWidth = frameHeight * aspectRatio; // Calculate width based on aspect ratio
+        frame.style.width = `${frameWidth}px`;
+        frame.style.height = `${frameHeight}px`;
+        frame.style.left = `${(imageContainer.offsetWidth - frameWidth) / 2}px`; // Center horizontally
+        frame.style.top = `${
+          (imageContainer.offsetHeight - frameHeight) / 2
+        }px`; // Center vertically
+        initializeOverlay();
+      };
 
-    imageContainer.appendChild(img);
-    imageContainer.appendChild(frame);
+      imageContainer.appendChild(img);
+      imageContainer.appendChild(frame);
 
-    // Add a draggable frame
-    //const zoomLevel = parseFloat(zoomSlider.value);
+      // Add a draggable frame
+      //const zoomLevel = parseFloat(zoomSlider.value);
 
+      const rect = imageContainer.getBoundingClientRect();
+      console.log(rect.x);
 
-    const rect = imageContainer.getBoundingClientRect()
-    console.log(rect.x)
+      // Add resize handles
+      const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
+      handles.forEach((handle) => {
+        const handleDiv = document.createElement("div");
+        handleDiv.className = `resize-handle ${handle}`;
+        handleDiv.style.position = "absolute";
+        handleDiv.style.width = "10px";
+        handleDiv.style.height = "10px";
+        handleDiv.style.backgroundColor = "#000";
+        handleDiv.style.zIndex = "11";
 
-    // Add resize handles
-    const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
-    handles.forEach((handle) => {
-      const handleDiv = document.createElement("div");
-      handleDiv.className = `resize-handle ${handle}`;
-      handleDiv.style.position = "absolute";
-      handleDiv.style.width = "10px";
-      handleDiv.style.height = "10px";
-      handleDiv.style.backgroundColor = "#000";
-      handleDiv.style.zIndex = "11";
+        // Position the handles
+        if (handle.includes("top")) handleDiv.style.top = "-5px";
+        if (handle.includes("bottom")) handleDiv.style.bottom = "-5px";
+        if (handle.includes("left")) handleDiv.style.left = "-5px";
+        if (handle.includes("right")) handleDiv.style.right = "-5px";
 
-      // Position the handles
-      if (handle.includes("top")) handleDiv.style.top = "-5px";
-      if (handle.includes("bottom")) handleDiv.style.bottom = "-5px";
-      if (handle.includes("left")) handleDiv.style.left = "-5px";
-      if (handle.includes("right")) handleDiv.style.right = "-5px";
+        frame.appendChild(handleDiv);
+        // Add resize logic
+        handleDiv.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
 
-      frame.appendChild(handleDiv);
-      // Add resize logic
-      handleDiv.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+          const startX = e.clientX;
+          const startY = e.clientY;
+          const startWidth = frame.offsetWidth;
+          const startHeight = frame.offsetHeight;
+          const startLeft = frame.offsetLeft;
+          const startTop = frame.offsetTop;
 
-        const startX = e.clientX;
-        const startY = e.clientY;
-        const startWidth = frame.offsetWidth;
-        const startHeight = frame.offsetHeight;
-        const startLeft = frame.offsetLeft;
-        const startTop = frame.offsetTop;
+          const onMouseMove = (moveEvent: MouseEvent) => {
+            const dx = moveEvent.clientX - startX;
+            const dy = moveEvent.clientY - startY;
 
-        const onMouseMove = (moveEvent: MouseEvent) => {
-          const dx = moveEvent.clientX - startX;
-          const dy = moveEvent.clientY - startY;
+            if (handle.includes("right")) {
+              frame.style.width = `${startWidth + dx}px`;
+            }
+            if (handle.includes("bottom")) {
+              frame.style.height = `${startHeight + dy}px`;
+            }
+            if (handle.includes("left")) {
+              frame.style.width = `${startWidth - dx}px`;
+              frame.style.left = `${startLeft + dx}px`;
+            }
+            if (handle.includes("top")) {
+              frame.style.height = `${startHeight - dy}px`;
+              frame.style.top = `${startTop + dy}px`;
+            }
 
-          if (handle.includes("right")) {
-            frame.style.width = `${startWidth + dx}px`;
-          }
-          if (handle.includes("bottom")) {
-            frame.style.height = `${startHeight + dy}px`;
-          }
-          if (handle.includes("left")) {
-            frame.style.width = `${startWidth - dx}px`;
-            frame.style.left = `${startLeft + dx}px`;
-          }
-          if (handle.includes("top")) {
-            frame.style.height = `${startHeight - dy}px`;
-            frame.style.top = `${startTop + dy}px`;
-          }
+            // Update the overlay positions
+            initializeOverlay();
+          };
+          const onMouseUp = () => {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+          };
 
-          // Update the overlay positions
-          initializeOverlay();
-        };
-        const onMouseUp = () => {
-          document.removeEventListener("mousemove", onMouseMove);
-          document.removeEventListener("mouseup", onMouseUp);
-        };
-
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
+          document.addEventListener("mousemove", onMouseMove);
+          document.addEventListener("mouseup", onMouseUp);
+        });
       });
-    });
 
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
+      let isDragging = false;
+      let offsetX = 0;
+      let offsetY = 0;
 
-    frame.addEventListener("mousedown", (e) => {
-      e.preventDefault(); // Prevent default behavior (e.g., text selection)
-      e.stopPropagation(); // Stop event propagation
-      isDragging = true;
-      offsetX = e.clientX - frame.getBoundingClientRect().left;
-      offsetY = e.clientY - frame.getBoundingClientRect().top;
-      document.body.style.userSelect = "none";
-    });
+      frame.addEventListener("mousedown", (e) => {
+        e.preventDefault(); // Prevent default behavior (e.g., text selection)
+        e.stopPropagation(); // Stop event propagation
+        isDragging = true;
+        offsetX = e.clientX - frame.getBoundingClientRect().left;
+        offsetY = e.clientY - frame.getBoundingClientRect().top;
+        document.body.style.userSelect = "none";
+      });
 
-    document.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        e.preventDefault();
-        e.stopPropagation();
+      document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+          e.preventDefault();
+          e.stopPropagation();
+          const parentRect = imageContainer.getBoundingClientRect();
+
+          let newLeft = e.clientX - offsetX - parentRect.left;
+          let newTop = e.clientY - offsetY - parentRect.top;
+
+          // Ensure the frame stays within the image container
+          if (newLeft < 0) newLeft = 0;
+          if (newLeft + frame.offsetWidth > parentRect.width) {
+            newLeft = parentRect.width - frame.offsetWidth;
+          }
+
+          if (newTop < 0) newTop = 0;
+          if (newTop + frame.offsetHeight > parentRect.height) {
+            newTop = parentRect.height - frame.offsetHeight;
+          }
+
+          frame.style.left = `${newLeft}px`;
+          frame.style.top = `${newTop}px`;
+          // Update the grey overlay positions
+          overlayTop.style.height = `${newTop}px`;
+          overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
+          overlayBottom.style.height = `${
+            parentRect.height - (newTop + frame.offsetHeight)
+          }px`;
+          overlayLeft.style.top = `${newTop}px`;
+          overlayLeft.style.height = `${frame.offsetHeight}px`;
+          overlayLeft.style.width = `${newLeft}px`;
+          overlayRight.style.top = `${newTop}px`;
+          overlayRight.style.height = `${frame.offsetHeight}px`;
+          overlayRight.style.left = `${newLeft + frame.offsetWidth}px`;
+          overlayRight.style.width = `${
+            parentRect.width - (newLeft + frame.offsetWidth)
+          }px`;
+        }
+      });
+
+      document.addEventListener("mouseup", (e) => {
+        if (isDragging) {
+          e.preventDefault(); // Prevent default behavior
+          e.stopPropagation(); // Stop event propagation
+          isDragging = false;
+          document.body.style.userSelect = "auto"; // Re-enable text selection globally
+        }
+      });
+
+      // Add grey overlay outside the frame
+      const overlayTop = document.createElement("div");
+      const overlayBottom = document.createElement("div");
+      const overlayLeft = document.createElement("div");
+      const overlayRight = document.createElement("div");
+
+      const overlayStyle = {
+        position: "absolute",
+        backgroundColor: "rgba(0, 0, 0, 0.7)", // 60% grey opacity
+        zIndex: "5", // Ensure the overlays are below the frame
+        pointerEvents: "none", // Allow interactions with the frame
+      };
+
+      imageContainer.appendChild(frame);
+
+      const initializeOverlay = () => {
+        const frameRect = frame.getBoundingClientRect();
         const parentRect = imageContainer.getBoundingClientRect();
 
-        let newLeft = e.clientX - offsetX - parentRect.left;
-        let newTop = e.clientY - offsetY - parentRect.top;
+        Object.assign(overlayTop.style, overlayStyle, {
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: `${frameRect.top - parentRect.top}px`,
+        });
 
-        // Ensure the frame stays within the image container
-        if (newLeft < 0) newLeft = 0;
-        if (newLeft + frame.offsetWidth > parentRect.width) {
-          newLeft = parentRect.width - frame.offsetWidth;
+        Object.assign(overlayBottom.style, overlayStyle, {
+          top: `${frameRect.bottom - parentRect.top}px`,
+          left: "0",
+          width: "100%",
+          height: `${parentRect.bottom - frameRect.bottom}px`,
+        });
+
+        Object.assign(overlayLeft.style, overlayStyle, {
+          top: `${frameRect.top - parentRect.top}px`,
+          left: "0",
+          width: `${frameRect.left - parentRect.left}px`,
+          height: `${frameRect.height}px`,
+        });
+
+        Object.assign(overlayRight.style, overlayStyle, {
+          top: `${frameRect.top - parentRect.top}px`,
+          left: `${frameRect.right - parentRect.left}px`,
+          width: `${parentRect.right - frameRect.right}px`,
+          height: `${frameRect.height}px`,
+        });
+      };
+      // Defer overlay initialization to ensure the frame is fully rendered
+      setTimeout(() => {
+        initializeOverlay();
+
+        // Add the overlays to the image container
+        imageContainer.appendChild(overlayTop);
+        imageContainer.appendChild(overlayBottom);
+        imageContainer.appendChild(overlayLeft);
+        imageContainer.appendChild(overlayRight);
+      }, 0);
+
+      // Create a wrapper for the slider and buttons
+      const modalFooter = document.createElement("div");
+      modalFooter.className = "modal-footer";
+      // Add the slider to adjust overlay opacity
+      const opacitySlider = document.createElement("input");
+      opacitySlider.type = "range";
+      opacitySlider.min = "0";
+      opacitySlider.max = "100";
+      opacitySlider.step = "1";
+      opacitySlider.value = "0"; // Default 60% opacity
+      opacitySlider.style.width = "40%";
+
+      opacitySlider.addEventListener("input", () => {
+        const opacityValue = parseInt(opacitySlider.value, 10) / 100;
+
+        opacityLabel.innerText = `${opacitySlider.value}%`;
+        const selectedComponent = (globalThis as any).selectedComponent;
+        if (!selectedComponent) return;
+
+        selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacityValue})`;
+        selectedComponent.getEl().style.backgroundImage = `url(${img.src})`;
+        selectedComponent.getEl().style.backgroundSize = "cover";
+
+        const pageData = (globalThis as any).pageData;
+
+        if (pageData.PageType === "Information") {
+          const infoSectionController = new InfoSectionController();
+          infoSectionController.updateInfoTileAttributes(
+            selectedComponent.parent().parent().getId(),
+            selectedComponent.parent().getId(),
+            "Opacity",
+            parseInt(opacitySlider.value)
+          );
+        } else {
+          (globalThis as any).tileMapper.updateTile(
+            selectedComponent.parent().getId(),
+            "Opacity",
+            opacitySlider.value
+          );
         }
 
-        if (newTop < 0) newTop = 0;
-        if (newTop + frame.offsetHeight > parentRect.height) {
-          newTop = parentRect.height - frame.offsetHeight;
-        }
+        img.style.opacity = `1`;
+        img.style.filter = `brightness(${1 - opacityValue})`;
+      });
 
-        frame.style.left = `${newLeft}px`;
-        frame.style.top = `${newTop}px`;
-        // Update the grey overlay positions
-        overlayTop.style.height = `${newTop}px`;
-        overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
-        overlayBottom.style.height = `${parentRect.height - (newTop + frame.offsetHeight)
-          }px`;
-        overlayLeft.style.top = `${newTop}px`;
-        overlayLeft.style.height = `${frame.offsetHeight}px`;
-        overlayLeft.style.width = `${newLeft}px`;
-        overlayRight.style.top = `${newTop}px`;
-        overlayRight.style.height = `${frame.offsetHeight}px`;
-        overlayRight.style.left = `${newLeft + frame.offsetWidth}px`;
-        overlayRight.style.width = `${parentRect.width - (newLeft + frame.offsetWidth)
-          }px`;
+      // Create a label to display the opacity percentage
+      const opacityLabel = document.createElement("span");
+      opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
+      opacityLabel.style.fontSize = "14px";
+      opacityLabel.style.color = "#333";
+
+      const sliderWrapper = document.createElement("div");
+      sliderWrapper.style.display = "flex";
+      sliderWrapper.style.alignItems = "center";
+      sliderWrapper.style.gap = "10px";
+
+      sliderWrapper.appendChild(opacitySlider);
+      sliderWrapper.appendChild(opacityLabel);
+
+      modalFooter.appendChild(sliderWrapper);
+
+      this.modalContent.appendChild(modalFooter);
+
+      if (uploadArea) {
+        uploadArea.appendChild(imageContainer);
+        uploadArea.appendChild(modalFooter);
       }
-    });
-
-    document.addEventListener("mouseup", (e) => {
-      if (isDragging) {
-        e.preventDefault(); // Prevent default behavior
-        e.stopPropagation(); // Stop event propagation
-        isDragging = false;
-        document.body.style.userSelect = "auto"; // Re-enable text selection globally
-      }
-    });
-
-    // Add grey overlay outside the frame
-    const overlayTop = document.createElement("div");
-    const overlayBottom = document.createElement("div");
-    const overlayLeft = document.createElement("div");
-    const overlayRight = document.createElement("div");
-
-    const overlayStyle = {
-      position: "absolute",
-      backgroundColor: "rgba(0, 0, 0, 0.7)", // 60% grey opacity
-      zIndex: "5", // Ensure the overlays are below the frame
-      pointerEvents: "none", // Allow interactions with the frame
-    };
-
-    imageContainer.appendChild(frame);
-
-    const initializeOverlay = () => {
-      const frameRect = frame.getBoundingClientRect();
-      const parentRect = imageContainer.getBoundingClientRect();
-
-      Object.assign(overlayTop.style, overlayStyle, {
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: `${frameRect.top - parentRect.top}px`,
-      });
-
-      Object.assign(overlayBottom.style, overlayStyle, {
-        top: `${frameRect.bottom - parentRect.top}px`,
-        left: "0",
-        width: "100%",
-        height: `${parentRect.bottom - frameRect.bottom}px`,
-      });
-
-      Object.assign(overlayLeft.style, overlayStyle, {
-        top: `${frameRect.top - parentRect.top}px`,
-        left: "0",
-        width: `${frameRect.left - parentRect.left}px`,
-        height: `${frameRect.height}px`,
-      });
-
-      Object.assign(overlayRight.style, overlayStyle, {
-        top: `${frameRect.top - parentRect.top}px`,
-        left: `${frameRect.right - parentRect.left}px`,
-        width: `${parentRect.right - frameRect.right}px`,
-        height: `${frameRect.height}px`,
-      });
-    };
-    // Defer overlay initialization to ensure the frame is fully rendered
-    setTimeout(() => {
-      initializeOverlay();
-
-      // Add the overlays to the image container
-      imageContainer.appendChild(overlayTop);
-      imageContainer.appendChild(overlayBottom);
-      imageContainer.appendChild(overlayLeft);
-      imageContainer.appendChild(overlayRight);
-    }, 0);
-
-    // Create a wrapper for the slider and buttons
-    const modalFooter = document.createElement("div");
-    modalFooter.className = "modal-footer";
-    // Add the slider to adjust overlay opacity
-    const opacitySlider = document.createElement("input");
-    opacitySlider.type = "range";
-    opacitySlider.min = "0";
-    opacitySlider.max = "100";
-    opacitySlider.step = "1";
-    opacitySlider.value = "0"; // Default 60% opacity
-    opacitySlider.style.width = "40%";
-
-    opacitySlider.addEventListener("input", () => {
-      const opacityValue = parseInt(opacitySlider.value, 10) / 100;
-
-      opacityLabel.innerText = `${opacitySlider.value}%`;
-      const selectedComponent = (globalThis as any).selectedComponent;
-      if (!selectedComponent) return;
-
-      selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacityValue})`;
-      selectedComponent.getEl().style.backgroundImage = `url(${img.src})`;
-      selectedComponent.getEl().style.backgroundSize = "cover";
-
-      const pageData = (globalThis as any).pageData;
-
-      if (pageData.PageType === "Information") {
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.updateInfoTileAttributes(
-          selectedComponent.parent().parent().getId(),
-          selectedComponent.parent().getId(),
-          "Opacity",
-          parseInt(opacitySlider.value)
-        );
-      } else {
-        (globalThis as any).tileMapper.updateTile(
-          selectedComponent.parent().getId(),
-          "Opacity",
-          opacitySlider.value
-        );
-      }
-
-      img.style.opacity = `1`;
-      img.style.filter = `brightness(${1 - opacityValue})`;
-    });
-
-    // Create a label to display the opacity percentage
-    const opacityLabel = document.createElement("span");
-    opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
-    opacityLabel.style.fontSize = "14px";
-    opacityLabel.style.color = "#333";
-
-    const sliderWrapper = document.createElement("div");
-    sliderWrapper.style.display = "flex";
-    sliderWrapper.style.alignItems = "center";
-    sliderWrapper.style.gap = "10px";
-
-    sliderWrapper.appendChild(opacitySlider);
-    sliderWrapper.appendChild(opacityLabel);
-
-    modalFooter.appendChild(sliderWrapper);
-
-
-    this.modalContent.appendChild(modalFooter);
-
-    if (uploadArea) {
-      uploadArea.appendChild(imageContainer);
-      uploadArea.appendChild(modalFooter);
     }
-  }}
+  }
 
   public async saveCroppedImage(
     img: HTMLImageElement,
@@ -697,8 +698,7 @@ export class ImageUpload {
       newMedia.MediaType
     );
     console.log("Cropped image uploaded successfully:", response);
-    this.croppedUrl = response.BC_Trn_Media.MediaUrl ;
-    
+    this.croppedUrl = response.BC_Trn_Media.MediaUrl;
 
     // Add the cropped image to the selected tile
     const selectedComponent = (globalThis as any).selectedComponent;
@@ -708,13 +708,10 @@ export class ImageUpload {
       tileElement.style.backgroundSize = "cover";
       tileElement.style.backgroundPosition = "center";
       console.log("Cropped image added to the tile.");
-
-
     }
     if (this.fileListElement) {
       this.displayMediaFile(this.fileListElement, newMedia);
-    }
-    else {
+    } else {
     }
     const modal = this.modalContent.parentElement as HTMLElement;
     if (modal) {
@@ -723,13 +720,12 @@ export class ImageUpload {
     }
 
     console.log("Cropped image saved successfully:", newMedia.MediaName);
-  } catch(error: any) {
+  }
+  catch(error: any) {
     console.error("Error saving cropped image:", error);
   }
 
-
   //   this.resetModal();
-
 
   private resetModal() {
     this.modalContent.innerHTML = "";
@@ -739,8 +735,9 @@ export class ImageUpload {
 
   private displayMediaFileProgress(fileList: HTMLElement, file: Media) {
     const fileItem = document.createElement("div");
-    fileItem.className = `file-item ${this.validateFile(file) ? "valid" : "invalid"
-      }`;
+    fileItem.className = `file-item ${
+      this.validateFile(file) ? "valid" : "invalid"
+    }`;
     fileItem.setAttribute("data-mediaid", file.MediaId);
 
     const removeBeforeFirstHyphen = (str: string) =>
@@ -748,21 +745,25 @@ export class ImageUpload {
 
     const isValid = this.validateFile(file);
     fileItem.innerHTML = `
-              <img src="${file.MediaUrl
-      }" alt="File thumbnail" class="preview-image">
-                ${isValid
-        ? ""
-        : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>`
-      }
+              <img src="${
+                file.MediaUrl
+              }" alt="File thumbnail" class="preview-image">
+                ${
+                  isValid
+                    ? ""
+                    : `<small>File is invalid. Please upload a valid file (jpg, png, jpeg and less than 2MB).</small>`
+                }
               </div>
-              <span class="status-icon" style="color: ${isValid ? "green" : "red"
-      }">
+              <span class="status-icon" style="color: ${
+                isValid ? "green" : "red"
+              }">
                 ${isValid ? "" : "⚠"}
               </span>
-              ${isValid
-        ? ""
-        : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
-      }
+              ${
+                isValid
+                  ? ""
+                  : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
+              }
             `;
     fileList.insertBefore(fileItem, fileList.firstChild);
 

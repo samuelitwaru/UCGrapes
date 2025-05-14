@@ -349,17 +349,14 @@ export class ImageUpload {
      // Determine the aspect ratio based on the number of tiles in the row
     const selectedComponent = (globalThis as any).selectedComponent;
     if (selectedComponent) {
-      const tileElement = selectedComponent.getEl();
-      const parentRow = tileElement.parentElement; // Get the parent row
-      const numberOfTiles = parentRow?.children.length || 1; // Count the number of tiles
-
+      const parentRow = selectedComponent.parent().parent(); // Get the parent row      
+      const numberOfTiles = parentRow.find('.template-wrapper').length || 1; // Count the number of tiles
       let aspectRatio = 1; // Default to square (1:1)
       if (numberOfTiles === 2) {
         aspectRatio = 2; // 2:1 aspect ratio
       } else if (numberOfTiles === 1) {
         aspectRatio = 3; // 3:1 aspect ratio
       }
-
 
     // Adjust the cropper dimensions based on the aspect ratio
     img.onload = () => {

@@ -109,9 +109,6 @@ export class EditorManager {
 
     const htmlOutput = converter.generateHTML();
 
-    console.log(this.homepage)
-    console.log(htmlOutput)
-
     editor.setComponents(htmlOutput);
     this.editorEvents.init(editor, this.homepage, `gjs-0`, true);
     localStorage.setItem(

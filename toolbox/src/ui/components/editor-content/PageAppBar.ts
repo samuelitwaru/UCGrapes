@@ -153,6 +153,7 @@ export class PageAppBar {
         pageTitle.addEventListener("input", () => {            
             if (this.pageTitle) {
                 this.pageTitle.textContent || "";
+                this.pageTitle.title = this.pageTitle.textContent || "";
                 this.updateSaveButtonState();
             }
         });

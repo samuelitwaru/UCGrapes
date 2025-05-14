@@ -80,15 +80,36 @@ export class EditorEvents {
               this.resizingRowHeight = this.resizingRow.offsetHeight;
               this.resizeYStart = e.clientY;
               this.initialHeight = this.resizingRow.offsetHeight;
+
+              this.resizingRow.style.setProperty(
+                "cursor",
+                "ns-resize",
+                "important"
+              );
+
+              // this.templateBlock = targetElement.closest(
+              //   ".template-block"
+              // ) as HTMLDivElement;
+              // if (this.templateBlock) {
+              //   this.templateBlock.style.setProperty(
+              //     "cursor",
+              //     "",
+              //     ""
+              //   );                
+              // }
             }
           });
 
           document.addEventListener("mousemove", (e: MouseEvent) => {
             if (this.isResizing) {
-              // Calculate how far the mouse has moved
+              this.resizingRow?.style.setProperty(
+                "cursor",
+                "ns-resize",
+                "important"
+              );
+
               const deltaY = e.clientY - this.resizeYStart;
 
-              // Define our snap points
               const minHeight = 80;
               const mediumHeight = 120;
               const maxHeight = 160;
@@ -96,16 +117,13 @@ export class EditorEvents {
               // Determine which snap point to use based on drag distance
               let newHeight;
 
-              // Implement snapping logic
               if (this.initialHeight === minHeight) {
-                // Starting from minimum height
                 if (deltaY > 20) {
                   newHeight = mediumHeight;
                 } else {
                   newHeight = minHeight;
                 }
               } else if (this.initialHeight === mediumHeight) {
-                // Starting from medium height
                 if (deltaY > 20) {
                   newHeight = maxHeight;
                 } else if (deltaY < -20) {
@@ -114,14 +132,12 @@ export class EditorEvents {
                   newHeight = mediumHeight;
                 }
               } else if (this.initialHeight === maxHeight) {
-                // Starting from maximum height
                 if (deltaY < -20) {
                   newHeight = mediumHeight;
                 } else {
                   newHeight = maxHeight;
                 }
               } else {
-                // If we're at a non-standard height, snap to the closest height
                 const draggedHeight = this.initialHeight + deltaY;
 
                 if (draggedHeight < (minHeight + mediumHeight) / 2) {
@@ -140,7 +156,7 @@ export class EditorEvents {
                 });
               }
 
-              (globalThis as any).tileMapper.updateTile(
+              (globalThis as any).tileMapper?.updateTile(
                 this.resizingRow?.id,
                 "Size",
                 newHeight
@@ -151,6 +167,11 @@ export class EditorEvents {
           document.addEventListener("mouseup", (e: MouseEvent) => {
             if (this.isResizing) {
               this.isResizing = false;
+
+              this.resizingRow?.style.setProperty(
+                "cursor",
+                "",
+              );
             }
           });
 

@@ -175,11 +175,11 @@ export class ImageUpload {
 
     // Add a loading indicator initially
     const loadingElement = document.createElement("div");
+    loadingElement.id = 'loading-media'
     loadingElement.className = "loading-media";
     loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
 
-    console.log("this.fileListElement");
     this.modalContent.appendChild(this.fileListElement);
   }
 
@@ -202,6 +202,10 @@ export class ImageUpload {
             );
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
+          const loadingElement = document.getElementById('loading-media') as HTMLElement
+          if (loadingElement) {
+            loadingElement.style.display = "none";
+          }
         }
       }
     } catch (error) {

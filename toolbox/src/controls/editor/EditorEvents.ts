@@ -5,6 +5,7 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
+import { InfoSectionController } from "../InfoSectionController";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -80,15 +81,36 @@ export class EditorEvents {
               this.resizingRowHeight = this.resizingRow.offsetHeight;
               this.resizeYStart = e.clientY;
               this.initialHeight = this.resizingRow.offsetHeight;
+
+              this.resizingRow.style.setProperty(
+                "cursor",
+                "ns-resize",
+                "important"
+              );
+
+              // this.templateBlock = targetElement.closest(
+              //   ".template-block"
+              // ) as HTMLDivElement;
+              // if (this.templateBlock) {
+              //   this.templateBlock.style.setProperty(
+              //     "cursor",
+              //     "",
+              //     ""
+              //   );                
+              // }
             }
           });
 
           document.addEventListener("mousemove", (e: MouseEvent) => {
             if (this.isResizing) {
-              // Calculate how far the mouse has moved
+              this.resizingRow?.style.setProperty(
+                "cursor",
+                "ns-resize",
+                "important"
+              );
+
               const deltaY = e.clientY - this.resizeYStart;
 
-              // Define our snap points
               const minHeight = 80;
               const mediumHeight = 120;
               const maxHeight = 160;
@@ -96,16 +118,13 @@ export class EditorEvents {
               // Determine which snap point to use based on drag distance
               let newHeight;
 
-              // Implement snapping logic
               if (this.initialHeight === minHeight) {
-                // Starting from minimum height
                 if (deltaY > 20) {
                   newHeight = mediumHeight;
                 } else {
                   newHeight = minHeight;
                 }
               } else if (this.initialHeight === mediumHeight) {
-                // Starting from medium height
                 if (deltaY > 20) {
                   newHeight = maxHeight;
                 } else if (deltaY < -20) {
@@ -114,14 +133,12 @@ export class EditorEvents {
                   newHeight = mediumHeight;
                 }
               } else if (this.initialHeight === maxHeight) {
-                // Starting from maximum height
                 if (deltaY < -20) {
                   newHeight = mediumHeight;
                 } else {
                   newHeight = maxHeight;
                 }
               } else {
-                // If we're at a non-standard height, snap to the closest height
                 const draggedHeight = this.initialHeight + deltaY;
 
                 if (draggedHeight < (minHeight + mediumHeight) / 2) {
@@ -140,7 +157,7 @@ export class EditorEvents {
                 });
               }
 
-              (globalThis as any).tileMapper.updateTile(
+              (globalThis as any).tileMapper?.updateTile(
                 this.resizingRow?.id,
                 "Size",
                 newHeight
@@ -151,6 +168,11 @@ export class EditorEvents {
           document.addEventListener("mouseup", (e: MouseEvent) => {
             if (this.isResizing) {
               this.isResizing = false;
+
+              this.resizingRow?.style.setProperty(
+                "cursor",
+                "",
+              );
             }
           });
 
@@ -217,6 +239,8 @@ export class EditorEvents {
         );
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.removeConsecutivePlusButtons();
       });
     }
   }
@@ -269,6 +293,7 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools();
+        this.uiManager.hidePageInfo()
 
         const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
         const version = (globalThis as any).activeVersion;
@@ -279,7 +304,7 @@ export class EditorEvents {
           if (pageType === 'DynamicForm' || pageType === 'WebLink') {
             let childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
-                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action.ObjectId)
+                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action?.ObjectId)
               }
             })
             // console.log(pageType, childPage);
@@ -291,6 +316,7 @@ export class EditorEvents {
         }
 
 
+      
       }
 
       else if (isTile) {
@@ -299,8 +325,10 @@ export class EditorEvents {
         this.uiManager.setInfoTileProperties();
         this.uiManager.showTileTools();
         this.uiManager.createChildEditor();
+        this.uiManager.hidePageInfo()
       } else {
         this.uiManager.toggleSidebar(false);
+        this.uiManager.showPageInfo()
       }
       // this.uiManager.toggleSidebar()
       // this.uiManager.setCtaProperties();
@@ -309,6 +337,7 @@ export class EditorEvents {
     this.editor.on("component:deselected", () => {
       (globalThis as any).selectedComponent = null;
       this.uiManager.toggleSidebar(false);
+      this.uiManager.showPageInfo()
     });
   }
 

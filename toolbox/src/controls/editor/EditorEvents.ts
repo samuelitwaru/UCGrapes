@@ -5,6 +5,7 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
+import { InfoSectionController } from "../InfoSectionController";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -217,6 +218,8 @@ export class EditorEvents {
         );
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.removeConsecutivePlusButtons();
       });
     }
   }

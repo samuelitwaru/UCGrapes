@@ -144,7 +144,7 @@ export class EditorUIManager {
   }
 
   getNextInfoSectionId(target: HTMLElement): string {
-    console.log('target :>> ', target);
+    // console.log('target :>> ', target);
     // Check if the target has the class 'info-section-spacing-container'
     if (!target.classList.contains('info-section-spacing-container')) {
       console.warn('Target element does not have the correct class');

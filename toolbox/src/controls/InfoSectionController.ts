@@ -347,6 +347,7 @@ export class InfoSectionController {
       if (ctaAttributes) {
         this.setNestedProperty(ctaAttributes, attribute, value);
         this.updateInfoMapper(infoId, infoType);
+        this.removeConsecutivePlusButtons();
       }
     }
   }
@@ -416,12 +417,12 @@ export class InfoSectionController {
     }
   }
 
-  private restoreEmptyStateIfNoSections() {
+  restoreEmptyStateIfNoSections() {
     const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
     if (!containerColumn) return;
 
     const remainingComponents = containerColumn.components().models;
-    if (remainingComponents.length === 1 && remainingComponents[0].getClasses().includes('blank-page')) {
+    if (remainingComponents.length <= 1) {
       // Add the default blank plus button
       const blankPlus = new AddInfoSectionButton(true).getHTML();
       const newBtn = this.editor.addComponents(blankPlus);
@@ -452,36 +453,55 @@ export class InfoSectionController {
     }
   }
 
-  private removeConsecutivePlusButtons() {
+  removeConsecutivePlusButtons() {
     const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
     if (!containerColumn) return;
 
-    const components = containerColumn.components().models;
+    let components = containerColumn.components().models;
 
     let i = 1; // Start from the second component
     while (i < components.length) {
       const current = components[i];
       const previous = components[i - 1];
 
-      const isCurrentPlus = current.getClasses().includes('info-section-spacing-container');
-      const isPreviousPlus = previous.getClasses().includes('info-section-spacing-container');
+      const currentClasses = current.getClasses();
+      const previousClasses = previous.getClasses();
+
+      const isCurrentPlus = currentClasses.includes('info-section-spacing-container');
+      const isPreviousPlus = previousClasses.includes('info-section-spacing-container');
 
       if (isCurrentPlus && isPreviousPlus) {
         const currentId = current.getId?.();
-        // console.log('Duplicate plus found, current.getId?.() :>> ', currentId);
-
         const component = this.editor.getWrapper().find(`#${currentId}`)[0];
         if (component) {
           component.remove();
-          // console.log('Removed duplicate plus button:', currentId);
 
-          // Since we've removed a component, we need to adjust the loop to account for the change
-          // Don't increment `i` to check the new component at the same index after removal
+          // Refresh components after removal
+          components = containerColumn.components().models;
+
+          // Don't increment i; re-evaluate current index
           continue;
+        }
+      } else if (isCurrentPlus) {
+        const next = i + 1 < components.length ? components[i + 1] : null;
+        const prevIsCta = previousClasses.includes('cta-container-child') && previousClasses.includes('cta-child');
+        const nextIsCta = next?.getClasses().includes('cta-container-child') && next?.getClasses().includes('cta-child');
+
+        const currentId = current.getId?.();
+        const component = this.editor.getWrapper().find(`#${currentId}`)[0];
+
+        if (component) {
+          if (prevIsCta && nextIsCta) {
+            component.addStyle({ width: 'auto' });
+            console.log(`Setting width: auto for plus button: ${currentId}`);
+          } else {
+            component.removeStyle('width');
+            console.log(`Removing width style from plus button: ${currentId}`);
+          }
         }
       }
 
-      i++; // Move to the next component if no removal
+      i++;
     }
   }
 

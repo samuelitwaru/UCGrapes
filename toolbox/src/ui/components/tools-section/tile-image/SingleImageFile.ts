@@ -59,6 +59,11 @@ export class SingleImageFile {
     statusCheck.className = "status-icon";
     statusCheck.style.color = "green";
 
+    const addImage = document.createElement("span");
+    addImage.className = "add-image fas fa-sync-alt";
+    addImage.title = "Add image";
+    //addImage.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/rotate.png')";
+
     this.setupItemClickEvent(statusCheck);
 
     const deleteSpan = document.createElement("span");
@@ -71,7 +76,8 @@ export class SingleImageFile {
     });
 
     // Append statusCheck and deleteSpan to the action column
-    actionColumn.appendChild(statusCheck);
+    //actionColumn.appendChild(statusCheck);
+    actionColumn.appendChild(addImage);
     actionColumn.appendChild(deleteSpan);
 
     this.container.appendChild(img);

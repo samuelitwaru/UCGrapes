@@ -10,4 +10,5 @@ export interface CtaAttributes {
     CtaButtonIcon?: string;
     CtaSupplierIsConnected?: boolean;
     CtaConnectedSupplierId?: string;
+    Action?: Object;
 }

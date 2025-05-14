@@ -268,25 +268,31 @@ export class EditorEvents {
       if (isCta) {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setInfoCtaProperties();
-        this.uiManager.showCtaTools()
+        this.uiManager.showCtaTools();
+
         const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
         const version = (globalThis as any).activeVersion;
+        this.uiManager.removeOtherEditors();
 
         if (ctaAttrs.CtaAction) {
-          const pageType = ctaAttrs.CtaType=="Form" ?  "DynamicForm" : "WebLink"
-          let childPage = version?.Pages.find((page: any) => {
-            if (page.PageType == pageType) console.log(pageType, page)
-            return page.PageType == pageType && page.PageLinkStructure.Url == ctaAttrs.CtaAction
-          })
-          if (childPage) {
-            this.uiManager.removeOtherEditors();
-            new ChildEditor(childPage?.PageId, childPage).init({});
+          const pageType = ctaAttrs.CtaType == "Form" ? "DynamicForm" : ctaAttrs.CtaType
+          if (pageType === 'DynamicForm' || pageType === 'WebLink') {
+            let childPage = version?.Pages.find((page: any) => {
+              if (page.PageType == pageType) {
+                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action.ObjectId)
+              }
+            })
+            // console.log(pageType, childPage);
+            if (childPage) {
+              this.uiManager.removeOtherEditors();
+              new ChildEditor(childPage?.PageId, childPage).init({});
+            }
           }
         }
 
 
       }
-     
+
       else if (isTile) {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setTileProperties();

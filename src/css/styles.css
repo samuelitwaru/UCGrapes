@@ -3417,3 +3417,16 @@ input[type="range"]::-webkit-slider-thumb {
 .btn-danger:hover {
   background-color: #b31412;
 }
+
+.resize-handle.bottom-right {
+  cursor: se-resize;
+}
+.resize-handle.bottom-left {
+  cursor: sw-resize;
+}
+.resize-handle.top-left {
+  cursor: nw-resize;
+}
+.resize-handle.top-right {
+  cursor: ne-resize;
+}

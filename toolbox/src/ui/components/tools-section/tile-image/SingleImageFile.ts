@@ -173,6 +173,7 @@ export class SingleImageFile {
   }
 
   private addImageToTile() {
+    alert()
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
     try {

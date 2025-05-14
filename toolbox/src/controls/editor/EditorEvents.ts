@@ -307,10 +307,10 @@ export class EditorEvents {
                 return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action?.ObjectId)
               }
             })
-            // console.log(pageType, childPage);
+            
             if (childPage) {
               this.uiManager.removeOtherEditors();
-              new ChildEditor(childPage?.PageId, childPage).init({});
+              new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
             }
           }
         }

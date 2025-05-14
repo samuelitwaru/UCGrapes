@@ -175,11 +175,11 @@ export class ImageUpload {
 
     // Add a loading indicator initially
     const loadingElement = document.createElement("div");
+    loadingElement.id = 'loading-media'
     loadingElement.className = "loading-media";
     loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
 
-    console.log("this.fileListElement");
     this.modalContent.appendChild(this.fileListElement);
   }
 
@@ -202,6 +202,10 @@ export class ImageUpload {
             );
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
+          const loadingElement = document.getElementById('loading-media') as HTMLElement
+          if (loadingElement) {
+            loadingElement.style.display = "none";
+          }
         }
       }
     } catch (error) {
@@ -343,11 +347,12 @@ export class ImageUpload {
 
     // Determine the aspect ratio based on the number of tiles in the row
     const selectedComponent = (globalThis as any).selectedComponent;
+    let aspectRatio = 2; // Default to square (1:1)
+
     if (selectedComponent) {
       const parentRow = selectedComponent.parent().parent(); // Get the parent row
       const numberOfTiles = parentRow.find(".template-wrapper").length || 1; // Count the number of tiles
-
-      let aspectRatio = 1; // Default to square (1:1)
+      
       if (numberOfTiles === 1) {
         aspectRatio = 2;
       } else if (numberOfTiles === 2) {
@@ -355,7 +360,7 @@ export class ImageUpload {
       } else if (numberOfTiles === 3) {
         aspectRatio = 1;
       }
-
+    }
       // Adjust the cropper dimensions based on the aspect ratio
       img.onload = () => {
         const frameHeight = 300; // Fixed height for the cropper
@@ -627,7 +632,7 @@ export class ImageUpload {
         uploadArea.appendChild(imageContainer);
         uploadArea.appendChild(modalFooter);
       }
-    }
+  //  }
   }
 
   public async saveCroppedImage(

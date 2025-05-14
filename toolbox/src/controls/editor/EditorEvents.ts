@@ -5,6 +5,7 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
+import { InfoSectionController } from "../InfoSectionController";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -238,6 +239,8 @@ export class EditorEvents {
         );
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.removeConsecutivePlusButtons();
       });
     }
   }
@@ -290,6 +293,7 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools();
+        this.uiManager.hidePageInfo()
 
         const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
         const version = (globalThis as any).activeVersion;
@@ -300,7 +304,7 @@ export class EditorEvents {
           if (pageType === 'DynamicForm' || pageType === 'WebLink') {
             let childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
-                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action.ObjectId)
+                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action?.ObjectId)
               }
             })
             // console.log(pageType, childPage);
@@ -312,6 +316,7 @@ export class EditorEvents {
         }
 
 
+      
       }
 
       else if (isTile) {
@@ -320,8 +325,10 @@ export class EditorEvents {
         this.uiManager.setInfoTileProperties();
         this.uiManager.showTileTools();
         this.uiManager.createChildEditor();
+        this.uiManager.hidePageInfo()
       } else {
         this.uiManager.toggleSidebar(false);
+        this.uiManager.showPageInfo()
       }
       // this.uiManager.toggleSidebar()
       // this.uiManager.setCtaProperties();
@@ -330,6 +337,7 @@ export class EditorEvents {
     this.editor.on("component:deselected", () => {
       (globalThis as any).selectedComponent = null;
       this.uiManager.toggleSidebar(false);
+      this.uiManager.showPageInfo()
     });
   }
 

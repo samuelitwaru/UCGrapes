@@ -11,7 +11,7 @@ export class EditorFrame {
     pageData: any;
     isNewPage: boolean = false;
 
-    constructor(id: string, isHome: boolean = false, pageData?:any, pageName?: string, isNewPage: boolean = false) {
+    constructor(id: string, isHome: boolean = false, pageData:any, pageName?: string, isNewPage: boolean = false) {
         this.container = document.createElement('div');
         this.id = id;
         this.isHome = isHome
@@ -24,7 +24,7 @@ export class EditorFrame {
     init() {
         this.container.className = "mobile-frame";
         this.container.id = `${this.id}-frame`;
-        this.container.setAttribute('data-pageid', '1');
+        this.container.setAttribute('data-pageid', this.pageData.PageId);
 
         const frameHeader = new FrameHeader();
         const homeAppBar = new HomeAppBar();

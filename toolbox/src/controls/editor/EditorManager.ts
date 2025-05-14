@@ -46,10 +46,7 @@ export class EditorManager {
   }
 
   setUpEditorFrame() {
-    const leftNavigatorButton = new LeftNavigatorButton();
-    const rightNavigatorButton = new RightNavigatorButton();
-    const frameList = new FrameList(`gjs-0`);
-
+    const frameList = new FrameList(`gjs-0`, this.homepage);
     
     const thumbsContainer = document.createElement("div");
     thumbsContainer.style.justifyContent = "center";

@@ -14,7 +14,7 @@ export class TileUpdate {
 
   updateTile(rowComponent: any, isDragging: boolean = false) {
     this.rowComponent = rowComponent;
-    const tiles = rowComponent.components();
+    const tiles = rowComponent.find(".template-wrapper");
     const length = tiles.length;
     tiles.forEach((tile: any) => {
       const tileAttributes = this.getTileAttributes(rowComponent, tile);

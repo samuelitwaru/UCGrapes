@@ -60,10 +60,10 @@ export class SingleImageFile {
     statusCheck.style.color = "green";
 
     const addImage = document.createElement("span");
-    addImage.className = "add-image fas fa-sync-alt";
-    addImage.title = "Add image";
-    addImage.style.width = "28px";
-    addImage.style.height = "28px";
+    addImage.className = "add-image";
+    addImage.title = "Replace image";
+    addImage.style.width = "16px";
+    addImage.style.height = "16px";
     addImage.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/rotate.png')";
     addImage.style.backgroundSize = "contain";
     addImage.style.backgroundRepeat = "no-repeat";

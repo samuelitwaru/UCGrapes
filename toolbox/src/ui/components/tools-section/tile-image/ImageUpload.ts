@@ -342,7 +342,7 @@ export class ImageUpload {
     const frame = document.createElement("div");
     frame.id = "crop-frame";
     frame.style.position = "absolute";
-    frame.style.border = "2px dashed #5068A8";
+    frame.style.border = "2px dashedrgb(0, 0, 0)";
     //frame.style.height = "80%";
 
     // Determine the aspect ratio based on the number of tiles in the row

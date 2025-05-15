@@ -62,7 +62,13 @@ export class SingleImageFile {
     const addImage = document.createElement("span");
     addImage.className = "add-image fas fa-sync-alt";
     addImage.title = "Add image";
-    //addImage.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/rotate.png')";
+    addImage.style.width = "28px";
+    addImage.style.height = "28px";
+    addImage.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/rotate.png')";
+    addImage.style.backgroundSize = "contain";
+    addImage.style.backgroundRepeat = "no-repeat";
+    addImage.style.backgroundPosition = "center";
+    addImage.style.cursor = "pointer";
 
     this.setupItemClickEvent(statusCheck);
 

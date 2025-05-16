@@ -59,6 +59,8 @@ export class EditorEvents {
       this.appVersionManager
     );
 
+    (globalThis as any).uiManager = this.uiManager
+
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
@@ -78,6 +80,7 @@ export class EditorEvents {
         if (wrapper) {
           wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
             const targetElement = e.target as Element;
+
             if (targetElement.closest(".tile-resize-button")) {
               this.isResizing = true;
               this.resizingRow = targetElement.closest(
@@ -295,7 +298,7 @@ export class EditorEvents {
             }
 
             this.uiManager.clearAllMenuContainers();
-            this.uiManager.resetTitleFromDOM();
+            //this.uiManager.resetTitleFromDOM();
 
             (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
@@ -329,6 +332,7 @@ export class EditorEvents {
           console.error("Wrapper not found!");
         }
 
+        
         new EditorThumbs(
           this.frameId,
           this.pageId,
@@ -336,6 +340,9 @@ export class EditorEvents {
           this.pageData,
           this.isHome
         );
+
+        console.log('editors', (window as any).app.editors)
+
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
         const infoSectionController = new InfoSectionController();

@@ -45,7 +45,14 @@ export class PageAppBar {
         const thumbsList = document.querySelector(".editor-thumbs-list") as HTMLElement;
         backButton?.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation()
             const currentFrame = document.querySelector(`#${this.id}-frame`)
+            const previousFrame = currentFrame?.previousElementSibling as HTMLDivElement
+
+            if(previousFrame && previousFrame?.classList.contains("mobile-frame")) {
+                (globalThis as any).pageId = previousFrame.dataset.pageid;
+                (globalThis as any).uiManager.activateEditor(previousFrame.id.replace('-frame', ''))
+            } 
             if (currentFrame) {
                 let nextElement = currentFrame.nextElementSibling;
                 while (nextElement) {

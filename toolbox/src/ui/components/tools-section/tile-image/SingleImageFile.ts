@@ -227,7 +227,7 @@ export class SingleImageFile {
           (tile: any) => tile.Id === tileWrapper.getId()
         );
       } else {
-        console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
+       // console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
         for (const [property, value] of updates) {
           (globalThis as any).tileMapper.updateTile(
             tileWrapper.getId(),

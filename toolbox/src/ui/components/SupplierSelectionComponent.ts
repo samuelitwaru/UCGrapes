@@ -195,7 +195,7 @@ export class SupplierSelectionComponent<DropdownOption> {
           }
           
           .select-field {
-            padding: 6px 16px;
+            padding: 6px 7px;
             background: white;
             border: 1px solid #b4b9bd;
             border-radius: 6px;

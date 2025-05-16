@@ -233,6 +233,7 @@ export class EditorEvents {
           console.error("Wrapper not found!");
         }
 
+        
         new EditorThumbs(
           this.frameId,
           this.pageId,
@@ -240,6 +241,9 @@ export class EditorEvents {
           this.pageData,
           this.isHome
         );
+
+        console.log('editors', (window as any).app.editors)
+
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
         const infoSectionController = new InfoSectionController();

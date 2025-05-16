@@ -224,7 +224,7 @@ button {
 
 .content-page-block:hover {
   border: 2px dashed #5068a8;
-  cursor: move;
+  cursor: text;
   padding: 0px;
 }
 
@@ -622,7 +622,7 @@ img.content-page-block {
 .img-button-container:hover,
 .plain-button-container:hover,
 .cta-container-child:hover {
-  cursor: move;
+  cursor: pointer;
 }
 
 .cta-label {
@@ -692,7 +692,7 @@ img.content-page-block {
 }
 
 .plain-button:hover {
-  cursor: move;
+  cursor: pointer;
 }
 
 .img-button-section {
@@ -922,7 +922,7 @@ img.content-page-block {
 }
 
 .content-image:hover {
-  cursor: move;
+  cursor: default;
 }
 
 /* menu container */
@@ -1240,7 +1240,11 @@ img.content-page-block {
 }
 
 .content-frame-container.empty-state .info-section-spacing-container.blank-page {
-  height: 2rem;
+    height: 2rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .untitled-page .add-new-info-section {
@@ -1293,8 +1297,6 @@ img.content-page-block {
   display: flex;
 }
 
-
-
 .info-desc-section .info-desc-content {
   padding: 2px;
 }
@@ -1305,7 +1307,7 @@ img.content-page-block {
 
 .container-column-info .info-desc-content:hover,
 .container-column-info .info-image-section:hover {
-  cursor: move;
+  cursor: default;
 }
 
 [data-gjs-type="info-cta-section"].gjs-selected .tile-open-menu {

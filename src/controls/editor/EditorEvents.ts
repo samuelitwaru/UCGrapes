@@ -95,11 +95,13 @@ export class EditorEvents {
                 "#frame-container"
               ) as HTMLDivElement;
               // get all the children of the frame container apart from the template wrapper
-              const children = Array.from(frameContainer.children);
+              const children = Array.from(frameContainer?.querySelectorAll("*")).filter(
+                (child): child is HTMLDivElement => child !== this.resizingRow
+              );
 
               children.forEach((child) => {
                 console.log("Hello", child);
-                // child.style.setProperty("cursor", "ns-resize", "important");
+                child.style.setProperty("cursor", "ns-resize", "important");
               });
 
               // Create an overlay to block hover events on other elements during resize

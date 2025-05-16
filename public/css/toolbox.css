@@ -529,6 +529,13 @@ img.content-page-block {
 
 .cta-badge:hover {
   opacity: 1;
+  background-color: #5068a8 !important;
+}
+
+.cta-badge:hover svg,
+.cta-badge:hover path,
+.cta-badge:hover rect{
+  fill: #fff;
 }
 
 .cta-container-child {

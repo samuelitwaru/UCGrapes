@@ -1237,7 +1237,11 @@ img.content-page-block {
 }
 
 .content-frame-container.empty-state .info-section-spacing-container.blank-page {
-  height: 2rem;
+    height: 2rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .untitled-page .add-new-info-section {

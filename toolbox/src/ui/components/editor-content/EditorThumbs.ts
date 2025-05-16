@@ -104,11 +104,7 @@ export class EditorThumbs {
             img.style.width = iframe.offsetWidth + "px";
             img.style.height = iframe.offsetHeight + "px";
             img.style.display = "block";
-            // console.log("Image URL:", dataUrl);
-            const toolboxService = new ToolBoxService();
-            // console.log("Calling savePageThumbnail with dataUrl:", dataUrl);
-            toolboxService.savePageThumbnail(this.pageId, dataUrl);
-            // console.log("Thumbnail saved successfully");
+            
             const iframeClone = clone.querySelector("iframe");
             if (iframeClone?.parentNode) {
               iframeClone.parentNode.replaceChild(img, iframeClone);

@@ -242,7 +242,7 @@ export class EditorEvents {
           this.isHome
         );
 
-        console.log('editors', (window as any).app.editors)
+        // console.log('editors', (window as any).app.editors)
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();

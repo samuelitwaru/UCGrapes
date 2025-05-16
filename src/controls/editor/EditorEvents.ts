@@ -310,25 +310,21 @@ export class EditorEvents {
             this.uiManager.handleInfoSectionHover(e);
           });
 
-          // wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
-          //   const targetElement = e.target as Element;
-          //     console.log("mouse first")
-          //   if (
-          //     targetElement.closest(".info-section-spacing-container")
-          //   ) {
-          //     const infoSection = targetElement.closest(
-          //       ".info-section-spacing-container"
-          //     ) as HTMLDivElement;
+          wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
+            const targetElement = e.target as Element;
+              console.log("mouse first")
+            if (
+              targetElement.closest(".info-section-spacing-container")
+            ) {
+              const infoSection = targetElement.closest(
+                ".info-section-spacing-container"
+              ) as HTMLDivElement;
 
-          //     console.log("mouse hover/enter")
-          //     if (infoSection) {
-          //     console.log("mouse in if")
-          //       infoSection.style.height = "3.2rem";
-          //       infoSection.style.transition = "height 0.3s ease";  
-          //     }
-          //     this.uiManager.clearAllMenuContainers();
-          //   }
-          // });
+              if (infoSection && infoSection.style.height !== "3.2rem") {
+                this.uiManager.clearAllMenuContainers();
+              }
+            }
+          });
         } else {
           console.error("Wrapper not found!");
         }

@@ -75,12 +75,12 @@ export class EditorUIManager {
         if (addButton) {
           addButton.style.removeProperty("opacity");
         }
-        const svgGEl = svgTrigger.querySelector('[data-name="Ellipse 6"]') as HTMLElement;
-        if (svgGEl) {
-          svgGEl.setAttribute("fill", "#fff");        
+        if (svgTrigger) {
+          svgTrigger.setAttribute("fill", "#fdfdfd");        
         }
-        const svgGPath = svgTrigger.querySelector('path') as SVGPathElement;
+        const svgGPath = component.getEl().querySelector('path') as SVGPathElement;
         if (svgGPath) {
+          console.log("svgGPath: ", svgGPath);
           svgGPath.setAttribute("fill", "#5068a8");
         }
     });

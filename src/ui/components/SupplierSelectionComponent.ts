@@ -78,9 +78,23 @@ export class SupplierSelectionComponent<DropdownOption> {
     // Event Listeners
     selectField.addEventListener('click', (e) => {
       e.stopPropagation();
-      selectField.classList.toggle('active');
-      dropdown.classList.toggle('show');
-      if (dropdown.classList.contains('show')) {
+      // Close all other dropdowns first
+      const allSelectFields = document.querySelectorAll(".select-field.active");
+      const allDropdowns = document.querySelectorAll(".select-dropdown.show");
+
+      allSelectFields.forEach((field) => {
+        if (field !== selectField) field.classList.remove("active");
+      });
+
+      allDropdowns.forEach((drop) => {
+        if (drop !== dropdown) drop.classList.remove("show");
+      });
+      // Toggle current dropdown
+      const isCurrentlyOpen = dropdown.classList.contains("show");
+      selectField.classList.toggle("active", !isCurrentlyOpen);
+      dropdown.classList.toggle("show", !isCurrentlyOpen);
+
+      if (!isCurrentlyOpen) {
         searchInput.value = '';
         this.filterOptions('', optionsContainer);
         setTimeout(() => searchInput.focus(), 100);

@@ -96,75 +96,82 @@ export class EditorUIManager {
   handleInfoSectionHover(e: MouseEvent) {
     const target = e.target as HTMLElement;
 
-    // Check if the target is within a '.tb-add-new-info-section svg' or '.add-new-info-section svg'
-    const svgTrigger = target.closest(".tb-add-new-info-section svg, .add-new-info-section svg") as HTMLElement;
+    // Check if the target is within a '.add-new-info-section svg'
+    const svgTrigger = target.closest(".add-new-info-section svg") as HTMLElement;
 
     if (svgTrigger) {
-      // console.log("SVG Trigger Found:", svgTrigger);
-
-      // Case 1: If the svg is inside '.tb-add-new-info-section', we want to get the sectionId
-      if (svgTrigger.closest(".tb-add-new-info-section")) {
-        let el: HTMLElement | null = svgTrigger;
-        const sectionContainer = (() => {
-          while (el) {
-            if (/^info-.*-section$/.test(el.getAttribute('data-gjs-type') || '')) return el;
-            el = el.parentElement;
-          }
-          return null;
-        })();
-
-        if (!sectionContainer) {
-          console.warn("No parent info section found.");
-          return;
+      // Find the nearest parent container with class 'info-section-spacing-container'
+      let el: HTMLElement | null = svgTrigger;
+      const sectionContainer = (() => {
+        while (el) {
+          if (el.classList.contains("info-section-spacing-container")) return el;
+          el = el.parentElement;
         }
+        return null;
+      })();
 
-        const sectionId = sectionContainer.id;
-        // console.log("sectionId:", sectionId);
-
-        const templateContainer = sectionContainer.querySelector(".tb-add-new-info-section") as HTMLElement;
-        if (!templateContainer) {
-          console.warn("No .tb-add-new-info-section found in section.");
-          return;
-        }
-
-        this.clearAllMenuContainers();
-
-        // Get mobile frame and iframe positioning
-        const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
-        const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
-        const iframeRect = iframe?.getBoundingClientRect();
-
-        // Pass the sectionId to InfoSectionPopup
-        const menu = new InfoSectionPopup(templateContainer, mobileFrame, sectionId);
-        const triggerRect = svgTrigger.getBoundingClientRect();
-
-        menu.render(triggerRect, iframeRect);
-
-        (globalThis as any).activeEditor = this.editor;
-        (globalThis as any).currentPageId = this.pageId;
-        (globalThis as any).pageData = this.pageData;
-        this.activateEditor(this.frameId);
+      if (!sectionContainer) {
+        console.warn("No parent info-section-spacing-container found.");
+        return;
       }
 
-      // Case 2: If the svg is inside '.add-new-info-section', we do NOT need to get the sectionId
-      else if (svgTrigger.closest(".add-new-info-section")) {
-        // Handle the logic specific to `.add-new-info-section` here if needed
-        // console.log("Clicked on .add-new-info-section svg (no sectionId required).");
+      // Find the next div with class starting with 'info' and ending with 'section'
+      const nextSectionId = this.getNextInfoSectionId(sectionContainer);
 
-        // Optional: You can still trigger menu actions or other behaviors if necessary
-        this.clearAllMenuContainers();
-        const templateContainer = svgTrigger.closest(".add-new-info-section") as HTMLElement;
-        const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
-        const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
-        const iframeRect = iframe?.getBoundingClientRect();
-
-        const menu = new InfoSectionPopup(templateContainer, mobileFrame, '');
-        const triggerRect = svgTrigger.getBoundingClientRect();
-
-        menu.render(triggerRect, iframeRect);
+      if (nextSectionId) {
+        console.log("Found next sectionId:", nextSectionId);
+      } else {
+        console.warn("No matching info section found below.");
       }
+
+      // Proceed with your logic (menu rendering, iframe positioning, etc.)
+      this.clearAllMenuContainers();
+
+      const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
+      const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
+      const iframeRect = iframe?.getBoundingClientRect();
+
+      const menu = new InfoSectionPopup(sectionContainer, mobileFrame, nextSectionId);
+      const triggerRect = svgTrigger.getBoundingClientRect();
+
+      menu.render(triggerRect, iframeRect);
+
+      (globalThis as any).activeEditor = this.editor;
+      (globalThis as any).currentPageId = this.pageId;
+      (globalThis as any).pageData = this.pageData;
+      this.activateEditor(this.frameId);
     }
   }
+
+  getNextInfoSectionId(target: HTMLElement): string {
+    // console.log('target :>> ', target);
+    // Check if the target has the class 'info-section-spacing-container'
+    if (!target.classList.contains('info-section-spacing-container')) {
+      // console.warn('Target element does not have the correct class');
+      return '';
+    }
+
+    // Find the next sibling of the target element
+    let nextElement = target.nextElementSibling;
+
+    // Loop through the sibling elements until we find the next div with the class starting with 'info' and ending with 'section'
+    while (nextElement) {
+      // console.log('nextElement :>> ', nextElement);
+      if (nextElement instanceof HTMLElement && nextElement.dataset.gjsType?.startsWith('info') && nextElement.dataset.gjsType?.endsWith('section')) {
+        // console.log('nextElementId :>> ', nextElement.id);
+        // Return the sectionId of the found element
+        return nextElement.id || '';
+      }
+      // Move to the next sibling
+      nextElement = nextElement.nextElementSibling;
+    }
+
+    // If no matching element is found
+    // console.warn('No matching info section found');
+    return '';
+  }
+
+
 
 
   handleDragEnd(model: any, sourceComponent: any, destinationComponent: any) {
@@ -293,8 +300,43 @@ export class EditorUIManager {
         this.activateMiniatureFrame(frame.id);
       }
     });
-
+    this.showPageInfo()
     new ToolboxManager().unDoReDo();
+  }
+
+  showPageInfo() {
+    if ((globalThis as any).selectedComponent) {
+      return
+    }
+    let listHTML = ``
+    const pageInfoSection = document.querySelector('#page-info-section') as HTMLElement
+    if (this.pageData.PageType == "Information" && this.pageData.PageInfoStructure.InfoContent) {
+      this.pageData.PageInfoStructure.InfoContent.forEach((info:any) => {
+        if (info.InfoType == "TileRow") {
+          info.Tiles.forEach((tile:any) => {
+            listHTML += `<li>${tile.Text}</li>`
+          })
+        } else if (info.InfoType == "Cta") {
+          const objectType = info.CtaAttributes.Action.ObjectType
+          if (["DynamicForm", "WebLink"].includes(objectType)) {
+            listHTML += `<li>${info.CtaAttributes.CtaLabel}</li>`
+          }
+        }
+      }) 
+    } 
+    pageInfoSection.innerHTML = `
+      <h3>${this.pageData.PageName.toUpperCase()}</h3>
+      <hr/>
+      <ul>
+        ${listHTML}
+      </ul>
+    `
+    pageInfoSection.style.display = "block";
+  }
+
+  hidePageInfo() {
+    const pageInfoSection = document.querySelector('#page-info-section') as HTMLElement
+    pageInfoSection.style.display = "none";
   }
 
   activateMiniatureFrame(frameId: string) {
@@ -460,6 +502,12 @@ export class EditorUIManager {
     const rowComponent = tileWrapper.parent();
     let tileAttributes;
 
+    const isTile = selectedComponent.getClasses().includes('template-block')
+    const isCta = ['img-button-container', 'plain-button-container', 'cta-container-child']
+      .some(cls => selectedComponent.getClasses().includes(cls))
+
+
+
     if (this.pageData.PageType === "Information") {
       const tileInfoSectionAttributes: InfoType = (
         globalThis as any
@@ -582,37 +630,36 @@ export class EditorUIManager {
   }
 
   resetTitleFromDOM() {
-        const pageTitle = document.querySelector('.app-bar .title') as HTMLHeadingElement;
-        const editHeader = document.getElementById('edit_page_title') as HTMLElement;
-        const saveChange = document.getElementById('save_page_title') as HTMLElement;
-        const titleDiv = document.querySelector('.app-bar .appbar-title-container') as HTMLDivElement;
-        
-        if (!pageTitle || !editHeader || !saveChange || !titleDiv) {
-            console.warn('resetTitleFromDOM: Required elements not found in DOM');
-            return;
-        }
-        
-        if (pageTitle.contentEditable === "false") {
-            return;          
-        }
-        // Reset UI elements
-        pageTitle.contentEditable = "false";
-        editHeader.style.display = "block";
-        saveChange.style.display = "none";
-        titleDiv.style.removeProperty("border-width");
-        pageTitle.style.whiteSpace = "";
-        pageTitle.style.overflow = "";
-        pageTitle.style.textOverflow = "";
-        
-        const editorWidth = (globalThis as any).deviceWidth;
-        const length = editorWidth ? (editorWidth <= 350 ? 16 : 24) : 16;
-        if (pageTitle.textContent && this.pageData.PageName) {
-          pageTitle.title = this.pageData.PageName
-          if (pageTitle.textContent.length > length) {
-            pageTitle.textContent = this.pageData.PageName.substring(0, length) + "...";            
-          } else {
-            pageTitle.textContent = this.pageData.PageName;
-          }
-        }  
+    const pageTitle = document.querySelector('.app-bar .title') as HTMLHeadingElement;
+    const editHeader = document.getElementById('edit_page_title') as HTMLElement;
+    const saveChange = document.getElementById('save_page_title') as HTMLElement;
+    const titleDiv = document.querySelector('.app-bar .appbar-title-container') as HTMLDivElement;
+
+    if (!pageTitle || !editHeader || !saveChange || !titleDiv) {
+      console.warn('resetTitleFromDOM: Required elements not found in DOM');
+      return;
     }
+
+    if (pageTitle.contentEditable === "false") return
+
+    // Reset UI elements
+    pageTitle.contentEditable = "false";
+    editHeader.style.display = "block";
+    saveChange.style.display = "none";
+    titleDiv.style.removeProperty("border-width");
+    pageTitle.style.whiteSpace = "";
+    pageTitle.style.overflow = "";
+    pageTitle.style.textOverflow = "";
+
+    const editorWidth = (globalThis as any).deviceWidth;
+    const length = editorWidth ? (editorWidth <= 350 ? 16 : 24) : 16;
+    if (pageTitle.textContent && this.pageData.PageName) {
+      pageTitle.title = this.pageData.PageName
+      if (pageTitle.textContent.length > length) {
+        pageTitle.textContent = this.pageData.PageName.substring(0, length) + "...";
+      } else {
+        pageTitle.textContent = this.pageData.PageName;
+      }
+    }
+  }
 }

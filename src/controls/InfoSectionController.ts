@@ -9,6 +9,8 @@ import {
 } from "../utils/default-attributes";
 import { randomIdGenerator } from "../utils/helpers";
 import { InfoContentMapper } from "./editor/InfoContentMapper";
+import { isEmpty } from "lodash";
+import { AddInfoSectionButton } from "../ui/components/AddInfoSectionButton";
 import { CtaAttributes, InfoType } from "../types";
 
 export class InfoSectionController {
@@ -278,6 +280,8 @@ export class InfoSectionController {
     if (component) {
       component.remove();
       this.removeInfoMapper(infoId);
+      this.removeConsecutivePlusButtons();
+      this.restoreEmptyStateIfNoSections();
     }
   }
 
@@ -286,24 +290,59 @@ export class InfoSectionController {
     if (component) {
       component.remove();
       this.removeInfoMapper(infoId);
+      this.removeConsecutivePlusButtons();
+      this.restoreEmptyStateIfNoSections();
     }
   }
 
   appendComponent(componentDiv: any, nextSectionId?: string) {
-    const containerColumn = this.editor
-      .getWrapper()
-      .find(".container-column-info")[0];
+    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    if (!containerColumn) return false;
 
-    if (containerColumn) {
-      const component = this.editor.addComponents(componentDiv);
-      const nextSectionIndex = containerColumn.components().models.findIndex((comp: any) => comp.getId() === nextSectionId);
-      containerColumn.append(component, { at: nextSectionIndex });
+    const components = containerColumn.components().models;
+    const isAppendingAtEnd = !nextSectionId;
+    const insertionIndex = nextSectionId
+      ? components.findIndex((comp: any) => comp.getId() === nextSectionId)
+      : components.length;
 
-      return true;
+    const addInfoSectionButton = new AddInfoSectionButton().getHTML();
+
+    // Add plus above
+    const plusAbove = this.editor.addComponents(addInfoSectionButton);
+    containerColumn.append(plusAbove, { at: insertionIndex });
+
+    // Add actual section
+    const section = this.editor.addComponents(componentDiv);
+    containerColumn.append(section, { at: insertionIndex + 1 });
+
+    // Add plus below
+    const plusBelow = this.editor.addComponents(addInfoSectionButton);
+    containerColumn.append(plusBelow, { at: insertionIndex + 2 });
+
+    // Clean up redundant pluses
+    this.removeConsecutivePlusButtons();
+    this.markFirstPlusButton();
+    this.removeEmptyState();
+
+    // Scroll to bottom if we added the section at the end
+    if (isAppendingAtEnd) {
+      setTimeout(() => {
+        const editorFrame = this.editor.getWrapper().find(".content-frame-container")[0];
+        if (editorFrame) {
+          const editorFrameElement = editorFrame.getEl()
+          editorFrameElement.scrollTo({
+            top: editorFrameElement.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }, 0);
     }
 
-    return false;
+    return true;
   }
+
+
+
 
   private addToMapper(infoType: InfoType) {
     // console.log('infoType :>> ', infoType);
@@ -321,6 +360,7 @@ export class InfoSectionController {
       if (ctaAttributes) {
         this.setNestedProperty(ctaAttributes, attribute, value);
         this.updateInfoMapper(infoId, infoType);
+        this.removeConsecutivePlusButtons();
       }
     }
   }
@@ -389,6 +429,104 @@ export class InfoSectionController {
       });
     }
   }
+
+  restoreEmptyStateIfNoSections() {
+    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    if (!containerColumn) return;
+
+    const remainingComponents = containerColumn.components().models;
+    if (remainingComponents.length <= 1) {
+      // Add the default blank plus button
+      const blankPlus = new AddInfoSectionButton(true).getHTML();
+      const newBtn = this.editor.addComponents(blankPlus);
+      containerColumn.append(newBtn);
+
+      // Re-apply empty state class to main container
+      const contentFrameContainer = this.editor.getWrapper().find('.content-frame-container')[0];
+      if (contentFrameContainer) {
+        contentFrameContainer.addClass('empty-state');
+        this.removeConsecutivePlusButtons();
+      }
+    }
+  }
+
+  private markFirstPlusButton() {
+    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    if (!containerColumn) return;
+
+    // Remove 'first-section' class from all
+    const allPlusButtons = containerColumn.find('.info-section-spacing-container');
+    allPlusButtons.forEach((comp: any) => comp.removeClass('first-section'));
+
+    // Add it to the first valid one
+    const firstPlus = allPlusButtons[0];
+    if (firstPlus) {
+      firstPlus.addClass('first-section');
+      // console.log("Marked first plus button with 'first-section' class:", firstPlus.getId?.());
+    }
+  }
+
+  removeConsecutivePlusButtons() {
+    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    if (!containerColumn) return;
+
+    let components = containerColumn.components().models;
+
+    let i = 1; // Start from the second component
+    while (i < components.length) {
+      const current = components[i];
+      const previous = components[i - 1];
+
+      const currentClasses = current.getClasses();
+      const previousClasses = previous.getClasses();
+
+      const isCurrentPlus = currentClasses.includes('info-section-spacing-container');
+      const isPreviousPlus = previousClasses.includes('info-section-spacing-container');
+
+      if (isCurrentPlus && isPreviousPlus) {
+        const currentId = current.getId?.();
+        const component = this.editor.getWrapper().find(`#${currentId}`)[0];
+        if (component) {
+          component.remove();
+
+          // Refresh components after removal
+          components = containerColumn.components().models;
+
+          // Don't increment i; re-evaluate current index
+          continue;
+        }
+      } else if (isCurrentPlus) {
+        const next = i + 1 < components.length ? components[i + 1] : null;
+        const prevIsCta = previousClasses.includes('cta-container-child') && previousClasses.includes('cta-child');
+        const nextIsCta = next?.getClasses().includes('cta-container-child') && next?.getClasses().includes('cta-child');
+
+        const currentId = current.getId?.();
+        const component = this.editor.getWrapper().find(`#${currentId}`)[0];
+
+        if (component) {
+          if (prevIsCta && nextIsCta) {
+            component.addStyle({ width: 'auto' });
+            // console.log(`Setting width: auto for plus button: ${currentId}`);
+          } else {
+            component.removeStyle('width');
+            // console.log(`Removing width style from plus button: ${currentId}`);
+          }
+        }
+      }
+
+      i++;
+    }
+  }
+
+
+  private removeEmptyState() {
+    const contentFrameContainer = this.editor.getWrapper().find('.content-frame-container')[0];
+    if (contentFrameContainer) {
+      contentFrameContainer.removeClass('empty-state');
+      // console.log("Removed 'empty-state' from content frame container");
+    }
+  }
+
 
   private createButton(
     id: string,

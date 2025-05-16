@@ -163,6 +163,9 @@ export class TileManager {
             "delete",
             tileComponent.getId()
           );
+          const infoSectionController = new InfoSectionController();
+          infoSectionController.removeConsecutivePlusButtons();
+          infoSectionController.restoreEmptyStateIfNoSections();
         } else {
           (globalThis as any).tileMapper.removeTile(
             tileComponent.getId() as string,

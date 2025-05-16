@@ -5,9 +5,11 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
+import { InfoSectionController } from "../InfoSectionController";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
+import { ChildEditor } from "./ChildEditor";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
 import { PageMapper } from "./PageMapper";
@@ -80,6 +82,23 @@ export class EditorEvents {
               this.resizingRowHeight = this.resizingRow.offsetHeight;
               this.resizeYStart = e.clientY;
               this.initialHeight = this.resizingRow.offsetHeight;
+
+              this.resizingRow.style.setProperty(
+                "cursor",
+                "ns-resize",
+                "important"
+              );
+
+              // this.templateBlock = targetElement.closest(
+              //   ".template-block"
+              // ) as HTMLDivElement;
+              // if (this.templateBlock) {
+              //   this.templateBlock.style.setProperty(
+              //     "cursor",
+              //     "",
+              //     ""
+              //   );                
+              // }
 
               this.resizingRow.style.setProperty(
                 "cursor",
@@ -238,6 +257,8 @@ export class EditorEvents {
         );
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
+        const infoSectionController = new InfoSectionController();
+        infoSectionController.removeConsecutivePlusButtons();
       });
     }
   }
@@ -272,7 +293,7 @@ export class EditorEvents {
   }
 
   onSelected() {
-    this.editor.on("component:selected", (component: any) => {
+    this.editor.on("component:selected", async (component: any) => {
       const pageMapper = new PageMapper(this.editor);
       (globalThis as any).selectedComponent = component;
       (globalThis as any).tileMapper = this.uiManager.createTileMapper();
@@ -290,14 +311,42 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools();
-      } else if (isTile) {
+        this.uiManager.hidePageInfo()
+
+        const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
+        const version = (globalThis as any).activeVersion;
+        this.uiManager.removeOtherEditors();
+
+        if (ctaAttrs.CtaAction) {
+          const pageType = ctaAttrs.CtaType == "Form" ? "DynamicForm" : ctaAttrs.CtaType
+          if (pageType === 'DynamicForm' || pageType === 'WebLink') {
+            let childPage = version?.Pages.find((page: any) => {
+              if (page.PageType == pageType) {
+                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action?.ObjectId)
+              }
+            })
+            // console.log(pageType, childPage);
+            if (childPage) {
+              this.uiManager.removeOtherEditors();
+              new ChildEditor(childPage?.PageId, childPage).init({});
+            }
+          }
+        }
+
+
+      
+      }
+
+      else if (isTile) {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setTileProperties();
         this.uiManager.setInfoTileProperties();
         this.uiManager.showTileTools();
         this.uiManager.createChildEditor();
+        this.uiManager.hidePageInfo()
       } else {
         this.uiManager.toggleSidebar(false);
+        this.uiManager.showPageInfo()
       }
       // this.uiManager.toggleSidebar()
       // this.uiManager.setCtaProperties();
@@ -306,6 +355,7 @@ export class EditorEvents {
     this.editor.on("component:deselected", () => {
       (globalThis as any).selectedComponent = null;
       this.uiManager.toggleSidebar(false);
+      this.uiManager.showPageInfo()
     });
   }
 

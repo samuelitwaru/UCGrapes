@@ -2,10 +2,12 @@ import { EditorFrame } from "./EditorFrame";
 
 export class FrameList {
     container: HTMLElement;
-    pageId: any;
+    editorId: any;
+    pageData: any;
 
-    constructor(pageId: any) {
-        this.pageId = pageId;
+    constructor(editorId: any, pageData:any) {
+        this.editorId = editorId;
+        this.pageData = pageData
         this.container = document.createElement("div");
         this.init();
     }
@@ -15,7 +17,7 @@ export class FrameList {
         this.container.className = "frame-list";
         this.container.id = "child-container";
 
-        const editorFrame = new EditorFrame(`${this.pageId}`, true);
+        const editorFrame = new EditorFrame(`${this.editorId}`, true, this.pageData);
         editorFrame.render(this.container);
     }
 

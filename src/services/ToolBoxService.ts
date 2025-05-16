@@ -3,6 +3,7 @@ import { LoadingManager } from "../controls/LoadingManager";
 import { Theme } from "../types";
 import { environment } from "../utils/env";
 
+
 export const baseURL =
   window.location.origin +
   (window.location.origin.startsWith("http://localhost") ? environment : "");

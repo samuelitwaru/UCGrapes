@@ -46,10 +46,7 @@ export class EditorManager {
   }
 
   setUpEditorFrame() {
-    const leftNavigatorButton = new LeftNavigatorButton();
-    const rightNavigatorButton = new RightNavigatorButton();
-    const frameList = new FrameList(`gjs-0`);
-
+    const frameList = new FrameList(`gjs-0`, this.homepage);
     
     const thumbsContainer = document.createElement("div");
     thumbsContainer.style.justifyContent = "center";
@@ -108,9 +105,6 @@ export class EditorManager {
     }
 
     const htmlOutput = converter.generateHTML();
-
-    console.log(this.homepage)
-    console.log(htmlOutput)
 
     editor.setComponents(htmlOutput);
     this.editorEvents.init(editor, this.homepage, `gjs-0`, true);

@@ -39,7 +39,9 @@ export class FormModalService {
 
     if (this.isInfoCtaSection) {
       this.appendSupplierSelection(formBody, form);
-      if (this.type === 'Form') this.appendSupplierFormSelection(formBody, form);
+      if (this.type === 'Form') {
+        this.appendSupplierFormSelection(formBody, form);
+      }
     }
 
     form.render(formBody);
@@ -199,8 +201,8 @@ export class FormModalService {
     formBody.appendChild(formSupplierField);
   }
 
-  private appendSupplierFormSelection(formBody: HTMLDivElement, form: Form): void {
-    const filteredForms = this.selectedSupplierId
+  private appendSupplierFormSelection(formBody: HTMLDivElement, form: Form, isRefresh?: boolean): void {
+    const filteredForms = this.selectedSupplierId && isRefresh
       ? this.toolBoxService.forms.filter((f: any) => f.SupplierId === this.selectedSupplierId)
       : this.toolBoxService.forms;
 
@@ -238,8 +240,10 @@ export class FormModalService {
     // Update valueField on selection change
     itemsSelect.onChange((selectedForm: any) => {
       const valueField = formBody.querySelector("#field_value") as HTMLInputElement;
-      if (valueField && selectedForm?.FormUrl) {
+      const formIdField = formBody.querySelector("#field_id") as HTMLInputElement;
+      if ((valueField || formIdField) && selectedForm?.FormUrl) {
         valueField.value = selectedForm.FormUrl;
+        formIdField.value = selectedForm.FormId
       }
     });
   }
@@ -287,7 +291,7 @@ export class FormModalService {
     }
 
     // Append a fresh one
-    if (this.type === 'Form') this.appendSupplierFormSelection(formBody, form);
+    if (this.type === 'Form') this.appendSupplierFormSelection(formBody, form, true);
   }
 
   private findLastConnectedSupplier(): InfoType | null {

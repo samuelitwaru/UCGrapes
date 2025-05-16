@@ -84,11 +84,11 @@ export class ImageUpload {
       const tileElement = selectedComponent.getStyle();
       // Retrieve the background image
       const backgroundImage = tileElement["background-image"];
-      console.log("Background image:", backgroundImage);
+     // console.log("Background image:", backgroundImage);
 
       if (backgroundImage !== undefined) {
         const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
-        console.log("Background image exists:", dataUrl);
+      //  console.log("Background image exists:", dataUrl);
         this.displayImageEditor(dataUrl);
         this.createFileListElement();
         this.loadMediaFiles(); // Loa
@@ -118,7 +118,7 @@ export class ImageUpload {
         </div>
         `;
     this.setupDragAndDrop(uploadArea);
-    console.log("uploadArea");
+   // console.log("uploadArea");
     this.modalContent.appendChild(uploadArea);
 
     // Create the modal footer
@@ -154,7 +154,7 @@ export class ImageUpload {
     cancelBtn.innerText = "Cancel";
     cancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Cancel button clicked");
+     // console.log("Cancel button clicked");
       const modal = this.modalContent.parentElement as HTMLElement;
       modal.style.display = "none";
       modal?.remove();
@@ -186,7 +186,7 @@ export class ImageUpload {
   private async loadMediaFiles() {
     try {
       const media = await this.toolboxService.getMediaFiles();
-      console.log("files", media);
+     // console.log("files", media);
       if (this.fileListElement) {
         this.fileListElement.innerHTML = "";
 
@@ -272,7 +272,7 @@ export class ImageUpload {
   }
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
-    console.log("filearray", fileArray);
+   // console.log("filearray", fileArray);
     for (const file of fileArray) {
       if (file.type.startsWith("image/")) {
         try {
@@ -390,7 +390,7 @@ export class ImageUpload {
       //const zoomLevel = parseFloat(zoomSlider.value);
 
       const rect = imageContainer.getBoundingClientRect();
-      console.log(rect.x);
+      //console.log(rect.x);
 
       // Add resize handles
       const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
@@ -711,7 +711,7 @@ export class ImageUpload {
       newMedia.MediaSize,
       newMedia.MediaType
     );
-    console.log("Cropped image uploaded successfully:", response);
+    //console.log("Cropped image uploaded successfully:", response);
     this.croppedUrl = response.BC_Trn_Media.MediaUrl;
 
     // Add the cropped image to the selected tile
@@ -721,7 +721,7 @@ export class ImageUpload {
       tileElement.style.backgroundImage = `url(${croppedDataUrl})`;
       tileElement.style.backgroundSize = "cover";
       tileElement.style.backgroundPosition = "center";
-      console.log("Cropped image added to the tile.");
+     // console.log("Cropped image added to the tile.");
     }
     if (this.fileListElement) {
       this.displayMediaFile(this.fileListElement, newMedia);
@@ -733,7 +733,7 @@ export class ImageUpload {
       modal.remove();
     }
 
-    console.log("Cropped image saved successfully:", newMedia.MediaName);
+   // console.log("Cropped image saved successfully:", newMedia.MediaName);
   }
   catch(error: any) {
     console.error("Error saving cropped image:", error);
@@ -858,7 +858,7 @@ export class ImageUpload {
     checkButton.innerHTML = "✔"; // Check icon
     checkButton.addEventListener("click", () => {
       // Handle image selection logic
-      console.log("Image selected:", file.MediaUrl);
+    //  console.log("Image selected:", file.MediaUrl);
     });
 
     // Add the delete button
@@ -868,7 +868,7 @@ export class ImageUpload {
     deleteButton.addEventListener("click", () => {
       // Remove the image from the grid
       fileItem.remove();
-      console.log("Image deleted:", file.MediaUrl);
+     // console.log("Image deleted:", file.MediaUrl);
     });
 
     // Append buttons to the action buttons container

@@ -316,7 +316,7 @@ export class EditorUIManager {
           info.Tiles.forEach((tile:any) => {
             listHTML += `<li>${tile.Text}</li>`
           })
-        } else if (info.InfoType == "Cta") {
+        } else if (info.InfoType == "Cta" && info.CtaAttributes.Action) {
           const objectType = info.CtaAttributes.Action.ObjectType
           if (["DynamicForm", "WebLink"].includes(objectType)) {
             listHTML += `<li>${info.CtaAttributes.CtaLabel}</li>`
@@ -327,6 +327,7 @@ export class EditorUIManager {
     pageInfoSection.innerHTML = `
       <h3>${this.pageData.PageName.toUpperCase()}</h3>
       <hr/>
+      <h5>${listHTML? 'Linked Pages' : ''}</h5>
       <ul>
         ${listHTML}
       </ul>

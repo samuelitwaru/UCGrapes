@@ -8,6 +8,7 @@ import { ThemeManager } from "../themes/ThemeManager";
 import { UndoRedoManager } from "../toolbox/UndoRedoManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorEvents } from "./EditorEvents";
+import { EditorUIManager } from "./EditorUiManager";
 import { JSONToGrapesJSInformation } from "./JSONToGrapesJSInformation";
 import { JSONToGrapesJSMenu } from "./JSONToGrapesJSMenu";
 import { TileMapper } from "./TileMapper";
@@ -43,6 +44,7 @@ export class EditorManager {
     mainContainer.innerHTML = ""
     this.setUpEditorFrame();
     this.setUpEditor();
+    this.editorEvents.uiManager.activateEditor(`gjs-0`)
   }
 
   setUpEditorFrame() {

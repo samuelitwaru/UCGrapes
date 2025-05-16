@@ -322,10 +322,10 @@ export class EditorUIManager {
 
   activateEditor(frameId: any) {
     const mobileFrame = document.getElementById(`${frameId}-frame`) as HTMLDivElement
-    if (!mobileFrame) return 
+    if (!mobileFrame) return
     (globalThis as any).pageId = mobileFrame.dataset.pageid;
     const currentPageId = mobileFrame.dataset.pageid
-    const currentPage = this.appVersionManager.getPages().find((page:any) => page.PageId == currentPageId)
+    const currentPage = this.appVersionManager.getPages().find((page: any) => page.PageId == currentPageId)
     this.pageData = currentPage
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
@@ -357,9 +357,9 @@ export class EditorUIManager {
     let listHTML = ``
     const pageInfoSection = document.querySelector('#page-info-section') as HTMLDivElement
     if (this.pageData.PageType == "Information" && this.pageData.PageInfoStructure.InfoContent) {
-      this.pageData.PageInfoStructure.InfoContent.forEach((info:any) => {
+      this.pageData.PageInfoStructure.InfoContent.forEach((info: any) => {
         if (info.InfoType == "TileRow") {
-          info.Tiles.forEach((tile:any) => {
+          info.Tiles.forEach((tile: any) => {
             listHTML += `<li>${tile.Text}</li>`
           })
         } else if (info.InfoType == "Cta" && info.CtaAttributes.Action) {
@@ -368,10 +368,10 @@ export class EditorUIManager {
             listHTML += `<li>${info.CtaAttributes.CtaLabel}</li>`
           }
         }
-      }) 
-    } 
+      })
+    }
     pageInfoSection.innerHTML = `
-      <h5>${listHTML? 'Linked Pages' : ''}</h5>
+      <h5>${listHTML ? 'Linked Pages' : ''}</h5>
       <ul>
         ${listHTML}
       </ul>

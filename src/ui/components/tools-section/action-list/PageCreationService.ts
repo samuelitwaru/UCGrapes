@@ -271,40 +271,12 @@ export class PageCreationService {
     }
     else if (type == "WebLink") {
       icon = "Link"
-      const version = (globalThis as any).activeVersion;
-
-      let childPage = version?.Pages.find((page: any) => {
-        if (page.PageType == "WebLink") console.log('page', page)
-        return page.PageType == "WebLink" && page.PageLinkStructure.Url == formData.field_value
-      })
-      if (!childPage) {
-        const appVersion = await this.appVersionManager.getActiveVersion();
-        childPage = await this.toolBoxService.createLinkPage(appVersion.AppVersionId, formData.field_label, formData.field_value, null)
-        childPage = childPage.MenuPage
-      }
-      if (childPage) {
-        new ChildEditor(childPage?.PageId, childPage).init({});
-      }
     } else if (type == "Address") {
       icon = "Globe"
-
     } else if (type == "Form") {
       icon = "Document"
-      const version = (globalThis as any).activeVersion;
-
-      let childPage = version?.Pages?.find((page: any) => {
-        if (page.PageType == "DynamicForm") console.log('page', page)
-        return page.PageType == "DynamicForm" && page.PageLinkStructure.Url == formData.field_value
-      })
-      if (!childPage) {
-        const appVersion = await this.appVersionManager.getActiveVersion();
-        childPage = await this.toolBoxService.createLinkPage(appVersion.AppVersionId, formData.field_label, formData.field_value, Number(formData?.field_id))
-        childPage = childPage.MenuPage
-      }
-      if (childPage) {
-        new ChildEditor(childPage?.PageId, childPage).init({});
-      }
     }
+
     const cta: CtaAttributes = {
       CtaId: randomIdGenerator(15),
       CtaType: type,
@@ -318,11 +290,46 @@ export class PageCreationService {
       CtaSupplierIsConnected: formData.supplier_id ? true : false,
       CtaConnectedSupplierId: formData.supplier_id ? formData.supplier_id : null,
       Action: {
-        ObjectId: formData?.field_id || null,
+        ObjectId: type === 'Form' ? formData?.field_id : randomIdGenerator(15),
         ObjectType: type === 'Form' ? 'DynamicForm' : type,
         ObjectUrl: formData.field_value
       }
     };
+
+    let childPage: any;
+    if (type === "WebLink" || type === "Form") {
+      const activeVersion = (globalThis as any).activeVersion;
+      const pageType = type === "WebLink" ? "WebLink" : "DynamicForm";
+      const url = formData.field_value;
+
+      childPage = activeVersion?.Pages?.find((page: any) =>
+        page.PageType === pageType && page.PageLinkStructure?.Url === url
+      );
+
+      if (!childPage) {
+        const appVersion = await this.appVersionManager.getActiveVersion(); // Await here
+        const formId = type === 'Form' ? Number(formData?.field_id) : null;
+        try {
+          const newChildPage = await this.toolBoxService.createLinkPage(
+            appVersion.AppVersionId,
+            formData.field_label,
+            url,
+            formId
+          );
+          childPage = newChildPage.MenuPage; // Access MenuPage property
+        } catch (error) {
+          console.error("Error creating link page:", error);
+          // Consider throwing the error or handling it appropriately (e.g., showing a message to the user)
+          return; // Exit the function if page creation fails.
+        }
+      }
+
+      if (childPage) {
+        console.log(`${type} childPage:`, childPage);
+        new ChildEditor(childPage.PageId, childPage).init({});
+      }
+    }
+    console.log('cta.. ', cta)
     const button = this.infoSectionUi.addCtaButton(cta);
     this.infoSectionController.addCtaButton(button, cta, this.sectionId);
   }

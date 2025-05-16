@@ -408,9 +408,8 @@ export class EditorEvents {
         this.uiManager.removeOtherEditors();
 
         if (ctaAttrs.CtaAction) {
-          const pageType =
-            ctaAttrs.CtaType == "Form" ? "DynamicForm" : ctaAttrs.CtaType;
-          if (pageType === "DynamicForm" || pageType === "WebLink") {
+          const pageType = ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType
+          if (pageType === 'DynamicForm') {
             let childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
                 return (
@@ -419,7 +418,7 @@ export class EditorEvents {
                     Number(ctaAttrs.Action?.ObjectId)
                 );
               }
-            });
+            })
 
             if (childPage) {
               this.uiManager.removeOtherEditors();
@@ -427,7 +426,12 @@ export class EditorEvents {
             }
           }
         }
-      } else if (isTile) {
+
+
+
+      }
+
+      else if (isTile) {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setTileProperties();
         this.uiManager.setInfoTileProperties();

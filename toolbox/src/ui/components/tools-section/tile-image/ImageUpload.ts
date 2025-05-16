@@ -342,7 +342,7 @@ export class ImageUpload {
     const frame = document.createElement("div");
     frame.id = "crop-frame";
     frame.style.position = "absolute";
-    frame.style.border = "2px dashed #5068A8";
+    frame.style.border = "2px dashedrgb(0, 0, 0)";
     //frame.style.height = "80%";
 
     // Determine the aspect ratio based on the number of tiles in the row
@@ -767,7 +767,7 @@ export class ImageUpload {
               ${
                 isValid
                   ? ""
-                  : `<span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
+                  : `<span style="margin-right: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span><span style="margin-left: 10px" id="delete-invalid" class="fa-regular fa-trash-can"></span>`
               }
             `;
     fileList.insertBefore(fileItem, fileList.firstChild);

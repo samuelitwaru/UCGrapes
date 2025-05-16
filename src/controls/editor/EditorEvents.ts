@@ -36,6 +36,7 @@ export class EditorEvents {
   originalCursors: string[] | null = null;
   resizeOverlay: HTMLDivElement | null = null;
   infoSectionSpacer: HTMLDivElement | null = null;
+  frameChildren: HTMLDivElement[] = [];
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
@@ -95,12 +96,11 @@ export class EditorEvents {
                 "#frame-container"
               ) as HTMLDivElement;
               // get all the children of the frame container apart from the template wrapper
-              const children = Array.from(frameContainer?.querySelectorAll("*")).filter(
+              this.frameChildren = Array.from(frameContainer?.querySelectorAll("*")).filter(
                 (child): child is HTMLDivElement => child !== this.resizingRow
               );
 
-              children.forEach((child) => {
-                console.log("Hello", child);
+              this.frameChildren.forEach((child) => {
                 child.style.setProperty("cursor", "ns-resize", "important");
               });
 
@@ -273,15 +273,9 @@ export class EditorEvents {
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "auto";
               }
-              const frameContainer = wrapper.getEl().querySelector(
-                "#frame-container"
-              ) as HTMLDivElement;
-
-              const children = Array.from(frameContainer.children).filter(
-                (child) => child !== this.resizingRow
-              );
-              children?.forEach((child) => {
-                (child as HTMLDivElement).style.removeProperty("cursor");
+              
+              this.frameChildren?.forEach((child) => {
+                child.style.removeProperty("cursor");
               });
             }
           });

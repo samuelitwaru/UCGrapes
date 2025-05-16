@@ -133,6 +133,7 @@ export class PageCreationService {
 
   // Updated handleWebLinks method
   handleWebLinks() {
+    console.log('handleWebLinks');
     const formModalService = this.formModalService;
     const form = this.formModalService.createForm("web-link-form", [
       {

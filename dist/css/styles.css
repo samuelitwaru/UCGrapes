@@ -1081,6 +1081,8 @@ h5#current-page-title {
 .tile-img-section {
   display: flex;
   gap: 0.6rem;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .bg-section {
@@ -1090,6 +1092,7 @@ h5#current-page-title {
   padding: 6px;
   border-radius: 6px;
   background-color: #fff;
+  width: 100%;
 }
 
 .bg-section:hover {
@@ -1188,7 +1191,7 @@ h5#current-page-title {
   height: 37px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #b4b9bd;
-  border-radius: 8px;
+  border-radius: 6px;
   display: none;
   background-color: #fff;
 }

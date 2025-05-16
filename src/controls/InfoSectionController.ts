@@ -262,14 +262,14 @@ export class InfoSectionController {
   updateInfoCtaButtonImage(imageUrl: string, infoId?: string) {
     const ctaEditor = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (ctaEditor) {
+      const ctaInfoHtml =  ctaEditor.getEl();
+      ctaInfoHtml.style.backgroundImage = ``;
       const img = ctaEditor.find("img")[0];
-      if (img) {
-        if (infoId) {
+      if (img && infoId) {
           img.setAttributes({ src: imageUrl });
           this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image")
           this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl)
         }
-      }
     }
   }
 

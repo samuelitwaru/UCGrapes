@@ -591,7 +591,10 @@ export class EditorUIManager {
             console.warn('resetTitleFromDOM: Required elements not found in DOM');
             return;
         }
-                
+        
+        if (pageTitle.contentEditable === "false") {
+            return;          
+        }
         // Reset UI elements
         pageTitle.contentEditable = "false";
         editHeader.style.display = "block";

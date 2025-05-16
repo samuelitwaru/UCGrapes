@@ -78,14 +78,14 @@ export class AppVersionManager {
       PageId: pageId,
       PageName: pageTitle,
     };
-    console.log("pageData", pageData);
     const res = await toolboxService.updatePageTitle(pageData);
     if (res) {
       const data = localStorage.getItem(`data-${pageId}`);
       if (data) {
         const page = JSON.parse(data);
         page.PageName = pageTitle;
-        localStorage.setItem(`data-${pageId}`, JSON.stringify(page));        
+        localStorage.setItem(`data-${pageId}`, JSON.stringify(page)); 
+        this.refreshVersion();       
       }
     }
 

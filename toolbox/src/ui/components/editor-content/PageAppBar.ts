@@ -254,7 +254,7 @@ export class PageAppBar {
         if (editor) {
             const newInfoSectionButton = editor.getWrapper().find(".add-new-info-section")[0];
             if (newInfoSectionButton) {
-                newInfoSectionButton.addStyle({ display: "block" });
+                newInfoSectionButton.addStyle({ display: "flex" });
             }
 
             const untitledPage = editor.getWrapper().find(".untitled-page")[0];

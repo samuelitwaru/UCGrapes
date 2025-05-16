@@ -1,5 +1,6 @@
 import { baseURL } from "../../services/ToolBoxService";
 import { InfoType } from "../../types";
+import { AddInfoSectionButton } from "../../ui/components/AddInfoSectionButton";
 import { ctaIcons } from "../../utils/cta-icons";
 import {
   contentColumnDefaultAttributes,

@@ -307,14 +307,14 @@ export class EditorEvents {
         this.uiManager.removeOtherEditors();
 
         if (ctaAttrs.CtaAction) {
-          const pageType = ctaAttrs.CtaType == "Form" ? "DynamicForm" : ctaAttrs.CtaType
-          if (pageType === 'DynamicForm' || pageType === 'WebLink') {
+          const pageType = ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType
+          if (pageType === 'DynamicForm') {
             let childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
                 return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action?.ObjectId)
               }
             })
-            
+
             if (childPage) {
               this.uiManager.removeOtherEditors();
               new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
@@ -323,7 +323,7 @@ export class EditorEvents {
         }
 
 
-      
+
       }
 
       else if (isTile) {

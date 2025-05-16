@@ -227,6 +227,15 @@ export class ImageUpload {
     fileInput.style.display = "none";
     uploadArea.appendChild(fileInput);
 
+      // Make the upload text clickable
+      const uploadText = uploadArea.querySelector('.upload-text');
+      if (uploadText) {
+        uploadText.addEventListener("click", (e) => {
+          e.stopPropagation();
+          fileInput.click();
+        });
+      }
+
     // Prevent the file input from being triggered unintentionally
     uploadArea.addEventListener("click", (e) => {
       if (e.target === uploadArea) {
@@ -342,7 +351,7 @@ export class ImageUpload {
     const frame = document.createElement("div");
     frame.id = "crop-frame";
     frame.style.position = "absolute";
-    frame.style.border = "2px dashedrgb(0, 0, 0)";
+    frame.style.border = "2px dashed #5068a8";
     //frame.style.height = "80%";
 
     // Determine the aspect ratio based on the number of tiles in the row
@@ -391,7 +400,7 @@ export class ImageUpload {
         handleDiv.style.position = "absolute";
         handleDiv.style.width = "10px";
         handleDiv.style.height = "10px";
-        handleDiv.style.backgroundColor = "#000";
+        handleDiv.style.backgroundColor = "#5068a8";
         handleDiv.style.zIndex = "11";
 
         // Position the handles

@@ -2,11 +2,13 @@ import { DefaultAttributes } from "../../utils/default-attributes";
 
 export class AddInfoSectionButton {
   private isFirstSectionButton: boolean;
+  private isLastSectionButton: boolean;
   private isBlankInfoPage: boolean;
   private isUntitledPage: boolean;
 
-  constructor(isFirstSection: boolean = false, isNewPage: boolean = false, isUntitledPage: boolean = false) {
+  constructor(isFirstSection: boolean = false, isLastSection: boolean = false, isNewPage: boolean = false, isUntitledPage: boolean = false) {
     this.isFirstSectionButton = isFirstSection;
+    this.isLastSectionButton = isLastSection;
     this.isBlankInfoPage = isNewPage;
     this.isUntitledPage = isUntitledPage;
   }
@@ -15,6 +17,7 @@ export class AddInfoSectionButton {
     const spacingClass = [
       'info-section-spacing-container',
       this.isFirstSectionButton ? 'first-section' : '',
+      this.isLastSectionButton ? 'last-section' : '',
       this.isBlankInfoPage ? 'blank-page' : '',
       this.isUntitledPage ? 'untitled-page' : '',
     ].join(' ').trim();

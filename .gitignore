@@ -1,5 +1,5 @@
 html-tests/
-src/combined.js
-toolbox/src/utils/env.ts
+src/utils/env.ts
 shimmers-test.html
-toolbox/dist/bundle.js
+dist/bundle.js
+src/utils/env.ts

@@ -1,3 +1,4 @@
+import { CallToAction, CtaAttributes } from "../../types";
 import { ActionInput } from "../../ui/components/tools-section/content-section/ActionInput";
 import { TextColor } from "../../ui/components/tools-section/title-section/TextColor";
 import { TileAlignmentSection } from "../../ui/components/tools-section/title-section/TileAlignmentSection";
@@ -5,7 +6,7 @@ import { truncateString } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
 export class CtaButtonProperties {
-    ctaAttributes: any;
+    ctaAttributes: CtaAttributes;
     selectedComponent: any;
     themeManager: any;
     pageData: any;
@@ -81,8 +82,12 @@ export class CtaButtonProperties {
     
     private ctaActionDisplay () {
         const contentSection = document.querySelector("#content-page-section");
-        const value = this.ctaAttributes?.CtaLabel;
-        const actionInput = new ActionInput(value, this.ctaAttributes);
+        const labelValue = this.ctaAttributes?.CtaLabel;
+        const labelInput = new ActionInput(labelValue, this.ctaAttributes);
+        labelInput.render(contentSection as HTMLElement);
+
+        const actionValue = this.ctaAttributes?.CtaAction;
+        const actionInput = new ActionInput(actionValue, this.ctaAttributes, "action");
         actionInput.render(contentSection as HTMLElement);
     }
 

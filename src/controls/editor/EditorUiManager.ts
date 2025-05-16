@@ -13,6 +13,7 @@ import { ContentSection } from "../../ui/components/tools-section/ContentSection
 import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { InfoType } from "../../types";
+import { svg } from "d3";
 
 export class EditorUIManager {
   editor: any;
@@ -24,6 +25,7 @@ export class EditorUIManager {
   appVersionManager: any;
   tilePropsSection: HTMLElement;
   ctaPropsSection: HTMLDivElement;
+  isMenuOpen: boolean = false;
 
   constructor(
     editor: any,
@@ -64,6 +66,24 @@ export class EditorUIManager {
     existingMenu.forEach((menu: any) => {
       menu.remove();
     });
+    
+    const infoSections = this.editor?.getWrapper()?.find(".info-section-spacing-container");
+    infoSections?.forEach((component: any) => {
+      component.getEl().style.removeProperty("height");
+      const svgTrigger = component.getEl().querySelector('[data-name="Ellipse 6"]') as HTMLElement;
+      const addButton = component.getEl().querySelector(".add-new-info-section") as HTMLDivElement;
+        if (addButton) {
+          addButton.style.removeProperty("opacity");
+        }
+        const svgGEl = svgTrigger.querySelector('[data-name="Ellipse 6"]') as HTMLElement;
+        if (svgGEl) {
+          svgGEl.setAttribute("fill", "#fff");        
+        }
+        const svgGPath = svgTrigger.querySelector('path') as SVGPathElement;
+        if (svgGPath) {
+          svgGPath.setAttribute("fill", "#5068a8");
+        }
+    });
   }
 
   openMenu(e: MouseEvent) {
@@ -95,7 +115,10 @@ export class EditorUIManager {
 
   handleInfoSectionHover(e: MouseEvent) {
     const target = e.target as HTMLElement;
-
+    if (this.isMenuOpen) {
+      this.isMenuOpen = false;
+      return;
+    };
     // Check if the target is within a '.add-new-info-section svg'
     const svgTrigger = target.closest(".add-new-info-section svg") as HTMLElement;
 
@@ -125,8 +148,6 @@ export class EditorUIManager {
       }
 
       // Proceed with your logic (menu rendering, iframe positioning, etc.)
-      this.clearAllMenuContainers();
-
       const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
       const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
       const iframeRect = iframe?.getBoundingClientRect();
@@ -135,6 +156,24 @@ export class EditorUIManager {
       const triggerRect = svgTrigger.getBoundingClientRect();
 
       menu.render(triggerRect, iframeRect);
+      this.isMenuOpen = true;
+      const addNewSectionContainer = svgTrigger.closest(".info-section-spacing-container") as HTMLDivElement
+      if (addNewSectionContainer) {
+        addNewSectionContainer.style.height = "3.2rem";
+        const addButton = addNewSectionContainer.querySelector(".add-new-info-section") as HTMLDivElement;
+        if (addButton) {
+          addButton.style.opacity = "1";
+        }
+        const svgGEl = svgTrigger.querySelector('[data-name="Ellipse 6"]') as HTMLElement;
+        if (svgGEl) {
+          svgGEl.setAttribute("fill", "#5068a8");        
+        }
+
+        const svgGPath = svgTrigger.querySelector('path') as SVGPathElement;
+        if (svgGPath) {
+          svgGPath.setAttribute("fill", "#fff");
+        }
+      }
 
       (globalThis as any).activeEditor = this.editor;
       (globalThis as any).currentPageId = this.pageId;
@@ -493,7 +532,7 @@ export class EditorUIManager {
     const colorItems = contentSection?.querySelectorAll(".color-item > input");
     colorItems?.forEach((input: any) => (input.checked = false));
 
-    const buttonLabel = contentSection?.querySelector("#cta-action-title");
+    const buttonLabel = contentSection?.querySelector(".cta-action-input");
     if (buttonLabel) buttonLabel.remove();
   }
 

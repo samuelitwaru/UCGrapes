@@ -43,6 +43,7 @@ export interface Category {
     CtaButtonIcon?: string;
     CtaSupplierIsConnected?: boolean;
     CtaConnectedSupplierId?: string;
+    Action? : {}
 }
 
 export interface DebugResults {

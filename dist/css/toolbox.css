@@ -170,10 +170,7 @@ button {
   display: flex;
   flex-direction: column;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.template-block:hover {
-  /* cursor: move; */
+  cursor: pointer;
 }
 
 /* .high-priority-template {

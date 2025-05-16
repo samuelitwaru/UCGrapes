@@ -1,71 +1,88 @@
 import { ContentMapper } from "../../../../controls/editor/ContentMapper";
 import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { CtaAttributes } from "../../../../types";
 
 export class ActionInput {
-    input: HTMLInputElement;
-    value: string;
-    ctaAttributes: any;
-    pageData: any;
+  input: HTMLInputElement;
+  value: CtaAttributes["CtaLabel"] | CtaAttributes["CtaAction"];
+  ctaAttributes: CtaAttributes;
+  pageData: any;
+  type: "label" | "action" = "label";
 
-    constructor(value: string, ctaAttributes: any) {
-      this.value = value;
-      this.ctaAttributes = ctaAttributes;
-      this.pageData = (globalThis as any).pageData;
-      this.input = document.createElement("input");
-      this.init();
-    }
-  
-    init() {
-      this.input.type = "text";
-      this.input.placeholder = "Action";
-      this.input.classList.add("tb-form-control");
-      this.input.id = "cta-action-title";
-      this.input.style.marginTop = "10px";
-      this.input.value = this.value;
-  
-      this.input.addEventListener("input", (e) => {
-        const selectedComponent = (globalThis as any).selectedComponent;        
-        if (!selectedComponent) return;
+  constructor(
+    value: CtaAttributes["CtaLabel"] | CtaAttributes["CtaAction"],
+    ctaAttributes: any,
+    type: "label" | "action" = "label"
+  ) {
+    this.value = value;
+    this.ctaAttributes = ctaAttributes;
+    this.type = type;
+    this.pageData = (globalThis as any).pageData;
+    this.input = document.createElement("input");
+    this.init();
+  }
 
-        const isRoundButton = this.ctaAttributes.CtaButtonType;
-        const ctaButton = selectedComponent.find(".cta-styled-btn")[0];
-  
+  init() {
+    this.input.type = "text";
+    this.input.placeholder = "Action";
+    this.input.classList.add("tb-form-control");
+    this.input.classList.add("cta-action-input");
+    this.input.style.marginTop = "10px";
+    this.input.value = (this.value as string) || "";
+
+    this.input.addEventListener("input", (e) => {
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
+
+      const isRoundButton = this.ctaAttributes.CtaButtonType;
+      const ctaButton = selectedComponent.find(".cta-styled-btn")[0];
+      if (this.type === "label") {
         const ctaTitle = selectedComponent.find(".label")[0];
         if (ctaTitle) {
           const truncatedTitle =
-          isRoundButton === "Round"
-              ? this.truncate(10)
-              : this.truncate(14);
+            isRoundButton === "Round" ? this.truncate(10) : this.truncate(14);
 
-              ctaTitle.components(truncatedTitle);
-              ctaTitle.addAttributes({ title: this.input.value });
+          ctaTitle.components(truncatedTitle);
+          ctaTitle.addAttributes({ title: this.input.value });
         }
-  
-        const ctaButtonComponent = ctaButton.parent();
-        const currentPageId = (globalThis as any).currentPageId;
-        if (this.pageData.PageType === "Information") {
-            const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoCtaAttributes(selectedComponent.getId(), 'CtaLabel', this.input.value.trim());                
-        } else {
-          const contentMapper = new ContentMapper(currentPageId);
-          contentMapper.updateContentCtaLabel(ctaButtonComponent.getId(), this.input.value.trim());
-        }         
-      });
-    }
-  
-    truncate(length: number) {
-      if (this.input.value.length > length) {
-        return this.input.value.substring(0, length) + "..";
       }
-      return this.input.value;
-    }
-  
-    render(container: HTMLElement) {
-        const existingInput = container.querySelector("#cta-action-title");
-        if (existingInput) {
-          existingInput.remove();
+      const ctaButtonComponent = ctaButton.parent();
+      const currentPageId = (globalThis as any).currentPageId;
+      if (this.pageData.PageType === "Information") {
+        const infoSectionController = new InfoSectionController();
+        let propertyName = "";
+        if (this.type === "label") {
+          propertyName = "CtaLabel";
+        } else {
+          propertyName = "CtaAction";
         }
-      container.appendChild(this.input);
-    }
+        infoSectionController.updateInfoCtaAttributes(
+          selectedComponent.getId(),
+          propertyName,
+          this.input.value.trim()
+        );
+      } else {
+        const contentMapper = new ContentMapper(currentPageId);
+        contentMapper.updateContentCtaLabel(
+          ctaButtonComponent.getId(),
+          this.input.value.trim()
+        );
+      }
+    });
   }
-  
+
+  truncate(length: number) {
+    if (this.input.value.length > length) {
+      return this.input.value.substring(0, length) + "..";
+    }
+    return this.input.value;
+  }
+
+  render(container: HTMLElement) {
+    // const existingInput = container.querySelector(".cta-action-input");
+    // if (existingInput) {
+    //   existingInput.remove();
+    // }
+    container.appendChild(this.input);
+  }
+}

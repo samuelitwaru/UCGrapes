@@ -27,11 +27,15 @@ export class EditorEvents {
   isHome?: boolean;
   isResizing: boolean = false;
   resizingRowHeight: number = 0;
-  resizingRow: HTMLDivElement | undefined;
+  resizingRow: HTMLDivElement | null = null;
   resizeYStart: number = 0;
   selectedComponent: any;
   initialHeight!: number;
   templateBlock!: HTMLDivElement;
+  affectedElements: HTMLElement[] | null = null;
+  originalCursors: string[] | null = null;
+  resizeOverlay: HTMLDivElement | null = null;
+  infoSectionSpacer: HTMLDivElement | null = null;
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
@@ -83,100 +87,95 @@ export class EditorEvents {
               this.resizeYStart = e.clientY;
               this.initialHeight = this.resizingRow.offsetHeight;
 
-              this.resizingRow.style.setProperty(
-                "cursor",
-                "ns-resize",
-                "important"
-              );
+              // Apply cursor to resizing row - will override child elements
+              const frameContainer = targetElement.closest("#frame-container") as HTMLDivElement;
+              frameContainer?.style.setProperty("cursor", "ns-resize", "important");
+              
+              // Create an overlay to block hover events on other elements during resize
+              this.resizeOverlay = document.createElement('div');
+              Object.assign(this.resizeOverlay.style, {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '100%',
+                zIndex: '9999',
+                cursor: 'ns-resize',
+                backgroundColor: 'transparent',
+                pointerEvents: 'auto'
+              });
+              document.body.appendChild(this.resizeOverlay);
+              
+              // Store all child elements that might have cursor styles
+              this.affectedElements = Array.from(
+                this.resizingRow.querySelectorAll("*")
+              ) as HTMLElement[];
+              
+              // Save original cursor styles to restore later
+              this.originalCursors = this.affectedElements.map(el => el.style.cursor);
+              
+              // Force ns-resize on all child elements
+              this.affectedElements.forEach(el => {
+                el.style.setProperty("cursor", "ns-resize", "important");
+              });
 
-              // this.templateBlock = targetElement.closest(
-              //   ".template-block"
-              // ) as HTMLDivElement;
-              // if (this.templateBlock) {
-              //   this.templateBlock.style.setProperty(
-              //     "cursor",
-              //     "",
-              //     ""
-              //   );                
-              // }
-
-              this.resizingRow.style.setProperty(
-                "cursor",
-                "ns-resize",
-                "important"
-              );
+              this.infoSectionSpacer = targetElement?.closest('.container-row')?.nextElementSibling?.closest('.info-section-spacing-container') as HTMLDivElement | null;
+              if (this.infoSectionSpacer) {
+                this.infoSectionSpacer.style.pointerEvents = "none";
+              } 
 
               this.templateBlock = targetElement.closest(
                 ".template-block"
               ) as HTMLDivElement;
-              if (this.templateBlock) {
-                this.templateBlock.style.setProperty(
-                  "cursor",
-                  "",
-                  ""
-                );                
-              }
             }
           });
 
           document.addEventListener("mousemove", (e: MouseEvent) => {
-            if (this.isResizing) {
-              this.resizingRow?.style.setProperty(
-                "cursor",
-                "ns-resize",
-                "important"
-              );
-
-              const deltaY = e.clientY - this.resizeYStart;
-
-              const minHeight = 80;
-              const mediumHeight = 120;
-              const maxHeight = 160;
-
-              // Determine which snap point to use based on drag distance
-              let newHeight;
-
-              if (this.initialHeight === minHeight) {
-                if (deltaY > 20) {
-                  newHeight = mediumHeight;
-                } else {
-                  newHeight = minHeight;
-                }
-              } else if (this.initialHeight === mediumHeight) {
-                if (deltaY > 20) {
-                  newHeight = maxHeight;
-                } else if (deltaY < -20) {
-                  newHeight = minHeight;
-                } else {
-                  newHeight = mediumHeight;
-                }
-              } else if (this.initialHeight === maxHeight) {
-                if (deltaY < -20) {
-                  newHeight = mediumHeight;
-                } else {
-                  newHeight = maxHeight;
-                }
-              } else {
-                const draggedHeight = this.initialHeight + deltaY;
-
-                if (draggedHeight < (minHeight + mediumHeight) / 2) {
-                  newHeight = minHeight;
-                } else if (draggedHeight < (mediumHeight + maxHeight) / 2) {
-                  newHeight = mediumHeight;
-                } else {
-                  newHeight = maxHeight;
-                }
+            if (this.isResizing && this.resizingRow) {
+              // Ensure the overlay follows the mouse position if needed
+              if (this.resizeOverlay) {
+                e.preventDefault();
+                e.stopPropagation();
               }
-
-              const comps = wrapper.find(`#${this.resizingRow?.id}`);
+              
+              const deltaY = e.clientY - this.resizeYStart;
+              
+              // Get constants from imported minTileHeight
+              const minHeight = minTileHeight;
+              const mediumHeight = minTileHeight * 1.5;  // 120
+              const maxHeight = minTileHeight * 2;       // 160
+              
+              // Snap threshold - lower value means more sensitive snapping
+              const snapThreshold = 10;
+              
+              // Calculate target height with smooth transition
+              let newHeight;
+              const draggedHeight = this.initialHeight + deltaY;
+              
+              // Implement smooth snapping with clear thresholds
+              if (draggedHeight < minHeight + snapThreshold) {
+                newHeight = minHeight;
+              } else if (draggedHeight < mediumHeight - snapThreshold) {
+                newHeight = draggedHeight; // Allow free movement between snap points
+              } else if (draggedHeight < mediumHeight + snapThreshold) {
+                newHeight = mediumHeight;
+              } else if (draggedHeight < maxHeight - snapThreshold) {
+                newHeight = draggedHeight; // Allow free movement between snap points
+              } else {
+                newHeight = maxHeight;
+              }
+              
+              // Apply the new height to the resizing row
+              const comps = wrapper.find(`#${this.resizingRow.id}`);
               if (comps.length) {
                 comps[0].addStyle({
                   height: `${newHeight}px`,
                 });
               }
-
+              
+              // Update tile mapper with new size
               (globalThis as any).tileMapper?.updateTile(
-                this.resizingRow?.id,
+                this.resizingRow.id,
                 "Size",
                 newHeight
               );
@@ -184,13 +183,79 @@ export class EditorEvents {
           });
 
           document.addEventListener("mouseup", (e: MouseEvent) => {
-            if (this.isResizing) {
+            if (this.isResizing && this.resizingRow) {
+              // Get constants for reference
+              const minHeight = minTileHeight;
+              const mediumHeight = minTileHeight * 1.5;  // 120
+              const maxHeight = minTileHeight * 2;       // 160
+              
               this.isResizing = false;
-
-              this.resizingRow?.style.setProperty(
-                "cursor",
-                "",
+              
+              // Reset cursor on body
+              document.body.style.removeProperty("cursor");
+              
+              // Remove the overlay
+              if (this.resizeOverlay) {
+                document.body.removeChild(this.resizeOverlay);
+                this.resizeOverlay = null;
+              }
+              
+              // Reset all affected element cursors to their original values
+              if (this.affectedElements && this.originalCursors) {
+                this.affectedElements.forEach((el, i) => {
+                  if (this.originalCursors && this.originalCursors[i]) {
+                    el.style.cursor = this.originalCursors[i];
+                  } else {
+                    el.style.removeProperty("cursor");
+                  }
+                });
+              }
+              
+              // Final snap to discrete sizes
+              const currentHeight = this.resizingRow.offsetHeight;
+              let finalHeight;
+              
+              if (currentHeight < (minHeight + mediumHeight) / 2) {
+                finalHeight = minHeight;
+              } else if (currentHeight < (mediumHeight + maxHeight) / 2) {
+                finalHeight = mediumHeight;
+              } else {
+                finalHeight = maxHeight;
+              }
+              
+              // Apply final snapped height with smooth animation
+              const comps = wrapper.find(`#${this.resizingRow.id}`);
+              if (comps.length) {
+                this.resizingRow.style.transition = "height 0.05s ease-out";
+                comps[0].addStyle({
+                  height: `${finalHeight}px`,
+                });
+                
+                // Remove transition after animation completes
+                setTimeout(() => {
+                  if (this.resizingRow) {
+                    this.resizingRow.style.removeProperty("transition");
+                  }
+                }, 150);
+              }
+              
+              // Update tile mapper with final size
+              (globalThis as any).tileMapper?.updateTile(
+                this.resizingRow.id,
+                "Size",
+                finalHeight
               );
+              
+              // Clear references
+              this.resizingRow = null;
+              this.affectedElements = null;
+              this.originalCursors = null;
+              this.resizeOverlay = null;
+              if (this.infoSectionSpacer) {
+                this.infoSectionSpacer.style.pointerEvents = "auto";
+              }
+              const frameContainer = document.getElementById("#frame-container") as HTMLDivElement;
+              frameContainer?.style.setProperty("cursor", "ns-resize", "important");
             }
           });
 
@@ -244,6 +309,26 @@ export class EditorEvents {
             this.uiManager.activateEditor(this.frameId);
             this.uiManager.handleInfoSectionHover(e);
           });
+
+          // wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
+          //   const targetElement = e.target as Element;
+          //     console.log("mouse first")
+          //   if (
+          //     targetElement.closest(".info-section-spacing-container")
+          //   ) {
+          //     const infoSection = targetElement.closest(
+          //       ".info-section-spacing-container"
+          //     ) as HTMLDivElement;
+
+          //     console.log("mouse hover/enter")
+          //     if (infoSection) {
+          //     console.log("mouse in if")
+          //       infoSection.style.height = "3.2rem";
+          //       infoSection.style.transition = "height 0.3s ease";  
+          //     }
+          //     this.uiManager.clearAllMenuContainers();
+          //   }
+          // });
         } else {
           console.error("Wrapper not found!");
         }
@@ -311,42 +396,44 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setInfoCtaProperties();
         this.uiManager.showCtaTools();
-        this.uiManager.hidePageInfo()
+        this.uiManager.hidePageInfo();
 
-        const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId())
+        const ctaAttrs = (globalThis as any).tileMapper.getCta(
+          component.getId()
+        );
         const version = (globalThis as any).activeVersion;
         this.uiManager.removeOtherEditors();
 
         if (ctaAttrs.CtaAction) {
-          const pageType = ctaAttrs.CtaType == "Form" ? "DynamicForm" : ctaAttrs.CtaType
-          if (pageType === 'DynamicForm' || pageType === 'WebLink') {
+          const pageType =
+            ctaAttrs.CtaType == "Form" ? "DynamicForm" : ctaAttrs.CtaType;
+          if (pageType === "DynamicForm" || pageType === "WebLink") {
             let childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
-                return page.PageType == pageType && page.PageLinkStructure?.WWPFormId == Number(ctaAttrs.Action?.ObjectId)
+                return (
+                  page.PageType == pageType &&
+                  page.PageLinkStructure?.WWPFormId ==
+                    Number(ctaAttrs.Action?.ObjectId)
+                );
               }
-            })
-            
+            });
+
             if (childPage) {
               this.uiManager.removeOtherEditors();
               new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
             }
           }
         }
-
-
-      
-      }
-
-      else if (isTile) {
+      } else if (isTile) {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setTileProperties();
         this.uiManager.setInfoTileProperties();
         this.uiManager.showTileTools();
         this.uiManager.createChildEditor();
-        this.uiManager.hidePageInfo()
+        this.uiManager.hidePageInfo();
       } else {
         this.uiManager.toggleSidebar(false);
-        this.uiManager.showPageInfo()
+        this.uiManager.showPageInfo();
       }
       // this.uiManager.toggleSidebar()
       // this.uiManager.setCtaProperties();
@@ -355,7 +442,7 @@ export class EditorEvents {
     this.editor.on("component:deselected", () => {
       (globalThis as any).selectedComponent = null;
       this.uiManager.toggleSidebar(false);
-      this.uiManager.showPageInfo()
+      this.uiManager.showPageInfo();
     });
   }
 

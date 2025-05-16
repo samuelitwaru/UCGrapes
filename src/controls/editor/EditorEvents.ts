@@ -59,7 +59,7 @@ export class EditorEvents {
       this.appVersionManager
     );
 
-    (globalThis as any).uiManager = this.uiManager
+    (globalThis as any).uiManager = this.uiManager;
 
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
@@ -91,41 +91,59 @@ export class EditorEvents {
               this.initialHeight = this.resizingRow.offsetHeight;
 
               // Apply cursor to resizing row - will override child elements
-              const frameContainer = targetElement.closest("#frame-container") as HTMLDivElement;
-              frameContainer?.style.setProperty("cursor", "ns-resize", "important");
-              
+              const frameContainer = targetElement.closest(
+                "#frame-container"
+              ) as HTMLDivElement;
+              // get all the children of the frame container apart from the template wrapper
+              const children = Array.from(frameContainer.children).filter(
+                (child) => child !== this.resizingRow
+              );
+              children?.forEach((child) => {
+                (child as HTMLDivElement).style.setProperty(
+                  "cursor",
+                  "ns-resize",
+                  "important"
+                );
+              });
+
               // Create an overlay to block hover events on other elements during resize
-              this.resizeOverlay = document.createElement('div');
+              this.resizeOverlay = document.createElement("div");
               Object.assign(this.resizeOverlay.style, {
-                position: 'fixed',
-                top: '0',
-                left: '0',
-                width: '100%',
-                height: '100%',
-                zIndex: '9999',
-                cursor: 'ns-resize',
-                backgroundColor: 'transparent',
-                pointerEvents: 'auto'
+                position: "fixed",
+                top: "0",
+                left: "0",
+                width: "100%",
+                height: "100%",
+                zIndex: "9999",
+                cursor: "ns-resize",
+                backgroundColor: "transparent",
+                pointerEvents: "auto",
               });
               document.body.appendChild(this.resizeOverlay);
-              
+
               // Store all child elements that might have cursor styles
               this.affectedElements = Array.from(
                 this.resizingRow.querySelectorAll("*")
               ) as HTMLElement[];
-              
+
               // Save original cursor styles to restore later
-              this.originalCursors = this.affectedElements.map(el => el.style.cursor);
-              
+              this.originalCursors = this.affectedElements.map(
+                (el) => el.style.cursor
+              );
+
               // Force ns-resize on all child elements
-              this.affectedElements.forEach(el => {
+              this.affectedElements.forEach((el) => {
                 el.style.setProperty("cursor", "ns-resize", "important");
               });
 
-              this.infoSectionSpacer = targetElement?.closest('.container-row')?.nextElementSibling?.closest('.info-section-spacing-container') as HTMLDivElement | null;
+              this.infoSectionSpacer = targetElement
+                ?.closest(".container-row")
+                ?.nextElementSibling?.closest(
+                  ".info-section-spacing-container"
+                ) as HTMLDivElement | null;
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "none";
-              } 
+              }
 
               this.templateBlock = targetElement.closest(
                 ".template-block"
@@ -140,21 +158,21 @@ export class EditorEvents {
                 e.preventDefault();
                 e.stopPropagation();
               }
-              
+
               const deltaY = e.clientY - this.resizeYStart;
-              
+
               // Get constants from imported minTileHeight
               const minHeight = minTileHeight;
-              const mediumHeight = minTileHeight * 1.5;  // 120
-              const maxHeight = minTileHeight * 2;       // 160
-              
+              const mediumHeight = minTileHeight * 1.5; // 120
+              const maxHeight = minTileHeight * 2; // 160
+
               // Snap threshold - lower value means more sensitive snapping
               const snapThreshold = 10;
-              
+
               // Calculate target height with smooth transition
               let newHeight;
               const draggedHeight = this.initialHeight + deltaY;
-              
+
               // Implement smooth snapping with clear thresholds
               if (draggedHeight < minHeight + snapThreshold) {
                 newHeight = minHeight;
@@ -167,7 +185,7 @@ export class EditorEvents {
               } else {
                 newHeight = maxHeight;
               }
-              
+
               // Apply the new height to the resizing row
               const comps = wrapper.find(`#${this.resizingRow.id}`);
               if (comps.length) {
@@ -175,7 +193,7 @@ export class EditorEvents {
                   height: `${newHeight}px`,
                 });
               }
-              
+
               // Update tile mapper with new size
               (globalThis as any).tileMapper?.updateTile(
                 this.resizingRow.id,
@@ -189,20 +207,20 @@ export class EditorEvents {
             if (this.isResizing && this.resizingRow) {
               // Get constants for reference
               const minHeight = minTileHeight;
-              const mediumHeight = minTileHeight * 1.5;  // 120
-              const maxHeight = minTileHeight * 2;       // 160
-              
+              const mediumHeight = minTileHeight * 1.5; // 120
+              const maxHeight = minTileHeight * 2; // 160
+
               this.isResizing = false;
-              
+
               // Reset cursor on body
               document.body.style.removeProperty("cursor");
-              
+
               // Remove the overlay
               if (this.resizeOverlay) {
                 document.body.removeChild(this.resizeOverlay);
                 this.resizeOverlay = null;
               }
-              
+
               // Reset all affected element cursors to their original values
               if (this.affectedElements && this.originalCursors) {
                 this.affectedElements.forEach((el, i) => {
@@ -213,11 +231,11 @@ export class EditorEvents {
                   }
                 });
               }
-              
+
               // Final snap to discrete sizes
               const currentHeight = this.resizingRow.offsetHeight;
               let finalHeight;
-              
+
               if (currentHeight < (minHeight + mediumHeight) / 2) {
                 finalHeight = minHeight;
               } else if (currentHeight < (mediumHeight + maxHeight) / 2) {
@@ -225,7 +243,7 @@ export class EditorEvents {
               } else {
                 finalHeight = maxHeight;
               }
-              
+
               // Apply final snapped height with smooth animation
               const comps = wrapper.find(`#${this.resizingRow.id}`);
               if (comps.length) {
@@ -233,7 +251,7 @@ export class EditorEvents {
                 comps[0].addStyle({
                   height: `${finalHeight}px`,
                 });
-                
+
                 // Remove transition after animation completes
                 setTimeout(() => {
                   if (this.resizingRow) {
@@ -241,14 +259,14 @@ export class EditorEvents {
                   }
                 }, 150);
               }
-              
+
               // Update tile mapper with final size
               (globalThis as any).tileMapper?.updateTile(
                 this.resizingRow.id,
                 "Size",
                 finalHeight
               );
-              
+
               // Clear references
               this.resizingRow = null;
               this.affectedElements = null;
@@ -257,8 +275,16 @@ export class EditorEvents {
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "auto";
               }
-              const frameContainer = document.getElementById("#frame-container") as HTMLDivElement;
-              frameContainer?.style.setProperty("cursor", "ns-resize", "important");
+              const frameContainer = wrapper.getEl().querySelector(
+                "#frame-container"
+              ) as HTMLDivElement;
+
+              const children = Array.from(frameContainer.children).filter(
+                (child) => child !== this.resizingRow
+              );
+              children?.forEach((child) => {
+                (child as HTMLDivElement).style.removeProperty("cursor");
+              });
             }
           });
 
@@ -315,10 +341,8 @@ export class EditorEvents {
 
           wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
             const targetElement = e.target as Element;
-              console.log("mouse first")
-            if (
-              targetElement.closest(".info-section-spacing-container")
-            ) {
+            console.log("mouse first");
+            if (targetElement.closest(".info-section-spacing-container")) {
               const infoSection = targetElement.closest(
                 ".info-section-spacing-container"
               ) as HTMLDivElement;
@@ -332,7 +356,6 @@ export class EditorEvents {
           console.error("Wrapper not found!");
         }
 
-        
         new EditorThumbs(
           this.frameId,
           this.pageId,
@@ -341,7 +364,7 @@ export class EditorEvents {
           this.isHome
         );
 
-        console.log('editors', (window as any).app.editors)
+        console.log("editors", (window as any).app.editors);
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
@@ -408,8 +431,9 @@ export class EditorEvents {
         this.uiManager.removeOtherEditors();
 
         if (ctaAttrs.CtaAction) {
-          const pageType = ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType
-          if (pageType === 'DynamicForm') {
+          const pageType =
+            ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
+          if (pageType === "DynamicForm") {
             let childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
                 return (
@@ -418,7 +442,7 @@ export class EditorEvents {
                     Number(ctaAttrs.Action?.ObjectId)
                 );
               }
-            })
+            });
 
             if (childPage) {
               this.uiManager.removeOtherEditors();
@@ -426,12 +450,7 @@ export class EditorEvents {
             }
           }
         }
-
-
-
-      }
-
-      else if (isTile) {
+      } else if (isTile) {
         this.uiManager.toggleSidebar(true);
         this.uiManager.setTileProperties();
         this.uiManager.setInfoTileProperties();

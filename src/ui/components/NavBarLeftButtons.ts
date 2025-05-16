@@ -88,7 +88,7 @@ export class NavbarLeftButtons {
     versionSelection.render(this.container);
     this.container.appendChild(debugButton);
     this.container.appendChild(shareButton)
-    this.container.appendChild(trashButton);
+    // this.container.appendChild(trashButton);
     // shareButton.render(this.container);
 
     shareButton.addEventListener("click", (e) => {

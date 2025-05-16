@@ -64,7 +64,7 @@ export class NavbarButtons {
     editActions.render(this.container);
 
     themeSelection.render(this.container);
-    treeButton.render(this.container);
+    // treeButton.render(this.container);
     publishButton.render(this.container);
 
     publishButton.button.addEventListener("click", (e) => {

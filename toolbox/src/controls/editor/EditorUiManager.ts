@@ -283,6 +283,12 @@ export class EditorUIManager {
   }
 
   activateEditor(frameId: any) {
+    const mobileFrame = document.getElementById(`${frameId}-frame`) as HTMLDivElement
+    if (!mobileFrame) return 
+    (globalThis as any).pageId = mobileFrame.dataset.pageid;
+    const currentPageId = mobileFrame.dataset.pageid
+    const currentPage = this.appVersionManager.getPages().find((page:any) => page.PageId == currentPageId)
+    this.pageData = currentPage
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       // deselect in active editors
@@ -295,8 +301,10 @@ export class EditorUIManager {
       });
 
       frame.classList.remove("active-editor");
+      console.log('frameId', frameId)
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");
+
         this.activateMiniatureFrame(frame.id);
       }
     });
@@ -309,7 +317,7 @@ export class EditorUIManager {
       return
     }
     let listHTML = ``
-    const pageInfoSection = document.querySelector('#page-info-section') as HTMLElement
+    const pageInfoSection = document.querySelector('#page-info-section') as HTMLDivElement
     if (this.pageData.PageType == "Information" && this.pageData.PageInfoStructure.InfoContent) {
       this.pageData.PageInfoStructure.InfoContent.forEach((info:any) => {
         if (info.InfoType == "TileRow") {
@@ -325,12 +333,15 @@ export class EditorUIManager {
       }) 
     } 
     pageInfoSection.innerHTML = `
-      <h3>${this.pageData.PageName.toUpperCase()}</h3>
-      <hr/>
       <h5>${listHTML? 'Linked Pages' : ''}</h5>
       <ul>
         ${listHTML}
       </ul>
+    `
+    const pageTitle = document.getElementById('page-info-title') as HTMLDivElement
+    pageTitle.innerHTML = `
+      <h3>${this.pageData.PageName.toUpperCase()}</h3>
+      <hr/>
     `
     pageInfoSection.style.display = "block";
   }
@@ -543,7 +554,6 @@ export class EditorUIManager {
         const pages = this.appVersionManager.getPages();
         childPage = pages?.find((page: any) => page.PageId === objectId);
       }
-      console.log(childPage)
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }

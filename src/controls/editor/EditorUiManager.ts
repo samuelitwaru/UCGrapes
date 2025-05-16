@@ -80,7 +80,6 @@ export class EditorUIManager {
         }
         const svgGPath = component.getEl().querySelector('path') as SVGPathElement;
         if (svgGPath) {
-          console.log("svgGPath: ", svgGPath);
           svgGPath.setAttribute("fill", "#5068a8");
         }
     });
@@ -582,7 +581,6 @@ export class EditorUIManager {
         const pages = this.appVersionManager.getPages();
         childPage = pages?.find((page: any) => page.PageId === objectId);
       }
-      console.log(childPage)
       if (childPage) {
         new ChildEditor(objectId, childPage).init(tileAttributes);
       }

@@ -264,14 +264,14 @@ export class InfoSectionController {
   updateInfoCtaButtonImage(imageUrl: string, infoId?: string) {
     const ctaEditor = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (ctaEditor) {
-      const ctaInfoHtml =  ctaEditor.getEl();
+      const ctaInfoHtml = ctaEditor.getEl();
       ctaInfoHtml.style.backgroundImage = ``;
       const img = ctaEditor.find("img")[0];
       if (img && infoId) {
-          img.setAttributes({ src: imageUrl });
-          this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image")
-          this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl)
-        }
+        img.setAttributes({ src: imageUrl });
+        this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image")
+        this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl)
+      }
     }
   }
 
@@ -306,6 +306,7 @@ export class InfoSectionController {
       : components.length;
 
     const addInfoSectionButton = new AddInfoSectionButton().getHTML();
+    const addLastInfoSectionButton = new AddInfoSectionButton(false, true).getHTML();
 
     // Add plus above
     const plusAbove = this.editor.addComponents(addInfoSectionButton);
@@ -321,7 +322,8 @@ export class InfoSectionController {
 
     // Clean up redundant pluses
     this.removeConsecutivePlusButtons();
-    this.markFirstPlusButton();
+    this.markFirstAndLastPlusButtons('first');
+    this.markFirstAndLastPlusButtons('last');
     this.removeEmptyState();
 
     // Scroll to bottom if we added the section at the end
@@ -450,19 +452,23 @@ export class InfoSectionController {
     }
   }
 
-  private markFirstPlusButton() {
+  private markFirstAndLastPlusButtons(position: 'first' | 'last') {
     const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
     if (!containerColumn) return;
 
-    // Remove 'first-section' class from all
     const allPlusButtons = containerColumn.find('.info-section-spacing-container');
-    allPlusButtons.forEach((comp: any) => comp.removeClass('first-section'));
+    if (allPlusButtons.length === 0) return;
 
-    // Add it to the first valid one
-    const firstPlus = allPlusButtons[0];
-    if (firstPlus) {
-      firstPlus.addClass('first-section');
-      // console.log("Marked first plus button with 'first-section' class:", firstPlus.getId?.());
+    // Remove relevant class from all
+    const classToRemove = position === 'first' ? 'first-section' : 'last-section';
+    allPlusButtons.forEach((comp: any) => comp.removeClass(classToRemove));
+
+    // Add it to the target element
+    const targetPlus = position === 'first' ? allPlusButtons[0] : allPlusButtons[allPlusButtons.length - 1];
+    if (targetPlus) {
+      const classToAdd = position === 'first' ? 'first-section' : 'last-section';
+      targetPlus.addClass(classToAdd);
+      // console.log(`Marked ${position} plus button with '${classToAdd}' class:`, targetPlus.getId?.());
     }
   }
 

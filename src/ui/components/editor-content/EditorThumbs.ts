@@ -234,12 +234,12 @@ export class EditorThumbs {
 
     let updateTimeoutId: ReturnType<typeof setTimeout> | null = null;
     console.log('editorDiv: >> ', editorDiv)
-    observer.observe(editorDiv, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      characterData: true,
-    });
+    // observer.observe(editorDiv, {
+    //   childList: true,
+    //   subtree: true,
+    //   attributes: true,
+    //   characterData: true,
+    // });
 
     updateMirror();
 

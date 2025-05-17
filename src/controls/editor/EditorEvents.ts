@@ -96,7 +96,9 @@ export class EditorEvents {
                 "#frame-container"
               ) as HTMLDivElement;
               // get all the children of the frame container apart from the template wrapper
-              this.frameChildren = Array.from(frameContainer?.querySelectorAll("*")).filter(
+              this.frameChildren = Array.from(
+                frameContainer?.querySelectorAll("*")
+              ).filter(
                 (child): child is HTMLDivElement => child !== this.resizingRow
               );
 
@@ -273,7 +275,7 @@ export class EditorEvents {
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "auto";
               }
-              
+
               this.frameChildren?.forEach((child) => {
                 child.style.removeProperty("cursor");
               });
@@ -348,13 +350,13 @@ export class EditorEvents {
           console.error("Wrapper not found!");
         }
 
-        new EditorThumbs(
-          this.frameId,
-          this.pageId,
-          this.editor,
-          this.pageData,
-          this.isHome
-        );
+        // new EditorThumbs(
+        //   this.frameId,
+        //   this.pageId,
+        //   this.editor,
+        //   this.pageData,
+        //   this.isHome
+        // );
 
         console.log("editors", (window as any).app.editors);
 
@@ -425,8 +427,9 @@ export class EditorEvents {
         if (ctaAttrs.CtaAction) {
           const pageType =
             ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
+          let childPage;
           if (pageType === "DynamicForm") {
-            let childPage = version?.Pages.find((page: any) => {
+            childPage = version?.Pages.find((page: any) => {
               if (page.PageType == pageType) {
                 return (
                   page.PageType == pageType &&
@@ -435,11 +438,16 @@ export class EditorEvents {
                 );
               }
             });
-
-            if (childPage) {
-              this.uiManager.removeOtherEditors();
-              new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
-            }
+          } else if (pageType === "WebLink") {
+            childPage = version?.Pages.find(
+              (page: any) => {
+                return page.PageLinkStructure?.Url == ctaAttrs.CtaAction
+              }
+            );
+          }
+          if (childPage) {
+            this.uiManager.removeOtherEditors();
+            new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
           }
         }
       } else if (isTile) {

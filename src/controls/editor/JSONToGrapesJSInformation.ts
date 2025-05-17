@@ -409,7 +409,7 @@ export class JSONToGrapesJSInformation {
         <img
             class="product-service-image"
             ${DefaultAttributes}
-            src="${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg"
+            src="${baseURL}/Resources/UCGrapes/dist/images/default.jpg"
             data-gjs-type="default"
             alt="Full-width Image"
             style="border: 1px dashed #222f54;"

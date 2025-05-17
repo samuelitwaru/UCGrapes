@@ -70,7 +70,7 @@ export class InfoSectionController {
 
   addImage(imageUrl: string, nextSectionId?: string) {
     // console.log('addImage sectionId :>> ', nextSectionId);
-    const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
+    const imgUrl = `${baseURL}/Resources/UCGrapes/dist/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;

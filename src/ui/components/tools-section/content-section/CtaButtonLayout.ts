@@ -24,7 +24,7 @@ export class CtaButtonLayout {
         imgBtn.id = 'image-button-layout';
         imgBtn.innerHTML = `
             <span class="img-button-icon">
-                <img src="Resources/UCGrapes1/toolbox/public/images/food.png" alt="img-button-icon" width="35px" height="auto">  
+                <img src="Resources/UCGrapes/dist/images/food.png" alt="img-button-icon" width="35px" height="auto">  
             </span>
             <label>Button</label>
             <i class="fa fa-angle-right img-button-arrow"></i>

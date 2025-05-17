@@ -33,7 +33,7 @@ export class ChildEditor {
     this.editorEvents = new EditorEvents();
   }
 
-  init(tileAttributes: any) {
+  init(attributes: any) {
     let editorId: any = `gjs-${this.getEditorId()}`;
     this.pageTitle = this.pageData?.PageName;
     this.createNewEditor(editorId);
@@ -54,7 +54,7 @@ export class ChildEditor {
           this.pageData
         );
       }
-    }
+    };
     let converter;
     if (
       this.pageData?.PageType === "Menu" ||
@@ -80,16 +80,19 @@ export class ChildEditor {
       this.pageData?.PageType === "WebLink" ||
       this.pageData?.PageType === "DynamicForm"
     ) {
-      if (tileAttributes?.CtaType === 'Form') {
-        tileAttributes.Action.ObjectUrl = this.pageData.PageLinkStructure.Url
-      }
       const urlPageEditor = new UrlPageEditor(childEditor);
-      urlPageEditor.initialise(tileAttributes.Action);
-    } else if (
-      this.pageData?.PageType === "Map"
-    ) {
+      if (this.pageData?.PageLinkStructure?.Url) {
+        urlPageEditor.initialise(this.pageData.PageLinkStructure.Url);
+      } else {
+        console.error(
+          "Missing URL for WebLink/DynamicForm page:",
+          this.pageData
+        );
+        urlPageEditor.initialise("htps://www.example.com"); 
+      }
+    } else if (this.pageData?.PageType === "Map") {
       const mapsPageEditor = new MapsPageEditor(childEditor);
-      mapsPageEditor.initialise(tileAttributes.Action);
+      mapsPageEditor.initialise(attributes.Action);
     } else if (this.pageData?.PageType === "MyActivity") {
       const activityEditor = new LoadMyActivityData(childEditor);
       activityEditor.load();
@@ -109,7 +112,14 @@ export class ChildEditor {
     const frameContainer = document.getElementById(
       "child-container"
     ) as HTMLElement;
-    const newEditor = new EditorFrame(editorId, false, this.pageData, this.pageTitle, this.isNewPage);
+    const newEditor = new EditorFrame(
+      editorId,
+      false,
+      this.pageData,
+      this.pageTitle,
+      this.isNewPage
+    );
+
     newEditor.render(frameContainer);
   }
 
@@ -122,9 +132,7 @@ export class ChildEditor {
     return id;
   }
 
-  refreshPage() {
-
-  }
+  refreshPage() {}
 
   addImageContent(editor: any) {
     const components = editor.DomComponents.getWrapper().find(
@@ -165,7 +173,8 @@ export class ChildEditor {
     const childContainer = document.getElementById(
       "child-container"
     ) as HTMLDivElement;
-    childContainer.scrollLeft = childContainer.scrollWidth - childContainer.clientWidth;
+    childContainer.scrollLeft =
+      childContainer.scrollWidth - childContainer.clientWidth;
     childContainer.style.justifyContent = "right";
   }
 }

@@ -4,8 +4,7 @@ export class UrlPageEditor {
         this.editor = editor;
     }
 
-    async initialise(tileAction: any) {
-        const linkUrl = tileAction?.ObjectUrl;
+    async initialise(linkUrl: any) {
         try {
             this.editor.DomComponents.clear();
     

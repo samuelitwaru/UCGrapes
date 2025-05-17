@@ -35,6 +35,10 @@ export class EditorThumbs {
     const editorDiv = document.getElementById(
       `${this.frameId}-frame`
     ) as HTMLDivElement;
+    if (!editorDiv) {
+      console.error("Editor div not found");
+      return;
+    }
     const thumbnail = this.captureMiniature(editorDiv);
     thumbnail.style.cursor = "pointer";
     thumbnail.addEventListener("click", (event: MouseEvent) => {
@@ -76,6 +80,7 @@ export class EditorThumbs {
   }
 
   private captureMiniature(editorDiv: HTMLDivElement) {
+    console.log('editorDiv', editorDiv)
     const updateMirror = async () => {
       const canvasWrapper = editorDiv.querySelector(
         ".gjs-cv-canvas"
@@ -104,11 +109,6 @@ export class EditorThumbs {
             img.style.width = iframe.offsetWidth + "px";
             img.style.height = iframe.offsetHeight + "px";
             img.style.display = "block";
-            // console.log("Image URL:", dataUrl);
-            const toolboxService = new ToolBoxService();
-            // console.log("Calling savePageThumbnail with dataUrl:", dataUrl);
-            toolboxService.savePageThumbnail(this.pageId, dataUrl);
-            // console.log("Thumbnail saved successfully");
             const iframeClone = clone.querySelector("iframe");
             if (iframeClone?.parentNode) {
               iframeClone.parentNode.replaceChild(img, iframeClone);

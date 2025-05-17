@@ -335,7 +335,6 @@ export class EditorEvents {
 
           wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
             const targetElement = e.target as Element;
-            console.log("mouse first");
             if (targetElement.closest(".info-section-spacing-container")) {
               const infoSection = targetElement.closest(
                 ".info-section-spacing-container"
@@ -343,22 +342,21 @@ export class EditorEvents {
 
               if (infoSection && infoSection.style.height !== "3.2rem") {
                 this.uiManager.clearAllMenuContainers();
+                this.uiManager.isMenuOpen = false;
               }
             }
           });
         } else {
           console.error("Wrapper not found!");
         }
-
-        // new EditorThumbs(
-        //   this.frameId,
-        //   this.pageId,
-        //   this.editor,
-        //   this.pageData,
-        //   this.isHome
-        // );
-
-        console.log("editors", (window as any).app.editors);
+        
+        new EditorThumbs(
+          this.frameId,
+          this.pageId,
+          this.editor,
+          this.pageData,
+          this.isHome
+        );
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();

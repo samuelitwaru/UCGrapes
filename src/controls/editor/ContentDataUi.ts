@@ -151,8 +151,8 @@ export class ContentDataUi {
                 return;
             }
     
-            const title = this.page.PageType === "Information" ? "Delete Description" : "Delete Image";
-            const message = "Are you sure you want to delete this section?";
+            const title = this.page.PageType === "Information" ? "Remove Section" : "Remove Section";
+            const message = "Are you sure you want to remove this section?";
     
             const handleConfirmation = async () => {
                 if (this.page.PageType === "Information") {

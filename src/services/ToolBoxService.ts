@@ -184,12 +184,6 @@ export class ToolBoxService {
     url: string,
     formId: number
   ) {
-    console.log({
-      appVersionId: appVersionId,
-      pageName: pageName,
-      url: url,
-      WWPForm: formId,
-    });
     const response = await this.fetchAPI("/api/toolbox/v2/create-link-page", {
       method: "POST",
       body: JSON.stringify({

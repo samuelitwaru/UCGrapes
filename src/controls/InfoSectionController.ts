@@ -343,9 +343,6 @@ export class InfoSectionController {
     return true;
   }
 
-
-
-
   private addToMapper(infoType: InfoType) {
     // console.log('infoType :>> ', infoType);
     const pageId = (globalThis as any).currentPageId;

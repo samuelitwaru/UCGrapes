@@ -26,6 +26,7 @@ export class EditorUIManager {
   tilePropsSection: HTMLElement;
   ctaPropsSection: HTMLDivElement;
   isMenuOpen: boolean = false;
+  activeMenuContainer: HTMLElement | null = null;
 
   constructor(
     editor: any,
@@ -41,7 +42,8 @@ export class EditorUIManager {
     this.appVersionManager = appVersionManager;
 
     this.tilePropsSection = document.getElementById(
-      "menu-page-section") as HTMLElement
+      "menu-page-section"
+    ) as HTMLElement;
     this.ctaPropsSection = document.getElementById(
       "content-page-section"
     ) as HTMLDivElement;
@@ -66,151 +68,162 @@ export class EditorUIManager {
     existingMenu.forEach((menu: any) => {
       menu.remove();
     });
-    
-    const infoSections = this.editor?.getWrapper()?.find(".info-section-spacing-container");
+
+    const infoSections = this.editor
+      ?.getWrapper()
+      ?.find(".info-section-spacing-container");
     infoSections?.forEach((component: any) => {
       component.getEl().style.removeProperty("height");
-      const svgTrigger = component.getEl().querySelector('[data-name="Ellipse 6"]') as HTMLElement;
-      const addButton = component.getEl().querySelector(".add-new-info-section") as HTMLDivElement;
-        if (addButton) {
-          addButton.style.removeProperty("opacity");
-        }
-        if (svgTrigger) {
-          svgTrigger.setAttribute("fill", "#fdfdfd");        
-        }
-        const svgGPath = component.getEl().querySelector('path') as SVGPathElement;
-        if (svgGPath) {
-          svgGPath.setAttribute("fill", "#5068a8");
-        }
+      const svgTrigger = component
+        .getEl()
+        .querySelector('[data-name="Ellipse 6"]') as HTMLElement;
+      const addButton = component
+        .getEl()
+        .querySelector(".add-new-info-section") as HTMLDivElement;
+      if (addButton) {
+        addButton.style.removeProperty("opacity");
+      }
+      if (svgTrigger) {
+        svgTrigger.setAttribute("fill", "#fdfdfd");
+      }
+      const svgGPath = component
+        .getEl()
+        .querySelector("path") as SVGPathElement;
+      if (svgGPath) {
+        svgGPath.setAttribute("fill", "#5068a8");
+      }
     });
+
+    // Reset menu state
+    this.activeMenuContainer = null;
   }
 
   openMenu(e: MouseEvent) {
     const target = e.target as HTMLElement;
     if (target.closest(".tile-open-menu")) {
       e.stopPropagation();
+
+      if (this.isMenuOpen) {
+        this.clearAllMenuContainers();
+        return;
+      }
+
       const menuBtn = target.closest(".tile-open-menu") as HTMLElement;
       const templateContainer = menuBtn.closest(
         ".template-wrapper"
       ) as HTMLElement;
 
-      this.clearAllMenuContainers();
-
-      // Get the mobileFrame for positioning context
       const mobileFrame = document.getElementById(
         `${this.frameId}-frame`
       ) as HTMLElement;
       const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
       const iframeRect = iframe?.getBoundingClientRect();
 
-      // Pass the mobileFrame to the ActionListPopUp constructor
       const menu = new ActionListPopUp(templateContainer, mobileFrame);
-
       const triggerRect = menuBtn.getBoundingClientRect();
-
       menu.render(triggerRect, iframeRect);
+
+      this.isMenuOpen = true;
     }
   }
 
   handleInfoSectionHover(e: MouseEvent) {
     const target = e.target as HTMLElement;
+
+    console.log('this.isMenuOpen', this.isMenuOpen)
     if (this.isMenuOpen) {
+      this.clearAllMenuContainers();
       this.isMenuOpen = false;
       return;
-    };
-    // Check if the target is within a '.add-new-info-section svg'
-    const svgTrigger = target.closest(".add-new-info-section svg") as HTMLElement;
-
-    if (svgTrigger) {
-      // Find the nearest parent container with class 'info-section-spacing-container'
-      let el: HTMLElement | null = svgTrigger;
-      const sectionContainer = (() => {
-        while (el) {
-          if (el.classList.contains("info-section-spacing-container")) return el;
-          el = el.parentElement;
-        }
-        return null;
-      })();
-
-      if (!sectionContainer) {
-        console.warn("No parent info-section-spacing-container found.");
-        return;
-      }
-
-      // Find the next div with class starting with 'info' and ending with 'section'
-      const nextSectionId = this.getNextInfoSectionId(sectionContainer);
-
-      if (nextSectionId) {
-        console.log("Found next sectionId:", nextSectionId);
-      } else {
-        console.warn("No matching info section found below.");
-      }
-
-      // Proceed with your logic (menu rendering, iframe positioning, etc.)
-      const mobileFrame = document.getElementById(`${this.frameId}-frame`) as HTMLElement;
-      const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
-      const iframeRect = iframe?.getBoundingClientRect();
-
-      const menu = new InfoSectionPopup(sectionContainer, mobileFrame, nextSectionId);
-      const triggerRect = svgTrigger.getBoundingClientRect();
-
-      menu.render(triggerRect, iframeRect);
-      this.isMenuOpen = true;
-      const addNewSectionContainer = svgTrigger.closest(".info-section-spacing-container") as HTMLDivElement
-      if (addNewSectionContainer) {
-        addNewSectionContainer.style.height = "3.2rem";
-        const addButton = addNewSectionContainer.querySelector(".add-new-info-section") as HTMLDivElement;
-        if (addButton) {
-          addButton.style.opacity = "1";
-        }
-        const svgGEl = svgTrigger.querySelector('[data-name="Ellipse 6"]') as HTMLElement;
-        if (svgGEl) {
-          svgGEl.setAttribute("fill", "#5068a8");        
-        }
-
-        const svgGPath = svgTrigger.querySelector('path') as SVGPathElement;
-        if (svgGPath) {
-          svgGPath.setAttribute("fill", "#fff");
-        }
-      }
-
-      (globalThis as any).activeEditor = this.editor;
-      (globalThis as any).currentPageId = this.pageId;
-      (globalThis as any).pageData = this.pageData;
-      this.activateEditor(this.frameId);
     }
+
+    const svgTrigger = target.closest(
+      ".add-new-info-section svg"
+    ) as HTMLElement;
+    if (!svgTrigger) return;
+
+    let el: HTMLElement | null = svgTrigger;
+    const sectionContainer = (() => {
+      while (el) {
+        if (el.classList.contains("info-section-spacing-container")) return el;
+        el = el.parentElement;
+      }
+      return null;
+    })();
+
+    if (!sectionContainer) {
+      console.warn("No parent info-section-spacing-container found.");
+      return;
+    }
+
+    const nextSectionId = this.getNextInfoSectionId(sectionContainer);
+
+    const mobileFrame = document.getElementById(
+      `${this.frameId}-frame`
+    ) as HTMLElement;
+    const iframe = mobileFrame?.querySelector("iframe") as HTMLIFrameElement;
+    const iframeRect = iframe?.getBoundingClientRect();
+
+    const menu = new InfoSectionPopup(
+      sectionContainer,
+      mobileFrame,
+      nextSectionId
+    );
+    const triggerRect = svgTrigger.getBoundingClientRect();
+
+    menu.render(triggerRect, iframeRect);
+
+    this.isMenuOpen = true;
+
+    const addNewSectionContainer = svgTrigger.closest(
+      ".info-section-spacing-container"
+    ) as HTMLDivElement;
+    if (addNewSectionContainer) {
+      addNewSectionContainer.style.height = "3.2rem";
+      const addButton = addNewSectionContainer.querySelector(
+        ".add-new-info-section"
+      ) as HTMLDivElement;
+      if (addButton) {
+        addButton.style.opacity = "1";
+      }
+      const svgGEl = svgTrigger.querySelector(
+        '[data-name="Ellipse 6"]'
+      ) as HTMLElement;
+      if (svgGEl) {
+        svgGEl.setAttribute("fill", "#5068a8");
+      }
+      const svgGPath = svgTrigger.querySelector("path") as SVGPathElement;
+      if (svgGPath) {
+        svgGPath.setAttribute("fill", "#fff");
+      }
+    }
+
+    (globalThis as any).activeEditor = this.editor;
+    (globalThis as any).currentPageId = this.pageId;
+    (globalThis as any).pageData = this.pageData;
+    this.activateEditor(this.frameId);
   }
 
   getNextInfoSectionId(target: HTMLElement): string {
-    // console.log('target :>> ', target);
-    // Check if the target has the class 'info-section-spacing-container'
-    if (!target.classList.contains('info-section-spacing-container')) {
-      // console.warn('Target element does not have the correct class');
-      return '';
+    if (!target.classList.contains("info-section-spacing-container")) {
+      return "";
     }
 
-    // Find the next sibling of the target element
     let nextElement = target.nextElementSibling;
 
-    // Loop through the sibling elements until we find the next div with the class starting with 'info' and ending with 'section'
     while (nextElement) {
-      // console.log('nextElement :>> ', nextElement);
-      if (nextElement instanceof HTMLElement && nextElement.dataset.gjsType?.startsWith('info') && nextElement.dataset.gjsType?.endsWith('section')) {
-        // console.log('nextElementId :>> ', nextElement.id);
-        // Return the sectionId of the found element
-        return nextElement.id || '';
+      if (
+        nextElement instanceof HTMLElement &&
+        nextElement.dataset.gjsType?.startsWith("info") &&
+        nextElement.dataset.gjsType?.endsWith("section")
+      ) {
+        return nextElement.id || "";
       }
-      // Move to the next sibling
       nextElement = nextElement.nextElementSibling;
     }
 
-    // If no matching element is found
-    // console.warn('No matching info section found');
-    return '';
+    return "";
   }
-
-
-
 
   handleDragEnd(model: any, sourceComponent: any, destinationComponent: any) {
     const parentEl = destinationComponent.getEl();
@@ -302,8 +315,17 @@ export class EditorUIManager {
     });
 
     document.addEventListener("click", (event: MouseEvent) => {
-      this.clearAllMenuContainers();
-    })
+      if (this.isMenuOpen) {
+        const target = event.target as HTMLElement;
+        if (
+          !target.closest(".menu-container") &&
+          !target.closest(".add-new-info-section") &&
+          !target.closest(".tile-open-menu")
+        ) {
+          this.clearAllMenuContainers();
+        }
+      }
+    });
   }
 
   setPageFocus(editor: any, frameId: string, pageId: string, pageData: any) {
@@ -321,12 +343,16 @@ export class EditorUIManager {
   }
 
   activateEditor(frameId: any) {
-    const mobileFrame = document.getElementById(`${frameId}-frame`) as HTMLDivElement
-    if (!mobileFrame) return
+    const mobileFrame = document.getElementById(
+      `${frameId}-frame`
+    ) as HTMLDivElement;
+    if (!mobileFrame) return;
     (globalThis as any).pageId = mobileFrame.dataset.pageid;
-    const currentPageId = mobileFrame.dataset.pageid
-    const currentPage = this.appVersionManager.getPages().find((page: any) => page.PageId == currentPageId)
-    this.pageData = currentPage
+    const currentPageId = mobileFrame.dataset.pageid;
+    const currentPage = this.appVersionManager
+      .getPages()
+      .find((page: any) => page.PageId == currentPageId);
+    this.pageData = currentPage;
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       // deselect in active editors
@@ -339,53 +365,62 @@ export class EditorUIManager {
       });
 
       frame.classList.remove("active-editor");
-      console.log('frameId', frameId)
+      console.log("frameId", frameId);
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");
 
         this.activateMiniatureFrame(frame.id);
       }
     });
-    this.showPageInfo()
+    this.showPageInfo();
     new ToolboxManager().unDoReDo();
   }
 
   showPageInfo() {
     if ((globalThis as any).selectedComponent) {
-      return
+      return;
     }
-    let listHTML = ``
-    const pageInfoSection = document.querySelector('#page-info-section') as HTMLDivElement
-    if (this.pageData.PageType == "Information" && this.pageData.PageInfoStructure.InfoContent) {
+    let listHTML = ``;
+    const pageInfoSection = document.querySelector(
+      "#page-info-section"
+    ) as HTMLDivElement;
+    if (
+      this.pageData.PageType == "Information" &&
+      this.pageData.PageInfoStructure.InfoContent
+    ) {
       this.pageData.PageInfoStructure.InfoContent.forEach((info: any) => {
         if (info.InfoType == "TileRow") {
           info.Tiles.forEach((tile: any) => {
-            listHTML += `<li>${tile.Text}</li>`
-          })
+            listHTML += `<li>${tile.Text}</li>`;
+          });
         } else if (info.InfoType == "Cta" && info.CtaAttributes.Action) {
-          const objectType = info.CtaAttributes.Action.ObjectType
+          const objectType = info.CtaAttributes.Action.ObjectType;
           if (["DynamicForm", "WebLink"].includes(objectType)) {
-            listHTML += `<li>${info.CtaAttributes.CtaLabel}</li>`
+            listHTML += `<li>${info.CtaAttributes.CtaLabel}</li>`;
           }
         }
-      })
+      });
     }
     pageInfoSection.innerHTML = `
-      <h5>${listHTML ? 'Linked Pages' : ''}</h5>
+      <h5>${listHTML ? "Linked Pages" : ""}</h5>
       <ul>
         ${listHTML}
       </ul>
-    `
-    const pageTitle = document.getElementById('page-info-title') as HTMLDivElement
+    `;
+    const pageTitle = document.getElementById(
+      "page-info-title"
+    ) as HTMLDivElement;
     pageTitle.innerHTML = `
       <h3>${this.pageData.PageName.toUpperCase()}</h3>
       <hr/>
-    `
+    `;
     pageInfoSection.style.display = "block";
   }
 
   hidePageInfo() {
-    const pageInfoSection = document.querySelector('#page-info-section') as HTMLElement
+    const pageInfoSection = document.querySelector(
+      "#page-info-section"
+    ) as HTMLElement;
     pageInfoSection.style.display = "none";
   }
 
@@ -412,14 +447,14 @@ export class EditorUIManager {
 
   showCtaTools() {
     this.ctaPropsSection.style.display = "block";
-    this.tilePropsSection.style.display = "none"
+    this.tilePropsSection.style.display = "none";
   }
 
   showTileTools() {
     // this.ctaPropsSection = document.getElementById(
     //   "content-page-section"
     // ) as HTMLDivElement;
-    this.tilePropsSection.style.display = "block"
+    this.tilePropsSection.style.display = "block";
     this.ctaPropsSection.style.display = "none";
   }
 
@@ -438,7 +473,6 @@ export class EditorUIManager {
       if (menuSection) menuSection.style.display = "block";
       // if (contentection) contentection.remove();
     } else toolSection.style.display = "none";
-
   }
 
   createTileMapper() {
@@ -506,7 +540,9 @@ export class EditorUIManager {
 
   setInfoCtaProperties() {
     // render cta component
-    (window as any).app.toolsSection.pagesTabContent.contentSection.renderComponents()
+    (
+      window as any
+    ).app.toolsSection.pagesTabContent.contentSection.renderComponents();
 
     const selectedComponent = (globalThis as any).selectedComponent;
     if (this.pageData.PageType !== "Information") return;
@@ -552,11 +588,12 @@ export class EditorUIManager {
     const rowComponent = tileWrapper.parent();
     let tileAttributes;
 
-    const isTile = selectedComponent.getClasses().includes('template-block')
-    const isCta = ['img-button-container', 'plain-button-container', 'cta-container-child']
-      .some(cls => selectedComponent.getClasses().includes(cls))
-
-
+    const isTile = selectedComponent.getClasses().includes("template-block");
+    const isCta = [
+      "img-button-container",
+      "plain-button-container",
+      "cta-container-child",
+    ].some((cls) => selectedComponent.getClasses().includes(cls));
 
     if (this.pageData.PageType === "Information") {
       const tileInfoSectionAttributes: InfoType = (
@@ -656,8 +693,8 @@ export class EditorUIManager {
           ? "center"
           : "center"
         : frames.length > 3
-          ? "center"
-          : "center";
+        ? "center"
+        : "center";
 
     scrollContainer.style.setProperty("justify-content", alignment);
 
@@ -679,17 +716,25 @@ export class EditorUIManager {
   }
 
   resetTitleFromDOM() {
-    const pageTitle = document.querySelector('.app-bar .title') as HTMLHeadingElement;
-    const editHeader = document.getElementById('edit_page_title') as HTMLElement;
-    const saveChange = document.getElementById('save_page_title') as HTMLElement;
-    const titleDiv = document.querySelector('.app-bar .appbar-title-container') as HTMLDivElement;
+    const pageTitle = document.querySelector(
+      ".app-bar .title"
+    ) as HTMLHeadingElement;
+    const editHeader = document.getElementById(
+      "edit_page_title"
+    ) as HTMLElement;
+    const saveChange = document.getElementById(
+      "save_page_title"
+    ) as HTMLElement;
+    const titleDiv = document.querySelector(
+      ".app-bar .appbar-title-container"
+    ) as HTMLDivElement;
 
     if (!pageTitle || !editHeader || !saveChange || !titleDiv) {
-      console.warn('resetTitleFromDOM: Required elements not found in DOM');
+      console.warn("resetTitleFromDOM: Required elements not found in DOM");
       return;
     }
 
-    if (pageTitle.contentEditable === "false") return
+    if (pageTitle.contentEditable === "false") return;
 
     // Reset UI elements
     pageTitle.contentEditable = "false";
@@ -703,9 +748,10 @@ export class EditorUIManager {
     const editorWidth = (globalThis as any).deviceWidth;
     const length = editorWidth ? (editorWidth <= 350 ? 16 : 24) : 16;
     if (pageTitle.textContent && this.pageData.PageName) {
-      pageTitle.title = this.pageData.PageName
+      pageTitle.title = this.pageData.PageName;
       if (pageTitle.textContent.length > length) {
-        pageTitle.textContent = this.pageData.PageName.substring(0, length) + "...";
+        pageTitle.textContent =
+          this.pageData.PageName.substring(0, length) + "...";
       } else {
         pageTitle.textContent = this.pageData.PageName;
       }

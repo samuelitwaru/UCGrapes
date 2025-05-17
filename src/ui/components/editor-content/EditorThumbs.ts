@@ -32,9 +32,14 @@ export class EditorThumbs {
   }
 
   init() {
+    console.log("EditorThumbs initialized", this.frameId);
     const editorDiv = document.getElementById(
       `${this.frameId}-frame`
     ) as HTMLDivElement;
+    if (!editorDiv) {
+      console.error("Editor div not found");
+      return;
+    }
     const thumbnail = this.captureMiniature(editorDiv);
     thumbnail.style.cursor = "pointer";
     thumbnail.addEventListener("click", (event: MouseEvent) => {
@@ -76,6 +81,7 @@ export class EditorThumbs {
   }
 
   private captureMiniature(editorDiv: HTMLDivElement) {
+    console.log('editorDiv', editorDiv)
     const updateMirror = async () => {
       const canvasWrapper = editorDiv.querySelector(
         ".gjs-cv-canvas"

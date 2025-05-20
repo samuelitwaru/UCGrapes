@@ -1668,79 +1668,67 @@ div#cta-selected-actions {
 .file-item {
   position: relative;
   border-radius: 8px;
-  /* overflow: hidden; */
   cursor: pointer;
-  /* transition: border 0.3s ease; */
+  overflow: visible;
 }
-.file-item::after {
-  content: "";
+
+/* Position the status/check icon at the top left */
+.status-icon {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 83%;
-  height: 30%; /* Adjust the height of the gradient */
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent); /* Dark grey gradient */
-  pointer-events: none; /* Ensure the gradient does not interfere with interactions */
-  z-index: 1; /* Place the gradient above the image */
-  opacity: 0; /* Initially hidden */
-  transition: opacity 0.3s ease; /* Smooth fade-in effect */
-  align-self: left;
-}
-.file-item:hover::after {
-  opacity: 1; /* Show the gradient on hover */
-}
-
-.action-column {
-  display: flex;
-  flex-direction: row; /* Stack items vertically */
-  position: absolute; /* Position the action-column over the image */
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust for centering */
-  gap: 10px; /* Add spacing between buttons */
-  z-index: 2; /* Ensure the action-column is above the image */
-  opacity: 0; /* Initially hidden */
-  transition: opacity 0.3s ease; /* Smooth fade-in effect */
-  margin-top: 15px;
-  margin-left: 15px;
-}
-.file-item:hover .action-column {
-  opacity: 1; /* Show the action-column on hover */
-}
-.delete-media:hover {
-  color: darkred; /* Darker red on hover */
-}
-.file-item:hover .grid-image {
-  filter: blur(4px); /* Blur the image on hover */
-  transform: scale(1.05); /* Slight zoom effect */
-  transition: all 0.3s ease;
-}
-
-.file-item:hover .action-buttons {
-  opacity: 1; /* Show buttons on hover */
-}
-
-.file-item .action-button {
-  width: 40px;
-  height: 40px;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-  color: #fff;
-  border: none;
-  border-radius: 50%;
+  top: -16px;
+  z-index: 4;
+  display: none; /* Show via JS when selected */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+}
+
+/* Position the action icons (add-image, delete-media) at the top right in a row */
+/* .action-column {
+  position: absolute;
+  top: -16px;
+  right: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  z-index: 3;
+} */
+
+/* Style for both icons */
+.file-item .add-image,
+.file-item .delete-media {
+  width: 33px;
+  height: 33px;
+  /* font-size: 24px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255);
+  border-radius: 50%;
+  color: #fff;
+  opacity: 0;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin: 0;
+  transition: opacity 0.3s, background 0.3s, color 0.3s;
 }
 
-.file-item .action-button:hover {
-  background-color: #28a745; /* Green background on hover */
+/* Show icons on hover */
+.file-item:hover .add-image,
+.file-item:hover .delete-media {
+  opacity: 1;
 }
 
-.file-item .delete-button:hover {
-  background-color: #dc3545; /* Red background for delete button */
+/* Optional: hover/focus effects */
+.file-item .delete-media:hover,
+.file-item .delete-media:focus {
+  color: #fff;
+  background: #dc3545;
+}
+
+.file-item .add-image:hover,
+.file-item .add-image:focus {
+  color: #fff;
+  background: #28a745;
 }
 
 .file-item img {
@@ -1753,41 +1741,26 @@ div#cta-selected-actions {
 .file-item .file-info {
   flex-grow: 1;
 }
-/* .file-item.valid {
-  background-color: #d9f1fb;
-} */
 
 .file-item.invalid {
   background-color: #f9eceb;
 }
-
-.file-item .status-icon {
-  font-size: 20px;
-  margin-left: 10px;
-}
-
-.file-item .delete-media {
-  font-size: 16px;
-  color: #ffffff;
-  opacity: 0; 
-  cursor: pointer;
-  margin-top: 40px;
-  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */
-}
 .file-item .add-image{
-  font-size: 16px;
-  color: #ffffff;
+  font-size: 33px;
+  /* color: #ffffff; */
   opacity: 0; 
   cursor: pointer;
-  margin-top: 40px;
-  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */  
+  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */ 
+  /* margin-right: 3px;  */
 }
-
-.file-info .file-info-details {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
+.file-item .delete-media {
+  /* font-size: 33px; */
+  color: #5068A8;
+  margin-right: 10px;
+  opacity: 0; 
+  cursor: pointer;
+  /* margin-top: 40px; */
+  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */
 }
 
 .file-item:hover .delete-media{
@@ -1795,28 +1768,6 @@ div#cta-selected-actions {
 }
 .file-item:hover .add-image{
   opacity: 1;
-}
-
-.file-item .progress-bar {
-  height: 6px;
-  background: #fff;
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 5px;
-  margin-top: 5px;
-  width: 100%;
-}
-
-.file-item .progress {
-  height: 100%;
-  background: #222f54;
-  width: 0;
-  transition: width 0.3s ease;
-}
-
-.file-item .progress-text {
-  font-size: 0.8rem;
-  color: #666;
 }
 
 #browseLink {
@@ -3413,17 +3364,4 @@ input[type="range"]::-webkit-slider-thumb {
 
 .btn-danger:hover {
   background-color: #b31412;
-}
-
-.resize-handle.bottom-right {
-  cursor: se-resize;
-}
-.resize-handle.bottom-left {
-  cursor: sw-resize;
-}
-.resize-handle.top-left {
-  cursor: nw-resize;
-}
-.resize-handle.top-right {
-  cursor: ne-resize;
 }

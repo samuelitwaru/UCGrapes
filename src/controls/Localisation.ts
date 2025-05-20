@@ -8,8 +8,3 @@ export class Localisation {
         i18n.store(translations);
     }
 }
-
-
-// const i18n = new I18n();
-
-// export {i18n, loadTranslations};

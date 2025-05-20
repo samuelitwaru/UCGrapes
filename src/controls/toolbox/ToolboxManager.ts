@@ -239,9 +239,9 @@ export class ToolboxManager {
     const storageKey = `data-${pageId}`;
 
     const editor = (globalThis as any).activeEditor;
-    console.log('editor: >> ', editor)
     if (!editor) return;
 
+    
     const selectedComponent = (globalThis as any).selectedComponent;
     const selectedComponentId = selectedComponent
       ? selectedComponent.getId()

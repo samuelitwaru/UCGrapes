@@ -83,7 +83,10 @@ export class TileProperties {
           const tileImageSection = opactySection.querySelector(
             "#tile-img-container"
           ) as HTMLElement;
-          tileImageSection.style.display = "flex";
+          const imageSectionContainer = tileImageSection.parentElement;
+          if (imageSectionContainer) {
+            imageSectionContainer.style.display = "flex";
+          }
           const imageThumbnail = tileImageSection.querySelector(
             ".tile-img-thumbnail"
           ) as HTMLImageElement;
@@ -98,12 +101,13 @@ export class TileProperties {
         }
       }
     } else {
-      const slider = document.querySelector("#slider-wrapper") as HTMLElement;
       const tileImageSection = document.querySelector(
         "#tile-img-container"
       ) as HTMLElement;
-      slider.style.display = "none";
-      tileImageSection.style.display = "none";
+      const imageSectionContainer = tileImageSection?.parentElement;
+      if (imageSectionContainer) {
+        imageSectionContainer.style.display = "none";
+      }
     }
   }
 

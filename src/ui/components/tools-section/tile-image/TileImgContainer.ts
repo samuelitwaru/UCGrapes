@@ -1,3 +1,5 @@
+import { ThemeManager } from "../../../../controls/themes/ThemeManager";
+
 export class TileImgContainer {
   container: HTMLElement;
   positionX: number = 50;
@@ -8,7 +10,6 @@ export class TileImgContainer {
     this.container = document.createElement("div");
     this.init();
    }
-
 
   init() {
     this.container.classList.add("tile-img-container");
@@ -36,11 +37,17 @@ export class TileImgContainer {
         tileWrapper.getId()
       );
 
+      const themeManager = new ThemeManager();      
+
       const currentStyles = selectedComponent.getStyle();
       delete currentStyles["background-image"];
-      currentStyles["background-color"] = tileAttributes.BGColor;
+      currentStyles["background-color"] = themeManager.getThemeColor(tileAttributes?.BGColor);
            
       selectedComponent.setStyle(currentStyles);
+
+      const el = selectedComponent.getEl();
+      el.style.backgroundImage = ''; 
+      el.style.backgroundColor = themeManager.getThemeColor(tileAttributes?.BGColor);
 
       (globalThis as any).tileMapper.updateTile(
         selectedComponent.parent().getId(),
@@ -54,11 +61,9 @@ export class TileImgContainer {
         "0"
       );
 
-      this.container.style.display = "none";
-      this.container.style.position = "relative";
-      this.container.style.overflow = "hidden";
-      const slider = document.getElementById("slider-wrapper") as HTMLInputElement;
-      slider.style.display = "none";
+      const parent = this.container.parentElement;
+      if (!parent) return;
+      parent.remove();
     });
   }
 

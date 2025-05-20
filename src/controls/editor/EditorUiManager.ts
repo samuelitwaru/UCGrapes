@@ -414,9 +414,6 @@ export class EditorUIManager {
   }
 
   showTileTools() {
-    // this.ctaPropsSection = document.getElementById(
-    //   "content-page-section"
-    // ) as HTMLDivElement;
     this.tilePropsSection.style.display = "block"
     this.ctaPropsSection.style.display = "none";
   }
@@ -486,22 +483,6 @@ export class EditorUIManager {
     }
   }
 
-  setCtaProperties() {
-    const selectedComponent = (globalThis as any).selectedComponent;
-    const contentMapper = new ContentMapper(this.pageId);
-    const ctaAttributes = contentMapper.getContentCta(
-      selectedComponent.getId()
-    );
-
-    if (ctaAttributes && selectedComponent) {
-      const ctaProperties = new CtaButtonProperties(
-        selectedComponent,
-        ctaAttributes
-      );
-      ctaProperties.setctaAttributes();
-    }
-  }
-
   setInfoCtaProperties() {
     // render cta component
     (window as any).app.toolsSection.pagesTabContent.contentSection.renderComponents()
@@ -535,7 +516,7 @@ export class EditorUIManager {
     const buttonLayoutContainer = document?.querySelector(
       ".cta-button-layout-container"
     ) as HTMLElement;
-    if (buttonLayoutContainer) buttonLayoutContainer.style.display = "none";
+    if (buttonLayoutContainer) buttonLayoutContainer.style.display = "flex";
     const contentSection = document.querySelector("#content-page-section");
     const colorItems = contentSection?.querySelectorAll(".color-item > input");
     colorItems?.forEach((input: any) => (input.checked = false));

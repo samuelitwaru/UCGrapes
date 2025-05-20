@@ -360,8 +360,8 @@ export class EditorEvents {
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
-        const InfoSectionManager = new InfoSectionManager();
-        InfoSectionManager.removeConsecutivePlusButtons();
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.removeConsecutivePlusButtons();
       });
     }
   }

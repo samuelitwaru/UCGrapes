@@ -49,14 +49,14 @@ export class ActionInput {
       const ctaButtonComponent = ctaButton.parent();
       const currentPageId = (globalThis as any).currentPageId;
       if (this.pageData.PageType === "Information") {
-        const InfoSectionManager = new InfoSectionManager();
+        const infoSectionManager = new InfoSectionManager();
         let propertyName = "";
         if (this.type === "label") {
           propertyName = "CtaLabel";
         } else {
           propertyName = "CtaAction";
         }
-        InfoSectionManager.updateInfoCtaAttributes(
+        infoSectionManager.updateInfoCtaAttributes(
           selectedComponent.getId(),
           propertyName,
           this.input.value.trim()

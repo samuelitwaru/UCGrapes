@@ -89,8 +89,8 @@ export class OpacitySection {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoTileAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
         selectedComponent.parent().parent().getId(),
         selectedComponent.parent().getId(),
         "Opacity",

@@ -12,13 +12,13 @@ export class ContentDataUi {
   editor: any;
   page: any;
   contentDataManager: any;
-  InfoSectionManager: any;
+  infoSectionController: any;
 
   constructor(e: any, editor: any, page: any) {
     this.e = e;
     this.editor = editor;
     this.page = page;
-    this.InfoSectionManager = new InfoSectionManager();
+    this.infoSectionController = new InfoSectionManager();
     this.contentDataManager = new ContentDataManager(this.editor, this.page);
     this.init();
   }
@@ -123,7 +123,7 @@ export class ContentDataUi {
         const correctedContent = this.correctULTagFromQuill(content.innerHTML);
 
         if (this.page.PageType === "Information" && infoDescSection) {
-          this.InfoSectionManager.updateDescription(
+          this.infoSectionController.updateDescription(
             correctedContent,
             infoDescSection.id
           );
@@ -192,7 +192,7 @@ export class ContentDataUi {
             );
 
           if (infoSection) {
-            this.InfoSectionManager.deleteInfoImageOrDesc(
+            this.infoSectionController.deleteInfoImageOrDesc(
               (infoSection as HTMLElement).id
             );
           }

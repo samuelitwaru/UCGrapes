@@ -2,14 +2,8 @@ import Quill from "quill";
 import { baseURL } from "../services/ToolBoxService";
 import { Modal } from "../ui/components/Modal";
 import { InfoSectionUI } from "../ui/views/InfoSectionUI";
-import {
-  contentColumnDefaultAttributes,
-  contentDefaultAttributes,
-  DefaultAttributes,
-} from "../utils/default-attributes";
 import { randomIdGenerator } from "../utils/helpers";
 import { InfoContentMapper } from "./editor/InfoContentMapper";
-import { isEmpty } from "lodash";
 import { AddInfoSectionButton } from "../ui/components/AddInfoSectionButton";
 import { CtaAttributes, InfoType } from "../types";
 

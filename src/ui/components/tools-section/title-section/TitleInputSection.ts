@@ -41,8 +41,8 @@ export class TitleInputSection {
       if (isFirstTile) this.input.value = this.input.value.toUpperCase();
       const pageData = this.getPageData();
       if (pageData.PageType === "Information") {
-        const InfoSectionManager = new InfoSectionManager();
-        InfoSectionManager.updateInfoTileAttributes(
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.updateInfoTileAttributes(
           selectedComponent.parent().parent().getId(),
           selectedComponent.parent().getId(),
           "Text",

@@ -214,9 +214,9 @@ export class SingleImageFile {
       const rowComponent = tileWrapper.parent();
       const pageData = (globalThis as any).pageData;
       if (pageData.PageType === "Information") {
-        const InfoSectionManager = new InfoSectionManager();
+        const infoSectionManager = new InfoSectionManager();
         for (const [property, value] of updates) {
-          InfoSectionManager.updateInfoTileAttributes(
+          infoSectionManager.updateInfoTileAttributes(
             rowComponent.getId(),
             tileWrapper.getId(),
             property,
@@ -276,8 +276,8 @@ export class SingleImageFile {
 
   private async updateInfoImage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const InfoSectionManager = new InfoSectionManager();
-    InfoSectionManager.updateInfoImage(
+    const infoSectionManager = new InfoSectionManager();
+    infoSectionManager.updateInfoImage(
       safeMediaUrl,
       this.infoId,
       this.sectionId
@@ -286,8 +286,8 @@ export class SingleImageFile {
 
   private updateInfoCtaButtonImage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const InfoSectionManager = new InfoSectionManager();
-    InfoSectionManager.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
+    const infoSectionManager = new InfoSectionManager();
+    infoSectionManager.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
   }
 
   private deleteEvent() {

@@ -84,11 +84,11 @@ export class PageAttacher {
 
     const pageData = (globalThis as any).pageData;
     if (pageData.PageType === "Information") {
-      const InfoSectionManager = new InfoSectionManager();
+      const infoSectionManager = new InfoSectionManager();
       if (selectedComponent.is("info-cta-section")) {
       } else if (selectedComponent.parent().parent().is("info-tiles-section")) {
         for (const [property, value] of updates) {
-          InfoSectionManager.updateInfoTileAttributes(
+          infoSectionManager.updateInfoTileAttributes(
             selectedComponent.parent().parent().getId(),
             selectedComponent.parent().getId(),
             property,

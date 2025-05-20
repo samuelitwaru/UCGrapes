@@ -72,8 +72,8 @@ export class TextColor {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoTileAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
         selectedComponent.parent().parent().getId(),
         selectedComponent.parent().getId(),
         "Color",
@@ -123,8 +123,8 @@ export class TextColor {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoCtaAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoCtaAttributes(
         selectedComponent.getId(),
         "CtaColor",
         colorValue

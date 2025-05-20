@@ -162,9 +162,9 @@ export class TileManager {
             "delete",
             tileComponent.getId()
           );
-          const InfoSectionManager = new InfoSectionManager();
-          InfoSectionManager.removeConsecutivePlusButtons();
-          InfoSectionManager.restoreEmptyStateIfNoSections();
+          const infoSectionManager = new InfoSectionManager();
+          infoSectionManager.removeConsecutivePlusButtons();
+          infoSectionManager.restoreEmptyStateIfNoSections();
         } else {
           (globalThis as any).tileMapper.removeTile(
             tileComponent.getId() as string,
@@ -211,8 +211,8 @@ export class TileManager {
         }
       }
 
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoMapper(tileRowId, tileSection);
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoMapper(tileRowId, tileSection);
     }
   }
 
@@ -227,8 +227,8 @@ export class TileManager {
 
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
-            const InfoSectionManager = new InfoSectionManager();
-            InfoSectionManager.updateInfoTileAttributes(
+            const infoSectionManager = new InfoSectionManager();
+            infoSectionManager.updateInfoTileAttributes(
               tileComponent.parent().getId(),
               tileComponent.getId(),
               "Icon",
@@ -265,8 +265,8 @@ export class TileManager {
 
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
-            const InfoSectionManager = new InfoSectionManager();
-            InfoSectionManager.updateInfoTileAttributes(
+            const infoSectionManager = new InfoSectionManager();
+            infoSectionManager.updateInfoTileAttributes(
               tileComponent.parent().getId(),
               tileComponent.getId(),
               "Text",

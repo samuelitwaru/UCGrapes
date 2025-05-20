@@ -87,8 +87,8 @@ export class CtaManager {
 
     const ctaButtonComponent = ctaButton.parent();
     if (this.isInformationPage()) {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoCtaAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoCtaAttributes(
         selectedComponent.getId(),
         "CtaBGColor",
         color.CtaColorName
@@ -213,8 +213,8 @@ export class CtaManager {
     if (!ctaBadgeParentComponent) return;
 
     if (this.isInformationPage()) {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.deleteCtaButton(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.deleteCtaButton(
         ctaBadgeParentComponent.parent().getId()
       );
       return;
@@ -279,8 +279,8 @@ export class CtaManager {
   private updateCtaButtonType(componentId: string, buttonType: string): void {
     // console.log('iconButton');
     if (this.isInformationPage()) {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoCtaAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoCtaAttributes(
         componentId,
         "CtaButtonType",
         buttonType
@@ -536,8 +536,8 @@ export class CtaManager {
     if (this.isInformationPage()) {
       const selectedComponent = this.getSelectedComponent();
       if (selectedComponent) {
-        const InfoSectionManager = new InfoSectionManager();
-        InfoSectionManager.updateInfoCtaAttributes(
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.updateInfoCtaAttributes(
           ctaId,
           "CtaButtonIcon",
           icon.name

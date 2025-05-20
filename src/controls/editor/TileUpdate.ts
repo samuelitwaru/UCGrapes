@@ -146,8 +146,8 @@ export class TileUpdate {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const InfoSectionManager = new InfoSectionManager();
-      InfoSectionManager.updateInfoTileAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
         this.rowComponent.getId(),
         tileId,
         "Align",

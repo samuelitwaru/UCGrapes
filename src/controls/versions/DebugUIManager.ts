@@ -10,6 +10,7 @@ export class DebugUIManager {
 
     constructor(debugResults: DebugResults) {
         this.debugResults = debugResults;
+        console.log('this.debugResults: >> ', this.debugResults)
         this.container = document.createElement('div');
         this.container.classList.add('tb_debug_dashboard');
     }
@@ -19,13 +20,13 @@ export class DebugUIManager {
         const debugSummary = document.createElement('div');
         debugSummary.classList.add('tb_debug_summary');
         // Total URLs Section
-        const totalUrls = this.createSummaryItem(this.debugResults.Summary.TotalUrls, `${i18n.t("navbar.debug.total_urls")}`, true);
+        const totalUrls = this.createSummaryItem(this.debugResults?.Summary.TotalUrls, `${i18n.t("navbar.debug.total_urls")}`, true);
 
         // Successful URLs Section
-        const totalSuccess = this.createSummaryItem(this.debugResults.Summary.SuccessCount, `${i18n.t("navbar.debug.total_successful")}`);
+        const totalSuccess = this.createSummaryItem(this.debugResults?.Summary.SuccessCount, `${i18n.t("navbar.debug.total_successful")}`);
 
         // Failed URLs Section
-        const totalFail = this.createSummaryItem(this.debugResults.Summary.FailureCount, `${i18n.t("navbar.debug.total_failed")}`);
+        const totalFail = this.createSummaryItem(this.debugResults?.Summary.FailureCount, `${i18n.t("navbar.debug.total_failed")}`);
 
         debugSummary.appendChild(totalUrls);
         debugSummary.appendChild(totalSuccess);

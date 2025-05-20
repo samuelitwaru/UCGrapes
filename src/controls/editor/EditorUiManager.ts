@@ -174,7 +174,6 @@ export class EditorUIManager {
         }
       }
 
-      (globalThis as any).activeEditor = this.editor;
       (globalThis as any).currentPageId = this.pageId;
       (globalThis as any).pageData = this.pageData;
       this.activateEditor(this.frameId);
@@ -283,7 +282,6 @@ export class EditorUIManager {
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {
         frame.addEventListener("click", (event: MouseEvent) => {
-          (globalThis as any).activeEditor = this.editor;
           (globalThis as any).currentPageId = this.pageId;
           (globalThis as any).pageData = this.pageData;
           (globalThis as any).frameId = this.frameId;
@@ -292,7 +290,6 @@ export class EditorUIManager {
         });
 
         frame.addEventListener("input", (event: MouseEvent) => {
-          (globalThis as any).activeEditor = this.editor;
           (globalThis as any).currentPageId = this.pageId;
           (globalThis as any).pageData = this.pageData;
           (globalThis as any).frameId = this.frameId;
@@ -346,7 +343,8 @@ export class EditorUIManager {
         this.activateMiniatureFrame(frame.id);
       }
     });
-    this.showPageInfo()
+    this.showPageInfo();
+    (globalThis as any).activeEditor = this.editor;
     new ToolboxManager().unDoReDo();
   }
 

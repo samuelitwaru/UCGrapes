@@ -10,6 +10,7 @@ import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
+import { EditorManager } from "./EditorManager";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
 import { PageMapper } from "./PageMapper";
@@ -74,7 +75,6 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         (globalThis as any).wrapper = wrapper;
-        (globalThis as any).activeEditor = this.editor;
         (globalThis as any).currentPageId = this.pageId;
         (globalThis as any).pageData = this.pageData;
 
@@ -320,7 +320,6 @@ export class EditorEvents {
             this.uiManager.clearAllMenuContainers();
             //this.uiManager.resetTitleFromDOM();
 
-            (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
             (globalThis as any).eventTarget = targetElement;
@@ -330,6 +329,8 @@ export class EditorEvents {
 
             this.uiManager.initContentDataUi(e);
             this.uiManager.activateEditor(this.frameId);
+            const editorManager = new EditorManager();
+            editorManager.loadPageHistory(this.pageData);
             this.uiManager.handleInfoSectionHover(e);
           });
 
@@ -403,6 +404,7 @@ export class EditorEvents {
       (globalThis as any).infoContentMapper =
         this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
+      (globalThis as any).activeEditor = this.editor;
       const isTile = component.getClasses().includes("template-block");
       const isCta = [
         "img-button-container",
@@ -452,8 +454,6 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(false);
         this.uiManager.showPageInfo();
       }
-      // this.uiManager.toggleSidebar()
-      // this.uiManager.setCtaProperties();
     });
 
     this.editor.on("component:deselected", () => {

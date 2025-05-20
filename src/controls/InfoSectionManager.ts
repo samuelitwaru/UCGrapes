@@ -14,6 +14,7 @@ export class InfoSectionManager {
   constructor() {
     this.infoSectionUI = new InfoSectionUI();
     this.editor = (globalThis as any).activeEditor;
+    if (!this.editor) return;
   }
 
   createMenuItem(item: any, onCloseCallback?: () => void): HTMLElement {
@@ -59,9 +60,9 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
 
       // Select the component after appending
-      const component = this.editor.getWrapper().find(`#${ctaComponent.id}`)[0];
+      const component = this.editor?.getWrapper().find(`#${ctaComponent.id}`)[0];
       if (component) {
-        this.editor.select(component);
+        this.editor?.select(component);
       }
     }
   }
@@ -221,12 +222,12 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
 
       // Select the tile
-      const component = this.editor.getWrapper().find(`#${tileId}`)[0];
+      const component = this.editor?.getWrapper().find(`#${tileId}`)[0];
 
       if (component) {
         const tileComponent = component.find(".template-block")[0];
         if (tileComponent) {
-          this.editor.select(tileComponent);
+          this.editor?.select(tileComponent);
         }
       }
     }
@@ -237,7 +238,7 @@ export class InfoSectionManager {
       updatedDescription,
       infoId
     );
-    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.replaceWith(descContainer);
       this.updateInfoMapper(infoId, {
@@ -251,7 +252,7 @@ export class InfoSectionManager {
   updateInfoImage(imageUrl: string, infoId?: string, sectionId?: string) {
     // console.log('updateInfoImage sectionId :>> ', sectionId);
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
-    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.replaceWith(imgContainer);
       this.updateInfoMapper(infoId || "", {
@@ -265,7 +266,7 @@ export class InfoSectionManager {
   }
 
   updateInfoCtaButtonImage(imageUrl: string, infoId?: string) {
-    const ctaEditor = this.editor.getWrapper().find(`#${infoId}`)[0];
+    const ctaEditor = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (ctaEditor) {
       const ctaInfoHtml = ctaEditor.getEl();
       ctaInfoHtml.style.backgroundImage = ``;
@@ -279,7 +280,7 @@ export class InfoSectionManager {
   }
 
   deleteInfoImageOrDesc(infoId: string) {
-    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.remove();
       this.removeInfoMapper(infoId);
@@ -289,7 +290,7 @@ export class InfoSectionManager {
   }
 
   deleteCtaButton(infoId: string) {
-    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
+    const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.remove();
       this.removeInfoMapper(infoId);
@@ -299,8 +300,7 @@ export class InfoSectionManager {
   }
 
   appendComponent(componentDiv: any, nextSectionId?: string) {
-    const containerColumn = this.editor
-      .getWrapper()
+    const containerColumn = this.editor?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return false;
 
@@ -317,15 +317,15 @@ export class InfoSectionManager {
     ).getHTML();
 
     // Add plus above
-    const plusAbove = this.editor.addComponents(addInfoSectionButton);
+    const plusAbove = this.editor?.addComponents(addInfoSectionButton);
     containerColumn.append(plusAbove, { at: insertionIndex });
 
     // Add actual section
-    const section = this.editor.addComponents(componentDiv);
+    const section = this.editor?.addComponents(componentDiv);
     containerColumn.append(section, { at: insertionIndex + 1 });
 
     // Add plus below
-    const plusBelow = this.editor.addComponents(addInfoSectionButton);
+    const plusBelow = this.editor?.addComponents(addInfoSectionButton);
     containerColumn.append(plusBelow, { at: insertionIndex + 2 });
 
     // Clean up redundant pluses
@@ -337,8 +337,7 @@ export class InfoSectionManager {
     // Scroll to bottom if we added the section at the end
     if (isAppendingAtEnd) {
       setTimeout(() => {
-        const editorFrame = this.editor
-          .getWrapper()
+        const editorFrame = this.editor?.getWrapper()
           .find(".content-frame-container")[0];
         if (editorFrame) {
           const editorFrameElement = editorFrame.getEl();
@@ -354,7 +353,6 @@ export class InfoSectionManager {
   }
 
   private addToMapper(infoType: InfoType) {
-    // console.log('infoType :>> ', infoType);
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.addInfoType(infoType);
@@ -442,8 +440,7 @@ export class InfoSectionManager {
   }
 
   restoreEmptyStateIfNoSections() {
-    const containerColumn = this.editor
-      .getWrapper()
+    const containerColumn = this.editor?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -451,12 +448,11 @@ export class InfoSectionManager {
     if (remainingComponents.length <= 1) {
       // Add the default blank plus button
       const blankPlus = new AddInfoSectionButton(true).getHTML();
-      const newBtn = this.editor.addComponents(blankPlus);
+      const newBtn = this.editor?.addComponents(blankPlus);
       containerColumn.append(newBtn);
 
       // Re-apply empty state class to main container
-      const contentFrameContainer = this.editor
-        .getWrapper()
+      const contentFrameContainer = this.editor?.getWrapper()
         .find(".content-frame-container")[0];
       if (contentFrameContainer) {
         contentFrameContainer.addClass("empty-state");
@@ -466,8 +462,7 @@ export class InfoSectionManager {
   }
 
   private markFirstAndLastPlusButtons(position: "first" | "last") {
-    const containerColumn = this.editor
-      .getWrapper()
+    const containerColumn = this.editor?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -495,8 +490,8 @@ export class InfoSectionManager {
   }
 
   removeConsecutivePlusButtons() {
-    const containerColumn = this.editor
-      .getWrapper()
+    if (!this.editor) return;
+    const containerColumn = this.editor?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 

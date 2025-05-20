@@ -27,7 +27,6 @@ class ToolboxApp {
   initialise(): void {
     this.toolboxManager.setUpNavBar();
     this.toolboxManager.setUpSideBar();
-    // this.toolboxManager.unDoReDo();
     this.editor.init();
   }
 

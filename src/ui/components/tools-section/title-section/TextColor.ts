@@ -1,5 +1,5 @@
 import { ContentMapper } from "../../../../controls/editor/ContentMapper";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 
 export class TextColor {
   container: HTMLElement;
@@ -45,10 +45,10 @@ export class TextColor {
         const selectedComponent = (globalThis as any).selectedComponent;
         if (!selectedComponent) return;
         if (this.type === "tile") {
-          this.tileStyle(selectedComponent, colorValue)
+          this.tileStyle(selectedComponent, colorValue);
         } else if (this.type === "cta") {
-          this.ctaStyle(selectedComponent, colorValue)
-        }       
+          this.ctaStyle(selectedComponent, colorValue);
+        }
 
         radioInput.checked = true;
       };
@@ -56,13 +56,13 @@ export class TextColor {
   }
 
   private tileStyle(selectedComponent: any, colorValue: string) {
-    const iconPath = selectedComponent.find('.tile-icon')[0];
+    const iconPath = selectedComponent.find(".tile-icon")[0];
 
     if (iconPath) {
-      const svgElement = iconPath && iconPath.view.el.querySelector('svg');
+      const svgElement = iconPath && iconPath.view.el.querySelector("svg");
       if (svgElement) {
-        svgElement.querySelector('path')?.setAttribute('fill', colorValue); 
-      }   
+        svgElement.querySelector("path")?.setAttribute("fill", colorValue);
+      }
     }
 
     selectedComponent.addStyle({
@@ -72,8 +72,8 @@ export class TextColor {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.updateInfoTileAttributes(
+      const InfoSectionManager = new InfoSectionManager();
+      InfoSectionManager.updateInfoTileAttributes(
         selectedComponent.parent().parent().getId(),
         selectedComponent.parent().getId(),
         "Color",
@@ -123,8 +123,12 @@ export class TextColor {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.updateInfoCtaAttributes(selectedComponent.getId(), 'CtaColor', colorValue);  
+      const InfoSectionManager = new InfoSectionManager();
+      InfoSectionManager.updateInfoCtaAttributes(
+        selectedComponent.getId(),
+        "CtaColor",
+        colorValue
+      );
     } else {
       new ContentMapper(pageId).updateContentCtaColor(
         selectedComponent.getId(),

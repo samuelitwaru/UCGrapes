@@ -1,7 +1,7 @@
 import { InfoType } from "../../types";
 import { minTileHeight } from "../../utils/default-attributes";
 import { resizeButton } from "../../utils/gjs-components";
-import { InfoSectionController } from "../InfoSectionController";
+import { InfoSectionManager } from "../InfoSectionManager";
 import { TileMapper } from "./TileMapper";
 
 export class TileUpdate {
@@ -27,18 +27,17 @@ export class TileUpdate {
       const alignValue = length === 3 ? "center" : tileAttributes?.Align;
       const cssAlignValue = alignValue === "left" ? "start" : alignValue;
 
-      
       // if tiles are 2 or 3, remove resize button else add the resize button
       if (length > 1) {
-        tile.addStyle({height:`${minTileHeight}px`});
+        tile.addStyle({ height: `${minTileHeight}px` });
         (globalThis as any).tileMapper.updateTile(
           tile.getId(),
           "Size",
           minTileHeight
-        )
-        tile.find('.tile-resize-button').forEach((comp:any) => comp.remove());
+        );
+        tile.find(".tile-resize-button").forEach((comp: any) => comp.remove());
       } else {
-        tile.append(resizeButton("Resize"))
+        tile.append(resizeButton("Resize"));
       }
 
       const tileAlignment = {
@@ -72,10 +71,10 @@ export class TileUpdate {
         (tile: any) => tile.Id === tileWrapper.getId()
       );
     } else {
-        tileAttributes = (globalThis as any).tileMapper.getTile(
-            rowComponent.getId(),
-            tileWrapper.getId()
-        );
+      tileAttributes = (globalThis as any).tileMapper.getTile(
+        rowComponent.getId(),
+        tileWrapper.getId()
+      );
     }
     return tileAttributes;
   }
@@ -147,8 +146,8 @@ export class TileUpdate {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.updateInfoTileAttributes(
+      const InfoSectionManager = new InfoSectionManager();
+      InfoSectionManager.updateInfoTileAttributes(
         this.rowComponent.getId(),
         tileId,
         "Align",

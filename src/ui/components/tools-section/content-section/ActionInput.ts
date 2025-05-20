@@ -1,5 +1,5 @@
 import { ContentMapper } from "../../../../controls/editor/ContentMapper";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { CtaAttributes } from "../../../../types";
 
 export class ActionInput {
@@ -49,14 +49,14 @@ export class ActionInput {
       const ctaButtonComponent = ctaButton.parent();
       const currentPageId = (globalThis as any).currentPageId;
       if (this.pageData.PageType === "Information") {
-        const infoSectionController = new InfoSectionController();
+        const InfoSectionManager = new InfoSectionManager();
         let propertyName = "";
         if (this.type === "label") {
           propertyName = "CtaLabel";
         } else {
           propertyName = "CtaAction";
         }
-        infoSectionController.updateInfoCtaAttributes(
+        InfoSectionManager.updateInfoCtaAttributes(
           selectedComponent.getId(),
           propertyName,
           this.input.value.trim()

@@ -7,7 +7,7 @@ import { PageCreationService } from "./PageCreationService";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { i18n } from "../../../../i18n/i18n";
 import { ActionSelectContainer } from "./ActionSelectContainer";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ActionPage, InfoType } from "../../../../types";
 
 export class PageAttacher {
@@ -62,7 +62,7 @@ export class PageAttacher {
     if (tileTitle) {
       // tileTitle.addAttributes({ 'title': page.PageName });
       // tileTitle.components(page.PageName)
-    };
+    }
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();
@@ -84,27 +84,26 @@ export class PageAttacher {
 
     const pageData = (globalThis as any).pageData;
     if (pageData.PageType === "Information") {
-      const infoSectionController = new InfoSectionController();
-      if (selectedComponent.is('info-cta-section')) {
-        
-      } else if (selectedComponent.parent().parent().is('info-tiles-section')) {
+      const InfoSectionManager = new InfoSectionManager();
+      if (selectedComponent.is("info-cta-section")) {
+      } else if (selectedComponent.parent().parent().is("info-tiles-section")) {
         for (const [property, value] of updates) {
-          infoSectionController.updateInfoTileAttributes(
+          InfoSectionManager.updateInfoTileAttributes(
             selectedComponent.parent().parent().getId(),
             selectedComponent.parent().getId(),
             property,
             value
           );
         }
-  
+
         const tileInfoSectionAttributes: InfoType = (
           globalThis as any
         ).infoContentMapper.getInfoContent(rowId);
-  
+
         tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
           (tile: any) => tile.Id === tileId
         );
-      }      
+      }
     } else {
       for (const [property, value] of updates) {
         (globalThis as any).tileMapper.updateTile(tileId, property, value);
@@ -125,7 +124,12 @@ export class PageAttacher {
     }
   }
 
-  attachPage(page: ActionPage, version: any, tileAttributes: any, isNewPage: boolean) {
+  attachPage(
+    page: ActionPage,
+    version: any,
+    tileAttributes: any,
+    isNewPage: boolean
+  ) {
     const selectedItemPageId = page.PageId;
     const childPage =
       version?.Pages.find((page: any) => page.PageId === selectedItemPageId) ||

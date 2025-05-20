@@ -1,6 +1,6 @@
 import { ContentDataManager } from "../../../../controls/editor/ContentDataManager";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { InfoType, Media } from "../../../../types";
 import { ConfirmationBox } from "../../ConfirmationBox";
@@ -16,14 +16,20 @@ export class SingleImageFile {
   imageUpload: ImageUpload;
   fileListContainer: HTMLElement | undefined;
 
-  constructor(mediaFile: Media, type: any, imageUpload: ImageUpload, infoId?: string, sectionId?: string) {
+  constructor(
+    mediaFile: Media,
+    type: any,
+    imageUpload: ImageUpload,
+    infoId?: string,
+    sectionId?: string
+  ) {
     this.mediaFile = mediaFile;
     this.type = type;
     this.infoId = infoId;
     this.sectionId = sectionId;
     this.toolboxService = new ToolBoxService();
     this.container = document.createElement("div");
-    this.imageUpload = imageUpload
+    this.imageUpload = imageUpload;
     this.init();
   }
 
@@ -63,7 +69,8 @@ export class SingleImageFile {
     addImage.title = "Replace image";
     addImage.style.width = "16px";
     addImage.style.height = "16px";
-    addImage.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/rotate.png')";
+    addImage.style.backgroundImage =
+      "url('/Resources/UCGrapes1/src/images/rotate.png')";
     addImage.style.backgroundSize = "contain";
     addImage.style.backgroundRepeat = "no-repeat";
     addImage.style.backgroundPosition = "center";
@@ -102,9 +109,11 @@ export class SingleImageFile {
 
   private setupItemClickEvent(statusCheck: HTMLElement) {
     this.container.addEventListener("click", () => {
-      this.fileListContainer = document.getElementById('fileList') as HTMLElement
+      this.fileListContainer = document.getElementById(
+        "fileList"
+      ) as HTMLElement;
       this.fileListContainer.style.display = "none";
-      this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl)
+      this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl);
       document.querySelectorAll(".file-item").forEach((el) => {
         el.classList.remove("selected");
         const icon = el.querySelector(".status-icon");
@@ -165,7 +174,6 @@ export class SingleImageFile {
         const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
         const file = new File([img.src], uniqueFileName, { type: "image/png" });
         await this.imageUpload.saveCroppedImage(img, frame, file);
-
       }
       if (this.type === "tile") {
         this.addImageToTile();
@@ -198,7 +206,7 @@ export class SingleImageFile {
       const updates = [
         ["BGImageUrl", safeMediaUrl],
         ["BGColor", "transparent"],
-       // ["Opacity", this.imageUpload.opacity],
+        // ["Opacity", this.imageUpload.opacity],
       ];
 
       let tileAttributes;
@@ -206,9 +214,9 @@ export class SingleImageFile {
       const rowComponent = tileWrapper.parent();
       const pageData = (globalThis as any).pageData;
       if (pageData.PageType === "Information") {
-        const infoSectionController = new InfoSectionController();
+        const InfoSectionManager = new InfoSectionManager();
         for (const [property, value] of updates) {
-          infoSectionController.updateInfoTileAttributes(
+          InfoSectionManager.updateInfoTileAttributes(
             rowComponent.getId(),
             tileWrapper.getId(),
             property,
@@ -218,15 +226,13 @@ export class SingleImageFile {
 
         const tileInfoSectionAttributes: InfoType = (
           globalThis as any
-        ).infoContentMapper.getInfoContent(
-          rowComponent.getId()
-        );
+        ).infoContentMapper.getInfoContent(rowComponent.getId());
 
         tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
           (tile: any) => tile.Id === tileWrapper.getId()
         );
       } else {
-       // console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
+        // console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
         for (const [property, value] of updates) {
           (globalThis as any).tileMapper.updateTile(
             tileWrapper.getId(),
@@ -270,14 +276,18 @@ export class SingleImageFile {
 
   private async updateInfoImage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const infoSectionController = new InfoSectionController();
-    infoSectionController.updateInfoImage(safeMediaUrl, this.infoId, this.sectionId);
+    const InfoSectionManager = new InfoSectionManager();
+    InfoSectionManager.updateInfoImage(
+      safeMediaUrl,
+      this.infoId,
+      this.sectionId
+    );
   }
 
   private updateInfoCtaButtonImage() {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const infoSectionController = new InfoSectionController();
-    infoSectionController.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
+    const InfoSectionManager = new InfoSectionManager();
+    InfoSectionManager.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
   }
 
   private deleteEvent() {

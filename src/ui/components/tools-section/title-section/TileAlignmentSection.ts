@@ -1,4 +1,4 @@
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 
 export class TileAlignmentSection {
   container: HTMLElement;
@@ -60,8 +60,8 @@ export class TileAlignmentSection {
       const pageData = (globalThis as any).pageData;
 
       if (pageData.PageType === "Information") {
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.updateInfoTileAttributes(
+        const InfoSectionManager = new InfoSectionManager();
+        InfoSectionManager.updateInfoTileAttributes(
           selectedComponent.parent().parent().getId(),
           selectedComponent.parent().getId(),
           "Align",
@@ -102,8 +102,8 @@ export class TileAlignmentSection {
       const pageData = (globalThis as any).pageData;
 
       if (pageData.PageType === "Information") {
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.updateInfoTileAttributes(
+        const InfoSectionManager = new InfoSectionManager();
+        InfoSectionManager.updateInfoTileAttributes(
           selectedComponent.parent().parent().getId(),
           selectedComponent.parent().getId(),
           "Align",

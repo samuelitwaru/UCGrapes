@@ -1,4 +1,4 @@
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ImageUpload } from "./ImageUpload";
 
 export class OpacitySection {
@@ -89,8 +89,8 @@ export class OpacitySection {
     const pageData = (globalThis as any).pageData;
 
     if (pageData.PageType === "Information") {
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.updateInfoTileAttributes(
+      const InfoSectionManager = new InfoSectionManager();
+      InfoSectionManager.updateInfoTileAttributes(
         selectedComponent.parent().parent().getId(),
         selectedComponent.parent().getId(),
         "Opacity",

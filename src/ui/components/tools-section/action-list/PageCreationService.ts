@@ -1,5 +1,5 @@
 import { ChildEditor } from "../../../../controls/editor/ChildEditor";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";
 import { i18n } from "../../../../i18n/i18n";
 import { baseURL, ToolBoxService } from "../../../../services/ToolBoxService";
@@ -19,7 +19,7 @@ export class PageCreationService {
   private toolBoxService: ToolBoxService;
   formModalService: FormModalService;
   private infoSectionUi: InfoSectionUI;
-  private infoSectionController: InfoSectionController;
+  private InfoSectionManager: InfoSectionManager;
   isInfoCtaSection: boolean;
   sectionId?: string;
 
@@ -30,7 +30,7 @@ export class PageCreationService {
     this.toolBoxService = new ToolBoxService();
     this.formModalService = new FormModalService(isInfoCtaSection, type);
     this.infoSectionUi = new InfoSectionUI();
-    this.infoSectionController = new InfoSectionController();
+    this.InfoSectionManager = new InfoSectionManager();
   }
 
   handlePhone() {
@@ -144,7 +144,8 @@ export class PageCreationService {
         placeholder: "Address",
         required: true,
         errorMessage: "Please enter a Address",
-        validate: (value: string) => this.formModalService.isValidAddress(value),
+        validate: (value: string) =>
+          this.formModalService.isValidAddress(value),
       },
       {
         label: "Label",
@@ -158,7 +159,12 @@ export class PageCreationService {
     ]);
   }
 
-  private createFormAndModal(formId: string, title: string, type: string, fields: any[]) {
+  private createFormAndModal(
+    formId: string,
+    title: string,
+    type: string,
+    fields: any[]
+  ) {
     const form = this.formModalService.createForm(formId, fields);
     this.formModalService.createModal({
       title,
@@ -167,7 +173,10 @@ export class PageCreationService {
     });
   }
 
-  private async processFormData(formData: Record<string, string>, type: string) {
+  private async processFormData(
+    formData: Record<string, string>,
+    type: string
+  ) {
     if (this.isInfoCtaSection) {
       this.addCtaButtonSection(type, formData);
       return;
@@ -196,10 +205,10 @@ export class PageCreationService {
 
     const pageData = (globalThis as any).pageData;
     let tileAttributes;
-    
+
     if (pageData.PageType === "Information") {
       for (const [property, value] of updates) {
-        this.infoSectionController.updateInfoTileAttributes(
+        this.InfoSectionManager.updateInfoTileAttributes(
           rowId,
           tileId,
           property,
@@ -207,7 +216,9 @@ export class PageCreationService {
         );
       }
 
-      const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper.getInfoContent(rowId);
+      const tileInfoSectionAttributes: InfoType = (
+        globalThis as any
+      ).infoContentMapper.getInfoContent(rowId);
       tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
         (tile: any) => tile.Id === tileId
       );
@@ -224,24 +235,30 @@ export class PageCreationService {
     }
   }
 
-  private async findOrCreateChildPage(type: string, formData: Record<string, string>) {
+  private async findOrCreateChildPage(
+    type: string,
+    formData: Record<string, string>
+  ) {
     const version = (globalThis as any).activeVersion;
-    
+
     let childPage = version?.Pages.find((page: any) => {
       if (type === "WebLink") {
-        return page.PageType === "WebLink" && page.PageLinkStructure.Url === formData.field_value;
+        return (
+          page.PageType === "WebLink" &&
+          page.PageLinkStructure.Url === formData.field_value
+        );
       }
       return false;
     });
-    
+
     if (!childPage) {
       try {
         const appVersion = await this.appVersionManager.getActiveVersion();
-        const formId = type === 'Form' ? Number(formData?.field_id) : 1;
+        const formId = type === "Form" ? Number(formData?.field_id) : 1;
         const response = await this.toolBoxService.createLinkPage(
-          appVersion.AppVersionId, 
-          formData.field_label, 
-          formData.field_value, 
+          appVersion.AppVersionId,
+          formData.field_label,
+          formData.field_value,
           formId
         );
         childPage = response.MenuPage;
@@ -250,20 +267,20 @@ export class PageCreationService {
         return null;
       }
     }
-    
+
     return childPage;
   }
 
   async addCtaButtonSection(type: string = "Phone", formData: any = {}) {
     const iconMap: Record<string, string> = {
-      "Phone": "Phone",
-      "Email": "Email",
-      "WebLink": "Link",
-      "Map": "Globe",
-      "Form": "Document",
-      "Address": "Globe"
+      Phone: "Phone",
+      Email: "Email",
+      WebLink: "Link",
+      Map: "Globe",
+      Form: "Document",
+      Address: "Globe",
     };
-    
+
     const icon = iconMap[type] || "Info";
 
     const cta: CtaAttributes = {
@@ -279,10 +296,10 @@ export class PageCreationService {
       CtaSupplierIsConnected: Boolean(formData.supplier_id),
       CtaConnectedSupplierId: formData.supplier_id || null,
       Action: {
-        ObjectId: type === 'Form' ? formData?.field_id : randomIdGenerator(2),
-        ObjectType: type === 'Form' ? 'DynamicForm' : type,
-        ObjectUrl: formData.field_value
-      }
+        ObjectId: type === "Form" ? formData?.field_id : randomIdGenerator(2),
+        ObjectType: type === "Form" ? "DynamicForm" : type,
+        ObjectUrl: formData.field_value,
+      },
     };
 
     let childPage;
@@ -292,8 +309,8 @@ export class PageCreationService {
     //     new ChildEditor(childPage.PageId, childPage).init({});
     //   }
     // }
-    
+
     const button = this.infoSectionUi.addCtaButton(cta);
-    this.infoSectionController.addCtaButton(button, cta, this.sectionId);
+    this.InfoSectionManager.addCtaButton(button, cta, this.sectionId);
   }
 }

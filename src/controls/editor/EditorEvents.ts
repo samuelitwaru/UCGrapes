@@ -5,7 +5,7 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
-import { InfoSectionController } from "../InfoSectionController";
+import { InfoSectionManager } from "../InfoSectionManager";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -96,7 +96,9 @@ export class EditorEvents {
                 "#frame-container"
               ) as HTMLDivElement;
               // get all the children of the frame container apart from the template wrapper
-              this.frameChildren = Array.from(frameContainer?.querySelectorAll("*")).filter(
+              this.frameChildren = Array.from(
+                frameContainer?.querySelectorAll("*")
+              ).filter(
                 (child): child is HTMLDivElement => child !== this.resizingRow
               );
 
@@ -273,7 +275,7 @@ export class EditorEvents {
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "auto";
               }
-              
+
               this.frameChildren?.forEach((child) => {
                 child.style.removeProperty("cursor");
               });
@@ -347,7 +349,7 @@ export class EditorEvents {
         } else {
           console.error("Wrapper not found!");
         }
-        
+
         new EditorThumbs(
           this.frameId,
           this.pageId,
@@ -358,8 +360,8 @@ export class EditorEvents {
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.removeConsecutivePlusButtons();
+        const InfoSectionManager = new InfoSectionManager();
+        InfoSectionManager.removeConsecutivePlusButtons();
       });
     }
   }
@@ -433,7 +435,6 @@ export class EditorEvents {
           //       );
           //     }
           //   });
-
           //   if (childPage) {
           //     this.uiManager.removeOtherEditors();
           //     new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);

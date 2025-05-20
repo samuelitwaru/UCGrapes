@@ -1,5 +1,5 @@
 import { TileProperties } from "../../../../controls/editor/TileProperties";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 import { InfoType, ThemeIcon } from "../../../../types";
 import { DefaultAttributes } from "../../../../utils/default-attributes";
@@ -61,8 +61,8 @@ export class IconList {
 
           const pageData = (globalThis as any).pageData;
           if (pageData.PageType === "Information") {
-            const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoTileAttributes(
+            const InfoSectionManager = new InfoSectionManager();
+            InfoSectionManager.updateInfoTileAttributes(
               rowComponent.getId(),
               tileWrapper.getId(),
               "Icon",

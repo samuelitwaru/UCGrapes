@@ -13,7 +13,7 @@ import { isEmpty } from "lodash";
 import { AddInfoSectionButton } from "../ui/components/AddInfoSectionButton";
 import { CtaAttributes, InfoType } from "../types";
 
-export class InfoSectionController {
+export class InfoSectionManager {
   editor: any;
   infoSectionUI: InfoSectionUI;
 
@@ -44,7 +44,11 @@ export class InfoSectionController {
     return menuItem;
   }
 
-  addCtaButton(buttonHTML: string, ctaAttributes: CtaAttributes, nextSectionId?: string) {
+  addCtaButton(
+    buttonHTML: string,
+    ctaAttributes: CtaAttributes,
+    nextSectionId?: string
+  ) {
     const ctaContainer = document.createElement("div");
     ctaContainer.innerHTML = buttonHTML;
     const ctaComponent = ctaContainer.firstElementChild as HTMLElement;
@@ -142,10 +146,11 @@ export class InfoSectionController {
     }, 0);
 
     // Monitor content changes to enable/disable save button
-    quill.on('text-change', () => {
+    quill.on("text-change", () => {
       const editorContent = quill.root.innerHTML;
       // Check if editor has meaningful content (not just empty paragraphs)
-      const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
+      const hasContent =
+        editorContent !== "<p><br></p>" && editorContent.trim() !== "";
       saveBtn.disabled = !hasContent;
 
       // Update button styling based on disabled state
@@ -174,7 +179,8 @@ export class InfoSectionController {
     const descContainer = this.infoSectionUI.getDescription(description);
     const descTempContainer = document.createElement("div");
     descTempContainer.innerHTML = descContainer;
-    const descTempComponent = descTempContainer.firstElementChild as HTMLElement;
+    const descTempComponent =
+      descTempContainer.firstElementChild as HTMLElement;
 
     const append = this.appendComponent(descContainer, nextSectionId);
     if (append) {
@@ -193,7 +199,7 @@ export class InfoSectionController {
     const tileWrapper = document.createElement("div");
     tileWrapper.innerHTML = tileHTML;
     const tileWrapperComponent = tileWrapper.firstElementChild as HTMLElement;
-    const tileId = tileWrapperComponent.querySelector(".template-wrapper")?.id
+    const tileId = tileWrapperComponent.querySelector(".template-wrapper")?.id;
 
     const append = this.appendComponent(tileHTML, nextSectionId);
     if (append) {
@@ -214,7 +220,7 @@ export class InfoSectionController {
               ObjectType: "",
               ObjectId: "",
               ObjectUrl: "",
-            }
+            },
           },
         ],
       };
@@ -224,7 +230,7 @@ export class InfoSectionController {
       const component = this.editor.getWrapper().find(`#${tileId}`)[0];
 
       if (component) {
-        const tileComponent = component.find('.template-block')[0];
+        const tileComponent = component.find(".template-block")[0];
         if (tileComponent) {
           this.editor.select(tileComponent);
         }
@@ -233,7 +239,10 @@ export class InfoSectionController {
   }
 
   updateDescription(updatedDescription: string, infoId: string) {
-    const descContainer = this.infoSectionUI.getDescription(updatedDescription, infoId);
+    const descContainer = this.infoSectionUI.getDescription(
+      updatedDescription,
+      infoId
+    );
     const component = this.editor.getWrapper().find(`#${infoId}`)[0];
     if (component) {
       component.replaceWith(descContainer);
@@ -269,8 +278,8 @@ export class InfoSectionController {
       const img = ctaEditor.find("img")[0];
       if (img && infoId) {
         img.setAttributes({ src: imageUrl });
-        this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image")
-        this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl)
+        this.updateInfoCtaAttributes(infoId, "CtaButtonType", "Image");
+        this.updateInfoCtaAttributes(infoId, "CtaButtonImgUrl", imageUrl);
       }
     }
   }
@@ -296,7 +305,9 @@ export class InfoSectionController {
   }
 
   appendComponent(componentDiv: any, nextSectionId?: string) {
-    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    const containerColumn = this.editor
+      .getWrapper()
+      .find(".container-column-info")[0];
     if (!containerColumn) return false;
 
     const components = containerColumn.components().models;
@@ -306,7 +317,10 @@ export class InfoSectionController {
       : components.length;
 
     const addInfoSectionButton = new AddInfoSectionButton().getHTML();
-    const addLastInfoSectionButton = new AddInfoSectionButton(false, true).getHTML();
+    const addLastInfoSectionButton = new AddInfoSectionButton(
+      false,
+      true
+    ).getHTML();
 
     // Add plus above
     const plusAbove = this.editor.addComponents(addInfoSectionButton);
@@ -322,19 +336,21 @@ export class InfoSectionController {
 
     // Clean up redundant pluses
     this.removeConsecutivePlusButtons();
-    this.markFirstAndLastPlusButtons('first');
-    this.markFirstAndLastPlusButtons('last');
+    this.markFirstAndLastPlusButtons("first");
+    this.markFirstAndLastPlusButtons("last");
     this.removeEmptyState();
 
     // Scroll to bottom if we added the section at the end
     if (isAppendingAtEnd) {
       setTimeout(() => {
-        const editorFrame = this.editor.getWrapper().find(".content-frame-container")[0];
+        const editorFrame = this.editor
+          .getWrapper()
+          .find(".content-frame-container")[0];
         if (editorFrame) {
-          const editorFrameElement = editorFrame.getEl()
+          const editorFrameElement = editorFrame.getEl();
           editorFrameElement.scrollTo({
             top: editorFrameElement.scrollHeight,
-            behavior: 'smooth'
+            behavior: "smooth",
           });
         }
       }, 0);
@@ -351,9 +367,9 @@ export class InfoSectionController {
   }
 
   updateInfoCtaAttributes(infoId: string, attribute: string, value: any) {
-    const infoType: InfoType = (globalThis as any).infoContentMapper.getInfoContent(
-      infoId
-    );
+    const infoType: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(infoId);
     if (infoType) {
       const ctaAttributes = infoType.CtaAttributes;
       if (ctaAttributes) {
@@ -417,7 +433,9 @@ export class InfoSectionController {
   }
 
   private removeEmptyRows(pageId: string) {
-    const data: any = JSON.parse(localStorage.getItem(`data-${pageId}`) || "{}");
+    const data: any = JSON.parse(
+      localStorage.getItem(`data-${pageId}`) || "{}"
+    );
     if (data?.PageInfoStructure?.InfoContent) {
       data.PageInfoStructure.InfoContent.forEach((infoContent: any) => {
         if (infoContent?.InfoType === "TileRow") {
@@ -430,7 +448,9 @@ export class InfoSectionController {
   }
 
   restoreEmptyStateIfNoSections() {
-    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    const containerColumn = this.editor
+      .getWrapper()
+      .find(".container-column-info")[0];
     if (!containerColumn) return;
 
     const remainingComponents = containerColumn.components().models;
@@ -441,36 +461,49 @@ export class InfoSectionController {
       containerColumn.append(newBtn);
 
       // Re-apply empty state class to main container
-      const contentFrameContainer = this.editor.getWrapper().find('.content-frame-container')[0];
+      const contentFrameContainer = this.editor
+        .getWrapper()
+        .find(".content-frame-container")[0];
       if (contentFrameContainer) {
-        contentFrameContainer.addClass('empty-state');
+        contentFrameContainer.addClass("empty-state");
         this.removeConsecutivePlusButtons();
       }
     }
   }
 
-  private markFirstAndLastPlusButtons(position: 'first' | 'last') {
-    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+  private markFirstAndLastPlusButtons(position: "first" | "last") {
+    const containerColumn = this.editor
+      .getWrapper()
+      .find(".container-column-info")[0];
     if (!containerColumn) return;
 
-    const allPlusButtons = containerColumn.find('.info-section-spacing-container');
+    const allPlusButtons = containerColumn.find(
+      ".info-section-spacing-container"
+    );
     if (allPlusButtons.length === 0) return;
 
     // Remove relevant class from all
-    const classToRemove = position === 'first' ? 'first-section' : 'last-section';
+    const classToRemove =
+      position === "first" ? "first-section" : "last-section";
     allPlusButtons.forEach((comp: any) => comp.removeClass(classToRemove));
 
     // Add it to the target element
-    const targetPlus = position === 'first' ? allPlusButtons[0] : allPlusButtons[allPlusButtons.length - 1];
+    const targetPlus =
+      position === "first"
+        ? allPlusButtons[0]
+        : allPlusButtons[allPlusButtons.length - 1];
     if (targetPlus) {
-      const classToAdd = position === 'first' ? 'first-section' : 'last-section';
+      const classToAdd =
+        position === "first" ? "first-section" : "last-section";
       targetPlus.addClass(classToAdd);
       // console.log(`Marked ${position} plus button with '${classToAdd}' class:`, targetPlus.getId?.());
     }
   }
 
   removeConsecutivePlusButtons() {
-    const containerColumn = this.editor.getWrapper().find(".container-column-info")[0];
+    const containerColumn = this.editor
+      .getWrapper()
+      .find(".container-column-info")[0];
     if (!containerColumn) return;
 
     let components = containerColumn.components().models;
@@ -483,8 +516,12 @@ export class InfoSectionController {
       const currentClasses = current.getClasses();
       const previousClasses = previous.getClasses();
 
-      const isCurrentPlus = currentClasses.includes('info-section-spacing-container');
-      const isPreviousPlus = previousClasses.includes('info-section-spacing-container');
+      const isCurrentPlus = currentClasses.includes(
+        "info-section-spacing-container"
+      );
+      const isPreviousPlus = previousClasses.includes(
+        "info-section-spacing-container"
+      );
 
       if (isCurrentPlus && isPreviousPlus) {
         const currentId = current.getId?.();
@@ -500,18 +537,22 @@ export class InfoSectionController {
         }
       } else if (isCurrentPlus) {
         const next = i + 1 < components.length ? components[i + 1] : null;
-        const prevIsCta = previousClasses.includes('cta-container-child') && previousClasses.includes('cta-child');
-        const nextIsCta = next?.getClasses().includes('cta-container-child') && next?.getClasses().includes('cta-child');
+        const prevIsCta =
+          previousClasses.includes("cta-container-child") &&
+          previousClasses.includes("cta-child");
+        const nextIsCta =
+          next?.getClasses().includes("cta-container-child") &&
+          next?.getClasses().includes("cta-child");
 
         const currentId = current.getId?.();
         const component = this.editor.getWrapper().find(`#${currentId}`)[0];
 
         if (component) {
           if (prevIsCta && nextIsCta) {
-            component.addStyle({ width: 'auto' });
+            component.addStyle({ width: "auto" });
             // console.log(`Setting width: auto for plus button: ${currentId}`);
           } else {
-            component.removeStyle('width');
+            component.removeStyle("width");
             // console.log(`Removing width style from plus button: ${currentId}`);
           }
         }
@@ -521,15 +562,15 @@ export class InfoSectionController {
     }
   }
 
-
   private removeEmptyState() {
-    const contentFrameContainer = this.editor.getWrapper().find('.content-frame-container')[0];
+    const contentFrameContainer = this.editor
+      .getWrapper()
+      .find(".content-frame-container")[0];
     if (contentFrameContainer) {
-      contentFrameContainer.removeClass('empty-state');
+      contentFrameContainer.removeClass("empty-state");
       // console.log("Removed 'empty-state' from content frame container");
     }
   }
-
 
   private createButton(
     id: string,

@@ -1,0 +1,1 @@
+export const environment = "/Comforta_version2_Development7NETPostgreSQL3";

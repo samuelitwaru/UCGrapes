@@ -318,7 +318,7 @@ span#scroll-right:hover {
 .home-app-bar {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 12px 16px 0px 16px;
   width: 100%;
 }
 
@@ -1779,9 +1779,15 @@ div#cta-selected-actions {
   background-color: #f9eceb;
 }
 
-.file-item .status-icon {
-  font-size: 20px;
-  margin-left: 10px;
+/* Position the status/check icon at the top left */
+.status-icon {
+  position: absolute;
+  top: -16px;
+  z-index: 4;
+  display: none; /* Show via JS when selected */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .file-item .delete-media {
@@ -3241,7 +3247,34 @@ input[type="range"]::-webkit-slider-thumb {
 .file-item.active .check-icon {
   display: flex; /* Show only for active tile */
 }
-
+/* Style for both icons */
+.file-item .add-image,
+.file-item .delete-media {
+  width: 33px;
+  height: 33px;
+  /* font-size: 24px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255);
+  border-radius: 50%;
+  color: #fff;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+  transition: opacity 0.3s, background 0.3s, color 0.3s;
+}
+/* Show icons on hover */
+.file-item:hover .add-image,
+.file-item:hover .delete-media {
+  opacity: 1;
+}
+/* Optional: hover/focus effects */
+.file-item .delete-media:hover,
+.file-item .delete-media:focus {
+  color: #fff;
+  background: #dc3545;
+}
 /* Trash section */
 .trash-container {
   /* display: flex;

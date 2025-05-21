@@ -287,7 +287,6 @@ export class JSONToGrapesJSInformation {
       });
       contentHtml += contentArray.join("");
     } else {
-      // No sections: Add a special hover-enabled plus btn
       contentHtml = new AddInfoSectionButton(false, true, this.isNewPage || this.data.PageName === 'Untitled').getHTML();
     }
 

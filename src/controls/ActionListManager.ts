@@ -142,7 +142,6 @@ export class ActionListManager {
     } else if (type === "CtaPhone") {
       this.pageCreationService.handlePhone();
     } else if (type === "CtaWebLink") {
-      console.log("CtaWebLink handle");
       this.pageCreationService.handleWebLinks();
     } else {
       this.pageAttacher.attachToTile(item, type, item.PageName);

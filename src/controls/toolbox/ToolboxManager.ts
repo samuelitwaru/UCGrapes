@@ -21,7 +21,7 @@ export class ToolboxManager {
   }
 
   public setUpNavBar() {
-    this.autoSave();
+    // this.autoSave();
     const navBar = document.getElementById("tb-navbar") as HTMLElement;
 
     const navBarButtons = new NavbarButtons();
@@ -77,11 +77,11 @@ export class ToolboxManager {
     updateButtonVisibility();
   }
 
-  autoSave() {
-    setInterval(async () => {
-      this.savePages();
-    }, 10000);
-  }
+  // autoSave() {
+  //   setInterval(async () => {
+  //     this.savePages();
+  //   }, 10000);
+  // }
 
   async savePages(publish = false) {
     try {

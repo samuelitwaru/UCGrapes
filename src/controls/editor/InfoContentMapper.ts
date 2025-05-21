@@ -1,5 +1,6 @@
 import { InfoType } from "../../types";
 import { HistoryManager } from "../toolbox/HistoryManager";
+import { ToolboxManager } from "../toolbox/ToolboxManager";
 
 export class InfoContentMapper {
   pageId: any;
@@ -7,6 +8,16 @@ export class InfoContentMapper {
   constructor(pageId: any) {
     this.pageId = pageId;
     this.historyManager = new HistoryManager(this.pageId);
+  }
+
+  private saveData(data: any): void {
+    const storageKey = `data-${this.pageId}`;
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    this.historyManager.addState(data);
+
+    // call auto save to DB:
+    const toolboxManager = new ToolboxManager();
+    toolboxManager.savePages();
   }
 
   public contentRow(content: InfoType): any {
@@ -52,11 +63,7 @@ export class InfoContentMapper {
       data.PageInfoStructure.InfoContent.push(newSection);
     }
 
-    // console.log('data.PageInfoStructure.InfoContent :>> ', data.PageInfoStructure.InfoContent);
-
-    localStorage.setItem(storageKey, JSON.stringify(data));
-
-    this.historyManager.addState(data);
+    this.saveData(data);
   }
 
   moveContentRow(contentId: any, newIndex: number): void {
@@ -80,8 +87,7 @@ export class InfoContentMapper {
     const [contentRow] = contentArray.splice(contentRowIndex, 1);
 
     contentArray.splice(newIndex, 0, contentRow);
-    localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-    this.historyManager.addState(data);
+    this.saveData(data);
   }
 
   updateInfoContent(infoId: any, newContent: InfoType): boolean {
@@ -95,8 +101,7 @@ export class InfoContentMapper {
     );
     if (contentRowIndex === -1) return false;
     contentArray[contentRowIndex] = newContent;
-    localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-    this.historyManager.addState(data);
+    this.saveData(data);
     return true;
   }
 
@@ -114,8 +119,7 @@ export class InfoContentMapper {
     if (contentRowIndex === -1) return false;
 
     contentArray.splice(contentRowIndex, 1);
-    localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-    this.historyManager.addState(data);
+    this.saveData(data);
 
     // trigger a grapes js deselect event
     const grapesJsEditor = (globalThis as any).activeEditor;
@@ -126,7 +130,7 @@ export class InfoContentMapper {
         (globalThis as any).selectedComponent = null;
       }
     }
-    
+
     return true;
   }
 

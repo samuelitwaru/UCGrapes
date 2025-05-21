@@ -107,18 +107,21 @@ export class ColorPalette {
     );
     if (tileAttributes?.BGImageUrl) return;
 
-    this.updateComponentStyle(selectedComponent, colorValue);
+    const currentColor = selectedComponent.getStyle()["background-color"];
+    const newColor = currentColor === colorValue ? "transparent" : colorValue;
+    const newColorName = currentColor === colorValue ? "transparent" : colorName;
+    
+    this.updateComponentStyle(selectedComponent, newColor);
     this.updateTileData(
       pageData,
       rowComponent,
       tileWrapper,
       selectedComponent,
-      colorName
+      newColorName
     );
 
     // Toggle radio button state
-    input.checked =
-      selectedComponent.getStyle()["background-color"] == colorValue;
+    input.checked = selectedComponent.getStyle()["background-color"] === colorValue;
   }
 
   private getSelectedComponent(): any {
@@ -154,14 +157,11 @@ export class ColorPalette {
   }
 
   private updateComponentStyle(component: any, colorValue: string): void {
-    const currentColor = component.getStyle()["background-color"];
-    const newColor = currentColor === colorValue ? "transparent" : colorValue;
-
     component.addStyle({
-      "background-color": newColor,
+      "background-color": colorValue,
     });
 
-    component.getEl().style.backgroundColor = newColor;
+    component.getEl().style.backgroundColor = colorValue;
   }
 
   private updateTileData(

@@ -158,7 +158,7 @@ export class EditorManager {
 
     const canvas = editor.Canvas.getElement();
     if (canvas) {
-      canvas.style.setProperty("height", "calc(100% - 100px)", "important");
+      canvas.style.setProperty("height", "calc(100% - 110px)", "important");
     }
 
     const canvasBody = editor.Canvas.getBody();

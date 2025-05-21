@@ -184,7 +184,6 @@ export class ToolboxManager {
   }
 
   unDoReDo() {
-    console.log('Undo redo reached');
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
     const pageId = (globalThis as any).currentPageId;
@@ -194,7 +193,6 @@ export class ToolboxManager {
       return;
     }
 
-    console.log('pageId: >> ', pageId)
     const historyManager = new HistoryManager(pageId);
     const updateButtonStates = () => {
       if (undoButton) {
@@ -211,24 +209,24 @@ export class ToolboxManager {
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
-        const undoResult = historyManager.undo();
+        // const undoResult = historyManager.undo();
 
-        if (undoResult) {
-          this.applyNewState(undoResult, pageId);
-        }
-        updateButtonStates();
+        // if (undoResult) {
+        //   this.applyNewState(undoResult, pageId);
+        // }
+        // updateButtonStates();
       };
     }
 
     if (redoButton) {
       redoButton.onclick = (e) => {
         e.preventDefault();
-        const redoResult = historyManager.redo();
+        // const redoResult = historyManager.redo();
 
-        if (redoResult) {
-          this.applyNewState(redoResult, pageId);
-        }
-        updateButtonStates();
+        // if (redoResult) {
+        //   this.applyNewState(redoResult, pageId);
+        // }
+        // updateButtonStates();
       };
     }
   }

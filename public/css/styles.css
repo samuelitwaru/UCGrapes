@@ -12,7 +12,7 @@
   margin-top: -20px;
   margin-right: -20px;
 }
-#tb-body input:focus {
+#tb-body input:not([type="range"]):focus {
   outline: 1px solid #b4b9bd !important;
   border: 1px solid #b4b9bd !important;
 }
@@ -1092,7 +1092,7 @@ h5#current-page-title {
   padding: 6px;
   border-radius: 6px;
   background-color: #fff;
-  width: 100%;
+  /* width: 100%; */
 }
 
 .bg-section:hover {

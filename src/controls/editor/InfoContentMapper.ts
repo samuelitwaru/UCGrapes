@@ -93,7 +93,6 @@ export class InfoContentMapper {
     const contentRowIndex = contentArray.findIndex(
       (row: InfoType) => row.InfoId === infoId
     );
-    console.log("info index", contentRowIndex);
     if (contentRowIndex === -1) return false;
     contentArray[contentRowIndex] = newContent;
     localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
@@ -117,6 +116,17 @@ export class InfoContentMapper {
     contentArray.splice(contentRowIndex, 1);
     localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     this.historyManager.addState(data);
+
+    // trigger a grapes js deselect event
+    const grapesJsEditor = (globalThis as any).activeEditor;
+    if (grapesJsEditor) {
+      const selectedComponent = grapesJsEditor.getSelected();
+      if (selectedComponent) {
+        grapesJsEditor.select(null);
+        (globalThis as any).selectedComponent = null;
+      }
+    }
+    
     return true;
   }
 

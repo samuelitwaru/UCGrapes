@@ -5,10 +5,9 @@ import { ToolsSection } from "../../ui/components/ToolsSection";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { PageAttacher } from "../../ui/components/tools-section/action-list/PageAttacher";
 import { NavbarLeftButtons } from "../../ui/components/NavBarLeftButtons";
-import { UndoRedoManager } from "./UndoRedoManager";
 import { TileMapper } from "../editor/TileMapper";
 import { TreeComponent } from "../../ui/components/TreeComponent";
-import { HistoryManager } from "../HistoryManager";
+import { HistoryManager } from "./HistoryManager";
 import { JSONToGrapesJSInformation } from "../editor/JSONToGrapesJSInformation";
 
 export class ToolboxManager {
@@ -22,15 +21,8 @@ export class ToolboxManager {
   }
 
   public setUpNavBar() {
-    this.autoSave();
+    // this.autoSave();
     const navBar = document.getElementById("tb-navbar") as HTMLElement;
-    // const navbarTitle = document.getElementById("navbar_title") as HTMLElement;
-    // if (!navBar || !navbarTitle) {
-    //   console.error("Navigation bar elements not found!");
-    //   return;
-    // }
-
-    // navbarTitle.textContent = "App toolbox";
 
     const navBarButtons = new NavbarButtons();
     const leftNavBarButtons = new NavbarLeftButtons();
@@ -46,7 +38,7 @@ export class ToolboxManager {
     const toolSectionElement = document.getElementById(
       "tools-section"
     ) as HTMLDivElement;
-    if (toolSectionElement) toolSectionElement.style.display = 'none';
+    if (toolSectionElement) toolSectionElement.style.display = "none";
   }
 
   public setUpScrollButtons() {
@@ -85,11 +77,11 @@ export class ToolboxManager {
     updateButtonVisibility();
   }
 
-  autoSave() {
-    setInterval(async () => {
-      this.savePages();
-    }, 10000);
-  }
+  // autoSave() {
+  //   setInterval(async () => {
+  //     this.savePages();
+  //   }, 10000);
+  // }
 
   async savePages(publish = false) {
     try {
@@ -97,64 +89,72 @@ export class ToolboxManager {
       const activeVersion = await this.appVersions.getUpdatedActiveVersion();
       const pages = activeVersion.Pages;
 
-      await Promise.all(pages.map(async (page: any) => {
-        const pageId = page.PageId;
-        const localStorageKey = `data-${pageId}`;
-        const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
+      await Promise.all(
+        pages.map(async (page: any) => {
+          const pageId = page.PageId;
+          const localStorageKey = `data-${pageId}`;
+          const pageData = JSON.parse(
+            localStorage.getItem(localStorageKey) || "{}"
+          );
 
-        let localStructureProperty = null;
-        if (
-          page.PageType === "Menu" ||
-          page.PageType === "MyCare" ||
-          page.PageType === "MyLiving" ||
-          page.PageType === "MyService"
-        )
-          localStructureProperty = "PageMenuStructure";
-        else if (
-          page.PageType === "Content" ||
-          page.PageType === "Location" ||
-          page.PageType === "Reception"
-        ) {
-          localStructureProperty = "PageContentStructure";
-        } else if (page.PageType === "Information") {
-          localStructureProperty = "PageInfoStructure";
-        }
-
-        if (!localStructureProperty || !pageData[localStructureProperty]) return;
-
-        const localStructureString = JSON.stringify(pageData[localStructureProperty]);
-
-        // Ensure page.PageStructure is a string for comparison
-        const pageStructureString = typeof page.PageStructure === 'string'
-          ? page.PageStructure
-          : JSON.stringify(page.PageStructure);
-        // if (page.PageType === "Content") {
-        //   console.log(`Saving localStructureProperty ${localStructureString}`);
-        //   console.log(`Saving page.PageStructure ${pageStructureString}`);
-        // }       
-
-        // Compare serialized versions to avoid hidden character differences
-        if (localStructureString !== pageStructureString) {
-          const pageInfo = {
-            AppVersionId: activeVersion.AppVersionId,
-            PageId: pageId,
-            PageName: page.PageName,
-            PageType: page.PageType,
-            PageStructure: localStructureString,
-          };
-
-          try {
-            // console.log(`Saving page: ${page.PageName}`);
-            // console.log('Data: ', JSON.stringify(pageInfo, null, 2));
-            await this.toolboxService.autoSavePage(pageInfo);
-            lastSavedStates.set(pageId, localStructureString);
-            // if (!publish) this.openToastMessage();
-          } catch (error) {
-            console.error(`Failed to save page ${page.PageName}:`, error);
-            throw error; // Re-throw to be caught by the outer try/catch
+          let localStructureProperty = null;
+          if (
+            page.PageType === "Menu" ||
+            page.PageType === "MyCare" ||
+            page.PageType === "MyLiving" ||
+            page.PageType === "MyService"
+          )
+            localStructureProperty = "PageMenuStructure";
+          else if (
+            page.PageType === "Content" ||
+            page.PageType === "Location" ||
+            page.PageType === "Reception"
+          ) {
+            localStructureProperty = "PageContentStructure";
+          } else if (page.PageType === "Information") {
+            localStructureProperty = "PageInfoStructure";
           }
-        }
-      }));
+
+          if (!localStructureProperty || !pageData[localStructureProperty])
+            return;
+
+          const localStructureString = JSON.stringify(
+            pageData[localStructureProperty]
+          );
+
+          // Ensure page.PageStructure is a string for comparison
+          const pageStructureString =
+            typeof page.PageStructure === "string"
+              ? page.PageStructure
+              : JSON.stringify(page.PageStructure);
+          // if (page.PageType === "Content") {
+          //   console.log(`Saving localStructureProperty ${localStructureString}`);
+          //   console.log(`Saving page.PageStructure ${pageStructureString}`);
+          // }
+
+          // Compare serialized versions to avoid hidden character differences
+          if (localStructureString !== pageStructureString) {
+            const pageInfo = {
+              AppVersionId: activeVersion.AppVersionId,
+              PageId: pageId,
+              PageName: page.PageName,
+              PageType: page.PageType,
+              PageStructure: localStructureString,
+            };
+
+            try {
+              // console.log(`Saving page: ${page.PageName}`);
+              // console.log('Data: ', JSON.stringify(pageInfo, null, 2));
+              await this.toolboxService.autoSavePage(pageInfo);
+              lastSavedStates.set(pageId, localStructureString);
+              // if (!publish) this.openToastMessage();
+            } catch (error) {
+              console.error(`Failed to save page ${page.PageName}:`, error);
+              throw error; // Re-throw to be caught by the outer try/catch
+            }
+          }
+        })
+      );
 
       return lastSavedStates; // Return something meaningful
     } catch (error) {
@@ -162,7 +162,6 @@ export class ToolboxManager {
       throw error; // Re-throw so caller knows something went wrong
     }
   }
-
 
   openToastMessage(message?: string) {
     const toast = document.createElement("div") as HTMLElement;
@@ -185,6 +184,7 @@ export class ToolboxManager {
   }
 
   unDoReDo() {
+    console.log('Undo redo reached');
     const undoButton = document.getElementById("undo") as HTMLButtonElement;
     const redoButton = document.getElementById("redo") as HTMLButtonElement;
     const pageId = (globalThis as any).currentPageId;
@@ -194,8 +194,8 @@ export class ToolboxManager {
       return;
     }
 
+    console.log('pageId: >> ', pageId)
     const historyManager = new HistoryManager(pageId);
-
     const updateButtonStates = () => {
       if (undoButton) {
         undoButton.disabled = !historyManager.canUndo();
@@ -204,7 +204,7 @@ export class ToolboxManager {
       if (redoButton) {
         redoButton.disabled = !historyManager.canRedo();
       }
-    }
+    };
 
     updateButtonStates();
 
@@ -241,23 +241,30 @@ export class ToolboxManager {
     const editor = (globalThis as any).activeEditor;
     if (!editor) return;
 
+    
     const selectedComponent = (globalThis as any).selectedComponent;
-    const selectedComponentId = selectedComponent ? selectedComponent.getId() : null;
-
-    const frameContainer = editor.getWrapper().find('#frame-container')[0];
+    const selectedComponentId = selectedComponent
+      ? selectedComponent.getId()
+      : null;
+    
+    const frameContainer = editor.getWrapper().find("#frame-container")[0];
     if (frameContainer) {
       frameContainer.replaceWith(updatedHtml);
       localStorage.setItem(storageKey, JSON.stringify(stateData));
 
       if (selectedComponentId) {
-        const newFrameContainer = editor.getWrapper().find('#frame-container')[0];
+        const newFrameContainer = editor
+          .getWrapper()
+          .find("#frame-container")[0];
         if (newFrameContainer) {
-          const newComponent = editor.getWrapper().find(`#${selectedComponentId}`)[0];
+          const newComponent = editor
+            .getWrapper()
+            .find(`#${selectedComponentId}`)[0];
           if (newComponent) {
             editor.select(newComponent);
             (globalThis as any).selectedComponent = newComponent;
           } else {
-            console.log('Previously selected component no longer exists');
+            console.log("Previously selected component no longer exists");
           }
         }
       }

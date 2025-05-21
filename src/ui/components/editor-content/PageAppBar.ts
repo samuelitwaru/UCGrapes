@@ -257,9 +257,9 @@ export class PageAppBar {
                 newInfoSectionButton.addStyle({ display: "flex" });
             }
 
-            const untitledPage = editor.getWrapper().find(".untitled-page")[0];
-            if (untitledPage) {
-                untitledPage.removeClass("untitled-page");
+            const unTitledPage = editor.getWrapper().find(".untitled-page")[0];
+            if (unTitledPage) {
+                unTitledPage.removeClass("untitled-page");
             }
         }
     }

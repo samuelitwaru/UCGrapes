@@ -174,7 +174,6 @@ export class EditorUIManager {
         }
       }
 
-      (globalThis as any).activeEditor = this.editor;
       (globalThis as any).currentPageId = this.pageId;
       (globalThis as any).pageData = this.pageData;
       this.activateEditor(this.frameId);
@@ -283,7 +282,6 @@ export class EditorUIManager {
     framelist.forEach((frame: any) => {
       if (frame.id.includes(this.frameId)) {
         frame.addEventListener("click", (event: MouseEvent) => {
-          (globalThis as any).activeEditor = this.editor;
           (globalThis as any).currentPageId = this.pageId;
           (globalThis as any).pageData = this.pageData;
           (globalThis as any).frameId = this.frameId;
@@ -292,7 +290,6 @@ export class EditorUIManager {
         });
 
         frame.addEventListener("input", (event: MouseEvent) => {
-          (globalThis as any).activeEditor = this.editor;
           (globalThis as any).currentPageId = this.pageId;
           (globalThis as any).pageData = this.pageData;
           (globalThis as any).frameId = this.frameId;
@@ -346,7 +343,8 @@ export class EditorUIManager {
         this.activateMiniatureFrame(frame.id);
       }
     });
-    this.showPageInfo()
+    this.showPageInfo();
+    (globalThis as any).activeEditor = this.editor;
     new ToolboxManager().unDoReDo();
   }
 
@@ -416,9 +414,6 @@ export class EditorUIManager {
   }
 
   showTileTools() {
-    // this.ctaPropsSection = document.getElementById(
-    //   "content-page-section"
-    // ) as HTMLDivElement;
     this.tilePropsSection.style.display = "block"
     this.ctaPropsSection.style.display = "none";
   }
@@ -488,22 +483,6 @@ export class EditorUIManager {
     }
   }
 
-  setCtaProperties() {
-    const selectedComponent = (globalThis as any).selectedComponent;
-    const contentMapper = new ContentMapper(this.pageId);
-    const ctaAttributes = contentMapper.getContentCta(
-      selectedComponent.getId()
-    );
-
-    if (ctaAttributes && selectedComponent) {
-      const ctaProperties = new CtaButtonProperties(
-        selectedComponent,
-        ctaAttributes
-      );
-      ctaProperties.setctaAttributes();
-    }
-  }
-
   setInfoCtaProperties() {
     // render cta component
     (window as any).app.toolsSection.pagesTabContent.contentSection.renderComponents()
@@ -537,7 +516,7 @@ export class EditorUIManager {
     const buttonLayoutContainer = document?.querySelector(
       ".cta-button-layout-container"
     ) as HTMLElement;
-    if (buttonLayoutContainer) buttonLayoutContainer.style.display = "none";
+    if (buttonLayoutContainer) buttonLayoutContainer.style.display = "flex";
     const contentSection = document.querySelector("#content-page-section");
     const colorItems = contentSection?.querySelectorAll(".color-item > input");
     colorItems?.forEach((input: any) => (input.checked = false));

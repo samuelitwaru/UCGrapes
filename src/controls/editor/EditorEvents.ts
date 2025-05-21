@@ -5,11 +5,12 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
-import { InfoSectionController } from "../InfoSectionController";
+import { InfoSectionManager } from "../InfoSectionManager";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
+import { EditorManager } from "./EditorManager";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
 import { PageMapper } from "./PageMapper";
@@ -74,7 +75,6 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         (globalThis as any).wrapper = wrapper;
-        (globalThis as any).activeEditor = this.editor;
         (globalThis as any).currentPageId = this.pageId;
         (globalThis as any).pageData = this.pageData;
 
@@ -96,7 +96,9 @@ export class EditorEvents {
                 "#frame-container"
               ) as HTMLDivElement;
               // get all the children of the frame container apart from the template wrapper
-              this.frameChildren = Array.from(frameContainer?.querySelectorAll("*")).filter(
+              this.frameChildren = Array.from(
+                frameContainer?.querySelectorAll("*")
+              ).filter(
                 (child): child is HTMLDivElement => child !== this.resizingRow
               );
 
@@ -273,7 +275,7 @@ export class EditorEvents {
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "auto";
               }
-              
+
               this.frameChildren?.forEach((child) => {
                 child.style.removeProperty("cursor");
               });
@@ -318,7 +320,6 @@ export class EditorEvents {
             this.uiManager.clearAllMenuContainers();
             //this.uiManager.resetTitleFromDOM();
 
-            (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
             (globalThis as any).eventTarget = targetElement;
@@ -328,6 +329,8 @@ export class EditorEvents {
 
             this.uiManager.initContentDataUi(e);
             this.uiManager.activateEditor(this.frameId);
+            const editorManager = new EditorManager();
+            editorManager.loadPageHistory(this.pageData);
             this.uiManager.handleInfoSectionHover(e);
           });
 
@@ -347,7 +350,7 @@ export class EditorEvents {
         } else {
           console.error("Wrapper not found!");
         }
-        
+
         new EditorThumbs(
           this.frameId,
           this.pageId,
@@ -358,8 +361,8 @@ export class EditorEvents {
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.removeConsecutivePlusButtons();
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.removeConsecutivePlusButtons();
       });
     }
   }
@@ -401,6 +404,7 @@ export class EditorEvents {
       (globalThis as any).infoContentMapper =
         this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
+      (globalThis as any).activeEditor = this.editor;
       const isTile = component.getClasses().includes("template-block");
       const isCta = [
         "img-button-container",
@@ -433,7 +437,6 @@ export class EditorEvents {
           //       );
           //     }
           //   });
-
           //   if (childPage) {
           //     this.uiManager.removeOtherEditors();
           //     new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
@@ -451,8 +454,6 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(false);
         this.uiManager.showPageInfo();
       }
-      // this.uiManager.toggleSidebar()
-      // this.uiManager.setCtaProperties();
     });
 
     this.editor.on("component:deselected", () => {

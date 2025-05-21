@@ -1,5 +1,5 @@
 import { TileMapper } from "../../../controls/editor/TileMapper";
-import { InfoSectionController } from "../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../controls/InfoSectionManager";
 import { InfoType, ThemeColors } from "../../../types";
 
 export class ColorPalette {
@@ -40,7 +40,10 @@ export class ColorPalette {
     });
   }
 
-  private createColorItem(colorName: string, colorValue: string): HTMLDivElement {
+  private createColorItem(
+    colorName: string,
+    colorValue: string
+  ): HTMLDivElement {
     const colorItem = document.createElement("div");
     colorItem.className = "color-item";
 
@@ -49,13 +52,18 @@ export class ColorPalette {
 
     colorItem.appendChild(input);
     colorItem.appendChild(label);
-    
-    colorItem.addEventListener("click", (e) => this.handleColorSelection(e, colorValue, colorName, input));
-    
+
+    colorItem.addEventListener("click", (e) =>
+      this.handleColorSelection(e, colorValue, colorName, input)
+    );
+
     return colorItem;
   }
 
-  private createRadioInput(colorName: string, colorValue: string): HTMLInputElement {
+  private createRadioInput(
+    colorName: string,
+    colorValue: string
+  ): HTMLInputElement {
     const input = document.createElement("input");
     input.type = "radio";
     input.id = `color-${colorName}`;
@@ -64,7 +72,10 @@ export class ColorPalette {
     return input;
   }
 
-  private createColorLabel(colorName: string, colorValue: string): HTMLLabelElement {
+  private createColorLabel(
+    colorName: string,
+    colorValue: string
+  ): HTMLLabelElement {
     const label = document.createElement("label");
     label.htmlFor = `color-${colorName}`;
     label.className = "color-box";
@@ -73,24 +84,41 @@ export class ColorPalette {
     return label;
   }
 
-  private handleColorSelection(e: Event, colorValue: string, colorName: string, input: HTMLInputElement): void {
+  private handleColorSelection(
+    e: Event,
+    colorValue: string,
+    colorName: string,
+    input: HTMLInputElement
+  ): void {
     e.preventDefault();
-    
+
     const selectedComponent = this.getSelectedComponent();
     if (!selectedComponent) return;
 
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
     const pageData = this.getPageData();
-    
-    const tileAttributes = this.getTileAttributes(pageData, rowComponent, tileWrapper, selectedComponent);
+
+    const tileAttributes = this.getTileAttributes(
+      pageData,
+      rowComponent,
+      tileWrapper,
+      selectedComponent
+    );
     if (tileAttributes?.BGImageUrl) return;
 
     this.updateComponentStyle(selectedComponent, colorValue);
-    this.updateTileData(pageData, rowComponent, tileWrapper, selectedComponent, colorName);
-    
+    this.updateTileData(
+      pageData,
+      rowComponent,
+      tileWrapper,
+      selectedComponent,
+      colorName
+    );
+
     // Toggle radio button state
-    input.checked = selectedComponent.getStyle()["background-color"] == colorValue;
+    input.checked =
+      selectedComponent.getStyle()["background-color"] == colorValue;
   }
 
   private getSelectedComponent(): any {
@@ -101,12 +129,19 @@ export class ColorPalette {
     return (globalThis as any).pageData;
   }
 
-  private getTileAttributes(pageData: any, rowComponent: any, tileWrapper: any, selectedComponent: any): any {
+  private getTileAttributes(
+    pageData: any,
+    rowComponent: any,
+    tileWrapper: any,
+    selectedComponent: any
+  ): any {
     if (pageData.PageType === "Information") {
       const tileInfoSectionAttributes: InfoType = (
         globalThis as any
-      ).infoContentMapper.getInfoContent(selectedComponent.parent().parent().getId());
-      
+      ).infoContentMapper.getInfoContent(
+        selectedComponent.parent().parent().getId()
+      );
+
       return tileInfoSectionAttributes?.Tiles?.find(
         (tile) => tile.Id === selectedComponent.parent().getId()
       );
@@ -121,18 +156,24 @@ export class ColorPalette {
   private updateComponentStyle(component: any, colorValue: string): void {
     const currentColor = component.getStyle()["background-color"];
     const newColor = currentColor === colorValue ? "transparent" : colorValue;
-    
+
     component.addStyle({
-      "background-color": newColor
+      "background-color": newColor,
     });
-    
+
     component.getEl().style.backgroundColor = newColor;
   }
 
-  private updateTileData(pageData: any, rowComponent: any, tileWrapper: any, selectedComponent: any, colorName: string): void {      
+  private updateTileData(
+    pageData: any,
+    rowComponent: any,
+    tileWrapper: any,
+    selectedComponent: any,
+    colorName: string
+  ): void {
     if (pageData.PageType === "Information") {
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.updateInfoTileAttributes(
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
         rowComponent.getId(),
         tileWrapper.getId(),
         "BGColor",

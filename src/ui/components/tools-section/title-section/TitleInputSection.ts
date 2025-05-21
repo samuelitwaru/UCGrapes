@@ -1,4 +1,4 @@
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 
 export class TitleInputSection {
   input: HTMLInputElement;
@@ -16,9 +16,11 @@ export class TitleInputSection {
 
     this.input.addEventListener("input", (e) => {
       const selectedComponent = (globalThis as any).selectedComponent;
-      
-      let isFirstTile = selectedComponent.getClasses().includes("first-tile") && selectedComponent.getClasses().includes("high-priority-template")
-      
+
+      let isFirstTile =
+        selectedComponent.getClasses().includes("first-tile") &&
+        selectedComponent.getClasses().includes("high-priority-template");
+
       if (!selectedComponent) return;
       const componentRow = selectedComponent.closest(".container-row");
       const rowTilesLength = componentRow.components().length;
@@ -39,20 +41,20 @@ export class TitleInputSection {
       if (isFirstTile) this.input.value = this.input.value.toUpperCase();
       const pageData = this.getPageData();
       if (pageData.PageType === "Information") {
-            const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoTileAttributes(
-              selectedComponent.parent().parent().getId(),
-              selectedComponent.parent().getId(),
-              "Text",
-              this.input.value.trim()
-            );
-          } else {
-            (globalThis as any).tileMapper.updateTile(
-              selectedComponent.parent().getId(),
-              "Text",
-              this.input.value.trim()
-            );
-          }
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.updateInfoTileAttributes(
+          selectedComponent.parent().parent().getId(),
+          selectedComponent.parent().getId(),
+          "Text",
+          this.input.value.trim()
+        );
+      } else {
+        (globalThis as any).tileMapper.updateTile(
+          selectedComponent.parent().getId(),
+          "Text",
+          this.input.value.trim()
+        );
+      }
 
       const parentComponent = tileTitle.parent();
       if (parentComponent) {

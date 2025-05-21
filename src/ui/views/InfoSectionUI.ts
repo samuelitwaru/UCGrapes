@@ -11,7 +11,7 @@ import {
   tileWrapperDefaultAttributes,
 } from "../../utils/default-attributes";
 import { ThemeManager } from "../../controls/themes/ThemeManager";
-import { InfoSectionController } from "../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../controls/InfoSectionManager";
 import { baseURL } from "../../services/ToolBoxService";
 import { randomIdGenerator } from "../../utils/helpers";
 import { resizeButton } from "../../utils/gjs-components";
@@ -23,7 +23,7 @@ export class InfoSectionUI {
 
   constructor() {
     this.themeManager = new ThemeManager();
-    // this.controller = new InfoSectionController();
+    // this.controller = new InfoSectionManager();
   }
 
   openImageUpload(sectionId?: string) {
@@ -54,18 +54,20 @@ export class InfoSectionUI {
         class="img-button-container">
         <div ${DefaultAttributes} class="img-button cta-styled-btn"
             style="background-color: ${this.themeManager.getThemeCtaColor(
-      cta.CtaBGColor
-    )}">
+              cta.CtaBGColor
+            )}">
             <span ${DefaultAttributes} class="img-button-section">
                 <img ${DefaultAttributes} 
-                    src="${cta.CtaButtonImgUrl
-        ? cta.CtaButtonImgUrl
-        : `/Resources/UCGrapes1/src/images/image.png`
-      }" 
+                    src="${
+                      cta.CtaButtonImgUrl
+                        ? cta.CtaButtonImgUrl
+                        : `/Resources/UCGrapes1/src/images/image.png`
+                    }" 
                 />
                 <span ${DefaultAttributes} class="edit-cta-image">
-                    ${cta.CtaButtonImgUrl
-        ? `
+                    ${
+                      cta.CtaButtonImgUrl
+                        ? `
                         <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="22" height="22" viewBox="0 0 33 33">
                             <g ${DefaultAttributes} id="Ellipse_532" data-name="Ellipse 532" fill="#fff" stroke="#5068a8" stroke-width="2">
                                 <circle ${DefaultAttributes} cx="16.5" cy="16.5" r="16.5" stroke="none"/>
@@ -74,7 +76,7 @@ export class InfoSectionUI {
                             <path ${DefaultAttributes} id="Icon_feather-edit-2" data-name="Icon feather-edit-2" d="M12.834,3.8a1.854,1.854,0,0,1,2.622,2.622L6.606,15.274,3,16.257l.983-3.606Z" transform="translate(7 6.742)" fill="#5068a8" stroke="#5068a8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
                         </svg>
                         `
-        : `
+                        : `
                         <svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_53_4" data-name="Component 53 – 4" width="22" height="22" viewBox="0 0 22 22">
                             <g ${DefaultAttributes} id="Group_2309" data-name="Group 2309">
                                 <g ${DefaultAttributes} id="Group_2307" data-name="Group 2307">
@@ -87,7 +89,7 @@ export class InfoSectionUI {
                             <path ${DefaultAttributes} id="Icon_ionic-ios-add" data-name="Icon ionic-ios-add" d="M18.342,13.342H14.587V9.587a.623.623,0,1,0-1.245,0v3.755H9.587a.623.623,0,0,0,0,1.245h3.755v3.755a.623.623,0,1,0,1.245,0V14.587h3.755a.623.623,0,1,0,0-1.245Z" transform="translate(-2.965 -2.965)" fill="#5068a8"/>
                         </svg>
                     `
-      }
+                    }
                 </span>
             </span>
             
@@ -101,10 +103,12 @@ export class InfoSectionUI {
                 <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
             </svg>
             </div>
-            <span ${DefaultAttributes} class="img-button-label label" style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
-      }">${cta.CtaLabel}</span>
-                        <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
-      }"></i>
+            <span ${DefaultAttributes} class="img-button-label label" style="color:${
+      cta.CtaColor ? cta.CtaColor : "#ffffff"
+    }">${cta.CtaLabel}</span>
+                        <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${
+      cta.CtaColor ? cta.CtaColor : "#ffffff"
+    }"></i>
         </div>
     </div>`;
     return imgButton;
@@ -112,7 +116,9 @@ export class InfoSectionUI {
 
   infoTileUi() {
     return `
-      <div class="container-row" ${infoRowDefaultAttributes} id="${randomIdGenerator(8)}">
+      <div class="container-row" ${infoRowDefaultAttributes} id="${randomIdGenerator(
+      8
+    )}">
         <div ${tileWrapperDefaultAttributes} style="height:${minTileHeight}px" class="template-wrapper" id="${randomIdGenerator(
       8
     )}">
@@ -167,8 +173,8 @@ export class InfoSectionUI {
                 </svg>
             </button>
             ${this.addGrapesAttributes(
-      `<div ${DefaultAttributes} class="info-desc-content">${description}</div>`
-    )}      
+              `<div ${DefaultAttributes} class="info-desc-content">${description}</div>`
+            )}      
           </div>
       `;
   }
@@ -289,10 +295,11 @@ export class InfoSectionUI {
     }, 0);
 
     // Monitor content changes to enable/disable save button
-    quill.on('text-change', () => {
+    quill.on("text-change", () => {
       const editorContent = quill.root.innerHTML;
       // Check if editor has meaningful content (not just empty paragraphs)
-      const hasContent = editorContent !== '<p><br></p>' && editorContent.trim() !== '';
+      const hasContent =
+        editorContent !== "<p><br></p>" && editorContent.trim() !== "";
       saveBtn.disabled = !hasContent;
 
       // Update button styling based on disabled state

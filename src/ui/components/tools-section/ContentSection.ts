@@ -22,7 +22,6 @@ export class ContentSection {
     private async initializeContentSection() {
         this.toggleSideBar();
         this.setupContainerStyles();
-        // this.renderComponents();
     }
 
 
@@ -69,20 +68,13 @@ export class ContentSection {
     }
 
     public renderComponents() {
-        // Clear previous content before rendering
-        this.container.innerHTML = '';
-        
+        this.container.innerHTML = '';        
         const ctaButtonSection = new CtaButtonLayout();
-        // const ctaIconList = new CtaIconList(this.iconsList);
         const activeCtaColors = this.themeManager.currentTheme.ThemeCtaColors;
         const ctaColorList = new CtaColorPalette(activeCtaColors);
 
-
         ctaButtonSection.render(this.container);
-        // ctaIconList.render(this.container);
-        ctaColorList.render(this.container);
-        
-        // this.render();
+        ctaColorList.render(this.container);        
     }
 
     private toggleSideBar() {

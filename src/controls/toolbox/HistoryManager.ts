@@ -1,7 +1,6 @@
-import { ToolboxManager } from "./toolbox/ToolboxManager";
+import { ToolboxManager } from "./ToolboxManager";
 
 export class HistoryManager {
-  // Static store shared across all instances
   private static pagesStore: Record<
     string,
     {
@@ -10,11 +9,9 @@ export class HistoryManager {
     }
   > = {};
 
-  // Instance properties
   currentPageId: string;
   limit: number;
 
-  // Getter for pages to always access the static store
   get pages() {
     return HistoryManager.pagesStore;
   }
@@ -23,7 +20,6 @@ export class HistoryManager {
     this.currentPageId = currentPageId;
     this.limit = 50;
 
-    // Only add the page if it doesn't exist yet
     if (!this.pages[currentPageId]) {
       this.addPage(currentPageId);
     }
@@ -32,8 +28,8 @@ export class HistoryManager {
   addPage(pageId: string = this.currentPageId) {
     if (!this.pages[pageId]) {
       this.pages[pageId] = {
-        history: [], // Start with empty history
-        currentIndex: -1, // No current state
+        history: [], 
+        currentIndex: -1, 
       };
     }
   }
@@ -53,19 +49,16 @@ export class HistoryManager {
 
     const page = this.pages[this.currentPageId];
 
-    // Handle initial state
     if (page.history.length === 0) {
       page.history.push(JSON.parse(JSON.stringify(newState)));
       page.currentIndex = 0;
       return this.currentState;
     }
 
-    // Rest of your existing logic...
     if (page.currentIndex < page.history.length - 1) {
       page.history = page.history.slice(0, page.currentIndex + 1);
     }
 
-    // Only add state if it's different from current
     const currentState = page.history[page.currentIndex];
     if (JSON.stringify(currentState) === JSON.stringify(newState)) {
       return this.currentState;
@@ -132,12 +125,10 @@ export class HistoryManager {
     return this.pages;
   }
 
-  // Static method to access the pages store directly
   static getAllPages() {
     return HistoryManager.pagesStore;
   }
 
-  // Reset all history (useful for testing)
   static clearAllHistory() {
     HistoryManager.pagesStore = {};
   }

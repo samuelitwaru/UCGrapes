@@ -10,22 +10,30 @@ export class DebugUIManager {
 
     constructor(debugResults: DebugResults) {
         this.debugResults = debugResults;
+        console.log('this.debugResults: >> ', this.debugResults)
         this.container = document.createElement('div');
         this.container.classList.add('tb_debug_dashboard');
     }
 
-    // Method to create the summary of debug results (Total URLs, Success, Fail)
     private debugSummary() {
+        if (!this.debugResults || !this.debugResults.Summary || 
+            !this.debugResults.Pages || this.debugResults.Pages.length === 0) {
+            const noResultsMessage = document.createElement('div');
+            noResultsMessage.classList.add('tb_debug_no_results');
+            noResultsMessage.innerHTML = `
+                <h3>${i18n.t("navbar.debug.no_results")}</h3>
+                <p>${i18n.t("navbar.debug.no_results_message")}</p>
+            `;
+            return noResultsMessage;
+        }
+
         const debugSummary = document.createElement('div');
         debugSummary.classList.add('tb_debug_summary');
-        // Total URLs Section
-        const totalUrls = this.createSummaryItem(this.debugResults.Summary.TotalUrls, `${i18n.t("navbar.debug.total_urls")}`, true);
+        const totalUrls = this.createSummaryItem(this.debugResults?.Summary.TotalUrls, `${i18n.t("navbar.debug.total_urls")}`, true);
 
-        // Successful URLs Section
-        const totalSuccess = this.createSummaryItem(this.debugResults.Summary.SuccessCount, `${i18n.t("navbar.debug.total_successful")}`);
+        const totalSuccess = this.createSummaryItem(this.debugResults?.Summary.SuccessCount, `${i18n.t("navbar.debug.total_successful")}`);
 
-        // Failed URLs Section
-        const totalFail = this.createSummaryItem(this.debugResults.Summary.FailureCount, `${i18n.t("navbar.debug.total_failed")}`);
+        const totalFail = this.createSummaryItem(this.debugResults?.Summary.FailureCount, `${i18n.t("navbar.debug.total_failed")}`);
 
         debugSummary.appendChild(totalUrls);
         debugSummary.appendChild(totalSuccess);
@@ -34,7 +42,6 @@ export class DebugUIManager {
         return debugSummary;
     }
 
-    // Helper method to create individual summary items
     private createSummaryItem(count: string, label: string, isFirstTab = false): HTMLElement {
         const item = document.createElement('div');
         item.classList.add('tb_debug_summary_item');
@@ -61,41 +68,36 @@ export class DebugUIManager {
     }
 
     private filterPageSections() {
-        // 1. Select all page sections
+        if (!this.debugResults || !this.debugResults.Pages || this.debugResults.Pages.length === 0) {
+            return;
+        }
+        
         const pageSections = this.container.querySelectorAll('.tb_debug_page-section');
         
         pageSections.forEach(pageSection => {
-            // 2. Find the URL list within each page section
             const urlList = pageSection.querySelector('.tb_debug_url-list');
             if (!urlList) return;
     
-            // 3. Get all URL items
             const urlItems = urlList.querySelectorAll('.tb_debug_url-item');
             let hasVisibleUrls = false;
     
-            // 4. Iterate through URL items and apply filtering
             urlItems.forEach(urlItem => {
                 const statusElement = urlItem.querySelector('.tb_debug_url-status');
                 const isVisible = this.shouldShowUrlItem(statusElement);
                 
-                // 5. Toggle visibility of URL items
                 urlItem.classList.toggle('hidden', !isVisible);
                 if (isVisible) hasVisibleUrls = true;
             });
     
-            // 6. Hide entire page section if no URL items are visible
             pageSection.classList.toggle('hidden', !hasVisibleUrls);
         });
     }
 
     private shouldShowUrlItem(statusElement: Element | null): boolean {
-        // 1. If no status element, show the item
         if (!statusElement) return true;
         
-        // 2. If no filter is active, show all items
         if (this.activeFilter === null) return true;
     
-        // 3. For 'Successful' filter
         if (this.activeFilter === `${i18n.t("navbar.debug.total_successful")}`) {
             return statusElement.classList.contains('tb_debug_status-200');
         }
@@ -108,10 +110,14 @@ export class DebugUIManager {
     }
 
     private debugPageSections() {
+        // Check if there are no debug results
+        if (!this.debugResults || !this.debugResults.Pages || this.debugResults.Pages.length === 0) {
+            return document.createElement('div');
+        }
+        
         const debugPage = document.createElement('div');
         debugPage.classList.add('tb_debug_page-sections');
 
-        // Dynamically create a section for each page
         this.debugResults.Pages.forEach(pageItem => {
             const pageSection = this.debugPageSection(pageItem);
             debugPage.appendChild(pageSection);
@@ -120,18 +126,15 @@ export class DebugUIManager {
         return debugPage;
     }
 
-    // Method to create a single section for each page
     private debugPageSection(pageItem: { Page: string, UrlList: { Url: string, StatusCode: number, StatusMessage: string, AffectedType: string, AffectedName: string }[] }) {
         const pageSection = document.createElement('div');
         pageSection.classList.add('tb_debug_page-section');
 
-        // Add title for the page
         const title = document.createElement('div');
         title.classList.add('tb_debug_page-title');
         title.innerText = pageItem.Page;
         pageSection.appendChild(title);
 
-        // Create the URL list for the page
         const urlList = this.createUrlList(pageItem.UrlList);
         pageSection.appendChild(urlList);
 
@@ -184,10 +187,24 @@ export class DebugUIManager {
     }
     
     public buildDebugUI(): HTMLElement {
-        this.container.appendChild(this.debugSummary());
-        this.container.appendChild(this.debugPageSections());
-
-        this.filterPageSections();
+        if (!this.debugResults || 
+            !this.debugResults.Summary || 
+            !this.debugResults.Pages || 
+            this.debugResults.Pages.length === 0) {
+            
+            const emptyStateMessage = document.createElement('div');
+            emptyStateMessage.classList.add('tb_debug_empty_state');
+            emptyStateMessage.innerHTML = `
+                <div class="tb_debug_empty_icon">⚠️</div>
+                <h3>No Debug Results Available</h3>
+                <p>There are no debug results to display. Please run a debug scan first.</p>
+            `;
+            this.container.appendChild(emptyStateMessage);
+        } else {
+            this.container.appendChild(this.debugSummary());
+            this.container.appendChild(this.debugPageSections());
+            this.filterPageSections();
+        }
 
         return this.container;
     }

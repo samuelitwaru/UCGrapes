@@ -47,7 +47,6 @@ export class ActionListManager {
     });
     // }
 
-    console.log("categoryData", categoryData);
     secondCategory.push({
       id: "list-page",
       name: "Page",

@@ -10,7 +10,6 @@ export class DebugUIManager {
 
     constructor(debugResults: DebugResults) {
         this.debugResults = debugResults;
-        console.log('this.debugResults: >> ', this.debugResults)
         this.container = document.createElement('div');
         this.container.classList.add('tb_debug_dashboard');
     }

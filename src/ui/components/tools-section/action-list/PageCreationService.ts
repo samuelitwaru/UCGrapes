@@ -192,10 +192,8 @@ export class PageCreationService {
 
     // Find or create child page
     let childPage;
-    console.log('type: >>', type)
     if (type === "WebLink" || type === "Form") {
       childPage = await this.findOrCreateChildPage(type, formData);
-      console.log('childPage: >>', childPage)
     }
 
     const updates = [
@@ -243,7 +241,6 @@ export class PageCreationService {
     formData: Record<string, string>
   ) {
     const version = (globalThis as any).activeVersion;
-
     let childPage = version?.Pages.find((page: any) => {
       if (type === "WebLink") {
         return (
@@ -257,7 +254,7 @@ export class PageCreationService {
     if (!childPage) {
       try {
         const appVersion = await this.appVersionManager.getActiveVersion();
-        const formId = type === "Form" ? Number(formData?.field_id) : 1;
+        const formId = type === "Form" ? Number(formData?.field_id) : 0;
         const response = await this.toolBoxService.createLinkPage(
           appVersion.AppVersionId,
           formData.field_label,

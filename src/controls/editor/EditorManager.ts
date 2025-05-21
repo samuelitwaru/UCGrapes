@@ -119,7 +119,6 @@ export class EditorManager {
   }
 
   initializeGrapesEditor(editorId: string) {
-    console.log("editorId", editorId);
     return grapesjs.init({
       container: `#${editorId}`,
       fromElement: true,

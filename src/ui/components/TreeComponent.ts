@@ -125,10 +125,8 @@ export class TreeComponent {
   }
 
   buildListItem(rootPageId: string, page: any, isOpenable = true) {
-    console.log("hello", page.PageType, isOpenable);
     if (page.PageType != "MyCare") isOpenable = false;
 
-    console.log("isOpenable", isOpenable);
     const listItem = document.createElement("li");
     listItem.classList.add("tb-custom-list-item");
     listItem.dataset.parentPageId = rootPageId;

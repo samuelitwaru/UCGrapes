@@ -81,7 +81,6 @@ export class TileManager {
 
       if (this.page?.PageType === "Information") {
       } else {
-        console.log("index", index);
         (globalThis as any).tileMapper.addFreshRow(
           newRowComponent.getId() as string,
           tileId as string,
@@ -307,7 +306,6 @@ export class TileManager {
         component.getId()
       );
     }
-    console.log("tileAttributes", tileAttributes);
     if (tileAttributes) {
       if (tileAttributes.Icon && tileAttributes.Text) {
         return true;

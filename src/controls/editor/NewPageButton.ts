@@ -14,7 +14,6 @@ export class NewPageButton {
         this.toolboxService = toolboxService
         this.appVersionManager = appVersionManager
         this.parentPage = parentPage
-        console.log(parentPage)
         this.pageAttacher = new PageAttacher();
         const menuContainer = this.render();
         const childContainer = document.getElementById('child-container')

@@ -81,7 +81,6 @@ export class EditorEvents {
         if (wrapper) {
           wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
             const targetElement = e.target as Element;
-            console.log(targetElement)
             if (targetElement.closest(".tile-resize-button")) {
               this.isResizing = true;
               this.resizingRow = targetElement.closest(

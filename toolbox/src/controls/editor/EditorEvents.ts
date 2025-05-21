@@ -87,17 +87,6 @@ export class EditorEvents {
                 "ns-resize",
                 "important"
               );
-
-              // this.templateBlock = targetElement.closest(
-              //   ".template-block"
-              // ) as HTMLDivElement;
-              // if (this.templateBlock) {
-              //   this.templateBlock.style.setProperty(
-              //     "cursor",
-              //     "",
-              //     ""
-              //   );                
-              // }
             }
           });
 
@@ -115,7 +104,6 @@ export class EditorEvents {
               const mediumHeight = 120;
               const maxHeight = 160;
 
-              // Determine which snap point to use based on drag distance
               let newHeight;
 
               if (this.initialHeight === minHeight) {
@@ -198,6 +186,33 @@ export class EditorEvents {
 
             document.body.appendChild(modal);
             document.body.appendChild(uploadInput);
+          });
+
+          wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "IMG") {
+              alert("Image clicked");
+              e.preventDefault();
+
+              (globalThis as any).selectedComponent = target;
+
+              const modal = document.createElement("div");
+              modal.classList.add("tb-modal");
+              modal.style.display = "flex";
+
+              const modalContent = new ImageUpload("image", target.getAttribute("id") || "");
+              modalContent.render(modal);
+
+              const uploadInput = document.createElement("input");
+              uploadInput.type = "file";
+              uploadInput.multiple = true;
+              uploadInput.accept = "image/jpeg, image/jpg, image/png";
+              uploadInput.id = "fileInput";
+              uploadInput.style.display = "none";
+
+              document.body.appendChild(modal);
+              document.body.appendChild(uploadInput);
+            }
           });
 
           wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
@@ -330,8 +345,6 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(false);
         this.uiManager.showPageInfo()
       }
-      // this.uiManager.toggleSidebar()
-      // this.uiManager.setCtaProperties();
     });
 
     this.editor.on("component:deselected", () => {

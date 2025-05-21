@@ -129,7 +129,6 @@ export class AllPagesComponent {
                     this.showList()
                     deleteModal.close();
                     // reload the editor
-                    console.log((window as any).app.toolboxApp.editor.init())
                     // console.log(window.App)
                 }else {
                     new Alert("error", res.error.message)

@@ -505,7 +505,6 @@ export class PageBubbleTree {
     this.primaryNodeId = d.id;
     d.title = d.name;
     let nodesToAdd: string[] = [d.id];
-    console.log("d", d);
     const processedPages: any[] = [d]; // Start with the clicked node
 
     const childIds = [...(d.children || [])]; // Defensive copy

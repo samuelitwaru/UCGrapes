@@ -22,8 +22,6 @@ export class LoadReceptionData {
                 return;
             }
 
-            console.log("Location data retrieved:", this.locationData)
-
             // Update page data and get the updated structure
             const updatedPageData = this.updatePageData();
 

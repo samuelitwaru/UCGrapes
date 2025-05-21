@@ -103,7 +103,6 @@ export class ActionListDropDown {
         PageUrl: form.FormUrl,
         PageType: "DynamicForm",
       }));
-    console.log('forms', forms)
     return forms;
   }
 

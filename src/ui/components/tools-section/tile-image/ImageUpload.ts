@@ -294,9 +294,9 @@ export class ImageUpload {
             newMedia.MediaSize,
             newMedia.MediaType
           );
-          this.init();
+          // this.init();
           // Replace the upload area with the image editor
-          //this.displayImageEditor(dataUrl, file);
+          this.displayImageEditor(dataUrl, file);
         } catch (error) {
           console.error("Error processing file:", error);
         }

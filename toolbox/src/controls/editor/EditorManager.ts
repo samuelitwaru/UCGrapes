@@ -90,7 +90,6 @@ export class EditorManager {
 
   async setUpEditor() {
     const editor = this.initializeGrapesEditor(`gjs-0`);
-    console.log((window as any).app.editors);
     (window as any).app.editors[`gjs-0`] = editor;
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);

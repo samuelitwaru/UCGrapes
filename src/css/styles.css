@@ -318,7 +318,7 @@ span#scroll-right:hover {
 .home-app-bar {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 12px 16px 0px 16px;
   width: 100%;
 }
 
@@ -1081,6 +1081,7 @@ h5#current-page-title {
 .tile-img-section {
   display: flex;
   gap: 0.6rem;
+  justify-content: space-between;
 }
 
 .bg-section {
@@ -1090,6 +1091,7 @@ h5#current-page-title {
   padding: 6px;
   border-radius: 6px;
   background-color: #fff;
+  flex: 1;
 }
 
 .bg-section:hover {
@@ -1117,6 +1119,7 @@ h5#current-page-title {
   border-radius: 2px;
   -webkit-appearance: none;
   outline: none;
+  width: 9rem;
 }
 
 .bg-section input[type="range"]::-webkit-slider-thumb {

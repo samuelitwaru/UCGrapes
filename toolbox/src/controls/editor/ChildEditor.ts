@@ -57,11 +57,11 @@ export class ChildEditor {
     }
     let converter;
     if (
-        this.pageData?.PageType === "Menu" ||
-        this.pageData?.PageType === "MyLiving" ||
-        this.pageData?.PageType === "MyCare" ||
-        this.pageData?.PageType === "MyService" 
-      ) {
+      this.pageData?.PageType === "Menu" ||
+      this.pageData?.PageType === "MyLiving" ||
+      this.pageData?.PageType === "MyCare" ||
+      this.pageData?.PageType === "MyService"
+    ) {
       converter = new JSONToGrapesJSMenu(this.pageData);
       setUpEditor(converter);
     } else if (this.pageData?.PageType === "Information") {
@@ -80,10 +80,12 @@ export class ChildEditor {
       this.pageData?.PageType === "WebLink" ||
       this.pageData?.PageType === "DynamicForm"
     ) {
-      console.log('tileAttributes',tileAttributes)
+      if (tileAttributes?.CtaType === 'Form') {
+        tileAttributes.Action.ObjectUrl = this.pageData.PageLinkStructure.Url
+      }
       const urlPageEditor = new UrlPageEditor(childEditor);
       urlPageEditor.initialise(tileAttributes.Action);
-    }else if (
+    } else if (
       this.pageData?.PageType === "Map"
     ) {
       const mapsPageEditor = new MapsPageEditor(childEditor);
@@ -121,7 +123,7 @@ export class ChildEditor {
   }
 
   refreshPage() {
-    
+
   }
 
   addImageContent(editor: any) {
@@ -162,7 +164,7 @@ export class ChildEditor {
   private updatePositions() {
     const childContainer = document.getElementById(
       "child-container"
-    ) as HTMLDivElement; 
+    ) as HTMLDivElement;
     childContainer.scrollLeft = childContainer.scrollWidth - childContainer.clientWidth;
     childContainer.style.justifyContent = "right";
   }

@@ -45,7 +45,14 @@ export class PageAppBar {
         const thumbsList = document.querySelector(".editor-thumbs-list") as HTMLElement;
         backButton?.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation()
             const currentFrame = document.querySelector(`#${this.id}-frame`)
+            const previousFrame = currentFrame?.previousElementSibling as HTMLDivElement
+
+            if(previousFrame && previousFrame?.classList.contains("mobile-frame")) {
+                (globalThis as any).pageId = previousFrame.dataset.pageid;
+                (globalThis as any).uiManager.activateEditor(previousFrame.id.replace('-frame', ''))
+            } 
             if (currentFrame) {
                 let nextElement = currentFrame.nextElementSibling;
                 while (nextElement) {
@@ -247,7 +254,7 @@ export class PageAppBar {
         if (editor) {
             const newInfoSectionButton = editor.getWrapper().find(".add-new-info-section")[0];
             if (newInfoSectionButton) {
-                newInfoSectionButton.addStyle({ display: "block" });
+                newInfoSectionButton.addStyle({ display: "flex" });
             }
 
             const untitledPage = editor.getWrapper().find(".untitled-page")[0];

@@ -412,6 +412,8 @@ export class InfoSectionManager {
   }
 
   updateInfoMapper(infoId: string, infoType: InfoType) {
+    console.log('infoId', infoId);
+    console.log('infoType', infoType);
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);

@@ -77,7 +77,6 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         (globalThis as any).wrapper = wrapper;
-        (globalThis as any).currentPageId = this.pageId;
         (globalThis as any).pageData = this.pageData;
 
         if (wrapper) {
@@ -338,7 +337,6 @@ export class EditorEvents {
             this.uiManager.clearAllMenuContainers();
             //this.uiManager.resetTitleFromDOM();
 
-            (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
             (globalThis as any).eventTarget = targetElement;
 

@@ -202,11 +202,12 @@ export class SingleImageFile {
         "background-position": "center",
         "background-blend-mode": "overlay",
       });
+      const selectedElement = selectedComponent.getEl()
+      
+      if (selectedElement) selectedElement.style.backgroundColor = "transparent";
 
       const updates = [
         ["BGImageUrl", safeMediaUrl],
-        ["BGColor", "transparent"],
-        // ["Opacity", this.imageUpload.opacity],
       ];
 
       let tileAttributes;

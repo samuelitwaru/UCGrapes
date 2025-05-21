@@ -345,6 +345,7 @@ export class EditorUIManager {
     });
     this.showPageInfo();
     (globalThis as any).activeEditor = this.editor;
+    (globalThis as any).currentPageId = this.pageId;
     new ToolboxManager().unDoReDo();
   }
 

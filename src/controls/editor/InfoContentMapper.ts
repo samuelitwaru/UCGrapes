@@ -14,7 +14,6 @@ export class InfoContentMapper {
     const storageKey = `data-${this.pageId}`;
     localStorage.setItem(storageKey, JSON.stringify(data));
     this.historyManager.addState(data);
-
     // call auto save to DB:
     const toolboxManager = new ToolboxManager();
     toolboxManager.savePages();
@@ -102,6 +101,7 @@ export class InfoContentMapper {
     if (contentRowIndex === -1) return false;
     contentArray[contentRowIndex] = newContent;
     this.saveData(data);
+    
     return true;
   }
 

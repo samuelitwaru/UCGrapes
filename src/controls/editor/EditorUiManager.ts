@@ -174,7 +174,6 @@ export class EditorUIManager {
         }
       }
 
-      (globalThis as any).currentPageId = this.pageId;
       (globalThis as any).pageData = this.pageData;
       this.activateEditor(this.frameId);
     }

@@ -43,7 +43,6 @@ export class TileImgContainer {
       const themeManager = new ThemeManager();      
 
       const currentStyles = selectedComponent.getStyle();
-      console.log('currentStyles ',currentStyles)
       delete currentStyles["background-image"];
       currentStyles["background-color"] = themeManager.getThemeColor(tileAttributes?.BGColor);
            

@@ -302,13 +302,13 @@ export class TileMapper {
     );
     let tile: any = null;
     // if current page is Information type
-    if (data.PageType === "Information") {
-      data.PageInfoStructure.InfoContent
-      .filter((content:any)=>content.InfoType == "TileRow")
-      .forEach((content: any) => {
-        tile = content.Tiles.find((t: any) => t.Id === tileId)
-      })
-      return tile
+    console.log(data)
+    if (data.PageType === "Information") {      
+      const row = data.PageInfoStructure.InfoContent.find((item:any)=>item.InfoId==rowId)
+      if (row) {
+        const tile = row.Tiles.find((t:any) => t.Id == tileId)
+        return tile
+      }
     }
 
     // if current page is Menu type

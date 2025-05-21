@@ -37,7 +37,9 @@ export class TileImgContainer {
       );
 
       const currentStyles = selectedComponent.getStyle();
+      console.log('currentStyles ',currentStyles)
       delete currentStyles["background-image"];
+      console.log(tileAttributes)
       currentStyles["background-color"] = tileAttributes.BGColor;
            
       selectedComponent.setStyle(currentStyles);

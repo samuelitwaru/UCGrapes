@@ -26,6 +26,7 @@ export class EditorEvents {
   uiManager!: EditorUIManager;
   isHome?: boolean;
   isResizing: boolean = false;
+  isDragging: boolean = false;
   resizingRowHeight: number = 0;
   resizingRow: HTMLDivElement | null = null;
   resizeYStart: number = 0;
@@ -37,6 +38,7 @@ export class EditorEvents {
   resizeOverlay: HTMLDivElement | null = null;
   infoSectionSpacer: HTMLDivElement | null = null;
   frameChildren: HTMLDivElement[] = [];
+
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
@@ -81,7 +83,7 @@ export class EditorEvents {
         if (wrapper) {
           wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
             const targetElement = e.target as Element;
-
+            console.log(targetElement)
             if (targetElement.closest(".tile-resize-button")) {
               this.isResizing = true;
               this.resizingRow = targetElement.closest(
@@ -149,7 +151,23 @@ export class EditorEvents {
                 ".template-block"
               ) as HTMLDivElement;
             }
+
+            if (targetElement.closest(".template-block")) {
+              this.isDragging = true;
+            }
           });
+
+          wrapper.view.el.addEventListener("mousemove", (e: MouseEvent) => {
+            if (this.isDragging) {
+              console.log(e)
+            }
+          })
+
+          wrapper.view.el.addEventListener("mouseup", (e: MouseEvent) => {
+            if (this.isDragging) {
+              this.isDragging = false
+            }
+          })
 
           document.addEventListener("mousemove", (e: MouseEvent) => {
             if (this.isResizing && this.resizingRow) {

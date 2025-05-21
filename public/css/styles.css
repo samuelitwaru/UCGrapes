@@ -1082,7 +1082,7 @@ h5#current-page-title {
 .tile-img-section {
   display: flex;
   gap: 1rem;
-  width: 100%;
+  /* width: 100%; */
   justify-content: space-between;
 }
 
@@ -1093,7 +1093,7 @@ h5#current-page-title {
   padding: 6px;
   border-radius: 6px;
   background-color: #fff;
-  width: 100%;
+  /* width: 100%; */
 }
 
 .bg-section:hover {

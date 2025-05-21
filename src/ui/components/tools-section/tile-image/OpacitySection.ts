@@ -35,6 +35,7 @@ export class OpacitySection {
     input.min = "0";
     input.max = "100";
     input.value = "0";
+    input.style.width = "50px";
     input.addEventListener("input", (event: any) => {
       const value = event.target.value;
       const valueDisplay = document.getElementById("valueDisplay");

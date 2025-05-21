@@ -1,3 +1,4 @@
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 
 export class TileImgContainer {
@@ -42,7 +43,6 @@ export class TileImgContainer {
       const themeManager = new ThemeManager();      
 
       const currentStyles = selectedComponent.getStyle();
-      console.log('currentStyles ',currentStyles)
       delete currentStyles["background-image"];
       currentStyles["background-color"] = themeManager.getThemeColor(tileAttributes?.BGColor);
            
@@ -52,14 +52,17 @@ export class TileImgContainer {
       el.style.backgroundImage = ''; 
       el.style.backgroundColor = themeManager.getThemeColor(tileAttributes?.BGColor);
 
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId(),
         "BGImageUrl",
         ""
       );
 
-      (globalThis as any).tileMapper.updateTile(
-        selectedComponent.parent().getId(),
+      infoSectionManager.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId(),
         "Opacity",
         "0"
       );

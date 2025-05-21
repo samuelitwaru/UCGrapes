@@ -174,7 +174,6 @@ export class EditorUIManager {
         }
       }
 
-      (globalThis as any).currentPageId = this.pageId;
       (globalThis as any).pageData = this.pageData;
       this.activateEditor(this.frameId);
     }
@@ -345,6 +344,8 @@ export class EditorUIManager {
     });
     this.showPageInfo();
     (globalThis as any).activeEditor = this.editor;
+    (globalThis as any).currentPageId = this.pageId;
+    (globalThis as any).pageData = this.pageData;
     new ToolboxManager().unDoReDo();
   }
 

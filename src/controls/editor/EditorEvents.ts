@@ -77,7 +77,6 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         (globalThis as any).wrapper = wrapper;
-        (globalThis as any).pageData = this.pageData;
 
         if (wrapper) {
           wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
@@ -337,7 +336,7 @@ export class EditorEvents {
             this.uiManager.clearAllMenuContainers();
             //this.uiManager.resetTitleFromDOM();
 
-            (globalThis as any).pageData = this.pageData;
+            
             (globalThis as any).eventTarget = targetElement;
 
             this.uiManager.handleTileManager(e);

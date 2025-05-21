@@ -1,6 +1,6 @@
 import Quill from "quill";
-import { ActionListController } from "../../controls/ActionListController";
-import { InfoSectionController } from "../../controls/InfoSectionController";
+import { ActionListManager } from "../../controls/ActionListManager";
+import { InfoSectionManager } from "../../controls/InfoSectionManager";
 import { ImageUpload } from "../components/tools-section/tile-image/ImageUpload";
 import { MenuItemManager } from "./MenuItemManager";
 import { Modal } from "../components/Modal";
@@ -9,7 +9,7 @@ import { randomIdGenerator } from "../../utils/helpers";
 import { PageCreationService } from "../components/tools-section/action-list/PageCreationService";
 
 export class InfoSectionPopup {
-  private controller: InfoSectionController;
+  private controller: InfoSectionManager;
   private menuContainer: HTMLDivElement;
   private templateContainer: HTMLElement;
   private menuList: HTMLUListElement;
@@ -19,11 +19,15 @@ export class InfoSectionPopup {
   private sectionId: string;
   pageCreationService!: PageCreationService;
 
-  constructor(templateContainer: HTMLElement, parentContainer: HTMLElement, sectionId: string) {
+  constructor(
+    templateContainer: HTMLElement,
+    parentContainer: HTMLElement,
+    sectionId: string
+  ) {
     this.templateContainer = templateContainer;
     this.parentContainer = parentContainer;
     this.menuContainer = document.createElement("div");
-    this.controller = new InfoSectionController();
+    this.controller = new InfoSectionManager();
     this.menuList = document.createElement("ul");
     this.submenuContainer = document.createElement("div");
     this.infoSectionUi = new InfoSectionUI();
@@ -60,7 +64,7 @@ export class InfoSectionPopup {
       },
     ];
 
-    sectionItems.sort((a, b) => a.label.localeCompare(b.label))
+    sectionItems.sort((a, b) => a.label.localeCompare(b.label));
     sectionItems?.forEach((item) => {
       const menuCategory = document.createElement("div");
       menuCategory.classList.add("menu-category");
@@ -94,10 +98,11 @@ export class InfoSectionPopup {
           this.submenuContainer.style.left = "100%";
           this.submenuContainer.style.top = `${menuItem.offsetTop + 10}px`;
           this.submenuContainer.style.backgroundColor = "white";
-          this.submenuContainer.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.2)";
+          this.submenuContainer.style.boxShadow =
+            "0 2px 6px rgba(0, 0, 0, 0.2)";
           this.submenuContainer.style.borderRadius = "9px";
           this.submenuContainer.style.width = "100px";
-          this.submenuContainer.style.minHeight = "fit-content"
+          this.submenuContainer.style.minHeight = "fit-content";
           this.submenuContainer.style.zIndex = "1001";
 
           // Get submenu items
@@ -120,7 +125,6 @@ export class InfoSectionPopup {
 
           this.menuContainer.appendChild(this.submenuContainer);
         });
-
       } else {
         // For non-expandable items, just perform the action on click
         menuItem.addEventListener("click", () => {
@@ -214,8 +218,9 @@ export class InfoSectionPopup {
     }
     // Second priority: show at the top if there's enough space
     else if (spaceAbove >= effectiveMenuHeight + 10) {
-      this.menuContainer.style.top = `${relTriggerTop - effectiveMenuHeight - 0
-        }px`;
+      this.menuContainer.style.top = `${
+        relTriggerTop - effectiveMenuHeight - 0
+      }px`;
     }
     // Last resort: show at the top with scroll if needed
     else {
@@ -226,8 +231,9 @@ export class InfoSectionPopup {
       }
     }
 
-    this.menuContainer.style.left = `calc(50% - ${this.menuContainer.clientWidth / 2
-      }px)`;
+    this.menuContainer.style.left = `calc(50% - ${
+      this.menuContainer.clientWidth / 2
+    }px)`;
 
     this.menuContainer.style.visibility = "visible";
     this.menuContainer.style.opacity = "1";
@@ -279,7 +285,11 @@ export class InfoSectionPopup {
         label: item.label,
         type: item.type,
         action: () => {
-          const service = new PageCreationService(true, item.type, this.sectionId);
+          const service = new PageCreationService(
+            true,
+            item.type,
+            this.sectionId
+          );
           item.handler(service);
         },
       };

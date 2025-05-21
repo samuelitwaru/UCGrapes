@@ -20,10 +20,9 @@ export class CtaButtonProperties {
 
     public setctaAttributes() {
         this.waitForButtonLayoutContainer(() => {
-            this.displayButtonLayouts();
+            this.checkButtonLayouts();
             this.ctaColorAttributes();
             this.ctaActionDisplay();
-            this.selectedButtonLayout();
             this.ctaLabelColor();
         });        
     }
@@ -39,18 +38,7 @@ export class CtaButtonProperties {
         }, 100);
     }    
 
-    private displayButtonLayouts() {
-        const buttonLayoutContainer = document?.querySelector(".cta-button-layout-container") as HTMLElement;
-        if (!buttonLayoutContainer) return;
-        
-        const shouldDisplay = this.pageData.PageType === "Information" 
-            ? this.selectedComponent.is('info-cta-section')
-            : this.selectedComponent.parent().getClasses().includes("cta-button-container");
-        
-        buttonLayoutContainer.style.display = shouldDisplay ? "flex" : "none";
-    }
-
-    private selectedButtonLayout() {
+    private checkButtonLayouts() {
         if (this.ctaAttributes) {
             let buttons = document.querySelectorAll(".cta-button-layout") as NodeListOf<HTMLElement>;
             buttons.forEach((button) => {
@@ -64,7 +52,6 @@ export class CtaButtonProperties {
                     button.style.border = "";                    
                 }
             });
-            
         }
     }
 

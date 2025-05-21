@@ -80,7 +80,6 @@ export class EditorThumbs {
   }
 
   private captureMiniature(editorDiv: HTMLDivElement) {
-    console.log('editorDiv', editorDiv)
     const updateMirror = async () => {
       const canvasWrapper = editorDiv.querySelector(
         ".gjs-cv-canvas"

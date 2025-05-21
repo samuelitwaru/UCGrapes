@@ -9,7 +9,7 @@ import {
 } from "../../utils/default-attributes";
 import { resizeButton } from "../../utils/gjs-components";
 import { randomIdGenerator } from "../../utils/helpers";
-import { InfoSectionController } from "../InfoSectionController";
+import { InfoSectionManager } from "../InfoSectionManager";
 import { CtaManager } from "../themes/CtaManager";
 import { EditorEvents } from "./EditorEvents";
 import { InfoContentMapper } from "./InfoContentMapper";
@@ -81,7 +81,7 @@ export class TileManager {
 
       if (this.page?.PageType === "Information") {
       } else {
-        console.log('index', index);
+        console.log("index", index);
         (globalThis as any).tileMapper.addFreshRow(
           newRowComponent.getId() as string,
           tileId as string,
@@ -133,12 +133,11 @@ export class TileManager {
       this.tileUpdate.updateTile(containerRowComponent);
 
       if (newTileComponent) {
-        const tileComponent = newTileComponent.find('.template-block')[0];
+        const tileComponent = newTileComponent.find(".template-block")[0];
         if (tileComponent) {
           this.editor.select(tileComponent);
         }
       }
-
     }
   }
 
@@ -163,9 +162,9 @@ export class TileManager {
             "delete",
             tileComponent.getId()
           );
-          const infoSectionController = new InfoSectionController();
-          infoSectionController.removeConsecutivePlusButtons();
-          infoSectionController.restoreEmptyStateIfNoSections();
+          const infoSectionManager = new InfoSectionManager();
+          infoSectionManager.removeConsecutivePlusButtons();
+          infoSectionManager.restoreEmptyStateIfNoSections();
         } else {
           (globalThis as any).tileMapper.removeTile(
             tileComponent.getId() as string,
@@ -200,7 +199,7 @@ export class TileManager {
             ObjectType: "",
             ObjectId: "",
             ObjectUrl: "",
-          }
+          },
         });
       } else if (method === "delete") {
         const tile = tileSection.Tiles?.find((tile: any) => tile.Id === tileId);
@@ -212,8 +211,8 @@ export class TileManager {
         }
       }
 
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.updateInfoMapper(tileRowId, tileSection);
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoMapper(tileRowId, tileSection);
     }
   }
 
@@ -228,8 +227,8 @@ export class TileManager {
 
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
-            const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoTileAttributes(
+            const infoSectionManager = new InfoSectionManager();
+            infoSectionManager.updateInfoTileAttributes(
               tileComponent.parent().getId(),
               tileComponent.getId(),
               "Icon",
@@ -266,8 +265,8 @@ export class TileManager {
 
         if (this.checkTileHasIconOrTitle(tileComponent)) {
           if (this.page?.PageType === "Information") {
-            const infoSectionController = new InfoSectionController();
-            infoSectionController.updateInfoTileAttributes(
+            const infoSectionManager = new InfoSectionManager();
+            infoSectionManager.updateInfoTileAttributes(
               tileComponent.parent().getId(),
               tileComponent.getId(),
               "Text",
@@ -358,7 +357,7 @@ export class TileManager {
   }
 
   private getTileRow() {
-    const isSingleTile = true
+    const isSingleTile = true;
     const tile = this.getTile(isSingleTile);
     return `<div class="container-row" ${rowDefaultAttributes} id="${randomIdGenerator(
       8
@@ -367,9 +366,9 @@ export class TileManager {
 
   private getTile(isSingleTile: boolean = false) {
     return `
-      <div ${tileWrapperDefaultAttributes} ${isSingleTile ? `style="height:${minTileHeight}px"` : ``} class="template-wrapper" id="${randomIdGenerator(
-      8
-    )}">
+      <div ${tileWrapperDefaultAttributes} ${
+      isSingleTile ? `style="height:${minTileHeight}px"` : ``
+    } class="template-wrapper" id="${randomIdGenerator(8)}">
         <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #333333; justify-content: left">
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
@@ -386,19 +385,24 @@ export class TileManager {
             <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
           </svg>
         </button>
-        ${isSingleTile ? `
+        ${
+          isSingleTile
+            ? `
             ${resizeButton("Resize")}
-          `: ``}
-        ${this.page?.PageType === "Information"
-        ? ``
-        : `
+          `
+            : ``
+        }
+        ${
+          this.page?.PageType === "Information"
+            ? ``
+            : `
           <button ${DefaultAttributes} id="i4ubt" data-gjs-type="default" title="Add template bottom" class="action-button add-button-bottom">
           <svg ${DefaultAttributes} fill="#fff" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path ${DefaultAttributes} d="M19,11H13V5a1,1,0,0,0-2,0v6H5a1,1,0,0,0,0,2h6v6a1,1,0,0,0,2,0V13h6a1,1,0,0,0,0-2Z"/>
           </svg>
           </button>
         `
-      }
+        }
         <svg ${DefaultAttributes} class="tile-open-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 27 27">
           <g ${DefaultAttributes} id="Group_2383" data-name="Group 2383" transform="translate(-921 -417.999)">
             <g ${DefaultAttributes} id="Group_2382" data-name="Group 2382" transform="translate(921 418)">

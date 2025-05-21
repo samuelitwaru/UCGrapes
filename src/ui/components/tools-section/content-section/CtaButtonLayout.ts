@@ -12,7 +12,7 @@ export class CtaButtonLayout {
 
     private init() {
         this.container.classList.add('cta-button-layout-container');
-        this.container.style.display = "none";
+        this.container.style.display = "flex";
  
         const plainBtn = document.createElement('button');
         plainBtn.classList.add('cta-button-layout');
@@ -24,7 +24,7 @@ export class CtaButtonLayout {
         imgBtn.id = 'image-button-layout';
         imgBtn.innerHTML = `
             <span class="img-button-icon">
-                <img src="Resources/UCGrapes1/toolbox/public/images/food.png" alt="img-button-icon" width="35px" height="auto">  
+                <img src="Resources/UCGrapes/dist/images/food.png" alt="img-button-icon" width="35px" height="auto">  
             </span>
             <label>Button</label>
             <i class="fa fa-angle-right img-button-arrow"></i>

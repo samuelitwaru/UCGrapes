@@ -5,11 +5,12 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
-import { InfoSectionController } from "../InfoSectionController";
+import { InfoSectionManager } from "../InfoSectionManager";
 import { ThemeManager } from "../themes/ThemeManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
+import { EditorManager } from "./EditorManager";
 import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
 import { PageMapper } from "./PageMapper";
@@ -26,6 +27,7 @@ export class EditorEvents {
   uiManager!: EditorUIManager;
   isHome?: boolean;
   isResizing: boolean = false;
+  isDragging: boolean = false;
   resizingRowHeight: number = 0;
   resizingRow: HTMLDivElement | null = null;
   resizeYStart: number = 0;
@@ -37,6 +39,7 @@ export class EditorEvents {
   resizeOverlay: HTMLDivElement | null = null;
   infoSectionSpacer: HTMLDivElement | null = null;
   frameChildren: HTMLDivElement[] = [];
+
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
@@ -74,14 +77,13 @@ export class EditorEvents {
       this.editor.on("load", () => {
         const wrapper = this.editor.getWrapper();
         (globalThis as any).wrapper = wrapper;
-        (globalThis as any).activeEditor = this.editor;
         (globalThis as any).currentPageId = this.pageId;
         (globalThis as any).pageData = this.pageData;
 
         if (wrapper) {
           wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
             const targetElement = e.target as Element;
-
+            console.log(targetElement)
             if (targetElement.closest(".tile-resize-button")) {
               this.isResizing = true;
               this.resizingRow = targetElement.closest(
@@ -96,7 +98,9 @@ export class EditorEvents {
                 "#frame-container"
               ) as HTMLDivElement;
               // get all the children of the frame container apart from the template wrapper
-              this.frameChildren = Array.from(frameContainer?.querySelectorAll("*")).filter(
+              this.frameChildren = Array.from(
+                frameContainer?.querySelectorAll("*")
+              ).filter(
                 (child): child is HTMLDivElement => child !== this.resizingRow
               );
 
@@ -147,7 +151,23 @@ export class EditorEvents {
                 ".template-block"
               ) as HTMLDivElement;
             }
+
+            if (targetElement.closest(".template-block")) {
+              this.isDragging = true;
+            }
           });
+
+          wrapper.view.el.addEventListener("mousemove", (e: MouseEvent) => {
+            if (this.isDragging) {
+              console.log(e)
+            }
+          })
+
+          wrapper.view.el.addEventListener("mouseup", (e: MouseEvent) => {
+            if (this.isDragging) {
+              this.isDragging = false
+            }
+          })
 
           document.addEventListener("mousemove", (e: MouseEvent) => {
             if (this.isResizing && this.resizingRow) {
@@ -273,7 +293,7 @@ export class EditorEvents {
               if (this.infoSectionSpacer) {
                 this.infoSectionSpacer.style.pointerEvents = "auto";
               }
-              
+
               this.frameChildren?.forEach((child) => {
                 child.style.removeProperty("cursor");
               });
@@ -318,7 +338,6 @@ export class EditorEvents {
             this.uiManager.clearAllMenuContainers();
             //this.uiManager.resetTitleFromDOM();
 
-            (globalThis as any).activeEditor = this.editor;
             (globalThis as any).currentPageId = this.pageId;
             (globalThis as any).pageData = this.pageData;
             (globalThis as any).eventTarget = targetElement;
@@ -328,6 +347,8 @@ export class EditorEvents {
 
             this.uiManager.initContentDataUi(e);
             this.uiManager.activateEditor(this.frameId);
+            const editorManager = new EditorManager();
+            editorManager.loadPageHistory(this.pageData);
             this.uiManager.handleInfoSectionHover(e);
           });
 
@@ -347,7 +368,7 @@ export class EditorEvents {
         } else {
           console.error("Wrapper not found!");
         }
-        
+
         new EditorThumbs(
           this.frameId,
           this.pageId,
@@ -358,8 +379,8 @@ export class EditorEvents {
 
         this.uiManager.frameEventListener();
         this.uiManager.activateNavigators();
-        const infoSectionController = new InfoSectionController();
-        infoSectionController.removeConsecutivePlusButtons();
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.removeConsecutivePlusButtons();
       });
     }
   }
@@ -401,6 +422,7 @@ export class EditorEvents {
       (globalThis as any).infoContentMapper =
         this.uiManager.createInfoContentMapper();
       (globalThis as any).frameId = this.frameId;
+      (globalThis as any).activeEditor = this.editor;
       const isTile = component.getClasses().includes("template-block");
       const isCta = [
         "img-button-container",
@@ -421,24 +443,30 @@ export class EditorEvents {
         this.uiManager.removeOtherEditors();
 
         if (ctaAttrs.CtaAction) {
-          // const pageType =
-          //   ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
-          // if (pageType === "DynamicForm") {
-          //   let childPage = version?.Pages.find((page: any) => {
-          //     if (page.PageType == pageType) {
-          //       return (
-          //         page.PageType == pageType &&
-          //         page.PageLinkStructure?.WWPFormId ==
-          //           Number(ctaAttrs.Action?.ObjectId)
-          //       );
-          //     }
-          //   });
-
-          //   if (childPage) {
-          //     this.uiManager.removeOtherEditors();
-          //     new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
-          //   }
-          // }
+          const pageType =
+            ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
+          let childPage;
+          if (pageType === "DynamicForm") {
+            childPage = version?.Pages.find((page: any) => {
+              if (page.PageType == pageType) {
+                return (
+                  page.PageType == pageType &&
+                  page.PageLinkStructure?.WWPFormId ==
+                    Number(ctaAttrs.Action?.ObjectId)
+                );
+              }
+            });
+          } else if (pageType === "WebLink") {
+            childPage = version?.Pages.find(
+              (page: any) => {
+                return page.PageLinkStructure?.Url == ctaAttrs.CtaAction
+              }
+            );
+          }
+          if (childPage) {
+            this.uiManager.removeOtherEditors();
+            new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
+          }
         }
       } else if (isTile) {
         this.uiManager.toggleSidebar(true);
@@ -451,8 +479,6 @@ export class EditorEvents {
         this.uiManager.toggleSidebar(false);
         this.uiManager.showPageInfo();
       }
-      // this.uiManager.toggleSidebar()
-      // this.uiManager.setCtaProperties();
     });
 
     this.editor.on("component:deselected", () => {

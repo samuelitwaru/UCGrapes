@@ -5,7 +5,8 @@ import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavi
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
 import { demoPages } from "../../utils/test-data/pages";
 import { ThemeManager } from "../themes/ThemeManager";
-import { UndoRedoManager } from "../toolbox/UndoRedoManager";
+import { HistoryManager } from "../toolbox/HistoryManager";
+import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { EditorEvents } from "./EditorEvents";
 import { EditorUIManager } from "./EditorUiManager";
@@ -114,7 +115,7 @@ export class EditorManager {
       JSON.stringify(this.homepage)
     );
 
-    new UndoRedoManager(this.homepage.PageId);
+    new ToolboxManager().unDoReDo();
   }
 
   initializeGrapesEditor(editorId: string) {
@@ -169,5 +170,10 @@ export class EditorManager {
   activateHomeEditor(frameId: string) {
     const homeFrame = document.getElementById(`${frameId}-frame`) as HTMLElement;
     homeFrame.classList.add("active-editor");
+  }
+
+  loadPageHistory(pageData: any) {
+    const historyManager = new HistoryManager(pageData?.PageId);
+    historyManager.addState(pageData);
   }
 }

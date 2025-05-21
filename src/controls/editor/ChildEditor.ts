@@ -2,7 +2,6 @@ import { EditorFrame } from "../../ui/components/editor-content/EditorFrame";
 import { contentDefaultAttributes } from "../../utils/default-attributes";
 import { randomIdGenerator } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
-import { UndoRedoManager } from "../toolbox/UndoRedoManager";
 import { EditorEvents } from "./EditorEvents";
 import { EditorManager } from "./EditorManager";
 import { JSONToGrapesJSContent } from "./JSONToGrapesJSContent";
@@ -103,7 +102,6 @@ export class ChildEditor {
 
     this.editorEvents.init(childEditor, this.pageData, editorId);
     this.editorManager.finalizeEditorSetup(childEditor);
-    new UndoRedoManager(this.pageData.PageId);
     this.themeManager.applyTheme(this.themeManager.currentTheme);
     this.updatePositions();
   }

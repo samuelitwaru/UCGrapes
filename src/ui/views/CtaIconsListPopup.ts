@@ -1,6 +1,6 @@
 import Quill from "quill";
-import { ActionListController } from "../../controls/ActionListController";
-import { InfoSectionController } from "../../controls/InfoSectionController";
+import { ActionListManager } from "../../controls/ActionListManager";
+import { InfoSectionManager } from "../../controls/InfoSectionManager";
 import { ImageUpload } from "../components/tools-section/tile-image/ImageUpload";
 import { MenuItemManager } from "./MenuItemManager";
 import { Modal } from "../components/Modal";
@@ -117,7 +117,7 @@ export class CtaIconsListPopup {
 
     // Set up icons list
     this.iconsList.classList.add("cta-icons-list");
-    console.log('cta icons', ctaIcons)
+    console.log("cta icons", ctaIcons);
     // Add icons to the list
     ctaIcons?.forEach((item) => {
       const iconItem = document.createElement("div");

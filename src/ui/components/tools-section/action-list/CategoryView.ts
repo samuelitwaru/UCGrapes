@@ -3,7 +3,7 @@ import { PageCreationService } from "./PageCreationService";
 import { Alert } from "../../Alert";
 import { AppConfig } from "../../../../AppConfig";
 import { i18n } from "../../../../i18n/i18n";
-import { ActionListController } from "../../../../controls/ActionListController";
+import { ActionListManager } from "../../../../controls/ActionListManager";
 import { ActionPage, Category } from "../../../../types";
 
 export class CategoryView {
@@ -82,13 +82,19 @@ export class CategoryView {
         }
 
         if (this.categoryData.name === "DynamicForm") {
-          new ActionListController().handleDynamicForms(page);
-        } 
-        else if (this.categoryData.name == "Modules") {
-          this.pageAttacher.attachToTile(page, page.PageType, this.categoryData.label);
-        }
-        else {
-          this.pageAttacher.attachToTile(page, this.categoryData.name, this.categoryData.label);
+          new ActionListManager().handleDynamicForms(page);
+        } else if (this.categoryData.name == "Modules") {
+          this.pageAttacher.attachToTile(
+            page,
+            page.PageType,
+            this.categoryData.label
+          );
+        } else {
+          this.pageAttacher.attachToTile(
+            page,
+            this.categoryData.name,
+            this.categoryData.label
+          );
         }
       });
 
@@ -115,7 +121,7 @@ export class CategoryView {
           new Alert("error", i18n.t("messages.error.select_tile"));
           return;
         }
-        console.log('toggle');
+        console.log("toggle");
         this.pageCreationService.handleWebLinks();
       }
     });

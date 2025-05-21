@@ -51,7 +51,7 @@ export class TileProperties {
 
   private setOpacityProperties(): void {
     const tileBgImageAttrUrl = this.tileAttributes?.BGImageUrl;
-    const tileBgImageAttrOpacity = this.tileAttributes?.Opacity;
+    const tileBgImageAttrOpacity = this.tileAttributes?.Opacity || 0;
     const bgImageStyle =
       this.selectedComponent.getStyle()?.["background-image"];
     let tileBGImage = "";
@@ -83,12 +83,8 @@ export class TileProperties {
           const tileImageSection = opactySection.querySelector(
             "#tile-img-container"
           ) as HTMLElement;
-          tileImageSection.style.display = "flex";
-          const imageThumbnail = tileImageSection.querySelector(
-            ".tile-img-thumbnail"
-          ) as HTMLImageElement;
-          if (imageThumbnail) {
-            imageThumbnail.src = tileBgImageAttrUrl;
+          if (tileImageSection) {
+            tileImageSection.style.display = "flex";
           }
           this.selectedComponent.addStyle({
             "background-color": `rgba(0, 0, 0, ${
@@ -98,12 +94,17 @@ export class TileProperties {
         }
       }
     } else {
-      const slider = document.querySelector("#slider-wrapper") as HTMLElement;
       const tileImageSection = document.querySelector(
         "#tile-img-container"
       ) as HTMLElement;
-      slider.style.display = "none";
-      tileImageSection.style.display = "none";
+      if (tileImageSection) {
+        tileImageSection.style.display = "none";
+      }
+
+      const slider = document.querySelector("#slider-wrapper") as HTMLElement;
+      if (slider) {
+        slider.style.display = "none";
+      } 
     }
   }
 

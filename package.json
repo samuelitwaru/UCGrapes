@@ -1,7 +1,7 @@
 {
-    "name": "typescript-bookstore",
+    "name": "app-toolbox",
     "version": "1.0.0",
-    "description": "Object-oriented TypeScript bookstore project",
+    "description": "A Genexus library for building mobile app designs",
     "main": "index.js",
     "scripts": {
         "start": "webpack serve --mode development",
@@ -10,9 +10,9 @@
         "dev": "webpack --mode production --watch"
     },
     "keywords": [
-        "typescript",
-        "bookstore",
-        "oop"
+        "toolbox",
+        "genexus",
+        "appbuilder"
     ],
     "author": "",
     "license": "MIT",

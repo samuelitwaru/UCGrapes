@@ -1,12 +1,12 @@
-import { ActionListController } from "../../controls/ActionListController";
+import { ActionListManager } from "../../controls/ActionListManager";
 
 export class MenuItemManager {
   private menuContainer: HTMLElement;
-  private controller: ActionListController;
+  private controller: ActionListManager;
   private activeSubmenu: HTMLElement | null = null;
   private hoverTimeout: number | null = null;
 
-  constructor(menuContainer: HTMLElement, controller: ActionListController) {
+  constructor(menuContainer: HTMLElement, controller: ActionListManager) {
     this.menuContainer = menuContainer;
     this.controller = controller;
   }
@@ -59,9 +59,8 @@ export class MenuItemManager {
       menuItem.addEventListener("mouseenter", (e) => {
         e.stopPropagation();
         if (!menuItem.classList.contains("sub-menu-item")) {
-          const allExpandableItems = this.menuContainer.querySelectorAll(
-            ".expandable"
-          );
+          const allExpandableItems =
+            this.menuContainer.querySelectorAll(".expandable");
 
           const subMenuContainer = this.menuContainer.querySelectorAll(
             ".sub-menu-container"
@@ -76,13 +75,14 @@ export class MenuItemManager {
     return menuItem;
   }
 
-
   async showSubMenu(type: string, menuItem: HTMLElement) {
     const parentDoc = document.querySelector(".frame-list");
     const parentDocRect = parentDoc?.getBoundingClientRect();
 
     let subMenuContainer: HTMLElement;
-    const existingSubmenu = this.menuContainer.querySelector(".sub-menu-container") as HTMLElement;
+    const existingSubmenu = this.menuContainer.querySelector(
+      ".sub-menu-container"
+    ) as HTMLElement;
     if (existingSubmenu) {
       subMenuContainer = existingSubmenu;
       subMenuContainer.innerHTML = "";
@@ -93,17 +93,16 @@ export class MenuItemManager {
     }
     const itemRect = menuItem.getBoundingClientRect();
     const parentMenuItemRect = this.menuContainer.getBoundingClientRect();
-    
+
     const topPosition = itemRect.top - parentMenuItemRect.top;
     subMenuContainer.style.top = `${topPosition}px`;
 
     const menuWidth = 180; // The width of the submenu container
-    
-    if (parentDocRect && 
-        (itemRect.right + menuWidth > parentDocRect.right)) {
-        subMenuContainer.style.left = "-178px";
+
+    if (parentDocRect && itemRect.right + menuWidth > parentDocRect.right) {
+      subMenuContainer.style.left = "-178px";
     } else {
-        subMenuContainer.style.left = "100%";
+      subMenuContainer.style.left = "100%";
     }
 
     const menuHeader = document.createElement("div");
@@ -117,10 +116,9 @@ export class MenuItemManager {
     `;
     menuHeader.appendChild(searchContainer);
 
-    if(type !== 'CallToActions') {
+    if (type !== "CallToActions") {
       subMenuContainer.appendChild(menuHeader);
     }
-
 
     const submenuList = document.createElement("ul");
     submenuList.classList.add("menu-list");
@@ -166,9 +164,10 @@ export class MenuItemManager {
 
     subMenuContainer.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      const isMenuItem = target.classList.contains('menu-item') || 
-                         target.closest('.menu-item:not(.no-items)');
-      
+      const isMenuItem =
+        target.classList.contains("menu-item") ||
+        target.closest(".menu-item:not(.no-items)");
+
       if (!isMenuItem) {
         e.stopPropagation();
       }
@@ -179,32 +178,32 @@ export class MenuItemManager {
     const searchInput = searchContainer.querySelector(
       ".search-input"
     ) as HTMLInputElement;
-    
+
     searchInput?.addEventListener("input", (e) => {
       const searchTerm = (e.target as HTMLInputElement).value;
       const menuItems = Array.from(
         submenuList.querySelectorAll(".menu-item:not(.no-items)")
       ) as HTMLElement[];
-      
+
       const existingNoItems = submenuList.querySelector(".no-items");
       if (existingNoItems) {
         existingNoItems.remove();
       }
-      
+
       const filteredItems = this.controller.filterMenuItems(
         menuItems,
         searchTerm
       );
-      
-      menuItems.forEach(item => {
+
+      menuItems.forEach((item) => {
         item.style.display = "flex";
       });
-      
+
       if (searchTerm.trim() !== "") {
-        menuItems.forEach(item => {
+        menuItems.forEach((item) => {
           item.style.display = filteredItems.includes(item) ? "flex" : "none";
         });
-        
+
         if (filteredItems.length === 0) {
           const noItemsMessage = document.createElement("li");
           noItemsMessage.classList.add("menu-item", "no-items");
@@ -215,11 +214,11 @@ export class MenuItemManager {
         }
       }
     });
-    
+
     searchInput?.addEventListener("click", (e) => {
       e.stopPropagation();
     });
-    
+
     searchInput?.addEventListener("focus", (e) => {
       e.stopPropagation();
     });

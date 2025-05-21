@@ -1,5 +1,5 @@
 import { AppConfig } from "../../../../AppConfig";
-import { InfoSectionController } from "../../../../controls/InfoSectionController";
+import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { i18n } from "../../../../i18n/i18n";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { Media } from "../../../../types";
@@ -84,11 +84,11 @@ export class ImageUpload {
       const tileElement = selectedComponent.getStyle();
       // Retrieve the background image
       const backgroundImage = tileElement["background-image"];
-     // console.log("Background image:", backgroundImage);
+      // console.log("Background image:", backgroundImage);
 
       if (backgroundImage !== undefined) {
         const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
-      //  console.log("Background image exists:", dataUrl);
+        //  console.log("Background image exists:", dataUrl);
         this.displayImageEditor(dataUrl);
         this.createFileListElement();
         this.loadMediaFiles(); // Loa
@@ -118,7 +118,7 @@ export class ImageUpload {
         </div>
         `;
     this.setupDragAndDrop(uploadArea);
-   // console.log("uploadArea");
+    // console.log("uploadArea");
     this.modalContent.appendChild(uploadArea);
 
     // Create the modal footer
@@ -154,7 +154,7 @@ export class ImageUpload {
     cancelBtn.innerText = "Cancel";
     cancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
-     // console.log("Cancel button clicked");
+      // console.log("Cancel button clicked");
       const modal = this.modalContent.parentElement as HTMLElement;
       modal.style.display = "none";
       modal?.remove();
@@ -175,7 +175,7 @@ export class ImageUpload {
 
     // Add a loading indicator initially
     const loadingElement = document.createElement("div");
-    loadingElement.id = 'loading-media'
+    loadingElement.id = "loading-media";
     loadingElement.className = "loading-media";
     loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
@@ -186,7 +186,7 @@ export class ImageUpload {
   private async loadMediaFiles() {
     try {
       const media = await this.toolboxService.getMediaFiles();
-     // console.log("files", media);
+      // console.log("files", media);
       if (this.fileListElement) {
         this.fileListElement.innerHTML = "";
 
@@ -202,7 +202,9 @@ export class ImageUpload {
             );
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
-          const loadingElement = document.getElementById('loading-media') as HTMLElement
+          const loadingElement = document.getElementById(
+            "loading-media"
+          ) as HTMLElement;
           if (loadingElement) {
             loadingElement.style.display = "none";
           }
@@ -227,14 +229,14 @@ export class ImageUpload {
     fileInput.style.display = "none";
     uploadArea.appendChild(fileInput);
 
-      // Make the upload text clickable
-      const uploadText = uploadArea.querySelector('.upload-text');
-      if (uploadText) {
-        uploadText.addEventListener("click", (e) => {
-          e.stopPropagation();
-          fileInput.click();
-        });
-      }
+    // Make the upload text clickable
+    const uploadText = uploadArea.querySelector(".upload-text");
+    if (uploadText) {
+      uploadText.addEventListener("click", (e) => {
+        e.stopPropagation();
+        fileInput.click();
+      });
+    }
 
     // Prevent the file input from being triggered unintentionally
     uploadArea.addEventListener("click", (e) => {
@@ -272,7 +274,7 @@ export class ImageUpload {
   }
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
-   // console.log("filearray", fileArray);
+    // console.log("filearray", fileArray);
     for (const file of fileArray) {
       if (file.type.startsWith("image/")) {
         try {
@@ -361,7 +363,7 @@ export class ImageUpload {
     if (selectedComponent) {
       const parentRow = selectedComponent.parent().parent(); // Get the parent row
       const numberOfTiles = parentRow.find(".template-wrapper").length || 1; // Count the number of tiles
-      
+
       if (numberOfTiles === 1) {
         aspectRatio = 2;
       } else if (numberOfTiles === 2) {
@@ -370,278 +372,276 @@ export class ImageUpload {
         aspectRatio = 1;
       }
     }
-      // Adjust the cropper dimensions based on the aspect ratio
-      img.onload = () => {
-        const frameHeight = 300; // Fixed height for the cropper
-        const frameWidth = frameHeight * aspectRatio; // Calculate width based on aspect ratio
-        frame.style.width = `${frameWidth}px`;
-        frame.style.height = `${frameHeight}px`;
-        frame.style.left = `${(imageContainer.offsetWidth - frameWidth) / 2}px`; // Center horizontally
-        frame.style.top = `${
-          (imageContainer.offsetHeight - frameHeight) / 2
-        }px`; // Center vertically
-        initializeOverlay();
-      };
+    // Adjust the cropper dimensions based on the aspect ratio
+    img.onload = () => {
+      const frameHeight = 300; // Fixed height for the cropper
+      const frameWidth = frameHeight * aspectRatio; // Calculate width based on aspect ratio
+      frame.style.width = `${frameWidth}px`;
+      frame.style.height = `${frameHeight}px`;
+      frame.style.left = `${(imageContainer.offsetWidth - frameWidth) / 2}px`; // Center horizontally
+      frame.style.top = `${(imageContainer.offsetHeight - frameHeight) / 2}px`; // Center vertically
+      initializeOverlay();
+    };
 
-      imageContainer.appendChild(img);
-      imageContainer.appendChild(frame);
+    imageContainer.appendChild(img);
+    imageContainer.appendChild(frame);
 
-      // Add a draggable frame
-      //const zoomLevel = parseFloat(zoomSlider.value);
+    // Add a draggable frame
+    //const zoomLevel = parseFloat(zoomSlider.value);
 
-      const rect = imageContainer.getBoundingClientRect();
-      //console.log(rect.x);
+    const rect = imageContainer.getBoundingClientRect();
+    //console.log(rect.x);
 
-      // Add resize handles
-      const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
-      handles.forEach((handle) => {
-        const handleDiv = document.createElement("div");
-        handleDiv.className = `resize-handle ${handle}`;
-        handleDiv.style.position = "absolute";
-        handleDiv.style.width = "10px";
-        handleDiv.style.height = "10px";
-        handleDiv.style.backgroundColor = "#5068a8";
-        handleDiv.style.zIndex = "11";
+    // Add resize handles
+    const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
+    handles.forEach((handle) => {
+      const handleDiv = document.createElement("div");
+      handleDiv.className = `resize-handle ${handle}`;
+      handleDiv.style.position = "absolute";
+      handleDiv.style.width = "10px";
+      handleDiv.style.height = "10px";
+      handleDiv.style.backgroundColor = "#5068a8";
+      handleDiv.style.zIndex = "11";
 
-        // Position the handles
-        if (handle.includes("top")) handleDiv.style.top = "-5px";
-        if (handle.includes("bottom")) handleDiv.style.bottom = "-5px";
-        if (handle.includes("left")) handleDiv.style.left = "-5px";
-        if (handle.includes("right")) handleDiv.style.right = "-5px";
+      // Position the handles
+      if (handle.includes("top")) handleDiv.style.top = "-5px";
+      if (handle.includes("bottom")) handleDiv.style.bottom = "-5px";
+      if (handle.includes("left")) handleDiv.style.left = "-5px";
+      if (handle.includes("right")) handleDiv.style.right = "-5px";
 
-        frame.appendChild(handleDiv);
-        // Add resize logic
-        handleDiv.addEventListener("mousedown", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+      frame.appendChild(handleDiv);
+      // Add resize logic
+      handleDiv.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-          const startX = e.clientX;
-          const startY = e.clientY;
-          const startWidth = frame.offsetWidth;
-          const startHeight = frame.offsetHeight;
-          const startLeft = frame.offsetLeft;
-          const startTop = frame.offsetTop;
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startWidth = frame.offsetWidth;
+        const startHeight = frame.offsetHeight;
+        const startLeft = frame.offsetLeft;
+        const startTop = frame.offsetTop;
 
-          const onMouseMove = (moveEvent: MouseEvent) => {
-            const dx = moveEvent.clientX - startX;
-            const dy = moveEvent.clientY - startY;
+        const onMouseMove = (moveEvent: MouseEvent) => {
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
 
-            if (handle.includes("right")) {
-              frame.style.width = `${startWidth + dx}px`;
-            }
-            if (handle.includes("bottom")) {
-              frame.style.height = `${startHeight + dy}px`;
-            }
-            if (handle.includes("left")) {
-              frame.style.width = `${startWidth - dx}px`;
-              frame.style.left = `${startLeft + dx}px`;
-            }
-            if (handle.includes("top")) {
-              frame.style.height = `${startHeight - dy}px`;
-              frame.style.top = `${startTop + dy}px`;
-            }
-
-            // Update the overlay positions
-            initializeOverlay();
-          };
-          const onMouseUp = () => {
-            document.removeEventListener("mousemove", onMouseMove);
-            document.removeEventListener("mouseup", onMouseUp);
-          };
-
-          document.addEventListener("mousemove", onMouseMove);
-          document.addEventListener("mouseup", onMouseUp);
-        });
-      });
-
-      let isDragging = false;
-      let offsetX = 0;
-      let offsetY = 0;
-
-      frame.addEventListener("mousedown", (e) => {
-        e.preventDefault(); // Prevent default behavior (e.g., text selection)
-        e.stopPropagation(); // Stop event propagation
-        isDragging = true;
-        offsetX = e.clientX - frame.getBoundingClientRect().left;
-        offsetY = e.clientY - frame.getBoundingClientRect().top;
-        document.body.style.userSelect = "none";
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-          e.preventDefault();
-          e.stopPropagation();
-          const parentRect = imageContainer.getBoundingClientRect();
-
-          let newLeft = e.clientX - offsetX - parentRect.left;
-          let newTop = e.clientY - offsetY - parentRect.top;
-
-          // Ensure the frame stays within the image container
-          if (newLeft < 0) newLeft = 0;
-          if (newLeft + frame.offsetWidth > parentRect.width) {
-            newLeft = parentRect.width - frame.offsetWidth;
+          if (handle.includes("right")) {
+            frame.style.width = `${startWidth + dx}px`;
+          }
+          if (handle.includes("bottom")) {
+            frame.style.height = `${startHeight + dy}px`;
+          }
+          if (handle.includes("left")) {
+            frame.style.width = `${startWidth - dx}px`;
+            frame.style.left = `${startLeft + dx}px`;
+          }
+          if (handle.includes("top")) {
+            frame.style.height = `${startHeight - dy}px`;
+            frame.style.top = `${startTop + dy}px`;
           }
 
-          if (newTop < 0) newTop = 0;
-          if (newTop + frame.offsetHeight > parentRect.height) {
-            newTop = parentRect.height - frame.offsetHeight;
-          }
+          // Update the overlay positions
+          initializeOverlay();
+        };
+        const onMouseUp = () => {
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onMouseUp);
+        };
 
-          frame.style.left = `${newLeft}px`;
-          frame.style.top = `${newTop}px`;
-          // Update the grey overlay positions
-          overlayTop.style.height = `${newTop}px`;
-          overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
-          overlayBottom.style.height = `${
-            parentRect.height - (newTop + frame.offsetHeight)
-          }px`;
-          overlayLeft.style.top = `${newTop}px`;
-          overlayLeft.style.height = `${frame.offsetHeight}px`;
-          overlayLeft.style.width = `${newLeft}px`;
-          overlayRight.style.top = `${newTop}px`;
-          overlayRight.style.height = `${frame.offsetHeight}px`;
-          overlayRight.style.left = `${newLeft + frame.offsetWidth}px`;
-          overlayRight.style.width = `${
-            parentRect.width - (newLeft + frame.offsetWidth)
-          }px`;
-        }
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
       });
+    });
 
-      document.addEventListener("mouseup", (e) => {
-        if (isDragging) {
-          e.preventDefault(); // Prevent default behavior
-          e.stopPropagation(); // Stop event propagation
-          isDragging = false;
-          document.body.style.userSelect = "auto"; // Re-enable text selection globally
-        }
-      });
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
 
-      // Add grey overlay outside the frame
-      const overlayTop = document.createElement("div");
-      const overlayBottom = document.createElement("div");
-      const overlayLeft = document.createElement("div");
-      const overlayRight = document.createElement("div");
+    frame.addEventListener("mousedown", (e) => {
+      e.preventDefault(); // Prevent default behavior (e.g., text selection)
+      e.stopPropagation(); // Stop event propagation
+      isDragging = true;
+      offsetX = e.clientX - frame.getBoundingClientRect().left;
+      offsetY = e.clientY - frame.getBoundingClientRect().top;
+      document.body.style.userSelect = "none";
+    });
 
-      const overlayStyle = {
-        position: "absolute",
-        backgroundColor: "rgba(0, 0, 0, 0.7)", // 60% grey opacity
-        zIndex: "5", // Ensure the overlays are below the frame
-        pointerEvents: "none", // Allow interactions with the frame
-      };
-
-      imageContainer.appendChild(frame);
-
-      const initializeOverlay = () => {
-        const frameRect = frame.getBoundingClientRect();
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        e.stopPropagation();
         const parentRect = imageContainer.getBoundingClientRect();
 
-        Object.assign(overlayTop.style, overlayStyle, {
-          top: "0",
-          left: "0",
-          width: "100%",
-          height: `${frameRect.top - parentRect.top}px`,
-        });
+        let newLeft = e.clientX - offsetX - parentRect.left;
+        let newTop = e.clientY - offsetY - parentRect.top;
 
-        Object.assign(overlayBottom.style, overlayStyle, {
-          top: `${frameRect.bottom - parentRect.top}px`,
-          left: "0",
-          width: "100%",
-          height: `${parentRect.bottom - frameRect.bottom}px`,
-        });
-
-        Object.assign(overlayLeft.style, overlayStyle, {
-          top: `${frameRect.top - parentRect.top}px`,
-          left: "0",
-          width: `${frameRect.left - parentRect.left}px`,
-          height: `${frameRect.height}px`,
-        });
-
-        Object.assign(overlayRight.style, overlayStyle, {
-          top: `${frameRect.top - parentRect.top}px`,
-          left: `${frameRect.right - parentRect.left}px`,
-          width: `${parentRect.right - frameRect.right}px`,
-          height: `${frameRect.height}px`,
-        });
-      };
-      // Defer overlay initialization to ensure the frame is fully rendered
-      setTimeout(() => {
-        initializeOverlay();
-
-        // Add the overlays to the image container
-        imageContainer.appendChild(overlayTop);
-        imageContainer.appendChild(overlayBottom);
-        imageContainer.appendChild(overlayLeft);
-        imageContainer.appendChild(overlayRight);
-      }, 0);
-
-      // Create a wrapper for the slider and buttons
-      const modalFooter = document.createElement("div");
-      modalFooter.className = "modal-footer";
-      // Add the slider to adjust overlay opacity
-      const opacitySlider = document.createElement("input");
-      opacitySlider.type = "range";
-      opacitySlider.min = "0";
-      opacitySlider.max = "100";
-      opacitySlider.step = "1";
-      opacitySlider.value = "0"; // Default 60% opacity
-      opacitySlider.style.width = "40%";
-
-      opacitySlider.addEventListener("input", () => {
-        const opacityValue = parseInt(opacitySlider.value, 10) / 100;
-
-        opacityLabel.innerText = `${opacitySlider.value}%`;
-        const selectedComponent = (globalThis as any).selectedComponent;
-        if (!selectedComponent) return;
-
-        selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacityValue})`;
-        selectedComponent.getEl().style.backgroundImage = `url(${img.src})`;
-        selectedComponent.getEl().style.backgroundSize = "cover";
-
-        const pageData = (globalThis as any).pageData;
-
-        if (pageData.PageType === "Information") {
-          const infoSectionController = new InfoSectionController();
-          infoSectionController.updateInfoTileAttributes(
-            selectedComponent.parent().parent().getId(),
-            selectedComponent.parent().getId(),
-            "Opacity",
-            parseInt(opacitySlider.value)
-          );
-        } else {
-          (globalThis as any).tileMapper.updateTile(
-            selectedComponent.parent().getId(),
-            "Opacity",
-            opacitySlider.value
-          );
+        // Ensure the frame stays within the image container
+        if (newLeft < 0) newLeft = 0;
+        if (newLeft + frame.offsetWidth > parentRect.width) {
+          newLeft = parentRect.width - frame.offsetWidth;
         }
 
-        img.style.opacity = `1`;
-        img.style.filter = `brightness(${1 - opacityValue})`;
+        if (newTop < 0) newTop = 0;
+        if (newTop + frame.offsetHeight > parentRect.height) {
+          newTop = parentRect.height - frame.offsetHeight;
+        }
+
+        frame.style.left = `${newLeft}px`;
+        frame.style.top = `${newTop}px`;
+        // Update the grey overlay positions
+        overlayTop.style.height = `${newTop}px`;
+        overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
+        overlayBottom.style.height = `${
+          parentRect.height - (newTop + frame.offsetHeight)
+        }px`;
+        overlayLeft.style.top = `${newTop}px`;
+        overlayLeft.style.height = `${frame.offsetHeight}px`;
+        overlayLeft.style.width = `${newLeft}px`;
+        overlayRight.style.top = `${newTop}px`;
+        overlayRight.style.height = `${frame.offsetHeight}px`;
+        overlayRight.style.left = `${newLeft + frame.offsetWidth}px`;
+        overlayRight.style.width = `${
+          parentRect.width - (newLeft + frame.offsetWidth)
+        }px`;
+      }
+    });
+
+    document.addEventListener("mouseup", (e) => {
+      if (isDragging) {
+        e.preventDefault(); // Prevent default behavior
+        e.stopPropagation(); // Stop event propagation
+        isDragging = false;
+        document.body.style.userSelect = "auto"; // Re-enable text selection globally
+      }
+    });
+
+    // Add grey overlay outside the frame
+    const overlayTop = document.createElement("div");
+    const overlayBottom = document.createElement("div");
+    const overlayLeft = document.createElement("div");
+    const overlayRight = document.createElement("div");
+
+    const overlayStyle = {
+      position: "absolute",
+      backgroundColor: "rgba(0, 0, 0, 0.7)", // 60% grey opacity
+      zIndex: "5", // Ensure the overlays are below the frame
+      pointerEvents: "none", // Allow interactions with the frame
+    };
+
+    imageContainer.appendChild(frame);
+
+    const initializeOverlay = () => {
+      const frameRect = frame.getBoundingClientRect();
+      const parentRect = imageContainer.getBoundingClientRect();
+
+      Object.assign(overlayTop.style, overlayStyle, {
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: `${frameRect.top - parentRect.top}px`,
       });
 
-      // Create a label to display the opacity percentage
-      const opacityLabel = document.createElement("span");
-      opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
-      opacityLabel.style.fontSize = "14px";
-      opacityLabel.style.color = "#333";
+      Object.assign(overlayBottom.style, overlayStyle, {
+        top: `${frameRect.bottom - parentRect.top}px`,
+        left: "0",
+        width: "100%",
+        height: `${parentRect.bottom - frameRect.bottom}px`,
+      });
 
-      const sliderWrapper = document.createElement("div");
-      sliderWrapper.style.display = "flex";
-      sliderWrapper.style.alignItems = "center";
-      sliderWrapper.style.gap = "10px";
+      Object.assign(overlayLeft.style, overlayStyle, {
+        top: `${frameRect.top - parentRect.top}px`,
+        left: "0",
+        width: `${frameRect.left - parentRect.left}px`,
+        height: `${frameRect.height}px`,
+      });
 
-      sliderWrapper.appendChild(opacitySlider);
-      sliderWrapper.appendChild(opacityLabel);
+      Object.assign(overlayRight.style, overlayStyle, {
+        top: `${frameRect.top - parentRect.top}px`,
+        left: `${frameRect.right - parentRect.left}px`,
+        width: `${parentRect.right - frameRect.right}px`,
+        height: `${frameRect.height}px`,
+      });
+    };
+    // Defer overlay initialization to ensure the frame is fully rendered
+    setTimeout(() => {
+      initializeOverlay();
 
-      modalFooter.appendChild(sliderWrapper);
+      // Add the overlays to the image container
+      imageContainer.appendChild(overlayTop);
+      imageContainer.appendChild(overlayBottom);
+      imageContainer.appendChild(overlayLeft);
+      imageContainer.appendChild(overlayRight);
+    }, 0);
 
-      this.modalContent.appendChild(modalFooter);
+    // Create a wrapper for the slider and buttons
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "modal-footer";
+    // Add the slider to adjust overlay opacity
+    const opacitySlider = document.createElement("input");
+    opacitySlider.type = "range";
+    opacitySlider.min = "0";
+    opacitySlider.max = "100";
+    opacitySlider.step = "1";
+    opacitySlider.value = "0"; // Default 60% opacity
+    opacitySlider.style.width = "40%";
 
-      if (uploadArea) {
-        uploadArea.appendChild(imageContainer);
-        uploadArea.appendChild(modalFooter);
+    opacitySlider.addEventListener("input", () => {
+      const opacityValue = parseInt(opacitySlider.value, 10) / 100;
+
+      opacityLabel.innerText = `${opacitySlider.value}%`;
+      const selectedComponent = (globalThis as any).selectedComponent;
+      if (!selectedComponent) return;
+
+      selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacityValue})`;
+      selectedComponent.getEl().style.backgroundImage = `url(${img.src})`;
+      selectedComponent.getEl().style.backgroundSize = "cover";
+
+      const pageData = (globalThis as any).pageData;
+
+      if (pageData.PageType === "Information") {
+        const infoSectionManager = new InfoSectionManager();
+        infoSectionManager.updateInfoTileAttributes(
+          selectedComponent.parent().parent().getId(),
+          selectedComponent.parent().getId(),
+          "Opacity",
+          parseInt(opacitySlider.value)
+        );
+      } else {
+        (globalThis as any).tileMapper.updateTile(
+          selectedComponent.parent().getId(),
+          "Opacity",
+          opacitySlider.value
+        );
       }
-  //  }
+
+      img.style.opacity = `1`;
+      img.style.filter = `brightness(${1 - opacityValue})`;
+    });
+
+    // Create a label to display the opacity percentage
+    const opacityLabel = document.createElement("span");
+    opacityLabel.innerText = `${opacitySlider.value}%`; // Set initial value
+    opacityLabel.style.fontSize = "14px";
+    opacityLabel.style.color = "#333";
+
+    const sliderWrapper = document.createElement("div");
+    sliderWrapper.style.display = "flex";
+    sliderWrapper.style.alignItems = "center";
+    sliderWrapper.style.gap = "10px";
+
+    sliderWrapper.appendChild(opacitySlider);
+    sliderWrapper.appendChild(opacityLabel);
+
+    modalFooter.appendChild(sliderWrapper);
+
+    this.modalContent.appendChild(modalFooter);
+
+    if (uploadArea) {
+      uploadArea.appendChild(imageContainer);
+      uploadArea.appendChild(modalFooter);
+    }
+    //  }
   }
 
   public async saveCroppedImage(
@@ -721,7 +721,7 @@ export class ImageUpload {
       tileElement.style.backgroundImage = `url(${croppedDataUrl})`;
       tileElement.style.backgroundSize = "cover";
       tileElement.style.backgroundPosition = "center";
-     // console.log("Cropped image added to the tile.");
+      // console.log("Cropped image added to the tile.");
     }
     if (this.fileListElement) {
       this.displayMediaFile(this.fileListElement, newMedia);
@@ -733,7 +733,7 @@ export class ImageUpload {
       modal.remove();
     }
 
-   // console.log("Cropped image saved successfully:", newMedia.MediaName);
+    // console.log("Cropped image saved successfully:", newMedia.MediaName);
   }
   catch(error: any) {
     console.error("Error saving cropped image:", error);
@@ -858,7 +858,7 @@ export class ImageUpload {
     checkButton.innerHTML = "✔"; // Check icon
     checkButton.addEventListener("click", () => {
       // Handle image selection logic
-    //  console.log("Image selected:", file.MediaUrl);
+      //  console.log("Image selected:", file.MediaUrl);
     });
 
     // Add the delete button
@@ -868,7 +868,7 @@ export class ImageUpload {
     deleteButton.addEventListener("click", () => {
       // Remove the image from the grid
       fileItem.remove();
-     // console.log("Image deleted:", file.MediaUrl);
+      // console.log("Image deleted:", file.MediaUrl);
     });
 
     // Append buttons to the action buttons container

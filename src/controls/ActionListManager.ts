@@ -8,7 +8,7 @@ import { AppVersionManager } from "./versions/AppVersionManager";
 import { i18n } from "../i18n/i18n";
 import { MenuItem } from "../types";
 
-export class ActionListController {
+export class ActionListManager {
   private toolboxService: ToolBoxService;
   private appVersionManager: AppVersionManager;
   private pageAttacher: PageAttacher;
@@ -31,20 +31,20 @@ export class ActionListController {
 
     const secondCategory: MenuItem[] = [];
 
-      secondCategory.push({
-        id: "list-form",
-        name: "DynamicForm",
-        label: i18n.t("tile.forms"),
-        expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Content"),
-      });
-      secondCategory.push({
-        id: "list-module",
-        name: "Modules",
-        label: i18n.t("tile.modules"),
-        expandable: true,
-        action: () => this.getSubMenuItems(categoryData, "Modules"),
-      });
+    secondCategory.push({
+      id: "list-form",
+      name: "DynamicForm",
+      label: i18n.t("tile.forms"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, "Content"),
+    });
+    secondCategory.push({
+      id: "list-module",
+      name: "Modules",
+      label: i18n.t("tile.modules"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, "Modules"),
+    });
     // }
 
     console.log("categoryData", categoryData);
@@ -62,7 +62,7 @@ export class ActionListController {
       expandable: true,
       action: () => this.getSubMenuItems(categoryData, "CallToActions"),
     });
-  
+
     return [
       [
         {
@@ -138,12 +138,12 @@ export class ActionListController {
     } else if (type === "Modules") {
       this.pageAttacher.attachToTile(item, item.PageType, item.PageName);
     } else if (type === "CtaEmail") {
-      this.pageCreationService.handleEmail()
+      this.pageCreationService.handleEmail();
     } else if (type === "CtaPhone") {
-      this.pageCreationService.handlePhone()
+      this.pageCreationService.handlePhone();
     } else if (type === "CtaWebLink") {
-    console.log('CtaWebLink handle');
-      this.pageCreationService.handleWebLinks()
+      console.log("CtaWebLink handle");
+      this.pageCreationService.handleWebLinks();
     } else {
       this.pageAttacher.attachToTile(item, type, item.PageName);
     }
@@ -154,22 +154,30 @@ export class ActionListController {
     if (!selectedComponent) return;
     const tileTitle = selectedComponent.find(".tile-title")[0];
     if (tileTitle) tileTitle.components(form.PageName);
-    tileTitle.addAttributes({'title': form.PageName})
+    tileTitle.addAttributes({ title: form.PageName });
 
     const tileId = selectedComponent.parent().getId();
     const rowId = selectedComponent.parent().parent().getId();
 
     const version = (globalThis as any).activeVersion;
-    let childPage = version?.Pages.find((page:any)=>{
-      if(page.PageType=="DynamicForm") console.log('page', page)
-      return page.PageType=="DynamicForm" && page.PageLinkStructure.WWPFormId == form.PageId
-    })
+    let childPage = version?.Pages.find((page: any) => {
+      if (page.PageType == "DynamicForm") console.log("page", page);
+      return (
+        page.PageType == "DynamicForm" &&
+        page.PageLinkStructure.WWPFormId == form.PageId
+      );
+    });
     if (!childPage) {
       const appVersion = await this.appVersionManager.getActiveVersion();
-      childPage = await this.toolboxService.createLinkPage(appVersion.AppVersionId, form.PageName, '', form.PageId)
-      childPage = childPage.MenuPage
+      childPage = await this.toolboxService.createLinkPage(
+        appVersion.AppVersionId,
+        form.PageName,
+        "",
+        form.PageId
+      );
+      childPage = childPage.MenuPage;
     }
-    
+
     const formUrl = `${baseURL}/utoolboxdynamicform.aspx?WWPFormId=${form.PageId}&WWPDynamicFormMode=DSP&DefaultFormType=&WWPFormType=0`;
     const updates = [
       ["Text", form.PageName],
@@ -186,7 +194,6 @@ export class ActionListController {
       rowId,
       tileId
     );
-
 
     new ChildEditor(childPage?.PageId, childPage).init(tileAttributes);
   }

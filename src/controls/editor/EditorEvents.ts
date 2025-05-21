@@ -336,7 +336,6 @@ export class EditorEvents {
             this.uiManager.clearAllMenuContainers();
             //this.uiManager.resetTitleFromDOM();
 
-            
             (globalThis as any).eventTarget = targetElement;
 
             this.uiManager.handleTileManager(e);

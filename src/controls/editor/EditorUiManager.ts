@@ -335,7 +335,7 @@ export class EditorUIManager {
       });
 
       frame.classList.remove("active-editor");
-      
+
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");
 

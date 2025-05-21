@@ -65,7 +65,7 @@ export class SingleImageFile {
     addImage.title = "Replace image";
     addImage.style.width = "33px";
     addImage.style.height = "33px";
-    addImage.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/rotatenew.png')";
+    addImage.style.backgroundImage = "url('/Resources/UCGrapes/public/images/rotatenew.png')";
     addImage.style.backgroundSize = "contain";
     addImage.style.backgroundRepeat = "no-repeat";
     addImage.style.backgroundPosition = "center";
@@ -86,6 +86,7 @@ export class SingleImageFile {
     deleteSpan.style.width = "33px";
     deleteSpan.style.height = "33px";
     deleteSpan.style.fontSize = "16px";
+    deleteSpan.style.color = "#5068a8";
     deleteSpan.style.display = "flex";
     deleteSpan.style.alignItems = "center";
     deleteSpan.style.justifyContent = "center";
@@ -131,7 +132,7 @@ export class SingleImageFile {
       });
 
       // Show check only on this image
-      statusCheck.style.backgroundImage = "url('/Resources/UCGrapes1/src/images/check.png')";
+      statusCheck.style.backgroundImage = "url('/Resources/UCGrapes/public/images/check.png')";
       statusCheck.style.backgroundSize = "contain";
       statusCheck.style.backgroundRepeat = "no-repeat";
       statusCheck.style.backgroundPosition = "center";

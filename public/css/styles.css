@@ -1676,36 +1676,8 @@ div#cta-selected-actions {
   cursor: pointer;
   /* transition: border 0.3s ease; */
 }
-.file-item::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 30%; /* Adjust the height of the gradient */
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent); /* Dark grey gradient */
-  pointer-events: none; /* Ensure the gradient does not interfere with interactions */
-  z-index: 1; /* Place the gradient above the image */
-  opacity: 0; /* Initially hidden */
-  transition: opacity 0.3s ease; /* Smooth fade-in effect */
-}
 .file-item:hover::after {
   opacity: 1; /* Show the gradient on hover */
-}
-
-.action-column {
-  display: flex;
-  flex-direction: column; /* Stack items vertically */
-  position: absolute; /* Position the action-column over the image */
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust for centering */
-  gap: 10px; /* Add spacing between buttons */
-  z-index: 2; /* Ensure the action-column is above the image */
-  opacity: 0; /* Initially hidden */
-  transition: opacity 0.3s ease; /* Smooth fade-in effect */
-  margin-top: 15px;
-  margin-left: 25px;
 }
 .file-item:hover .action-column {
   opacity: 1; /* Show the action-column on hover */
@@ -1717,44 +1689,6 @@ div#cta-selected-actions {
   filter: blur(4px); /* Blur the image on hover */
   transform: scale(1.05); /* Slight zoom effect */
   transition: all 0.3s ease;
-}
-
-.file-item .action-button {
-  width: 40px;
-  height: 40px;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.file-item:hover .action-buttons {
-  opacity: 1; /* Show buttons on hover */
-}
-
-.file-item .action-button {
-  width: 40px;
-  height: 40px;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.file-item .action-button:hover {
-  background-color: #28a745; /* Green background on hover */
 }
 
 .file-item .delete-button:hover {
@@ -3258,7 +3192,7 @@ input[type="range"]::-webkit-slider-thumb {
   justify-content: center;
   background: rgba(255, 255, 255);
   border-radius: 50%;
-  color: #fff;
+  /* color: #fff; */
   opacity: 0;
   cursor: pointer;
   margin: 0;

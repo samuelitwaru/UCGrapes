@@ -378,10 +378,9 @@ export class InfoSectionManager {
     attributePath: string, // accepts dot notation
     value: any
   ) {
-    const tileInfoSectionAttributes: InfoType = (
-      globalThis as any
-    ).infoContentMapper.getInfoContent(infoId);
-
+    const pageId = (globalThis as any).currentPageId;
+    const infoMapper = new InfoContentMapper(pageId);
+    const tileInfoSectionAttributes = infoMapper.getInfoContent(infoId);
     if (tileInfoSectionAttributes) {
       const tile = tileInfoSectionAttributes.Tiles?.find(
         (tile) => tile.Id === tileId
@@ -412,8 +411,6 @@ export class InfoSectionManager {
   }
 
   updateInfoMapper(infoId: string, infoType: InfoType) {
-    console.log('infoId', infoId);
-    console.log('infoType', infoType);
     const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);

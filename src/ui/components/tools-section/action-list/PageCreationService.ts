@@ -181,7 +181,6 @@ export class PageCreationService {
       this.addCtaButtonSection(type, formData);
       return;
     }
-
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -192,14 +191,18 @@ export class PageCreationService {
     const rowId = selectedComponent.parent().parent().getId();
 
     // Find or create child page
-    let childPage = await this.findOrCreateChildPage(type, formData);
-    if (!childPage) return;
+    let childPage;
+    console.log('type: >>', type)
+    if (type === "WebLink" || type === "Form") {
+      childPage = await this.findOrCreateChildPage(type, formData);
+      console.log('childPage: >>', childPage)
+    }
 
     const updates = [
       ["Text", formData.field_label],
       ["Name", formData.field_label],
       ["Action.ObjectType", type],
-      ["Action.ObjectId", childPage.PageId],
+      ["Action.ObjectId", childPage?.PageId || randomIdGenerator(10)],
       ["Action.ObjectUrl", formData.field_value],
     ];
 
@@ -228,7 +231,7 @@ export class PageCreationService {
       }
       tileAttributes = (globalThis as any).tileMapper.getTile(rowId, tileId);
     }
-
+    
     new PageAttacher().removeOtherEditors();
     if (childPage) {
       new ChildEditor(childPage.PageId, childPage).init(tileAttributes);

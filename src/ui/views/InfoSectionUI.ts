@@ -22,11 +22,13 @@ export class InfoSectionUI {
   controller: any;
 
   constructor() {
+   
     this.themeManager = new ThemeManager();
     // this.controller = new InfoSectionManager();
   }
 
   openImageUpload(sectionId?: string) {
+    
     const modal = document.createElement("div");
     modal.classList.add("tb-modal");
     modal.style.display = "flex";

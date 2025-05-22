@@ -53,7 +53,6 @@ export class TabButtons {
     switchTabs (activeTab: string, inactiveTab: string) {
         const activeTabDiv: HTMLElement | any = document.getElementById(activeTab);
         const inactiveTabDiv: HTMLElement | any = document.getElementById(inactiveTab);
-        console.log(activeTabDiv, inactiveTabDiv);
         activeTabDiv.style.display = 'block';
         inactiveTabDiv.style.display = 'none';
     }

@@ -46,11 +46,9 @@ export class PageTree {
         const appVersionManager = this.themeManager.appVersionManager
         this.pages = appVersionManager.getPages()
         const processsedPages = this.processPageData()
-        console.log('pages', processsedPages)
         const config = AppConfig.getInstance();
         this.d3 = config.UC.d3
         this.graphData = this.convertPagesToD3Data(processsedPages)
-        console.log('graph Data: ', this.graphData)
         this.graphContainer = this.build();
         this.buildTree();
     }
@@ -102,7 +100,6 @@ export class PageTree {
             return ret
         })
 
-        console.log('processed: ', pages.concat(linkPages))
         // return pages
         return this.assignCoordinates(pages.concat(linkPages))
     }
@@ -137,7 +134,6 @@ export class PageTree {
       
         // Final D3 format
         const nodes = Object.values(idToNode).filter((node) => node.parentId || node.children.length > 0);
-        console.log('nodes: ', nodes)
         return { nodes, links };
       }
 
@@ -597,7 +593,6 @@ export class PageTree {
         }
 
         roots.forEach((root) => {
-            console.log(root.title)
             setPosition(root.id, 0)
         });
 

@@ -45,7 +45,6 @@ export class NavbarButtons {
         "mapping-section"
       ) as HTMLElement;
       if (mappingSection) {
-        console.log("mappingSection", mappingSection);
         mappingSection.style.display = "block";
       }
       // const pageTree = new PageTree()

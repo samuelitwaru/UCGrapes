@@ -71,7 +71,6 @@ export class ContentSection {
         this.container.innerHTML = '';        
         const ctaButtonSection = new CtaButtonLayout();
         const activeCtaColors = this.themeManager.currentTheme.ThemeCtaColors;
-        console.log((window as any).app.currentThemeId)
         const ctaColorList = new CtaColorPalette(activeCtaColors);
 
         ctaButtonSection.render(this.container);

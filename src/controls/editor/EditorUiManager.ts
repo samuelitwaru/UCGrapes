@@ -174,7 +174,6 @@ export class EditorUIManager {
         }
       }
 
-      (globalThis as any).currentPageId = this.pageId;
       (globalThis as any).pageData = this.pageData;
       this.activateEditor(this.frameId);
     }
@@ -336,7 +335,7 @@ export class EditorUIManager {
       });
 
       frame.classList.remove("active-editor");
-      console.log('frameId', frameId)
+
       if (frame.id.includes(frameId)) {
         frame.classList.add("active-editor");
 
@@ -346,6 +345,7 @@ export class EditorUIManager {
     this.showPageInfo();
     (globalThis as any).activeEditor = this.editor;
     (globalThis as any).currentPageId = this.pageId;
+    (globalThis as any).pageData = this.pageData;
     new ToolboxManager().unDoReDo();
   }
 

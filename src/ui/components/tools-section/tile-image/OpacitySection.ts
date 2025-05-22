@@ -46,6 +46,7 @@ export class OpacitySection {
 
     const valueDisplay = document.createElement("span");
     valueDisplay.id = "valueDisplay";
+    valueDisplay.style.width = "50px";
     valueDisplay.innerHTML = "0%";
 
     sliderWrapper.appendChild(input);

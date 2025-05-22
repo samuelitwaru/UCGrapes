@@ -186,7 +186,9 @@ export class ThemeManager {
                       if (tileWrapper) {
                         const tileEl = tileWrapper.querySelector('.template-block') as HTMLElement;
                         if (tileEl) {
-                          tileEl.style.backgroundColor = theme?.ThemeColors?.[tile.BGColor as keyof ThemeColors];
+                          if (!tile.BGImageUrl) {
+                            tileEl.style.backgroundColor = theme?.ThemeColors?.[tile.BGColor as keyof ThemeColors];                            
+                          }
                         }   
                         this.updateTileIcon(tile, tileWrapper);
                       }

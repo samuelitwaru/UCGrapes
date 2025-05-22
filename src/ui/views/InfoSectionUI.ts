@@ -27,7 +27,6 @@ export class InfoSectionUI {
   }
 
   openImageUpload(sectionId?: string) {
-    // console.log('openImageUpload sectionId :>> ', sectionId);
     const modal = document.createElement("div");
     modal.classList.add("tb-modal");
     modal.style.display = "flex";

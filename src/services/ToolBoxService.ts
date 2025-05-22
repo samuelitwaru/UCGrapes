@@ -47,7 +47,13 @@ export class ToolBoxService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const data = await response.json()
+
+      if (data?.error && data.error?.Message == "Not Authenticated") {
+        location.reload()
+      }
+
+      return await data;
     } catch (error) {
       console.error(`API Error (${endpoint}):`, error);
       throw error;
@@ -163,10 +169,6 @@ export class ToolBoxService {
   }
 
   async createInfoPage(appVersionId: string, pageName: string) {
-    console.log({
-      appVersionId: appVersionId,
-      pageName: pageName,
-    });
     const response = await this.fetchAPI("/api/toolbox/v2/create-info-page", {
       method: "POST",
       body: JSON.stringify({
@@ -182,7 +184,7 @@ export class ToolBoxService {
     appVersionId: string,
     pageName: string,
     url: string,
-    formId: number
+    formId: any
   ) {
     const response = await this.fetchAPI("/api/toolbox/v2/create-link-page", {
       method: "POST",
@@ -230,7 +232,6 @@ export class ToolBoxService {
       method: "POST",
       body: JSON.stringify(payload),
     });
-    console.log(response);
     return response;
   }
 

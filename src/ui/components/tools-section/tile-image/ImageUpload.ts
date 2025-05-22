@@ -294,9 +294,9 @@ export class ImageUpload {
             newMedia.MediaSize,
             newMedia.MediaType
           );
-          this.init();
+          // this.init();
           // Replace the upload area with the image editor
-          //this.displayImageEditor(dataUrl, file);
+          this.displayImageEditor(dataUrl, file);
         } catch (error) {
           console.error("Error processing file:", error);
         }
@@ -576,7 +576,7 @@ export class ImageUpload {
 
     // Create a wrapper for the slider and buttons
     const modalFooter = document.createElement("div");
-    modalFooter.className = "modal-footer";
+    modalFooter.className = "modal-footer-slider";
     // Add the slider to adjust overlay opacity
     const opacitySlider = document.createElement("input");
     opacitySlider.type = "range";

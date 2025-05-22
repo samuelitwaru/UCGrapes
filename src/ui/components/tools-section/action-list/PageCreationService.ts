@@ -181,7 +181,6 @@ export class PageCreationService {
       this.addCtaButtonSection(type, formData);
       return;
     }
-
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -192,14 +191,16 @@ export class PageCreationService {
     const rowId = selectedComponent.parent().parent().getId();
 
     // Find or create child page
-    let childPage = await this.findOrCreateChildPage(type, formData);
-    if (!childPage) return;
+    let childPage;
+    if (type === "WebLink" || type === "Form") {
+      childPage = await this.findOrCreateChildPage(type, formData);
+    }
 
     const updates = [
       ["Text", formData.field_label],
       ["Name", formData.field_label],
       ["Action.ObjectType", type],
-      ["Action.ObjectId", childPage.PageId],
+      ["Action.ObjectId", childPage?.PageId || randomIdGenerator(10)],
       ["Action.ObjectUrl", formData.field_value],
     ];
 
@@ -228,7 +229,7 @@ export class PageCreationService {
       }
       tileAttributes = (globalThis as any).tileMapper.getTile(rowId, tileId);
     }
-
+    
     new PageAttacher().removeOtherEditors();
     if (childPage) {
       new ChildEditor(childPage.PageId, childPage).init(tileAttributes);
@@ -240,7 +241,6 @@ export class PageCreationService {
     formData: Record<string, string>
   ) {
     const version = (globalThis as any).activeVersion;
-
     let childPage = version?.Pages.find((page: any) => {
       if (type === "WebLink") {
         return (
@@ -254,7 +254,7 @@ export class PageCreationService {
     if (!childPage) {
       try {
         const appVersion = await this.appVersionManager.getActiveVersion();
-        const formId = type === "Form" ? Number(formData?.field_id) : 1;
+        const formId = type === "Form" ? Number(formData?.field_id) : 0;
         const response = await this.toolBoxService.createLinkPage(
           appVersion.AppVersionId,
           formData.field_label,

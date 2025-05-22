@@ -47,7 +47,13 @@ export class ToolBoxService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const data = await response.json()
+
+      if (data?.error && data.error?.Message == "Not Authenticated") {
+        location.reload()
+      }
+
+      return await data;
     } catch (error) {
       console.error(`API Error (${endpoint}):`, error);
       throw error;

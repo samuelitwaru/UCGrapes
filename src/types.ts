@@ -247,3 +247,26 @@ export interface ProductService {
     SupplierAGBId?: string | null;
     ProductServiceClass: string;
 }
+
+export interface ResizeState {
+  isResizing: boolean;
+  isDragging: boolean;
+  resizingRowHeight: number;
+  resizingRow: HTMLDivElement | null;
+  resizingRowParent: HTMLDivElement | null;
+  resizeYStart: number;
+  initialHeight: number;
+  templateBlock: HTMLDivElement | null;
+  affectedElements: HTMLElement[] | null;
+  originalCursors: string[] | null;
+  resizeOverlay: HTMLDivElement | null;
+  infoSectionSpacer: HTMLDivElement | null;
+  frameChildren: HTMLDivElement[];
+}
+
+export interface TileHeights {
+  min: number;
+  medium: number;
+  max: number;
+  snapThreshold: number;
+}

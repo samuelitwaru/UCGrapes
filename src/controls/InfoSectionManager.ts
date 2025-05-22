@@ -488,9 +488,9 @@ export class InfoSectionManager {
     }
   }
 
-  removeConsecutivePlusButtons() {
-    if (!this.editor) return;
-    const containerColumn = this.editor?.getWrapper()
+  removeConsecutivePlusButtons(editor: any = this.editor) {
+    if (!editor) return;
+    const containerColumn = editor?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -513,7 +513,7 @@ export class InfoSectionManager {
 
       if (isCurrentPlus && isPreviousPlus) {
         const currentId = current.getId?.();
-        const component = this.editor.getWrapper().find(`#${currentId}`)[0];
+        const component = editor.getWrapper().find(`#${currentId}`)[0];
         if (component) {
           component.remove();
 
@@ -533,7 +533,7 @@ export class InfoSectionManager {
           next?.getClasses().includes("cta-child");
 
         const currentId = current.getId?.();
-        const component = this.editor.getWrapper().find(`#${currentId}`)[0];
+        const component = editor.getWrapper().find(`#${currentId}`)[0];
 
         if (component) {
           if (prevIsCta && nextIsCta) {

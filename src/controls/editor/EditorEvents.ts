@@ -483,7 +483,7 @@ export class EditorEvents {
     this.uiManager.activateNavigators();
     
     const infoSectionManager = new InfoSectionManager();
-    infoSectionManager.removeConsecutivePlusButtons();
+    infoSectionManager.removeConsecutivePlusButtons(this.editor);
   }
 
   private onComponentUpdate(): void {

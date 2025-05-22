@@ -45,7 +45,7 @@ export class EditorManager {
     mainContainer.innerHTML = ""
     this.setUpEditorFrame();
     this.setUpEditor();
-    this.editorEvents.uiManager.activateEditor(`gjs-0`)
+    this.editorEvents.activateEditor(`gjs-0`)
   }
 
   setUpEditorFrame() {
@@ -74,9 +74,7 @@ export class EditorManager {
     frameList.render(mainEditorSection);
     mainEditorSection.appendChild(thumbsContainer);
 
-    // leftNavigatorButton.render(editorFrameArea);
     editorFrameArea.appendChild(mainEditorSection);    
-    // rightNavigatorButton.render(editorFrameArea);
 
     this.setClientWidth(frameList.container);
   }

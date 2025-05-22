@@ -1,13 +1,10 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
+import { ResizeState, TileHeights } from "../../types";
 import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
-import { PageSelector } from "../../ui/components/page-selector/PageSelector";
-import { ActionSelectContainer } from "../../ui/components/tools-section/action-list/ActionSelectContainer";
-import { ContentSection } from "../../ui/components/tools-section/ContentSection";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { ThemeManager } from "../themes/ThemeManager";
-import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
 import { ChildEditor } from "./ChildEditor";
 import { EditorManager } from "./EditorManager";
@@ -15,47 +12,74 @@ import { EditorUIManager } from "./EditorUiManager";
 import { FrameEvent } from "./FrameEvent";
 import { PageMapper } from "./PageMapper";
 
-export class EditorEvents {
-  editor: any;
-  pageId: any;
-  frameId: any;
-  pageData: any;
-  editorManager: any;
-  appVersionManager: any;
-  toolboxService: any;
-  themeManager: any;
-  uiManager!: EditorUIManager;
-  isHome?: boolean;
-  isResizing: boolean = false;
-  isDragging: boolean = false;
-  resizingRowHeight: number = 0;
-  resizingRow: HTMLDivElement | null = null;
-  resizingRowParent: HTMLDivElement | null = null;
-  resizeYStart: number = 0;
-  selectedComponent: any;
-  initialHeight!: number;
-  templateBlock!: HTMLDivElement;
-  affectedElements: HTMLElement[] | null = null;
-  originalCursors: string[] | null = null;
-  resizeOverlay: HTMLDivElement | null = null;
-  infoSectionSpacer: HTMLDivElement | null = null;
-  frameChildren: HTMLDivElement[] = [];
 
+
+export class EditorEvents {
+  // Core editor properties
+  private editor: any;
+  private pageId: any;
+  private frameId: any;
+  private pageData: any;
+  private isHome?: boolean;
+
+  // Services and managers
+  private editorManager: any;
+  private appVersionManager: AppVersionManager;
+  private toolboxService: ToolBoxService;
+  private uiManager!: EditorUIManager;
+  
+  // Component state
+  private selectedComponent: any;
+  private resizeState!: ResizeState;
+  private tileHeights!: TileHeights;
 
   constructor() {
     this.appVersionManager = new AppVersionManager();
     this.toolboxService = new ToolBoxService();
-    this.themeManager = new ThemeManager();
+    this.initializeResizeState();
+    this.initializeTileHeights();
   }
 
-  init(editor: any, pageData: any, frameEditor: any, isHome?: boolean) {
+  private initializeResizeState(): void {
+    this.resizeState = {
+      isResizing: false,
+      isDragging: false,
+      resizingRowHeight: 0,
+      resizingRow: null,
+      resizingRowParent: null,
+      resizeYStart: 0,
+      initialHeight: 80,
+      templateBlock: null,
+      affectedElements: null,
+      originalCursors: null,
+      resizeOverlay: null,
+      infoSectionSpacer: null,
+      frameChildren: []
+    };
+  }
+
+  private initializeTileHeights(): void {
+    this.tileHeights = {
+      min: minTileHeight,
+      medium: minTileHeight * 1.5,
+      max: minTileHeight * 2,
+      snapThreshold: 10
+    };
+  }
+
+  public init(editor: any, pageData: any, frameEditor: any, isHome?: boolean): void {
     this.editor = editor;
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
     this.isHome = isHome;
-    this.initialHeight = 80;
 
+    this.initializeUIManager();
+    this.setupGlobalReferences();
+    this.initializeEventListeners();
+  }
+
+  private initializeUIManager(): void {
     this.uiManager = new EditorUIManager(
       this.editor,
       this.pageId,
@@ -63,9 +87,13 @@ export class EditorEvents {
       this.pageData,
       this.appVersionManager
     );
+  }
 
+  private setupGlobalReferences(): void {
     (globalThis as any).uiManager = this.uiManager;
+  }
 
+  private initializeEventListeners(): void {
     new FrameEvent(this.frameId);
     this.onDragAndDrop();
     this.onSelected();
@@ -73,315 +101,392 @@ export class EditorEvents {
     this.onLoad();
   }
 
-  onLoad() {
-    if (this.editor !== undefined) {
-      this.editor.on("load", () => {
-        const wrapper = this.editor.getWrapper();
-        (globalThis as any).wrapper = wrapper;
+  private onLoad(): void {
+    if (!this.editor) return;
 
-        if (wrapper) {
-          wrapper.view.el.addEventListener("mousedown", (e: MouseEvent) => {
-            const targetElement = e.target as Element;
-            if (targetElement.closest(".tile-resize-button")) {
-              this.isResizing = true;
-              this.resizingRow = targetElement.closest(
-                ".template-wrapper"
-              ) as HTMLDivElement;
+    this.editor.on("load", () => {
+      const wrapper = this.editor.getWrapper();
+      if (!wrapper) {
+        console.error("Wrapper not found!");
+        return;
+      }
 
-              this.resizingRowParent = targetElement.closest(
-                ".container-row"
-              ) as HTMLDivElement;
+      this.setupGlobalWrapper(wrapper);
+      this.setupWrapperEventListeners(wrapper);
+      this.initializePostLoadComponents();
+    });
+  }
 
-              this.resizingRowHeight = this.resizingRow.offsetHeight;
-              this.resizeYStart = e.clientY;
-              this.initialHeight = this.resizingRow.offsetHeight;
+  private setupGlobalWrapper(wrapper: any): void {
+    (globalThis as any).wrapper = wrapper;
+  }
 
-              // Apply cursor to resizing row - will override child elements
-              const frameContainer = targetElement.closest(
-                "#frame-container"
-              ) as HTMLDivElement;
-              // get all the children of the frame container apart from the template wrapper
-              this.frameChildren = Array.from(
-                frameContainer?.querySelectorAll("*")
-              ).filter(
-                (child): child is HTMLDivElement => child !== this.resizingRow
-              );
+  private setupWrapperEventListeners(wrapper: any): void {
+    const viewEl = wrapper.view.el;
+    
+    viewEl.addEventListener("mousedown", this.handleMouseDown.bind(this));
+    viewEl.addEventListener("mousemove", this.handleMouseMove.bind(this));
+    viewEl.addEventListener("mouseup", this.handleMouseUp.bind(this));
+    viewEl.addEventListener("dblclick", this.handleDoubleClick.bind(this));
+    viewEl.addEventListener("click", this.handleClick.bind(this));
+    viewEl.addEventListener("mouseover", this.handleMouseOver.bind(this));
 
-              this.frameChildren.forEach((child) => {
-                child.style.setProperty("cursor", "ns-resize", "important");
-              });
+    // Document-level events for resize functionality
+    document.addEventListener("mousemove", this.handleDocumentMouseMove.bind(this));
+    document.addEventListener("mouseup", this.handleDocumentMouseUp.bind(this));
+  }
 
-              // Create an overlay to block hover events on other elements during resize
-              this.resizeOverlay = document.createElement("div");
-              Object.assign(this.resizeOverlay.style, {
-                position: "fixed",
-                top: "0",
-                left: "0",
-                width: "100%",
-                height: "100%",
-                zIndex: "9999",
-                cursor: "ns-resize",
-                backgroundColor: "transparent",
-                pointerEvents: "auto",
-              });
-              document.body.appendChild(this.resizeOverlay);
+  private handleMouseDown(e: MouseEvent): void {
+    const targetElement = e.target as Element;
+    
+    if (targetElement.closest(".tile-resize-button")) {
+      this.startResize(e, targetElement);
+    }
 
-              // Store all child elements that might have cursor styles
-              this.affectedElements = Array.from(
-                this.resizingRow.querySelectorAll("*")
-              ) as HTMLElement[];
+    if (targetElement.closest(".template-block")) {
+      this.resizeState.isDragging = true;
+    }
+  }
 
-              // Save original cursor styles to restore later
-              this.originalCursors = this.affectedElements.map(
-                (el) => el.style.cursor
-              );
+  private startResize(e: MouseEvent, targetElement: Element): void {
+    this.resizeState.isResizing = true;
+    this.resizeState.resizingRow = targetElement.closest(".template-wrapper") as HTMLDivElement;
+    this.resizeState.resizingRowParent = targetElement.closest(".container-row") as HTMLDivElement;
+    this.resizeState.resizingRowHeight = this.resizeState.resizingRow.offsetHeight;
+    this.resizeState.resizeYStart = e.clientY;
+    this.resizeState.initialHeight = this.resizeState.resizingRow.offsetHeight;
 
-              // Force ns-resize on all child elements
-              this.affectedElements.forEach((el) => {
-                el.style.setProperty("cursor", "ns-resize", "important");
-              });
+    this.setupResizeUI(targetElement);
+  }
 
-              this.infoSectionSpacer = targetElement
-                ?.closest(".container-row")
-                ?.nextElementSibling?.closest(
-                  ".info-section-spacing-container"
-                ) as HTMLDivElement | null;
-              if (this.infoSectionSpacer) {
-                this.infoSectionSpacer.style.pointerEvents = "none";
-              }
+  private setupResizeUI(targetElement: Element): void {
+    const frameContainer = targetElement.closest("#frame-container") as HTMLDivElement;
+    
+    // Setup frame children cursors
+    this.resizeState.frameChildren = Array.from(frameContainer?.querySelectorAll("*"))
+      .filter((child): child is HTMLDivElement => child !== this.resizeState.resizingRow);
+    
+    this.resizeState.frameChildren.forEach((child) => {
+      child.style.setProperty("cursor", "ns-resize", "important");
+    });
 
-              this.templateBlock = targetElement.closest(
-                ".template-block"
-              ) as HTMLDivElement;
-            }
+    // Create resize overlay
+    this.createResizeOverlay();
+    
+    // Setup affected elements
+    this.setupAffectedElements();
+    
+    // Setup info section spacer
+    this.setupInfoSectionSpacer(targetElement);
+    
+    this.resizeState.templateBlock = targetElement.closest(".template-block") as HTMLDivElement;
+  }
 
-            if (targetElement.closest(".template-block")) {
-              this.isDragging = true;
-            }
-          });
+  private createResizeOverlay(): void {
+    this.resizeState.resizeOverlay = document.createElement("div");
+    Object.assign(this.resizeState.resizeOverlay.style, {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      width: "100%",
+      height: "100%",
+      zIndex: "9999",
+      cursor: "ns-resize",
+      backgroundColor: "transparent",
+      pointerEvents: "auto",
+    });
+    document.body.appendChild(this.resizeState.resizeOverlay);
+  }
 
-          wrapper.view.el.addEventListener("mousemove", (e: MouseEvent) => {
-            if (this.isDragging) {
-              console.log(e)
-            }
-          })
+  private setupAffectedElements(): void {
+    if (!this.resizeState.resizingRow) return;
 
-          wrapper.view.el.addEventListener("mouseup", (e: MouseEvent) => {
-            if (this.isDragging) {
-              this.isDragging = false
-            }
-          })
+    this.resizeState.affectedElements = Array.from(
+      this.resizeState.resizingRow.querySelectorAll("*")
+    ) as HTMLElement[];
 
-          document.addEventListener("mousemove", (e: MouseEvent) => {
-            if (this.isResizing && this.resizingRow) {
-              // Ensure the overlay follows the mouse position if needed
-              if (this.resizeOverlay) {
-                e.preventDefault();
-                e.stopPropagation();
-              }
+    this.resizeState.originalCursors = this.resizeState.affectedElements.map(
+      (el) => el.style.cursor
+    );
 
-              const deltaY = e.clientY - this.resizeYStart;
+    this.resizeState.affectedElements.forEach((el) => {
+      el.style.setProperty("cursor", "ns-resize", "important");
+    });
+  }
 
-              // Get constants from imported minTileHeight
-              const minHeight = minTileHeight;
-              const mediumHeight = minTileHeight * 1.5; // 120
-              const maxHeight = minTileHeight * 2; // 160
+  private setupInfoSectionSpacer(targetElement: Element): void {
+    this.resizeState.infoSectionSpacer = targetElement
+      ?.closest(".container-row")
+      ?.nextElementSibling?.closest(".info-section-spacing-container") as HTMLDivElement | null;
+    
+    if (this.resizeState.infoSectionSpacer) {
+      this.resizeState.infoSectionSpacer.style.pointerEvents = "none";
+    }
+  }
 
-              // Snap threshold - lower value means more sensitive snapping
-              const snapThreshold = 10;
+  private handleMouseMove(e: MouseEvent): void {
+    if (this.resizeState.isDragging) {
+      console.log(e);
+    }
+  }
 
-              // Calculate target height with smooth transition
-              let newHeight;
-              const draggedHeight = this.initialHeight + deltaY;
+  private handleMouseUp(e: MouseEvent): void {
+    if (this.resizeState.isDragging) {
+      this.resizeState.isDragging = false;
+    }
+  }
 
-              // Implement smooth snapping with clear thresholds
-              if (draggedHeight < minHeight + snapThreshold) {
-                newHeight = minHeight;
-              } else if (draggedHeight < mediumHeight - snapThreshold) {
-                newHeight = draggedHeight; // Allow free movement between snap points
-              } else if (draggedHeight < mediumHeight + snapThreshold) {
-                newHeight = mediumHeight;
-              } else if (draggedHeight < maxHeight - snapThreshold) {
-                newHeight = draggedHeight; // Allow free movement between snap points
-              } else {
-                newHeight = maxHeight;
-              }
+  private handleDocumentMouseMove(e: MouseEvent): void {
+    if (!this.resizeState.isResizing || !this.resizeState.resizingRow) return;
 
-              // Apply the new height to the resizing row
-              const comps = wrapper.find(`#${this.resizingRow.id}`);
-              if (comps.length) {
-                comps[0].addStyle({
-                  height: `${newHeight}px`,
-                });
-              }              
-            }
-          });
+    this.performResize(e);
+  }
 
-          document.addEventListener("mouseup", (e: MouseEvent) => {
-            if (this.isResizing && this.resizingRow) {
-              // Get constants for reference
-              const minHeight = minTileHeight;
-              const mediumHeight = minTileHeight * 1.5; // 120
-              const maxHeight = minTileHeight * 2; // 160
+  private performResize(e: MouseEvent): void {
+    if (this.resizeState.resizeOverlay) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
-              this.isResizing = false;
+    const deltaY = e.clientY - this.resizeState.resizeYStart;
+    const newHeight = this.calculateNewHeight(deltaY);
+    
+    this.applyResize(newHeight);
+  }
 
-              // Reset cursor on body
-              document.body.style.removeProperty("cursor");
+  private calculateNewHeight(deltaY: number): number {
+    const draggedHeight = this.resizeState.initialHeight + deltaY;
+    const { min, medium, max, snapThreshold } = this.tileHeights;
 
-              // Remove the overlay
-              if (this.resizeOverlay) {
-                document.body.removeChild(this.resizeOverlay);
-                this.resizeOverlay = null;
-              }
+    if (draggedHeight < min + snapThreshold) {
+      return min;
+    } else if (draggedHeight < medium - snapThreshold) {
+      return draggedHeight;
+    } else if (draggedHeight < medium + snapThreshold) {
+      return medium;
+    } else if (draggedHeight < max - snapThreshold) {
+      return draggedHeight;
+    } else {
+      return max;
+    }
+  }
 
-              // Reset all affected element cursors to their original values
-              if (this.affectedElements && this.originalCursors) {
-                this.affectedElements.forEach((el, i) => {
-                  if (this.originalCursors && this.originalCursors[i]) {
-                    el.style.cursor = this.originalCursors[i];
-                  } else {
-                    el.style.removeProperty("cursor");
-                  }
-                });
-              }
+  private applyResize(newHeight: number): void {
+    if (!this.resizeState.resizingRow) return;
 
-              // Final snap to discrete sizes
-              const currentHeight = this.resizingRow.offsetHeight;
-              let finalHeight;
+    const wrapper = this.editor.getWrapper();
+    const comps = wrapper.find(`#${this.resizeState.resizingRow.id}`);
+    
+    if (comps.length) {
+      comps[0].addStyle({ height: `${newHeight}px` });
+    }
+  }
 
-              if (currentHeight < (minHeight + mediumHeight) / 2) {
-                finalHeight = minHeight;
-              } else if (currentHeight < (mediumHeight + maxHeight) / 2) {
-                finalHeight = mediumHeight;
-              } else {
-                finalHeight = maxHeight;
-              }
+  private handleDocumentMouseUp(e: MouseEvent): void {
+    if (!this.resizeState.isResizing || !this.resizeState.resizingRow) return;
 
-              // Apply final snapped height with smooth animation
-              const comps = wrapper.find(`#${this.resizingRow.id}`);
-              if (comps.length) {
-                this.resizingRow.style.transition = "height 0.05s ease-out";
-                comps[0].addStyle({
-                  height: `${finalHeight}px`,
-                });
+    this.finishResize();
+  }
 
-                // Remove transition after animation completes
-                setTimeout(() => {
-                  if (this.resizingRow) {
-                    this.resizingRow.style.removeProperty("transition");
-                  }
-                }, 150);
-              }
+  private finishResize(): void {
+    const finalHeight = this.calculateFinalHeight();
+    this.applyFinalResize(finalHeight);
+    this.updateInfoTileAttributes(finalHeight);
+    this.cleanupResize();
+  }
 
-              const infoSectionManager = new InfoSectionManager();
-              const parentId = this.resizingRowParent?.id;
-              infoSectionManager.updateInfoTileAttributes(
-                parentId || "",
-                this.resizingRow.id,
-                "Size",
-                finalHeight
-              )
+  private calculateFinalHeight(): number {
+    if (!this.resizeState.resizingRow) return this.tileHeights.min;
 
-              // Clear references
-              this.resizingRow = null;
-              this.affectedElements = null;
-              this.originalCursors = null;
-              this.resizeOverlay = null;
-              if (this.infoSectionSpacer) {
-                this.infoSectionSpacer.style.pointerEvents = "auto";
-              }
+    const currentHeight = this.resizeState.resizingRow.offsetHeight;
+    const { min, medium, max } = this.tileHeights;
 
-              this.frameChildren?.forEach((child) => {
-                child.style.removeProperty("cursor");
-              });
-            }
-          });
+    if (currentHeight < (min + medium) / 2) {
+      return min;
+    } else if (currentHeight < (medium + max) / 2) {
+      return medium;
+    } else {
+      return max;
+    }
+  }
 
-          wrapper.view.el.addEventListener("dblclick", (e: MouseEvent) => {
-            e.preventDefault();
-            const selectedComponent = (globalThis as any).selectedComponent;
-            if (!selectedComponent) return;
+  private applyFinalResize(finalHeight: number): void {
+    if (!this.resizeState.resizingRow) return;
 
-            const modal = document.createElement("div");
-            modal.classList.add("tb-modal");
-            modal.style.display = "flex";
+    const wrapper = this.editor.getWrapper();
+    const comps = wrapper.find(`#${this.resizeState.resizingRow.id}`);
+    
+    if (comps.length) {
+      this.resizeState.resizingRow.style.transition = "height 0.05s ease-out";
+      comps[0].addStyle({ height: `${finalHeight}px` });
 
-            const tileComp = selectedComponent.closest(".template-wrapper");
-            const modalContent = new ImageUpload("tile", tileComp.getId());
-            modalContent.render(modal);
-
-            const uploadInput = document.createElement("input");
-            uploadInput.type = "file";
-            uploadInput.multiple = true;
-            uploadInput.accept = "image/jpeg, image/jpg, image/png";
-            uploadInput.id = "fileInput";
-            uploadInput.style.display = "none";
-
-            document.body.appendChild(modal);
-            document.body.appendChild(uploadInput);
-          });
-
-          wrapper.view.el.addEventListener("click", (e: MouseEvent) => {
-            const targetElement = e.target as Element;
-            if (
-              targetElement.closest(".menu-container") ||
-              targetElement.closest(".menu-category") ||
-              targetElement.closest(".sub-menu-header")
-            ) {
-              e.stopPropagation();
-              return;
-            }
-
-            this.uiManager.clearAllMenuContainers();
-            //this.uiManager.resetTitleFromDOM();
-
-            (globalThis as any).eventTarget = targetElement;
-
-            this.uiManager.handleTileManager(e);
-            this.uiManager.openMenu(e);
-
-            this.uiManager.initContentDataUi(e);
-            this.uiManager.activateEditor(this.frameId);
-            const editorManager = new EditorManager();
-            editorManager.loadPageHistory(this.pageData);
-            this.uiManager.handleInfoSectionHover(e);
-          });
-
-          wrapper.view.el.addEventListener("mouseover", (e: MouseEvent) => {
-            const targetElement = e.target as Element;
-            if (targetElement.closest(".info-section-spacing-container")) {
-              const infoSection = targetElement.closest(
-                ".info-section-spacing-container"
-              ) as HTMLDivElement;
-
-              if (infoSection && infoSection.style.height !== "3.2rem") {
-                this.uiManager.clearAllMenuContainers();
-                this.uiManager.isMenuOpen = false;
-              }
-            }
-          });
-        } else {
-          console.error("Wrapper not found!");
+      setTimeout(() => {
+        if (this.resizeState.resizingRow) {
+          this.resizeState.resizingRow.style.removeProperty("transition");
         }
+      }, 150);
+    }
+  }
 
-        new EditorThumbs(
-          this.frameId,
-          this.pageId,
-          this.editor,
-          this.pageData,
-          this.isHome
-        );
+  private updateInfoTileAttributes(finalHeight: number): void {
+    const infoSectionManager = new InfoSectionManager();
+    const parentId = this.resizeState.resizingRowParent?.id;
+    
+    if (parentId && this.resizeState.resizingRow) {
+      infoSectionManager.updateInfoTileAttributes(
+        parentId,
+        this.resizeState.resizingRow.id,
+        "Size",
+        finalHeight
+      );
+    }
+  }
 
-        this.uiManager.frameEventListener();
-        this.uiManager.activateNavigators();
-        const infoSectionManager = new InfoSectionManager();
-        infoSectionManager.removeConsecutivePlusButtons();
+  private cleanupResize(): void {
+    this.resizeState.isResizing = false;
+    
+    // Reset body cursor
+    document.body.style.removeProperty("cursor");
+    
+    // Remove overlay
+    if (this.resizeState.resizeOverlay) {
+      document.body.removeChild(this.resizeState.resizeOverlay);
+      this.resizeState.resizeOverlay = null;
+    }
+    
+    // Reset affected element cursors
+    this.resetAffectedElementCursors();
+    
+    // Reset frame children cursors
+    this.resizeState.frameChildren?.forEach((child) => {
+      child.style.removeProperty("cursor");
+    });
+    
+    // Reset info section spacer
+    if (this.resizeState.infoSectionSpacer) {
+      this.resizeState.infoSectionSpacer.style.pointerEvents = "auto";
+    }
+    
+    // Clear references
+    this.clearResizeReferences();
+  }
+
+  private resetAffectedElementCursors(): void {
+    if (this.resizeState.affectedElements && this.resizeState.originalCursors) {
+      this.resizeState.affectedElements.forEach((el, i) => {
+        if (this.resizeState.originalCursors && this.resizeState.originalCursors[i]) {
+          el.style.cursor = this.resizeState.originalCursors[i];
+        } else {
+          el.style.removeProperty("cursor");
+        }
       });
     }
   }
 
-  onComponentUpdate() {
+  private clearResizeReferences(): void {
+    this.resizeState.resizingRow = null;
+    this.resizeState.resizingRowParent = null;
+    this.resizeState.affectedElements = null;
+    this.resizeState.originalCursors = null;
+    this.resizeState.resizeOverlay = null;
+    this.resizeState.infoSectionSpacer = null;
+    this.resizeState.templateBlock = null;
+  }
+
+  private handleDoubleClick(e: MouseEvent): void {
+    e.preventDefault();
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (!selectedComponent) return;
+
+    this.createImageUploadModal(selectedComponent);
+  }
+
+  private createImageUploadModal(selectedComponent: any): void {
+    const modal = document.createElement("div");
+    modal.classList.add("tb-modal");
+    modal.style.display = "flex";
+
+    const tileComp = selectedComponent.closest(".template-wrapper");
+    const modalContent = new ImageUpload("tile", tileComp.getId());
+    modalContent.render(modal);
+
+    const uploadInput = this.createUploadInput();
+
+    document.body.appendChild(modal);
+    document.body.appendChild(uploadInput);
+  }
+
+  private createUploadInput(): HTMLInputElement {
+    const uploadInput = document.createElement("input");
+    uploadInput.type = "file";
+    uploadInput.multiple = true;
+    uploadInput.accept = "image/jpeg, image/jpg, image/png";
+    uploadInput.id = "fileInput";
+    uploadInput.style.display = "none";
+    return uploadInput;
+  }
+
+  private handleClick(e: MouseEvent): void {
+    const targetElement = e.target as Element;
+    
+    if (this.shouldIgnoreClick(targetElement)) {
+      e.stopPropagation();
+      return;
+    }
+
+    this.processClick(e, targetElement);
+  }
+
+  private shouldIgnoreClick(targetElement: Element): boolean {
+    return !!(
+      targetElement.closest(".menu-container") ||
+      targetElement.closest(".menu-category") ||
+      targetElement.closest(".sub-menu-header")
+    );
+  }
+
+  private processClick(e: MouseEvent, targetElement: Element): void {
+    this.uiManager.clearAllMenuContainers();
+    (globalThis as any).eventTarget = targetElement;
+
+    this.uiManager.handleTileManager(e);
+    this.uiManager.openMenu(e);
+    this.uiManager.initContentDataUi(e);
+    this.uiManager.activateEditor(this.frameId);
+    
+    const editorManager = new EditorManager();
+    editorManager.loadPageHistory(this.pageData);
+    
+    this.uiManager.handleInfoSectionHover(e);
+  }
+
+  private handleMouseOver(e: MouseEvent): void {
+    const targetElement = e.target as Element;
+    const infoSection = targetElement.closest(".info-section-spacing-container") as HTMLDivElement;
+
+    if (infoSection && infoSection.style.height !== "3.2rem") {
+      this.uiManager.clearAllMenuContainers();
+      this.uiManager.isMenuOpen = false;
+    }
+  }
+
+  private initializePostLoadComponents(): void {
+    new EditorThumbs(
+      this.frameId,
+      this.pageId,
+      this.editor,
+      this.pageData,
+      this.isHome
+    );
+
+    this.uiManager.frameEventListener();
+    this.uiManager.activateNavigators();
+    
+    const infoSectionManager = new InfoSectionManager();
+    infoSectionManager.removeConsecutivePlusButtons();
+  }
+
+  private onComponentUpdate(): void {
     this.editor.on("component:update", (model: any) => {
       window.dispatchEvent(
         new CustomEvent("pageChanged", {
@@ -391,7 +496,7 @@ export class EditorEvents {
     });
   }
 
-  onDragAndDrop() {
+  private onDragAndDrop(): void {
     let sourceComponent: any;
     let destinationComponent: any;
 
@@ -400,175 +505,163 @@ export class EditorEvents {
     });
 
     this.editor.on("component:drag:end", (model: any) => {
-      if (this.isResizing) return;
+      if (this.resizeState.isResizing) return;
+      
       destinationComponent = model.parent;
-      this.uiManager.handleDragEnd(
-        model,
-        sourceComponent,
-        destinationComponent
-      );
+      this.uiManager.handleDragEnd(model, sourceComponent, destinationComponent);
     });
   }
 
-  onSelected() {
-    this.editor.on("component:selected", async (component: any) => {
-      const pageMapper = new PageMapper(this.editor);
-      (globalThis as any).selectedComponent = component;
-      (globalThis as any).tileMapper = this.uiManager.createTileMapper();
-      (globalThis as any).infoContentMapper =
-        this.uiManager.createInfoContentMapper();
-      (globalThis as any).frameId = this.frameId;
-      (globalThis as any).activeEditor = this.editor;
-      const isTile = component.getClasses().includes("template-block");
-      const isCta = [
-        "img-button-container",
-        "plain-button-container",
-        "cta-container-child",
-      ].some((cls) => component.getClasses().includes(cls));
-
-      if (isCta) {
-        this.uiManager.toggleSidebar(true);
-        this.uiManager.setInfoCtaProperties();
-        this.uiManager.showCtaTools();
-        this.uiManager.hidePageInfo();
-
-        const ctaAttrs = (globalThis as any).tileMapper.getCta(
-          component.getId()
-        );
-        const version = (globalThis as any).activeVersion;
-        this.uiManager.removeOtherEditors();
-
-        if (ctaAttrs.CtaAction) {
-          const pageType =
-            ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
-          let childPage;
-          if (pageType === "DynamicForm") {
-            childPage = version?.Pages.find((page: any) => {
-              if (page.PageType == pageType) {
-                return (
-                  page.PageType == pageType &&
-                  page.PageLinkStructure?.WWPFormId ==
-                    Number(ctaAttrs.Action?.ObjectId)
-                );
-              }
-            });
-          } else if (pageType === "WebLink") {
-            childPage = version?.Pages.find(
-              (page: any) => {
-                return page.PageLinkStructure?.Url == ctaAttrs.CtaAction
-              }
-            );
-          }
-          if (childPage) {
-            this.uiManager.removeOtherEditors();
-            new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
-          }
-        }
-      } else if (isTile) {
-        this.uiManager.toggleSidebar(true);
-        this.uiManager.setTileProperties();
-        this.uiManager.setInfoTileProperties();
-        this.uiManager.showTileTools();
-        this.uiManager.createChildEditor();
-        this.uiManager.hidePageInfo();
-      } else {
-        this.uiManager.toggleSidebar(false);
-        this.uiManager.showPageInfo();
-      }
-    });
-
-    this.editor.on("component:deselected", () => {
-      (globalThis as any).selectedComponent = null;
-      this.uiManager.toggleSidebar(false);
-      this.uiManager.showPageInfo();
-    });
+  private onSelected(): void {
+    this.editor.on("component:selected", this.handleComponentSelected.bind(this));
+    this.editor.on("component:deselected", this.handleComponentDeselected.bind(this));
   }
 
-  onTileUpdate(containerRow: any) {
-    if (
-      containerRow &&
-      containerRow.getEl()?.classList.contains("container-row")
-    ) {
+  private async handleComponentSelected(component: any): Promise<void> {
+    this.setupGlobalComponentReferences(component);
+    
+    const componentType = this.determineComponentType(component);
+    
+    switch (componentType) {
+      case 'cta':
+        await this.handleCtaSelection(component);
+        break;
+      case 'tile':
+        this.handleTileSelection();
+        break;
+      default:
+        this.handleDefaultSelection();
+        break;
+    }
+  }
+
+  private setupGlobalComponentReferences(component: any): void {
+    const pageMapper = new PageMapper(this.editor);
+    (globalThis as any).selectedComponent = component;
+    (globalThis as any).tileMapper = this.uiManager.createTileMapper();
+    (globalThis as any).infoContentMapper = this.uiManager.createInfoContentMapper();
+    (globalThis as any).frameId = this.frameId;
+    (globalThis as any).activeEditor = this.editor;
+  }
+
+  private determineComponentType(component: any): 'cta' | 'tile' | 'default' {
+    const classes = component.getClasses();
+    
+    if (classes.includes("template-block")) {
+      return 'tile';
+    }
+    
+    const ctaClasses = ["img-button-container", "plain-button-container", "cta-container-child"];
+    if (ctaClasses.some(cls => classes.includes(cls))) {
+      return 'cta';
+    }
+    
+    return 'default';
+  }
+
+  private async handleCtaSelection(component: any): Promise<void> {
+    this.uiManager.toggleSidebar(true);
+    this.uiManager.setInfoCtaProperties();
+    this.uiManager.showCtaTools();
+    this.uiManager.hidePageInfo();
+
+    const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId());
+    
+    if (ctaAttrs.CtaAction) {
+      await this.setupChildEditor(ctaAttrs);
+    }
+  }
+
+  private async setupChildEditor(ctaAttrs: any): Promise<void> {
+    const version = (globalThis as any).activeVersion;
+    this.uiManager.removeOtherEditors();
+
+    const childPage = this.findChildPage(ctaAttrs, version);
+    
+    if (childPage) {
+      this.uiManager.removeOtherEditors();
+      new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
+    }
+  }
+
+  private findChildPage(ctaAttrs: any, version: any): any {
+    const pageType = ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
+    
+    if (pageType === "DynamicForm") {
+      return version?.Pages.find((page: any) => {
+        return page.PageType === pageType &&
+               page.PageLinkStructure?.WWPFormId === Number(ctaAttrs.Action?.ObjectId);
+      });
+    } else if (pageType === "WebLink") {
+      return version?.Pages.find((page: any) => {
+        return page.PageLinkStructure?.Url === ctaAttrs.CtaAction;
+      });
+    }
+    
+    return null;
+  }
+
+  private handleTileSelection(): void {
+    this.uiManager.toggleSidebar(true);
+    this.uiManager.setTileProperties();
+    this.uiManager.setInfoTileProperties();
+    this.uiManager.showTileTools();
+    this.uiManager.createChildEditor();
+    this.uiManager.hidePageInfo();
+  }
+
+  private handleDefaultSelection(): void {
+    this.uiManager.toggleSidebar(false);
+    this.uiManager.showPageInfo();
+  }
+
+  private handleComponentDeselected(): void {
+    (globalThis as any).selectedComponent = null;
+    this.uiManager.toggleSidebar(false);
+    this.uiManager.showPageInfo();
+  }
+
+  private onTileUpdate(containerRow: any): void {
+    if (containerRow && containerRow.getEl()?.classList.contains("container-row")) {
       this.editor.off("component:add", this.handleComponentAdd);
       this.editor.on("component:add", this.handleComponentAdd);
     }
   }
 
-  private handleComponentAdd = (model: any) => {
+  private handleComponentAdd = (model: any): void => {
     const parent = model.parent();
-    if (parent && parent.getEl()?.classList.contains("container-row")) {
-      const tileWrappers = parent.components().filter((comp: any) => {
-        const type = comp.get("type");
-        return type === "tile-wrapper";
-      });
-      if (tileWrappers.length === 3) {
-        console.log("more than 3");
-      }
+    if (!parent || !parent.getEl()?.classList.contains("container-row")) return;
+
+    const tileWrappers = parent.components().filter((comp: any) => {
+      return comp.get("type") === "tile-wrapper";
+    });
+    
+    if (tileWrappers.length === 3) {
+      console.log("more than 3");
     }
   };
 
-  setPageFocus(editor: any, frameId: string, pageId: string, pageData: any) {
-    if (!this.uiManager) {
-      this.uiManager = new EditorUIManager(
-        this.editor,
-        this.pageId,
-        this.frameId,
-        this.pageData,
-        this.appVersionManager
-      );
-    }
+  public setPageFocus(editor: any, frameId: string, pageId: string, pageData: any): void {
+    this.ensureUIManager();
     this.uiManager.setPageFocus(editor, frameId, pageId, pageData);
   }
 
-  activateNavigators() {
-    if (!this.uiManager) {
-      this.uiManager = new EditorUIManager(
-        this.editor,
-        this.pageId,
-        this.frameId,
-        this.pageData,
-        this.appVersionManager
-      );
-    }
+  public activateNavigators(): void {
+    this.ensureUIManager();
     this.uiManager.activateNavigators();
   }
 
-  removeOtherEditors() {
-    if (!this.uiManager) {
-      this.uiManager = new EditorUIManager(
-        this.editor,
-        this.pageId,
-        this.frameId,
-        this.pageData,
-        this.appVersionManager
-      );
-    }
+  public removeOtherEditors(): void {
+    this.ensureUIManager();
     this.uiManager.removeOtherEditors();
   }
 
-  reAlignEditor(editorDiv: HTMLDivElement) {
-    // const childContainer = document.getElementById("child-container") as HTMLDivElement;
-    //   if (childContainer && editorDiv) {
-    //     const editorFrames = Array.from(childContainer.children);
-    //     const isFirstItem = editorFrames[0] === editorDiv;
-    //     const isLastItem = editorFrames[editorFrames.length - 1] === editorDiv;
-    //     if (isFirstItem) {
-    //       childContainer.scrollLeft = 0;
-    //       if (childContainer.children.length > 2) {
-    //         childContainer.style.justifyContent = "start"
-    //       }
-    //     } else if (isLastItem) {
-    //       childContainer.scrollLeft = childContainer.scrollWidth - childContainer.clientWidth;
-    //     } else {
-    //       const editorDivLeft = editorDiv.offsetLeft;
-    //       const editorDivWidth = editorDiv.offsetWidth;
-    //       const targetScrollPosition = editorDivLeft - (childContainer.offsetWidth / 2) + (editorDivWidth / 2);
-    //       childContainer.scrollLeft = targetScrollPosition;
-    //     }
-    //   }
+  public activateEditor(frameId: any): void {
+    this.ensureUIManager();
+    this.uiManager.activateEditor(frameId);
   }
 
-  activateEditor(frameId: any) {
+  private ensureUIManager(): void {
     if (!this.uiManager) {
       this.uiManager = new EditorUIManager(
         this.editor,
@@ -578,7 +671,5 @@ export class EditorEvents {
         this.appVersionManager
       );
     }
-
-    this.uiManager.activateEditor(frameId);
   }
 }

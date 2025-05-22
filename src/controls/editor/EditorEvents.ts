@@ -30,6 +30,7 @@ export class EditorEvents {
   isDragging: boolean = false;
   resizingRowHeight: number = 0;
   resizingRow: HTMLDivElement | null = null;
+  resizingRowParent: HTMLDivElement | null = null;
   resizeYStart: number = 0;
   selectedComponent: any;
   initialHeight!: number;
@@ -86,6 +87,11 @@ export class EditorEvents {
               this.resizingRow = targetElement.closest(
                 ".template-wrapper"
               ) as HTMLDivElement;
+
+              this.resizingRowParent = targetElement.closest(
+                ".container-row"
+              ) as HTMLDivElement;
+
               this.resizingRowHeight = this.resizingRow.offsetHeight;
               this.resizeYStart = e.clientY;
               this.initialHeight = this.resizingRow.offsetHeight;
@@ -207,14 +213,7 @@ export class EditorEvents {
                 comps[0].addStyle({
                   height: `${newHeight}px`,
                 });
-              }
-
-              // Update tile mapper with new size
-              (globalThis as any).tileMapper?.updateTile(
-                this.resizingRow.id,
-                "Size",
-                newHeight
-              );
+              }              
             }
           });
 
@@ -275,12 +274,14 @@ export class EditorEvents {
                 }, 150);
               }
 
-              // Update tile mapper with final size
-              (globalThis as any).tileMapper?.updateTile(
+              const infoSectionManager = new InfoSectionManager();
+              const parentId = this.resizingRowParent?.id;
+              infoSectionManager.updateInfoTileAttributes(
+                parentId || "",
                 this.resizingRow.id,
                 "Size",
                 finalHeight
-              );
+              )
 
               // Clear references
               this.resizingRow = null;

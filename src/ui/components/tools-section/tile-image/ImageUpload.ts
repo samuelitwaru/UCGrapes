@@ -576,7 +576,7 @@ export class ImageUpload {
 
     // Create a wrapper for the slider and buttons
     const modalFooter = document.createElement("div");
-    modalFooter.className = "modal-footer";
+    modalFooter.className = "modal-footer-slider";
     // Add the slider to adjust overlay opacity
     const opacitySlider = document.createElement("input");
     opacitySlider.type = "range";

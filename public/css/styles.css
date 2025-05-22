@@ -318,7 +318,7 @@ span#scroll-right:hover {
 .home-app-bar {
   display: flex;
   align-items: center;
-  padding: 12px 16px 16px 16px;
+  padding: 12px 16px 0px 16px;
   width: 100%;
 }
 
@@ -3061,7 +3061,7 @@ canvas {
   flex: 1; /* Allow the slider to take up available space */
   margin-left: 0 20px; /* Add spacing around the slider */
 }
-.modal-footer {
+.modal-footer-slider {
   display: flex;
   justify-content: space-between;
   align-items: center;

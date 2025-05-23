@@ -311,10 +311,6 @@ export class InfoSectionManager {
       : components.length;
 
     const addInfoSectionButton = new AddInfoSectionButton().getHTML();
-    const addLastInfoSectionButton = new AddInfoSectionButton(
-      false,
-      true
-    ).getHTML();
 
     // Add plus above
     const plusAbove = this.editor?.addComponents(addInfoSectionButton);
@@ -460,7 +456,7 @@ export class InfoSectionManager {
     }
   }
 
-  private markFirstAndLastPlusButtons(position: "first" | "last") {
+  markFirstAndLastPlusButtons(position: "first" | "last") {
     const containerColumn = this.editor?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
@@ -516,7 +512,7 @@ export class InfoSectionManager {
         const component = editor.getWrapper().find(`#${currentId}`)[0];
         if (component) {
           component.remove();
-
+          console.log('component removed:>> ');
           // Refresh components after removal
           components = containerColumn.components().models;
 

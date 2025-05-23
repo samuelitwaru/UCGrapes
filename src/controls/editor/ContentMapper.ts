@@ -4,7 +4,7 @@ export class ContentMapper {
         this.pageId = pageId;
     }
 
-    public contentRow (content: any): any {
+    public contentRow(content: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         const row = {
             "ContentType": content.ContentType,
@@ -17,14 +17,34 @@ export class ContentMapper {
     moveContentRow(contentId: any, newIndex: number): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageContentStructure?.Content) return;
-    
+
         const contentArray = data.PageContentStructure.Content;
         const contentRowIndex = contentArray.findIndex((row: any) => row.ContentId === contentId);
-        
+
         if (contentRowIndex === -1 || newIndex < 0 || newIndex >= contentArray.length) return;
-    
+
         const [contentRow] = contentArray.splice(contentRowIndex, 1);
-    
+
+        // Insert the item at the new position
+        contentArray.splice(newIndex, 0, contentRow);
+        localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
+    }
+
+    moveInfoContentRow(contentId: any, newIndex: number): void {
+        // console.log('contentId :>> ', contentId);
+        // console.log('newIndex :>> ', newIndex);
+        const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
+        if (!data?.PageInfoStructure?.InfoContent) return;
+
+
+        const contentArray = data.PageInfoStructure.InfoContent;
+        const contentRowIndex = contentArray.findIndex((row: any) => row.InfoId === contentId);
+        // console.log('contentRowIndex :>> ', contentRowIndex);
+
+        if (contentRowIndex === -1 || newIndex < 0 || newIndex >= contentArray.length) return;
+
+        const [contentRow] = contentArray.splice(contentRowIndex, 1);
+
         // Insert the item at the new position
         contentArray.splice(newIndex, 0, contentRow);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
@@ -33,54 +53,54 @@ export class ContentMapper {
     updateContentDescription(contentId: any, newDescription: string): boolean {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageContentStructure?.Content) return false;
-    
+
         const ContentItem = data.PageContentStructure.Content.find((Content: any) => Content.ContentId === contentId);
-            
+
         if (ContentItem) {
-            ContentItem.ContentValue = newDescription; 
-            
+            ContentItem.ContentValue = newDescription;
+
             localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-            return true; 
+            return true;
         }
-    
-        return false; 
+
+        return false;
     }
 
     updateContentImage(contentId: any, newImageUrl: string): boolean {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageContentStructure?.Content) return false;
-    
+
         const ContentItem = data.PageContentStructure.Content.find((Content: any) => Content.ContentId === contentId);
-            
+
         if (ContentItem) {
-            ContentItem.ContentValue = newImageUrl; 
-            
+            ContentItem.ContentValue = newImageUrl;
+
             localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-            return true; 
+            return true;
         }
-    
-        return false; 
+
+        return false;
     }
-    
+
     moveCta(CtaId: any, newIndex: number): void {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
         if (!data?.PageContentStructure?.Cta) return;
-    
+
         const contentArray = data.PageContentStructure.Cta;
         const contentRowIndex = contentArray.findIndex((row: any) => row.CtaId === CtaId);
-        
+
         if (contentRowIndex === -1 || newIndex < 0 || newIndex >= contentArray.length) return;
-    
+
         const [contentRow] = contentArray.splice(contentRowIndex, 1);
-    
+
         // Insert the item at the new position
         contentArray.splice(newIndex, 0, contentRow);
-    
+
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
-    
 
-    public addContentCta (cta: any): any {
+
+    public addContentCta(cta: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         const ctaButton = {
@@ -93,79 +113,79 @@ export class ContentMapper {
             "CtaButtonType": cta.CtaButtonType,
             "CtaButtonImgUrl": cta.CtaButtonImgUrl || "",
         }
-         if (!data.PageContentStructure.Cta) {
+        if (!data.PageContentStructure.Cta) {
             data.PageContentStructure.Cta = [];
-         }
+        }
 
         data?.PageContentStructure?.Cta.push(ctaButton);
         localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
     }
 
-    public removeContentCta (ctaId: any): any {
+    public removeContentCta(ctaId: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
             const ctaIndex = data.PageContentStructure.Cta.findIndex((cta: any) => cta.CtaId === ctaId);
-            
+
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta.splice(ctaIndex, 1);
-                
+
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
                 return true;
             }
         }
     }
 
-    public updateContentCtaBGColor (ctaId: any, bgColor: any): any {
+    public updateContentCtaBGColor(ctaId: any, bgColor: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
             const ctaIndex = data.PageContentStructure.Cta.findIndex((cta: any) => cta.CtaId === ctaId);
-            
+
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta[ctaIndex].CtaBGColor = bgColor;
-                
+
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-                return true; 
+                return true;
             }
         }
     }
 
-    public updateContentCtaColor (ctaId: any, color: any): any {
+    public updateContentCtaColor(ctaId: any, color: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
             const ctaIndex = data.PageContentStructure.Cta.findIndex((cta: any) => cta.CtaId === ctaId);
-            
+
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta[ctaIndex].CtaColor = color;
-                
+
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-                return true; 
+                return true;
             }
         }
     }
 
-    public updateContentButtonType (ctaId: any, buttonType: any, imageUrl?: any): any {
+    public updateContentButtonType(ctaId: any, buttonType: any, imageUrl?: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
             const ctaIndex = data.PageContentStructure.Cta.findIndex((cta: any) => cta.CtaId === ctaId);
-            
+
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta[ctaIndex].CtaButtonType = buttonType;
-                
+
                 if (imageUrl) {
-                    data.PageContentStructure.Cta[ctaIndex].CtaButtonImgUrl = imageUrl;                    
+                    data.PageContentStructure.Cta[ctaIndex].CtaButtonImgUrl = imageUrl;
                 }
 
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-                return true; 
+                return true;
             }
         }
     }
 
-    public updateContentCtaLabel (ctaId: any, label: any): any {
+    public updateContentCtaLabel(ctaId: any, label: any): any {
         const data: any = JSON.parse(localStorage.getItem(`data-${this.pageId}`) || "{}");
 
         if (data && data.PageContentStructure && data.PageContentStructure.Cta) {
@@ -174,7 +194,7 @@ export class ContentMapper {
             if (ctaIndex !== -1 && data.PageContentStructure.Cta[ctaIndex]) {
                 data.PageContentStructure.Cta[ctaIndex].CtaLabel = label;
                 localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
-                return true; 
+                return true;
             }
         }
     }

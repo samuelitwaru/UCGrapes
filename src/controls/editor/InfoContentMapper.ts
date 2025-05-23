@@ -73,7 +73,7 @@ export class InfoContentMapper {
 
     const contentArray = data.PageInfoStructure.InfoContent;
     const contentRowIndex = contentArray.findIndex(
-      (row: any) => row.ContentId === contentId
+      (row: any) => row.InfoId === contentId
     );
 
     if (
@@ -101,7 +101,7 @@ export class InfoContentMapper {
     if (contentRowIndex === -1) return false;
     contentArray[contentRowIndex] = newContent;
     this.saveData(data);
-    
+
     return true;
   }
 

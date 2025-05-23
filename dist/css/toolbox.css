@@ -1159,6 +1159,18 @@ img.content-page-block {
   fill: #fff;
 }
 
+.drop-zone-highlight {
+  background: #efeeec;
+  border: 1px dashed #222f54;
+  border-radius: 6px;
+  margin: 4px 0px;
+  transition: background 0.2s, outline 0.2s;
+}
+
+.drop-zone-highlight .add-new-info-section {
+  display: none;
+}
+
 .tb-add-new-info-section{
   position: absolute;
   display: none;
@@ -1277,6 +1289,12 @@ img.content-page-block {
 .info-image-section {
   position: relative;
   width: 100% !important;
+  max-height: 156px;
+  min-height: 156px;
+  border-radius: 13px;
+  object-fit: cover;
+  display: block;
+  border: 1px dashed #222f54;
 }
 
 .info-image-section:hover .tb-delete-image-icon,
@@ -1305,9 +1323,9 @@ img.content-page-block {
   display: flex;
 }
 
-.info-desc-section .info-desc-content {
+/* .info-desc-section .info-desc-content {
   padding: 2px;
-}
+} */
 
 .info-desc-section .info-desc-content p {
   margin: 0;
@@ -1315,7 +1333,7 @@ img.content-page-block {
 
 .container-column-info .info-desc-content:hover,
 .container-column-info .info-image-section:hover {
-  cursor: default;
+  cursor: move;
 }
 
 [data-gjs-type="info-cta-section"].gjs-selected .tile-open-menu {

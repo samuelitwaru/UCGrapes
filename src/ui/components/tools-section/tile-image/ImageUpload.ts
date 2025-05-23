@@ -177,7 +177,7 @@ export class ImageUpload {
     const loadingElement = document.createElement("div");
     loadingElement.id = "loading-media";
     loadingElement.className = "loading-media";
-    loadingElement.textContent = "Loading media files...";
+   // loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
 
     this.modalContent.appendChild(this.fileListElement);
@@ -584,7 +584,8 @@ export class ImageUpload {
     opacitySlider.max = "100";
     opacitySlider.step = "1";
     opacitySlider.value = "0"; // Default 60% opacity
-    opacitySlider.style.width = "40%";
+    opacitySlider.style.width = "100%";
+    opacitySlider.style.marginLeft = "32px";
 
     opacitySlider.addEventListener("input", () => {
       const opacityValue = parseInt(opacitySlider.value, 10) / 100;

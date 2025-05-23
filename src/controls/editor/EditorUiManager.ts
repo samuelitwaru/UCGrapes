@@ -15,6 +15,7 @@ import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { InfoType } from "../../types";
 import { svg } from "d3";
 import { InfoSectionManager } from "../InfoSectionManager";
+import { AddInfoSectionButton } from "../../ui/components/AddInfoSectionButton";
 
 export class EditorUIManager {
   editor: any;
@@ -67,22 +68,22 @@ export class EditorUIManager {
     existingMenu.forEach((menu: any) => {
       menu.remove();
     });
-    
+
     const infoSections = this.editor?.getWrapper()?.find(".info-section-spacing-container");
     infoSections?.forEach((component: any) => {
       component.getEl().style.removeProperty("height");
       const svgTrigger = component.getEl().querySelector('[data-name="Ellipse 6"]') as HTMLElement;
       const addButton = component.getEl().querySelector(".add-new-info-section") as HTMLDivElement;
-        if (addButton) {
-          addButton.style.removeProperty("opacity");
-        }
-        if (svgTrigger) {
-          svgTrigger.setAttribute("fill", "#fdfdfd");        
-        }
-        const svgGPath = component.getEl().querySelector('path') as SVGPathElement;
-        if (svgGPath) {
-          svgGPath.setAttribute("fill", "#5068a8");
-        }
+      if (addButton) {
+        addButton.style.removeProperty("opacity");
+      }
+      if (svgTrigger) {
+        svgTrigger.setAttribute("fill", "#fdfdfd");
+      }
+      const svgGPath = component.getEl().querySelector('path') as SVGPathElement;
+      if (svgGPath) {
+        svgGPath.setAttribute("fill", "#5068a8");
+      }
     });
   }
 
@@ -166,7 +167,7 @@ export class EditorUIManager {
         }
         const svgGEl = svgTrigger.querySelector('[data-name="Ellipse 6"]') as HTMLElement;
         if (svgGEl) {
-          svgGEl.setAttribute("fill", "#5068a8");        
+          svgGEl.setAttribute("fill", "#5068a8");
         }
 
         const svgGPath = svgTrigger.querySelector('path') as SVGPathElement;
@@ -208,51 +209,60 @@ export class EditorUIManager {
     return '';
   }
 
-
-
-
   handleDragEnd(model: any, sourceComponent: any, destinationComponent: any) {
-    console.log('model', model.target.getEl());
-    console.log('sourceComponent', sourceComponent.getEl());
-    console.log('destinationComponent', destinationComponent.getEl());
-    const parentEl = destinationComponent.getEl();
-    if (parentEl && parentEl.classList.contains("container-row")) {
-      const tileWrappers = model.parent.components().filter((comp: any) => {
-        const type = comp.get("type");
-        return type === "tile-wrapper";
-      });
-      // console.log(tileWrappers);
-      if (tileWrappers.length > 3) {
-        model.target.remove();
-        this.editor.UndoManager.undo();
+    this.activateEditor(this.frameId);
+    let parentEl = destinationComponent.getEl();
+    let isDraggingTile = false;
+
+    // manage plus button sections
+    const containerColumn = this.editor?.getWrapper()
+      .find(".container-column-info")[0];
+    if (containerColumn) {
+      const modelId = model.target?.getId?.() ?? model.getId();
+      const components = containerColumn.components().models;
+      const modelIndex = components.findIndex((comp: any) => comp.getId() === modelId);
+
+      const addInfoSectionButton = new AddInfoSectionButton().getHTML();
+
+      // Add plus above
+      const plusAbove = this.editor?.addComponents(addInfoSectionButton);
+      containerColumn.append(plusAbove, { at: modelIndex });
+
+      // Add plus below
+      const plusBelow = this.editor?.addComponents(addInfoSectionButton);
+      containerColumn.append(plusBelow, { at: modelIndex + 2 });
+
+      // Clean up redundant plus buttons
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.removeConsecutivePlusButtons();
+      infoSectionManager.markFirstAndLastPlusButtons('first');
+      infoSectionManager.markFirstAndLastPlusButtons('last');
+    }
+
+    // If dragged element is a tile, get the main container-column-info parent
+    if (parentEl && parentEl.getAttribute("data-gjs-type") === "info-tiles-section") {
+      const containerParent = parentEl.closest(".container-column-info");
+      if (containerParent) {
+        isDraggingTile = true;
+        parentEl = containerParent;
       }
-      // return
-      const isDragging: boolean = true;
-      const tileUpdate = new TileUpdate();
+    }
 
-      tileUpdate.updateTile(destinationComponent, isDragging);
-      tileUpdate.updateTile(sourceComponent, isDragging);
+    if (
+      parentEl &&
+      parentEl.classList.contains("container-column-info")
+    ) {
 
-      const tileMapper = new TileMapper(this.pageId);
-      tileMapper.moveTile(
-        model.target.getId(),
-        sourceComponent.getId(),
-        destinationComponent.getId(),
-        model.index
+      // Same logic for info content rows
+      const siblings = Array.from(parentEl.children).filter(
+        (el) =>
+          !(el as Element).classList.contains("info-section-spacing-container")
       );
-      this.onTileUpdate(destinationComponent);
-    } else if (
-      parentEl &&
-      parentEl.classList.contains("content-page-wrapper")
-    ) {
-      const contentMapper = new ContentMapper(this.pageId);
-      contentMapper.moveContentRow(model.target.getId(), model.index);
-    } else if (
-      parentEl &&
-      parentEl.classList.contains("cta-button-container")
-    ) {
-      const contentMapper = new ContentMapper(this.pageId);
-      contentMapper.moveCta(model.target.getId(), model.index);
+      const modelEl = isDraggingTile ? model.parent.getEl() : model.target.getEl();
+      const filteredIndex = siblings.findIndex((el) => el === modelEl);
+
+      const infoContentMapper = new InfoContentMapper(this.pageId);
+      infoContentMapper.moveContentRow(modelEl.getAttribute("id"), filteredIndex);
     }
 
     const infoSectionMapper = new InfoSectionManager();

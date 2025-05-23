@@ -27,7 +27,7 @@ export class EditorEvents {
   private appVersionManager: AppVersionManager;
   private toolboxService: ToolBoxService;
   private uiManager!: EditorUIManager;
-  
+
   // Component state
   private selectedComponent: any;
   private resizeState!: ResizeState;
@@ -123,7 +123,7 @@ export class EditorEvents {
 
   private setupWrapperEventListeners(wrapper: any): void {
     const viewEl = wrapper.view.el;
-    
+
     viewEl.addEventListener("mousedown", this.handleMouseDown.bind(this));
     viewEl.addEventListener("mousemove", this.handleMouseMove.bind(this));
     viewEl.addEventListener("mouseup", this.handleMouseUp.bind(this));
@@ -138,7 +138,7 @@ export class EditorEvents {
 
   private handleMouseDown(e: MouseEvent): void {
     const targetElement = e.target as Element;
-    
+
     if (targetElement.closest(".tile-resize-button")) {
       this.startResize(e, targetElement);
     }
@@ -161,24 +161,24 @@ export class EditorEvents {
 
   private setupResizeUI(targetElement: Element): void {
     const frameContainer = targetElement.closest("#frame-container") as HTMLDivElement;
-    
+
     // Setup frame children cursors
     this.resizeState.frameChildren = Array.from(frameContainer?.querySelectorAll("*"))
       .filter((child): child is HTMLDivElement => child !== this.resizeState.resizingRow);
-    
+
     this.resizeState.frameChildren.forEach((child) => {
       child.style.setProperty("cursor", "ns-resize", "important");
     });
 
     // Create resize overlay
     this.createResizeOverlay();
-    
+
     // Setup affected elements
     this.setupAffectedElements();
-    
+
     // Setup info section spacer
     this.setupInfoSectionSpacer(targetElement);
-    
+
     this.resizeState.templateBlock = targetElement.closest(".template-block") as HTMLDivElement;
   }
 
@@ -218,7 +218,7 @@ export class EditorEvents {
     this.resizeState.infoSectionSpacer = targetElement
       ?.closest(".container-row")
       ?.nextElementSibling?.closest(".info-section-spacing-container") as HTMLDivElement | null;
-    
+
     if (this.resizeState.infoSectionSpacer) {
       this.resizeState.infoSectionSpacer.style.pointerEvents = "none";
     }
@@ -250,7 +250,7 @@ export class EditorEvents {
 
     const deltaY = e.clientY - this.resizeState.resizeYStart;
     const newHeight = this.calculateNewHeight(deltaY);
-    
+
     this.applyResize(newHeight);
   }
 
@@ -276,7 +276,7 @@ export class EditorEvents {
 
     const wrapper = this.editor.getWrapper();
     const comps = wrapper.find(`#${this.resizeState.resizingRow.id}`);
-    
+
     if (comps.length) {
       comps[0].addStyle({ height: `${newHeight}px` });
     }
@@ -315,7 +315,7 @@ export class EditorEvents {
 
     const wrapper = this.editor.getWrapper();
     const comps = wrapper.find(`#${this.resizeState.resizingRow.id}`);
-    
+
     if (comps.length) {
       this.resizeState.resizingRow.style.transition = "height 0.05s ease-out";
       comps[0].addStyle({ height: `${finalHeight}px` });
@@ -331,7 +331,7 @@ export class EditorEvents {
   private updateInfoTileAttributes(finalHeight: number): void {
     const infoSectionManager = new InfoSectionManager();
     const parentId = this.resizeState.resizingRowParent?.id;
-    
+
     if (parentId && this.resizeState.resizingRow) {
       infoSectionManager.updateInfoTileAttributes(
         parentId,
@@ -344,29 +344,29 @@ export class EditorEvents {
 
   private cleanupResize(): void {
     this.resizeState.isResizing = false;
-    
+
     // Reset body cursor
     document.body.style.removeProperty("cursor");
-    
+
     // Remove overlay
     if (this.resizeState.resizeOverlay) {
       document.body.removeChild(this.resizeState.resizeOverlay);
       this.resizeState.resizeOverlay = null;
     }
-    
+
     // Reset affected element cursors
     this.resetAffectedElementCursors();
-    
+
     // Reset frame children cursors
     this.resizeState.frameChildren?.forEach((child) => {
       child.style.removeProperty("cursor");
     });
-    
+
     // Reset info section spacer
     if (this.resizeState.infoSectionSpacer) {
       this.resizeState.infoSectionSpacer.style.pointerEvents = "auto";
     }
-    
+
     // Clear references
     this.clearResizeReferences();
   }
@@ -451,7 +451,7 @@ export class EditorEvents {
 
   private handleClick(e: MouseEvent): void {
     const targetElement = e.target as Element;
-    
+
     if (this.shouldIgnoreClick(targetElement)) {
       e.stopPropagation();
       return;
@@ -476,10 +476,10 @@ export class EditorEvents {
     this.uiManager.openMenu(e);
     this.uiManager.initContentDataUi(e);
     this.uiManager.activateEditor(this.frameId);
-    
+
     const editorManager = new EditorManager();
     editorManager.loadPageHistory(this.pageData);
-    
+
     this.uiManager.handleInfoSectionHover(e);
   }
 
@@ -504,7 +504,7 @@ export class EditorEvents {
 
     this.uiManager.frameEventListener();
     this.uiManager.activateNavigators();
-    
+
     const infoSectionManager = new InfoSectionManager();
     infoSectionManager.removeConsecutivePlusButtons(this.editor);
   }
@@ -529,7 +529,6 @@ export class EditorEvents {
 
     this.editor.on("component:drag:end", (model: any) => {
       if (this.resizeState.isResizing) return;
-      
       destinationComponent = model.parent;
       this.uiManager.handleDragEnd(model, sourceComponent, destinationComponent);
     });
@@ -542,9 +541,9 @@ export class EditorEvents {
 
   private async handleComponentSelected(component: any): Promise<void> {
     this.setupGlobalComponentReferences(component);
-    
+
     const componentType = this.determineComponentType(component);
-    
+
     switch (componentType) {
       case 'cta':
         await this.handleCtaSelection(component);
@@ -569,16 +568,16 @@ export class EditorEvents {
 
   private determineComponentType(component: any): 'cta' | 'tile' | 'default' {
     const classes = component.getClasses();
-    
+
     if (classes.includes("template-block")) {
       return 'tile';
     }
-    
+
     const ctaClasses = ["img-button-container", "plain-button-container", "cta-container-child"];
     if (ctaClasses.some(cls => classes.includes(cls))) {
       return 'cta';
     }
-    
+
     return 'default';
   }
 
@@ -589,7 +588,7 @@ export class EditorEvents {
     this.uiManager.hidePageInfo();
 
     const ctaAttrs = (globalThis as any).tileMapper.getCta(component.getId());
-    
+
     if (ctaAttrs.CtaAction) {
       await this.setupChildEditor(ctaAttrs);
     }
@@ -600,7 +599,7 @@ export class EditorEvents {
     this.uiManager.removeOtherEditors();
 
     const childPage = this.findChildPage(ctaAttrs, version);
-    
+
     if (childPage) {
       this.uiManager.removeOtherEditors();
       new ChildEditor(childPage?.PageId, childPage).init(ctaAttrs);
@@ -609,18 +608,18 @@ export class EditorEvents {
 
   private findChildPage(ctaAttrs: any, version: any): any {
     const pageType = ctaAttrs.CtaType === "Form" ? "DynamicForm" : ctaAttrs.CtaType;
-    
+
     if (pageType === "DynamicForm") {
       return version?.Pages.find((page: any) => {
         return page.PageType === pageType &&
-               page.PageLinkStructure?.WWPFormId === Number(ctaAttrs.Action?.ObjectId);
+          page.PageLinkStructure?.WWPFormId === Number(ctaAttrs.Action?.ObjectId);
       });
     } else if (pageType === "WebLink") {
       return version?.Pages.find((page: any) => {
         return page.PageLinkStructure?.Url === ctaAttrs.CtaAction;
       });
     }
-    
+
     return null;
   }
 
@@ -658,7 +657,7 @@ export class EditorEvents {
     const tileWrappers = parent.components().filter((comp: any) => {
       return comp.get("type") === "tile-wrapper";
     });
-    
+
     if (tileWrappers.length === 3) {
       console.log("more than 3");
     }

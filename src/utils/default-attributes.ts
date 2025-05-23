@@ -9,7 +9,7 @@ export const tileDefaultAttributes: string = `
 `;
 
 export const tileWrapperDefaultAttributes: string = `
-    data-gjs-draggable="false"
+    data-gjs-draggable="true"
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="false"
@@ -59,7 +59,7 @@ export const contentColumnDefaultAttributes: string = `
 `;
 
 export const contentDefaultAttributes: string = `
-    data-gjs-draggable="false"
+    data-gjs-draggable="true"
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-droppable="false"
@@ -68,7 +68,7 @@ export const contentDefaultAttributes: string = `
 `;
 
 export const ctaTileDEfaultAttributes: string = `
-    data-gjs-draggable="false"
+    data-gjs-draggable="true"
     data-gjs-selectable="true"
     data-gjs-editable="false"
     data-gjs-highlightable="false"
@@ -97,7 +97,7 @@ export const DefaultInfoColumnAttributes: string = `
 
 export const infoRowDefaultAttributes: string = `
     data-gjs-type="info-tiles-section"
-    data-gjs-draggable="false"
+    data-gjs-draggable="true"
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="true"

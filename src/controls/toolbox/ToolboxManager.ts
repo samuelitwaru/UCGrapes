@@ -88,7 +88,6 @@ export class ToolboxManager {
       const lastSavedStates = new Map<string, string>();
       const activeVersion = await this.appVersions.getUpdatedActiveVersion();
       const pages = activeVersion.Pages;
-
       await Promise.all(
         pages.map(async (page: any) => {
           const pageId = page.PageId;
@@ -144,7 +143,6 @@ export class ToolboxManager {
 
             try {
               // console.log(`Saving page: ${page.PageName}`);
-              // console.log('Data: ', JSON.stringify(pageInfo, null, 2));
               await this.toolboxService.autoSavePage(pageInfo);
               lastSavedStates.set(pageId, localStructureString);
               // if (!publish) this.openToastMessage();
@@ -209,63 +207,163 @@ export class ToolboxManager {
     if (undoButton) {
       undoButton.onclick = (e) => {
         e.preventDefault();
-        // const undoResult = historyManager.undo();
+        const undoResult = historyManager.undo();
 
-        // if (undoResult) {
-        //   this.applyNewState(undoResult, pageId);
-        // }
-        // updateButtonStates();
+        if (undoResult) {
+          this.applyNewState(undoResult, pageId);
+        }
+        updateButtonStates();
       };
     }
 
     if (redoButton) {
       redoButton.onclick = (e) => {
         e.preventDefault();
-        // const redoResult = historyManager.redo();
+        const redoResult = historyManager.redo();
 
-        // if (redoResult) {
-        //   this.applyNewState(redoResult, pageId);
-        // }
-        // updateButtonStates();
+        if (redoResult) {
+          this.applyNewState(redoResult, pageId);
+        }
+        updateButtonStates();
       };
     }
   }
 
   applyNewState(stateData: any, pageId: string) {
+    const editor = (globalThis as any).activeEditor;
+    if (!editor) return;
+
+    const frameContainer = editor.getWrapper().find("#frame-container")[0];
+    if (!frameContainer) return;
+
+    // Capture current state
+    const currentState = this.captureCurrentState(frameContainer);
+
+    // Apply the new state
+    this.replaceFrameContent(stateData, pageId, frameContainer);
+
+    // Restore scroll and selection
+    this.restoreUIState(editor, currentState);
+  }
+
+  private captureCurrentState(frameContainer: any) {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    let scrollPosition = { top: 0, left: 0 };
+    let frameContainerEl = null;
+
+    try {
+      frameContainerEl = frameContainer.getEl();
+      if (frameContainerEl) {
+        scrollPosition = {
+          top: frameContainerEl.scrollTop || 0,
+          left: frameContainerEl.scrollLeft || 0,
+        };
+
+        // Hide container to prevent flicker
+        frameContainerEl.style.visibility = "hidden";
+      }
+    } catch (error) {
+      console.warn("Could not capture current state:", error);
+    }
+
+    return {
+      selectedComponentId: selectedComponent?.getId() || null,
+      scrollPosition,
+      frameContainerEl,
+    };
+  }
+
+  private replaceFrameContent(
+    stateData: any,
+    pageId: string,
+    frameContainer: any
+  ) {
     const jsonFormatter = new JSONToGrapesJSInformation(stateData);
     const updatedHtml = jsonFormatter.generateHTML();
     const storageKey = `data-${pageId}`;
 
-    const editor = (globalThis as any).activeEditor;
-    if (!editor) return;
+    frameContainer.replaceWith(updatedHtml);
+    localStorage.setItem(storageKey, JSON.stringify(stateData));
+    this.savePages();
+  }
 
-    
-    const selectedComponent = (globalThis as any).selectedComponent;
-    const selectedComponentId = selectedComponent
-      ? selectedComponent.getId()
-      : null;
-    
-    const frameContainer = editor.getWrapper().find("#frame-container")[0];
-    if (frameContainer) {
-      frameContainer.replaceWith(updatedHtml);
-      localStorage.setItem(storageKey, JSON.stringify(stateData));
+  private restoreUIState(editor: any, currentState: any) {
+    const { selectedComponentId, scrollPosition } = currentState;
 
-      if (selectedComponentId) {
+    const restoreState = () => {
+      this.restoreScrollPosition(editor, scrollPosition);
+      this.restoreSelectedComponent(editor, selectedComponentId);
+    };
+
+    // for smooth restoration
+    requestAnimationFrame(() => {
+      restoreState();
+      setTimeout(restoreState, 10);
+    });
+  }
+
+  private restoreScrollPosition(
+    editor: any,
+    scrollPosition: { top: number; left: number }
+  ) {
+    try {
+      const newFrameContainer = editor.getWrapper().find("#frame-container")[0];
+      const newFrameContainerEl = newFrameContainer?.getEl();
+
+      if (!newFrameContainerEl) return;
+
+      const hasScrollToRestore =
+        scrollPosition.top > 0 || scrollPosition.left > 0;
+
+      if (hasScrollToRestore) {
+        newFrameContainerEl.scrollTop = scrollPosition.top;
+        newFrameContainerEl.scrollLeft = scrollPosition.left;
+      }
+
+      newFrameContainerEl.style.visibility = "visible";
+    } catch (error) {
+      console.log("Could not restore scroll position:", error);
+      this.ensureContainerVisibility(editor);
+    }
+  }
+
+  private restoreSelectedComponent(
+    editor: any,
+    selectedComponentId: string | null
+  ) {
+    if (!selectedComponentId) return;
+
+    setTimeout(() => {
+      try {
         const newFrameContainer = editor
           .getWrapper()
           .find("#frame-container")[0];
-        if (newFrameContainer) {
-          const newComponent = editor
-            .getWrapper()
-            .find(`#${selectedComponentId}`)[0];
-          if (newComponent) {
-            editor.select(newComponent);
-            (globalThis as any).selectedComponent = newComponent;
-          } else {
-            console.log("Previously selected component no longer exists");
-          }
+        if (!newFrameContainer) return;
+
+        const newComponent = editor
+          .getWrapper()
+          .find(`#${selectedComponentId}`)[0];
+        if (newComponent) {
+          editor.select(newComponent);
+          (globalThis as any).selectedComponent = newComponent;
+        } else {
+          console.log("Previously selected component no longer exists");
         }
+      } catch (error) {
+        console.log("Could not restore selected component:", error);
       }
+    }, 150);
+  }
+
+  private ensureContainerVisibility(editor: any) {
+    try {
+      const frameContainer = editor.getWrapper().find("#frame-container")[0];
+      const frameContainerEl = frameContainer?.getEl();
+      if (frameContainerEl) {
+        frameContainerEl.style.visibility = "visible";
+      }
+    } catch (error) {
+      console.log("Could not ensure container visibility:", error);
     }
   }
 }

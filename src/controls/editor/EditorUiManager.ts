@@ -236,7 +236,6 @@ export class EditorUIManager {
         destinationComponent.getId(),
         model.index
       );
-      // console.log("tileMapper", tileMapper);
       this.onTileUpdate(destinationComponent);
     } else if (
       parentEl &&

@@ -211,43 +211,16 @@ export class EditorUIManager {
 
   handleDragEnd(model: any, sourceComponent: any, destinationComponent: any) {
     this.activateEditor(this.frameId);
-    const parentEl = destinationComponent.getEl();
-    // console.log('parentEl :>> ', parentEl);
-
-    if (
-      parentEl &&
-      parentEl.classList.contains("container-column-info")
-    ) {
-
-      // console.log('parentEl.children :>> ', parentEl.children);
-      // Same logic for info content rows
-      const siblings = Array.from(parentEl.children).filter(
-        (el) =>
-          !(el as Element).classList.contains("info-section-spacing-container")
-      );
-      // console.log('siblings :>> ', siblings);
-      const modelEl = model.target.getEl();
-      const filteredIndex = siblings.findIndex((el) => el === modelEl);
-      // console.log('filteredIndex :>> ', filteredIndex);
-      // console.log('modalIndex :>> ', model.index);
-
-      // console.log('Moving Content Row :>> ', parentEl);
-      const contentMapper = new ContentMapper(this.pageId);
-      contentMapper.moveInfoContentRow(model.target.getId(), filteredIndex);
-    }
-
+    let parentEl = destinationComponent.getEl();
+    let isDraggingTile = false;
 
     // manage plus button sections
-
     const containerColumn = this.editor?.getWrapper()
       .find(".container-column-info")[0];
     if (containerColumn) {
-      // console.log('containerColumn B4 :>> ', containerColumn.getEl());
       const modelId = model.target?.getId?.() ?? model.getId();
       const components = containerColumn.components().models;
-      // console.log('components :>> ', components);
       const modelIndex = components.findIndex((comp: any) => comp.getId() === modelId);
-      // console.log('modelIndex :>> ', modelIndex);
 
       const addInfoSectionButton = new AddInfoSectionButton().getHTML();
 
@@ -257,15 +230,39 @@ export class EditorUIManager {
 
       // Add plus below
       const plusBelow = this.editor?.addComponents(addInfoSectionButton);
-      containerColumn.append(plusBelow, { at: modelIndex + 2 }); // +2 because you just inserted one above
+      containerColumn.append(plusBelow, { at: modelIndex + 2 });
 
       // Clean up redundant plus buttons
       const infoSectionManager = new InfoSectionManager();
       infoSectionManager.removeConsecutivePlusButtons();
       infoSectionManager.markFirstAndLastPlusButtons('first');
       infoSectionManager.markFirstAndLastPlusButtons('last');
+    }
 
-      // console.log('containerColumn AFTER :>> ', containerColumn.getEl());
+    // If dragged element is a tile, get the main container-column-info parent
+    if (parentEl && parentEl.getAttribute("data-gjs-type") === "info-tiles-section") {
+      const containerParent = parentEl.closest(".container-column-info");
+      if (containerParent) {
+        isDraggingTile = true;
+        parentEl = containerParent;
+      }
+    }
+
+    if (
+      parentEl &&
+      parentEl.classList.contains("container-column-info")
+    ) {
+
+      // Same logic for info content rows
+      const siblings = Array.from(parentEl.children).filter(
+        (el) =>
+          !(el as Element).classList.contains("info-section-spacing-container")
+      );
+      const modelEl = isDraggingTile ? model.parent.getEl() : model.target.getEl();
+      const filteredIndex = siblings.findIndex((el) => el === modelEl);
+
+      const infoContentMapper = new InfoContentMapper(this.pageId);
+      infoContentMapper.moveContentRow(modelEl.getAttribute("id"), filteredIndex);
     }
   }
 

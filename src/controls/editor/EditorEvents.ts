@@ -226,7 +226,15 @@ export class EditorEvents {
 
   private handleMouseMove(e: MouseEvent): void {
     if (this.resizeState.isDragging) {
-      console.log(e);
+      // console.log(e);
+      if ((e.target) as Element) {
+        const targetElement = e.target as Element;
+        const tileRow = targetElement.closest('[data-gjs-type="info-tiles-section"]') as HTMLDivElement;
+        if (tileRow) {
+          tileRow.tabIndex = 0;
+          tileRow.focus();
+        }
+      }
     }
   }
 
@@ -395,14 +403,14 @@ export class EditorEvents {
 
   private handleDoubleClick(e: MouseEvent): void {
     e.preventDefault();
-     const selectedComponent = (globalThis as any).selectedComponent;
-     if (selectedComponent) {
-       this.createImageUploadModal(selectedComponent);
-       return;
-     }
-      
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (selectedComponent) {
+      this.createImageUploadModal(selectedComponent);
+      return;
+    }
+
     const target = e.target as HTMLElement;
-      if (target.id == "product-service-image") {
+    if (target.id == "product-service-image") {
       // Open the image upload modal for info section
       const sectionId = target.parentElement?.id;
       if (!sectionId) return;
@@ -419,8 +427,8 @@ export class EditorEvents {
     }
 
 
-   
-    
+
+
 
   }
 

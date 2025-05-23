@@ -9,7 +9,7 @@ export const tileDefaultAttributes: string = `
 `;
 
 export const tileWrapperDefaultAttributes: string = `
-    data-gjs-draggable="true"
+    data-gjs-draggable="false"
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="false"
@@ -101,7 +101,7 @@ export const infoRowDefaultAttributes: string = `
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="true"
-    data-gjs-droppable="[data-gjs-type='info-tiles-section']"
+    data-gjs-droppable="false"
 `;
-
+// data-gjs-droppable="[data-gjs-type='info-tiles-section']"
 export const minTileHeight = 80

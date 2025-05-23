@@ -1160,8 +1160,7 @@ img.content-page-block {
 }
 
 .drop-zone-highlight {
-  outline: 2px dashed #5068a8;
-  background: #fa8585;
+  background: #efeeec;
   border: 1px dashed #222f54;
   border-radius: 6px;
   margin: 4px 0px;
@@ -1334,7 +1333,7 @@ img.content-page-block {
 
 .container-column-info .info-desc-content:hover,
 .container-column-info .info-image-section:hover {
-  cursor: default;
+  cursor: move;
 }
 
 [data-gjs-type="info-cta-section"].gjs-selected .tile-open-menu {

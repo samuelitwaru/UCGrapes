@@ -226,7 +226,7 @@ export class EditorEvents {
 
   private handleMouseMove(e: MouseEvent): void {
     if (this.resizeState.isDragging) {
-      console.log(e);
+      // console.log(e);
     }
   }
 
@@ -502,6 +502,7 @@ export class EditorEvents {
 
     this.editor.on("component:drag:start", (model: any) => {
       sourceComponent = model.parent;
+      console.log('sourceComponent', sourceComponent)
     });
 
     this.editor.on("component:drag:end", (model: any) => {

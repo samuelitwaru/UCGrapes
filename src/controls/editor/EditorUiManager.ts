@@ -14,6 +14,7 @@ import { ActionSelectContainer } from "../../ui/components/tools-section/action-
 import { ToolboxManager } from "../toolbox/ToolboxManager";
 import { InfoType } from "../../types";
 import { svg } from "d3";
+import { InfoSectionManager } from "../InfoSectionManager";
 
 export class EditorUIManager {
   editor: any;
@@ -211,6 +212,9 @@ export class EditorUIManager {
 
 
   handleDragEnd(model: any, sourceComponent: any, destinationComponent: any) {
+    console.log('model', model.target.getEl());
+    console.log('sourceComponent', sourceComponent.getEl());
+    console.log('destinationComponent', destinationComponent.getEl());
     const parentEl = destinationComponent.getEl();
     if (parentEl && parentEl.classList.contains("container-row")) {
       const tileWrappers = model.parent.components().filter((comp: any) => {
@@ -250,6 +254,9 @@ export class EditorUIManager {
       const contentMapper = new ContentMapper(this.pageId);
       contentMapper.moveCta(model.target.getId(), model.index);
     }
+
+    const infoSectionMapper = new InfoSectionManager();
+    infoSectionMapper.removeConsecutivePlusButtons();
   }
 
   onTileUpdate(containerRow: any) {

@@ -1,11 +1,38 @@
+const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+
 module.exports = {
-    mode: 'development', // This is the default mode that doesn’t minify
-    devtool: 'cheap-module-source-map',
-    entry: './src/script.js',
-    output: {
-        path: __dirname + '/dist', // Output folder
-        filename: 'main.js', // Output file
-        clean: true, // Clean dist folder before each build
+  entry: "./src/index.ts",
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  performance: {
+    maxEntrypointSize: 1812000,
+    maxAssetSize: 1812000,
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
+  },
+  output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [{ from: "public", to: "" }],
+    }),
+  ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
     },
-    // Your other Webpack settings
-  };
+    compress: true,
+    port: 9000,
+  },
+};

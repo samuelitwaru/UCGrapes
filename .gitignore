@@ -1,9 +1,6 @@
-custom.html
-node_modules
-test.html
-range.html
-test1.html
-src/combined.js
-toolbox/src/utils/env.ts
+html-tests/
+src/utils/env.ts
 shimmers-test.html
-toolbox/dist/bundle.js
+dist/bundle.js
+src/utils/env.ts
+/node_modules/

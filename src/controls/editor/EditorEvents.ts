@@ -395,10 +395,33 @@ export class EditorEvents {
 
   private handleDoubleClick(e: MouseEvent): void {
     e.preventDefault();
-    const selectedComponent = (globalThis as any).selectedComponent;
-    if (!selectedComponent) return;
+     const selectedComponent = (globalThis as any).selectedComponent;
+     if (selectedComponent) {
+       this.createImageUploadModal(selectedComponent);
+       return;
+     }
+      
+    const target = e.target as HTMLElement;
+      if (target.id == "product-service-image") {
+      // Open the image upload modal for info section
+      const sectionId = target.parentElement?.id;
+      if (!sectionId) return;
+      const modal = document.createElement("div");
+      modal.classList.add("tb-modal");
+      modal.style.display = "flex";
 
-    this.createImageUploadModal(selectedComponent);
+      // Pass "info" as type and sectionId as id
+      const modalContent = new ImageUpload("info", sectionId);
+      modalContent.render(modal);
+
+      document.body.appendChild(modal);
+      return;
+    }
+
+
+   
+    
+
   }
 
   private createImageUploadModal(selectedComponent: any): void {

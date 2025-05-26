@@ -214,6 +214,28 @@ export class ContentDataUi {
       document.body.appendChild(modal);
       document.body.appendChild(uploadInput);
     }
+    else  if ((this.e.target as Element).closest(".tb-edit-images-icon")) {
+      const image = this.e.target.closest(
+        '[data-gjs-type="info-image-section"].info-image-section'
+      );
+
+      const modal = document.createElement("div");
+      modal.classList.add("tb-modal");
+      modal.style.display = "flex";
+      const type = this.page.PageType === "Information" ? "info" : "content";
+      const modalContent = new ImageUpload(type, (image as HTMLElement)?.id);
+      modalContent.render(modal);
+
+      const uploadInput = document.createElement("input");
+      uploadInput.type = "file";
+      uploadInput.multiple = true;
+      uploadInput.accept = "image/jpeg, image/jpg, image/png";
+      uploadInput.id = "fileInput";
+      uploadInput.style.display = "none";
+
+      document.body.appendChild(modal);
+      document.body.appendChild(uploadInput);
+    }
   }
 
   private openDeleteModal() {

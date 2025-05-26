@@ -9,7 +9,7 @@ export const tileDefaultAttributes: string = `
 `;
 
 export const tileWrapperDefaultAttributes: string = `
-    data-gjs-draggable="true"
+    data-gjs-draggable="false"
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="false"
@@ -92,7 +92,7 @@ export const DefaultInfoColumnAttributes: string = `
     data-gjs-selectable="false"
     data-gjs-editable="false"
     data-gjs-highlightable="true"
-    data-gjs-droppable="[data-gjs-type='info-desc-section'], [data-gjs-type='info-image-section'], [data-gjs-type='info-cta-section'], [data-gjs-type='info-tiles-section'], [data-gjs-type='tile-wrapper']"
+    data-gjs-droppable="[data-gjs-type='info-desc-section'], [data-gjs-type='info-image-section'], [data-gjs-type='info-cta-section'], [data-gjs-type='info-tiles-section']"
 `;
 
 export const infoRowDefaultAttributes: string = `

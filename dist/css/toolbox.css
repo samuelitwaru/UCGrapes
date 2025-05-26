@@ -1164,11 +1164,12 @@ img.content-page-block {
   border: 1px dashed #222f54;
   border-radius: 6px;
   margin: 4px 0px;
-  transition: background 0.2s, outline 0.2s;
+  transition: background 0.2s, border 0.2s;
 }
 
 .drop-zone-highlight .add-new-info-section {
   display: none;
+  height: 1.6rem;
 }
 
 .tb-add-new-info-section{
@@ -1370,4 +1371,21 @@ img.content-page-block {
 .img-button-container .icon-edit-button:hover g {
   fill: #5068a8;
   stroke: #fdfdfd;
+}
+
+
+/*  drag and drop */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.drag-over {
+  background-color: rgba(0, 123, 255, 0.1);
+  border: 2px dashed #007bff;
+}
+
+.drop-zone {
+  min-height: 50px;
+  transition: all 0.2s ease;
 }

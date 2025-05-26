@@ -226,7 +226,6 @@ export class EditorEvents {
 
   private handleMouseMove(e: MouseEvent): void {
     if (this.resizeState.isDragging) {
-      // console.log(e);
       if ((e.target) as Element) {
         const targetElement = e.target as Element;
         const tileRow = targetElement.closest('[data-gjs-type="info-tiles-section"]') as HTMLDivElement;
@@ -493,11 +492,17 @@ export class EditorEvents {
 
   private handleMouseOver(e: MouseEvent): void {
     const targetElement = e.target as Element;
+
     const infoSection = targetElement.closest(".info-section-spacing-container") as HTMLDivElement;
 
     if (infoSection && infoSection.style.height !== "3.2rem") {
       this.uiManager.clearAllMenuContainers();
       this.uiManager.isMenuOpen = false;
+    }
+
+    
+    if (this.resizeState.isDragging && infoSection) {
+      infoSection.style.border = "3px dashed red";
     }
   }
 

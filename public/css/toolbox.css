@@ -1372,3 +1372,20 @@ img.content-page-block {
   fill: #5068a8;
   stroke: #fdfdfd;
 }
+
+
+/*  drag and drop */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.drag-over {
+  background-color: rgba(0, 123, 255, 0.1);
+  border: 2px dashed #007bff;
+}
+
+.drop-zone {
+  min-height: 50px;
+  transition: all 0.2s ease;
+}

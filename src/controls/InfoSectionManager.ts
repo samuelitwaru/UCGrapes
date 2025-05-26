@@ -306,16 +306,11 @@ export class InfoSectionManager {
   }
 
   updateDescription(updatedDescription: string, infoId: string) {
-<<<<<<< HEAD:toolbox/src/controls/InfoSectionController.ts
-    const descContainer = this.infoSectionUI.getDescription(updatedDescription, infoId);
-    const component = this.editor.getWrapper().find(`#${infoId}`)[0];
-=======
     const descContainer = this.infoSectionUI.getDescription(
       updatedDescription,
       infoId
     );
     const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/controls/InfoSectionManager.ts
     if (component) {
       component.replaceWith(descContainer);
       this.updateInfoMapper(infoId, {

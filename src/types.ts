@@ -72,6 +72,13 @@ export interface InfoType {
   InfoPositionId?: string;
   CtaAttributes?: CtaAttributes;
   Tiles?:Tile[];
+  Images?: Image[];
+}
+
+export interface Image {
+  InfoImageId: string;
+  InfoImageValue?: string;
+
 }
 
 export interface MenuItem {

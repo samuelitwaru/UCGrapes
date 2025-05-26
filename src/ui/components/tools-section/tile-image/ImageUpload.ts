@@ -4,6 +4,7 @@ import { i18n } from "../../../../i18n/i18n";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { Media } from "../../../../types";
 import { SingleImageFile } from "./SingleImageFile";
+// FIX: Update the import path if the file exists elsewhere, or create the file if missing.
 
 export class ImageUpload {
   private type: "tile" | "cta" | "content" | "info";
@@ -80,13 +81,11 @@ export class ImageUpload {
     this.modalContent.appendChild(modalHeader);
     this.uploadArea();
 
-<<<<<<< HEAD:toolbox/src/ui/components/tools-section/tile-image/ImageUpload.ts
 
     // cropper container
     this.cropContainer = document.createElement("div");
     this.cropContainer.id = "crop-container";
     this.modalContent.appendChild(this.cropContainer);
-=======
     const selectedComponent = (globalThis as any).selectedComponent;
     if (selectedComponent) {
       // Get the tile element
@@ -94,7 +93,6 @@ export class ImageUpload {
       // Retrieve the background image
       const backgroundImage = tileElement["background-image"];
       // console.log("Background image:", backgroundImage);
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/ui/components/tools-section/tile-image/ImageUpload.ts
 
       if (backgroundImage !== undefined) {
         const dataUrl = backgroundImage.replace(/url\(["']?|["']?\)/g, "");
@@ -113,11 +111,13 @@ export class ImageUpload {
     this.createFileListElement();
     this.loadMediaFiles(); // Load media files asynchronously
     this.modalContent.appendChild(modalActions);
-<<<<<<< HEAD:toolbox/src/ui/components/tools-section/tile-image/ImageUpload.ts
 
 
     const modalActionsdown = document.createElement("div");
     modalActionsdown.className = "modal-actions-slider";
+    modalActionsdown.style.display = "flex";
+    modalActionsdown.style.gap = "16px"; // Add spacing between child buttons
+    modalActionsdown.style.marginTop = "16px"; // Optional: add space above the button row
 
     // Add cancel button
     const cancelBtn1 = document.createElement("button");
@@ -145,8 +145,8 @@ export class ImageUpload {
       }
 
       // Call addMultipleImages after the modal is removed
-      const infoSectionController = new InfoSectionController();
-      infoSectionController.addMultipleImages(this.selectedImageUrls);
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.addMultipleImages(this.selectedImageUrls);
     });
 
     modalActionsdown.appendChild(cancelBtn1);
@@ -156,8 +156,6 @@ export class ImageUpload {
     //this.modalContent.appendChild(bottomButton);
 
 
-=======
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/ui/components/tools-section/tile-image/ImageUpload.ts
   }
 
   private uploadArea() {

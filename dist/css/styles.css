@@ -1674,23 +1674,11 @@ div#cta-selected-actions {
   cursor: pointer;
   /* transition: border 0.3s ease; */
 }
-<<<<<<< HEAD:src/css/styles.css
-.action-column {
-  display: flex;
-  flex-direction: row; /* Stack items vertically */
-  align-items: right; /* Center items horizontally */
-  position: absolute;
-  top: 80px; /* Adjust position relative to the container */
-  right: 25px; /* Adjust position relative to the container */
-  gap: 30px; /* Add spacing between statusCheck and deleteSpan */
-  margin-left: 10px;
-=======
 .file-item:hover::after {
   opacity: 1; /* Show the gradient on hover */
 }
 .file-item:hover .action-column {
   opacity: 1; /* Show the action-column on hover */
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:dist/css/styles.css
 }
 .delete-media:hover {
   color: darkred; /* Darker red on hover */
@@ -1708,11 +1696,7 @@ div#cta-selected-actions {
 .file-item img {
   height: 110px;
   width: 110px;
-<<<<<<< HEAD:src/css/styles.css
-  margin-right: 5px;
-=======
   margin-right: 10px;
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:dist/css/styles.css
   object-fit: cover;
 }
 
@@ -1740,13 +1724,8 @@ div#cta-selected-actions {
 
 .file-item .delete-media {
   font-size: 20px;
-<<<<<<< HEAD:src/css/styles.css
-  color: #eaeaebe2;
-  opacity: 1;
-=======
   color: #ffffff;
   opacity: 0;
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:dist/css/styles.css
   cursor: pointer;
   margin-top: 40px;
   transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */
@@ -1760,6 +1739,9 @@ div#cta-selected-actions {
 }
 
 .file-item:hover .delete-media {
+  opacity: 1;
+}
+.selected-checkbox{
   opacity: 1;
 }
 
@@ -1798,10 +1780,11 @@ div#cta-selected-actions {
 }
 
 .modal-actions-slider {
-  margin-top: 20px;
-  display: flex; /* Ensure flexbox layout */
-  justify-content: flex-end; /* Align items to the right */
-  gap: 1em; /* Add spacing between child elements */
+    margin-top: 40px;
+    /* display: none; */
+    margin-left: 76%;
+    justify-content: flex-end;
+    gap: 1em;
 }
 
 /* popup */
@@ -3160,13 +3143,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 .file-list {
   display: grid;
-<<<<<<< HEAD:src/css/styles.css
-  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); /* Responsive grid */
-=======
   grid-template-columns: repeat(5, 1fr); /* Responsive grid */
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:dist/css/styles.css
   gap: 10px; /* Spacing between images */
-  padding: 10px;
+  padding: 16px;
+  overflow: scroll;
 }
 
 .grid-image {
@@ -3184,27 +3164,12 @@ input[type="range"]::-webkit-slider-thumb {
   outline: none; /* Remove the default focus outline */
 }
 
-.file-item .check-icon {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 20px;
-  height: 20px;
-  background-color: #28a745;
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  z-index: 10;
-  display: none; /* Hidden by default */
-}
+
 
 .file-item.active .check-icon {
   display: flex; /* Show only for active tile */
 }
+
 /* Style for both icons */
 .file-item .add-image,
 .file-item .delete-media {
@@ -3224,15 +3189,16 @@ input[type="range"]::-webkit-slider-thumb {
 }
 /* Show icons on hover */
 .file-item:hover .add-image,
-.file-item:hover .delete-media {
+.file-item:hover .delete-media,
+.file-item:hover {
   opacity: 1;
 }
 /* Optional: hover/focus effects */
-.file-item .delete-media:hover,
+/* .file-item .delete-media:hover,
 .file-item .delete-media:focus {
+  background: #5068a8;
   color: #fff;
-  background: #dc3545;
-}
+} */
 /* Trash section */
 .trash-container {
   /* display: flex;
@@ -3412,67 +3378,3 @@ input[type="range"]::-webkit-slider-thumb {
 .btn-danger:hover {
   background-color: #b31412;
 }
-<<<<<<< HEAD:src/css/styles.css
-
-* {box-sizing:border-box}
-
-/* Slideshow container */
-.slideshow-container {
-  max-width: 1000px;
-  position: relative;
-  margin: auto;
-}
-
-/* Hide the images by default */
-.mySlides {
-  display: none;
-}
-
-/* Next & previous buttons */
-.prev, .next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  margin-top: -22px;
-  padding: 16px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
-}
-
-/* Position the "next button" to the right */
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-/* On hover, add a black background color with a little bit see-through */
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
-}
-
-
-/* Number text (1/3 etc) */
-.numbertext {
-  color: #f2f2f2;
-  font-size: 12px;
-  padding: 8px 12px;
-  position: absolute;
-  top: 0;
-}
-/* Fading animation */
-.fade {
-  animation-name: fade;
-  animation-duration: 1.5s;
-}
-
-@keyframes fade {
-  from {opacity: .4}
-  to {opacity: 1}
-}
-=======
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:dist/css/styles.css

@@ -1,9 +1,4 @@
-<<<<<<< HEAD:toolbox/src/controls/editor/JSONToGrapesJSInformation.ts
-import { CallToAction } from "../../interfaces/CallToAction";
-import { Image } from "../../interfaces/Image";
-import { InfoType } from "../../interfaces/InfoType";
-=======
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/controls/editor/JSONToGrapesJSInformation.ts
+import { Image } from "../../Image";
 import { baseURL } from "../../services/ToolBoxService";
 import { InfoType } from "../../types";
 import { AddInfoSectionButton } from "../../ui/components/AddInfoSectionButton";

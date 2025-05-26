@@ -17,9 +17,6 @@ export class SingleImageFile {
   imageUpload: ImageUpload;
   fileListContainer: HTMLElement | undefined;
 
-<<<<<<< HEAD:toolbox/src/ui/components/tools-section/tile-image/SingleImageFile.ts
-  constructor(mediaFile: Media, type: any, imageUpload:  ImageUpload, infoId?: string, sectionId?: string) {
-=======
   constructor(
     mediaFile: Media,
     type: any,
@@ -27,7 +24,6 @@ export class SingleImageFile {
     infoId?: string,
     sectionId?: string
   ) {
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/ui/components/tools-section/tile-image/SingleImageFile.ts
     this.mediaFile = mediaFile;
     this.type = type;
     this.infoId = infoId;
@@ -47,25 +43,7 @@ export class SingleImageFile {
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
 
-<<<<<<< HEAD:toolbox/src/ui/components/tools-section/tile-image/SingleImageFile.ts
-    // Create a wrapper for statusCheck and deleteSpan
-    const actionColumn = document.createElement("div");
-    actionColumn.className = "action-column";
-
-    const fileInfo = document.createElement("div");
-    fileInfo.className = "file-info";
-
-    const fileName = document.createElement("div");
-    fileName.className = "file-name";
-    fileName.innerText = this.mediaFile.MediaName;
-
-    const fileSize = document.createElement("div");
-    fileSize.className = "file-size";
-    fileSize.innerText = this.formatBytes(this.mediaFile.MediaSize);
-
-=======
     // Check icon (statusCheck) - now positioned top left
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/ui/components/tools-section/tile-image/SingleImageFile.ts
     const statusCheck = document.createElement("span");
     statusCheck.className = "status-icon";
     statusCheck.style.position = "absolute";
@@ -81,7 +59,7 @@ export class SingleImageFile {
     actionColumn.className = "action-column";
     actionColumn.style.position = "absolute";
     actionColumn.style.top = "-16px";
-    actionColumn.style.right = "-4px";
+    actionColumn.style.right = "7px";
     actionColumn.style.display = "flex";
     actionColumn.style.flexDirection = "row";
     actionColumn.style.gap = "4px";
@@ -115,6 +93,7 @@ export class SingleImageFile {
     deleteSpan.style.width = "33px";
     deleteSpan.style.height = "33px";
     deleteSpan.style.fontSize = "16px";
+    //deleteSpan.style.color = "#f00707";
     deleteSpan.style.color = "#5068a8";
     deleteSpan.style.display = "flex";
     deleteSpan.style.alignItems = "center";
@@ -127,43 +106,53 @@ export class SingleImageFile {
       this.deleteEvent();
     });
 
-<<<<<<< HEAD:toolbox/src/ui/components/tools-section/tile-image/SingleImageFile.ts
     // Add a checkbox
-    const checkboxDiv = document.createElement("div");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.className = "select-media-checkbox";
+    //const checkboxDiv = document.createElement("div");
+    const checkbox = document.createElement("span");
+    //const checkbox = document.createElement("input");
+    checkbox.style.position = "absolute";
+    //checkbox.type = "checkbox";
+    checkbox.style.left = "-60px";
+    checkbox.style.top = "7px";
+    checkbox.style.fontSize = "25px"
+    //checkbox.style.width = "33px";
+    //checkbox.style.height = "33px";
+    checkbox.style.backgroundColor = "rgba(255,255,255,0.95)"; // Opaque white background
+    checkbox.style.color = "#5068a8"
+    checkbox.className = "select-media-checkbox fa-regular fa-square";
     checkbox.title = "Select image";
-    checkboxDiv.appendChild(checkbox);
+    //checkboxDiv.appendChild(checkbox);
     // Add event listener to the checkbox
     checkbox.addEventListener("click", (e) => {
       e.stopPropagation(); // Prevent triggering the container's click event
-      if (checkbox.checked) {
+      const isSelected = checkbox.classList.toggle("selected-checkbox");
+      if (isSelected) {
         // Add the URL to the selectedImageUrls array in ImageUpload
         this.imageUpload.selectedImageUrls.push(this.mediaFile.MediaUrl);
+        checkbox.className = "select-media-checkbox fa-solid fa-square-check selected-checkbox";
       } else {
         // Remove the URL from the selectedImageUrls array in ImageUpload
         this.imageUpload.selectedImageUrls = this.imageUpload.selectedImageUrls.filter(
           (url) => url !== this.mediaFile.MediaUrl
         );
+        checkbox.className = "select-media-checkbox fa-regular fa-square";
       }
       console.log("Selected Image URLs in ImageUpload:", this.imageUpload.selectedImageUrls); // Debugging output
     });
 
     // Append statusCheck, deleteSpan, and checkbox to the action column
-    actionColumn.appendChild(statusCheck);
-    actionColumn.appendChild(checkboxDiv);
-    actionColumn.appendChild(deleteSpan);
-
-    this.container.appendChild(img);
-=======
-    // Append addImage and deleteSpan to the action column (addImage left of delete)
+    //actionColumn.appendChild(statusCheck);
+    actionColumn.appendChild(checkbox);
     actionColumn.appendChild(addImage);
     actionColumn.appendChild(deleteSpan);
 
     this.container.appendChild(img);
-    this.container.appendChild(statusCheck);
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:src/ui/components/tools-section/tile-image/SingleImageFile.ts
+    // Append addImage and deleteSpan to the action column (addImage left of delete)
+   // actionColumn.appendChild(addImage);
+   // actionColumn.appendChild(deleteSpan);
+
+   // this.container.appendChild(img);
+    //this.container.appendChild(statusCheck);
     this.container.appendChild(actionColumn);
 
     this.setupItemClickEvent(statusCheck);
@@ -206,6 +195,8 @@ export class SingleImageFile {
   }
 
   private setupModalActions() {
+    const Imageslider = document.querySelector(".modal-actions-slider") as HTMLElement;
+    Imageslider.style.display = "none";
     const modalActions = document.querySelector(
       ".modal-actions"
     ) as HTMLElement;
@@ -233,12 +224,13 @@ export class SingleImageFile {
       modal.remove();
     });
     newSaveBtn.addEventListener("click", async () => {
-      const img = document.getElementById("selected-image") as HTMLImageElement;
+      const img = document.querySelector("selected-image") as HTMLImageElement;
       if (!img) {
         console.error("Image element not found.");
         return;
       }
       const frame = document.getElementById("crop-frame") as HTMLElement;
+
       if (frame) {
         const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
         const file = new File([img.src], uniqueFileName, { type: "image/png" });

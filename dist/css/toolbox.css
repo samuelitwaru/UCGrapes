@@ -1352,19 +1352,16 @@ img.content-page-block {
 .img-button-container .icon-edit-button:hover g {
   fill: #5068a8;
   stroke: #fdfdfd;
-<<<<<<< HEAD:src/css/toolbox.css
 }
+
 
 * {box-sizing:border-box}
 
 /* Slideshow container */
 .slideshow-container {
-  max-height: 156px;
-  min-height: 156px;
-  width: 100%;
-  border-radius: 13px;
-  object-fit: cover;
-  display: block;
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
 }
 
 /* Hide the images by default */
@@ -1445,6 +1442,6 @@ img.content-page-block {
   from {opacity: .4}
   to {opacity: 1}
 }
-=======
+.select-media-checkbox{
+  position: absolute;
 }
->>>>>>> d234b8864651c008928bb5eb130c2d81153c5739:dist/css/toolbox.css

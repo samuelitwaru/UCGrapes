@@ -30,6 +30,7 @@ export class InfoContentMapper {
       InfoNextSectionId: content.InfoPositionId || "",
       CtaAttributes: content?.CtaAttributes,
       Tiles: content?.Tiles,
+      Images: content?.Images,
     };
 
     return row;
@@ -61,7 +62,6 @@ export class InfoContentMapper {
       // If no match found, fallback to push
       data.PageInfoStructure.InfoContent.push(newSection);
     }
-
     this.saveData(data);
   }
 

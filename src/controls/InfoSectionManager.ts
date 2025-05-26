@@ -123,17 +123,13 @@ export class InfoSectionManager {
       
        function showSlides(n:number) {
         let i;
-        //console.log((globalThis as any).wrapper.find(".mySlides"))
-
         (globalThis as any).wrapper.find(".mySlides").forEach((slide: any) => {
           slide.getEl()
         })
 
 
         let slides = (globalThis as any).wrapper.find(".mySlides");
-        console.log(slides[1].getEl())
         //let slides = document.getElementsByClassName("mySlides");
-        console.log(slides.length)
         //let dots = document.getElementsByClassName("dot");
         let dots = (globalThis as any).wrapper.find(".dot")
         
@@ -143,18 +139,14 @@ export class InfoSectionManager {
         
         for (i = 0; i < slides.length; i++) {
           slides[i].getEl().style.display = "none";
-          console.log(slides[i].getEl().style.display)
         }
         for (i = 0; i < dots.length; i++) {
           dots[i].className = dots[i].getEl().className.replace(" active", "");
         }
         //slides[slideIndex-1].getEl().className += 'visible';
         slides[slideIndex-1].getEl().style.display = "block";
-        console.log(slides[slideIndex-1].getEl().style.display)
         //dots[slideIndex-1].getEl().className += " active";
       } 
-
-
     }
   }
 

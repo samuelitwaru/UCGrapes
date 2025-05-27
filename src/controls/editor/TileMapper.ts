@@ -277,22 +277,6 @@ export class TileMapper {
         });
       }
     }
-    // data?.PageMenuStructure?.Rows?.forEach((row: any) => {
-    //   row.Tiles.forEach((tile: any) => {
-    //     if (tile.Id === tileId) {
-    //       if (attribute.includes(".")) {
-    //         const parts = attribute.split(".");
-    //         let current = tile;
-    //         for (let i = 0; i < parts.length - 1; i++) {
-    //           current = current[parts[i]];
-    //         }
-    //         current[parts[parts.length - 1]] = value;
-    //       } else {
-    //         tile[attribute] = value;
-    //       }
-    //     }
-    //   });
-    // });
     localStorage.setItem(`data-${this.pageId}`, JSON.stringify(data));
   }
 
@@ -301,8 +285,6 @@ export class TileMapper {
       localStorage.getItem(`data-${this.pageId}`) || "{}"
     );
     let tile: any = null;
-    // if current page is Information type
-    console.log(data)
     if (data.PageType === "Information") {      
       const row = data.PageInfoStructure.InfoContent.find((item:any)=>item.InfoId==rowId)
       if (row) {

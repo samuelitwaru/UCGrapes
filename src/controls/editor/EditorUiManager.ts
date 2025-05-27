@@ -372,7 +372,9 @@ export class EditorUIManager {
     }
     let listHTML = ``
     const pageInfoSection = document.querySelector('#page-info-section') as HTMLDivElement
-    if (this.pageData.PageType == "Information" && this.pageData.PageInfoStructure.InfoContent) {
+    if (!this.pageData) return;
+
+    if (this.pageData?.PageType == "Information" && this.pageData?.PageInfoStructure.InfoContent) {
       this.pageData.PageInfoStructure.InfoContent.forEach((info: any) => {
         if (info.InfoType == "TileRow") {
           info.Tiles.forEach((tile: any) => {

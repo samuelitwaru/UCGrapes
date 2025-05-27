@@ -237,10 +237,9 @@ export class VersionSelectionView {
 
   private reloadPage(appVersion: any): void {
     const editorEvents = new EditorEvents();
-    editorEvents.clearAllEditors();
     this.clearGlobalVariables();
     (globalThis as any).activeVersion = appVersion.AppVersion;
-    // globalThis.pageData = appVersion.Pages.find((page: any) => page.PageName === "Home");
+    editorEvents.clearAllEditors();
     const newEditor = new EditorManager();
     newEditor.init(appVersion.AppVersion);
   }

@@ -51,7 +51,6 @@ export class ContentDataUi {
     const slides = parentContainer?.querySelectorAll(".mySlides");
 
     if (!slides || slides.length === 0) {
-      console.log("No slides found");
       return;
     }
 
@@ -79,7 +78,6 @@ export class ContentDataUi {
     const slides = parentContainer?.querySelectorAll(".mySlides");
 
     if (!slides || slides.length === 0) {
-      console.log("No slides found in showSlides");
       return;
     }
 
@@ -364,10 +362,6 @@ export class ContentDataUi {
     if (this.page.PageType === "Information") {
       const description = this.e.target.closest(
         '[data-gjs-type="info-desc-section"].info-desc-section'
-      );
-      console.log(
-        "description",
-        description.querySelector(".info-desc-content")
       );
       if (description) {
         return description.querySelector(".info-desc-content").innerHTML;

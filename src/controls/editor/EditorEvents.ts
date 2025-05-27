@@ -645,7 +645,7 @@ export class EditorEvents {
     this.uiManager.showPageInfo();
   }
 
-  private handleComponentDeselected(): void {
+  handleComponentDeselected(): void {
     (globalThis as any).selectedComponent = null;
     this.uiManager.toggleSidebar(false);
     this.uiManager.showPageInfo();
@@ -689,6 +689,7 @@ export class EditorEvents {
   public clearAllEditors(): void {
     this.ensureUIManager();
     this.uiManager.clearAllEditors();
+    this.handleComponentDeselected();
   }
 
   public activateEditor(frameId: any): void {

@@ -512,7 +512,6 @@ export class InfoSectionManager {
         const component = editor.getWrapper().find(`#${currentId}`)[0];
         if (component) {
           component.remove();
-          console.log('component removed:>> ');
           // Refresh components after removal
           components = containerColumn.components().models;
 

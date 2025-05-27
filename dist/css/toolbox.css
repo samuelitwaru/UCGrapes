@@ -1283,6 +1283,7 @@ img.content-page-block {
 .info-image-section:hover .tb-add-new-info-section,
 .info-image-section:hover .tb-edit-image-icon {
   display: flex !important;
+  z-index: 10;
 }
 
 .info-desc-section {

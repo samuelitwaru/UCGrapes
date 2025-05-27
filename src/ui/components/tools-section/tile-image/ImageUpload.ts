@@ -2,9 +2,8 @@ import { AppConfig } from "../../../../AppConfig";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { i18n } from "../../../../i18n/i18n";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
-import { Media } from "../../../../types";
+import { Image, InfoType, Media } from "../../../../types";
 import { SingleImageFile } from "./SingleImageFile";
-// FIX: Update the import path if the file exists elsewhere, or create the file if missing.
 
 export class ImageUpload {
   private type: "tile" | "cta" | "content" | "info";
@@ -18,9 +17,7 @@ export class ImageUpload {
   bgImage: any;
   opacity: any;
   croppedUrl: any;
-
-    // Add the selectedImageUrls array
-  public selectedImageUrls: string[] = [];
+  public selectedImageUrls: Array<{ Id: string; Url: string }> = [];
 
   constructor(type: any, infoId?: string, sectionId?: string) {
     this.type = type;
@@ -43,10 +40,10 @@ export class ImageUpload {
     const closeBtn = document.createElement("span");
     closeBtn.className = "close";
     closeBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
-        <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"></path>
-      </svg>
-  `;
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
+              <path id="Icon_material-close" data-name="Icon material-close" d="M28.5,9.615,26.385,7.5,18,15.885,9.615,7.5,7.5,9.615,15.885,18,7.5,26.385,9.615,28.5,18,20.115,26.385,28.5,28.5,26.385,20.115,18Z" transform="translate(-7.5 -7.5)" fill="#6a747f" opacity="0.54"></path>
+            </svg>
+        `;
     closeBtn.addEventListener("click", (e) => {
       e.preventDefault();
       const modal = this.modalContent.parentElement as HTMLElement;
@@ -75,17 +72,13 @@ export class ImageUpload {
     saveBtn.className = "tb-btn tb-btn-primary";
     saveBtn.id = "save-modal";
     saveBtn.innerText = i18n.t("sidebar.image_upload.save");
+    // Add save functionality here
 
     modalActions.appendChild(cancelBtn);
     modalActions.appendChild(saveBtn);
     this.modalContent.appendChild(modalHeader);
     this.uploadArea();
 
-
-    // cropper container
-    this.cropContainer = document.createElement("div");
-    this.cropContainer.id = "crop-container";
-    this.modalContent.appendChild(this.cropContainer);
     const selectedComponent = (globalThis as any).selectedComponent;
     if (selectedComponent) {
       // Get the tile element
@@ -109,53 +102,8 @@ export class ImageUpload {
       }
     }
     this.createFileListElement();
-    this.loadMediaFiles(); // Load media files asynchronously
+    this.loadMediaFiles();
     this.modalContent.appendChild(modalActions);
-
-
-    const modalActionsdown = document.createElement("div");
-    modalActionsdown.className = "modal-actions-slider";
-    modalActionsdown.style.display = "flex";
-    modalActionsdown.style.gap = "16px"; // Add spacing between child buttons
-    modalActionsdown.style.marginTop = "16px"; // Optional: add space above the button row
-
-    // Add cancel button
-    const cancelBtn1 = document.createElement("button");
-    cancelBtn1.className = "tb-btn tb-btn-outline";
-    cancelBtn1.id = "cancel-modal-check";
-    cancelBtn1.innerText = ("Cancel");
-    cancelBtn1.addEventListener("click", (e) => {
-      e.preventDefault();
-      const modal = this.modalContent.parentElement as HTMLElement;
-      modal.style.display = "none";
-      modal?.remove();
-    });
-
-    // Add a bottom button
-    const bottomButton = document.createElement("button");
-    bottomButton.className = "tb-btn tb-btn-primary";
-    bottomButton.id = "bottom-button";
-    bottomButton.innerText = "Save";
-    //bottomButton.style.marginTop = "20px"; // Add some spacing
-    bottomButton.addEventListener("click", () => {
-      const modal = this.modalContent.parentElement as HTMLElement;
-      if (modal) {
-        modal.style.display = "none";
-        modal.remove();
-      }
-
-      // Call addMultipleImages after the modal is removed
-      const infoSectionManager = new InfoSectionManager();
-      infoSectionManager.addMultipleImages(this.selectedImageUrls);
-    });
-
-    modalActionsdown.appendChild(cancelBtn1);
-    modalActionsdown.appendChild(bottomButton);
-    // Append the button to the modal content
-    this.modalContent.appendChild(modalActionsdown);
-    //this.modalContent.appendChild(bottomButton);
-
-
   }
 
   private uploadArea() {
@@ -230,7 +178,7 @@ export class ImageUpload {
     const loadingElement = document.createElement("div");
     loadingElement.id = "loading-media";
     loadingElement.className = "loading-media";
-   // loadingElement.textContent = "Loading media files...";
+    // loadingElement.textContent = "Loading media files...";
     this.fileListElement.appendChild(loadingElement);
 
     this.modalContent.appendChild(this.fileListElement);
@@ -245,7 +193,10 @@ export class ImageUpload {
 
         // Render each media item
         if (media && media.length > 0) {
-          media.forEach((item: Media) => {
+          // Sort media items - selected images first
+          const sortedMedia = this.sortMediaBySelection(media);
+
+          sortedMedia.forEach((item: Media) => {
             const singleImageFile = new SingleImageFile(
               item,
               this.type,
@@ -255,6 +206,7 @@ export class ImageUpload {
             );
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
+
           const loadingElement = document.getElementById(
             "loading-media"
           ) as HTMLElement;
@@ -270,6 +222,51 @@ export class ImageUpload {
           '<div class="error-message">Error loading media files. Please try again.</div>';
       }
     }
+  }
+
+  private sortMediaBySelection(media: Media[]): Media[] {
+    // Only sort for info type, as that's where checkboxes are used
+    if (this.type !== "info" || !this.infoId) {
+      return media;
+    }
+
+    return media.sort((a, b) => {
+      const isASelected = this.isMediaSelected(a.MediaId);
+      const isBSelected = this.isMediaSelected(b.MediaId);
+
+      // Selected items (true) should come first, so we sort in descending order
+      if (isASelected === isBSelected) {
+        return 0; // Maintain original order for items with same selection state
+      }
+      return isASelected ? -1 : 1; // Selected items (-1) come before unselected (1)
+    });
+  }
+
+  private isMediaSelected(mediaId: string): boolean {
+    try {
+      const existingImages = this.getExistingImages();
+      return existingImages.some(
+        (image) => image.InfoImageId === `id-${mediaId}`
+      );
+    } catch (error) {
+      console.error("Error checking selected media:", error);
+      return false;
+    }
+  }
+
+  private getExistingImages(): Image[] {
+    const pageId = (globalThis as any).currentPageId;
+    if (!pageId) return [];
+
+    const storedData = localStorage.getItem(`data-${pageId}`);
+    if (!storedData) return [];
+
+    const data = JSON.parse(storedData);
+    const content = data?.PageInfoStructure?.InfoContent?.find(
+      (content: InfoType) => content.InfoId === this.infoId
+    );
+
+    return content?.Images || [];
   }
 
   private async setupDragAndDrop(uploadArea: HTMLElement) {
@@ -767,6 +764,7 @@ export class ImageUpload {
     );
     //console.log("Cropped image uploaded successfully:", response);
     this.croppedUrl = response.BC_Trn_Media.MediaUrl;
+    console.log("Cropped image uploaded successfully:", this.croppedUrl);
 
     // Add the cropped image to the selected tile
     const selectedComponent = (globalThis as any).selectedComponent;

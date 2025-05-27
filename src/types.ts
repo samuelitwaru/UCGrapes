@@ -277,3 +277,10 @@ export interface TileHeights {
   max: number;
   snapThreshold: number;
 }
+
+export interface SelectedImage {
+  Id: string;
+  Url: string;
+}
+
+export type ImageType = "info" | "tile" | "content" | "cta";

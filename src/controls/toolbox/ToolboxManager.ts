@@ -126,11 +126,6 @@ export class ToolboxManager {
             typeof page.PageStructure === "string"
               ? page.PageStructure
               : JSON.stringify(page.PageStructure);
-          // if (page.PageType === "Content") {
-          //   console.log(`Saving localStructureProperty ${localStructureString}`);
-          //   console.log(`Saving page.PageStructure ${pageStructureString}`);
-          // }
-
           // Compare serialized versions to avoid hidden character differences
           if (localStructureString !== pageStructureString) {
             const pageInfo = {

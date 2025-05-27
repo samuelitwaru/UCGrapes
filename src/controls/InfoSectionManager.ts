@@ -60,7 +60,9 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
 
       // Select the component after appending
-      const component = this.editor?.getWrapper().find(`#${ctaComponent.id}`)[0];
+      const component = this.editor
+        ?.getWrapper()
+        .find(`#${ctaComponent.id}`)[0];
       if (component) {
         this.editor?.select(component);
       }
@@ -68,8 +70,6 @@ export class InfoSectionManager {
   }
 
   addImage(imageUrl: string, nextSectionId?: string) {
-    // console.log('addImage sectionId :>> ', nextSectionId);
-    const imgUrl = `${baseURL}/Resources/UCGrapes/dist/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;
@@ -87,71 +87,49 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
     }
   }
-  addMultipleImages(imgUrl: string[]) {
-   // const imgUrl = `${baseURL}/Resources/UCGrapes1/toolbox/public/images/default.jpg`;
-    const imgContainer = this.infoSectionUI.getMultipleImages(imgUrl);
+  addMultipleImages(
+    selectedImages: Array<{ Id: string; Url: string }> = [],
+    isUpdating: boolean = false,
+    infoId?: string
+  ) {
+    const imgContainer = this.infoSectionUI.getMultipleImages(
+      selectedImages.map((img) => img.Url),
+      isUpdating,
+      infoId
+    );
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;
     const imageComponent = imageContainer.firstElementChild as HTMLElement;
 
-    const append = this.appendComponent(imgContainer);
-    if (append) {
-      const infoType: InfoType = {
-        InfoId: imageComponent.id,
-        InfoType: "Images",
-        Images:imgUrl.map((url) => ({
-          InfoImageId: randomIdGenerator(15),
-          InfoImageValue: url,
-      })),
-      };
-
-      console.log('infoType: >> ', infoType);
-
-      this.addToMapper(infoType);
-      let slideIndex: number = 1;
-      showSlides(slideIndex);
-      
-      // Next/previous controls
-      function plusSlides(n:number) {
-        showSlides(slideIndex += n);
+    if (isUpdating) {
+      const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
+      if (component) {
+        component.replaceWith(imgContainer);
+        this.updateInfoMapper(infoId || "", {
+          InfoId: imageComponent.id,
+          InfoType: "Images",
+          Images: selectedImages.map((img) => ({
+            InfoImageId: `id-${img.Id}` || randomIdGenerator(15),
+            InfoImageValue: img.Url,
+          })),
+        });
       }
-      
-      // Thumbnail image controls
-      function currentSlide(n:number) {
-        showSlides(slideIndex = n);
-      } 
-      
-       function showSlides(n:number) {
-        let i;
-        (globalThis as any).wrapper.find(".mySlides").forEach((slide: any) => {
-          slide.getEl()
-        })
+    } else {
+      const append = this.appendComponent(imgContainer);
+      if (append) {
+        const infoType: InfoType = {
+          InfoId: imageComponent.id,
+          InfoType: "Images",
+          Images: selectedImages.map((img) => ({
+            InfoImageId: `id-${img.Id}` || randomIdGenerator(15),
+            InfoImageValue: img.Url,
+          })),
+        };
 
-
-        let slides = (globalThis as any).wrapper.find(".mySlides");
-        //let slides = document.getElementsByClassName("mySlides");
-        //let dots = document.getElementsByClassName("dot");
-        let dots = (globalThis as any).wrapper.find(".dot")
-        
-        if (n > slides.length) {slideIndex = 1}
-  
-        if (n < 1) {slideIndex = slides.length}
-        
-        for (i = 0; i < slides.length; i++) {
-          slides[i].getEl().style.display = "none";
-        }
-        for (i = 0; i < dots.length; i++) {
-          dots[i].className = dots[i].getEl().className.replace(" active", "");
-        }
-        //slides[slideIndex-1].getEl().className += 'visible';
-        slides[slideIndex-1].getEl().style.display = "block";
-        //dots[slideIndex-1].getEl().className += " active";
-      } 
+        this.addToMapper(infoType);
+      }
     }
   }
-
-  
-
   openContentEditModal(sectionId?: string) {
     const modalBody = document.createElement("div");
 
@@ -314,7 +292,6 @@ export class InfoSectionManager {
   }
 
   updateInfoImage(imageUrl: string, infoId?: string, sectionId?: string) {
-    // console.log('updateInfoImage sectionId :>> ', sectionId);
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
@@ -364,7 +341,8 @@ export class InfoSectionManager {
   }
 
   appendComponent(componentDiv: any, nextSectionId?: string) {
-    const containerColumn = this.editor?.getWrapper()
+    const containerColumn = this.editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return false;
 
@@ -401,7 +379,8 @@ export class InfoSectionManager {
     // Scroll to bottom if we added the section at the end
     if (isAppendingAtEnd) {
       setTimeout(() => {
-        const editorFrame = this.editor?.getWrapper()
+        const editorFrame = this.editor
+          ?.getWrapper()
           .find(".content-frame-container")[0];
         if (editorFrame) {
           const editorFrameElement = editorFrame.getEl();
@@ -476,8 +455,8 @@ export class InfoSectionManager {
 
   updateInfoMapper(infoId: string, infoType: InfoType) {
     const pageId = (globalThis as any).currentPageId;
-    console.log('infoId :>>', infoId );
-    console.log('newContent :>> ', infoType);
+    console.log("infoId :>>", infoId);
+    console.log("newContent :>> ", infoType);
     const infoMapper = new InfoContentMapper(pageId);
     infoMapper.updateInfoContent(infoId, infoType);
     this.removeEmptyRows(pageId);
@@ -505,7 +484,8 @@ export class InfoSectionManager {
   }
 
   restoreEmptyStateIfNoSections() {
-    const containerColumn = this.editor?.getWrapper()
+    const containerColumn = this.editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -517,7 +497,8 @@ export class InfoSectionManager {
       containerColumn.append(newBtn);
 
       // Re-apply empty state class to main container
-      const contentFrameContainer = this.editor?.getWrapper()
+      const contentFrameContainer = this.editor
+        ?.getWrapper()
         .find(".content-frame-container")[0];
       if (contentFrameContainer) {
         contentFrameContainer.addClass("empty-state");
@@ -527,7 +508,8 @@ export class InfoSectionManager {
   }
 
   markFirstAndLastPlusButtons(position: "first" | "last") {
-    const containerColumn = this.editor?.getWrapper()
+    const containerColumn = this.editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -556,7 +538,8 @@ export class InfoSectionManager {
 
   removeConsecutivePlusButtons(editor: any = this.editor) {
     if (!editor) return;
-    const containerColumn = editor?.getWrapper()
+    const containerColumn = editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 

@@ -2,24 +2,28 @@ import { ContentDataManager } from "../../../../controls/editor/ContentDataManag
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
-import { InfoType, Media } from "../../../../types";
+import { Image, ImageType, InfoType, Media } from "../../../../types";
 import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
 
+
+
 export class SingleImageFile {
+  // Private readonly properties
+  private readonly mediaFile: Media;
+  private readonly type: ImageType;
+  private readonly infoId?: string;
+  private readonly sectionId?: string;
+  private readonly toolboxService: ToolBoxService;
+  private readonly imageUpload: ImageUpload;
+  
+  // Private properties
   private container: HTMLElement;
-  private mediaFile: Media;
-  private toolboxService: ToolBoxService;
-  private selectedImageUrls: string[] = []; // Array to store selected image URLs
-  type: any;
-  infoId?: string;
-  sectionId?: string;
-  imageUpload: ImageUpload;
-  fileListContainer: HTMLElement | undefined;
+  private fileListContainer?: HTMLElement;
 
   constructor(
     mediaFile: Media,
-    type: any,
+    type: ImageType,
     imageUpload: ImageUpload,
     infoId?: string,
     sectionId?: string
@@ -29,298 +33,490 @@ export class SingleImageFile {
     this.infoId = infoId;
     this.sectionId = sectionId;
     this.toolboxService = new ToolBoxService();
-    this.container = document.createElement("div");
     this.imageUpload = imageUpload;
-    this.init();
+    this.container = this.createContainer();
+    
+    this.initializeComponent();
+    this.initializeExistingImages();
   }
 
-  private init() {
-    this.container.className = "file-item valid";
-    this.container.id = this.mediaFile.MediaId;
+  private initializeExistingImages(): void {
+    if (this.type !== "info" || !this.infoId) return;
+    
+    try {
+      const existingImages = this.getExistingImages();
+      this.syncSelectedImages(existingImages);
+    } catch (error) {
+      console.error('Error initializing existing images:', error);
+    }
+  }
 
-    const img = document.createElement("img");
-    img.src = this.mediaFile.MediaUrl;
-    img.alt = this.mediaFile.MediaName;
-    img.className = "preview-image";
+  private getExistingImages(): Image[] {
+    const pageId = (globalThis as any).currentPageId;
+    if (!pageId) return [];
+    
+    const storedData = localStorage.getItem(`data-${pageId}`);
+    if (!storedData) return [];
+    
+    const data = JSON.parse(storedData);
+    const content = data?.PageInfoStructure?.InfoContent?.find(
+      (content: InfoType) => content.InfoId === this.infoId
+    );
+    
+    return content?.Images || [];
+  }
 
-    // Check icon (statusCheck) - now positioned top left
-    const statusCheck = document.createElement("span");
-    statusCheck.className = "status-icon";
-    statusCheck.style.position = "absolute";
-    statusCheck.style.top = "-11px";
-    statusCheck.style.left = "-8px";
-    statusCheck.style.width = "25px";
-    statusCheck.style.height = "25px";
-    statusCheck.style.zIndex = "4";
-    statusCheck.style.display = "none";
-
-    // Action column (delete and add image) - top right
-    const actionColumn = document.createElement("div");
-    actionColumn.className = "action-column";
-    actionColumn.style.position = "absolute";
-    actionColumn.style.top = "-16px";
-    actionColumn.style.right = "7px";
-    actionColumn.style.display = "flex";
-    actionColumn.style.flexDirection = "row";
-    actionColumn.style.gap = "4px";
-    actionColumn.style.zIndex = "3";
-    actionColumn.style.marginLeft = "50px";
-
-    // Add Image icon (left of delete)
-    const addImage = document.createElement("span");
-    addImage.className = "add-image";
-    addImage.title = "Replace image";
-    addImage.style.width = "33px";
-    addImage.style.height = "33px";
-    addImage.style.backgroundImage = "url('/Resources/UCGrapes/public/images/rotatenew.png')";
-    addImage.style.backgroundSize = "contain";
-    addImage.style.backgroundRepeat = "no-repeat";
-    addImage.style.backgroundPosition = "center";
-    addImage.style.cursor = "pointer";
-    addImage.style.display = "flex";
-    addImage.style.alignItems = "center";
-    addImage.style.justifyContent = "center";
-
-    addImage.addEventListener("click", (e) => {
-      e.stopPropagation();
-      img.click();
-    });
-
-    // Delete icon (rightmost)
-    const deleteSpan = document.createElement("span");
-    deleteSpan.className = "delete-media fa-regular fa-trash-can";
-    deleteSpan.title = "Delete image";
-    deleteSpan.style.width = "33px";
-    deleteSpan.style.height = "33px";
-    deleteSpan.style.fontSize = "16px";
-    //deleteSpan.style.color = "#f00707";
-    deleteSpan.style.color = "#5068a8";
-    deleteSpan.style.display = "flex";
-    deleteSpan.style.alignItems = "center";
-    deleteSpan.style.justifyContent = "center";
-    deleteSpan.style.cursor = "pointer";
-    deleteSpan.style.border = "1px solid #5068a8";
-
-    deleteSpan.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.deleteEvent();
-    });
-
-    // Add a checkbox
-    //const checkboxDiv = document.createElement("div");
-    const checkbox = document.createElement("span");
-    //const checkbox = document.createElement("input");
-    checkbox.style.position = "absolute";
-    //checkbox.type = "checkbox";
-    checkbox.style.left = "-60px";
-    checkbox.style.top = "7px";
-    checkbox.style.fontSize = "25px"
-    //checkbox.style.width = "33px";
-    //checkbox.style.height = "33px";
-    checkbox.style.backgroundColor = "rgba(255,255,255,0.95)"; // Opaque white background
-    checkbox.style.color = "#5068a8"
-    checkbox.className = "select-media-checkbox fa-regular fa-square";
-    checkbox.title = "Select image";
-    //checkboxDiv.appendChild(checkbox);
-    // Add event listener to the checkbox
-    checkbox.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent triggering the container's click event
-      const isSelected = checkbox.classList.toggle("selected-checkbox");
-      if (isSelected) {
-        // Add the URL to the selectedImageUrls array in ImageUpload
-        this.imageUpload.selectedImageUrls.push(this.mediaFile.MediaUrl);
-        checkbox.className = "select-media-checkbox fa-solid fa-square-check selected-checkbox";
-      } else {
-        // Remove the URL from the selectedImageUrls array in ImageUpload
-        this.imageUpload.selectedImageUrls = this.imageUpload.selectedImageUrls.filter(
-          (url) => url !== this.mediaFile.MediaUrl
-        );
-        checkbox.className = "select-media-checkbox fa-regular fa-square";
+  private syncSelectedImages(existingImages: Image[]): void {
+    const currentUrls = new Set(this.imageUpload.selectedImageUrls.map(img => img.Url));
+    
+    existingImages.forEach(image => {
+      const mediaUrl = this.findMediaUrlById(image.InfoImageId);
+      if (mediaUrl && !currentUrls.has(mediaUrl)) {
+        this.imageUpload.selectedImageUrls.push({
+          Id: image.InfoImageId.replace('id-', ''),
+          Url: mediaUrl
+        });
       }
-      console.log("Selected Image URLs in ImageUpload:", this.imageUpload.selectedImageUrls); // Debugging output
     });
+  }
 
-    // Append statusCheck, deleteSpan, and checkbox to the action column
-    //actionColumn.appendChild(statusCheck);
-    actionColumn.appendChild(checkbox);
-    actionColumn.appendChild(addImage);
-    actionColumn.appendChild(deleteSpan);
+  private findMediaUrlById(imageId: string): string | null {
+    const mediaId = imageId.replace('id-', '');
+    return mediaId === this.mediaFile.MediaId ? this.mediaFile.MediaUrl : null;
+  }
+
+  private isImageSelected(): boolean {
+    try {
+      const existingImages = this.getExistingImages();
+      return existingImages.some(
+        image => image.InfoImageId === `id-${this.mediaFile.MediaId}`
+      );
+    } catch (error) {
+      console.error('Error checking selected image:', error);
+      return false;
+    }
+  }
+
+  private createContainer(): HTMLElement {
+    const container = document.createElement("div");
+    container.className = "file-item valid";
+    container.id = this.mediaFile.MediaId;
+    return container;
+  }
+
+  private initializeComponent(): void {
+    const img = this.createPreviewImage();
+    const statusCheck = this.createStatusIcon();
+    const actionColumn = this.createActionColumn();
 
     this.container.appendChild(img);
-    // Append addImage and deleteSpan to the action column (addImage left of delete)
-   // actionColumn.appendChild(addImage);
-   // actionColumn.appendChild(deleteSpan);
-
-   // this.container.appendChild(img);
-    //this.container.appendChild(statusCheck);
+    this.container.appendChild(statusCheck);
     this.container.appendChild(actionColumn);
 
     this.setupItemClickEvent(statusCheck);
   }
 
-  private formatBytes(bytes: number) {
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    if (bytes === 0) return "0 Byte";
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString());
-    if (i === 0) return bytes + " " + sizes[i];
-    return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
+  private createPreviewImage(): HTMLImageElement {
+    const img = document.createElement("img");
+    img.src = this.mediaFile.MediaUrl;
+    img.alt = this.mediaFile.MediaName;
+    img.className = "preview-image";
+    return img;
   }
 
-  private setupItemClickEvent(statusCheck: HTMLElement) {
-    this.container.addEventListener("click", () => {
-      this.fileListContainer = document.getElementById(
-        "fileList"
-      ) as HTMLElement;
-      this.fileListContainer.style.display = "none";
-      this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl)
-      // Remove check from all other images
-      document.querySelectorAll(".file-item").forEach((el) => {
-        el.classList.remove("selected");
-        const icon = el.querySelector(".status-icon") as HTMLElement;
-        if (icon) {
-          icon.style.display = "none";
-        }
-      });
+  private createStatusIcon(): HTMLElement {
+    const statusCheck = document.createElement("span");
+    statusCheck.className = "status-icon";
+    
+    Object.assign(statusCheck.style, {
+      position: "absolute",
+      top: "-11px",
+      left: "-8px",
+      width: "25px",
+      height: "25px",
+      zIndex: "4",
+      display: "none"
+    });
 
-      // Show check only on this image
-      statusCheck.style.backgroundImage = "url('/Resources/UCGrapes/public/images/check.png')";
-      statusCheck.style.backgroundSize = "contain";
-      statusCheck.style.backgroundRepeat = "no-repeat";
-      statusCheck.style.backgroundPosition = "center";
-      statusCheck.style.display = "block";
+    return statusCheck;
+  }
 
-      this.container.classList.add("selected");
+  private createActionColumn(): HTMLElement {
+    const actionColumn = document.createElement("div");
+    actionColumn.className = "action-column";
+    
+    Object.assign(actionColumn.style, {
+      position: "absolute",
+      top: "-16px",
+      right: "-4px",
+      display: "flex",
+      flexDirection: "row",
+      gap: "4px",
+      zIndex: "3",
+      marginLeft: "50px"
+    });
+
+    if (this.type === "info") {
+      actionColumn.appendChild(this.createImageCheckbox());
+    }
+    
+    actionColumn.appendChild(this.createReplaceButton());
+    actionColumn.appendChild(this.createDeleteButton());
+
+    return actionColumn;
+  }
+
+  private createImageCheckbox(): HTMLElement {
+    const checkbox = document.createElement("span");
+    checkbox.setAttribute("role", "checkbox");
+    checkbox.setAttribute("aria-label", "Select image");
+    checkbox.setAttribute("tabindex", "0");
+    checkbox.title = "Select image";
+    
+    Object.assign(checkbox.style, {
+      position: "absolute",
+      left: "-70px",
+      top: "7px",
+      fontSize: "25px",
+      lineHeight: "0.8",
+      backgroundColor: "rgba(255,255,255,0.95)",
+      color: "#5068a8",
+      cursor: "pointer"
+    });
+
+    const isSelected = this.isImageSelected();
+    this.updateCheckboxVisual(checkbox, isSelected);
+
+    checkbox.addEventListener("click", this.handleCheckboxClick.bind(this));
+    checkbox.addEventListener("keydown", this.handleKeyboardInteraction.bind(this));
+
+    return checkbox;
+  }
+
+  private createReplaceButton(): HTMLElement {
+    const addImage = document.createElement("span");
+    addImage.className = "add-image";
+    addImage.title = "Replace image";
+    
+    Object.assign(addImage.style, {
+      width: "33px",
+      height: "33px",
+      backgroundImage: "url('/Resources/UCGrapes/public/images/rotatenew.png')",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    });
+
+    addImage.addEventListener("click", this.handleReplaceClick.bind(this));
+    return addImage;
+  }
+
+  private createDeleteButton(): HTMLElement {
+    const deleteSpan = document.createElement("span");
+    deleteSpan.className = "delete-media fa-regular fa-trash-can";
+    deleteSpan.title = "Delete image";
+    
+    Object.assign(deleteSpan.style, {
+      width: "33px",
+      height: "33px",
+      fontSize: "16px",
+      color: "#5068a8",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      border: "1px solid #5068a8"
+    });
+
+    deleteSpan.addEventListener("click", this.handleDeleteClick.bind(this));
+    return deleteSpan;
+  }
+
+  private updateCheckboxVisual(checkbox: HTMLElement, isChecked: boolean): void {
+    checkbox.className = isChecked 
+      ? "select-media-checkbox fa-solid fa-square-check selected-checkbox"
+      : "select-media-checkbox fa-regular fa-square";
+    checkbox.setAttribute("aria-checked", String(isChecked));
+  }
+
+  private handleCheckboxClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.toggleImageSelection(event.currentTarget as HTMLElement);
+  }
+
+  private handleKeyboardInteraction(event: KeyboardEvent): void {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      this.toggleImageSelection(event.currentTarget as HTMLElement);
+    }
+  }
+
+  private toggleImageSelection(checkbox: HTMLElement): void {
+    const currentState = checkbox.getAttribute("aria-checked") === "true";
+    const newState = !currentState;
+
+    this.updateCheckboxVisual(checkbox, newState);
+    this.updateSelectedImages(newState);
+    
+    if (this.imageUpload.selectedImageUrls.length > 0) {
       this.setupModalActions();
+    }
+  }
+
+  private updateSelectedImages(shouldAdd: boolean): void {
+    const { selectedImageUrls } = this.imageUpload;
+    const imageExists = selectedImageUrls.some(item => item.Url === this.mediaFile.MediaUrl);
+
+    if (shouldAdd && !imageExists) {
+      selectedImageUrls.push({
+        Id: this.mediaFile.MediaId,
+        Url: this.mediaFile.MediaUrl,
+      });
+    } else if (!shouldAdd && imageExists) {
+      this.imageUpload.selectedImageUrls = selectedImageUrls.filter(
+        item => item.Url !== this.mediaFile.MediaUrl
+      );
+    }
+
+    console.log('Selected images:', this.imageUpload.selectedImageUrls);
+  }
+
+  private handleReplaceClick(event: MouseEvent): void {
+    event.stopPropagation();
+    const img = this.container.querySelector('img');
+    img?.click();
+  }
+
+  private handleDeleteClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.deleteEvent();
+  }
+
+  private setupItemClickEvent(statusCheck: HTMLElement): void {
+    if (this.type === "info") return; 
+
+    this.container.addEventListener("click", () => {
+      this.handleItemClick(statusCheck);
     });
   }
 
-  private setupModalActions() {
-    const Imageslider = document.querySelector(".modal-actions-slider") as HTMLElement;
-    Imageslider.style.display = "none";
-    const modalActions = document.querySelector(
-      ".modal-actions"
-    ) as HTMLElement;
-    if (!modalActions) return;
-    modalActions.style.display = "flex";
+  private handleItemClick(statusCheck: HTMLElement): void {
+    this.hideFileList();
+    this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl);
+    this.clearOtherSelections();
+    this.showSelectionStatus(statusCheck);
+    this.setupModalActions();
+  }
 
-    // Remove existing event listeners by cloning and replacing elements
-    const cancelBtn = modalActions.querySelector(
-      "#cancel-modal"
-    ) as HTMLElement;
+  private hideFileList(): void {
+    this.fileListContainer = document.getElementById("fileList") as HTMLElement;
+    if (this.fileListContainer) {
+      this.fileListContainer.style.display = "none";
+    }
+  }
+
+  private clearOtherSelections(): void {
+    document.querySelectorAll(".file-item").forEach((element) => {
+      element.classList.remove("selected");
+      const icon = element.querySelector(".status-icon") as HTMLElement;
+      if (icon) {
+        icon.style.display = "none";
+      }
+    });
+  }
+
+  private showSelectionStatus(statusCheck: HTMLElement): void {
+    Object.assign(statusCheck.style, {
+      backgroundImage: "url('/Resources/UCGrapes/public/images/check.png')",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      display: "block"
+    });
+
+    this.container.classList.add("selected");
+  }
+
+  private setupModalActions(): void {
+    const modalActions = this.getModalActions();
+    if (!modalActions) return;
+
+    modalActions.style.display = "flex";
+    const { cancelBtn, saveBtn } = this.replaceModalButtons(modalActions);
+    this.attachModalEventListeners(cancelBtn, saveBtn);
+  }
+
+  private getModalActions(): HTMLElement | null {
+    return document.querySelector(".modal-actions") as HTMLElement;
+  }
+
+  private replaceModalButtons(modalActions: HTMLElement): { cancelBtn: HTMLElement; saveBtn: HTMLElement } {
+    const cancelBtn = modalActions.querySelector("#cancel-modal") as HTMLElement;
     const saveBtn = modalActions.querySelector("#save-modal") as HTMLElement;
 
-    if (!cancelBtn || !saveBtn) return;
+    if (!cancelBtn || !saveBtn) {
+      throw new Error("Modal buttons not found");
+    }
+
     const newCancelBtn = cancelBtn.cloneNode(true) as HTMLElement;
     const newSaveBtn = saveBtn.cloneNode(true) as HTMLElement;
 
     cancelBtn.parentNode?.replaceChild(newCancelBtn, cancelBtn);
     saveBtn.parentNode?.replaceChild(newSaveBtn, saveBtn);
 
+    return { cancelBtn: newCancelBtn, saveBtn: newSaveBtn };
+  }
+
+  private attachModalEventListeners(cancelBtn: HTMLElement, saveBtn: HTMLElement): void {
     const modal = document.querySelector(".tb-modal") as HTMLElement;
     if (!modal) return;
 
-    newCancelBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-      modal.remove();
-    });
-    newSaveBtn.addEventListener("click", async () => {
-      const img = document.querySelector("selected-image") as HTMLImageElement;
-      if (!img) {
-        console.error("Image element not found.");
-        return;
-      }
-      const frame = document.getElementById("crop-frame") as HTMLElement;
-
-      if (frame) {
-        const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
-        const file = new File([img.src], uniqueFileName, { type: "image/png" });
-        await this.imageUpload.saveCroppedImage(img, frame, file);
-      }
-      if (this.type === "tile") {
-        this.addImageToTile();
-      } else if (this.type === "content") {
-        this.addImageToContentPage();
-      } else if (this.type === "cta" && this.infoId) {
-        this.updateInfoCtaButtonImage();
-      } else if (this.type === "cta") {
-        this.updateCtaButtonImage();
-      } else if (this.type === "info") {
-        this.updateInfoImage();
-      }
-      modal.style.display = "none";
-      modal.remove();
-    });
+    cancelBtn.addEventListener("click", () => this.closeModal(modal));
+    saveBtn.addEventListener("click", () => this.handleSaveClick(modal));
   }
 
-  private addImageToTile() {
+  private closeModal(modal: HTMLElement): void {
+    modal.style.display = "none";
+    modal.remove();
+  }
+
+  private async handleSaveClick(modal: HTMLElement): Promise<void> {
+    try {
+      await this.processSaveAction();
+      this.closeModal(modal);
+    } catch (error) {
+      console.error("Error saving:", error);
+    }
+  }
+
+  private async processSaveAction(): Promise<void> {
+    switch (this.type) {
+      case "tile":
+        this.addImageToTile();
+        break;
+      case "content":
+        await this.addImageToContentPage();
+        break;
+      case "cta":
+        if (this.infoId) {
+          this.updateInfoCtaButtonImage();
+        } else {
+          await this.updateCtaButtonImage();
+        }
+        break;
+      case "info":
+        await this.handleInfoImageSave();
+        break;
+      default:
+        await this.handleCroppedImageSave();
+    }
+  }
+
+  private async handleCroppedImageSave(): Promise<void> {
+    const img = document.getElementById("selected-image") as HTMLImageElement;
+    const frame = document.getElementById("crop-frame") as HTMLElement;
+    
+    if (!img) {
+      console.error("Image element not found.");
+      return;
+    }
+
+    if (frame) {
+      const uniqueFileName = `cropped-image-${Date.now()}.png`;
+      const file = new File([img.src], uniqueFileName, { type: "image/png" });
+      await this.imageUpload.saveCroppedImage(img, frame, file);
+    }
+  }
+
+  private async handleInfoImageSave(): Promise<void> {
+    if (this.imageUpload.selectedImageUrls.length > 0) {
+      const infoSectionManager = new InfoSectionManager();
+      const isUpdating = this.infoId ? true : false;
+      await infoSectionManager.addMultipleImages(this.imageUpload.selectedImageUrls, isUpdating, this.infoId);
+    }
+  }
+
+  private addImageToTile(): void {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
+
     try {
       const safeMediaUrl = encodeURI(this.imageUpload.croppedUrl);
-      selectedComponent.addStyle({
-        "background-image": `url(${safeMediaUrl})`,
-        "background-size": "cover",
-        "background-position": "center",
-        "background-blend-mode": "overlay",
-      });
-      const selectedElement = selectedComponent.getEl()
-      
-      if (selectedElement) selectedElement.style.backgroundColor = "transparent";
-
-      const updates = [
-        ["BGImageUrl", safeMediaUrl],
-      ];
-
-      let tileAttributes;
-      const tileWrapper = selectedComponent.parent();
-      const rowComponent = tileWrapper.parent();
-      const pageData = (globalThis as any).pageData;
-      if (pageData.PageType === "Information") {
-        const infoSectionManager = new InfoSectionManager();
-        for (const [property, value] of updates) {
-          infoSectionManager.updateInfoTileAttributes(
-            rowComponent.getId(),
-            tileWrapper.getId(),
-            property,
-            value
-          );
-        }
-
-        const tileInfoSectionAttributes: InfoType = (
-          globalThis as any
-        ).infoContentMapper.getInfoContent(rowComponent.getId());
-
-        tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
-          (tile: any) => tile.Id === tileWrapper.getId()
-        );
-      } else {
-        // console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
-        for (const [property, value] of updates) {
-          (globalThis as any).tileMapper.updateTile(
-            tileWrapper.getId(),
-            property,
-            value
-          );
-        }
-        tileAttributes = (globalThis as any).tileMapper.getTile(
-          rowComponent.getId(),
-          tileWrapper.getId()
-        );
-      }
-
-      if (selectedComponent && tileAttributes) {
-        const tileProperties = new TileProperties(
-          selectedComponent,
-          tileAttributes
-        );
-        tileProperties.setTileAttributes();
-      }
+      console.log("Adding image to tile:", safeMediaUrl);
+      this.applyTileStyles(selectedComponent, safeMediaUrl);
+      this.updateTileAttributes(selectedComponent, safeMediaUrl);
     } catch (error) {
       console.error("Error adding image to tile:", error);
     }
   }
 
-  private async addImageToContentPage() {
+  private applyTileStyles(selectedComponent: any, safeMediaUrl: string): void {
+    selectedComponent.addStyle({
+      "background-image": `url(${safeMediaUrl})`,
+      "background-size": "cover",
+      "background-position": "center",
+      "background-blend-mode": "overlay",
+    });
+
+    const selectedElement = selectedComponent.getEl();
+    if (selectedElement) {
+      selectedElement.style.backgroundColor = "transparent";
+    }
+  }
+
+  private updateTileAttributes(selectedComponent: any, safeMediaUrl: string): void {
+    const updates: Array<[string, string]> = [["BGImageUrl", safeMediaUrl]];
+    const tileWrapper = selectedComponent.parent();
+    const rowComponent = tileWrapper.parent();
+    const pageData = (globalThis as any).pageData;
+
+    let tileAttributes;
+
+    if (pageData.PageType === "Information") {
+      tileAttributes = this.updateInfoTileAttributes(updates, rowComponent, tileWrapper);
+    } else {
+      tileAttributes = this.updateRegularTileAttributes(updates, rowComponent, tileWrapper);
+    }
+
+    if (selectedComponent && tileAttributes) {
+      const tileProperties = new TileProperties(selectedComponent, tileAttributes);
+      tileProperties.setTileAttributes();
+    }
+  }
+
+  private updateInfoTileAttributes(updates: Array<[string, string]>, rowComponent: any, tileWrapper: any): any {
+    const infoSectionManager = new InfoSectionManager();
+    
+    updates.forEach(([property, value]) => {
+      infoSectionManager.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId(),
+        property,
+        value
+      );
+    });
+
+    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper
+      .getInfoContent(rowComponent.getId());
+
+    return tileInfoSectionAttributes?.Tiles?.find(
+      (tile: any) => tile.Id === tileWrapper.getId()
+    );
+  }
+
+  private updateRegularTileAttributes(updates: Array<[string, string]>, rowComponent: any, tileWrapper: any): any {
+    updates.forEach(([property, value]) => {
+      (globalThis as any).tileMapper.updateTile(tileWrapper.getId(), property, value);
+    });
+
+    return (globalThis as any).tileMapper.getTile(rowComponent.getId(), tileWrapper.getId());
+  }
+
+  private async addImageToContentPage(): Promise<void> {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
     const activeEditor = (globalThis as any).activeEditor;
     const activePage = (globalThis as any).pageData;
@@ -328,7 +524,7 @@ export class SingleImageFile {
     contentManager.updateContentImage(safeMediaUrl);
   }
 
-  private async updateCtaButtonImage() {
+  private async updateCtaButtonImage(): Promise<void> {
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
     const activeEditor = (globalThis as any).activeEditor;
     const activePage = (globalThis as any).pageData;
@@ -336,61 +532,70 @@ export class SingleImageFile {
     contentManager.updateCtaButtonImage(safeMediaUrl);
   }
 
-  private async updateInfoImage() {
-    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const infoSectionManager = new InfoSectionManager();
-    infoSectionManager.updateInfoImage(
-      safeMediaUrl,
-      this.infoId,
-      this.sectionId
-    );
-  }
-
-  private updateInfoCtaButtonImage() {
+  private updateInfoCtaButtonImage(): void {
+    if (!this.infoId) return;
+    
     const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
     const infoSectionManager = new InfoSectionManager();
     infoSectionManager.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
   }
 
-  private deleteEvent() {
-    const title = "Delete media";
-    const message = "Are you sure you want to delete this media file?";
-
-    const handleConfirmation = async () => {
-      try {
-        await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
-        let media = await this.toolboxService.getMediaFiles();
-        media = media.filter(
-          (item: Media) => item.MediaId !== this.mediaFile.MediaId
-        );
-        const mediaItem = document.getElementById(this.mediaFile.MediaId);
-        if (mediaItem) {
-          mediaItem.remove();
-        }
-
-        if (media.length === 0) {
-          const modalFooter = document.querySelector(
-            ".modal-actions"
-          ) as HTMLElement;
-          modalFooter.style.display = "none";
-        }
-      } catch (error) {
-        console.error("Error deleting media:", error);
-      }
-    };
+  private deleteEvent(): void {
     const confirmationBox = new ConfirmationBox(
-      message,
-      title,
-      handleConfirmation
+      "Are you sure you want to delete this media file?",
+      "Delete media",
+      this.handleDeleteConfirmation.bind(this)
     );
     confirmationBox.render(document.body);
   }
 
+  private async handleDeleteConfirmation(): Promise<void> {
+    try {
+      await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
+      this.removeFromDOM();
+      await this.hideModalIfEmpty();
+    } catch (error) {
+      console.error("Error deleting media:", error);
+    }
+  }
+
+  private async getUpdatedMediaList(): Promise<Media[]> {
+    const media = await this.toolboxService.getMediaFiles();
+    return media.filter((item: Media) => item.MediaId !== this.mediaFile.MediaId);
+  }
+
+  private removeFromDOM(): void {
+    const mediaItem = document.getElementById(this.mediaFile.MediaId);
+    mediaItem?.remove();
+  }
+
+  private async hideModalIfEmpty(): Promise<void> {
+    const remainingMedia = await this.getUpdatedMediaList();
+    if (remainingMedia.length === 0) {
+      const modalFooter = document.querySelector(".modal-actions") as HTMLElement;
+      if (modalFooter) {
+        modalFooter.style.display = "none";
+      }
+    }
+  }
+
+  // Utility method for byte formatting
+  private formatBytes(bytes: number): string {
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    if (bytes === 0) return "0 Byte";
+    
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    if (i === 0) return `${bytes} ${sizes[i]}`;
+    
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+  }
+
+  // Public API methods
   public getElement(): HTMLElement {
     return this.container;
   }
 
-  public render(container: HTMLElement) {
+  public render(container: HTMLElement): void {
     container.appendChild(this.container);
   }
 }

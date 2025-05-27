@@ -6,6 +6,7 @@ import { ConfirmationBox } from "../../ui/components/ConfirmationBox";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { CtaIconsListPopup } from "../../ui/views/CtaIconsListPopup";
 import { i18n } from "../../i18n/i18n";
+import { InfoType } from "../../types";
 
 export class ContentDataUi {
   e: any;
@@ -32,53 +33,66 @@ export class ContentDataUi {
     this.updateCtaButtonImage();
     this.updateCtaButtonIcon();
     this.handleSliderClick();
-    this.showSlides(this.slideIndex);
   }
 
   private handleSliderClick() {
+    const parentContainer = (this.e.target as Element).closest(
+      "[data-gjs-type='info-image-section']"
+    );
     if ((this.e.target as Element).closest(".prev-img-slide")) {
-      this.plusSlides(-1);
+      this.plusSlides(-1, parentContainer);
     }
     if ((this.e.target as Element).closest(".next-img-slide")) {
-      this.plusSlides(1);
+      this.plusSlides(1, parentContainer);
     }
   }
 
-  private plusSlides(n: number) {
-    let slides = (globalThis as any).wrapper.find(".mySlides");
-    let currentIndex = 1; // Default to first slide if none is found
-    for (let i = 0; i < slides.length; i++) {
-      if (slides[i].getEl().style.display == "block") {
-        currentIndex = i +1 ; 
-      }  
-    }
-    this.slideIndex = currentIndex; 
-    this.slideIndex += n; // Save the new value
-    this.showSlides(this.slideIndex);
-  }
+  private plusSlides(n: number, parentContainer: any) {
+    const slides = parentContainer?.querySelectorAll(".mySlides");
 
-  // Thumbnail image controls
-  private currentSlide(n: number) {
-    this.showSlides((this.slideIndex = n));
-  }
-
-  private showSlides(n: number) {
-    let slides = (globalThis as any).wrapper.find(".mySlides");
     if (!slides || slides.length === 0) {
+      console.log("No slides found");
       return;
     }
-    // Correct out-of-bounds and update slideIndex
-    if (n > slides.length) {
-      this.slideIndex = 1;
-    } else if (n < 1) {
-      this.slideIndex = slides.length;
-    } else {
-      this.slideIndex = n;
-    }
+
+    let currentIndex = 0; // Start from 0-based index
+
     for (let i = 0; i < slides.length; i++) {
-      slides[i].getEl().style.display = "none";
+      if (slides[i].style.display === "block") {
+        currentIndex = i;
+        break;
+      }
     }
-    slides[this.slideIndex - 1].getEl().style.display = "block";
+
+    let newIndex = currentIndex + n;
+
+    if (newIndex >= slides.length) {
+      newIndex = 0; // Go to first slide
+    } else if (newIndex < 0) {
+      newIndex = slides.length - 1; // Go to last slide
+    }
+
+    this.showSlides(newIndex, parentContainer);
+  }
+
+  private showSlides(slideIndex: number, parentContainer: any) {
+    const slides = parentContainer?.querySelectorAll(".mySlides");
+
+    if (!slides || slides.length === 0) {
+      console.log("No slides found in showSlides");
+      return;
+    }
+
+    // Hide all slides
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+
+    // Show the selected slide
+    if (slides[slideIndex]) {
+      slides[slideIndex].style.display = "block";
+    }
+
   }
 
   private openContentEditModal() {
@@ -211,8 +225,7 @@ export class ContentDataUi {
 
       document.body.appendChild(modal);
       document.body.appendChild(uploadInput);
-    }
-    else  if ((this.e.target as Element).closest(".tb-edit-images-icon")) {
+    } else if ((this.e.target as Element).closest(".tb-edit-image-icon")) {
       const image = this.e.target.closest(
         '[data-gjs-type="info-image-section"].info-image-section'
       );

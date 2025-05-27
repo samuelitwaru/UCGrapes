@@ -262,7 +262,7 @@ export class ToolboxManager {
     }
 
     return {
-      selectedComponentId: selectedComponent?.getId() || null,
+      selectedComponent: selectedComponent || null,
       scrollPosition,
       frameContainerEl,
     };
@@ -283,11 +283,11 @@ export class ToolboxManager {
   }
 
   private restoreUIState(editor: any, currentState: any) {
-    const { selectedComponentId, scrollPosition } = currentState;
+    const { selectedComponent, scrollPosition } = currentState;
 
     const restoreState = () => {
       this.restoreScrollPosition(editor, scrollPosition);
-      this.restoreSelectedComponent(editor, selectedComponentId);
+      this.restoreSelectedComponent(editor, selectedComponent);
     };
 
     // for smooth restoration
@@ -324,9 +324,9 @@ export class ToolboxManager {
 
   private restoreSelectedComponent(
     editor: any,
-    selectedComponentId: string | null
+    selectedComponent: any | null
   ) {
-    if (!selectedComponentId) return;
+    if (!selectedComponent) return;
 
     setTimeout(() => {
       try {
@@ -335,9 +335,24 @@ export class ToolboxManager {
           .find("#frame-container")[0];
         if (!newFrameContainer) return;
 
-        const newComponent = editor
-          .getWrapper()
-          .find(`#${selectedComponentId}`)[0];
+        let selectedComponentId;
+        let newComponent;
+        if (selectedComponent.is("info-cta-section")) {
+          selectedComponentId = selectedComponent.getId();   
+          newComponent = editor
+            .getWrapper()
+            .find(`#${selectedComponentId}`)[0];       
+        } else {
+          // it is a tile
+          const tileSectionId = selectedComponent?.parent()?.getId();
+          if (!tileSectionId) return;
+          const newTileSection = editor
+            .getWrapper()
+            .find(`#${tileSectionId}`)[0];
+          if (!newTileSection) return;
+          newComponent = newTileSection
+            .find(`.template-block`)[0]; 
+        }
         if (newComponent) {
           editor.select(newComponent);
           (globalThis as any).selectedComponent = newComponent;

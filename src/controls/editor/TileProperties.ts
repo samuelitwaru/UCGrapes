@@ -25,7 +25,10 @@ export class TileProperties {
   private setBgColorProperties(): void {
     const themeColors = document.getElementById("theme-color-palette");
     const tileEl = this.selectedComponent.getEl() as HTMLElement;
-    const tileBGColorHex = rgbToHex(tileEl.style.backgroundColor);
+    
+    const computedStyle = window.getComputedStyle(tileEl);
+    const backgroundColor = tileEl.style.backgroundColor || computedStyle.backgroundColor;
+    const tileBGColorHex = rgbToHex(backgroundColor);
     const hasBgImage: boolean =
       this.selectedComponent.getStyle()?.["background-image"];
 

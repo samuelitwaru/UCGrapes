@@ -10,6 +10,7 @@ export class SingleImageFile {
   private container: HTMLElement;
   private mediaFile: Media;
   private toolboxService: ToolBoxService;
+  private selectedImageUrls: string[] = []; // Array to store selected image URLs
   type: any;
   infoId?: string;
   sectionId?: string;
@@ -58,7 +59,7 @@ export class SingleImageFile {
     actionColumn.className = "action-column";
     actionColumn.style.position = "absolute";
     actionColumn.style.top = "-16px";
-    actionColumn.style.right = "-4px";
+    actionColumn.style.right = "7px";
     actionColumn.style.display = "flex";
     actionColumn.style.flexDirection = "row";
     actionColumn.style.gap = "4px";
@@ -92,6 +93,7 @@ export class SingleImageFile {
     deleteSpan.style.width = "33px";
     deleteSpan.style.height = "33px";
     deleteSpan.style.fontSize = "16px";
+    //deleteSpan.style.color = "#f00707";
     deleteSpan.style.color = "#5068a8";
     deleteSpan.style.display = "flex";
     deleteSpan.style.alignItems = "center";
@@ -104,12 +106,53 @@ export class SingleImageFile {
       this.deleteEvent();
     });
 
-    // Append addImage and deleteSpan to the action column (addImage left of delete)
+    // Add a checkbox
+    //const checkboxDiv = document.createElement("div");
+    const checkbox = document.createElement("span");
+    //const checkbox = document.createElement("input");
+    checkbox.style.position = "absolute";
+    //checkbox.type = "checkbox";
+    checkbox.style.left = "-60px";
+    checkbox.style.top = "7px";
+    checkbox.style.fontSize = "25px"
+    //checkbox.style.width = "33px";
+    //checkbox.style.height = "33px";
+    checkbox.style.backgroundColor = "rgba(255,255,255,0.95)"; // Opaque white background
+    checkbox.style.color = "#5068a8"
+    checkbox.className = "select-media-checkbox fa-regular fa-square";
+    checkbox.title = "Select image";
+    //checkboxDiv.appendChild(checkbox);
+    // Add event listener to the checkbox
+    checkbox.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent triggering the container's click event
+      const isSelected = checkbox.classList.toggle("selected-checkbox");
+      if (isSelected) {
+        // Add the URL to the selectedImageUrls array in ImageUpload
+        this.imageUpload.selectedImageUrls.push(this.mediaFile.MediaUrl);
+        checkbox.className = "select-media-checkbox fa-solid fa-square-check selected-checkbox";
+      } else {
+        // Remove the URL from the selectedImageUrls array in ImageUpload
+        this.imageUpload.selectedImageUrls = this.imageUpload.selectedImageUrls.filter(
+          (url) => url !== this.mediaFile.MediaUrl
+        );
+        checkbox.className = "select-media-checkbox fa-regular fa-square";
+      }
+      console.log("Selected Image URLs in ImageUpload:", this.imageUpload.selectedImageUrls); // Debugging output
+    });
+
+    // Append statusCheck, deleteSpan, and checkbox to the action column
+    //actionColumn.appendChild(statusCheck);
+    actionColumn.appendChild(checkbox);
     actionColumn.appendChild(addImage);
     actionColumn.appendChild(deleteSpan);
 
     this.container.appendChild(img);
-    this.container.appendChild(statusCheck);
+    // Append addImage and deleteSpan to the action column (addImage left of delete)
+   // actionColumn.appendChild(addImage);
+   // actionColumn.appendChild(deleteSpan);
+
+   // this.container.appendChild(img);
+    //this.container.appendChild(statusCheck);
     this.container.appendChild(actionColumn);
 
     this.setupItemClickEvent(statusCheck);
@@ -152,6 +195,8 @@ export class SingleImageFile {
   }
 
   private setupModalActions() {
+    const Imageslider = document.querySelector(".modal-actions-slider") as HTMLElement;
+    Imageslider.style.display = "none";
     const modalActions = document.querySelector(
       ".modal-actions"
     ) as HTMLElement;
@@ -179,12 +224,13 @@ export class SingleImageFile {
       modal.remove();
     });
     newSaveBtn.addEventListener("click", async () => {
-      const img = document.getElementById("selected-image") as HTMLImageElement;
+      const img = document.querySelector("selected-image") as HTMLImageElement;
       if (!img) {
         console.error("Image element not found.");
         return;
       }
       const frame = document.getElementById("crop-frame") as HTMLElement;
+
       if (frame) {
         const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
         const file = new File([img.src], uniqueFileName, { type: "image/png" });

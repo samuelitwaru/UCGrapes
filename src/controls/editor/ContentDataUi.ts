@@ -13,6 +13,7 @@ export class ContentDataUi {
   page: any;
   contentDataManager: any;
   infoSectionController: any;
+  slideIndex: number = 1;
 
   constructor(e: any, editor: any, page: any) {
     this.e = e;
@@ -20,15 +21,64 @@ export class ContentDataUi {
     this.page = page;
     this.infoSectionController = new InfoSectionManager();
     this.contentDataManager = new ContentDataManager(this.editor, this.page);
+
+    //this.showSlides(this.slideIndex);
     this.init();
   }
-
   private init() {
     this.openContentEditModal();
     this.openImageEditModal();
     this.openDeleteModal();
     this.updateCtaButtonImage();
     this.updateCtaButtonIcon();
+    this.handleSliderClick();
+    this.showSlides(this.slideIndex);
+  }
+
+  private handleSliderClick() {
+    if ((this.e.target as Element).closest(".prev-img-slide")) {
+      this.plusSlides(-1);
+    }
+    if ((this.e.target as Element).closest(".next-img-slide")) {
+      this.plusSlides(1);
+    }
+  }
+
+  private plusSlides(n: number) {
+    let slides = (globalThis as any).wrapper.find(".mySlides");
+    let currentIndex = 1; // Default to first slide if none is found
+    for (let i = 0; i < slides.length; i++) {
+      if (slides[i].getEl().style.display == "block") {
+        currentIndex = i +1 ; 
+      }  
+    }
+    this.slideIndex = currentIndex; 
+    this.slideIndex += n; // Save the new value
+    this.showSlides(this.slideIndex);
+  }
+
+  // Thumbnail image controls
+  private currentSlide(n: number) {
+    this.showSlides((this.slideIndex = n));
+  }
+
+  private showSlides(n: number) {
+    let slides = (globalThis as any).wrapper.find(".mySlides");
+    if (!slides || slides.length === 0) {
+      return;
+    }
+    // Correct out-of-bounds and update slideIndex
+    if (n > slides.length) {
+      this.slideIndex = 1;
+    } else if (n < 1) {
+      this.slideIndex = slides.length;
+    } else {
+      this.slideIndex = n;
+    }
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].getEl().style.display = "none";
+    }
+    slides[this.slideIndex - 1].getEl().style.display = "block";
   }
 
   private openContentEditModal() {
@@ -141,6 +191,28 @@ export class ContentDataUi {
 
   private openImageEditModal() {
     if ((this.e.target as Element).closest(".tb-edit-image-icon")) {
+      const image = this.e.target.closest(
+        '[data-gjs-type="info-image-section"].info-image-section'
+      );
+
+      const modal = document.createElement("div");
+      modal.classList.add("tb-modal");
+      modal.style.display = "flex";
+      const type = this.page.PageType === "Information" ? "info" : "content";
+      const modalContent = new ImageUpload(type, (image as HTMLElement)?.id);
+      modalContent.render(modal);
+
+      const uploadInput = document.createElement("input");
+      uploadInput.type = "file";
+      uploadInput.multiple = true;
+      uploadInput.accept = "image/jpeg, image/jpg, image/png";
+      uploadInput.id = "fileInput";
+      uploadInput.style.display = "none";
+
+      document.body.appendChild(modal);
+      document.body.appendChild(uploadInput);
+    }
+    else  if ((this.e.target as Element).closest(".tb-edit-images-icon")) {
       const image = this.e.target.closest(
         '[data-gjs-type="info-image-section"].info-image-section'
       );

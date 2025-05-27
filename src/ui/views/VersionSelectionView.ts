@@ -6,6 +6,8 @@ import { i18n } from "../../i18n/i18n";
 import { ConfirmationBox } from "../components/ConfirmationBox";
 import { truncateString } from "../../utils/helpers";
 import { AppVersion } from "../../types";
+import { EditorEvents } from "../../controls/editor/EditorEvents";
+import { EditorManager } from "../../controls/editor/EditorManager";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -110,7 +112,6 @@ export class VersionSelectionView {
     optionButtons.className = "option-buttons";
     versionOption.append(optionButtons);
     
-    // Check if this is the active version
     const activeVersion = (window as any).app.currentVersion;
     const isActive = (version.AppVersionId === activeVersion.AppVersionId);
     
@@ -225,13 +226,35 @@ export class VersionSelectionView {
       // Activate version and reload if successful
       const activationResult = await this.versionController.activateVersion(version.AppVersionId);
       if (activationResult) {
-        location.reload();
+        this.reloadPage(activationResult);
       }
 
       this.closeSelection();
     } catch (error) {
       console.error("Error activating version:", error);
     }
+  }
+
+  private reloadPage(appVersion: any): void {
+    const editorEvents = new EditorEvents();
+    editorEvents.clearAllEditors();
+    this.clearGlobalVariables();
+    (globalThis as any).activeVersion = appVersion.AppVersion;
+    // globalThis.pageData = appVersion.Pages.find((page: any) => page.PageName === "Home");
+    const newEditor = new EditorManager();
+    newEditor.init(appVersion.AppVersion);
+  }
+
+  private clearGlobalVariables(): void {
+    (globalThis as any).selectedComponent = null;
+    (globalThis as any).pageData = null;
+    (globalThis as any).activeVersion = null;
+    (globalThis as any).tileMapper = null;
+    (globalThis as any).activeEditor = null;
+    (globalThis as any).currentPageId = null;
+    (globalThis as any).ctaContainerId = null;
+    (globalThis as any).frameId = null;
+    (globalThis as any).wrapper = null;
   }
 
   public openVersionModal(
@@ -320,7 +343,7 @@ export class VersionSelectionView {
         
         // Reload only for create and activate actions
         if (result && (action === "create" || action === "duplicate")) {
-          location.reload();
+          this.reloadPage(result);
         }
       } catch (error) {
         console.error(`Error during ${action} operation:`, error);

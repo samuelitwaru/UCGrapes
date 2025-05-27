@@ -16,6 +16,7 @@ import { InfoType } from "../../types";
 import { svg } from "d3";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { AddInfoSectionButton } from "../../ui/components/AddInfoSectionButton";
+import { AppVersionManager } from "../versions/AppVersionManager";
 
 export class EditorUIManager {
   editor: any;
@@ -34,7 +35,7 @@ export class EditorUIManager {
     pageId: any,
     frameId: any,
     pageData: any,
-    appVersionManager: any
+    appVersionManager: AppVersionManager
   ) {
     this.editor = editor;
     this.pageId = pageId;
@@ -337,7 +338,7 @@ export class EditorUIManager {
     if (!mobileFrame) return
     (globalThis as any).pageId = mobileFrame.dataset.pageid;
     const currentPageId = mobileFrame.dataset.pageid
-    const currentPage = this.appVersionManager.getPages().find((page: any) => page.PageId == currentPageId)
+    const currentPage = this.appVersionManager.getPages()?.find((page: any) => page.PageId == currentPageId)
     this.pageData = currentPage
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
@@ -619,6 +620,23 @@ export class EditorUIManager {
           }
         }
       }
+    });
+  }
+
+  clearAllEditors(): void {
+    const framelist = document.querySelectorAll(".mobile-frame");
+    framelist.forEach((frame: any) => {
+      const thumbsList = document.querySelector(
+          ".editor-thumbs-list"
+        ) as HTMLElement;
+        const thumbToRemove = thumbsList.querySelector(
+          `div[id="${frame.id}"]`
+        );
+        if (thumbToRemove) {
+          thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+        }
+
+        frame.remove();
     });
   }
 

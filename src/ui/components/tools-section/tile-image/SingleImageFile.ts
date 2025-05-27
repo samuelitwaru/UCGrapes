@@ -396,7 +396,9 @@ export class SingleImageFile {
   private async processSaveAction(): Promise<void> {
     switch (this.type) {
       case "tile":
-        this.addImageToTile();
+        const imageUrl = await this.handleCroppedImageSave();
+        console.log("Cropped image URL this.handleCroppedImageSave():", this.handleCroppedImageSave());
+        this.addImageToTile(imageUrl);
         break;
       case "content":
         await this.addImageToContentPage();
@@ -416,20 +418,22 @@ export class SingleImageFile {
     }
   }
 
-  private async handleCroppedImageSave(): Promise<void> {
+  private async handleCroppedImageSave(): Promise<string | null> {
     const img = document.getElementById("selected-image") as HTMLImageElement;
     const frame = document.getElementById("crop-frame") as HTMLElement;
-    
+
     if (!img) {
       console.error("Image element not found.");
-      return;
+      return null;
     }
 
     if (frame) {
       const uniqueFileName = `cropped-image-${Date.now()}.png`;
       const file = new File([img.src], uniqueFileName, { type: "image/png" });
-      await this.imageUpload.saveCroppedImage(img, frame, file);
+      const url = await this.imageUpload.saveCroppedImage(img, frame, file);
+      return url;
     }
+    return null;
   }
 
   private async handleInfoImageSave(): Promise<void> {
@@ -440,13 +444,13 @@ export class SingleImageFile {
     }
   }
 
-  private addImageToTile(): void {
+  private addImageToTile(croppedUrl: any): void {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
     try {
-      const safeMediaUrl = encodeURI(this.imageUpload.croppedUrl);
-      console.log("Adding image to tile:", safeMediaUrl);
+      const safeMediaUrl = encodeURI(croppedUrl);
+      console.log("this.imageUpload.croppedUrl:", safeMediaUrl);
       this.applyTileStyles(selectedComponent, safeMediaUrl);
       this.updateTileAttributes(selectedComponent, safeMediaUrl);
     } catch (error) {

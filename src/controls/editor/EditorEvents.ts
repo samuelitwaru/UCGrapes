@@ -499,11 +499,6 @@ export class EditorEvents {
       this.uiManager.clearAllMenuContainers();
       this.uiManager.isMenuOpen = false;
     }
-
-    
-    if (this.resizeState.isDragging && infoSection) {
-      infoSection.style.border = "3px dashed red";
-    }
   }
 
   private initializePostLoadComponents(): void {
@@ -538,7 +533,6 @@ export class EditorEvents {
 
     this.editor.on("component:drag:start", (model: any) => {
       sourceComponent = model.parent;
-      console.log('sourceComponent', sourceComponent)
     });
 
     this.editor.on("component:drag:end", (model: any) => {
@@ -690,6 +684,11 @@ export class EditorEvents {
   public removeOtherEditors(): void {
     this.ensureUIManager();
     this.uiManager.removeOtherEditors();
+  }
+
+  public clearAllEditors(): void {
+    this.ensureUIManager();
+    this.uiManager.clearAllEditors();
   }
 
   public activateEditor(frameId: any): void {

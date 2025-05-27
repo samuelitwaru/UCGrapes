@@ -38,8 +38,8 @@ export class EditorManager {
     this.jsonToGrapes = new JSONToGrapesJSMenu(this);
   }
 
-  async init() {
-    const version = await this.appVersion.getActiveVersion();
+  async init(newVersion?: any) {
+    const version = newVersion || await this.appVersion.getActiveVersion();
     this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement
     mainContainer.innerHTML = ""

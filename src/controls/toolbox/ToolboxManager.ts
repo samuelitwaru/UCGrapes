@@ -77,89 +77,59 @@ export class ToolboxManager {
     updateButtonVisibility();
   }
 
-  // autoSave() {
-  //   setInterval(async () => {
-  //     this.savePages();
-  //   }, 10000);
-  // }
 
-  async savePages(publish = false) {
+  /**
+ * Saves the specified Information page if its structure has changed.
+ * @param pageId The ID of the page to save.
+ * @returns true if the page was saved, false if no changes were detected.
+ */
+  async saveInformationPage(pageId: string): Promise<boolean> {
+    // console.log('saveInformationPage pageId :>> ', pageId);
     try {
-      const lastSavedStates = new Map<string, string>();
-      const activeVersion = await this.appVersions.getUpdatedActiveVersion();
-      const pages = activeVersion.Pages;
+      // const activeVersion = await this.appVersions.getUpdatedActiveVersion();
+      const activeVersion = (globalThis as any).activeVersion;
+      // console.log('activeVersion :>> ', activeVersion);
+      const page = activeVersion.Pages.find((p: any) => p.PageId === pageId);
+      if (!page) return false;
 
-      await Promise.all(
-        pages.map(async (page: any) => {
-          const pageId = page.PageId;
-          const localStorageKey = `data-${pageId}`;
-          const pageData = JSON.parse(
-            localStorage.getItem(localStorageKey) || "{}"
-          );
+      const localStorageKey = `data-${pageId}`;
+      const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
 
-          let localStructureProperty = null;
-          if (
-            page.PageType === "Menu" ||
-            page.PageType === "MyCare" ||
-            page.PageType === "MyLiving" ||
-            page.PageType === "MyService"
-          )
-            localStructureProperty = "PageMenuStructure";
-          else if (
-            page.PageType === "Content" ||
-            page.PageType === "Location" ||
-            page.PageType === "Reception"
-          ) {
-            localStructureProperty = "PageContentStructure";
-          } else if (page.PageType === "Information") {
-            localStructureProperty = "PageInfoStructure";
-          }
+      // Only need to check PageInfoStructure
+      if (!pageData.PageInfoStructure) return false;
 
-          if (!localStructureProperty || !pageData[localStructureProperty])
-            return;
+      const localStructureString = JSON.stringify(pageData.PageInfoStructure);
+      const pageStructureString =
+        typeof page.PageStructure === "string"
+          ? page.PageStructure
+          : JSON.stringify(page.PageStructure);
 
-          const localStructureString = JSON.stringify(
-            pageData[localStructureProperty]
-          );
+      // console.log(`Saving localStructureString ${localStructureString}`);
+      // console.log(`Saving pageStructureString ${pageStructureString}`);
 
-          // Ensure page.PageStructure is a string for comparison
-          const pageStructureString =
-            typeof page.PageStructure === "string"
-              ? page.PageStructure
-              : JSON.stringify(page.PageStructure);
-          // if (page.PageType === "Content") {
-          //   console.log(`Saving localStructureProperty ${localStructureString}`);
-          //   console.log(`Saving page.PageStructure ${pageStructureString}`);
-          // }
+      if (localStructureString !== pageStructureString) {
+        const pageInfo = {
+          AppVersionId: activeVersion.AppVersionId,
+          PageId: pageId,
+          PageName: page.PageName,
+          PageType: page.PageType,
+          PageStructure: localStructureString,
+        };
 
-          // Compare serialized versions to avoid hidden character differences
-          if (localStructureString !== pageStructureString) {
-            const pageInfo = {
-              AppVersionId: activeVersion.AppVersionId,
-              PageId: pageId,
-              PageName: page.PageName,
-              PageType: page.PageType,
-              PageStructure: localStructureString,
-            };
+        // console.log('Saving page:.........', pageInfo);
 
-            try {
-              // console.log(`Saving page: ${page.PageName}`);
-              // console.log('Data: ', JSON.stringify(pageInfo, null, 2));
-              await this.toolboxService.autoSavePage(pageInfo);
-              lastSavedStates.set(pageId, localStructureString);
-              // if (!publish) this.openToastMessage();
-            } catch (error) {
-              console.error(`Failed to save page ${page.PageName}:`, error);
-              throw error; // Re-throw to be caught by the outer try/catch
-            }
-          }
-        })
-      );
-
-      return lastSavedStates; // Return something meaningful
+        try {
+          await this.toolboxService.autoSavePage(pageInfo);
+          return true;
+        } catch (error) {
+          // console.error(`Failed to save page ${page.PageName}:`, error);
+          throw error;
+        }
+      }
+      return false; // No changes to save
     } catch (error) {
-      console.error("Error saving pages:", error);
-      throw error; // Re-throw so caller knows something went wrong
+      // console.error("Error saving information page:", error);
+      throw error;
     }
   }
 
@@ -239,12 +209,12 @@ export class ToolboxManager {
     const editor = (globalThis as any).activeEditor;
     if (!editor) return;
 
-    
+
     const selectedComponent = (globalThis as any).selectedComponent;
     const selectedComponentId = selectedComponent
       ? selectedComponent.getId()
       : null;
-    
+
     const frameContainer = editor.getWrapper().find("#frame-container")[0];
     if (frameContainer) {
       frameContainer.replaceWith(updatedHtml);

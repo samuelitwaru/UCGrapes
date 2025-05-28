@@ -3,6 +3,7 @@ import { ThemeManager } from "../../../controls/themes/ThemeManager";
 import { TreeComponent } from "../TreeComponent";
 import { PageTreeRenderer } from "./PageTreeRenderer";
 import { PageTreeRendererInfoPage } from "./PageTreeRendererInfoPage";
+
 interface PageNode {
   id: string;
   title: string;
@@ -12,6 +13,7 @@ interface PageNode {
   x: Number;
   y: Number;
 }
+
 export class PageBubbleTree {
   sampleData: any;
   link: any;
@@ -21,14 +23,14 @@ export class PageBubbleTree {
   d3: any;
   pages: any;
   themeManager: ThemeManager;
-  processedPages!: { id: number; title: string; children: number[] }[];
+  processedPages!: { id: string; title: string; children: string[] }[]; // Fixed type to match actual usage
   nodes!: any[];
-  links!: { source: number; target: number }[];
+  links!: { source: string; target: string }[]; // Fixed type to match actual usage
   svg: any;
-  width: number = 100;
-  height: number = 40;
-  selfLinks: { source: number; target: number }[] = [];
-  normalLinks: { source: number; target: number }[] = [];
+  width: number = 1000;
+  height: number = 1000;
+  selfLinks: { source: string; target: string }[] = []; // Fixed type to match actual usage
+  normalLinks: { source: string; target: string }[] = []; // Fixed type to match actual usage
   container: any;
   selfArcs: any;
   arrows: any;
@@ -36,8 +38,10 @@ export class PageBubbleTree {
   zoom: any;
   pageTreeRenderer: PageTreeRenderer;
   PageTreeRendererInfoPage: PageTreeRendererInfoPage;
-  primaryNodeId: any | null = null;
+  primaryNodeId: string | null = null; // Fixed type to string
   appVersionManager: any;
+  navigationHistory: { id: string; name: string }[] = [];
+  parentNodeId: string | null = null;
 
   constructor() {
     this.pageTreeRenderer = new PageTreeRenderer();
@@ -51,25 +55,42 @@ export class PageBubbleTree {
 
     this.processedPages = this.processPageData(this.pages);
     const homePage = this.processedPages.find((page) => page.title === "Home");
+    // if (homePage) {
+    //   this.primaryNodeId = homePage.id;
+    //   // Initialize navigation history with home page
+    //   this.navigationHistory = [{ id: homePage.id, name: homePage.title }];
+    // }
+
+    // this.nodes = this.createNodes();
+    // this.links = this.createLinks();
+
     if (homePage) {
       this.primaryNodeId = homePage.id;
+      // Initialize navigation history with home page
+      this.navigationHistory = [{ id: homePage.id, name: homePage.title }];
+      // Use the same logic as onNodeClick for initialization
+      this.updateNodeDisplay(homePage);
     }
-
-    // console.log("processed pages", this.processedPages);
-    this.nodes = this.createNodes();
-    this.links = this.createLinks();
-    // console.log("nodes", this.nodes);
-    // console.log("links", this.links);
 
     this.init();
   }
 
   init() {
+    this.refreshPages();
     this.graphContainer = this.build();
     this.buildTree();
+    // Make sure breadcrumbs are created after tree is built
+    this.createBreadcrumbs();
+  }
+
+  refreshPages() {
+    this.pages = this.appVersionManager.getPages();
+    this.processedPages = this.processPageData(this.pages);
   }
 
   show() {
+    this.refreshPages();
+
     const editorSections = document.getElementsByClassName(
       "editor-main-section"
     );
@@ -80,6 +101,15 @@ export class PageBubbleTree {
     const treeSection = document.getElementById(
       "tree-container"
     ) as HTMLDivElement;
+
+    const sidebarSection = document.getElementById(
+      "tb-sidebar"
+    ) as HTMLDivElement;
+
+    const breadcrumbSection = document.getElementById(
+      "breadcrumb-container"
+    ) as HTMLDivElement;
+
     //set display to none for editor section
     if (editorSections.length > 0) {
       // toggle display
@@ -89,15 +119,18 @@ export class PageBubbleTree {
         this.graphContainer.style.display = "none";
         toolSection.style.display = "block";
         treeSection.style.display = "none";
+        sidebarSection.style.display = "block";
+        breadcrumbSection.style.display = "none";
       } else {
         toolSection.style.display = "none";
+        sidebarSection.style.display = "none";
         div.style.display = "none";
         this.graphContainer.style.display = "block";
         this.graphContainer.style.width = "100%";
         this.graphContainer.style.height = "100%";
         const tree = new TreeComponent(this.appVersionManager);
+        breadcrumbSection.style.display = "block";
       }
-      // editorSections[0].setAttribute("style", "display:none;")
     }
   }
 
@@ -105,6 +138,12 @@ export class PageBubbleTree {
     const mainContainer = document.getElementById(
       "main-content"
     ) as HTMLDivElement;
+
+    if (!mainContainer) {
+      console.error("Main content container not found");
+      return document.createElement("div");
+    }
+
     this.graphContainer = document.getElementById(
       "graph-container-1"
     ) as HTMLDivElement;
@@ -113,22 +152,34 @@ export class PageBubbleTree {
       this.graphContainer = document.createElement("div");
       this.graphContainer.id = "graph-container-1";
     }
+
+    // Clear any existing content
     this.graphContainer.innerHTML = "<svg></svg>";
-    // mainContainer.innerHTML = ""
+
+    // Create a separate breadcrumb container if it doesn't exist
+    let breadcrumbContainer = document.getElementById("breadcrumb-container");
+    if (!breadcrumbContainer) {
+      breadcrumbContainer = document.createElement("div");
+      breadcrumbContainer.id = "breadcrumb-container";
+      breadcrumbContainer.style.padding = "10px";
+      breadcrumbContainer.style.background = "#f8f9fa";
+      breadcrumbContainer.style.borderBottom = "1px solid #dee2e6";
+      breadcrumbContainer.style.display = "flex";
+      breadcrumbContainer.style.flexWrap = "wrap";
+      breadcrumbContainer.style.alignItems = "center";
+
+      mainContainer.appendChild(breadcrumbContainer);
+    }
+
     mainContainer.appendChild(this.graphContainer);
     this.graphContainer.setAttribute("style", "display:block;width:100%;");
+
     return this.graphContainer;
   }
 
   processPageData(pages: any[]) {
     const linkPages: PageNode[] = [];
     pages = pages.map((page: any) => {
-      // console.log(
-      //   "PageThumbnailUrl for page:",
-      //   page.PageName,
-      //   page.PageThumbnailUrl
-      // );
-
       let ret: PageNode = {
         id: page.PageId,
         title: page.PageName,
@@ -172,7 +223,8 @@ export class PageBubbleTree {
               ret.children.push(tile.Action.ObjectId);
             } else if (tile.Action.ObjectId) {
               if (
-                this.pages.filter(
+                this.pages.some(
+                  // Changed from filter to some for boolean check
                   (page: any) => page.PageId === tile.Action.ObjectId
                 )
               ) {
@@ -186,7 +238,6 @@ export class PageBubbleTree {
         if (page.PageInfoStructure.InfoContent) {
           ret.structure = this.PageTreeRendererInfoPage.createMenuHTML(page);
           page.PageInfoStructure.InfoContent.forEach((row: any) => {
-            // console.log(`info rows`, row)
             if (row.InfoType === "TileRow") {
               row.Tiles.forEach((tile: any) => {
                 if (
@@ -237,46 +288,125 @@ export class PageBubbleTree {
     });
 
     return pages.concat(linkPages);
-    // console.log(linkPages)
-    // return pages
   }
+
+  // createNodes(processedPages: any[] = this.processedPages) {
+  //   const primaryNode = processedPages.find((p) => p.id === this.primaryNodeId);
+  //   if (!primaryNode) return [];
+
+  //   const childNodes = processedPages.filter((p) =>
+  //     primaryNode.children.includes(p.id)
+  //   );
+
+  //   return [primaryNode, ...childNodes].map((p) => {
+  //     // For each node, get the count of its children that exist in the processed pages
+  //     const validChildren = p.children.filter((childId: string) =>
+  //       processedPages.some((page: any) => page.id === childId)
+  //     );
+
+  //     return {
+  //       id: p.id,
+  //       name: p.title,
+  //       children: p.children,
+  //       structure: p.structure,
+  //       thumbnail: p.thumbnail,
+  //       childCount: validChildren.length,
+  //     };
+  //   });
+  // }
+
+  // createNodes(processedPages: any[] = this.processedPages) {
+  //   return processedPages.map((p) => {
+  //     const validChildren = p.children.filter((childId: string) =>
+  //       processedPages.some((page: any) => page.id === childId)
+  //     );
+  //     return {
+  //       id: p.id,
+  //       name: p.title,
+  //       children: p.children,
+  //       structure: p.structure,
+  //       thumbnail: p.thumbnail,
+  //       childCount: validChildren.length,
+  //     };
+  //   });
+  // }
 
   createNodes(processedPages: any[] = this.processedPages) {
-    return processedPages.map((p) => ({
-      id: p.id,
-      name: p.title,
-      children: p.children,
-      structure: p.structure,
-      thumbnail: p.thumbnail,
-    }));
+    return processedPages.map((p) => {
+      const validChildren = p.children.filter((childId: string) =>
+        processedPages.some((page: any) => page.id === childId)
+      );
+      const totalChildCount = p.children.filter((childId: string) =>
+        this.processedPages.some((page: any) => page.id === childId)
+      ).length;
+      return {
+        id: p.id,
+        name: p.title,
+        children: p.children,
+        structure: p.structure,
+        thumbnail: p.thumbnail,
+        childCount: validChildren.length,
+        totalChildCount,
+      };
+    });
   }
+
+  // All nodes
+  // createNodes(processedPages: any[] = this.processedPages) {
+  //   return processedPages.map((p) => ({
+  //     id: p.id,
+  //     name: p.title,
+  //     children: p.children,
+  //     structure: p.structure,
+  //     thumbnail: p.thumbnail,
+  //   }));
+  // }
+
+  // createLinks(processedPages: any[] = this.processedPages) {
+  //   const primaryNode = processedPages.find((p) => p.id === this.primaryNodeId);
+  //   if (!primaryNode) return [];
+
+  //   return primaryNode.children.map((childId: string) => ({
+  //     source: primaryNode.id,
+  //     target: childId,
+  //   }));
+  // }
+
   createLinks(processedPages: any[] = this.processedPages) {
     return processedPages.flatMap((p) =>
-      p.children.map((childId: string) => ({
-        source: p.id,
-        target: childId,
-      }))
+      p.children
+        .filter((childId: string) =>
+          processedPages.some((page: any) => page.id === childId)
+        )
+        .map((childId: string) => ({
+          source: p.id,
+          target: childId,
+        }))
     );
   }
 
+  //all links
+  // createLinks(processedPages: any[] = this.processedPages) {
+  //   return processedPages.flatMap((p) =>
+  //     p.children.map((childId: string) => ({
+  //       source: p.id,
+  //       target: childId,
+  //     }))
+  //   );
+  // }
+
   buildTree() {
-    const nodeCount = this.nodes.length;
-    const minSize = 800;
-    const spacingFactor = 300; // Adjust based on how spaced out you want nodes
+    this.width = 0.8 * window.innerWidth;
+    this.height = window.innerHeight;
 
-    this.width = Math.max(
-      minSize,
-      Math.ceil(Math.sqrt(nodeCount)) * spacingFactor
-    );
-    this.height = this.width;
-
-    // creating the parent svg component
-    // this.svg = this.d3.select("svg")
+    // Clear existing SVG content first to avoid duplications
     this.svg = this.d3
       .select("#graph-container-1")
       .select("svg")
+      .html("") // Clear existing content
       .attr("viewBox", [0, 0, this.width, this.height])
       .attr("preserveAspectRatio", "xMidYMid meet");
+
     this.container = this.svg.append("g");
     this.splitLinks();
     this.forceSimulation();
@@ -303,8 +433,8 @@ export class PageBubbleTree {
           .id((d: any) => d.id)
           .distance(300)
       )
-      .force("charge", this.d3.forceManyBody().strength(-1000))
-      .force("center", this.d3.forceCenter(this.width / 2, this.height / 2));
+      .force("charge", this.d3.forceManyBody().strength(-4000))
+      .force("center", this.d3.forceCenter(this.width / 2, this.height / 2.2));
   }
 
   createNormalLinks() {
@@ -316,7 +446,13 @@ export class PageBubbleTree {
       .selectAll("line")
       .data(this.normalLinks)
       .join("line")
-      .attr("stroke-width", 2.0);
+      .attr("stroke-width", 2.0)
+      .style("cursor", "pointer") // Make it look clickable
+      .on("click", (event: any, d: any) => {
+        alert(
+          `Parent (source): ${d.source.id}\nChild (target): ${d.target.id}`
+        );
+      });
   }
 
   createLinkArrows() {
@@ -328,8 +464,8 @@ export class PageBubbleTree {
       .attr("viewBox", "0 -5 10 10")
       .attr("refX", 5)
       .attr("refY", 0)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 6)
+      .attr("markerWidth", 10)
+      .attr("markerHeight", 10)
       .attr("orient", "auto")
       .append("path")
       .attr("d", "M0,-5L10,0L0,5")
@@ -359,69 +495,142 @@ export class PageBubbleTree {
   }
 
   createCircularNodes() {
-    const radius = 50;
+    let tooltip = document.getElementById(
+      "bubble-tree-tooltip"
+    ) as HTMLDivElement;
+    if (!tooltip) {
+      tooltip = document.createElement("div");
+      tooltip.id = "bubble-tree-tooltip";
+      tooltip.style.position = "absolute";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.background = "#222f54";
+      tooltip.style.color = "#fff";
+      tooltip.style.padding = "6px 12px";
+      tooltip.style.borderRadius = "6px";
+      tooltip.style.fontSize = "14px";
+      tooltip.style.boxShadow = "0 2px 8px rgba(0,0,0,0.15)";
+      tooltip.style.display = "none";
+      tooltip.style.zIndex = "1000";
+      document.body.appendChild(tooltip);
+    }
+
     // Nodes
     this.node = this.container
       .append("g")
-      .attr("stroke", "#222f54")
       .attr("stroke-width", 1.5)
       .selectAll("g")
       .data(this.nodes)
       .join("g")
       .call(this.drag())
-      .on("click", (event: any, d: any) => this.onNodeClick(event, d));
+      .on("click", (event: any, d: any) => {
+        tooltip.style.display = "none";
+        this.onNodeClick(event, d);
+      })
+      .on("mouseover", (event: any, d: any) => {
+        tooltip.innerText = d.name;
+        tooltip.style.display = "block";
+      })
+      .on("mousemove", (event: any) => {
+        tooltip.style.left = event.clientX + 15 + "px";
+        tooltip.style.top = event.clientY + 10 + "px";
+      })
+      .on("mouseout", () => {
+        tooltip.style.display = "none";
+      });
+
+    // Nodes
+    // this.node = this.container
+    //   .append("g")
+    //   .attr("stroke-width", 1.5)
+    //   .selectAll("g")
+    //   .data(this.nodes)
+    //   .join("g")
+    //   .call(this.drag())
+    //   .on("click", (event: any, d: any) => this.onNodeClick(event, d));
+
+    // Store node dimensions for centered connections
+    const nodeWidth = 100;
+    const nodeHeight = 175;
 
     this.node
+      .filter(
+        (d: any) =>
+          d.totalChildCount > d.childCount && d.id !== this.primaryNodeId
+      )
       .append("rect")
-      .attr("width", 200)
-      .attr("height", 350)
-      .attr("x", (d: any) => -Math.max(d.name.length * 8, 100) / 2)
-      .attr("y", -20)
+      .attr("width", nodeWidth)
+      .attr("height", nodeHeight)
+      .attr("x", -nodeWidth / 2 + 5) // Offset to top-right
+      .attr("y", -nodeHeight / 2 - 5)
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .attr("fill", "#fff")
+      .attr("stroke", "#d3d3d3")
+      .attr("stroke-width", 1.5)
+      .attr("opacity", 1)
+      .attr("stroke", "#222f54")
+      .lower(); // Ensure it's behind the main rect
+
+    // Node rectangle
+    this.node
+      .append("rect")
+      .attr("width", nodeWidth)
+      .attr("height", nodeHeight)
+      .attr("x", -nodeWidth / 2) // Center the rectangle horizontally
+      .attr("y", -nodeHeight / 2) // Center the rectangle vertically
       .attr("stroke", (d: any) =>
         d.id === this.primaryNodeId ? "#FF5722" : "#222f54"
       )
-      .attr("fill", "#efeeec");
-    // .style("background", "#EFEEEC");
+      .attr("fill", "#efeeec")
+      .attr("rx", 10)
+      .attr("ry", 10);
 
+    // Add child count badge for nodes with children, excluding the active parent node
     // this.node
-    //   .append("text")
-    //   .text((d: any) => d.name)
-    //   .attr("dy", 6)
-    //   .attr("text-anchor", "middle")
-    //   .attr("stroke", "none")
-    //   .attr("fill", "#222f54");
+    //   .filter((d: any) => d.childCount > 0 && d.id !== this.primaryNodeId)
+    //   .append("circle")
+    //   .attr("r", 14)
+    //   .attr("cx", nodeWidth / 2 - 8)
+    //   .attr("cy", -nodeHeight / 2 + 8)
+    //   .attr("fill", "#222f54")
+    //   .attr("stroke", "#ffffff")
+    //   .attr("stroke-width", 1);
+
+    this.node
+      .filter((d: any) => d.childCount > 0 && d.id !== this.primaryNodeId)
+      .append("text")
+      .text((d: any) => d.childCount)
+      .attr("x", nodeWidth / 2 - 8)
+      .attr("y", -nodeHeight / 2 + 12)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "12px")
+      .attr("font-weight", "bold")
+      .attr("fill", "#ffffff");
 
     this.node
       .append("foreignObject")
-      .attr("height", 350)
-      .attr("width", 200)
-      .attr("y", -20)
-      .attr("x", -50)
+      .attr("height", nodeHeight - 10)
+      .attr("width", nodeWidth)
+      .attr("y", -nodeHeight / 2)
+      .attr("x", -nodeWidth / 2)
       .attr("fill", "#efeeec")
       .html(
         (d: any) => `
-        <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; padding:2px">
-            <div style="display:flex; ">
-              <svg xmlns="http://www.w3.org/2000/svg" data-name="Group 14" viewBox="0 0 47 47" class="content-back-butto" width="30" height="30">
-                  <g id="Ellipse_6" data-name="Ellipse 6" fill="none" stroke="#262626" stroke-width="1">
-                  <circle cx="23.5" cy="23.5" r="23.5" stroke="none"></circle>
-                  <circle cx="23.5" cy="23.5" r="23" fill="none"></circle>
-                  </g>
-                  <path id="Icon_ionic-ios-arrow-round-up" data-name="Icon ionic-ios-arrow-round-up" d="M13.242,7.334a.919.919,0,0,1-1.294.007L7.667,3.073V19.336a.914.914,0,0,1-1.828,0V3.073L1.557,7.348A.925.925,0,0,1,.263,7.341.91.91,0,0,1,.27,6.054L6.106.26h0A1.026,1.026,0,0,1,6.394.07.872.872,0,0,1,6.746,0a.916.916,0,0,1,.64.26l5.836,5.794A.9.9,0,0,1,13.242,7.334Z" transform="translate(13 30.501) rotate(-90)" fill="#262626"></path>
-              </svg>
-              <div class="">
-                <div style="padding: 5px; text-transform: uppercase;">${d.name}</div>
-              </div>
-            </div>
-           <img src="${d.thumbnail}" alt="${d.name}" style="max-width: 100%; margin-top:0px; height: auto; text-transform: uppercase;" />
-        </div>
+         ${d.structure}
         `
       );
   }
 
   onTick() {
     this.simulation.on("tick", () => {
-      // Normal links
+      // Transform nodes first so we can use their calculated positions
+      this.node.attr("transform", (d: any) => {
+        d.x = Math.max(100, Math.min(this.width - 100, d.x));
+        d.y = Math.max(100, Math.min(this.height - 100, d.y));
+        return `translate(${d.x},${d.y})`;
+      });
+
+      // Normal links - connecting to center of node rectangles
       this.link
         .attr("x1", (d: any) => d.source.x)
         .attr("y1", (d: any) => d.source.y)
@@ -458,16 +667,11 @@ export class PageBubbleTree {
                 a ${r} ${r} 0 1 1 1 0.01
                 `;
       });
-      this.node.attr("transform", (d: any) => {
-        d.x = Math.max(100, Math.min(this.width - 100, d.x));
-        d.y = Math.max(100, Math.min(this.height - 100, d.y));
-        return `translate(${d.x},${d.y})`;
-      });
     });
   }
 
   panAndZoom() {
-    // Zoom and pan
+    // Zoom and pan functionality can be enabled here if needed
     // this.zoom = this.d3
     //   .zoom()
     //   .scaleExtent([0.5, 2])
@@ -481,7 +685,13 @@ export class PageBubbleTree {
     return this.d3
       .drag()
       .on("start", (event: any, d: any) => this.dragstarted(event, d))
-      .on("drag", (event: any, d: any) => this.dragged(event, d))
+      .on("drag", (event: any, d: any) => {
+        const tooltip = document.getElementById(
+          "bubble-tree-tooltip"
+        ) as HTMLDivElement;
+        if (tooltip) tooltip.style.display = "none";
+        this.dragged(event, d);
+      })
       .on("end", (event: any, d: any) => this.dragended(event, d));
   }
 
@@ -490,6 +700,7 @@ export class PageBubbleTree {
     d.fx = d.x;
     d.fy = d.y;
   }
+
   dragged(event: any, d: any) {
     d.fx = event.x;
     d.fy = event.y;
@@ -502,34 +713,182 @@ export class PageBubbleTree {
   }
 
   onNodeClick(event: any, d: any) {
-    this.primaryNodeId = d.id;
-    d.title = d.name;
-    let nodesToAdd: string[] = [d.id];
-    const processedPages: any[] = [d]; // Start with the clicked node
-
-    const childIds = [...(d.children || [])]; // Defensive copy
-
-    while (childIds.length > 0) {
-      const childId = childIds.pop();
-      if (!childId || nodesToAdd.includes(childId)) continue;
-
-      nodesToAdd.push(childId);
-
-      const childPage = this.processedPages.find(
-        (page: any) => page.id === childId
-      );
-      if (childPage) {
-        processedPages.push(childPage);
-        if (childPage.children) {
-          childIds.push(...childPage.children);
-        }
-      }
+    if (!d || !d.id) {
+      console.error("Invalid node clicked:", d);
+      return;
     }
 
-    // console.log("nodes page", processedPages);
+    // Check if node is already in history
+    const existingIndex = this.navigationHistory.findIndex(
+      (item) => item.id === d.id
+    );
+
+    if (existingIndex !== -1) {
+      // If clicking a node that's in history, truncate history to that point
+      this.navigationHistory = this.navigationHistory.slice(
+        0,
+        existingIndex + 1
+      );
+    } else {
+      // Add new node to navigation history
+      this.navigationHistory.push({ id: d.id, name: d.name });
+    }
+
+    // Track parent node before updating primaryNodeId
+    this.parentNodeId = this.primaryNodeId;
+
+    // Set as primary node
+    this.primaryNodeId = d.id;
+
+    // Process nodes and links
+    this.updateNodeDisplay(d);
+  }
+
+  // Extracted common node display update logic to avoid code duplication
+  // updateNodeDisplay(node: any) {
+  //   if (!node) return;
+
+  //   let nodesToAdd: string[] = [node.id];
+  //   const processedPages: any[] = [node];
+
+  //   const childIds = [...(node.children || [])];
+
+  //   while (childIds.length > 0) {
+  //     const childId = childIds.pop();
+  //     if (!childId || nodesToAdd.includes(childId)) continue;
+
+  //     nodesToAdd.push(childId);
+
+  //     const childPage = this.processedPages.find(
+  //       (page: any) => page.id === childId
+  //     );
+  //     if (childPage) {
+  //       processedPages.push(childPage);
+  //       if (childPage.children) {
+  //         childIds.push(...childPage.children);
+  //       }
+  //     }
+  //   }
+
+  //   this.nodes = this.createNodes(processedPages);
+  //   this.links = this.createLinks(processedPages);
+  //   this.buildTree(); // Only rebuild the tree, not the entire component
+  //   this.createBreadcrumbs(); // Update breadcrumbs after tree is updated
+  // }
+
+  updateNodeDisplay(node: any) {
+    if (!node) return;
+
+    // Collect all ancestor node IDs from navigationHistory (excluding the current node)
+    const ancestorIds = this.navigationHistory
+      .slice(0, -1) // all except the last (current node)
+      .map((item) => item.id);
+
+    // Collect node IDs to display
+    let nodeIds = new Set<string>();
+    nodeIds.add(node.id);
+
+    // Add all ancestor nodes
+    ancestorIds.forEach((id) => nodeIds.add(id));
+
+    // Add children of the current node
+    (node.children || []).forEach((id: string) => nodeIds.add(id));
+
+    // Add shared nodes (children of both current node and any ancestor)
+    ancestorIds.forEach((ancestorId) => {
+      const ancestor = this.processedPages.find(
+        (p: any) => p.id === ancestorId
+      );
+      if (ancestor) {
+        const shared = (ancestor.children || []).filter((id: string) =>
+          (node.children || []).includes(id)
+        );
+        shared.forEach((id: string) => nodeIds.add(id));
+      }
+    });
+
+    // Build processedPages for these nodes
+    const processedPages = this.processedPages.filter((p: any) =>
+      nodeIds.has(p.id)
+    );
 
     this.nodes = this.createNodes(processedPages);
     this.links = this.createLinks(processedPages);
-    this.init();
+    this.buildTree();
+    this.createBreadcrumbs();
+  }
+
+  navigateToNode(nodeId: string, historyIndex?: number) {
+    const node = this.processedPages.find((page: any) => page.id === nodeId);
+    if (!node) {
+      console.error("Node not found:", nodeId);
+      return;
+    }
+
+    // Update primary node
+    this.primaryNodeId = nodeId;
+
+    // Update navigation history if index provided
+    if (historyIndex !== undefined) {
+      // Truncate history if clicking on a breadcrumb
+      this.navigationHistory = this.navigationHistory.slice(
+        0,
+        historyIndex + 1
+      );
+    }
+
+    // Use the common update function
+    this.updateNodeDisplay(node);
+  }
+
+  createBreadcrumbs() {
+    // Get the breadcrumb container
+    let breadcrumbContainer = document.getElementById("breadcrumb-container");
+
+    if (!breadcrumbContainer) {
+      console.error("Breadcrumb container not found");
+      return;
+    }
+
+    // Clear existing breadcrumbs
+    breadcrumbContainer.innerHTML = "";
+
+    // Build breadcrumbs from navigation history
+    this.navigationHistory.forEach((item, index) => {
+      if (!item || !item.name) return; // Skip invalid items
+
+      const breadcrumb = document.createElement("span");
+      breadcrumb.innerText = item.name || "Unnamed";
+      breadcrumb.style.cursor = "pointer";
+      breadcrumb.style.color = "#0d6efd";
+      breadcrumb.style.marginRight = "5px";
+      breadcrumb.style.padding = "3px 6px";
+
+      // Add event listener for navigation
+      if (index < this.navigationHistory.length - 1) {
+        breadcrumb.addEventListener("click", () => {
+          // Navigate to this node and truncate history
+          this.navigateToNode(item.id, index);
+        });
+        breadcrumb.style.textDecoration = "underline";
+      } else {
+        // Current item - no click action and different style
+        breadcrumb.style.fontWeight = "bold";
+        breadcrumb.style.color = "#212529";
+        breadcrumb.style.backgroundColor = "#e9ecef";
+        breadcrumb.style.borderRadius = "4px";
+      }
+
+      breadcrumbContainer.appendChild(breadcrumb);
+
+      // Add separator except for last item
+      if (index < this.navigationHistory.length - 1) {
+        const separator = document.createElement("span");
+        separator.innerText = " > ";
+        separator.style.marginRight = "5px";
+        separator.style.color = "#6c757d";
+        breadcrumbContainer.appendChild(separator);
+      }
+    });
   }
 }

@@ -34,7 +34,7 @@ export class NavbarButtons {
       labelId: "navbar_tree_label",
     });
 
-    treeButton.button.disabled = true
+    // treeButton.button.disabled = true
     treeButton.button.addEventListener("click", (e) => {
       e.preventDefault();
       const pageBubbleTree = new PageBubbleTree();
@@ -63,7 +63,7 @@ export class NavbarButtons {
     editActions.render(this.container);
 
     themeSelection.render(this.container);
-    // treeButton.render(this.container);
+    treeButton.render(this.container);
     publishButton.render(this.container);
 
     publishButton.button.addEventListener("click", (e) => {

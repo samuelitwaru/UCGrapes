@@ -2785,6 +2785,111 @@ details .tb_debug_details-content {
 }
 
 /* TREE */
+
+.plain-button-tree {
+  position: relative;
+  width: 90px;
+  border-radius: 7px;
+  border: none;
+  background-color: #5068a8;
+  display: inline-block;
+  vertical-align: middle;
+  color: white;
+  padding: 4px 3px;
+  font-size: 7px;
+}
+
+.cta-icon-button-tree {
+  position: relative;
+  width: 90px;
+  border-radius: 6px;
+  /* background-color: #5068a8; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  padding: 2px;
+  margin: 2.5px;
+}
+.cta-icon-button-icon-tree svg {
+  min-width: 18px;
+  min-height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  padding: 2px;
+}
+
+.cta-icon-button-label-tree {
+  flex: 1;
+  font-size: 7px;
+  margin-left: 0.8rem;
+}
+
+.img-button-arrow-tree {
+  font-size: 7px; /* Adjust as needed */
+  padding: 2px;
+}
+
+.plain-button-container-tree {
+  width: 100%;
+  padding: 2px 2.5px;
+}
+
+.cta-image-button-tree {
+  position: relative;
+  width: 90px;
+  border-radius: 6px;
+  /* background-color: #5068a8; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  padding: 2px;
+  margin: 2.5px;
+}
+.cta-image-button-image-tree {
+  padding: 2px;
+}
+.cta-image-button-label-tree {
+  flex: 1;
+  font-size: 7px;
+  margin-left: 0.8rem;
+}
+.cta-round-button-tree {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem;
+  text-transform: uppercase;
+  /* width: calc(100% / 4.5); */
+  width: 20px;
+}
+
+.cta-round-button-icon-tree {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 7px;
+}
+
+.cta-round-button-icon-tree svg {
+  width: 15px !important;
+  height: 15px !important;
+  display: block;
+}
+
+.tree-tb-time-slot {
+  display: flex;
+  border-top: 2px solid #dcdbd9;
+  position: relative;
+  padding: 5px;
+}
+
 #graph-container {
   width: 100%;
   height: 100vh;

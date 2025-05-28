@@ -385,10 +385,11 @@ export class ToolBoxService {
     return await this.fetchAPI("/api/toolbox/location-theme");
   }
 
-  async updateLocationTheme(themeId: string) {
-    return await this.fetchAPI("/api/toolbox/update-location-theme", {
+  async updateAppVersionTheme(appVersionId:string, themeId: string) {
+    
+    return await this.fetchAPI("/api/toolbox/update-appversion-theme", {
       method: "POST",
-      body: JSON.stringify({ ThemeId: themeId }),
+      body: JSON.stringify({ AppVersionId:appVersionId, ThemeId: themeId }),
     });
   }
 

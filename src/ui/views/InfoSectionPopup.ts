@@ -7,6 +7,7 @@ import { Modal } from "../components/Modal";
 import { InfoSectionUI } from "./InfoSectionUI";
 import { randomIdGenerator } from "../../utils/helpers";
 import { PageCreationService } from "../components/tools-section/action-list/PageCreationService";
+import { i18n } from "../../i18n/i18n";
 
 export class InfoSectionPopup {
   private controller: InfoSectionManager;
@@ -44,7 +45,7 @@ export class InfoSectionPopup {
     const sectionItems = [
       {
         name: "Cta",
-        label: "Call to Action",
+        label: i18n.t("sidebar.action_list.call_to_action"),
         expandable: true,
       },
       {
@@ -218,9 +219,8 @@ export class InfoSectionPopup {
     }
     // Second priority: show at the top if there's enough space
     else if (spaceAbove >= effectiveMenuHeight + 10) {
-      this.menuContainer.style.top = `${
-        relTriggerTop - effectiveMenuHeight - 0
-      }px`;
+      this.menuContainer.style.top = `${relTriggerTop - effectiveMenuHeight - 0
+        }px`;
     }
     // Last resort: show at the top with scroll if needed
     else {
@@ -231,9 +231,8 @@ export class InfoSectionPopup {
       }
     }
 
-    this.menuContainer.style.left = `calc(50% - ${
-      this.menuContainer.clientWidth / 2
-    }px)`;
+    this.menuContainer.style.left = `calc(50% - ${this.menuContainer.clientWidth / 2
+      }px)`;
 
     this.menuContainer.style.visibility = "visible";
     this.menuContainer.style.opacity = "1";

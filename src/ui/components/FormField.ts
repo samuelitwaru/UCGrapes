@@ -84,14 +84,18 @@ export class FormField {
 
     validate(): boolean {
         const input = this.formField.querySelector('input') as HTMLInputElement;
-        const isValid = this.validateFn ? this.validateFn(input.value) : true;
-
-        if (!isValid) {
-            this.showError(input.validationMessage || 'Invalid input');
+        if (this.validateFn) {
+            // Custom validation handles error display
+            return this.validateFn(input.value);
         } else {
-            this.hideError();
+            // Native validation
+            const isValid = input.checkValidity();
+            if (!isValid) {
+                this.showError(input.validationMessage || 'Invalid input');
+            } else {
+                this.hideError();
+            }
+            return isValid;
         }
-
-        return isValid;
     }
 }

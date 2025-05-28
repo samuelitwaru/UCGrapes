@@ -30,8 +30,26 @@ export class SupplierSelectionComponent<DropdownOption> {
     const selectArrow = document.createElement('span');
     selectArrow.className = 'select-arrow';
 
+    const clearIcon = document.createElement('span');
+    clearIcon.className = 'select-clear-icon';
+    clearIcon.innerHTML = '&times;';
+    clearIcon.style.display = 'none';
+    clearIcon.style.cursor = 'pointer';
+    clearIcon.style.marginLeft = '8px';
+
+    clearIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close any open dropdowns
+      document.querySelectorAll('.select-dropdown.show').forEach(drop => drop.classList.remove('show'));
+      document.querySelectorAll('.select-field.active').forEach(field => field.classList.remove('active'));
+      this.removeSelection();
+      clearIcon.style.display = 'none';
+    });
+
+
     selectField.appendChild(selectValue);
     selectField.appendChild(selectArrow);
+    selectField.appendChild(clearIcon);
 
     const dropdown = document.createElement('div');
     dropdown.className = 'select-dropdown';
@@ -155,6 +173,12 @@ export class SupplierSelectionComponent<DropdownOption> {
     const selectValue = this.element.querySelector('.select-value') as HTMLElement;
     selectValue.textContent = label;
 
+    const clearIcon = this.element.querySelector('.select-clear-icon') as HTMLElement;
+    clearIcon.style.display = 'flex';
+
+    const selectArrow = this.element.querySelector('.select-arrow') as HTMLElement;
+    if (selectArrow) selectArrow.style.display = 'none';
+
     const options = this.element.querySelectorAll('.select-option');
     options.forEach(optionEl => {
       if (optionEl.getAttribute('data-value') === value) {
@@ -170,7 +194,6 @@ export class SupplierSelectionComponent<DropdownOption> {
   }
 
   public removeSelection(): void {
-    const popup = document.querySelector(".popup-modal-link") as HTMLDivElement;
     const valueField = document.querySelector("#field_value") as HTMLInputElement;
     if (valueField) {
       valueField.value = "";
@@ -181,6 +204,13 @@ export class SupplierSelectionComponent<DropdownOption> {
     selectValue.textContent = this.placeholder;
     const options = this.element.querySelectorAll('.select-option');
     options.forEach(optionEl => optionEl.classList.remove('selected'));
+    const clearIcon = this.element.querySelector('.select-clear-icon') as HTMLElement;
+    if (clearIcon) clearIcon.style.display = 'none';
+    const selectArrow = this.element.querySelector('.select-arrow') as HTMLElement;
+    if (selectArrow) selectArrow.style.display = 'inline';
+    // custom event to notify that the supplier has been cleared
+    const event = new CustomEvent('supplier-cleared', { bubbles: true });
+    this.getElement().dispatchEvent(event);
   }
 
   private addStyles(): void {
@@ -193,7 +223,7 @@ export class SupplierSelectionComponent<DropdownOption> {
             width: 100%;
             font-family: Arial, sans-serif;
           }
-          
+
           .select-field {
             padding: 6px 7px;
             background: white;
@@ -206,15 +236,15 @@ export class SupplierSelectionComponent<DropdownOption> {
             cursor: pointer;
             user-select: none;
           }
-          
+
           .select-field:hover {
             border-color: #bbb;
           }
-          
+
           .select-field.active {
             border-color: #b4b9bd;
           }
-          
+
           .select-arrow {
             border-right: 2px solid #b4b9bd;
             border-bottom: 2px solid #b4b9bd;
@@ -226,6 +256,30 @@ export class SupplierSelectionComponent<DropdownOption> {
           
           .select-field.active .select-arrow {
             transform: rotate(-135deg);
+          }
+
+          .select-clear-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            color: #ccc;
+            border: 1px solid #ccc;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            margin-left: 8px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+          }
+          .select-clear-icon:hover {
+            color: #4e4e4e;
+            border-color: #4e4e4e;
+            background: #fff;
           }
           
           .select-dropdown {

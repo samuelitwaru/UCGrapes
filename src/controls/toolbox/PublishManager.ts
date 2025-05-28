@@ -19,7 +19,7 @@ export class PublishManager {
     const div = document.createElement("div");
     const p = document.createElement("p");
     p.innerText = i18n.t("navbar.publish.modal_description");
-    
+
     const label = document.createElement("label") as HTMLLabelElement;
     label.className = "notify_residents";
 
@@ -43,7 +43,7 @@ export class PublishManager {
       "tb-btn-primary",
       i18n.t("navbar.publish.modal_confirm")
     );
-    
+
     const cancelBtn = this.createButton(
       "cancel_publish",
       "tb-btn-outline",
@@ -68,17 +68,27 @@ export class PublishManager {
     saveBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       modal.close();
-      this.toolBoxManager.savePages(false).then(res => {
-        this.appVersions.getActiveVersion().then(res=>{
-          this.toolboxService.publishAppVersion(res.AppVersionId, input.checked)
-          .then((res:any)=>{
-            if(!res.message){
-              modal.close()
-              new Alert("success", i18n.t("messages.success.published"))
-            }
-          })
+      // publish the app version
+      const activeVersion = (globalThis as any).activeVersion;
+      this.toolboxService.publishAppVersion(activeVersion.AppVersionId, input.checked)
+        .then((res: any) => {
+          if (!res.message) {
+            modal.close()
+            new Alert("success", i18n.t("messages.success.published"))
+          }
         })
-      })
+
+      // this.toolBoxManager.savePages(false).then(res => {
+      //   this.appVersions.getActiveVersion().then(res=>{
+      //     this.toolboxService.publishAppVersion(res.AppVersionId, input.checked)
+      //     .then((res:any)=>{
+      //       if(!res.message){
+      //         modal.close()
+      //         new Alert("success", i18n.t("messages.success.published"))
+      //       }
+      //     })
+      //   })
+      // })
     });
 
     cancelBtn.addEventListener("click", (e) => {
@@ -90,12 +100,12 @@ export class PublishManager {
     // process the data from here
   }
 
-  
+
   private createButton(id: string, className: string, text: string): HTMLButtonElement {
     const btn = document.createElement('button');
     btn.id = id;
     btn.classList.add('tb-btn', className);
     btn.innerText = text;
     return btn;
- }
+  }
 }

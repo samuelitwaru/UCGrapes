@@ -16,7 +16,8 @@ export class InfoContentMapper {
     this.historyManager.addState(data);
     // call auto save to DB:
     const toolboxManager = new ToolboxManager();
-    toolboxManager.savePages();
+    toolboxManager.saveInformationPage(this.pageId);
+    // toolboxManager.savePages();
   }
 
   public contentRow(content: InfoType): any {

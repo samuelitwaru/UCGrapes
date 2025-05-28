@@ -35,13 +35,19 @@ export class OpacitySection {
     input.min = "0";
     input.max = "100";
     input.value = "0";
+
     input.addEventListener("input", (event: any) => {
       const value = event.target.value;
       const valueDisplay = document.getElementById("valueDisplay");
       if (valueDisplay) {
         valueDisplay.innerHTML = `${value}%`;
       }
-      this.updateImageOpacity(value);
+      this.updateImageOpacity(value, false);
+    });
+
+    input.addEventListener("change", (event: any) => {
+      const value = event.target.value;
+      this.updateImageOpacity(value, true);
     });
 
     const valueDisplay = document.createElement("span");
@@ -79,13 +85,15 @@ export class OpacitySection {
     this.container.appendChild(sliderWrapper);
   }
 
-  updateImageOpacity(value: number) {
+  updateImageOpacity(value: number, isFinalOpacityValue: boolean) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
     const opacity: number = value / 100;
 
     selectedComponent.getEl().style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
+
+    if (!isFinalOpacityValue) return;
 
     const pageData = (globalThis as any).pageData;
 

@@ -1,4 +1,5 @@
 import { ThemeManager } from "../../controls/themes/ThemeManager";
+import { AppVersionManager } from "../../controls/versions/AppVersionManager";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { Theme } from "../../types";
 
@@ -65,7 +66,6 @@ export class ThemeSelection extends ThemeManager{
             themeOption.textContent = theme.ThemeName;
 
             const currentTheme: Theme | undefined= this.currentTheme;
-            
             if (currentTheme &&currentTheme.ThemeName === theme.ThemeName) {
                 themeOption.classList.add("selected");
                 this.selectedTheme.textContent = theme.ThemeName;
@@ -88,11 +88,14 @@ export class ThemeSelection extends ThemeManager{
     }
 
     saveSelectedTheme(theme: Theme) {
+        console.log(this.appVersionManager.getActiveVersion())
+        console.log((globalThis as any).activeVersion.AppVersionId);
+        const appVersionId = (globalThis as any).activeVersion.AppVersionId;
         const toolboxService = new ToolBoxService();
-        toolboxService.updateLocationTheme(theme.ThemeId).then((res) => {
+        toolboxService.updateAppVersionTheme(appVersionId, theme.ThemeId).then((res) => {
+            console.log("Theme updated successfully:", res);
             this.setTheme(theme);
         })
-        ;
     }
 
     closeSelection() {

@@ -1159,6 +1159,19 @@ img.content-page-block {
   fill: #fff;
 }
 
+.drop-zone-highlight {
+  background: #efeeec;
+  border: 1px dashed #222f54;
+  border-radius: 6px;
+  margin: 4px 0px;
+  transition: background 0.2s, border 0.2s;
+}
+
+.drop-zone-highlight .add-new-info-section {
+  display: none;
+  height: 1.6rem;
+}
+
 .tb-add-new-info-section{
   position: absolute;
   display: none;

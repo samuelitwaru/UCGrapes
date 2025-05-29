@@ -22,6 +22,7 @@ export class ThemeSelection extends ThemeManager{
 
     init() {
         this.container.classList.add('tb-custom-theme-selection');
+        this.container.id = 'tb-custom-theme-selection';
         const button = document.createElement('button');
         button.classList.add('theme-select-button');
         button.setAttribute('aria-haspopup', 'listbox');
@@ -64,6 +65,7 @@ export class ThemeSelection extends ThemeManager{
             themeOption.role = "option";
             themeOption.setAttribute('data-value', theme.ThemeName);
             themeOption.textContent = theme.ThemeName;
+            themeOption.id = theme.ThemeId;
 
             const currentTheme: Theme | undefined= this.currentTheme;
             if (currentTheme &&currentTheme.ThemeName === theme.ThemeName) {
@@ -88,12 +90,10 @@ export class ThemeSelection extends ThemeManager{
     }
 
     saveSelectedTheme(theme: Theme) {
-        console.log(this.appVersionManager.getActiveVersion())
-        console.log((globalThis as any).activeVersion.AppVersionId);
+        console.log('(globalThis as any).activeVersion: >> ', (globalThis as any).activeVersion)
         const appVersionId = (globalThis as any).activeVersion.AppVersionId;
         const toolboxService = new ToolBoxService();
         toolboxService.updateAppVersionTheme(appVersionId, theme.ThemeId).then((res) => {
-            console.log("Theme updated successfully:", res);
             this.setTheme(theme);
         })
     }

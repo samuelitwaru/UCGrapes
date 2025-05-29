@@ -31,6 +31,10 @@ export class ThemeManager {
     return this.themes;
   }
 
+  getThemeById(themeId: string) {
+    return this.themes.find((theme: Theme) => theme.ThemeId === themeId);
+  }
+
   getActiveThemeIcons() {
     return this.currentTheme ? this.currentTheme.ThemeIcons : [];
   }
@@ -47,10 +51,7 @@ export class ThemeManager {
     this.currentTheme = theme;
     (window as any).app.currentThemeId = theme.ThemeId; 
     this.config.currentThemeId = theme.ThemeId;
-    this.updateColorPallete(theme.ThemeColors);
-    this.updateCtaColorPallete(theme.ThemeCtaColors);
-    this.updateThemeIcons();
-    this.applyTheme(theme);
+    this.applyTheme(theme.ThemeId);
   }
 
   updateColorPallete(colors: ThemeColors) {
@@ -107,44 +108,21 @@ export class ThemeManager {
     return this.getActiveThemeIcons()?.find((icon: any) => icon.IconName === iconName)?.IconCategory || null;
   }
 
-  async applyTheme (theme: Theme) {
+  async applyTheme (themeId?: string) {
+    let newThemeId = themeId || (globalThis as any).activeVersion?.ThemeId;
+    if (!newThemeId) return;
+    const theme: Theme = this.getThemeById(newThemeId);
     const iframes = document.querySelectorAll(".mobile-frame iframe") as NodeListOf<HTMLIFrameElement>;
     if (!iframes.length) return;
 
     const activeVersion = (globalThis as any).activeVersion;
+    console.log('activeVersion', activeVersion);
     if (activeVersion) {
       const pages = activeVersion.Pages;
       pages.forEach(async (page: any) => {
         const pageId = page.PageId;
         const localStorageKey = `data-${pageId}`;
         const pageData = JSON.parse(localStorage.getItem(localStorageKey) || "{}");
-        
-        if (pageData.PageMenuStructure) {
-          const rows = pageData.PageMenuStructure?.Rows;
-          rows.forEach((row: any) => {
-            row.Tiles.forEach((tile: any) => {
-              if (tile.BGColor) {
-                iframes.forEach((iframe) => {
-                  const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-                  if (iframeDoc) {
-                    this.updateFontFamily(iframeDoc, theme.ThemeFontFamily);
-                    const tileWrapper = iframeDoc.getElementById(tile.Id);
-                    if (tileWrapper) {
-                      const tileEl = tileWrapper.querySelector('.template-block') as HTMLElement;
-                      if (tileEl) {
-                        // tileEl.setAttribute('style', `background-color: ${theme?.ThemeColors?.[tile.BGColor as keyof ThemeColors]};`)
-                        tileEl.style.backgroundColor = theme?.ThemeColors?.[tile.BGColor as keyof ThemeColors];
-                      }   
-                      this.updateTileIcon(tile, tileWrapper);                   
-                    }
-
-                    this.updateFrameColor(iframeDoc);
-                  }
-                });
-              }
-            });
-          });
-        }
 
         if (pageData.PageContentStructure) {
           const ctas = pageData.PageContentStructure?.Cta;
@@ -204,6 +182,9 @@ export class ThemeManager {
         }
 
       });
+      this.updateColorPallete(theme.ThemeColors);
+      this.updateCtaColorPallete(theme.ThemeCtaColors);
+      this.updateThemeIcons();
     }
   }
 

@@ -8,6 +8,8 @@ import { truncateString } from "../../utils/helpers";
 import { AppVersion } from "../../types";
 import { EditorEvents } from "../../controls/editor/EditorEvents";
 import { EditorManager } from "../../controls/editor/EditorManager";
+import { ThemeManager } from "../../controls/themes/ThemeManager";
+import { ThemeSelection } from "../components/ThemeSelection";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -236,12 +238,13 @@ export class VersionSelectionView {
   }
 
   private reloadPage(appVersion: any): void {
-    const editorEvents = new EditorEvents();
     this.clearGlobalVariables();
-    (globalThis as any).activeVersion = appVersion.AppVersion;
+    (globalThis as any).activeVersion = appVersion.AppVersion; 
+    const editorEvents = new EditorEvents();   
     editorEvents.clearAllEditors();
     const newEditor = new EditorManager();
     newEditor.init(appVersion.AppVersion);
+    this.updateTheme(appVersion.AppVersion?.ThemeId);
   }
 
   private clearGlobalVariables(): void {
@@ -254,6 +257,25 @@ export class VersionSelectionView {
     (globalThis as any).ctaContainerId = null;
     (globalThis as any).frameId = null;
     (globalThis as any).wrapper = null;
+  }
+
+  private updateTheme(themeId: string): void {
+    if (!themeId) return;
+    const themeSelectionEl = document.getElementById("tb-custom-theme-selection");
+    if (themeSelectionEl) {
+      
+      const themeList = themeSelectionEl.querySelectorAll(".theme-option") as NodeListOf<HTMLDivElement>;
+      themeList.forEach((theme) => {
+        theme.classList.remove("selected");
+        if (theme.id === themeId) {
+          theme.classList.add("selected");
+          const selectedThemeEl = themeSelectionEl.querySelector(`.selected-theme-value`) as HTMLSpanElement;
+          if (selectedThemeEl) {
+            selectedThemeEl.innerText = theme.innerText;        
+          }
+        }
+      });
+    }
   }
 
   public openVersionModal(

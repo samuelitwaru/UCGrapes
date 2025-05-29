@@ -710,6 +710,21 @@ span#scroll-right:hover {
   color: #333;
 }
 
+.theme-option:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.tb-version-list .theme-option:last-child {
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
+.tb-version-list .theme-option:first-child:hover {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+}
+
 .theme-option:first-child:hover {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;

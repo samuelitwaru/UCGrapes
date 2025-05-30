@@ -1,4 +1,5 @@
 import { AppConfig } from "../../../../AppConfig";
+import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { i18n } from "../../../../i18n/i18n";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
@@ -12,22 +13,30 @@ export class ImageUpload {
   fileListElement: HTMLElement | null = null;
   infoId?: string;
   sectionId?: string;
-  croppedUrl: any;
-  public selectedImageUrls: Array<{ Id: string; Url: string }> = [];
+  croppedUrl: string | null = null;
+  private selectedImages: Map<string, { Id: string; Url: string }> = new Map();
+  private saveCallback?: (urls: Array<{ Id: string; Url: string }>) => void;
 
-  constructor(type: any, infoId?: string, sectionId?: string) {
+  constructor(
+    type: any,
+    infoId?: string,
+    sectionId?: string,
+    saveCallback?: (urls: Array<{ Id: string; Url: string }>) => void
+  ) {
     this.type = type;
     this.infoId = infoId;
     this.sectionId = sectionId;
+    this.saveCallback = saveCallback;
     this.modalContent = document.createElement("div");
     this.toolboxService = new ToolBoxService();
     this.init();
   }
 
+  /* Initialization Methods */
   private init() {
     this.modalContent.innerHTML = "";
     this.modalContent.className = "tb-modal-content";
-    
+
     this.createModalHeader();
     this.createUploadArea();
     this.createFileListElement();
@@ -35,13 +44,14 @@ export class ImageUpload {
     this.createModalActions();
   }
 
+  /* UI Creation Methods */
   private createModalHeader() {
     const modalHeader = document.createElement("div");
     modalHeader.className = "tb-modal-header";
-    
+
     const h2 = document.createElement("h2");
     h2.innerText = i18n.t("sidebar.image_upload.modal_title");
-    
+
     const closeBtn = document.createElement("span");
     closeBtn.className = "close";
     closeBtn.innerHTML = `
@@ -71,7 +81,7 @@ export class ImageUpload {
         ${i18n.t("sidebar.image_upload.upload_message")}
       </div>
     `;
-    
+
     this.setupDragAndDrop(uploadArea);
     this.modalContent.appendChild(uploadArea);
   }
@@ -92,6 +102,7 @@ export class ImageUpload {
   private createModalActions() {
     const modalActions = document.createElement("div");
     modalActions.className = "modal-actions";
+    modalActions.style.display = "none"; // Initially hidden
 
     const cancelBtn = document.createElement("button");
     cancelBtn.className = "tb-btn tb-btn-outline";
@@ -106,10 +117,118 @@ export class ImageUpload {
     saveBtn.className = "tb-btn tb-btn-primary";
     saveBtn.id = "save-modal";
     saveBtn.innerText = i18n.t("sidebar.image_upload.save");
+    saveBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await this.handleSave();
+    });
 
     modalActions.appendChild(cancelBtn);
     modalActions.appendChild(saveBtn);
     this.modalContent.appendChild(modalActions);
+  }
+
+  /* State Management Methods */
+  public addSelectedImage(image: { Id: string; Url: string }) {
+    this.selectedImages.set(image.Id, image);
+    this.updateModalActions();
+  }
+
+  public removeSelectedImage(imageId: string) {
+    this.selectedImages.delete(imageId);
+    this.updateModalActions();
+  }
+
+  public clearSelectedImages() {
+    this.selectedImages.clear();
+    this.updateModalActions();
+  }
+
+  private updateModalActions() {
+    const modalActions = this.modalContent.querySelector(
+      ".modal-actions"
+    ) as HTMLElement;
+    if (modalActions) {
+      modalActions.style.display =
+        this.selectedImages.size > 0 ? "flex" : "none";
+    }
+  }
+
+  /* Image Handling Methods */
+  private async handleSave() {
+    try {
+      const selectedImages = Array.from(this.selectedImages.values());
+
+      if (this.saveCallback) {
+        this.saveCallback(selectedImages);
+      } else if (this.type === "info") {
+        await this.saveMultipleImages(selectedImages);
+      } else if (this.type === "cta") {
+        this.updateInfoCtaButtonImage(selectedImages[0]);
+      } else {
+        await this.saveSingleImage(selectedImages[0]);
+      }
+
+      this.closeModal();
+    } catch (error) {
+      console.error("Error during save:", error);
+    }
+  }
+
+  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>) {
+    const infoSectionManager = new InfoSectionManager();
+    await infoSectionManager.addMultipleImages(
+      images,
+      Boolean(this.infoId),
+      this.infoId
+    );
+  }
+
+  private async saveSingleImage(image: { Id: string; Url: string }) {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    if (!selectedComponent) return;
+
+    const safeMediaUrl = encodeURI(image.Url);
+    selectedComponent.addStyle({
+      "background-image": `url(${safeMediaUrl})`,
+      "background-size": "cover",
+      "background-position": "center",
+      "background-blend-mode": "overlay",
+    });
+
+    const tileWrapper = selectedComponent.parent();
+    const rowComponent = tileWrapper.parent();
+    const pageData = (globalThis as any).pageData;
+
+    if (pageData.PageType === "Information") {
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId(),
+        "BGImageUrl",
+        safeMediaUrl
+      );
+
+      const tileAttributes = this.updateInfoTileAttributes(rowComponent.getId(), tileWrapper.getId());
+
+      const tileProperties = new TileProperties(selectedComponent, tileAttributes);
+      tileProperties.setTileAttributes();
+    }
+  }
+
+  private updateInfoTileAttributes(rowComponentId: any, tileWrapperId: any): any {
+    if (!rowComponentId || !tileWrapperId) return;
+    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper
+      .getInfoContent(rowComponentId);
+
+    return tileInfoSectionAttributes?.Tiles?.find(
+      (tile: any) => tile.Id === tileWrapperId
+    );
+  }
+
+  private updateInfoCtaButtonImage(image: { Id: string; Url: string }) {
+    const safeMediaUrl = encodeURI(image.Url);
+    const infoSectionManager = new InfoSectionManager();
+    infoSectionManager.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
   }
 
   private loadExistingImageAndFiles() {
@@ -127,7 +246,6 @@ export class ImageUpload {
     }
     this.loadMediaFiles();
   }
-
   private async loadMediaFiles() {
     try {
       const media = await this.toolboxService.getMediaFiles();
@@ -147,7 +265,9 @@ export class ImageUpload {
             singleImageFile.render(this.fileListElement as HTMLElement);
           });
 
-          const loadingElement = document.getElementById("loading-media") as HTMLElement;
+          const loadingElement = document.getElementById(
+            "loading-media"
+          ) as HTMLElement;
           if (loadingElement) {
             loadingElement.style.display = "none";
           }
@@ -161,7 +281,6 @@ export class ImageUpload {
       }
     }
   }
-
   private sortMediaBySelection(media: Media[]): Media[] {
     if (this.type !== "info" || !this.infoId) {
       return media;
@@ -177,7 +296,6 @@ export class ImageUpload {
       return isASelected ? -1 : 1;
     });
   }
-
   private isMediaSelected(mediaId: string): boolean {
     try {
       const existingImages = this.getExistingImages();
@@ -189,7 +307,6 @@ export class ImageUpload {
       return false;
     }
   }
-
   private getExistingImages(): Image[] {
     const pageId = (globalThis as any).currentPageId;
     if (!pageId) return [];
@@ -204,7 +321,6 @@ export class ImageUpload {
 
     return content?.Images || [];
   }
-
   private async setupDragAndDrop(uploadArea: HTMLElement) {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -253,7 +369,6 @@ export class ImageUpload {
       }
     });
   }
-
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
     for (const file of fileArray) {
@@ -268,14 +383,22 @@ export class ImageUpload {
             MediaSize: file.size,
           };
 
-          await this.toolboxService.uploadFile(
-            newMedia.MediaUrl,
-            newMedia.MediaName,
-            newMedia.MediaSize,
-            newMedia.MediaType
-          );
-          
-          this.displayImageEditor(dataUrl, file);
+          await this.toolboxService
+            .uploadFile(
+              newMedia.MediaUrl,
+              newMedia.MediaName,
+              newMedia.MediaSize,
+              newMedia.MediaType
+            )
+            .then(() => {
+              const image = {
+                Id: newMedia.MediaId,
+                Url: newMedia.MediaUrl,
+              };
+              this.displayImageEditor(dataUrl, file);
+              this.loadMediaFiles();
+              this.addSelectedImage(image);
+            });
         } catch (error) {
           console.error("Error processing file:", error);
         }
@@ -294,7 +417,9 @@ export class ImageUpload {
       file = await this.getFile(dataUrl);
     }
 
-    const uploadArea = this.modalContent.querySelector(".upload-area") as HTMLElement;
+    const uploadArea = this.modalContent.querySelector(
+      ".upload-area"
+    ) as HTMLElement;
     if (uploadArea) {
       uploadArea.innerHTML = "";
     }
@@ -306,7 +431,7 @@ export class ImageUpload {
       width: "100%",
       height: "400px",
       overflow: "hidden",
-      border: "1px solid #ccc"
+      border: "1px solid #ccc",
     });
 
     const img = document.createElement("img");
@@ -317,7 +442,7 @@ export class ImageUpload {
     frame.id = "crop-frame";
     Object.assign(frame.style, {
       position: "absolute",
-      border: "2px dashed #5068a8"
+      border: "2px dashed #5068a8",
     });
 
     this.setupCropFrame(img, frame, imageContainer);
@@ -329,9 +454,14 @@ export class ImageUpload {
       uploadArea.appendChild(imageContainer);
     }
     this.createOpacitySlider(img, uploadArea);
+    this.updateModalActions();
   }
 
-  private setupCropFrame(img: HTMLImageElement, frame: HTMLElement, container: HTMLElement) {
+  private setupCropFrame(
+    img: HTMLImageElement,
+    frame: HTMLElement,
+    container: HTMLElement
+  ) {
     const selectedComponent = (globalThis as any).selectedComponent;
     let aspectRatio = 2;
 
@@ -351,7 +481,7 @@ export class ImageUpload {
         width: `${frameWidth}px`,
         height: `${frameHeight}px`,
         left: `${(container.offsetWidth - frameWidth) / 2}px`,
-        top: `${(container.offsetHeight - frameHeight) / 2}px`
+        top: `${(container.offsetHeight - frameHeight) / 2}px`,
       });
       this.initializeOverlay(frame, container);
     };
@@ -370,7 +500,7 @@ export class ImageUpload {
         width: "10px",
         height: "10px",
         backgroundColor: "#5068a8",
-        zIndex: "11"
+        zIndex: "11",
       });
 
       if (handle.includes("top")) handleDiv.style.top = "-5px";
@@ -383,7 +513,11 @@ export class ImageUpload {
     });
   }
 
-  private addResizeLogic(handleDiv: HTMLElement, frame: HTMLElement, handle: string) {
+  private addResizeLogic(
+    handleDiv: HTMLElement,
+    frame: HTMLElement,
+    handle: string
+  ) {
     handleDiv.addEventListener("mousedown", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -480,15 +614,17 @@ export class ImageUpload {
       position: "absolute",
       backgroundColor: "rgba(0, 0, 0, 0.7)",
       zIndex: "5",
-      pointerEvents: "none"
+      pointerEvents: "none",
     };
 
-    ["overlayTop", "overlayBottom", "overlayLeft", "overlayRight"].forEach(id => {
-      const overlay = document.createElement("div");
-      overlay.id = id;
-      Object.assign(overlay.style, overlayStyle);
-      container.appendChild(overlay);
-    });
+    ["overlayTop", "overlayBottom", "overlayLeft", "overlayRight"].forEach(
+      (id) => {
+        const overlay = document.createElement("div");
+        overlay.id = id;
+        Object.assign(overlay.style, overlayStyle);
+        container.appendChild(overlay);
+      }
+    );
 
     setTimeout(() => this.initializeOverlay(frame, container), 0);
   }
@@ -498,16 +634,20 @@ export class ImageUpload {
     const parentRect = container.getBoundingClientRect();
 
     const overlayTop = container.querySelector("#overlayTop") as HTMLElement;
-    const overlayBottom = container.querySelector("#overlayBottom") as HTMLElement;
+    const overlayBottom = container.querySelector(
+      "#overlayBottom"
+    ) as HTMLElement;
     const overlayLeft = container.querySelector("#overlayLeft") as HTMLElement;
-    const overlayRight = container.querySelector("#overlayRight") as HTMLElement;
+    const overlayRight = container.querySelector(
+      "#overlayRight"
+    ) as HTMLElement;
 
     if (overlayTop) {
       Object.assign(overlayTop.style, {
         top: "0",
         left: "0",
         width: "100%",
-        height: `${frameRect.top - parentRect.top}px`
+        height: `${frameRect.top - parentRect.top}px`,
       });
     }
 
@@ -516,7 +656,7 @@ export class ImageUpload {
         top: `${frameRect.bottom - parentRect.top}px`,
         left: "0",
         width: "100%",
-        height: `${parentRect.bottom - frameRect.bottom}px`
+        height: `${parentRect.bottom - frameRect.bottom}px`,
       });
     }
 
@@ -525,7 +665,7 @@ export class ImageUpload {
         top: `${frameRect.top - parentRect.top}px`,
         left: "0",
         width: `${frameRect.left - parentRect.left}px`,
-        height: `${frameRect.height}px`
+        height: `${frameRect.height}px`,
       });
     }
 
@@ -534,7 +674,7 @@ export class ImageUpload {
         top: `${frameRect.top - parentRect.top}px`,
         left: `${frameRect.right - parentRect.left}px`,
         width: `${parentRect.right - frameRect.right}px`,
-        height: `${frameRect.height}px`
+        height: `${frameRect.height}px`,
       });
     }
   }
@@ -545,20 +685,26 @@ export class ImageUpload {
     const newLeft = frame.offsetLeft;
 
     const overlayTop = container.querySelector("#overlayTop") as HTMLElement;
-    const overlayBottom = container.querySelector("#overlayBottom") as HTMLElement;
+    const overlayBottom = container.querySelector(
+      "#overlayBottom"
+    ) as HTMLElement;
     const overlayLeft = container.querySelector("#overlayLeft") as HTMLElement;
-    const overlayRight = container.querySelector("#overlayRight") as HTMLElement;
+    const overlayRight = container.querySelector(
+      "#overlayRight"
+    ) as HTMLElement;
 
     if (overlayTop) overlayTop.style.height = `${newTop}px`;
     if (overlayBottom) {
       overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
-      overlayBottom.style.height = `${parentRect.height - (newTop + frame.offsetHeight)}px`;
+      overlayBottom.style.height = `${
+        parentRect.height - (newTop + frame.offsetHeight)
+      }px`;
     }
     if (overlayLeft) {
       Object.assign(overlayLeft.style, {
         top: `${newTop}px`,
         height: `${frame.offsetHeight}px`,
-        width: `${newLeft}px`
+        width: `${newLeft}px`,
       });
     }
     if (overlayRight) {
@@ -566,7 +712,7 @@ export class ImageUpload {
         top: `${newTop}px`,
         height: `${frame.offsetHeight}px`,
         left: `${newLeft + frame.offsetWidth}px`,
-        width: `${parentRect.width - (newLeft + frame.offsetWidth)}px`
+        width: `${parentRect.width - (newLeft + frame.offsetWidth)}px`,
       });
     }
   }
@@ -581,31 +727,31 @@ export class ImageUpload {
       min: "0",
       max: "100",
       step: "1",
-      value: "0"
+      value: "0",
     });
     Object.assign(opacitySlider.style, {
       width: "100%",
-      marginLeft: "32px"
+      marginLeft: "32px",
     });
 
     const opacityLabel = document.createElement("span");
     opacityLabel.innerText = `${opacitySlider.value}%`;
     Object.assign(opacityLabel.style, {
       fontSize: "14px",
-      color: "#333"
+      color: "#333",
     });
 
     opacitySlider.addEventListener("input", () => {
       const opacityValue = parseInt(opacitySlider.value, 10) / 100;
       opacityLabel.innerText = `${opacitySlider.value}%`;
-      
+
       const selectedComponent = (globalThis as any).selectedComponent;
       if (!selectedComponent) return;
 
       Object.assign(selectedComponent.getEl().style, {
         backgroundColor: `rgba(0, 0, 0, ${opacityValue})`,
         backgroundImage: `url(${img.src})`,
-        backgroundSize: "cover"
+        backgroundSize: "cover",
       });
 
       const pageData = (globalThis as any).pageData;
@@ -617,17 +763,11 @@ export class ImageUpload {
           "Opacity",
           parseInt(opacitySlider.value)
         );
-      } else {
-        (globalThis as any).tileMapper.updateTile(
-          selectedComponent.parent().getId(),
-          "Opacity",
-          opacitySlider.value
-        );
       }
 
       Object.assign(img.style, {
         opacity: "1",
-        filter: `brightness(${1 - opacityValue})`
+        filter: `brightness(${1 - opacityValue})`,
       });
     });
 
@@ -635,7 +775,7 @@ export class ImageUpload {
     Object.assign(sliderWrapper.style, {
       display: "flex",
       alignItems: "center",
-      gap: "10px"
+      gap: "10px",
     });
 
     sliderWrapper.appendChild(opacitySlider);
@@ -647,8 +787,11 @@ export class ImageUpload {
       uploadArea.appendChild(modalFooter);
     }
   }
-
-  public async saveCroppedImage(img: HTMLImageElement, frame: HTMLElement, file: File): Promise<string | null> {
+  public async saveCroppedImage(
+    img: HTMLImageElement,
+    frame: HTMLElement,
+    file: File
+  ): Promise<string | null> {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
@@ -668,7 +811,17 @@ export class ImageUpload {
     canvas.width = cropWidth;
     canvas.height = cropHeight;
 
-    ctx.drawImage(img, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+    ctx.drawImage(
+      img,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      cropWidth,
+      cropHeight
+    );
     const croppedDataUrl = canvas.toDataURL("image/png");
 
     const uniqueId = Date.now().toString();
@@ -715,7 +868,6 @@ export class ImageUpload {
       reader.readAsDataURL(file);
     });
   }
-
   public render(container: HTMLElement) {
     container.appendChild(this.modalContent);
   }

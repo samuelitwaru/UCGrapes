@@ -490,11 +490,10 @@ export class EditorUIManager {
     const tileInfoSectionAttributes: InfoType = (
       globalThis as any
     ).infoContentMapper.getInfoContent(rowComponent.getId());
-
     if (selectedComponent && tileInfoSectionAttributes) {
       const tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
         (tile: any) => tile.Id === tileWrapper.getId()
-      );
+      );   
       this.tileProperties = new TileProperties(
         selectedComponent,
         tileAttributes

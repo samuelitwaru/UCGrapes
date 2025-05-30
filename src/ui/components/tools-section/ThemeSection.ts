@@ -3,11 +3,12 @@ import { ThemeManager } from "../../../controls/themes/ThemeManager";
 import { ThemeColors } from "../../../types";
 import { ColorPalette } from "./ColorPalette";
 
-export class ThemeSection extends ThemeManager {
+export class ThemeSection {
   container: HTMLElement;
-  
+  themeManager: ThemeManager;
+
   constructor() {
-    super(); 
+    this.themeManager = new ThemeManager();
     this.container = document.createElement("div");
     this.init();
   }
@@ -16,7 +17,7 @@ export class ThemeSection extends ThemeManager {
     this.container.className = "sidebar-section theme-section";
     this.container.style.paddingTop = "0px";
 
-    const colors: ThemeColors  = this.getActiveThemeColors();
+    const colors = this.themeManager.getActiveThemeColors() as ThemeColors;
 
     const colorPalette = new ColorPalette(colors, 'theme-color-palette');
     colorPalette.render(this.container);

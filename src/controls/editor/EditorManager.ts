@@ -40,7 +40,6 @@ export class EditorManager {
 
   async init(newVersion?: any) {
     const version = newVersion || await this.appVersion.getActiveVersion();
-    console.log("version here: ", version);
     (globalThis as any).activeVersion = version;
     this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement
@@ -95,7 +94,10 @@ export class EditorManager {
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
     this.activateHomeEditor(`gjs-0`);
-    this.themeManager.applyTheme();
+
+    const theme = this.themeManager.getThemeById((globalThis as any).activeVersion.ThemeId);
+    console.log("theme: >> ",theme);
+    this.themeManager.setTheme(theme);
   }
 
   async loadHomePage(editor: any) {

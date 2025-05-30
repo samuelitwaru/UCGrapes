@@ -314,7 +314,6 @@ export class TileMapper {
       localStorage.getItem(`data-${this.pageId}`) || "{}"
     );
     const cta = data.PageInfoStructure.InfoContent.find((row:any) => row.InfoType == 'Cta' && row.InfoId == infoId)
-    console.log(cta)
     return cta.CtaAttributes || {}
   }
 

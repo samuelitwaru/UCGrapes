@@ -70,7 +70,8 @@ export class ContentSection {
     public renderComponents() {
         this.container.innerHTML = '';        
         const ctaButtonSection = new CtaButtonLayout();
-        const activeCtaColors = this.themeManager.currentTheme.ThemeCtaColors;
+        const activeCtaColors = this.themeManager?.currentTheme?.ThemeCtaColors;
+        if (!activeCtaColors) return;
         const ctaColorList = new CtaColorPalette(activeCtaColors);
 
         ctaButtonSection.render(this.container);

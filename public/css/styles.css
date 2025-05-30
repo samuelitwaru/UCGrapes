@@ -716,13 +716,13 @@ span#scroll-right:hover {
 }
 
 .tb-version-list .theme-option:last-child {
-  border-bottom-left-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 
 .tb-version-list .theme-option:first-child:hover {
-    border-top-left-radius: 0px !important;
-    border-top-right-radius: 0px !important;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 }
 
 .theme-option:first-child:hover {
@@ -731,6 +731,16 @@ span#scroll-right:hover {
 }
 
 .theme-option:last-child:hover {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.submenu-list .theme-option:first-child:hover {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.submenu-list .theme-option:last-child:hover {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
 }
@@ -1756,7 +1766,7 @@ div#cta-selected-actions {
 .file-item:hover .delete-media {
   opacity: 1;
 }
-.selected-checkbox{
+.selected-checkbox {
   opacity: 1;
 }
 
@@ -1795,11 +1805,11 @@ div#cta-selected-actions {
 }
 
 .modal-actions-slider {
-    margin-top: 40px;
-    /* display: none; */
-    margin-left: 76%;
-    justify-content: flex-end;
-    gap: 1em;
+  margin-top: 40px;
+  /* display: none; */
+  margin-left: 76%;
+  justify-content: flex-end;
+  gap: 1em;
 }
 
 /* popup */
@@ -3098,9 +3108,9 @@ canvas {
   padding: 10px;
   width: 235px;
   height: 45px;
-  margin-left: 220px;
-  margin-bottom: 40px;
   margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .modal-footer-buttons {
   display: flex;
@@ -3161,7 +3171,7 @@ input[type="range"]::-webkit-slider-thumb {
   grid-template-columns: repeat(5, 1fr); /* Responsive grid */
   gap: 10px; /* Spacing between images */
   padding: 16px;
-  overflow: scroll;
+  /* overflow: scroll; */
 }
 
 .grid-image {
@@ -3178,8 +3188,6 @@ input[type="range"]::-webkit-slider-thumb {
   color: red; /* Turn red when the delete button is focused */
   outline: none; /* Remove the default focus outline */
 }
-
-
 
 .file-item.active .check-icon {
   display: flex; /* Show only for active tile */

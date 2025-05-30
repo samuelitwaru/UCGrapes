@@ -27,7 +27,7 @@ export class TileProperties {
     const tileEl = this.selectedComponent.getEl() as HTMLElement;
     
     const computedStyle = window.getComputedStyle(tileEl);
-    const backgroundColor = tileEl.style.backgroundColor || computedStyle.backgroundColor;
+    const backgroundColor = computedStyle.backgroundColor || tileEl.style.backgroundColor;
     const tileBGColorHex = rgbToHex(backgroundColor);
     const hasBgImage: boolean =
       this.selectedComponent.getStyle()?.["background-image"];

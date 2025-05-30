@@ -3,14 +3,15 @@ import { AppVersionManager } from "../../controls/versions/AppVersionManager";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { Theme } from "../../types";
 
-export class ThemeSelection extends ThemeManager{
+export class ThemeSelection{
     private container: HTMLElement;
     selectionDiv: HTMLElement;
     themeOptions: HTMLElement;
     selectedTheme: HTMLSpanElement;
+    themeManager: ThemeManager;
 
     constructor() {
-        super();
+        this.themeManager = new ThemeManager();
         this.container = document.createElement('div') as HTMLElement;
         this.selectionDiv = document.createElement('div') as HTMLElement;
         this.themeOptions = document.createElement('div') as HTMLElement;
@@ -56,7 +57,7 @@ export class ThemeSelection extends ThemeManager{
         this.themeOptions.className = "theme-options-list";
         this.themeOptions.setAttribute("role", "listbox");
 
-        let themes: Theme [] = this.getThemes();
+        let themes: Theme [] = this.themeManager.getThemes();
 
         themes.forEach((theme) => {
             const themeOption = document.createElement('div') as HTMLElement;
@@ -67,7 +68,7 @@ export class ThemeSelection extends ThemeManager{
             themeOption.textContent = theme.ThemeName;
             themeOption.id = theme.ThemeId;
 
-            const currentTheme: Theme | undefined= this.currentTheme;
+            const currentTheme: Theme | null= this.themeManager.currentTheme;
             if (currentTheme &&currentTheme.ThemeName === theme.ThemeName) {
                 themeOption.classList.add("selected");
                 this.selectedTheme.textContent = theme.ThemeName;
@@ -94,7 +95,7 @@ export class ThemeSelection extends ThemeManager{
         const appVersionId = (globalThis as any).activeVersion.AppVersionId;
         const toolboxService = new ToolBoxService();
         toolboxService.updateAppVersionTheme(appVersionId, theme.ThemeId).then((res) => {
-            this.setTheme(theme);
+            this.themeManager.setTheme(theme);
         })
     }
 

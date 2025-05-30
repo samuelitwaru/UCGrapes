@@ -395,7 +395,10 @@ export class ImageUpload {
                 Id: newMedia.MediaId,
                 Url: newMedia.MediaUrl,
               };
-              this.displayImageEditor(dataUrl, file);
+
+              if (this.type === "tile") {
+                this.displayImageEditor(dataUrl, file);
+              }
               this.loadMediaFiles();
               this.addSelectedImage(image);
             });

@@ -96,7 +96,6 @@ export class EditorManager {
     this.activateHomeEditor(`gjs-0`);
 
     const theme = this.themeManager.getThemeById((globalThis as any).activeVersion.ThemeId);
-    console.log("theme: >> ",theme);
     this.themeManager.setTheme(theme);
   }
 

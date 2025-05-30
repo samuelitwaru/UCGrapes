@@ -77,6 +77,7 @@ export class ThemeManager {
 
   setTheme(theme: Theme): void {
     this._currentTheme = theme;
+    this.appVersionManager.getUpdatedActiveVersion();
     this.setWindowAppCurrentThemeId(theme.ThemeId);
     this.config.currentThemeId = theme.ThemeId;
     this.applyTheme(theme.ThemeId);
@@ -138,7 +139,6 @@ export class ThemeManager {
     const ctaColors = Array.isArray(this._currentTheme.ThemeCtaColors) 
       ? this._currentTheme.ThemeCtaColors 
       : [];
-    
     return ctaColors.find((color: any) => color.CtaColorName === colorName)?.CtaColorCode || '#5068a8';
   }
 

@@ -70,7 +70,9 @@ export class ContentSection {
     public renderComponents() {
         this.container.innerHTML = '';        
         const ctaButtonSection = new CtaButtonLayout();
-        const activeCtaColors = this.themeManager?.currentTheme?.ThemeCtaColors;
+        const themeId = (globalThis as any).activeVersion.ThemeId;
+        const theme = this.themeManager.getThemeById(themeId);
+        const activeCtaColors = theme?.ThemeCtaColors;
         if (!activeCtaColors) return;
         const ctaColorList = new CtaColorPalette(activeCtaColors);
 

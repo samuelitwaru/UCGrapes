@@ -9,8 +9,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  margin-top: -20px;
+  margin-top: -30px;
   margin-right: -20px;
+  position: relative;
 }
 #tb-body input:not([type="range"]):focus {
   outline: 1px solid #b4b9bd !important;
@@ -38,12 +39,16 @@
   padding: 0 20px;
   background-color: white;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 70px;
-  width: calc(100% - 252px);
+  /* position: fixed; */
+  /* top: 70px; */
+  /* width: calc(100% - 252px); */
   z-index: 10;
   min-height: 50px;
-  /* left: 225px; */
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   right: 0;
 }
 
@@ -160,7 +165,7 @@ button#open-mapping {
   display: flex;
   overflow-y: auto;
   scrollbar-width: thin;
-  top: 35px;
+  top: -2px;
   position: relative;
   height: 100%;
   background-color: #6a747f;
@@ -2146,6 +2151,7 @@ button.add-new-service i {
 .gjs-frame {
   outline: none !important;
   width: calc(100% - 2px) !important;
+  background-color: rgb(239, 238, 236);
 }
 
 #child-container {

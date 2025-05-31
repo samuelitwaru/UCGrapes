@@ -226,7 +226,6 @@ export class EditorEvents {
 
   private handleMouseMove(e: MouseEvent): void {
     if (this.resizeState.isDragging) {
-      // console.log(e);
       if ((e.target) as Element) {
         const targetElement = e.target as Element;
         const tileRow = targetElement.closest('[data-gjs-type="info-tiles-section"]') as HTMLDivElement;
@@ -493,6 +492,7 @@ export class EditorEvents {
 
   private handleMouseOver(e: MouseEvent): void {
     const targetElement = e.target as Element;
+
     const infoSection = targetElement.closest(".info-section-spacing-container") as HTMLDivElement;
 
     if (infoSection && infoSection.style.height !== "3.2rem") {
@@ -645,7 +645,7 @@ export class EditorEvents {
     this.uiManager.showPageInfo();
   }
 
-  private handleComponentDeselected(): void {
+  handleComponentDeselected(): void {
     (globalThis as any).selectedComponent = null;
     this.uiManager.toggleSidebar(false);
     this.uiManager.showPageInfo();
@@ -684,6 +684,12 @@ export class EditorEvents {
   public removeOtherEditors(): void {
     this.ensureUIManager();
     this.uiManager.removeOtherEditors();
+  }
+
+  public clearAllEditors(): void {
+    this.ensureUIManager();
+    this.uiManager.clearAllEditors();
+    this.handleComponentDeselected();
   }
 
   public activateEditor(frameId: any): void {

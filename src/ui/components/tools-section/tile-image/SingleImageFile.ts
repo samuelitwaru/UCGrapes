@@ -2,23 +2,23 @@ import { ContentDataManager } from "../../../../controls/editor/ContentDataManag
 import { TileProperties } from "../../../../controls/editor/TileProperties";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
-import { InfoType, Media } from "../../../../types";
+import { Image, ImageType, InfoType, Media } from "../../../../types";
 import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
 
 export class SingleImageFile {
+  private readonly mediaFile: Media;
+  private readonly type: ImageType;
+  private readonly infoId?: string;
+  private readonly sectionId?: string;
+  private readonly toolboxService: ToolBoxService;
+  private readonly imageUpload: ImageUpload;
   private container: HTMLElement;
-  private mediaFile: Media;
-  private toolboxService: ToolBoxService;
-  type: any;
-  infoId?: string;
-  sectionId?: string;
-  imageUpload: ImageUpload;
-  fileListContainer: HTMLElement | undefined;
+  private fileListContainer?: HTMLElement;
 
   constructor(
     mediaFile: Media,
-    type: any,
+    type: ImageType,
     imageUpload: ImageUpload,
     infoId?: string,
     sectionId?: string
@@ -28,323 +28,335 @@ export class SingleImageFile {
     this.infoId = infoId;
     this.sectionId = sectionId;
     this.toolboxService = new ToolBoxService();
-    this.container = document.createElement("div");
     this.imageUpload = imageUpload;
-    this.init();
+    this.container = this.createContainer();
+
+    this.initializeComponent();
   }
 
-  private init() {
-    this.container.className = "file-item valid";
-    this.container.id = this.mediaFile.MediaId;
+  /* Initialization Methods */
+  private isImageSelected(): boolean {
+    if (this.type !== "info" || !this.infoId) return false;
 
+    try {
+      const existingImages = this.getExistingImages();
+      if (
+        existingImages.some(
+          (image) => image.InfoImageId === `id-${this.mediaFile.MediaId}`
+        )
+      ) {
+        this.imageUpload.addSelectedImage({
+          Id: this.mediaFile.MediaId,
+          Url: this.mediaFile.MediaUrl,
+        });
+        return true;
+      }
+    } catch (error) {
+      console.error("Error initializing existing images:", error);
+    }
+
+    return false;
+  }
+
+  private getExistingImages(): Image[] {
+    const pageId = (globalThis as any).currentPageId;
+    if (!pageId) return [];
+
+    const storedData = localStorage.getItem(`data-${pageId}`);
+    if (!storedData) return [];
+
+    const data = JSON.parse(storedData);
+    const content = data?.PageInfoStructure?.InfoContent?.find(
+      (content: InfoType) => content.InfoId === this.infoId
+    );
+
+    return content?.Images || [];
+  }
+
+  private createContainer(): HTMLElement {
+    const container = document.createElement("div");
+    container.className = "file-item valid";
+    container.id = this.mediaFile.MediaId;
+    return container;
+  }
+
+  private initializeComponent(): void {
+    const img = this.createPreviewImage();
+    const statusCheck = this.createStatusIcon();
+    const actionColumn = this.createActionColumn();
+
+    this.container.appendChild(img);
+    this.container.appendChild(statusCheck);
+    this.container.appendChild(actionColumn);
+
+    if (this.type !== "info") {
+      this.setupItemClickEvent(statusCheck);
+    }
+  }
+
+  /* UI Creation Methods */
+  private createPreviewImage(): HTMLImageElement {
     const img = document.createElement("img");
     img.src = this.mediaFile.MediaUrl;
     img.alt = this.mediaFile.MediaName;
     img.className = "preview-image";
+    return img;
+  }
 
-    // Check icon (statusCheck) - now positioned top left
+  private createStatusIcon(): HTMLElement {
     const statusCheck = document.createElement("span");
     statusCheck.className = "status-icon";
-    statusCheck.style.position = "absolute";
-    statusCheck.style.top = "-11px";
-    statusCheck.style.left = "-8px";
-    statusCheck.style.width = "25px";
-    statusCheck.style.height = "25px";
-    statusCheck.style.zIndex = "4";
-    statusCheck.style.display = "none";
 
-    // Action column (delete and add image) - top right
+    Object.assign(statusCheck.style, {
+      position: "absolute",
+      top: "-11px",
+      left: "-8px",
+      width: "25px",
+      height: "25px",
+      zIndex: "4",
+      display: "none",
+    });
+
+    return statusCheck;
+  }
+
+  private createActionColumn(): HTMLElement {
     const actionColumn = document.createElement("div");
     actionColumn.className = "action-column";
-    actionColumn.style.position = "absolute";
-    actionColumn.style.top = "-16px";
-    actionColumn.style.right = "-4px";
-    actionColumn.style.display = "flex";
-    actionColumn.style.flexDirection = "row";
-    actionColumn.style.gap = "4px";
-    actionColumn.style.zIndex = "3";
-    actionColumn.style.marginLeft = "50px";
 
-    // Add Image icon (left of delete)
+    Object.assign(actionColumn.style, {
+      position: "absolute",
+      top: "-16px",
+      right: "-4px",
+      display: "flex",
+      flexDirection: "row",
+      gap: "4px",
+      zIndex: "3",
+      marginLeft: "50px",
+    });
+
+    if (this.type === "info") {
+      actionColumn.appendChild(this.createImageCheckbox());
+    }
+
+    actionColumn.appendChild(this.createReplaceButton());
+    actionColumn.appendChild(this.createDeleteButton());
+
+    return actionColumn;
+  }
+
+  private createImageCheckbox(): HTMLElement {
+    const checkbox = document.createElement("span");
+    checkbox.setAttribute("role", "checkbox");
+    checkbox.setAttribute("aria-label", "Select image");
+    checkbox.setAttribute("tabindex", "0");
+    checkbox.title = "Select image";
+
+    Object.assign(checkbox.style, {
+      position: "absolute",
+      left: "-70px",
+      top: "7px",
+      fontSize: "25px",
+      lineHeight: "0.8",
+      backgroundColor: "rgba(255,255,255,0.95)",
+      color: "#5068a8",
+      cursor: "pointer",
+    });
+
+    const isSelected = this.isImageSelected();
+    this.updateCheckboxVisual(checkbox, isSelected);
+
+    checkbox.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleImageSelection(checkbox);
+    });
+
+    checkbox.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        this.toggleImageSelection(checkbox);
+      }
+    });
+
+    return checkbox;
+  }
+
+  private createReplaceButton(): HTMLElement {
     const addImage = document.createElement("span");
     addImage.className = "add-image";
     addImage.title = "Replace image";
-    addImage.style.width = "33px";
-    addImage.style.height = "33px";
-    addImage.style.backgroundImage = "url('/Resources/UCGrapes/public/images/rotatenew.png')";
-    addImage.style.backgroundSize = "contain";
-    addImage.style.backgroundRepeat = "no-repeat";
-    addImage.style.backgroundPosition = "center";
-    addImage.style.cursor = "pointer";
-    addImage.style.display = "flex";
-    addImage.style.alignItems = "center";
-    addImage.style.justifyContent = "center";
+
+    Object.assign(addImage.style, {
+      width: "33px",
+      height: "33px",
+      backgroundImage: "url('/Resources/UCGrapes/public/images/rotatenew.png')",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    });
 
     addImage.addEventListener("click", (e) => {
       e.stopPropagation();
-      img.click();
+      this.handleReplaceClick();
     });
 
-    // Delete icon (rightmost)
+    return addImage;
+  }
+
+  private createDeleteButton(): HTMLElement {
     const deleteSpan = document.createElement("span");
     deleteSpan.className = "delete-media fa-regular fa-trash-can";
     deleteSpan.title = "Delete image";
-    deleteSpan.style.width = "33px";
-    deleteSpan.style.height = "33px";
-    deleteSpan.style.fontSize = "16px";
-    deleteSpan.style.color = "#5068a8";
-    deleteSpan.style.display = "flex";
-    deleteSpan.style.alignItems = "center";
-    deleteSpan.style.justifyContent = "center";
-    deleteSpan.style.cursor = "pointer";
-    deleteSpan.style.border = "1px solid #5068a8";
+
+    Object.assign(deleteSpan.style, {
+      width: "33px",
+      height: "33px",
+      fontSize: "16px",
+      color: "#5068a8",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      border: "1px solid #5068a8",
+    });
 
     deleteSpan.addEventListener("click", (e) => {
       e.stopPropagation();
       this.deleteEvent();
     });
 
-    // Append addImage and deleteSpan to the action column (addImage left of delete)
-    actionColumn.appendChild(addImage);
-    actionColumn.appendChild(deleteSpan);
-
-    this.container.appendChild(img);
-    this.container.appendChild(statusCheck);
-    this.container.appendChild(actionColumn);
-
-    this.setupItemClickEvent(statusCheck);
+    return deleteSpan;
   }
 
-  private formatBytes(bytes: number) {
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    if (bytes === 0) return "0 Byte";
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString());
-    if (i === 0) return bytes + " " + sizes[i];
-    return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
+  // /* Event Handlers */
+  // private isImageSelected(): boolean {
+  //   const selectedImages = this.imageUpload["selectedImages"];
+  //   console.log(
+  //     "Array.from(selectedImages.keys())",
+  //     Array.from(selectedImages.keys())
+  //   );
+  //   console.log("this.mediaFile.MediaId", this.mediaFile.MediaId);
+  //   console.log(
+  //     "Array.from(selectedImages.keys()).includes(this.mediaFile.MediaId)",
+  //     Array.from(selectedImages.keys()).includes(this.mediaFile.MediaId)
+  //   );
+  //   return Array.from(selectedImages.keys()).includes(this.mediaFile.MediaId);
+  // }
+
+  private updateCheckboxVisual(
+    checkbox: HTMLElement,
+    isChecked: boolean
+  ): void {
+    checkbox.className = isChecked
+      ? "select-media-checkbox fa-solid fa-square-check selected-checkbox"
+      : "select-media-checkbox fa-regular fa-square";
+    checkbox.setAttribute("aria-checked", String(isChecked));
   }
 
-  private setupItemClickEvent(statusCheck: HTMLElement) {
-    this.container.addEventListener("click", () => {
-      this.fileListContainer = document.getElementById(
-        "fileList"
-      ) as HTMLElement;
-      this.fileListContainer.style.display = "none";
-      this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl)
-      // Remove check from all other images
-      document.querySelectorAll(".file-item").forEach((el) => {
-        el.classList.remove("selected");
-        const icon = el.querySelector(".status-icon") as HTMLElement;
-        if (icon) {
-          icon.style.display = "none";
-        }
+  private toggleImageSelection(checkbox: HTMLElement): void {
+    const newState = !this.isImageSelected();
+    this.updateCheckboxVisual(checkbox, newState);
+
+    if (newState) {
+      this.imageUpload.addSelectedImage({
+        Id: this.mediaFile.MediaId,
+        Url: this.mediaFile.MediaUrl,
       });
-
-      // Show check only on this image
-      statusCheck.style.backgroundImage = "url('/Resources/UCGrapes/public/images/check.png')";
-      statusCheck.style.backgroundSize = "contain";
-      statusCheck.style.backgroundRepeat = "no-repeat";
-      statusCheck.style.backgroundPosition = "center";
-      statusCheck.style.display = "block";
-
-      this.container.classList.add("selected");
-      this.setupModalActions();
-    });
-  }
-
-  private setupModalActions() {
-    const modalActions = document.querySelector(
-      ".modal-actions"
-    ) as HTMLElement;
-    if (!modalActions) return;
-    modalActions.style.display = "flex";
-
-    // Remove existing event listeners by cloning and replacing elements
-    const cancelBtn = modalActions.querySelector(
-      "#cancel-modal"
-    ) as HTMLElement;
-    const saveBtn = modalActions.querySelector("#save-modal") as HTMLElement;
-
-    if (!cancelBtn || !saveBtn) return;
-    const newCancelBtn = cancelBtn.cloneNode(true) as HTMLElement;
-    const newSaveBtn = saveBtn.cloneNode(true) as HTMLElement;
-
-    cancelBtn.parentNode?.replaceChild(newCancelBtn, cancelBtn);
-    saveBtn.parentNode?.replaceChild(newSaveBtn, saveBtn);
-
-    const modal = document.querySelector(".tb-modal") as HTMLElement;
-    if (!modal) return;
-
-    newCancelBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-      modal.remove();
-    });
-    newSaveBtn.addEventListener("click", async () => {
-      const img = document.getElementById("selected-image") as HTMLImageElement;
-      if (!img) {
-        console.error("Image element not found.");
-        return;
-      }
-      const frame = document.getElementById("crop-frame") as HTMLElement;
-      if (frame) {
-        const uniqueFileName = `cropped-imafresetge-${Date.now()}.png`; // Generate a unique file name
-        const file = new File([img.src], uniqueFileName, { type: "image/png" });
-        await this.imageUpload.saveCroppedImage(img, frame, file);
-      }
-      if (this.type === "tile") {
-        this.addImageToTile();
-      } else if (this.type === "content") {
-        this.addImageToContentPage();
-      } else if (this.type === "cta" && this.infoId) {
-        this.updateInfoCtaButtonImage();
-      } else if (this.type === "cta") {
-        this.updateCtaButtonImage();
-      } else if (this.type === "info") {
-        this.updateInfoImage();
-      }
-      modal.style.display = "none";
-      modal.remove();
-    });
-  }
-
-  private addImageToTile() {
-    const selectedComponent = (globalThis as any).selectedComponent;
-    if (!selectedComponent) return;
-    try {
-      const safeMediaUrl = encodeURI(this.imageUpload.croppedUrl);
-      selectedComponent.addStyle({
-        "background-image": `url(${safeMediaUrl})`,
-        "background-size": "cover",
-        "background-position": "center",
-        "background-blend-mode": "overlay",
-      });
-      const selectedElement = selectedComponent.getEl()
-      
-      if (selectedElement) selectedElement.style.backgroundColor = "transparent";
-
-      const updates = [
-        ["BGImageUrl", safeMediaUrl],
-      ];
-
-      let tileAttributes;
-      const tileWrapper = selectedComponent.parent();
-      const rowComponent = tileWrapper.parent();
-      const pageData = (globalThis as any).pageData;
-      if (pageData.PageType === "Information") {
-        const infoSectionManager = new InfoSectionManager();
-        for (const [property, value] of updates) {
-          infoSectionManager.updateInfoTileAttributes(
-            rowComponent.getId(),
-            tileWrapper.getId(),
-            property,
-            value
-          );
-        }
-
-        const tileInfoSectionAttributes: InfoType = (
-          globalThis as any
-        ).infoContentMapper.getInfoContent(rowComponent.getId());
-
-        tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
-          (tile: any) => tile.Id === tileWrapper.getId()
-        );
-      } else {
-        // console.log("Updating tile mapper value: ", (globalThis as any).tileMapper)
-        for (const [property, value] of updates) {
-          (globalThis as any).tileMapper.updateTile(
-            tileWrapper.getId(),
-            property,
-            value
-          );
-        }
-        tileAttributes = (globalThis as any).tileMapper.getTile(
-          rowComponent.getId(),
-          tileWrapper.getId()
-        );
-      }
-
-      if (selectedComponent && tileAttributes) {
-        const tileProperties = new TileProperties(
-          selectedComponent,
-          tileAttributes
-        );
-        tileProperties.setTileAttributes();
-      }
-    } catch (error) {
-      console.error("Error adding image to tile:", error);
+    } else {
+      this.imageUpload.removeSelectedImage(this.mediaFile.MediaId);
     }
   }
 
-  private async addImageToContentPage() {
-    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const activeEditor = (globalThis as any).activeEditor;
-    const activePage = (globalThis as any).pageData;
-    const contentManager = new ContentDataManager(activeEditor, activePage);
-    contentManager.updateContentImage(safeMediaUrl);
+  private handleReplaceClick(): void {
+    this.imageUpload.clearSelectedImages();
+    this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl);
+    this.imageUpload.addSelectedImage({
+      Id: this.mediaFile.MediaId,
+      Url: this.mediaFile.MediaUrl,
+    });
   }
 
-  private async updateCtaButtonImage() {
-    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const activeEditor = (globalThis as any).activeEditor;
-    const activePage = (globalThis as any).pageData;
-    const contentManager = new ContentDataManager(activeEditor, activePage);
-    contentManager.updateCtaButtonImage(safeMediaUrl);
+  private setupItemClickEvent(statusCheck: HTMLElement): void {
+    this.container.addEventListener("click", () => {
+      this.handleItemClick(statusCheck);
+    });
   }
 
-  private async updateInfoImage() {
-    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const infoSectionManager = new InfoSectionManager();
-    infoSectionManager.updateInfoImage(
-      safeMediaUrl,
-      this.infoId,
-      this.sectionId
-    );
+  private handleItemClick(statusCheck: HTMLElement): void {
+    this.hideFileList();
+    this.imageUpload.clearSelectedImages();
+    this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl);
+    this.imageUpload.addSelectedImage({
+      Id: this.mediaFile.MediaId,
+      Url: this.mediaFile.MediaUrl,
+    });
+    this.clearOtherSelections();
+    this.showSelectionStatus(statusCheck);
   }
 
-  private updateInfoCtaButtonImage() {
-    const safeMediaUrl = encodeURI(this.mediaFile.MediaUrl);
-    const infoSectionManager = new InfoSectionManager();
-    infoSectionManager.updateInfoCtaButtonImage(safeMediaUrl, this.infoId);
+  private hideFileList(): void {
+    this.fileListContainer = document.getElementById("fileList") as HTMLElement;
+    if (this.fileListContainer) {
+      this.fileListContainer.style.display = "none";
+    }
   }
 
-  private deleteEvent() {
-    const title = "Delete media";
-    const message = "Are you sure you want to delete this media file?";
-
-    const handleConfirmation = async () => {
-      try {
-        await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
-        let media = await this.toolboxService.getMediaFiles();
-        media = media.filter(
-          (item: Media) => item.MediaId !== this.mediaFile.MediaId
-        );
-        const mediaItem = document.getElementById(this.mediaFile.MediaId);
-        if (mediaItem) {
-          mediaItem.remove();
-        }
-
-        if (media.length === 0) {
-          const modalFooter = document.querySelector(
-            ".modal-actions"
-          ) as HTMLElement;
-          modalFooter.style.display = "none";
-        }
-      } catch (error) {
-        console.error("Error deleting media:", error);
+  private clearOtherSelections(): void {
+    document.querySelectorAll(".file-item").forEach((element) => {
+      element.classList.remove("selected");
+      const icon = element.querySelector(".status-icon") as HTMLElement;
+      if (icon) {
+        icon.style.display = "none";
       }
-    };
+    });
+  }
+
+  private showSelectionStatus(statusCheck: HTMLElement): void {
+    Object.assign(statusCheck.style, {
+      backgroundImage: "url('/Resources/UCGrapes/public/images/check.png')",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      display: "block",
+    });
+
+    this.container.classList.add("selected");
+  }
+
+  private deleteEvent(): void {
     const confirmationBox = new ConfirmationBox(
-      message,
-      title,
-      handleConfirmation
+      "Are you sure you want to delete this media file?",
+      "Delete media",
+      this.handleDeleteConfirmation.bind(this)
     );
     confirmationBox.render(document.body);
   }
 
+  private async handleDeleteConfirmation(): Promise<void> {
+    try {
+      await this.toolboxService.deleteMedia(this.mediaFile.MediaId);
+      this.removeFromDOM();
+      this.imageUpload.removeSelectedImage(this.mediaFile.MediaId);
+    } catch (error) {
+      console.error("Error deleting media:", error);
+    }
+  }
+
+  private removeFromDOM(): void {
+    const mediaItem = document.getElementById(this.mediaFile.MediaId);
+    mediaItem?.remove();
+  }
+
+  /* Public API */
   public getElement(): HTMLElement {
     return this.container;
   }
 
-  public render(container: HTMLElement) {
+  public render(container: HTMLElement): void {
     container.appendChild(this.container);
   }
 }

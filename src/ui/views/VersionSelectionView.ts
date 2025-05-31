@@ -7,6 +7,10 @@ import { ConfirmationBox } from "../components/ConfirmationBox";
 import { truncateString } from "../../utils/helpers";
 import { AppVersion } from "../../types";
 import { FormField } from "../components/FormField";
+import { EditorEvents } from "../../controls/editor/EditorEvents";
+import { EditorManager } from "../../controls/editor/EditorManager";
+import { ThemeManager } from "../../controls/themes/ThemeManager";
+import { ThemeSelection } from "../components/ThemeSelection";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -230,12 +234,53 @@ export class VersionSelectionView {
       // Activate version and reload if successful
       const activationResult = await this.versionController.activateVersion(version.AppVersionId);
       if (activationResult) {
-        location.reload();
+        this.reloadPage(activationResult);
       }
 
       this.closeSelection();
     } catch (error) {
       console.error("Error activating version:", error);
+    }
+  }
+
+  private reloadPage(appVersion: any): void {
+    this.clearGlobalVariables();
+    (globalThis as any).activeVersion = appVersion.AppVersion; 
+    const editorEvents = new EditorEvents();   
+    editorEvents.clearAllEditors();
+    const newEditor = new EditorManager();
+    newEditor.init(appVersion.AppVersion);
+    this.updateTheme(appVersion.AppVersion?.ThemeId);
+  }
+
+  private clearGlobalVariables(): void {
+    (globalThis as any).selectedComponent = null;
+    (globalThis as any).pageData = null;
+    (globalThis as any).activeVersion = null;
+    (globalThis as any).tileMapper = null;
+    (globalThis as any).activeEditor = null;
+    (globalThis as any).currentPageId = null;
+    (globalThis as any).ctaContainerId = null;
+    (globalThis as any).frameId = null;
+    (globalThis as any).wrapper = null;
+  }
+
+  private updateTheme(themeId: string): void {
+    if (!themeId) return;
+    const themeSelectionEl = document.getElementById("tb-custom-theme-selection");
+    if (themeSelectionEl) {
+      
+      const themeList = themeSelectionEl.querySelectorAll(".theme-option") as NodeListOf<HTMLDivElement>;
+      themeList.forEach((theme) => {
+        theme.classList.remove("selected");
+        if (theme.id === themeId) {
+          theme.classList.add("selected");
+          const selectedThemeEl = themeSelectionEl.querySelector(`.selected-theme-value`) as HTMLSpanElement;
+          if (selectedThemeEl) {
+            selectedThemeEl.innerText = theme.innerText;        
+          }
+        }
+      });
     }
   }
 
@@ -351,7 +396,7 @@ export class VersionSelectionView {
 
         // Reload only for create and activate actions
         if (result && (action === "create" || action === "duplicate")) {
-          location.reload();
+          this.reloadPage(result);
         }
       } catch (error) {
         console.error(`Error during ${action} operation:`, error);

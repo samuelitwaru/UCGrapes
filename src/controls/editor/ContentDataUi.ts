@@ -6,6 +6,7 @@ import { ConfirmationBox } from "../../ui/components/ConfirmationBox";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { CtaIconsListPopup } from "../../ui/views/CtaIconsListPopup";
 import { i18n } from "../../i18n/i18n";
+import { InfoType } from "../../types";
 
 export class ContentDataUi {
   e: any;
@@ -13,6 +14,7 @@ export class ContentDataUi {
   page: any;
   contentDataManager: any;
   infoSectionController: any;
+  slideIndex: number = 1;
 
   constructor(e: any, editor: any, page: any) {
     this.e = e;
@@ -20,15 +22,75 @@ export class ContentDataUi {
     this.page = page;
     this.infoSectionController = new InfoSectionManager();
     this.contentDataManager = new ContentDataManager(this.editor, this.page);
+
+    //this.showSlides(this.slideIndex);
     this.init();
   }
-
   private init() {
     this.openContentEditModal();
     this.openImageEditModal();
     this.openDeleteModal();
     this.updateCtaButtonImage();
     this.updateCtaButtonIcon();
+    this.handleSliderClick();
+  }
+
+  private handleSliderClick() {
+    const parentContainer = (this.e.target as Element).closest(
+      "[data-gjs-type='info-image-section']"
+    );
+    if ((this.e.target as Element).closest(".prev-img-slide")) {
+      this.plusSlides(-1, parentContainer);
+    }
+    if ((this.e.target as Element).closest(".next-img-slide")) {
+      this.plusSlides(1, parentContainer);
+    }
+  }
+
+  private plusSlides(n: number, parentContainer: any) {
+    const slides = parentContainer?.querySelectorAll(".mySlides");
+
+    if (!slides || slides.length === 0) {
+      return;
+    }
+
+    let currentIndex = 0; // Start from 0-based index
+
+    for (let i = 0; i < slides.length; i++) {
+      if (slides[i].style.display === "block") {
+        currentIndex = i;
+        break;
+      }
+    }
+
+    let newIndex = currentIndex + n;
+
+    if (newIndex >= slides.length) {
+      newIndex = 0; // Go to first slide
+    } else if (newIndex < 0) {
+      newIndex = slides.length - 1; // Go to last slide
+    }
+
+    this.showSlides(newIndex, parentContainer);
+  }
+
+  private showSlides(slideIndex: number, parentContainer: any) {
+    const slides = parentContainer?.querySelectorAll(".mySlides");
+
+    if (!slides || slides.length === 0) {
+      return;
+    }
+
+    // Hide all slides
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+
+    // Show the selected slide
+    if (slides[slideIndex]) {
+      slides[slideIndex].style.display = "block";
+    }
+
   }
 
   private openContentEditModal() {
@@ -141,6 +203,27 @@ export class ContentDataUi {
 
   private openImageEditModal() {
     if ((this.e.target as Element).closest(".tb-edit-image-icon")) {
+      const image = this.e.target.closest(
+        '[data-gjs-type="info-image-section"].info-image-section'
+      );
+
+      const modal = document.createElement("div");
+      modal.classList.add("tb-modal");
+      modal.style.display = "flex";
+      const type = this.page.PageType === "Information" ? "info" : "content";
+      const modalContent = new ImageUpload(type, (image as HTMLElement)?.id);
+      modalContent.render(modal);
+
+      const uploadInput = document.createElement("input");
+      uploadInput.type = "file";
+      uploadInput.multiple = true;
+      uploadInput.accept = "image/jpeg, image/jpg, image/png";
+      uploadInput.id = "fileInput";
+      uploadInput.style.display = "none";
+
+      document.body.appendChild(modal);
+      document.body.appendChild(uploadInput);
+    } else if ((this.e.target as Element).closest(".tb-edit-image-icon")) {
       const image = this.e.target.closest(
         '[data-gjs-type="info-image-section"].info-image-section'
       );
@@ -279,10 +362,6 @@ export class ContentDataUi {
     if (this.page.PageType === "Information") {
       const description = this.e.target.closest(
         '[data-gjs-type="info-desc-section"].info-desc-section'
-      );
-      console.log(
-        "description",
-        description.querySelector(".info-desc-content")
       );
       if (description) {
         return description.querySelector(".info-desc-content").innerHTML;

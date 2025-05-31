@@ -60,7 +60,9 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
 
       // Select the component after appending
-      const component = this.editor?.getWrapper().find(`#${ctaComponent.id}`)[0];
+      const component = this.editor
+        ?.getWrapper()
+        .find(`#${ctaComponent.id}`)[0];
       if (component) {
         this.editor?.select(component);
       }
@@ -68,8 +70,6 @@ export class InfoSectionManager {
   }
 
   addImage(imageUrl: string, nextSectionId?: string) {
-    // console.log('addImage sectionId :>> ', nextSectionId);
-    const imgUrl = `${baseURL}/Resources/UCGrapes/dist/images/default.jpg`;
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;
@@ -87,7 +87,49 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
     }
   }
+  addMultipleImages(
+    selectedImages: Array<{ Id: string; Url: string }> = [],
+    isUpdating: boolean = false,
+    infoId?: string
+  ) {
+    const imgContainer = this.infoSectionUI.getMultipleImages(
+      selectedImages.map((img) => img.Url),
+      isUpdating,
+      infoId
+    );
+    const imageContainer = document.createElement("div");
+    imageContainer.innerHTML = imgContainer;
+    const imageComponent = imageContainer.firstElementChild as HTMLElement;
 
+    if (isUpdating) {
+      const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
+      if (component) {
+        component.replaceWith(imgContainer);
+        this.updateInfoMapper(infoId || "", {
+          InfoId: imageComponent.id,
+          InfoType: "Images",
+          Images: selectedImages.map((img) => ({
+            InfoImageId: `id-${img.Id}` || randomIdGenerator(15),
+            InfoImageValue: img.Url,
+          })),
+        });
+      }
+    } else {
+      const append = this.appendComponent(imgContainer);
+      if (append) {
+        const infoType: InfoType = {
+          InfoId: imageComponent.id,
+          InfoType: "Images",
+          Images: selectedImages.map((img) => ({
+            InfoImageId: `id-${img.Id}` || randomIdGenerator(15),
+            InfoImageValue: img.Url,
+          })),
+        };
+
+        this.addToMapper(infoType);
+      }
+    }
+  }
   openContentEditModal(sectionId?: string) {
     const modalBody = document.createElement("div");
 
@@ -250,7 +292,6 @@ export class InfoSectionManager {
   }
 
   updateInfoImage(imageUrl: string, infoId?: string, sectionId?: string) {
-    // console.log('updateInfoImage sectionId :>> ', sectionId);
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
@@ -300,7 +341,8 @@ export class InfoSectionManager {
   }
 
   appendComponent(componentDiv: any, nextSectionId?: string) {
-    const containerColumn = this.editor?.getWrapper()
+    const containerColumn = this.editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return false;
 
@@ -311,6 +353,10 @@ export class InfoSectionManager {
       : components.length;
 
     const addInfoSectionButton = new AddInfoSectionButton().getHTML();
+    const addLastInfoSectionButton = new AddInfoSectionButton(
+      false,
+      true
+    ).getHTML();
 
     // Add plus above
     const plusAbove = this.editor?.addComponents(addInfoSectionButton);
@@ -333,7 +379,8 @@ export class InfoSectionManager {
     // Scroll to bottom if we added the section at the end
     if (isAppendingAtEnd) {
       setTimeout(() => {
-        const editorFrame = this.editor?.getWrapper()
+        const editorFrame = this.editor
+          ?.getWrapper()
           .find(".content-frame-container")[0];
         if (editorFrame) {
           const editorFrameElement = editorFrame.getEl();
@@ -435,7 +482,8 @@ export class InfoSectionManager {
   }
 
   restoreEmptyStateIfNoSections() {
-    const containerColumn = this.editor?.getWrapper()
+    const containerColumn = this.editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -447,7 +495,8 @@ export class InfoSectionManager {
       containerColumn.append(newBtn);
 
       // Re-apply empty state class to main container
-      const contentFrameContainer = this.editor?.getWrapper()
+      const contentFrameContainer = this.editor
+        ?.getWrapper()
         .find(".content-frame-container")[0];
       if (contentFrameContainer) {
         contentFrameContainer.addClass("empty-state");
@@ -457,7 +506,8 @@ export class InfoSectionManager {
   }
 
   markFirstAndLastPlusButtons(position: "first" | "last") {
-    const containerColumn = this.editor?.getWrapper()
+    const containerColumn = this.editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 
@@ -486,7 +536,8 @@ export class InfoSectionManager {
 
   removeConsecutivePlusButtons(editor: any = this.editor) {
     if (!editor) return;
-    const containerColumn = editor?.getWrapper()
+    const containerColumn = editor
+      ?.getWrapper()
       .find(".container-column-info")[0];
     if (!containerColumn) return;
 

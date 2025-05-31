@@ -60,7 +60,7 @@ export class AppVersionManager {
   }
 
   async getActiveVersionId() {
-    const activeVersion = (window as any).app.currentVersion;
+    const activeVersion = (globalThis as any).activeVersion;
     return activeVersion.AppVersionId;
   }
 

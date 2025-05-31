@@ -159,7 +159,7 @@ export class ActionListManager {
 
     const version = (globalThis as any).activeVersion;
     let childPage = version?.Pages.find((page: any) => {
-      if (page.PageType == "DynamicForm") console.log("page", page);
+      if (page.PageType == "DynamicForm")
       return (
         page.PageType == "DynamicForm" &&
         page.PageLinkStructure.WWPFormId == form.PageId

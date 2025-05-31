@@ -38,8 +38,9 @@ export class EditorManager {
     this.jsonToGrapes = new JSONToGrapesJSMenu(this);
   }
 
-  async init() {
-    const version = await this.appVersion.getActiveVersion();
+  async init(newVersion?: any) {
+    const version = newVersion || await this.appVersion.getActiveVersion();
+    (globalThis as any).activeVersion = version;
     this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement
     mainContainer.innerHTML = ""
@@ -93,7 +94,9 @@ export class EditorManager {
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
     this.activateHomeEditor(`gjs-0`);
-    this.themeManager.applyTheme(this.themeManager.currentTheme);
+
+    const theme = this.themeManager.getThemeById((globalThis as any).activeVersion.ThemeId);
+    this.themeManager.setTheme(theme);
   }
 
   async loadHomePage(editor: any) {

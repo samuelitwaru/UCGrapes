@@ -109,7 +109,7 @@ export const i18n = new I18n({
       add_content_page: "Add content page",
       information_page: "New Page",
       existing_pages: "Existing Pages",
-      call_to_action: "Call to Action",
+      call_to_action: "Direct Link",
       forms: "Forms",
       modules: "Modules",
       email: "Email",
@@ -120,8 +120,6 @@ export const i18n = new I18n({
       edit_content: "Edit Content",
       save_button: "Save",
       cancel_button: "Cancel"
-      
-
     },
     messages: {
       success: {
@@ -134,11 +132,14 @@ export const i18n = new I18n({
         empty_page_name: "Enter page name",
         templates_on_menu_pages: "Templates can only be added to menu pages",
         no_active_page: "No active page",
+        empty_version_name: "Version name is required.",
+        existing_version_name: "A version with this name already exists.",
+        long_version_name: "Version name cannot exceed 50 characters.",
       },
     },
     Messages: "Messages",
     Requests: "Requests",
-    NoMessagesYet: "No Messages Yet"  
+    NoMessagesYet: "No Messages Yet"
   },
 
   nl: {
@@ -153,7 +154,7 @@ export const i18n = new I18n({
           "Bewoners op de hoogte stellen van de gemaakte updates",
         modal_confirm: "Publiceren",
         modal_cancel: "Annuleren",
-         sidebar_mapping_title: "Indeling",
+        sidebar_mapping_title: "Indeling",
       },
       debug: {
         label: "Debug",
@@ -215,6 +216,7 @@ export const i18n = new I18n({
         weblink: "Weblink",
         module: "Modules",
         content: "Inhoud",
+        call_to_action: "Call to Action",
       },
     },
     default: {
@@ -237,7 +239,7 @@ export const i18n = new I18n({
       forms: "Formulieren",
       modules: "Modules",
       existing_pages: "Bestaande pagina's",
-      call_to_action: "Call to Action",
+      call_to_action: "Directe link",
       email: "e-mail",
       phone: "Telefoon",
       maps: "Kaarten",
@@ -262,6 +264,9 @@ export const i18n = new I18n({
         templates_on_menu_pages:
           "Sjablonen kunnen alleen aan menupagina's worden toegevoegd",
         no_active_page: "Geen actieve pagina",
+        empty_version_name: "Versienaam is verplicht.",
+        existing_version_name: "Er bestaat al een versie met deze naam.",
+        long_version_name: "Versienaam mag niet langer zijn dan 50 tekens.",
       },
     },
     Messages: "Berichten",

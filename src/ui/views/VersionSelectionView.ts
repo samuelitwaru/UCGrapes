@@ -10,6 +10,7 @@ import { EditorEvents } from "../../controls/editor/EditorEvents";
 import { EditorManager } from "../../controls/editor/EditorManager";
 import { ThemeManager } from "../../controls/themes/ThemeManager";
 import { ThemeSelection } from "../components/ThemeSelection";
+import { FormField } from "../components/FormField";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -18,6 +19,8 @@ export class VersionSelectionView {
   private activeVersion: HTMLSpanElement;
   private versionController: AppVersionController;
   private versionList: HTMLDivElement;
+  private appVersions: AppVersion[];
+  private versionNameField?: FormField
 
   constructor() {
     this.versionController = new AppVersionController();
@@ -26,6 +29,7 @@ export class VersionSelectionView {
     this.versionSelection = document.createElement("div");
     this.versionList = document.createElement("div");
     this.activeVersion = document.createElement("span");
+    this.appVersions = [];
 
     this.init();
     document.addEventListener("click", this.handleOutsideClick.bind(this));
@@ -69,14 +73,15 @@ export class VersionSelectionView {
     this.versionSelection.className = "theme-options-list";
     this.versionSelection.setAttribute("role", "listbox");
     this.versionSelection.innerHTML = ""; // Clear existing options
-    
+
     this.versionList.classList.add("tb-version-list");
     this.versionList.innerHTML = "";
-    
+
     this.addNewVersionButton();
     this.versionSelection.appendChild(this.versionList);
 
     const versions = await this.versionController.getVersions();
+    this.appVersions = versions;
     versions.forEach((version: AppVersion) => this.createVersionOption(version));
 
     this.addTemplatesButton();
@@ -113,10 +118,11 @@ export class VersionSelectionView {
     const optionButtons = document.createElement("div");
     optionButtons.className = "option-buttons";
     versionOption.append(optionButtons);
-    
+
+    // Check if this is the active version
     const activeVersion = (window as any).app.currentVersion;
     const isActive = (version.AppVersionId === activeVersion.AppVersionId);
-    
+
     if (isActive) {
       versionOption.classList.add("selected");
       this.activeVersion.textContent = truncateString(version.AppVersionName, 15);
@@ -134,7 +140,7 @@ export class VersionSelectionView {
   private createVersionSubMenu(version: AppVersion, isActive: boolean): HTMLDivElement {
     const subMenu = document.createElement("div");
     subMenu.className = "submenu-list";
-    
+
     // Duplicate option
     const duplicateOption = document.createElement("div");
     duplicateOption.classList.add("theme-option");
@@ -166,7 +172,7 @@ export class VersionSelectionView {
       );
     });
     subMenu.appendChild(renameOption);
-    
+
     // Delete option (only if not active)
     if (!isActive) {
       const deleteOption = document.createElement("div");
@@ -199,7 +205,7 @@ export class VersionSelectionView {
         console.error("Error deleting version:", error);
       }
     };
-    
+
     const confirmationBox = new ConfirmationBox(
       message,
       title,
@@ -279,20 +285,39 @@ export class VersionSelectionView {
   }
 
   public openVersionModal(
-    initialValue: string = "", 
-    title: string = "Create new version", 
+    initialValue: string = "",
+    title: string = "Create new version",
     buttonText: string = "Save",
     action: string = "create",
     versionId?: string
   ): void {
     const form = new Form("page-form");
-    form.addField({
+    const versionNameField = form.addField({
       type: "text",
       id: "version_name",
       placeholder: "Version name",
       required: true,
       value: initialValue,
+      errorMessage: "",
+      validate: (value: string) => {
+        if (!value.trim()) {
+          versionNameField?.showError(i18n.t("messages.error.empty_version_name"));
+          return false;
+        }
+        if (this.appVersions.some(v => v.AppVersionName === value.trim())) {
+          versionNameField?.showError(i18n.t("messages.error.existing_version_name"));
+          return false;
+        }
+        if (value.length > 50) {
+          versionNameField?.showError(i18n.t("messages.error.long_version_name"));
+          return false;
+        }
+        versionNameField?.hideError();
+        return true;
+      }
     });
+
+    this.versionNameField = versionNameField;
 
     const div = document.createElement("div");
     form.render(div);
@@ -333,16 +358,23 @@ export class VersionSelectionView {
     const saveBtn = div.querySelector("#submit_form");
     const cancelBtn = div.querySelector("#cancel_form");
 
+    const inputElement = div.querySelector("#version_name") as HTMLInputElement;
+    inputElement?.addEventListener("input", () => this.versionNameField?.hideError());
+
     saveBtn?.addEventListener("click", async (e) => {
       e.preventDefault();
-      const inputElement = div.querySelector("#version_name") as HTMLInputElement;
-      const versionName = inputElement.value.trim();
 
-      if (!versionName) return;
+      const isValid = this.versionNameField?.validate();
+      if (!isValid) {
+        inputElement.focus();
+        return;
+      }
+
+      const versionName = inputElement.value.trim();
 
       try {
         let result = false;
-        
+
         switch (action) {
           case "create":
             result = await this.versionController.createVersion(versionName);
@@ -361,7 +393,7 @@ export class VersionSelectionView {
 
         modal.close();
         await this.refreshVersionList();
-        
+
         // Reload only for create and activate actions
         if (result && (action === "create" || action === "duplicate")) {
           this.reloadPage(result);

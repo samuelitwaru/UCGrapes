@@ -19,7 +19,7 @@ export class FormModalService {
   private isInfoCtaSection: boolean;
   private type?: CtaType;
   private toolBoxService: ToolBoxService;
-  private selectedSupplierId: string | undefined;
+  private supplierSelectComponent?: SupplierSelectionComponent<any>;
 
   constructor(isInfoCtaSection: boolean = false, type?: CtaType) {
     this.isInfoCtaSection = isInfoCtaSection;
@@ -45,6 +45,11 @@ export class FormModalService {
     }
 
     form.render(formBody);
+
+    // Now call setupSupplierSelection after rendering
+    if (this.isInfoCtaSection && this.supplierSelectComponent) {
+      this.setupSupplierSelection(this.supplierSelectComponent, formBody, form);
+    }
 
     const submitSection = this.createSubmitSection(form, onSave);
 
@@ -125,6 +130,8 @@ export class FormModalService {
       placeholder: 'Select supplier to connect...'
     });
 
+    this.supplierSelectComponent = itemsSelect;
+
     const formSupplierField = document.createElement("div");
     formSupplierField.classList.add("form-field");
     formSupplierField.style.marginBottom = "10px";
@@ -141,69 +148,25 @@ export class FormModalService {
 
     labelContainer.appendChild(label);
 
-    // Check if there's a last connected supplier
-    const lastConnectedSupplier = this.findLastConnectedSupplier();
-
-    // Only show clear selection if there's a previously connected supplier
-    if (lastConnectedSupplier) {
-      // Create the checkbox and its label
-      const clearLabel = document.createElement("label");
-      clearLabel.style.display = "flex";
-      clearLabel.style.alignItems = "center";
-      clearLabel.style.fontSize = "13px";
-      clearLabel.style.cursor = "pointer";
-      clearLabel.style.userSelect = "none";
-      clearLabel.style.gap = "22px";
-
-      const clearCheckbox = document.createElement("input");
-      clearCheckbox.style.marginBottom = "8px";
-      clearCheckbox.type = "checkbox";
-
-      const clearText = document.createTextNode("Clear Selection");
-
-      clearLabel.appendChild(clearCheckbox);
-      clearLabel.appendChild(clearText);
-
-      // Add the clear checkbox label to the container
-      labelContainer.appendChild(clearLabel);
-
-      // Set up toggle functionality
-      clearCheckbox.addEventListener("change", () => {
-        if (clearCheckbox.checked) {
-          itemsSelect.removeSelection();
-          const valueField = formBody.querySelector("#field_value") as HTMLInputElement;
-          if (valueField) {
-            valueField.value = "";
-            valueField.disabled = false;
-          }
-          form.setSelectedSupplierId("");
-        } else {
-          const supplierId = lastConnectedSupplier.CtaAttributes?.CtaConnectedSupplierId;
-          if (supplierId) {
-            itemsSelect.setValue(supplierId);
-            this.updateFieldWithSupplierData(
-              formBody,
-              supplierItemsList.find((item: any) => item.SupplierGenId === supplierId),
-              form
-            );
-          }
-        }
-      });
-    }
-
     formSupplierField.appendChild(labelContainer);
 
     const selectElement = itemsSelect.getElement();
 
-    this.setupSupplierSelection(itemsSelect, formBody, form);
+    // this.setupSupplierSelection(itemsSelect, formBody, form);
 
     formSupplierField.appendChild(selectElement);
     formBody.appendChild(formSupplierField);
+
+    // Listen for the clear event to reset dependent fields
+    selectElement.addEventListener('supplier-cleared', () => {
+      this.resetSupplierDependentFields(formBody, form);
+    });
   }
 
   private appendSupplierFormSelection(formBody: HTMLDivElement, form: Form, isRefresh?: boolean): void {
-    const filteredForms = this.selectedSupplierId && isRefresh
-      ? this.toolBoxService.forms.filter((f: any) => f.SupplierId === this.selectedSupplierId)
+    const selectedSupplierId = form.getSelectedSupplierId();
+    const filteredForms = selectedSupplierId && isRefresh
+      ? this.toolBoxService.forms.filter((f: any) => f.SupplierId === selectedSupplierId)
       : this.toolBoxService.forms;
 
     const itemsSelect = new SupplierSelectionComponent<any>(filteredForms, {
@@ -248,6 +211,31 @@ export class FormModalService {
     });
   }
 
+  private resetSupplierDependentFields(formBody: HTMLDivElement, form: Form): void {
+    form.setSelectedSupplierId("");
+    // Example: reset the value field and enable it
+    const valueField = formBody.querySelector("#field_value") as HTMLInputElement;
+    if (valueField) {
+      valueField.value = "";
+      valueField.disabled = false;
+    }
+    // Reset other fields as needed
+    // For example, reset a form selection dropdown:
+    if (this.type === 'Form') {
+      const formField = formBody.querySelector("#field_id") as HTMLInputElement;
+      if (formField) {
+        formField.value = "";
+        formField.disabled = false;
+      }
+      const formSelect = formBody.querySelector(".form-field select");
+      if (formSelect) {
+        (formSelect as HTMLSelectElement).selectedIndex = 0; // Reset to first option
+      }
+      // refresh form list dropdown when supplier changes
+      this.refreshFormSelection(formBody, form);
+    }
+  }
+
 
 
   private setupSupplierSelection(
@@ -261,7 +249,8 @@ export class FormModalService {
     if (lastConnectedSupplier) {
       const supplierId = lastConnectedSupplier.CtaAttributes?.CtaConnectedSupplierId;
       itemsSelect.setValue(supplierId);
-      this.selectedSupplierId = supplierId;
+      form.setSelectedSupplierId(supplierId ?? null);
+      // Update the form with the supplier data
       this.updateFieldWithSupplierData(
         formBody,
         supplierItemsList.find(
@@ -272,10 +261,8 @@ export class FormModalService {
     }
 
     itemsSelect.onChange((selectedOption: SupplierList | undefined) => {
-      this.selectedSupplierId = selectedOption?.SupplierGenId ?? "";
+      form.setSelectedSupplierId(selectedOption?.SupplierGenId ?? null);
       this.updateFieldWithSupplierData(formBody, selectedOption, form);
-      // Optional: refresh form list dropdown when supplier changes
-      this.refreshFormSelection(formBody, form);
     });
   }
 
@@ -320,7 +307,7 @@ export class FormModalService {
     const valueField = formBody.querySelector("#field_value") as HTMLInputElement;
 
     if (!valueField) {
-      console.warn("Could not find field_value element in the form");
+      // console.warn("Could not find field_value element in the form");
       return;
     }
 
@@ -330,13 +317,14 @@ export class FormModalService {
       case "Email": value = supplier.SupplierGenEmail?.trim() || ""; break;
       case "WebLink": value = supplier.SupplierGenWebsite?.trim() || ""; break;
       case "Map": value = supplier.SupplierGenAddressLine1?.trim() || ""; break;
+      case "Form": this.refreshFormSelection(formBody, form); break; // refresh form list.
     }
 
     // Only update the field value, not structure
     valueField.value = value;
     valueField.disabled = true;
 
-    // form.setSelectedSupplierId(supplier.SupplierGenId);
+    form.setSelectedSupplierId(supplier.SupplierGenId);
   }
 
 

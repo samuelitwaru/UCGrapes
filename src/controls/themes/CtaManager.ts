@@ -39,7 +39,6 @@ export class CtaManager {
       ctaButton,
       buttonId
     );
-
     const ctaMapper = {
       CtaId: buttonId,
       CtaLabel: ctaButton.CallToActionName,

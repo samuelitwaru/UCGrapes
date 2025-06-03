@@ -115,7 +115,12 @@ export class TileProperties {
     const title = document.querySelector("#tile-title") as HTMLInputElement;
     const tileTitle = this.tileAttributes?.Text;
     title.focus()
-    title.value = tileTitle;
+    const defaultTitles = ["title", "titel"];
+    if (tileTitle && !defaultTitles.includes(tileTitle.toLowerCase())) {
+      title.value = tileTitle;      
+    } else {
+      title.value = "";
+    }
 
     const tileColor = this.tileAttributes?.Color;
     const tileColorSection = document.querySelector("#text-color-palette");

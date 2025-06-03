@@ -16,6 +16,7 @@ import { baseURL } from "../../services/ToolBoxService";
 import { randomIdGenerator } from "../../utils/helpers";
 import { resizeButton } from "../../utils/gjs-components";
 import { AddInfoSectionButton } from "../components/AddInfoSectionButton";
+import { ImageUploadManager } from "../../controls/ImageUploadManager";
 
 export class InfoSectionUI {
   themeManager: any;
@@ -31,7 +32,7 @@ export class InfoSectionUI {
     modal.classList.add("tb-modal");
     modal.style.display = "flex";
 
-    const modalContent = new ImageUpload("info", undefined, sectionId);
+    const modalContent = new ImageUploadManager("info", undefined, sectionId);
     modalContent.render(modal);
     const uploadInput = document.createElement("input");
     uploadInput.type = "file";

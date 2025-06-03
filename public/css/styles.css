@@ -3056,7 +3056,7 @@ canvas {
 .image-editor-container {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  /* padding: 20px; */
   display: flex;
   justify-content: center;
   align-items: center;

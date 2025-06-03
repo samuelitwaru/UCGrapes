@@ -4,4 +4,4 @@ shimmers-test.html
 dist/bundle.js
 src/utils/env.ts
 /node_modules/
-/dist/
+dist/

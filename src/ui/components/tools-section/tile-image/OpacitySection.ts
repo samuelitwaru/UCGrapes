@@ -1,3 +1,4 @@
+import { ImageUploadManager } from "../../../../controls/ImageUploadManager";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ImageUpload } from "./ImageUpload";
 
@@ -61,7 +62,7 @@ export class OpacitySection {
       modal.classList.add("tb-modal");
       modal.style.display = "flex";
 
-      const modalContent = new ImageUpload("tile");
+      const modalContent = new ImageUploadManager("tile");
       modalContent.render(modal);
 
       const uploadInput = document.createElement("input");

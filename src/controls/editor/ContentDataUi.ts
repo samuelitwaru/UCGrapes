@@ -7,6 +7,7 @@ import { InfoSectionManager } from "../InfoSectionManager";
 import { CtaIconsListPopup } from "../../ui/views/CtaIconsListPopup";
 import { i18n } from "../../i18n/i18n";
 import { InfoType } from "../../types";
+import { ImageUploadManager } from "../ImageUploadManager";
 
 export class ContentDataUi {
   e: any;
@@ -211,7 +212,7 @@ export class ContentDataUi {
       modal.classList.add("tb-modal");
       modal.style.display = "flex";
       const type = this.page.PageType === "Information" ? "info" : "content";
-      const modalContent = new ImageUpload(type, (image as HTMLElement)?.id);
+      const modalContent = new ImageUploadManager(type, (image as HTMLElement)?.id);
       modalContent.render(modal);
 
       const uploadInput = document.createElement("input");
@@ -308,7 +309,7 @@ export class ContentDataUi {
       const modal = document.createElement("div");
       modal.classList.add("tb-modal");
       modal.style.display = "flex";
-      const modalContent = new ImageUpload("cta", (cta as HTMLElement).id);
+      const modalContent = new ImageUploadManager("cta", (cta as HTMLElement).id);
       modalContent.render(modal);
 
       const uploadInput = document.createElement("input");

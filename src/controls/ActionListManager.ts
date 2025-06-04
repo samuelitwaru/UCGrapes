@@ -32,6 +32,22 @@ export class ActionListManager {
     const secondCategory: MenuItem[] = [];
 
     secondCategory.push({
+      id: "list-page",
+      name: "Page",
+      label: i18n.t("tile.existing_pages"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, ""),
+    });
+
+    secondCategory.push({
+      id: "cta-list",
+      name: "CallToActions",
+      label: i18n.t("tile.call_to_action"),
+      expandable: true,
+      action: () => this.getSubMenuItems(categoryData, "CallToActions"),
+    });
+
+    secondCategory.push({
       id: "list-form",
       name: "DynamicForm",
       label: i18n.t("tile.forms"),
@@ -46,21 +62,6 @@ export class ActionListManager {
       action: () => this.getSubMenuItems(categoryData, "Modules"),
     });
     // }
-
-    secondCategory.push({
-      id: "list-page",
-      name: "Page",
-      label: i18n.t("tile.existing_pages"),
-      expandable: true,
-      action: () => this.getSubMenuItems(categoryData, ""),
-    });
-    secondCategory.push({
-      id: "cta-list",
-      name: "CallToActions",
-      label: i18n.t("tile.call_to_action"),
-      expandable: true,
-      action: () => this.getSubMenuItems(categoryData, "CallToActions"),
-    });
 
     return [
       [
@@ -160,10 +161,10 @@ export class ActionListManager {
     const version = (globalThis as any).activeVersion;
     let childPage = version?.Pages.find((page: any) => {
       if (page.PageType == "DynamicForm")
-      return (
-        page.PageType == "DynamicForm" &&
-        page.PageLinkStructure.WWPFormId == form.PageId
-      );
+        return (
+          page.PageType == "DynamicForm" &&
+          page.PageLinkStructure.WWPFormId == form.PageId
+        );
     });
     if (!childPage) {
       const appVersion = await this.appVersionManager.getActiveVersion();

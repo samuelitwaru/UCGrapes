@@ -492,7 +492,7 @@ export class EditorEvents {
     const infoSection = targetElement.closest(".info-section-spacing-container") as HTMLDivElement;
 
     if (infoSection && infoSection.style.height !== "3.2rem") {
-      this.uiManager.clearAllMenuContainers();
+      this.uiManager.clearAllMenuContainers(true);
       this.uiManager.isMenuOpen = false;
     }
   }

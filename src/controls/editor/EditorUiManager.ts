@@ -716,7 +716,7 @@ export class EditorUIManager {
     pageTitle.style.textOverflow = "";
 
     const editorWidth = (globalThis as any).deviceWidth;
-    const length = editorWidth ? (editorWidth <= 350 ? 16 : 24) : 16;
+    const length = editorWidth ? (editorWidth <= 300 ? 18 : 23) : 23;
     if (pageTitle.textContent && this.pageData.PageName) {
       pageTitle.title = this.pageData.PageName
       if (pageTitle.textContent.length > length) {

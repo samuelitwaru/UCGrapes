@@ -139,8 +139,11 @@ export class MenuItemManager {
     }
 
     if (items && items.length > 0) {
-      items.forEach((item) => {
+      items.forEach((item, index) => {
         const menuItem = this.createMenuItem(item);
+        if (type !== "CallToActions" && index === 0) {
+          menuItem.classList.add("first-menu-item");
+        }
         menuItem.classList.add("sub-menu-item");
         submenuList.appendChild(menuItem);
       });

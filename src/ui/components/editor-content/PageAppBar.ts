@@ -19,11 +19,11 @@ export class PageAppBar {
 
   constructor(id: string, title?: string, isNewPage: boolean = false) {
     this.title = title || "Untitled";
-    this.originalTitle = this.title; // Store original title
+    this.originalTitle = this.title; 
     this.id = id;
     this.isNewPage = isNewPage;
     this.isTitleSaved =
-      !isNewPage && title !== "Untitled" && title !== "" && title !== undefined; // Only saved if not new, not untitled, and has actual content
+      !isNewPage && title !== "Untitled" && title !== "" && title !== undefined; 
     this.container = document.createElement("div");
     this.editor = new EditorManager();
     this.editorWidth = (globalThis as any).deviceWidth;
@@ -93,7 +93,7 @@ export class PageAppBar {
 
     const pageTitle = document.createElement("h1");
     pageTitle.className = "title";
-    const length = this.editorWidth ? (this.editorWidth <= 350 ? 16 : 24) : 16;
+    const length = this.editorWidth ? (this.editorWidth <= 300 ? 18 : 23) : 23;
     const truncatedTitle =
       this.title.length > length
         ? this.title.substring(0, length) + "..."
@@ -102,10 +102,8 @@ export class PageAppBar {
     pageTitle.textContent = truncatedTitle || "Untitled";
     this.pageTitle = pageTitle;
     
-    // Set placeholder attribute for accessibility and screen readers
     this.pageTitle.setAttribute("data-placeholder", "Enter page title");
 
-    // Create a container div for the edit icon only
     const iconContainer = document.createElement("div");
     iconContainer.classList.add("icon-container");
 
@@ -124,13 +122,10 @@ export class PageAppBar {
         `;
     this.editHeader = editHeader;
 
-    // Append only the edit icon to the container
     iconContainer.appendChild(editHeader);
 
-    // Single click on edit icon to enter edit mode
     editHeader.addEventListener("click", () => this.enterEditMode());
 
-    // Double-click on page title to enter edit mode
     pageTitle.addEventListener("dblclick", () => this.enterEditMode());
 
     pageTitle.addEventListener("input", () => {
@@ -139,16 +134,13 @@ export class PageAppBar {
         this.pageTitle.title = newTitle;
         this.title = newTitle;
 
-        // Update placeholder visibility
         this.updatePlaceholderVisibility();
 
-        // Update frame container state as user types
         this.updateFrameContainerHoverState();
         this.updateAddNewInfoSectionVisibility();
       }
     });
 
-    // Handle blur event (when focus is lost) to auto-save
     pageTitle.addEventListener("blur", () => {
       if (this.isInEditMode) {
         const currentTitle = this.pageTitle?.textContent?.trim() || "";
@@ -160,7 +152,6 @@ export class PageAppBar {
       }
     });
 
-    // Handle Enter key to save and exit edit mode
     pageTitle.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -172,7 +163,6 @@ export class PageAppBar {
         }
         this.pageTitle?.blur();
       }
-      // Handle Escape key to cancel editing
       else if (e.key === "Escape") {
         e.preventDefault();
         this.resetTitle();
@@ -180,7 +170,6 @@ export class PageAppBar {
       }
     });
 
-    // Handle clicks outside the title editing area
     document.addEventListener("click", (event: MouseEvent) => {
       const target = event.target as Element;
       if (this.isInEditMode && this.shouldResetTitle(target)) {
@@ -199,7 +188,6 @@ export class PageAppBar {
     this.container.appendChild(titleDiv);
   }
 
-  // Update placeholder visibility based on content and edit mode
   private updatePlaceholderVisibility() {
     if (!this.pageTitle) return;
 
@@ -207,29 +195,23 @@ export class PageAppBar {
     const placeholder = this.pageTitle.getAttribute("data-placeholder") || "";
 
     if (this.isInEditMode && content === "" && placeholder) {
-      // Show placeholder when in edit mode and no content
       this.pageTitle.setAttribute("data-empty", "true");
     } else {
-      // Hide placeholder when there's content or not in edit mode
       this.pageTitle.removeAttribute("data-empty");
     }
   }
 
-  // Make enterEditMode a class method so it can be called from render()
   private enterEditMode() {
     if (this.pageTitle) {
       this.isInEditMode = true;
-      // Store the current title for possible cancellation
       this.originalTitle = this.pageTitle.title;
 
       this.pageTitle.contentEditable = "true";
-      // Clear the content if it's "Untitled" or if it's a new page
       this.pageTitle.textContent =
         this.title === "Untitled" || this.isNewPage
           ? ""
           : this.pageTitle.title;
       
-      // Update placeholder visibility
       this.updatePlaceholderVisibility();
 
       this.pageTitle.focus();
@@ -252,7 +234,6 @@ export class PageAppBar {
         this.titleDiv.style.borderWidth = "1px";
       }
 
-      // Update frame container and add-new-info-section visibility
       this.updateFrameContainerHoverState();
       this.updateAddNewInfoSectionVisibility();
     }
@@ -275,14 +256,13 @@ export class PageAppBar {
 
     const newTitle = this.pageTitle.textContent?.trim() || "";
 
-    // Only save if we have a valid title
     if (newTitle && newTitle !== "Untitled" && newTitle !== "") {
       const appVersionManager = new AppVersionManager();
       appVersionManager.updatePageTitle(newTitle);
       this.title = newTitle;
       this.originalTitle = this.title;
       this.isTitleSaved = true;
-      this.isNewPage = false; // No longer a new page once saved
+      this.isNewPage = false; 
 
       this.resetTitle(true);
       this.refreshPage();
@@ -293,16 +273,13 @@ export class PageAppBar {
 
   private updateFrameContainerHoverState() {
     const frame = this.captureFrameContainer();
-    console.log("frameContainer", frame);
     if (frame) {
-        console.log("frameContainer", frame);
         this.frameContainer = frame;
 
-        // Disable frame container when title is "Untitled" OR not saved OR in edit mode with unsaved title
         const shouldDisableFrame =
           this.title === "Untitled" ||
           !this.isTitleSaved ||
-          (this.isInEditMode && !this.isTitleSaved);
+          (this.isInEditMode);
 
         if (shouldDisableFrame) {
           frame.style.pointerEvents = "none";
@@ -317,19 +294,21 @@ export class PageAppBar {
   private updateAddNewInfoSectionVisibility() {
     const frame = this.captureFrameContainer();
     if (frame) {
-      const newInfoSectionButton = frame.querySelector(".add-new-info-section") as HTMLElement;
-      if (newInfoSectionButton) {
+      const newInfoSectionButtons = frame.querySelectorAll(".info-section-spacing-container")  as NodeListOf<HTMLDivElement>;
+      if (newInfoSectionButtons.length) {
         const shouldShow =
           this.isTitleSaved &&
           !this.isInEditMode &&
           this.title !== "Untitled" &&
           this.title.trim() !== "";
 
-        if (shouldShow) {
-          newInfoSectionButton.style.display ="flex";
-        } else {
-          newInfoSectionButton.style.display ="none";
-        }
+        newInfoSectionButtons.forEach((button) => {
+          if (shouldShow) {
+            button.style.display ="flex";
+          } else {
+            button.style.display ="none";
+          }
+        })
       }
     }
   }
@@ -345,31 +324,26 @@ export class PageAppBar {
     this.pageTitle.style.overflow = "";
     this.pageTitle.style.textOverflow = "";
 
-    // Update placeholder visibility
     this.updatePlaceholderVisibility();
 
     if (!isSaved) {
-      // Restore original title if not saved
       this.title = this.originalTitle;
       this.pageTitle.title = this.originalTitle;
 
-      // If we're resetting to "Untitled", mark as not saved
       if (this.title === "Untitled") {
         this.isTitleSaved = false;
       }
     }
 
-    // Update display text with truncation
-    const length = this.editorWidth ? (this.editorWidth <= 350 ? 16 : 24) : 16;
+    const length = this.editorWidth ? (this.editorWidth <= 300 ? 18 : 23) : 23;
     const displayTitle = this.title;
 
     if (displayTitle.length > length) {
-      this.pageTitle.textContent = displayTitle.substring(0, length) + "...";
+      this.pageTitle.textContent = displayTitle.substring(0, length) + "..";
     } else {
       this.pageTitle.textContent = displayTitle;
     }
 
-    // Update UI states when exiting edit mode
     this.updateFrameContainerHoverState();
     this.updateAddNewInfoSectionVisibility();
   }
@@ -385,7 +359,6 @@ export class PageAppBar {
   }
 
   private captureFrameContainer(): HTMLDivElement | null {
-    console.log('this.id', `#${this.id}-frame`)
     const currentFrameWrapper = document.querySelector(
       `#${this.id}-frame`
     ) as HTMLDivElement;
@@ -425,12 +398,10 @@ export class PageAppBar {
   render(container: HTMLElement) {
     container.appendChild(this.container);
 
-    // Call these after the component is rendered and the frame exists
     setTimeout(() => {
         this.updateAddNewInfoSectionVisibility();
         this.updateFrameContainerHoverState();
         
-        // Auto-enter edit mode for new pages
         if (this.isNewPage || this.title === "Untitled") {
             this.enterEditMode();
         }

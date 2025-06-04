@@ -71,6 +71,11 @@ export class VersionSelectionView {
   }
 
   public async initializeVersionOptions(): Promise<void> {
+    const existingVersionSelection = this.selectionDiv.querySelector('.theme-options-list');
+    if (existingVersionSelection) {
+      existingVersionSelection.remove();
+    }
+
     this.versionSelection.className = "theme-options-list";
     this.versionSelection.setAttribute("role", "listbox");
     this.versionSelection.innerHTML = ""; // Clear existing options
@@ -85,7 +90,7 @@ export class VersionSelectionView {
     this.appVersions = versions;
     versions.forEach((version: AppVersion) => this.createVersionOption(version));
 
-    this.addTemplatesButton();
+    // this.addTemplatesButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
@@ -121,7 +126,7 @@ export class VersionSelectionView {
     versionOption.append(optionButtons);
 
     // Check if this is the active version
-    const activeVersion = (window as any).app.currentVersion;
+    const activeVersion = (globalThis as any).activeVersion;
     const isActive = (version.AppVersionId === activeVersion.AppVersionId);
 
     if (isActive) {
@@ -244,14 +249,16 @@ export class VersionSelectionView {
     }
   }
 
-  private reloadPage(appVersion: any): void {
+  private async reloadPage(appVersion: any) {
     this.clearGlobalVariables();
     (globalThis as any).activeVersion = appVersion.AppVersion; 
     const editorEvents = new EditorEvents();   
     editorEvents.clearAllEditors();
     const newEditor = new EditorManager();
     newEditor.init(appVersion.AppVersion);
+    console.log('appVersion.AppVersion', appVersion.AppVersion)
     this.updateTheme(appVersion.AppVersion?.ThemeId);
+    this.refreshVersionList();
   }
 
   private clearGlobalVariables(): void {
@@ -393,7 +400,6 @@ export class VersionSelectionView {
         }
 
         modal.close();
-        await this.refreshVersionList();
 
         // Reload only for create and activate actions
         if (result && (action === "create" || action === "duplicate")) {
@@ -435,14 +441,13 @@ export class VersionSelectionView {
   }
 
   public async refreshVersionList(): Promise<void> {
-    await this.initializeVersionOptions();
-
-    // Ensure the dropdown is visible
-    this.versionSelection.classList.add("show");
-
-    const button = this.container.querySelector(".theme-select-button") as HTMLElement;
-    button.classList.add("open");
-    button.setAttribute("aria-expanded", "true");
+    this.container.innerHTML = "";
+    this.selectionDiv = document.createElement("div");
+    this.versionSelection = document.createElement("div");
+    this.versionList = document.createElement("div");
+    this.activeVersion = document.createElement("span");
+    
+    await this.init();
   }
 
   public render(container: HTMLElement): void {

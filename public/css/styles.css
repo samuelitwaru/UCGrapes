@@ -613,7 +613,7 @@ span#scroll-right:hover {
 
 .tb-version-list {
   border-top: 1px solid #e9e9e9;
-  border-bottom: 1px solid #e9e9e9;
+  /* border-bottom: 1px solid #e9e9e9; */
 }
 
 .theme-select-button:hover {
@@ -753,6 +753,11 @@ span#scroll-right:hover {
 .theme-option.selected {
   background: #e9ecef;
   color: #333;
+}
+
+.tb-version-list .theme-option:last-child.selected {
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
 }
 
 .theme-option.submenu > .submenu-list {
@@ -3056,7 +3061,7 @@ canvas {
 .image-editor-container {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  /* padding: 20px; */
   display: flex;
   justify-content: center;
   align-items: center;

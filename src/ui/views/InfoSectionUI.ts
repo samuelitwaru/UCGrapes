@@ -16,6 +16,8 @@ import { baseURL } from "../../services/ToolBoxService";
 import { randomIdGenerator } from "../../utils/helpers";
 import { resizeButton } from "../../utils/gjs-components";
 import { AddInfoSectionButton } from "../components/AddInfoSectionButton";
+import { ImageUploadManager } from "../../controls/ImageUploadManager";
+import { i18n } from "../../i18n/i18n";
 
 export class InfoSectionUI {
   themeManager: any;
@@ -31,7 +33,7 @@ export class InfoSectionUI {
     modal.classList.add("tb-modal");
     modal.style.display = "flex";
 
-    const modalContent = new ImageUpload("info", undefined, sectionId);
+    const modalContent = new ImageUploadManager("info", undefined, sectionId);
     modalContent.render(modal);
     const uploadInput = document.createElement("input");
     uploadInput.type = "file";
@@ -124,11 +126,11 @@ export class InfoSectionUI {
             <div ${tileDefaultAttributes} class="template-block" style="background-color: transparent; color: #333333; justify-content: left">
                 <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-icon-section">
                   <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-icon top-right selected-tile-title">×</span>
-                  <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" class="tile-icon">Title</span>
+                  <span ${DefaultAttributes} id="ic26t" data-gjs-type="text" class="tile-icon">deade</span>
                 </div>
                 <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
                   <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-title top-right selected-tile-title">×</span>
-                  <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Title" class="tile-title">Title</span>
+                  <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="${i18n.t('tile.title')}" class="tile-title">${i18n.t('tile.title')}</span>
                 </div>
             </div>
             <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>

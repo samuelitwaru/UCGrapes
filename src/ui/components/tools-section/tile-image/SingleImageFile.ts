@@ -1,10 +1,12 @@
 import { ContentDataManager } from "../../../../controls/editor/ContentDataManager";
 import { TileProperties } from "../../../../controls/editor/TileProperties";
+import { ImageUploadManager } from "../../../../controls/ImageUploadManager";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { ToolBoxService } from "../../../../services/ToolBoxService";
 import { Image, ImageType, InfoType, Media } from "../../../../types";
 import { ConfirmationBox } from "../../ConfirmationBox";
 import { ImageUpload } from "./ImageUpload";
+import { ImageUploadUi } from "./ImageUploadUi";
 
 export class SingleImageFile {
   private readonly mediaFile: Media;
@@ -12,22 +14,22 @@ export class SingleImageFile {
   private readonly infoId?: string;
   private readonly sectionId?: string;
   private readonly toolboxService: ToolBoxService;
-  private readonly imageUpload: ImageUpload;
+  private readonly imageUpload: ImageUploadUi;
   private container: HTMLElement;
   private fileListContainer?: HTMLElement;
   private isCurrentlySelected: boolean = false;
+  private controller: ImageUploadManager;
 
   constructor(
     mediaFile: Media,
-    type: ImageType,
-    imageUpload: ImageUpload,
-    infoId?: string,
-    sectionId?: string
+    controller: ImageUploadManager,
+    imageUpload: ImageUploadUi,
   ) {
     this.mediaFile = mediaFile;
-    this.type = type;
-    this.infoId = infoId;
-    this.sectionId = sectionId;
+    this.controller = controller;
+    this.type = this.controller.getType;
+    this.infoId = this.controller.getInfoId;
+    this.sectionId = this.controller.getSectionId;
     this.toolboxService = new ToolBoxService();
     this.imageUpload = imageUpload;
     this.container = this.createContainer();
@@ -53,7 +55,7 @@ export class SingleImageFile {
       this.isCurrentlySelected = isSelected;
 
       if (isSelected) {
-        this.imageUpload.addSelectedImage({
+        this.controller.addSelectedImage({
           Id: this.mediaFile.MediaId,
           Url: this.mediaFile.MediaUrl,
         });
@@ -272,7 +274,7 @@ export class SingleImageFile {
   }
 
   private handleImageSelect(): void {
-    this.imageUpload.addSelectedImage({
+    this.controller.addSelectedImage({
       Id: this.mediaFile.MediaId,
       Url: this.mediaFile.MediaUrl,
     });
@@ -288,7 +290,7 @@ export class SingleImageFile {
 
   private handleImageUnselect(): void {
     // Remove from ImageUpload's selected images
-    this.imageUpload.removeSelectedImage(this.mediaFile.MediaId);
+    this.controller.removeSelectedImage(this.mediaFile.MediaId);
 
     // Update localStorage if needed
     if (this.type === "info" && this.infoId) {
@@ -337,8 +339,6 @@ export class SingleImageFile {
         // Remove from stored images
         content.Images.splice(existingImageIndex, 1);
       }
-
-      localStorage.setItem(`data-${pageId}`, JSON.stringify(data));
     } catch (error) {
       console.error("Error updating stored image selection:", error);
     }
@@ -370,12 +370,13 @@ export class SingleImageFile {
 
   /* Event Handlers */
   private handleReplaceClick(): void {
-    this.imageUpload.clearSelectedImages();
+    this.controller.clearSelectedImages();
     this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl);
-    this.imageUpload.addSelectedImage({
+    this.controller.addSelectedImage({
       Id: this.mediaFile.MediaId,
       Url: this.mediaFile.MediaUrl,
     });
+    this.imageUpload.loadMediaFiles();
   }
 
   private setupItemClickEvent(statusCheck: HTMLElement): void {
@@ -385,10 +386,10 @@ export class SingleImageFile {
   }
 
   private handleItemClick(statusCheck: HTMLElement): void {
-    this.hideFileList();
-    this.imageUpload.clearSelectedImages();
+    // this.hideFileList();
+    this.controller.clearSelectedImages();
     this.imageUpload.displayImageEditor(this.mediaFile.MediaUrl);
-    this.imageUpload.addSelectedImage({
+    this.controller.addSelectedImage({
       Id: this.mediaFile.MediaId,
       Url: this.mediaFile.MediaUrl,
     });

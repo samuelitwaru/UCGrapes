@@ -13,6 +13,7 @@ export class ImageUploadUi {
   private controller: ImageUploadManager;
   private fileListElement: HTMLElement | null = null;
   private isEditingMode: boolean = false;
+  private opacityValue!: number;
 
   constructor(controller: ImageUploadManager) {
     this.controller = controller;
@@ -107,7 +108,7 @@ export class ImageUploadUi {
     saveBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       try {
-        await this.controller.handleSave();
+        await this.controller.handleSave(this.opacityValue);
         this.closeModal();
       } catch (error) {
         console.error("Error saving images:", error);
@@ -174,7 +175,7 @@ export class ImageUploadUi {
 
   /* Image Editor Methods */
   public async displayImageEditor(dataUrl: string, file?: File) {
-    if(this.controller.getType === "info") {
+    if (this.controller.getType === "info") {
       return;
     }
 
@@ -185,7 +186,7 @@ export class ImageUploadUi {
     const image = {
       Id: randomIdGenerator(12),
       Url: dataUrl,
-    }
+    };
 
     this.controller.addSelectedImage(image);
 
@@ -215,9 +216,8 @@ export class ImageUploadUi {
       position: "absolute",
       border: "2px solid #5068a8",
       backgroundColor: "rgba(80, 104, 168, 0.15)",
-      cursor: "move",  
+      cursor: "move",
     });
-
 
     imageContainer.appendChild(frame);
     if (uploadArea) {
@@ -230,54 +230,61 @@ export class ImageUploadUi {
     this.isEditingMode = true;
   }
 
-  private setupPositionFrame(
-  frame: HTMLElement,
-  container: HTMLElement
-) {
-  const selectedComponent = (globalThis as any).selectedComponent;
-  let aspectRatio = 1;
+  private setupPositionFrame(frame: HTMLElement, container: HTMLElement) {
+    const selectedComponent = (globalThis as any).selectedComponent;
+    let aspectRatio = 1;
+    let tile: Tile | undefined = this.getTile(selectedComponent);
 
-  if (selectedComponent) {
+    if (selectedComponent) {      
+      const selectedComponentEl = selectedComponent.getEl() as HTMLElement;
+      const componentWidth = selectedComponentEl.clientWidth;
+      const componentHeight = selectedComponentEl.clientHeight;
+      aspectRatio = parseFloat((componentWidth / componentHeight).toFixed(2));
+
+      // aspectRatio = 1.5;
+      let frameWidth = componentWidth * aspectRatio;
+      let frameHeight = componentHeight * aspectRatio;
+
+      const containerWidth = container.clientWidth;
+      if (frameWidth > containerWidth) {
+        frameWidth = containerWidth;
+        frameHeight = containerWidth / aspectRatio;
+      }
+
+      if (tile && tile.Left && tile.Top) {
+        frame.style.left = `${tile.Left}`;
+        frame.style.top = `${tile.Top}`;
+      }
+
+      container.style.filter = `brightness(${1 - (tile?.Opacity || 100)/100})`;
+
+      frame.style.width = `${frameWidth}px`;
+      frame.style.height = `${frameHeight}px`;
+    }
+
+    this.addResizeHandles(frame, container, aspectRatio);
+    this.addDragFunctionality(frame, container, aspectRatio);
+  }
+
+  private getTile (selectedComponent: any) {
+    let tile;
     const infoContent: InfoType | null = this.controller.getInfoContent();
-    let tile: Tile | undefined;
     if (infoContent) {
       const tileId = selectedComponent.parent().getId();
       const tiles: Tile[] | undefined = infoContent?.Tiles;
       if (tiles?.length) {
-        tile = tiles.find((t) => t.Id === tileId); 
+        tile = tiles.find((t) => t.Id === tileId);
       }
     }
-    const selectedComponentEl = selectedComponent.getEl() as HTMLElement;
-    const componentWidth = selectedComponentEl.clientWidth;
-    const componentHeight = selectedComponentEl.clientHeight;
-    aspectRatio = parseFloat((componentWidth / componentHeight).toFixed(2));
 
-    // aspectRatio = 1.5;
-    let frameWidth : any = componentWidth * aspectRatio;
-    let frameHeight = componentHeight * aspectRatio;
-
-    const containerWidth = container.clientWidth;
-    if (frameWidth > containerWidth) {
-      frameWidth = containerWidth;
-      frameHeight = containerWidth / aspectRatio;
-    }
-
-    if (tile && tile.Left && tile.Top) {
-      frame.style.left = `${tile.Left}`;
-      frame.style.top = `${tile.Top}`;
-    }
-
-
-    frame.style.width = `${frameWidth}px`;
-    frame.style.height = `${frameHeight}px`;
+    return tile;
   }
 
-  this.addResizeHandles(frame, container, aspectRatio);
-  this.addDragFunctionality(frame, container, aspectRatio);
-}
-
-
-  private addResizeHandles(frame: HTMLElement, container: HTMLElement, tileAspectRatio: number) {
+  private addResizeHandles(
+    frame: HTMLElement,
+    container: HTMLElement,
+    tileAspectRatio: number
+  ) {
     const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
     handles.forEach((handle) => {
       const handleDiv = document.createElement("div");
@@ -357,13 +364,21 @@ export class ImageUploadUi {
         frame.style.left = `${newLeft}px`;
         frame.style.top = `${newTop}px`;
 
-        this.controller.captureCurrentPosition(frame, container, tileAspectRatio);
+        this.controller.captureCurrentPosition(
+          frame,
+          container,
+          tileAspectRatio
+        );
       };
 
       const onMouseUp = () => {
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
-        this.controller.captureCurrentPosition(frame, container, tileAspectRatio);
+        this.controller.captureCurrentPosition(
+          frame,
+          container,
+          tileAspectRatio
+        );
         const newPosition = this.controller.getCurrentPosition();
       };
 
@@ -411,7 +426,11 @@ export class ImageUploadUi {
         frame.style.left = `${newLeft}px`;
         frame.style.top = `${newTop}px`;
 
-        this.controller.captureCurrentPosition(frame, container, tileAspectRatio);
+        this.controller.captureCurrentPosition(
+          frame,
+          container,
+          tileAspectRatio
+        );
       }
     });
 
@@ -421,16 +440,22 @@ export class ImageUploadUi {
         e.stopPropagation();
         isDragging = false;
         document.body.style.userSelect = "auto";
-        this.controller.captureCurrentPosition(frame, container, tileAspectRatio);
+        this.controller.captureCurrentPosition(
+          frame,
+          container,
+          tileAspectRatio
+        );
         const newPosition = this.controller.getCurrentPosition();
-        console.log('newPosition: >> ', newPosition);
+        console.log("newPosition: >> ", newPosition);
       }
     });
   }
 
   private createOpacitySlider(uploadArea: HTMLElement) {
+    const selectedComponent = (globalThis as any).selectedComponent;
     const modalFooter = document.createElement("div");
     modalFooter.className = "modal-footer-slider";
+    const tile: Tile | undefined = this.getTile(selectedComponent);
 
     const opacitySlider = document.createElement("input");
     Object.assign(opacitySlider, {
@@ -438,7 +463,7 @@ export class ImageUploadUi {
       min: "0",
       max: "100",
       step: "1",
-      value: "0",
+      value: tile?.Opacity || "0",
     });
     Object.assign(opacitySlider.style, {
       width: "100%",
@@ -459,27 +484,15 @@ export class ImageUploadUi {
       const selectedComponent = (globalThis as any).selectedComponent;
       if (!selectedComponent) return;
 
-      Object.assign(selectedComponent.getEl().style, {
-        backgroundColor: `rgba(0, 0, 0, ${opacityValue})`,
-        // backgroundImage: `url(${img.src})`,
-        backgroundSize: "cover",
+      this.opacityValue = opacityValue * 100;
+
+      const container = uploadArea.querySelector(".image-editor-container") as HTMLDivElement;
+      if (!container) return;
+
+      Object.assign(container.style, {
+        opacity: "1",
+        filter: `brightness(${1 - opacityValue})`,
       });
-
-      const pageData = (globalThis as any).pageData;
-      if (pageData.PageType === "Information") {
-        const infoSectionManager = new InfoSectionManager();
-        infoSectionManager.updateInfoTileAttributes(
-          selectedComponent.parent().parent().getId(),
-          selectedComponent.parent().getId(),
-          "Opacity",
-          parseInt(opacitySlider.value)
-        );
-      }
-
-      // Object.assign(img.style, {
-      //   opacity: "1",
-      //   filter: `brightness(${1 - opacityValue})`,
-      // });
     });
 
     const sliderWrapper = document.createElement("div");
@@ -501,7 +514,6 @@ export class ImageUploadUi {
 
   /* Drag and Drop Methods */
   private setupDragAndDrop(uploadArea: HTMLElement) {
-
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.id = "fileInput";
@@ -521,7 +533,7 @@ export class ImageUploadUi {
 
     uploadArea.addEventListener("click", (e) => {
       if (e.target === uploadArea) {
-        console.log('clicked')
+        console.log("clicked");
         if (this.checkIfIsEditingMode()) return;
         fileInput.click();
       }
@@ -563,7 +575,7 @@ export class ImageUploadUi {
   }
 
   private checkIfIsEditingMode() {
-    console.log('this.isEditingMode', this.isEditingMode)
+    console.log("this.isEditingMode", this.isEditingMode);
     if (this.isEditingMode) return true;
     return false;
   }

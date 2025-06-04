@@ -88,18 +88,19 @@ export class ImageUploadManager {
     const scaleY = containerRect.height / frameRect.height;
     const scale = Math.max(scaleX, scaleY); 
     let backgroundSizePercent = scale * 100;
-
     const selectedComponent = (globalThis as any).selectedComponent;
 
     if (selectedComponent) {
-      const parent = selectedComponent.parent();
-      const components = parent.components;
+      const tileWrapperComp = selectedComponent.parent();
+      const rowComponent = tileWrapperComp.parent();
+      const components = rowComponent.components();
+
       if (components.length === 1) {
-        if (parent?.getStyle()?.["height"] === '80px') {
+        if (tileWrapperComp?.getStyle()?.["height"] === '80px') {
             backgroundSizePercent = 110          
-        } else if (parent?.getStyle()?.["height"] === '120px') {
+        } else if (tileWrapperComp?.getStyle()?.["height"] === '120px') {
             backgroundSizePercent = 120
-        } else if (parent?.getStyle()?.["height"] === '160px') {
+        } else if (tileWrapperComp?.getStyle()?.["height"] === '160px') {
             backgroundSizePercent = 150
         }
       }
@@ -131,7 +132,7 @@ export class ImageUploadManager {
   }
 
   /* Image Handling Methods */
-  public async handleSave() {
+  public async handleSave(opacityValue: number) {
     try {
       const selectedImages = this.getSelectedImages();
 
@@ -142,7 +143,7 @@ export class ImageUploadManager {
       } else if (this.type === "cta") {
         this.updateInfoCtaButtonImage(selectedImages[0]);
       } else {
-        await this.saveSingleImage(selectedImages[0]);
+        await this.saveSingleImage(selectedImages[0], opacityValue);
       }
     } catch (error) {
       console.error("Error during save:", error);
@@ -158,7 +159,7 @@ export class ImageUploadManager {
     );
   }
 
-  private async saveSingleImage(image: { Id: string; Url: string }) {
+  private async saveSingleImage(image: { Id: string; Url: string }, opacityValue: number) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
@@ -172,6 +173,7 @@ export class ImageUploadManager {
       styleProperties["background-size"] = this.currentPosition.backgroundSize;
       styleProperties["background-position"] =
         this.currentPosition.backgroundPosition;
+      styleProperties['background-color'] = `rgba(0, 0, 0, ${opacityValue})`
     }
 
     selectedComponent.addStyle(styleProperties);
@@ -186,6 +188,13 @@ export class ImageUploadManager {
         tileWrapper.getId(),
         "BGImageUrl",
         safeMediaUrl
+      );
+
+      this.infoSectionManager.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId(),
+        "Opacity",
+        opacityValue
       );
 
       if (this.currentPosition) {

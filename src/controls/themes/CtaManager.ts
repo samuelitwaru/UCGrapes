@@ -165,7 +165,7 @@ export class CtaManager {
     this.updateCtaButtonType(selectedComponent.getId(), "Image");
 
     if (!this.isInformationPage()) {
-      const defaultImagePath = "/Resources/UCGrapes1/src/images/image.png";
+      const defaultImagePath = "/Resources/UCGrapes1/public/images/image.png";
       this.contentMapper.updateContentButtonType(
         ctaButtonAttributes.CtaId,
         "Image",
@@ -405,7 +405,8 @@ export class CtaManager {
       ? `data-gjs-type="info-cta-section"`
       : `data-gjs-type=cta-buttons`;
     const imgUrl =
-      attributes.CtaButtonImgUrl || `/Resources/UCGrapes1/src/images/image.png`;
+      attributes.CtaButtonImgUrl ||
+      `/Resources/UCGrapes/public/images/image.png`;
 
     const editIconSVG = attributes.CtaButtonImgUrl
       ? `<svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="22" height="22" viewBox="0 0 33 33">

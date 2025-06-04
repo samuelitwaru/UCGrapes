@@ -229,7 +229,7 @@ export class PageCreationService {
       }
       tileAttributes = (globalThis as any).tileMapper.getTile(rowId, tileId);
     }
-    
+
     new PageAttacher().removeOtherEditors();
     if (childPage) {
       new ChildEditor(childPage.PageId, childPage).init(tileAttributes);
@@ -291,7 +291,7 @@ export class PageCreationService {
       CtaColor: "#ffffff",
       CtaBGColor: "CtaColorOne",
       CtaButtonType: "Image",
-      CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+      CtaButtonImgUrl: "/Resources/UCGrapes1/public/images/image.png",
       CtaButtonIcon: icon,
       CtaSupplierIsConnected: Boolean(formData.supplier_id),
       CtaConnectedSupplierId: formData.supplier_id || null,

@@ -291,7 +291,7 @@ export class PageCreationService {
       CtaColor: "#ffffff",
       CtaBGColor: "ctaColor1",
       CtaButtonType: "Image",
-      CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+      CtaButtonImgUrl: "/Resources/UCGrapes/public/images/image.png",
       CtaButtonIcon: icon,
       CtaSupplierIsConnected: Boolean(formData.supplier_id),
       CtaConnectedSupplierId: formData.supplier_id || null,

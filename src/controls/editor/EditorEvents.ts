@@ -22,6 +22,7 @@ export class EditorEvents {
   private frameId: any;
   private pageData: any;
   private isHome?: boolean;
+  private isNewPage?: boolean;
 
   // Services and managers
   private editorManager: any;
@@ -39,6 +40,7 @@ export class EditorEvents {
     this.toolboxService = new ToolBoxService();
     this.initializeResizeState();
     this.initializeTileHeights();
+    this.isNewPage = false;
   }
 
   private initializeResizeState(): void {
@@ -68,12 +70,13 @@ export class EditorEvents {
     };
   }
 
-  public init(editor: any, pageData: any, frameEditor: any, isHome?: boolean): void {
+  public init(editor: any, pageData: any, frameEditor: any, isHome?: boolean, isNewPage?: boolean): void {
     this.editor = editor;
     this.pageData = pageData;
     this.pageId = pageData.PageId;
     this.frameId = frameEditor;
     this.isHome = isHome;
+    this.isNewPage = isNewPage;
 
     this.initializeUIManager();
     this.setupGlobalReferences();
@@ -112,14 +115,16 @@ export class EditorEvents {
         return;
       }
 
-      this.setupGlobalWrapper(wrapper);
+      this.setupGlobalWrapper(wrapper, this.editor);
       this.setupWrapperEventListeners(wrapper);
       this.initializePostLoadComponents();
+      this.activateFrameEvents(wrapper);
     });
   }
 
-  private setupGlobalWrapper(wrapper: any): void {
+  private setupGlobalWrapper(wrapper: any, editor: any): void {
     (globalThis as any).wrapper = wrapper;
+    (globalThis as any).nextEditor = editor
   }
 
   private setupWrapperEventListeners(wrapper: any): void {
@@ -691,6 +696,13 @@ export class EditorEvents {
   public activateEditor(frameId: any): void {
     this.ensureUIManager();
     this.uiManager.activateEditor(frameId);
+  }
+
+  private activateFrameEvents(wrapper: any): void {   
+    if (!this.isHome) return;
+    const frameContainer = wrapper?.find('#frame-container')[0]?.getEl();
+    
+    if (frameContainer) frameContainer.style.pointerEvents = "all";
   }
 
   private ensureUIManager(): void {

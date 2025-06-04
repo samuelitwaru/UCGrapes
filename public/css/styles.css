@@ -481,6 +481,11 @@ span#scroll-right:hover {
   border-width: 1px;
 }
 
+.appbar-title-container h1[contenteditable="true"]:empty:before {
+      content: attr(data-placeholder);
+      color: #9e9e9ec5;
+    }
+
 .app-bar .appbar-title-container svg {
   width: 18px;
   height: 18px;

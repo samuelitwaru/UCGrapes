@@ -100,7 +100,7 @@ export class ChildEditor {
       calendarEditor.load();
     }
 
-    this.editorEvents.init(childEditor, this.pageData, editorId);
+    this.editorEvents.init(childEditor, this.pageData, editorId, false, this.isNewPage);
     this.editorManager.finalizeEditorSetup(childEditor);
     this.themeManager.applyTheme(this.themeManager.currentTheme);
     this.updatePositions();
@@ -119,7 +119,10 @@ export class ChildEditor {
     );
 
     newEditor.render(frameContainer);
+
   }
+
+  
 
   getEditorId(): number {
     let id = 0;

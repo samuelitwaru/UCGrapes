@@ -3,7 +3,6 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { FrameList } from "../../ui/components/editor-content/FrameList";
 import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavigatorButton";
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
-import { demoPages } from "../../utils/test-data/pages";
 import { ThemeManager } from "../themes/ThemeManager";
 import { HistoryManager } from "../toolbox/HistoryManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";

@@ -3,6 +3,7 @@ import { ResizeState, TileHeights } from "../../types";
 import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
+import { ImageUploadManager } from "../ImageUploadManager";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { ThemeManager } from "../themes/ThemeManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -418,17 +419,12 @@ export class EditorEvents {
       modal.style.display = "flex";
 
       // Pass "info" as type and sectionId as id
-      const modalContent = new ImageUpload("info", sectionId);
+      const modalContent = new ImageUploadManager("info", sectionId);
       modalContent.render(modal);
 
       document.body.appendChild(modal);
       return;
     }
-
-
-
-
-
   }
 
   private createImageUploadModal(selectedComponent: any): void {
@@ -436,8 +432,8 @@ export class EditorEvents {
     modal.classList.add("tb-modal");
     modal.style.display = "flex";
 
-    const tileComp = selectedComponent.closest(".template-wrapper");
-    const modalContent = new ImageUpload("tile", tileComp.getId());
+    const tileComp = selectedComponent.closest('[data-gjs-type="info-tiles-section"]');
+    const modalContent = new ImageUploadManager("tile", tileComp?.getId());
     modalContent.render(modal);
 
     const uploadInput = this.createUploadInput();

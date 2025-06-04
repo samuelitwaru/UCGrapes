@@ -251,8 +251,6 @@ export class InfoSectionManager {
             Text: "Title",
             Color: "#333333",
             Align: "left",
-            BGSize: 1,
-            BGPosition: 1,
             Action: {
               ObjectType: "",
               ObjectId: "",
@@ -402,9 +400,7 @@ export class InfoSectionManager {
   }
 
   updateInfoCtaAttributes(infoId: string, attribute: string, value: any) {
-    const infoType: InfoType = (
-      globalThis as any
-    ).infoContentMapper.getInfoContent(infoId);
+    const infoType: InfoType | null = this.getInfoContent(infoId);
     if (infoType) {
       const ctaAttributes = infoType.CtaAttributes;
       if (ctaAttributes) {
@@ -415,6 +411,14 @@ export class InfoSectionManager {
     }
   }
 
+  getInfoContent(infoId: string) {  
+    const pageId = (globalThis as any).currentPageId;  
+    const infoMapper = new InfoContentMapper(pageId);
+    const infoContent: InfoType | null = infoMapper.getInfoContent(infoId);
+
+    return infoContent;
+  }
+
   updateInfoTileAttributes(
     infoId: string,
     tileId: string,
@@ -422,8 +426,7 @@ export class InfoSectionManager {
     value: any
   ) {
     const pageId = (globalThis as any).currentPageId;
-    const infoMapper = new InfoContentMapper(pageId);
-    const tileInfoSectionAttributes = infoMapper.getInfoContent(infoId);
+    const tileInfoSectionAttributes = this.getInfoContent(infoId);
     if (tileInfoSectionAttributes) {
       const tile = tileInfoSectionAttributes.Tiles?.find(
         (tile) => tile.Id === tileId

@@ -1,3 +1,4 @@
+import { i18n } from "../../i18n/i18n";
 import { InfoType } from "../../types";
 import { ActionListPopUp } from "../../ui/views/ActionListPopUp";
 import {
@@ -192,8 +193,6 @@ export class TileManager {
           Text: "Title",
           Color: "#333333",
           Align: "left",
-          BGSize: 1,
-          BGPosition: 1,
           Action: {
             ObjectType: "",
             ObjectId: "",
@@ -374,7 +373,7 @@ export class TileManager {
             </div>
             <div ${DefaultAttributes} id="igtdq" data-gjs-type="default" class="tile-title-section">
               <span ${DefaultAttributes} id="is1dw" data-gjs-type="text" class="tile-close-title top-right selected-tile-title">×</span>
-              <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="Title" class="tile-title">Title</span>
+              <span ${DefaultAttributes} style="display: block" id="ic26t" data-gjs-type="text" is-hidden="false" title="${i18n.t('tile.title')}" class="tile-title">${i18n.t('tile.title')}</span>
             </div>
         </div>
         <button ${DefaultAttributes} id="i9sxl" data-gjs-type="default" title="Delete template" class="action-button delete-button">&minus;</button>

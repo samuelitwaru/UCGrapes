@@ -13,9 +13,16 @@ export class ImageUpload {
   fileListElement: HTMLElement | null = null;
   infoId?: string;
   sectionId?: string;
-  croppedUrl: string | null = null;
   private selectedImages: Map<string, { Id: string; Url: string }> = new Map();
   private saveCallback?: (urls: Array<{ Id: string; Url: string }>) => void;
+  // Add position tracking properties
+  private currentPosition: {
+    x: number;
+    y: number;
+    scale: number;
+    backgroundSize: string;
+    backgroundPosition: string;
+  } | null = null;
 
   constructor(
     type: any,
@@ -153,10 +160,49 @@ export class ImageUpload {
     }
   }
 
+  /* Position Capture Methods */
+  private captureCurrentPosition(
+    img: HTMLImageElement,
+    frame: HTMLElement,
+    container: HTMLElement
+  ) {
+    const imgRect = img.getBoundingClientRect();
+    const frameRect = frame.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    // Calculate relative position as percentages
+    const relativeX = ((frameRect.left - imgRect.left) / imgRect.width) * 100;
+    const relativeY = ((frameRect.top - imgRect.top) / imgRect.height) * 100;
+
+    // Calculate scale based on frame size vs image size
+    const scaleX = frameRect.width / imgRect.width;
+    const scaleY = frameRect.height / imgRect.height;
+    const scale = Math.min(scaleX, scaleY);
+
+    // Calculate background-position values (CSS percentages)
+    const backgroundPosX = relativeX * -1;
+    const backgroundPosY = relativeY * -1;
+
+    this.currentPosition = {
+      x: relativeX,
+      y: relativeY,
+      scale: scale,
+      backgroundSize: `${(1 / scale) * 100}%`,
+      backgroundPosition: `${backgroundPosX}% ${backgroundPosY}%`,
+    };
+
+    return this.currentPosition;
+  }
+
   /* Image Handling Methods */
   private async handleSave() {
     try {
       const selectedImages = Array.from(this.selectedImages.values());
+
+      // Log final position before saving
+      if (this.currentPosition) {
+        console.log("Final position data being saved:", this.currentPosition);
+      }
 
       if (this.saveCallback) {
         this.saveCallback(selectedImages);
@@ -188,12 +234,25 @@ export class ImageUpload {
     if (!selectedComponent) return;
 
     const safeMediaUrl = encodeURI(image.Url);
-    selectedComponent.addStyle({
+
+    // Apply positioning if available
+    const styleProperties: any = {
       "background-image": `url(${safeMediaUrl})`,
-      "background-size": "cover",
-      "background-position": "center",
       "background-blend-mode": "overlay",
-    });
+    };
+
+    if (this.currentPosition) {
+      styleProperties["background-size"] = this.currentPosition.backgroundSize;
+      styleProperties["background-position"] =
+        this.currentPosition.backgroundPosition;
+      console.log("Applying positioned background styles:", styleProperties);
+    } else {
+      // Fallback to default centering
+      styleProperties["background-size"] = "cover";
+      styleProperties["background-position"] = "center";
+    }
+
+    selectedComponent.addStyle(styleProperties);
 
     const tileWrapper = selectedComponent.parent();
     const rowComponent = tileWrapper.parent();
@@ -208,17 +267,42 @@ export class ImageUpload {
         safeMediaUrl
       );
 
-      const tileAttributes = this.updateInfoTileAttributes(rowComponent.getId(), tileWrapper.getId());
+      // Save position data if available
+      if (this.currentPosition) {
+        infoSectionManager.updateInfoTileAttributes(
+          rowComponent.getId(),
+          tileWrapper.getId(),
+          "BackgroundSize",
+          this.currentPosition.backgroundSize
+        );
+        infoSectionManager.updateInfoTileAttributes(
+          rowComponent.getId(),
+          tileWrapper.getId(),
+          "BackgroundPosition",
+          this.currentPosition.backgroundPosition
+        );
+      }
 
-      const tileProperties = new TileProperties(selectedComponent, tileAttributes);
+      const tileAttributes = this.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId()
+      );
+      const tileProperties = new TileProperties(
+        selectedComponent,
+        tileAttributes
+      );
       tileProperties.setTileAttributes();
     }
   }
 
-  private updateInfoTileAttributes(rowComponentId: any, tileWrapperId: any): any {
+  private updateInfoTileAttributes(
+    rowComponentId: any,
+    tileWrapperId: any
+  ): any {
     if (!rowComponentId || !tileWrapperId) return;
-    const tileInfoSectionAttributes: InfoType = (globalThis as any).infoContentMapper
-      .getInfoContent(rowComponentId);
+    const tileInfoSectionAttributes: InfoType = (
+      globalThis as any
+    ).infoContentMapper.getInfoContent(rowComponentId);
 
     return tileInfoSectionAttributes?.Tiles?.find(
       (tile: any) => tile.Id === tileWrapperId
@@ -246,6 +330,7 @@ export class ImageUpload {
     }
     this.loadMediaFiles();
   }
+
   private async loadMediaFiles() {
     try {
       const media = await this.toolboxService.getMediaFiles();
@@ -255,14 +340,14 @@ export class ImageUpload {
         if (media && media.length > 0) {
           const sortedMedia = this.sortMediaBySelection(media);
           sortedMedia.forEach((item: Media) => {
-            const singleImageFile = new SingleImageFile(
-              item,
-              this.type,
-              this,
-              this.infoId,
-              this.sectionId
-            );
-            singleImageFile.render(this.fileListElement as HTMLElement);
+            // const singleImageFile = new SingleImageFile(
+            //   item,
+            //   this.type,
+            //   this,
+            //   this.infoId,
+            //   this.sectionId
+            // );
+            // singleImageFile.render(this.fileListElement as HTMLElement);
           });
 
           const loadingElement = document.getElementById(
@@ -281,6 +366,7 @@ export class ImageUpload {
       }
     }
   }
+
   private sortMediaBySelection(media: Media[]): Media[] {
     if (this.type !== "info" || !this.infoId) {
       return media;
@@ -296,6 +382,7 @@ export class ImageUpload {
       return isASelected ? -1 : 1;
     });
   }
+
   private isMediaSelected(mediaId: string): boolean {
     try {
       const existingImages = this.getExistingImages();
@@ -307,6 +394,7 @@ export class ImageUpload {
       return false;
     }
   }
+
   private getExistingImages(): Image[] {
     const pageId = (globalThis as any).currentPageId;
     if (!pageId) return [];
@@ -321,6 +409,7 @@ export class ImageUpload {
 
     return content?.Images || [];
   }
+
   private async setupDragAndDrop(uploadArea: HTMLElement) {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -369,6 +458,7 @@ export class ImageUpload {
       }
     });
   }
+
   private async handleFiles(files: FileList) {
     const fileArray = Array.from(files);
     for (const file of fileArray) {
@@ -442,14 +532,15 @@ export class ImageUpload {
     img.src = dataUrl;
 
     const frame = document.createElement("div");
-    frame.id = "crop-frame";
+    frame.id = "position-frame"; // Changed from crop-frame to position-frame
     Object.assign(frame.style, {
       position: "absolute",
-      border: "2px dashed #5068a8",
+      border: "2px solid #5068a8", // Solid border instead of dashed for positioning
+      backgroundColor: "rgba(80, 104, 168, 0.1)", // Semi-transparent overlay
+      cursor: "move",
     });
 
-    this.setupCropFrame(img, frame, imageContainer);
-    this.createOverlays(imageContainer, frame);
+    this.setupPositionFrame(img, frame, imageContainer);
 
     imageContainer.appendChild(img);
     imageContainer.appendChild(frame);
@@ -460,7 +551,7 @@ export class ImageUpload {
     this.updateModalActions();
   }
 
-  private setupCropFrame(
+  private setupPositionFrame(
     img: HTMLImageElement,
     frame: HTMLElement,
     container: HTMLElement
@@ -486,14 +577,20 @@ export class ImageUpload {
         left: `${(container.offsetWidth - frameWidth) / 2}px`,
         top: `${(container.offsetHeight - frameHeight) / 2}px`,
       });
-      this.initializeOverlay(frame, container);
+
+      // Initial position capture
+      this.captureCurrentPosition(img, frame, container);
     };
 
-    this.addResizeHandles(frame);
-    this.addDragFunctionality(frame, container);
+    this.addResizeHandles(frame, img, container);
+    this.addDragFunctionality(frame, container, img);
   }
 
-  private addResizeHandles(frame: HTMLElement) {
+  private addResizeHandles(
+    frame: HTMLElement,
+    img: HTMLImageElement,
+    container: HTMLElement
+  ) {
     const handles = ["top-left", "top-right", "bottom-left", "bottom-right"];
     handles.forEach((handle) => {
       const handleDiv = document.createElement("div");
@@ -504,6 +601,7 @@ export class ImageUpload {
         height: "10px",
         backgroundColor: "#5068a8",
         zIndex: "11",
+        cursor: "nw-resize",
       });
 
       if (handle.includes("top")) handleDiv.style.top = "-5px";
@@ -512,14 +610,16 @@ export class ImageUpload {
       if (handle.includes("right")) handleDiv.style.right = "-5px";
 
       frame.appendChild(handleDiv);
-      this.addResizeLogic(handleDiv, frame, handle);
+      this.addResizeLogic(handleDiv, frame, handle, img, container);
     });
   }
 
   private addResizeLogic(
     handleDiv: HTMLElement,
     frame: HTMLElement,
-    handle: string
+    handle: string,
+    img: HTMLImageElement,
+    container: HTMLElement
   ) {
     handleDiv.addEventListener("mousedown", (e) => {
       e.preventDefault();
@@ -551,12 +651,16 @@ export class ImageUpload {
           frame.style.top = `${startTop + dy}px`;
         }
 
-        this.initializeOverlay(frame, frame.parentElement as HTMLElement);
+        // Capture position on resize
+        this.captureCurrentPosition(img, frame, container);
       };
 
       const onMouseUp = () => {
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
+
+        // Final position capture on resize end
+        this.captureCurrentPosition(img, frame, container);
       };
 
       document.addEventListener("mousemove", onMouseMove);
@@ -564,7 +668,11 @@ export class ImageUpload {
     });
   }
 
-  private addDragFunctionality(frame: HTMLElement, container: HTMLElement) {
+  private addDragFunctionality(
+    frame: HTMLElement,
+    container: HTMLElement,
+    img: HTMLImageElement
+  ) {
     let isDragging = false;
     let offsetX = 0;
     let offsetY = 0;
@@ -598,7 +706,9 @@ export class ImageUpload {
 
         frame.style.left = `${newLeft}px`;
         frame.style.top = `${newTop}px`;
-        this.updateOverlays(frame, container);
+
+        // Capture position during drag
+        this.captureCurrentPosition(img, frame, container);
       }
     });
 
@@ -608,116 +718,29 @@ export class ImageUpload {
         e.stopPropagation();
         isDragging = false;
         document.body.style.userSelect = "auto";
+
+        // Enhanced position capture and logging on drag end
+        const finalPosition = this.captureCurrentPosition(
+          img,
+          frame,
+          container
+        );
+        console.log("Drag completed - Final position:", {
+          timestamp: new Date().toISOString(),
+          framePosition: {
+            left: frame.style.left,
+            top: frame.style.top,
+            width: frame.style.width,
+            height: frame.style.height,
+          },
+          calculatedPosition: finalPosition,
+          dragEndCoordinates: {
+            clientX: e.clientX,
+            clientY: e.clientY,
+          },
+        });
       }
     });
-  }
-
-  private createOverlays(container: HTMLElement, frame: HTMLElement) {
-    const overlayStyle = {
-      position: "absolute",
-      backgroundColor: "rgba(0, 0, 0, 0.7)",
-      zIndex: "5",
-      pointerEvents: "none",
-    };
-
-    ["overlayTop", "overlayBottom", "overlayLeft", "overlayRight"].forEach(
-      (id) => {
-        const overlay = document.createElement("div");
-        overlay.id = id;
-        Object.assign(overlay.style, overlayStyle);
-        container.appendChild(overlay);
-      }
-    );
-
-    setTimeout(() => this.initializeOverlay(frame, container), 0);
-  }
-
-  private initializeOverlay(frame: HTMLElement, container: HTMLElement) {
-    const frameRect = frame.getBoundingClientRect();
-    const parentRect = container.getBoundingClientRect();
-
-    const overlayTop = container.querySelector("#overlayTop") as HTMLElement;
-    const overlayBottom = container.querySelector(
-      "#overlayBottom"
-    ) as HTMLElement;
-    const overlayLeft = container.querySelector("#overlayLeft") as HTMLElement;
-    const overlayRight = container.querySelector(
-      "#overlayRight"
-    ) as HTMLElement;
-
-    if (overlayTop) {
-      Object.assign(overlayTop.style, {
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: `${frameRect.top - parentRect.top}px`,
-      });
-    }
-
-    if (overlayBottom) {
-      Object.assign(overlayBottom.style, {
-        top: `${frameRect.bottom - parentRect.top}px`,
-        left: "0",
-        width: "100%",
-        height: `${parentRect.bottom - frameRect.bottom}px`,
-      });
-    }
-
-    if (overlayLeft) {
-      Object.assign(overlayLeft.style, {
-        top: `${frameRect.top - parentRect.top}px`,
-        left: "0",
-        width: `${frameRect.left - parentRect.left}px`,
-        height: `${frameRect.height}px`,
-      });
-    }
-
-    if (overlayRight) {
-      Object.assign(overlayRight.style, {
-        top: `${frameRect.top - parentRect.top}px`,
-        left: `${frameRect.right - parentRect.left}px`,
-        width: `${parentRect.right - frameRect.right}px`,
-        height: `${frameRect.height}px`,
-      });
-    }
-  }
-
-  private updateOverlays(frame: HTMLElement, container: HTMLElement) {
-    const parentRect = container.getBoundingClientRect();
-    const newTop = frame.offsetTop;
-    const newLeft = frame.offsetLeft;
-
-    const overlayTop = container.querySelector("#overlayTop") as HTMLElement;
-    const overlayBottom = container.querySelector(
-      "#overlayBottom"
-    ) as HTMLElement;
-    const overlayLeft = container.querySelector("#overlayLeft") as HTMLElement;
-    const overlayRight = container.querySelector(
-      "#overlayRight"
-    ) as HTMLElement;
-
-    if (overlayTop) overlayTop.style.height = `${newTop}px`;
-    if (overlayBottom) {
-      overlayBottom.style.top = `${newTop + frame.offsetHeight}px`;
-      overlayBottom.style.height = `${
-        parentRect.height - (newTop + frame.offsetHeight)
-      }px`;
-    }
-    if (overlayLeft) {
-      Object.assign(overlayLeft.style, {
-        top: `${newTop}px`,
-        height: `${frame.offsetHeight}px`,
-        width: `${newLeft}px`,
-      });
-    }
-    if (overlayRight) {
-      Object.assign(overlayRight.style, {
-        top: `${newTop}px`,
-        height: `${frame.offsetHeight}px`,
-        left: `${newLeft + frame.offsetWidth}px`,
-        width: `${parentRect.width - (newLeft + frame.offsetWidth)}px`,
-      });
-    }
   }
 
   private createOpacitySlider(img: HTMLImageElement, uploadArea: HTMLElement) {
@@ -772,6 +795,12 @@ export class ImageUpload {
         opacity: "1",
         filter: `brightness(${1 - opacityValue})`,
       });
+
+      // Log opacity changes
+      console.log("Opacity changed:", {
+        value: opacityValue,
+        percentage: `${opacitySlider.value}%`,
+      });
     });
 
     const sliderWrapper = document.createElement("div");
@@ -790,64 +819,7 @@ export class ImageUpload {
       uploadArea.appendChild(modalFooter);
     }
   }
-  public async saveCroppedImage(
-    img: HTMLImageElement,
-    frame: HTMLElement,
-    file: File
-  ): Promise<string | null> {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
 
-    if (!ctx) return null;
-
-    const imgRect = img.getBoundingClientRect();
-    const frameRect = frame.getBoundingClientRect();
-
-    const scaleX = img.naturalWidth / imgRect.width;
-    const scaleY = img.naturalHeight / imgRect.height;
-
-    const cropX = (frameRect.left - imgRect.left) * scaleX;
-    const cropY = (frameRect.top - imgRect.top) * scaleY;
-    const cropWidth = frameRect.width * scaleX;
-    const cropHeight = frameRect.height * scaleY;
-
-    canvas.width = cropWidth;
-    canvas.height = cropHeight;
-
-    ctx.drawImage(
-      img,
-      cropX,
-      cropY,
-      cropWidth,
-      cropHeight,
-      0,
-      0,
-      cropWidth,
-      cropHeight
-    );
-    const croppedDataUrl = canvas.toDataURL("image/png");
-
-    const uniqueId = Date.now().toString();
-    const uniqueFileName = `${file.name.split(".")[0]}-${uniqueId}.png`;
-
-    const newMedia: Media = {
-      MediaId: uniqueId,
-      MediaName: file.name,
-      MediaUrl: croppedDataUrl,
-      MediaType: file.type,
-      MediaSize: file.size,
-    };
-
-    const response = await this.toolboxService.uploadFile(
-      newMedia.MediaUrl,
-      newMedia.MediaName,
-      newMedia.MediaSize,
-      newMedia.MediaType
-    );
-
-    this.croppedUrl = response.BC_Trn_Media.MediaUrl;
-    return this.croppedUrl;
-  }
 
   private closeModal() {
     const modal = this.modalContent.parentElement as HTMLElement;
@@ -871,6 +843,7 @@ export class ImageUpload {
       reader.readAsDataURL(file);
     });
   }
+
   public render(container: HTMLElement) {
     container.appendChild(this.modalContent);
   }

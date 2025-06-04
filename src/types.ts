@@ -154,8 +154,10 @@ export interface Tile {
         ObjectId?: string;
         ObjectUrl?: string;
     };
-    BGSize: number,
-    BGPosition: number
+    BGSize?: string,
+    BGPosition?: string
+    Left?: string;
+    Top?: string;
 }
 
 export interface TrashItem {

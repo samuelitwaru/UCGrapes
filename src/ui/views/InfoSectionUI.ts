@@ -60,7 +60,7 @@ export class InfoSectionUI {
                     src="${
                       cta.CtaButtonImgUrl
                         ? cta.CtaButtonImgUrl
-                        : `/Resources/UCGrapes1/public/images/image.png`
+                        : `/Resources/UCGrapes/public/images/image.png`
                     }" 
                 />
                 <span ${DefaultAttributes} class="edit-cta-image">

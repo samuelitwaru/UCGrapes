@@ -165,7 +165,7 @@ export class CtaManager {
     this.updateCtaButtonType(selectedComponent.getId(), "Image");
 
     if (!this.isInformationPage()) {
-      const defaultImagePath = "/Resources/UCGrapes1/public/images/image.png";
+      const defaultImagePath = "/Resources/UCGrapes/public/images/image.png";
       this.contentMapper.updateContentButtonType(
         ctaButtonAttributes.CtaId,
         "Image",

@@ -130,7 +130,7 @@ export class ThemeManager {
     return this._currentTheme.ThemeColors[colorName as keyof ThemeColors] || 'transparent';
   }
 
-  getThemeCtaColor(colorName: string = "CtaColorOne"): string {
+  getThemeCtaColor(colorName: string = "ctaColor1"): string {
     if (!this._currentTheme || !this._currentTheme.ThemeCtaColors) {
       console.error("ThemeColors is undefined or invalid:", this._currentTheme);
       return '#5068a8';

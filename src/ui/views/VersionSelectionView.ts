@@ -11,7 +11,7 @@ import { EditorEvents } from "../../controls/editor/EditorEvents";
 import { EditorManager } from "../../controls/editor/EditorManager";
 import { ThemeManager } from "../../controls/themes/ThemeManager";
 import { ThemeSelection } from "../components/ThemeSelection";
-import { FormField } from "../components/FormField";
+
 
 export class VersionSelectionView {
   private container: HTMLElement;

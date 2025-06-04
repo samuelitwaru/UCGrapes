@@ -276,6 +276,7 @@ export class ToolBoxService {
   }
 
   async publishAppVersion(appVersionId: string, notify = false) {
+    alert(appVersionId)
     return await this.fetchAPI("/api/toolbox/v2/publish-appversion", {
       method: "POST",
       body: JSON.stringify({

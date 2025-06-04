@@ -44,7 +44,7 @@ export class CtaManager {
       CtaLabel: ctaButton.CallToActionName,
       CtaType: ctaButton.CallToActionType,
       CtaButtonType: "Round",
-      CtaBGColor: "CtaColorOne",
+      CtaBGColor: "ctaColor1",
       CtaAction: ctaAction,
     };
 

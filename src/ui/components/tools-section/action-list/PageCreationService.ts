@@ -289,7 +289,7 @@ export class PageCreationService {
       CtaLabel: formData.field_label || "Call Us",
       CtaAction: formData.field_value,
       CtaColor: "#ffffff",
-      CtaBGColor: "CtaColorOne",
+      CtaBGColor: "ctaColor1",
       CtaButtonType: "Image",
       CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
       CtaButtonIcon: icon,

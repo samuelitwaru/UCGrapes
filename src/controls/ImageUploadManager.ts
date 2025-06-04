@@ -65,7 +65,6 @@ export class ImageUploadManager {
 
   // Get info content
   public getInfoContent(): InfoType | null {
-    console.log('this.infoId', this.infoId)
     if (this.infoId) {
       return this.infoSectionManager.getInfoContent(this.infoId);      
     }
@@ -88,8 +87,23 @@ export class ImageUploadManager {
     const scaleX = containerRect.width / frameRect.width;
     const scaleY = containerRect.height / frameRect.height;
     const scale = Math.max(scaleX, scaleY); 
+    let backgroundSizePercent = scale * 100;
 
-    const backgroundSizePercent = scale * 100;
+    const selectedComponent = (globalThis as any).selectedComponent;
+
+    if (selectedComponent) {
+      const parent = selectedComponent.parent();
+      const components = parent.components;
+      if (components.length === 1) {
+        if (parent?.getStyle()?.["height"] === '80px') {
+            backgroundSizePercent = 110          
+        } else if (parent?.getStyle()?.["height"] === '120px') {
+            backgroundSizePercent = 120
+        } else if (parent?.getStyle()?.["height"] === '160px') {
+            backgroundSizePercent = 150
+        }
+      }
+    }
 
     const backgroundPosX = (relativeX / (100 - (frameRect.width / containerRect.width) * 100)) * 100;
     const backgroundPosY = (relativeY / (100 - (frameRect.height / containerRect.height) * 100)) * 100;

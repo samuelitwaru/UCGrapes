@@ -206,7 +206,7 @@ export class ImageUploadUi {
       border: "1px solid #ccc",
       backgroundImage: `url(${dataUrl})`,
       backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
+      backgroundSize: "100% 100%",
     });
 
     const frame = document.createElement("div");
@@ -251,7 +251,6 @@ export class ImageUploadUi {
     const componentWidth = selectedComponentEl.clientWidth;
     const componentHeight = selectedComponentEl.clientHeight;
     aspectRatio = parseFloat((componentWidth / componentHeight).toFixed(2));
-    console.log('aspectRatio', aspectRatio);
 
     // aspectRatio = 1.5;
     let frameWidth : any = componentWidth * aspectRatio;

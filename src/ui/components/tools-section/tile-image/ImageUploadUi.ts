@@ -256,7 +256,7 @@ export class ImageUploadUi {
         frame.style.top = `${tile.Top}`;
       }
 
-      container.style.filter = `brightness(${1 - (tile?.Opacity || 100)/100})`;
+      container.style.filter = `brightness(${tile?.Opacity ? (1 - (tile.Opacity)/100) : 1})`;
 
       frame.style.width = `${frameWidth}px`;
       frame.style.height = `${frameHeight}px`;

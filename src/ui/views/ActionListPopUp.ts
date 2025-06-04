@@ -32,7 +32,7 @@ export class ActionListPopUp {
       const menuCategory = document.createElement("div");
       menuCategory.classList.add("menu-category");
 
-      category.sort((a, b) => a.label.localeCompare(b.label));
+      // category.sort((a, b) => a.label.localeCompare(b.label));
 
       category.forEach((item) => {
         const menuItem = this.menuItemManager.createMenuItem(item, () => {
@@ -99,9 +99,8 @@ export class ActionListPopUp {
     //   this.menuContainer.style.top = `${relTriggerBottom - 10}px`;
     // } else
     if (spaceAbove >= effectiveMenuHeight + 10) {
-      this.menuContainer.style.top = `${
-        relTriggerTop - effectiveMenuHeight - 0
-      }px`;
+      this.menuContainer.style.top = `${relTriggerTop - effectiveMenuHeight - 0
+        }px`;
     } else {
       this.menuContainer.style.top = "10px";
       if (effectiveMenuHeight > containerHeight - 20) {

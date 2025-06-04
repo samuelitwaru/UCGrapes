@@ -4,7 +4,7 @@ import {
   DefaultAttributes,
   tileDefaultAttributes,
 } from "../../utils/default-attributes";
-import { randomIdGenerator } from "../../utils/helpers";
+import { randomIdGenerator, truncateString } from "../../utils/helpers";
 import { ContentMapper } from "../editor/ContentMapper";
 import { CtaButtonProperties } from "../editor/CtaButtonProperties";
 import { InfoSectionManager } from "../InfoSectionManager";
@@ -107,6 +107,8 @@ export class CtaManager {
     const ctaButtonAttributes = this.getCtaButtonAttributes(selectedComponent);
     if (!ctaButtonAttributes) return;
 
+    ctaButtonAttributes.CtaButtonType = "FullWidth";
+
     const plainButton = this.createPlainButtonHTML(
       selectedComponent.getId(),
       ctaButtonAttributes
@@ -130,11 +132,15 @@ export class CtaManager {
 
     const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes);
     if (!ctaSVG) return;
+
+    ctaButtonAttributes.CtaButtonType = "Icon";
+
     const iconButton = this.createIconButtonHTML(
       selectedComponent.getId(),
       ctaButtonAttributes,
       ctaSVG
     );
+
 
     this.selectComponentAfterAdd(
       selectedComponent.getId(),
@@ -152,6 +158,8 @@ export class CtaManager {
     const ctaButtonAttributes = this.getCtaButtonAttributes(selectedComponent);
     if (!ctaButtonAttributes) return;
 
+    ctaButtonAttributes.CtaButtonType = "Image";
+
     const imgButton = this.createImgButtonHTML(
       selectedComponent.getId(),
       ctaButtonAttributes
@@ -165,7 +173,7 @@ export class CtaManager {
     this.updateCtaButtonType(selectedComponent.getId(), "Image");
 
     if (!this.isInformationPage()) {
-      const defaultImagePath = "/Resources/UCGrapes1/src/images/image.png";
+      const defaultImagePath = "/Resources/UCGrapes/src/images/image.png";
       this.contentMapper.updateContentButtonType(
         ctaButtonAttributes.CtaId,
         "Image",
@@ -185,6 +193,9 @@ export class CtaManager {
 
     const ctaSVG = this.ctaSvgManager.getTypeSVG(ctaButtonAttributes);
     if (!ctaSVG) return;
+
+    ctaButtonAttributes.CtaButtonType = "Round";
+
     const elipseButton = this.createElipseButtonHTML(
       selectedComponent.getId(),
       ctaButtonAttributes,
@@ -322,6 +333,21 @@ export class CtaManager {
     ctaButtonProperties.setctaAttributes();
   }
 
+  getCtaLabel(attributes: any): string {
+    let label = attributes.CtaLabel;
+    if (label) {
+      if (attributes.CtaButtonType === "Round") {
+        label = label.length > 10 ? truncateString(label, 10) : label;
+      } else if (attributes.CtaButtonType === "Icon" || attributes.CtaButtonType === "Image") {
+        label = label.length > 20 ? truncateString(label, 20) : label;
+      } else if (attributes.CtaButtonType === "FullWidth") {
+        label = label.length > 36 ? truncateString(label, 36) : label;
+      }
+      return label;
+    }
+    return "";
+  }
+
   private createPlainButtonHTML(componentId: string, attributes: any): string {
     const bgColor = this.themeManager.getThemeCtaColor(attributes.CtaBGColor);
     const textColor = attributes.CtaColor || "#ffffff";
@@ -346,7 +372,7 @@ export class CtaManager {
                             <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
                         </svg>
                     </div>
-                    <span ${DefaultAttributes} class="label" style="color:${textColor}"> ${attributes.CtaLabel}</span> 
+                    <span ${DefaultAttributes} class="label" style="color:${textColor}"> ${this.getCtaLabel(attributes)}</span> 
                 </button>
             </div>
         `;
@@ -391,7 +417,7 @@ export class CtaManager {
                             <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
                         </svg>
                     </div>
-                    <span ${DefaultAttributes} class="img-button-label label" style="color:${textColor}">${attributes.CtaLabel}</span>
+                    <span ${DefaultAttributes} class="img-button-label label" style="color:${textColor}">${this.getCtaLabel(attributes)}</span>
                     <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${textColor}"></i>
                 </div>
             </div>
@@ -405,7 +431,7 @@ export class CtaManager {
       ? `data-gjs-type="info-cta-section"`
       : `data-gjs-type=cta-buttons`;
     const imgUrl =
-      attributes.CtaButtonImgUrl || `/Resources/UCGrapes1/src/images/image.png`;
+      attributes.CtaButtonImgUrl || `/Resources/UCGrapes/src/images/image.png`;
 
     const editIconSVG = attributes.CtaButtonImgUrl
       ? `<svg ${DefaultAttributes} xmlns="http://www.w3.org/2000/svg" id="Component_57_1" data-name="Component 57 – 1" width="22" height="22" viewBox="0 0 33 33">
@@ -451,7 +477,7 @@ export class CtaManager {
                             <rect fill="#5068a8" ${DefaultAttributes} x="0" y="0" width="36" height="36" fill-opacity="0"/>
                         </svg>
                     </div>
-                    <span ${DefaultAttributes} class="img-button-label label" style="color:${textColor}">${attributes.CtaLabel}</span>
+                    <span ${DefaultAttributes} class="img-button-label label" style="color:${textColor}">${this.getCtaLabel(attributes)}</span>
                     <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${textColor}"></i>
                 </div>
             </div>
@@ -463,6 +489,7 @@ export class CtaManager {
     attributes: any,
     ctaSVG: string
   ): string {
+    console.log('Creating Ellipse Btn.......', attributes);
     const bgColor = this.themeManager.getThemeCtaColor(attributes.CtaBGColor);
     const textColor = attributes.CtaColor || "#ffffff";
     const pageTypeAttribute = this.isInformationPage()
@@ -488,7 +515,7 @@ export class CtaManager {
                     </svg>
                 </div>
             </div>
-            <span class="cta-label label" ${DefaultAttributes}>${attributes.CtaLabel}</span>
+            <span class="cta-label label" ${DefaultAttributes}>${this.getCtaLabel(attributes)}</span>
         </div>
         `;
   }

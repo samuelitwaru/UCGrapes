@@ -687,6 +687,11 @@ export class EditorEvents {
     this.uiManager.removeOtherEditors();
   }
 
+  public removeEditor(): void {
+    this.ensureUIManager();
+    this.uiManager.removeEditor();
+  }
+
   public clearAllEditors(): void {
     this.ensureUIManager();
     this.uiManager.clearAllEditors();

@@ -599,6 +599,28 @@ export class EditorUIManager {
     this.activateNavigators();
   }
 
+  removeEditor(): void {
+    const frameId = (globalThis as any).frameId;
+    const editorContainer = document.querySelector(
+      `#${frameId}-frame`
+    ) as HTMLElement;
+    if (editorContainer) {
+      this.removeOtherEditors();
+      editorContainer.remove();
+    }
+
+    // Remove the corresponding thumbnail from the thumbs list
+    const thumbsList = document.querySelector(
+      ".editor-thumbs-list"
+    ) as HTMLElement;
+    const thumbToRemove = thumbsList.querySelector(
+      `div[id="${frameId}"]`
+    );
+    if (thumbToRemove) {
+      thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+    }
+  }
+
   removeOtherEditors(): void {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
@@ -607,7 +629,6 @@ export class EditorUIManager {
         while (nextElement) {
           const elementToRemove = nextElement;
           nextElement = nextElement.nextElementSibling;
-
           if (elementToRemove) {
             const thumbsList = document.querySelector(
               ".editor-thumbs-list"

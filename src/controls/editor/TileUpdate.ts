@@ -2,6 +2,7 @@ import { InfoType } from "../../types";
 import { minTileHeight } from "../../utils/default-attributes";
 import { resizeButton } from "../../utils/gjs-components";
 import { InfoSectionManager } from "../InfoSectionManager";
+import { InfoContentMapper } from "./InfoContentMapper";
 import { TileMapper } from "./TileMapper";
 
 export class TileUpdate {
@@ -63,9 +64,10 @@ export class TileUpdate {
     const pageData = (globalThis as any).pageData;
     let tileAttributes;
     if (pageData.PageType === "Information") {
-      const tileInfoSectionAttributes: InfoType = (
-        globalThis as any
-      ).infoContentMapper.getInfoContent(rowComponent.getId());
+      const infoContentMapper = new InfoContentMapper(this.pageId);
+      const tileInfoSectionAttributes: InfoType | null = infoContentMapper.getInfoContent(rowComponent.getId());
+
+      if (!tileInfoSectionAttributes) return;
 
       tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
         (tile: any) => tile.Id === tileWrapper.getId()

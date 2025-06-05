@@ -112,7 +112,7 @@ export class PageCreationService {
     ]);
   }
 
-  handleWebLinks() {
+  handleWebLinks() {    
     this.createFormAndModal("web-link-form", "Add Web Link", "WebLink", [
       {
         label: "Link Url",

@@ -435,8 +435,6 @@ export class InfoSectionManager {
         this.setNestedProperty(tile, attributePath, value);
       }
 
-      console.log('tileInfoSectionAttributes: ', tileInfoSectionAttributes)
-
       this.updateInfoMapper(infoId, tileInfoSectionAttributes);
     }
   }

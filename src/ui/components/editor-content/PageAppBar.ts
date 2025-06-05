@@ -133,6 +133,7 @@ export class PageAppBar {
         const newTitle = this.pageTitle.textContent || "";
         this.pageTitle.title = newTitle;
         this.title = newTitle;
+        // this.updateSideBarTitle(newTitle);
 
         this.updatePlaceholderVisibility();
 
@@ -266,8 +267,20 @@ export class PageAppBar {
 
       this.resetTitle(true);
       this.refreshPage();
+      this.updateSideBarTitle(this.title);
       this.updateAddNewInfoSectionVisibility();
       this.updateFrameContainerHoverState();
+    }
+  }
+
+  private updateSideBarTitle (title: string) {
+    console.log('title', title);
+    const sideBarPageTitle = document.getElementById('page-info-title') as HTMLDivElement;
+    if (sideBarPageTitle) {
+      const h3 = sideBarPageTitle.querySelector('h3') as HTMLHeadingElement;
+      if (h3) {
+        h3.textContent = title;       
+      }
     }
   }
 
@@ -304,9 +317,9 @@ export class PageAppBar {
 
         newInfoSectionButtons.forEach((button) => {
           if (shouldShow) {
-            button.style.display ="flex";
+            button.style.pointerEvents ="none";
           } else {
-            button.style.display ="none";
+            button.style.pointerEvents ="auto";
           }
         })
       }
@@ -333,7 +346,6 @@ export class PageAppBar {
       if (this.title === "Untitled") {
         this.isTitleSaved = false;
         if (this.pageTitle) {
-          console.log('hello world')
           this.pageTitle.style.outline = "#d0030378 dashed 1px";
         }
       }

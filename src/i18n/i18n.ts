@@ -240,7 +240,7 @@ export const i18n = new I18n({
       modules: "Modules",
       existing_pages: "Bestaande pagina's",
       call_to_action: "Directe link",
-      email: "e-mail",
+      email: "E-mail",
       phone: "Telefoon",
       maps: "Kaarten",
       calendar: "Kalender",

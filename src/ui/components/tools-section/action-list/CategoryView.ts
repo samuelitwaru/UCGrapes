@@ -121,6 +121,7 @@ export class CategoryView {
           new Alert("error", i18n.t("messages.error.select_tile"));
           return;
         }
+        
         this.pageCreationService.handleWebLinks();
       }
     });

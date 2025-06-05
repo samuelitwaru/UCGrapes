@@ -175,7 +175,7 @@ export class ImageUploadUi {
 
   /* Image Editor Methods */
   public async displayImageEditor(dataUrl: string, file?: File) {
-    if (this.controller.getType === "info") {
+    if (this.controller.getType === "info" || this.controller.getType === "cta") {
       return;
     }
 
@@ -240,6 +240,8 @@ export class ImageUploadUi {
       const componentWidth = selectedComponentEl.clientWidth;
       const componentHeight = selectedComponentEl.clientHeight;
       aspectRatio = parseFloat((componentWidth / componentHeight).toFixed(2));
+
+      if (aspectRatio > 3) aspectRatio = 2.3 
 
       // aspectRatio = 1.5;
       let frameWidth = componentWidth * aspectRatio;
@@ -446,7 +448,6 @@ export class ImageUploadUi {
           tileAspectRatio
         );
         const newPosition = this.controller.getCurrentPosition();
-        console.log("newPosition: >> ", newPosition);
       }
     });
   }

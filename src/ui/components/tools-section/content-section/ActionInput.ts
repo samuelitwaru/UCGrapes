@@ -1,6 +1,7 @@
 import { ContentMapper } from "../../../../controls/editor/ContentMapper";
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
 import { CtaAttributes } from "../../../../types";
+import { PageCreationService } from "../action-list/PageCreationService";
 
 export class ActionInput {
   input: HTMLInputElement;
@@ -108,14 +109,37 @@ export class ActionInput {
     this.input.id = this.inputId;
     this.input.style.marginTop = "10px";
     this.input.value = (this.value as string) || "";
+    
+    // Use readonly instead of disabled for form inputs to allow click events
+    if (this.ctaAttributes.CtaType === "Form") {
+      this.input.readOnly = true;
+      this.input.style.cursor = "pointer";
+      this.input.style.backgroundColor = "#f8f9fa"; // Visual indicator it's not editable
+    }
   }
 
   private attachEventListeners(): void {
     this.input.addEventListener("input", () => {
       this.handleInputChange();
     });
+
+    this.input.addEventListener("click", (e) => {
+      if (this.ctaAttributes.CtaType === "Form") {
+        e.preventDefault();
+        console.log('form clicked');
+        this.openFormEditModal();
+      }
+    });
   }
 
+   private openFormEditModal(): void {
+    const service = new PageCreationService(
+                true,
+                'Form'
+              );
+    service.handleForm();
+  }
+  
   private truncate(length: number): string {
     if (this.input.value.length > length) {
       return this.input.value.substring(0, length) + "..";

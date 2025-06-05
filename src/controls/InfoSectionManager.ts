@@ -70,6 +70,7 @@ export class InfoSectionManager {
   }
 
   addImage(imageUrl: string, nextSectionId?: string) {
+    // console.log('addImage nextSectionId', nextSectionId);
     const imgContainer = this.infoSectionUI.getImage(imageUrl);
     const imageContainer = document.createElement("div");
     imageContainer.innerHTML = imgContainer;
@@ -87,11 +88,14 @@ export class InfoSectionManager {
       this.addToMapper(infoType);
     }
   }
+
   addMultipleImages(
     selectedImages: Array<{ Id: string; Url: string }> = [],
     isUpdating: boolean = false,
-    infoId?: string
+    infoId?: string,
+    nextSectionId?: string
   ) {
+    // console.log('addMultipleImages nextSectionId', nextSectionId);
     console.log("Selected images: ", selectedImages);
     const imgContainer = this.infoSectionUI.getMultipleImages(
       selectedImages.map((img) => img.Url),
@@ -116,7 +120,7 @@ export class InfoSectionManager {
         });
       }
     } else {
-      const append = this.appendComponent(imgContainer);
+      const append = this.appendComponent(imgContainer, nextSectionId);
       if (append) {
         const infoType: InfoType = {
           InfoId: imageComponent.id,
@@ -193,7 +197,7 @@ export class InfoSectionManager {
       quill.focus();
     }, 0);
 
-    
+
 
     // Monitor content changes to enable/disable save button
     quill.on("text-change", () => {
@@ -204,10 +208,10 @@ export class InfoSectionManager {
       saveBtn.disabled = !hasContent;
 
       if (quill.getLength() > 1000) {
-          quill.deleteText(1000, quill.getLength());
-          characterCounterSpan
-          characterCounterSpan.innerHTML = "1000/1000"
-          //console.log("InfoSectionManager");
+        quill.deleteText(1000, quill.getLength());
+        characterCounterSpan
+        characterCounterSpan.innerHTML = "1000/1000"
+        //console.log("InfoSectionManager");
       } else {
         const textLeft = quill.getLength() - 1;
         characterCounterSpan.innerHTML = textLeft + "/1000"
@@ -362,6 +366,7 @@ export class InfoSectionManager {
   }
 
   appendComponent(componentDiv: any, nextSectionId?: string) {
+    // console.log('appendComponent nextSectionId', nextSectionId);
     const containerColumn = this.editor
       ?.getWrapper()
       .find(".container-column-info")[0];
@@ -434,8 +439,8 @@ export class InfoSectionManager {
     }
   }
 
-  getInfoContent(infoId: string) {  
-    const pageId = (globalThis as any).currentPageId;  
+  getInfoContent(infoId: string) {
+    const pageId = (globalThis as any).currentPageId;
     const infoMapper = new InfoContentMapper(pageId);
     const infoContent: InfoType | null = infoMapper.getInfoContent(infoId);
 

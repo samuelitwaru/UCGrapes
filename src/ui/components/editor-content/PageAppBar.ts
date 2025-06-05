@@ -19,11 +19,11 @@ export class PageAppBar {
 
   constructor(id: string, title?: string, isNewPage: boolean = false) {
     this.title = title || "Untitled";
-    this.originalTitle = this.title; 
+    this.originalTitle = this.title;
     this.id = id;
     this.isNewPage = isNewPage;
     this.isTitleSaved =
-      !isNewPage && title !== "Untitled" && title !== "" && title !== undefined; 
+      !isNewPage && title !== "Untitled" && title !== "" && title !== undefined;
     this.container = document.createElement("div");
     this.editor = new EditorManager();
     this.editorWidth = (globalThis as any).deviceWidth;
@@ -101,7 +101,7 @@ export class PageAppBar {
     pageTitle.setAttribute("title", this.title || "Untitled");
     pageTitle.textContent = truncatedTitle || "Untitled";
     this.pageTitle = pageTitle;
-    
+
     this.pageTitle.setAttribute("data-placeholder", "Enter page title");
 
     const iconContainer = document.createElement("div");
@@ -163,8 +163,7 @@ export class PageAppBar {
           this.resetTitle();
         }
         this.pageTitle?.blur();
-      }
-      else if (e.key === "Escape") {
+      } else if (e.key === "Escape") {
         e.preventDefault();
         this.resetTitle();
         this.pageTitle?.blur();
@@ -209,10 +208,8 @@ export class PageAppBar {
 
       this.pageTitle.contentEditable = "true";
       this.pageTitle.textContent =
-        this.title === "Untitled" || this.isNewPage
-          ? ""
-          : this.pageTitle.title;
-      
+        this.title.toLowerCase() === "Untitled".toLowerCase()  || this.isNewPage ? "" : this.pageTitle.title;
+
       this.updatePlaceholderVisibility();
 
       this.pageTitle.focus();
@@ -263,7 +260,7 @@ export class PageAppBar {
       this.title = newTitle;
       this.originalTitle = this.title;
       this.isTitleSaved = true;
-      this.isNewPage = false; 
+      this.isNewPage = false;
 
       this.resetTitle(true);
       this.refreshPage();
@@ -273,13 +270,15 @@ export class PageAppBar {
     }
   }
 
-  private updateSideBarTitle (title: string) {
-    console.log('title', title);
-    const sideBarPageTitle = document.getElementById('page-info-title') as HTMLDivElement;
+  private updateSideBarTitle(title: string) {
+    console.log("title", title);
+    const sideBarPageTitle = document.getElementById(
+      "page-info-title"
+    ) as HTMLDivElement;
     if (sideBarPageTitle) {
-      const h3 = sideBarPageTitle.querySelector('h3') as HTMLHeadingElement;
+      const h3 = sideBarPageTitle.querySelector("h3") as HTMLHeadingElement;
       if (h3) {
-        h3.textContent = title;       
+        h3.textContent = title;
       }
     }
   }
@@ -287,41 +286,38 @@ export class PageAppBar {
   private updateFrameContainerHoverState() {
     const frame = this.captureFrameContainer();
     if (frame) {
-        this.frameContainer = frame;
+      this.frameContainer = frame;
 
-        const shouldDisableFrame =
-          this.title === "Untitled" ||
-          !this.isTitleSaved ||
-          (this.isInEditMode);
+      const shouldDisableFrame =
+        this.title.toLowerCase() === "Untitled".toLowerCase()  || !this.isTitleSaved || this.isInEditMode;
 
-        if (shouldDisableFrame) {
-          frame.style.pointerEvents = "none";
-          frame.style.opacity = "0.5";
-        } else {
-          frame.style.pointerEvents = "auto";
-          frame.style.opacity = "1";
-        }
+      if (shouldDisableFrame) {
+        frame.style.pointerEvents = "none";
+        frame.style.opacity = "0.5";
+      } else {
+        frame.style.pointerEvents = "auto";
+        frame.style.opacity = "1";
+      }
     }
   }
 
   private updateAddNewInfoSectionVisibility() {
     const frame = this.captureFrameContainer();
     if (frame) {
-      const newInfoSectionButtons = frame.querySelectorAll(".info-section-spacing-container")  as NodeListOf<HTMLDivElement>;
+      const newInfoSectionButtons = frame.querySelectorAll(
+        ".info-section-spacing-container"
+      ) as NodeListOf<HTMLDivElement>;
       if (newInfoSectionButtons.length) {
-        const shouldShow =
-          this.isTitleSaved &&
-          !this.isInEditMode &&
-          this.title !== "Untitled" &&
-          this.title.trim() !== "";
+        const shouldDisableButtons =
+          !this.isTitleSaved ||
+          this.isInEditMode ||
+          this.title.toLowerCase() === "Untitled".toLowerCase()  ||
+          this.title.trim() === "";
 
         newInfoSectionButtons.forEach((button) => {
-          if (shouldShow) {
-            button.style.pointerEvents ="none";
-          } else {
-            button.style.pointerEvents ="auto";
-          }
-        })
+          console.log('shouldDisableButtons', shouldDisableButtons)
+          button.style.pointerEvents = shouldDisableButtons ? "none" : "auto";
+        });
       }
     }
   }
@@ -343,7 +339,7 @@ export class PageAppBar {
       this.title = this.originalTitle;
       this.pageTitle.title = this.originalTitle;
 
-      if (this.title === "Untitled") {
+      if (this.title.toLowerCase() === "Untitled".toLowerCase() ) {
         this.isTitleSaved = false;
         if (this.pageTitle) {
           this.pageTitle.style.outline = "#d0030378 dashed 1px";
@@ -415,12 +411,12 @@ export class PageAppBar {
     container.appendChild(this.container);
 
     setTimeout(() => {
-        this.updateAddNewInfoSectionVisibility();
-        this.updateFrameContainerHoverState();
-        
-        if (this.isNewPage || this.title === "Untitled") {
-            this.enterEditMode();
-        }
+      this.updateAddNewInfoSectionVisibility();
+      this.updateFrameContainerHoverState();
+
+      if (this.isNewPage || this.title.toLowerCase() === "Untitled".toLowerCase() ) {
+        this.enterEditMode();
+      }
     }, 0);
   }
 }

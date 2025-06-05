@@ -332,6 +332,10 @@ export class PageAppBar {
 
       if (this.title === "Untitled") {
         this.isTitleSaved = false;
+        if (this.pageTitle) {
+          console.log('hello world')
+          this.pageTitle.style.outline = "#d0030378 dashed 1px";
+        }
       }
     }
 

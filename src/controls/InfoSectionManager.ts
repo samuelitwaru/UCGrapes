@@ -92,6 +92,7 @@ export class InfoSectionManager {
     isUpdating: boolean = false,
     infoId?: string
   ) {
+    console.log("Selected images: ", selectedImages);
     const imgContainer = this.infoSectionUI.getMultipleImages(
       selectedImages.map((img) => img.Url),
       isUpdating,

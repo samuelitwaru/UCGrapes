@@ -1,5 +1,4 @@
 import { ToolBoxService } from "../../../../services/ToolBoxService";
-import { demoPages } from "../../../../utils/test-data/pages";
 import { ActionDetails } from "./ActionDetails";
 import { i18n } from "../../../../i18n/i18n";
 import { AppVersionManager } from "../../../../controls/versions/AppVersionManager";

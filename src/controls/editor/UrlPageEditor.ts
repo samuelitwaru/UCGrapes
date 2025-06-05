@@ -41,7 +41,7 @@ export class UrlPageEditor {
                   .preloader {
                     width: 32px;
                     height: 32px;
-                    background-image: url('/Resources/UCGrapes1/src/images/spinner.gif');
+                    background-image: url('/Resources/UCGrapes/public/images/spinner.gif');
                     background-size: contain;
                     background-repeat: no-repeat;
                   }

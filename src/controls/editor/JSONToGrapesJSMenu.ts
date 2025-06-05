@@ -66,8 +66,8 @@ export class JSONToGrapesJSMenu {
         ${tile.BGImageUrl
         ? `background-color: rgba(0,0,0, ${tile.Opacity / 100});
                background-image: url('${tile.BGImageUrl}');
-               background-size: cover;
-               background-position: center;
+               background-size: ${tile?.BGSize || 'cover'};
+               background-position: ${tile?.BGPosition || 'center'};
                background-blend-mode: overlay;`
         : `
             background-color: ${this.themeManager.getThemeColor(tile.BGColor)}; 

@@ -30,6 +30,7 @@ export class InfoContentMapper {
       InfoNextSectionId: content.InfoPositionId || "",
       CtaAttributes: content?.CtaAttributes,
       Tiles: content?.Tiles,
+      Images: content?.Images,
     };
 
     return row;

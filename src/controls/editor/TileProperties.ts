@@ -25,7 +25,10 @@ export class TileProperties {
   private setBgColorProperties(): void {
     const themeColors = document.getElementById("theme-color-palette");
     const tileEl = this.selectedComponent.getEl() as HTMLElement;
-    const tileBGColorHex = rgbToHex(tileEl.style.backgroundColor);
+    
+    const computedStyle = window.getComputedStyle(tileEl);
+    const backgroundColor = computedStyle.backgroundColor || tileEl.style.backgroundColor;
+    const tileBGColorHex = rgbToHex(backgroundColor);
     const hasBgImage: boolean =
       this.selectedComponent.getStyle()?.["background-image"];
 
@@ -112,7 +115,12 @@ export class TileProperties {
     const title = document.querySelector("#tile-title") as HTMLInputElement;
     const tileTitle = this.tileAttributes?.Text;
     title.focus()
-    title.value = tileTitle;
+    const defaultTitles = ["title", "titel"];
+    if (tileTitle && !defaultTitles.includes(tileTitle.toLowerCase())) {
+      title.value = tileTitle;      
+    } else {
+      title.value = "";
+    }
 
     const tileColor = this.tileAttributes?.Color;
     const tileColorSection = document.querySelector("#text-color-palette");

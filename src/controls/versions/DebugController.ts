@@ -1,5 +1,5 @@
 import { ToolBoxService } from "../../services/ToolBoxService";
-import { DebugResults, Tile } from "../../types";
+import { DebugResults, Image, InfoType, Tile } from "../../types";
 import { AppVersionManager } from "./AppVersionManager";
 import { DebugUIManager } from "./DebugUIManager";
 
@@ -11,6 +11,7 @@ export class DebugController {
 
     async init() {
         const pageUrls: { page: string; urls: { url: string; affectedType: string; affectedName?: string }[] }[] = await this.getUrls();
+        console.log("Page URLs to debug:", pageUrls);
         this.debugProcess(pageUrls);
     }
 
@@ -60,13 +61,16 @@ export class DebugController {
             // Process content items
             const content = page.PageInfoStructure?.InfoContent;
             if (content) {
-                for (const item of content) {
-                    if (item.InfoType === "Image" && item.InfoValue) {
-                        urls.push({ url: item.InfoValue, affectedType: "Content", affectedName: item.InfoType || "Unnamed Content" });
+                for (const item of content as InfoType[]) {
+                    if (item.InfoType === "Image" && item.Images) {
+                        const images = item.Images;
+                        for (const image of images as Image[]) {
+                            urls.push({ url: image.InfoImageValue || "", affectedType: "Content", affectedName: item.InfoType || "Unnamed Content" });
+                        }                        
                     } 
-                    if (item.InfoType === "Cta" && item.CtaAttributes) {
+                    if (item.InfoType === "Cta" && item.CtaAttributes && item.CtaAttributes?.CtaButtonImgUrl) {
                         urls.push({ url: item.CtaAttributes?.CtaButtonImgUrl, affectedType: "Cta", affectedName: item.InfoType || "Unnamed Cta" });
-                        if (item.CtaAttributes?.CtaType === "WebLink" || item.CtaAttributes?.CtaType === "Form") {
+                        if (item.CtaAttributes?.CtaAction && (item.CtaAttributes?.CtaType === "WebLink" || item.CtaAttributes?.CtaType === "Form")) {
                             urls.push({ url: item.CtaAttributes?.CtaAction, affectedType: "Cta", affectedName: item.InfoType || "Unnamed Cta" });                            
                         }
                     } 

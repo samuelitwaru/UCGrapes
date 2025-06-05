@@ -11,6 +11,7 @@ export interface AppVersion {
     AppVersionId: string;
     AppVersionName: string;
     IsActive: boolean;
+    ThemeId: string;
 }
 
 export interface CallToAction {
@@ -72,6 +73,13 @@ export interface InfoType {
   InfoPositionId?: string;
   CtaAttributes?: CtaAttributes;
   Tiles?:Tile[];
+  Images?: Image[];
+}
+
+export interface Image {
+  InfoImageId: string;
+  InfoImageValue?: string;
+
 }
 
 export interface MenuItem {
@@ -146,8 +154,10 @@ export interface Tile {
         ObjectId?: string;
         ObjectUrl?: string;
     };
-    BGSize: number,
-    BGPosition: number
+    BGSize?: string,
+    BGPosition?: string
+    Left?: string;
+    Top?: string;
 }
 
 export interface TrashItem {
@@ -270,3 +280,10 @@ export interface TileHeights {
   max: number;
   snapThreshold: number;
 }
+
+export interface SelectedImage {
+  Id: string;
+  Url: string;
+}
+
+export type ImageType = "info" | "tile" | "content" | "cta";

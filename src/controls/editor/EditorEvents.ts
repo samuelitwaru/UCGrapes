@@ -3,6 +3,7 @@ import { ResizeState, TileHeights } from "../../types";
 import { EditorThumbs } from "../../ui/components/editor-content/EditorThumbs";
 import { ImageUpload } from "../../ui/components/tools-section/tile-image/ImageUpload";
 import { minTileHeight } from "../../utils/default-attributes";
+import { ImageUploadManager } from "../ImageUploadManager";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { ThemeManager } from "../themes/ThemeManager";
 import { AppVersionManager } from "../versions/AppVersionManager";
@@ -226,7 +227,6 @@ export class EditorEvents {
 
   private handleMouseMove(e: MouseEvent): void {
     if (this.resizeState.isDragging) {
-      // console.log(e);
       if ((e.target) as Element) {
         const targetElement = e.target as Element;
         const tileRow = targetElement.closest('[data-gjs-type="info-tiles-section"]') as HTMLDivElement;
@@ -419,17 +419,12 @@ export class EditorEvents {
       modal.style.display = "flex";
 
       // Pass "info" as type and sectionId as id
-      const modalContent = new ImageUpload("info", sectionId);
+      const modalContent = new ImageUploadManager("info", sectionId);
       modalContent.render(modal);
 
       document.body.appendChild(modal);
       return;
     }
-
-
-
-
-
   }
 
   private createImageUploadModal(selectedComponent: any): void {
@@ -437,8 +432,8 @@ export class EditorEvents {
     modal.classList.add("tb-modal");
     modal.style.display = "flex";
 
-    const tileComp = selectedComponent.closest(".template-wrapper");
-    const modalContent = new ImageUpload("tile", tileComp.getId());
+    const tileComp = selectedComponent.closest('[data-gjs-type="info-tiles-section"]');
+    const modalContent = new ImageUploadManager("tile", tileComp?.getId());
     modalContent.render(modal);
 
     const uploadInput = this.createUploadInput();
@@ -493,10 +488,11 @@ export class EditorEvents {
 
   private handleMouseOver(e: MouseEvent): void {
     const targetElement = e.target as Element;
+
     const infoSection = targetElement.closest(".info-section-spacing-container") as HTMLDivElement;
 
     if (infoSection && infoSection.style.height !== "3.2rem") {
-      this.uiManager.clearAllMenuContainers();
+      this.uiManager.clearAllMenuContainers(true);
       this.uiManager.isMenuOpen = false;
     }
   }
@@ -645,7 +641,7 @@ export class EditorEvents {
     this.uiManager.showPageInfo();
   }
 
-  private handleComponentDeselected(): void {
+  handleComponentDeselected(): void {
     (globalThis as any).selectedComponent = null;
     this.uiManager.toggleSidebar(false);
     this.uiManager.showPageInfo();
@@ -684,6 +680,12 @@ export class EditorEvents {
   public removeOtherEditors(): void {
     this.ensureUIManager();
     this.uiManager.removeOtherEditors();
+  }
+
+  public clearAllEditors(): void {
+    this.ensureUIManager();
+    this.uiManager.clearAllEditors();
+    this.handleComponentDeselected();
   }
 
   public activateEditor(frameId: any): void {

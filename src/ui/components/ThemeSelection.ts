@@ -1,15 +1,17 @@
 import { ThemeManager } from "../../controls/themes/ThemeManager";
+import { AppVersionManager } from "../../controls/versions/AppVersionManager";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { Theme } from "../../types";
 
-export class ThemeSelection extends ThemeManager{
+export class ThemeSelection{
     private container: HTMLElement;
     selectionDiv: HTMLElement;
     themeOptions: HTMLElement;
     selectedTheme: HTMLSpanElement;
+    themeManager: ThemeManager;
 
     constructor() {
-        super();
+        this.themeManager = new ThemeManager();
         this.container = document.createElement('div') as HTMLElement;
         this.selectionDiv = document.createElement('div') as HTMLElement;
         this.themeOptions = document.createElement('div') as HTMLElement;
@@ -21,6 +23,7 @@ export class ThemeSelection extends ThemeManager{
 
     init() {
         this.container.classList.add('tb-custom-theme-selection');
+        this.container.id = 'tb-custom-theme-selection';
         const button = document.createElement('button');
         button.classList.add('theme-select-button');
         button.setAttribute('aria-haspopup', 'listbox');
@@ -54,7 +57,7 @@ export class ThemeSelection extends ThemeManager{
         this.themeOptions.className = "theme-options-list";
         this.themeOptions.setAttribute("role", "listbox");
 
-        let themes: Theme [] = this.getThemes();
+        let themes: Theme [] = this.themeManager.getThemes();
 
         themes.forEach((theme) => {
             const themeOption = document.createElement('div') as HTMLElement;
@@ -63,9 +66,9 @@ export class ThemeSelection extends ThemeManager{
             themeOption.role = "option";
             themeOption.setAttribute('data-value', theme.ThemeName);
             themeOption.textContent = theme.ThemeName;
+            themeOption.id = theme.ThemeId;
 
-            const currentTheme: Theme | undefined= this.currentTheme;
-            
+            const currentTheme: Theme | null= this.themeManager.currentTheme;
             if (currentTheme &&currentTheme.ThemeName === theme.ThemeName) {
                 themeOption.classList.add("selected");
                 this.selectedTheme.textContent = theme.ThemeName;
@@ -88,11 +91,12 @@ export class ThemeSelection extends ThemeManager{
     }
 
     saveSelectedTheme(theme: Theme) {
+        console.log('(globalThis as any).activeVersion: >> ', (globalThis as any).activeVersion)
+        const appVersionId = (globalThis as any).activeVersion.AppVersionId;
         const toolboxService = new ToolBoxService();
-        toolboxService.updateLocationTheme(theme.ThemeId).then((res) => {
-            this.setTheme(theme);
+        toolboxService.updateAppVersionTheme(appVersionId, theme.ThemeId).then((res) => {
+            this.themeManager.setTheme(theme);
         })
-        ;
     }
 
     closeSelection() {

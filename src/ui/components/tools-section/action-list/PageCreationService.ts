@@ -289,9 +289,9 @@ export class PageCreationService {
       CtaLabel: formData.field_label || "Call Us",
       CtaAction: formData.field_value,
       CtaColor: "#ffffff",
-      CtaBGColor: "",
+      CtaBGColor: "ctaColor1",
       CtaButtonType: "Image",
-      CtaButtonImgUrl: "/Resources/UCGrapes1/src/images/image.png",
+      CtaButtonImgUrl: "/Resources/UCGrapes/public/images/image.png",
       CtaButtonIcon: icon,
       CtaSupplierIsConnected: Boolean(formData.supplier_id),
       CtaConnectedSupplierId: formData.supplier_id || null,
@@ -309,7 +309,6 @@ export class PageCreationService {
     //     new ChildEditor(childPage.PageId, childPage).init({});
     //   }
     // }
-
     const button = this.infoSectionUi.addCtaButton(cta);
     this.InfoSectionManager.addCtaButton(button, cta, this.sectionId);
   }

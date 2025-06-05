@@ -1,5 +1,6 @@
 import { AppConfig } from '../../../AppConfig';
 import { ThemeManager } from '../../../controls/themes/ThemeManager';
+import { AppVersionManager } from '../../../controls/versions/AppVersionManager';
 import { PageTreeRenderer } from './PageTreeRenderer';
 
 interface PageNode {
@@ -40,11 +41,13 @@ export class PageTree {
     pages: any;
     themeManager: ThemeManager;
     pageTreeRenderer: PageTreeRenderer;
+    appVersionManager: AppVersionManager;
     constructor(){
         this.pageTreeRenderer = new PageTreeRenderer()
         this.themeManager = new ThemeManager();
-        const appVersionManager = this.themeManager.appVersionManager
-        this.pages = appVersionManager.getPages()
+        this.themeManager = new ThemeManager();
+        this.appVersionManager = new AppVersionManager();
+        this.pages = this.appVersionManager.getPages();
         const processsedPages = this.processPageData()
         const config = AppConfig.getInstance();
         this.d3 = config.UC.d3

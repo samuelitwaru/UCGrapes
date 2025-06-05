@@ -1,5 +1,6 @@
 import { AppConfig } from "../../../AppConfig";
 import { ThemeManager } from "../../../controls/themes/ThemeManager";
+import { AppVersionManager } from "../../../controls/versions/AppVersionManager";
 import { TreeComponent } from "../TreeComponent";
 import { PageTreeRenderer } from "./PageTreeRenderer";
 import { PageTreeRendererInfoPage } from "./PageTreeRendererInfoPage";
@@ -37,7 +38,7 @@ export class PageBubbleTree {
   pageTreeRenderer: PageTreeRenderer;
   PageTreeRendererInfoPage: PageTreeRendererInfoPage;
   primaryNodeId: any | null = null;
-  appVersionManager: any;
+  appVersionManager: AppVersionManager;
 
   constructor() {
     this.pageTreeRenderer = new PageTreeRenderer();
@@ -45,9 +46,8 @@ export class PageBubbleTree {
     const config = AppConfig.getInstance();
     this.d3 = config.UC.d3;
     this.themeManager = new ThemeManager();
-    const appVersionManager = this.themeManager.appVersionManager;
-    this.appVersionManager = appVersionManager;
-    this.pages = appVersionManager.getPages();
+    this.appVersionManager = new AppVersionManager();
+    this.pages = this.appVersionManager.getPages();
 
     this.processedPages = this.processPageData(this.pages);
     const homePage = this.processedPages.find((page) => page.title === "Home");

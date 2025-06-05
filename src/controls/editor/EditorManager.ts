@@ -3,7 +3,6 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { FrameList } from "../../ui/components/editor-content/FrameList";
 import { LeftNavigatorButton } from "../../ui/components/editor-content/LeftNavigatorButton";
 import { RightNavigatorButton } from "../../ui/components/editor-content/RightNavigatorButton";
-import { demoPages } from "../../utils/test-data/pages";
 import { ThemeManager } from "../themes/ThemeManager";
 import { HistoryManager } from "../toolbox/HistoryManager";
 import { ToolboxManager } from "../toolbox/ToolboxManager";
@@ -38,8 +37,9 @@ export class EditorManager {
     this.jsonToGrapes = new JSONToGrapesJSMenu(this);
   }
 
-  async init() {
-    const version = await this.appVersion.getActiveVersion();
+  async init(newVersion?: any) {
+    const version = newVersion || await this.appVersion.getActiveVersion();
+    (globalThis as any).activeVersion = version;
     this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement
     mainContainer.innerHTML = ""
@@ -93,7 +93,9 @@ export class EditorManager {
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
     this.activateHomeEditor(`gjs-0`);
-    this.themeManager.applyTheme(this.themeManager.currentTheme);
+
+    const theme = this.themeManager.getThemeById((globalThis as any).activeVersion.ThemeId);
+    this.themeManager.setTheme(theme);
   }
 
   async loadHomePage(editor: any) {

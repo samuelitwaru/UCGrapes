@@ -1,4 +1,5 @@
 import { InfoSectionManager } from "../../../../controls/InfoSectionManager";
+import { capitalizeWords } from "../../../../utils/helpers";
 
 export class TitleInputSection {
   input: HTMLInputElement;
@@ -15,6 +16,7 @@ export class TitleInputSection {
     this.input.id = "tile-title";
 
     this.input.addEventListener("input", (e) => {
+      let titleValue = capitalizeWords(this.input.value)
       const selectedComponent = (globalThis as any).selectedComponent;
 
       let isFirstTile =
@@ -34,11 +36,11 @@ export class TitleInputSection {
             ? this.truncate(14)
             : this.truncate(25);
         tileTitle.components(truncatedTitle);
-        tileTitle.addAttributes({ title: this.input.value });
+        tileTitle.addAttributes({ title: titleValue });
       }
 
       // if tile is first and high priority, set text to upper case
-      if (isFirstTile) this.input.value = this.input.value.toUpperCase();
+      if (isFirstTile) titleValue = titleValue.toUpperCase();
       const pageData = this.getPageData();
       if (pageData.PageType === "Information") {
         const infoSectionManager = new InfoSectionManager();
@@ -46,13 +48,13 @@ export class TitleInputSection {
           selectedComponent.parent().parent().getId(),
           selectedComponent.parent().getId(),
           "Text",
-          this.input.value.trim()
+          titleValue.trim()
         );
       } else {
         (globalThis as any).tileMapper.updateTile(
           selectedComponent.parent().getId(),
           "Text",
-          this.input.value.trim()
+          titleValue.trim()
         );
       }
 

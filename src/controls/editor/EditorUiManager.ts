@@ -16,6 +16,7 @@ import { InfoType } from "../../types";
 import { svg } from "d3";
 import { InfoSectionManager } from "../InfoSectionManager";
 import { AddInfoSectionButton } from "../../ui/components/AddInfoSectionButton";
+import { AppVersionManager } from "../versions/AppVersionManager";
 
 export class EditorUIManager {
   editor: any;
@@ -34,7 +35,7 @@ export class EditorUIManager {
     pageId: any,
     frameId: any,
     pageData: any,
-    appVersionManager: any
+    appVersionManager: AppVersionManager
   ) {
     this.editor = editor;
     this.pageId = pageId;
@@ -63,10 +64,12 @@ export class EditorUIManager {
     new ContentDataUi(e, this.editor, this.pageData);
   }
 
-  clearAllMenuContainers() {
+  clearAllMenuContainers(excludeTileMenu: boolean = false) {
     const existingMenu = document.querySelectorAll(".menu-container");
     existingMenu.forEach((menu: any) => {
-      menu.remove();
+      if (!excludeTileMenu || menu.classList.contains("info-section-popup")) {
+        menu.remove();
+      }
     });
 
     const infoSections = this.editor?.getWrapper()?.find(".info-section-spacing-container");
@@ -264,6 +267,9 @@ export class EditorUIManager {
       const infoContentMapper = new InfoContentMapper(this.pageId);
       infoContentMapper.moveContentRow(modelEl.getAttribute("id"), filteredIndex);
     }
+
+    const infoSectionMapper = new InfoSectionManager();
+    infoSectionMapper.removeConsecutivePlusButtons();
   }
 
   onTileUpdate(containerRow: any) {
@@ -334,7 +340,7 @@ export class EditorUIManager {
     if (!mobileFrame) return
     (globalThis as any).pageId = mobileFrame.dataset.pageid;
     const currentPageId = mobileFrame.dataset.pageid
-    const currentPage = this.appVersionManager.getPages().find((page: any) => page.PageId == currentPageId)
+    const currentPage = this.appVersionManager.getPages()?.find((page: any) => page.PageId == currentPageId)
     this.pageData = currentPage
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
@@ -368,7 +374,9 @@ export class EditorUIManager {
     }
     let listHTML = ``
     const pageInfoSection = document.querySelector('#page-info-section') as HTMLDivElement
-    if (this.pageData.PageType == "Information" && this.pageData.PageInfoStructure.InfoContent) {
+    if (!this.pageData) return;
+
+    if (this.pageData?.PageType == "Information" && this.pageData?.PageInfoStructure.InfoContent) {
       this.pageData.PageInfoStructure.InfoContent.forEach((info: any) => {
         if (info.InfoType == "TileRow") {
           info.Tiles.forEach((tile: any) => {
@@ -484,7 +492,6 @@ export class EditorUIManager {
     const tileInfoSectionAttributes: InfoType = (
       globalThis as any
     ).infoContentMapper.getInfoContent(rowComponent.getId());
-
     if (selectedComponent && tileInfoSectionAttributes) {
       const tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
         (tile: any) => tile.Id === tileWrapper.getId()
@@ -616,6 +623,23 @@ export class EditorUIManager {
           }
         }
       }
+    });
+  }
+
+  clearAllEditors(): void {
+    const framelist = document.querySelectorAll(".mobile-frame");
+    framelist.forEach((frame: any) => {
+      const thumbsList = document.querySelector(
+        ".editor-thumbs-list"
+      ) as HTMLElement;
+      const thumbToRemove = thumbsList.querySelector(
+        `div[id="${frame.id}"]`
+      );
+      if (thumbToRemove) {
+        thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+      }
+
+      frame.remove();
     });
   }
 

@@ -11,20 +11,40 @@ export class PageAppBar {
     isNewPage: boolean;
     private pageTitle: HTMLHeadingElement | null = null;
     private editHeader: SVGSVGElement | null = null;
-    private saveChange: SVGSVGElement | null = null;
     private titleDiv: HTMLDivElement | null = null;
     private isInEditMode: boolean = false;
     private originalTitle: string; // Store the original title for cancellation
+    private isTitleSaved: boolean = false; // Track if title has been saved
+    private frameContainer: HTMLElement | null = null; // Reference to frame container
 
     constructor(id: string, title?: string, isNewPage: boolean = false) {
-        this.title = title || "Page Name";
+        this.title = title || "Untitled";
         this.originalTitle = this.title; // Store original title
         this.id = id;
         this.isNewPage = isNewPage;
+        this.isTitleSaved = !isNewPage && title !== "Untitled" && title !== "" && title !== undefined; // Only saved if not new, not untitled, and has actual content
         this.container = document.createElement("div");
         this.editor = new EditorManager();
         this.editorWidth = (globalThis as any).deviceWidth;
+        this.disableFrameOnInit();
         this.init();
+    }
+
+    private disableFrameOnInit() {
+        // Use a timeout to ensure the frame container is available
+        setTimeout(() => {
+            const editor = (globalThis as any).activeEditor;
+            if (editor) {
+                const frameContainer = editor.getWrapper().find(".frame-container")[0];
+                if (frameContainer) {
+                    // Only disable if the title is not saved (Untitled, new page, or empty)
+                    if (!this.isTitleSaved) {
+                        frameContainer.getEl().style.pointerEvents = "none";
+                        frameContainer.getEl().style.opacity = "0.5";
+                    }
+                }
+            }
+        }, 50);
     }
 
     init() {
@@ -83,11 +103,12 @@ export class PageAppBar {
         pageTitle.className = 'title';
         const length = this.editorWidth ? (this.editorWidth <= 350 ? 16 : 24) : 16;
         const truncatedTitle = this.title.length > length ? this.title.substring(0, length) + "..." : this.title;
-        pageTitle.setAttribute('title', this.title || 'Page Name');
-        pageTitle.textContent = truncatedTitle || 'Page Name';
+        pageTitle.setAttribute('title', this.title || 'Untitled');
+        pageTitle.textContent = truncatedTitle || 'Untitled';
         this.pageTitle = pageTitle;
+        this.pageTitle.setAttribute('aria-placeholder', 'Enter page title');
 
-        // Create a container div for the edit/save icons
+        // Create a container div for the edit icon only
         const iconContainer = document.createElement('div');
         iconContainer.classList.add('icon-container');
 
@@ -103,22 +124,8 @@ export class PageAppBar {
         `;
         this.editHeader = editHeader;
 
-        const saveChange = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        saveChange.id = "save_page_title";
-        saveChange.style.display = "none";
-        saveChange.setAttribute('width', '24px');
-        saveChange.setAttribute('height', '24px');
-        saveChange.setAttribute('viewBox', '0 0 48 48');
-        saveChange.setAttribute('fill', 'none');
-        saveChange.innerHTML = `
-            <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
-            <path d="M43 11L16.875 37L5 25.1818" stroke="#5068a8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        `;
-        this.saveChange = saveChange;
-
-        // Append the icons to the container
+        // Append only the edit icon to the container
         iconContainer.appendChild(editHeader);
-        iconContainer.appendChild(saveChange);
 
         const enterEditMode = () => {
             if (this.pageTitle) {
@@ -127,7 +134,8 @@ export class PageAppBar {
                 this.originalTitle = this.pageTitle.title;
 
                 this.pageTitle.contentEditable = 'true';
-                this.pageTitle.textContent = this.isNewPage || this.title === "Untitled" ? '' : this.pageTitle.title;
+                // Clear the content if it's "Untitled" or if it's a new page
+                this.pageTitle.textContent = (this.title === "Untitled" || this.isNewPage) ? '' : this.pageTitle.title;
                 this.pageTitle.focus();
 
                 const range = document.createRange();
@@ -143,38 +151,60 @@ export class PageAppBar {
                 this.pageTitle.style.overflow = "hidden";
                 this.pageTitle.style.textOverflow = "clip";
 
-                if (this.editHeader && this.saveChange && this.titleDiv) {
+                if (this.editHeader && this.titleDiv) {
                     this.editHeader.style.display = "none";
-                    this.saveChange.style.display = "block";
                     this.titleDiv.style.borderWidth = "1px";
-
-                    this.updateSaveButtonState();
                 }
+
+                // Update frame container and add-new-info-section visibility
+                this.updateFrameContainerHoverState();
+                this.updateAddNewInfoSectionVisibility();
             }
         };
 
         editHeader.addEventListener('click', enterEditMode);
 
-        this.updateSaveButtonState();
-
         pageTitle.addEventListener("input", () => {
             if (this.pageTitle) {
-                this.pageTitle.textContent || "";
-                this.pageTitle.title = this.pageTitle.textContent || "";
-                this.title = this.pageTitle.title
-                this.updateSaveButtonState();
+                const newTitle = this.pageTitle.textContent || "";
+                this.pageTitle.title = newTitle;
+                this.title = newTitle;
+                
+                // Update frame container state as user types
+                this.updateFrameContainerHoverState();
+                this.updateAddNewInfoSectionVisibility();
             }
         });
 
-        saveChange.addEventListener("click", (e) => {
-            e.preventDefault();
-            if (this.pageTitle && this.pageTitle.title.trim() !== "") {
-                const appVersionManager = new AppVersionManager();
-                appVersionManager.updatePageTitle(this.pageTitle.title);
-                this.title = this.pageTitle.title;
-                this.originalTitle = this.title;
-                this.resetTitle(true);
-                this.refreshPage();
+        // Handle blur event (when focus is lost) to auto-save
+        pageTitle.addEventListener("blur", () => {
+            if (this.isInEditMode) {
+                const currentTitle = this.pageTitle?.textContent?.trim() || "";
+                if (currentTitle !== "" && currentTitle !== "Untitled") {
+                    this.saveTitle();
+                } else {
+                    this.resetTitle();
+                }
+            }
+        });
+
+        // Handle Enter key to save and exit edit mode
+        pageTitle.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const currentTitle = this.pageTitle?.textContent?.trim() || "";
+                if (currentTitle !== "" && currentTitle !== "Untitled") {
+                    this.saveTitle();
+                } else {
+                    this.resetTitle();
+                }
+                this.pageTitle?.blur();
+            }
+            // Handle Escape key to cancel editing
+            else if (e.key === "Escape") {
+                e.preventDefault();
+                this.resetTitle();
+                this.pageTitle?.blur();
             }
         });
 
@@ -182,7 +212,12 @@ export class PageAppBar {
         document.addEventListener("click", (event: MouseEvent) => {
             const target = event.target as Element;
             if (this.isInEditMode && this.shouldResetTitle(target)) {
-                this.resetTitle();
+                const currentTitle = this.pageTitle?.textContent?.trim() || "";
+                if (currentTitle !== "" && currentTitle !== "Untitled") {
+                    this.saveTitle();
+                } else {
+                    this.resetTitle();
+                }
             }
         });
 
@@ -191,10 +226,15 @@ export class PageAppBar {
         titleDiv.appendChild(iconContainer);
         this.container.appendChild(titleDiv);
 
+        // Initialize the add-new-info-section visibility and frame container state
+        this.updateAddNewInfoSectionVisibility();
+        this.updateFrameContainerHoverState();
+
+        // Auto-enter edit mode for new pages or "Untitled" pages
         if (this.isNewPage || this.title === "Untitled") {
             setTimeout(() => {
                 enterEditMode();
-            }, 0);
+            }, 100); // Slightly longer timeout to ensure DOM is ready
         }
     }
 
@@ -210,60 +250,119 @@ export class PageAppBar {
         );
     }
 
-    private updateSaveButtonState() {
-        if (!this.saveChange) return;
+    private saveTitle() {
+        if (!this.pageTitle) return;
 
-        const titleText = this.pageTitle?.title || "";
-        const trimmedTitle = titleText.trim();
+        const newTitle = this.pageTitle.textContent?.trim() || "";
+        
+        // Only save if we have a valid title
+        if (newTitle && newTitle !== "Untitled" && newTitle !== "") {
+            const appVersionManager = new AppVersionManager();
+            appVersionManager.updatePageTitle(newTitle);
+            this.title = newTitle;
+            this.originalTitle = this.title;
+            this.isTitleSaved = true;
+            this.isNewPage = false; // No longer a new page once saved
+            
+            this.resetTitle(true);
+            this.refreshPage();
+            this.updateAddNewInfoSectionVisibility();
+            this.updateFrameContainerHoverState();
+        }
+    }
 
-        if (trimmedTitle === "") {
-            this.saveChange.style.pointerEvents = "none";
-            this.saveChange.style.opacity = "0.5";
-        } else {
-            this.saveChange.style.pointerEvents = "all";
-            this.saveChange.style.opacity = "1";
+    private updateFrameContainerHoverState() {
+        const editor = (globalThis as any).activeEditor;
+        if (editor) {
+            const frameContainer = editor.getWrapper().find(".frame-container")[0];
+            if (frameContainer) {
+                this.frameContainer = frameContainer;
+                
+                // Disable frame container when title is "Untitled" OR not saved OR in edit mode with unsaved title
+                const shouldDisableFrame = this.title === "Untitled" || 
+                                         !this.isTitleSaved || 
+                                         (this.isInEditMode && !this.isTitleSaved);
+                
+                if (shouldDisableFrame) {
+                    frameContainer.getEl().style.pointerEvents = "none";
+                    frameContainer.getEl().style.opacity = "0.5";
+                } else {
+                    frameContainer.getEl().style.pointerEvents = "auto";
+                    frameContainer.getEl().style.opacity = "1";
+                }
+            }
+        }
+    }
+
+    private updateAddNewInfoSectionVisibility() {
+        const editor = (globalThis as any).activeEditor;
+        if (editor) {
+            const newInfoSectionButton = editor.getWrapper().find(".add-new-info-section")[0];
+            if (newInfoSectionButton) {
+                // Show the add new info section only when:
+                // 1. Title has been saved AND
+                // 2. Not currently in edit mode AND
+                // 3. Title is not "Untitled" or empty
+                const shouldShow = this.isTitleSaved && 
+                                 !this.isInEditMode && 
+                                 this.title !== "Untitled" && 
+                                 this.title.trim() !== "";
+                
+                if (shouldShow) {
+                    newInfoSectionButton.addStyle({ display: "flex" });
+                } else {
+                    newInfoSectionButton.addStyle({ display: "none" });
+                }
+            }
         }
     }
 
     resetTitle(isSaved: boolean = false) {
-        if (!this.pageTitle || !this.editHeader || !this.saveChange || !this.titleDiv) return;
+        if (!this.pageTitle || !this.editHeader || !this.titleDiv) return;
 
         this.isInEditMode = false;
         this.pageTitle.contentEditable = "false";
         this.editHeader.style.display = "block";
-        this.saveChange.style.display = "none";
         this.titleDiv.style.removeProperty("border-width");
         this.pageTitle.style.whiteSpace = "";
         this.pageTitle.style.overflow = "";
         this.pageTitle.style.textOverflow = "";
 
         if (!isSaved) {
-            const length = this.editorWidth ? (this.editorWidth <= 350 ? 16 : 24) : 16;
-            const displayTitle = this.title;
-
-            if (displayTitle.length > length) {
-                this.pageTitle.textContent = displayTitle.substring(0, length) + "...";
-            } else {
-                this.pageTitle.textContent = displayTitle;
+            // Restore original title if not saved
+            this.title = this.originalTitle;
+            this.pageTitle.title = this.originalTitle;
+            
+            // If we're resetting to "Untitled", mark as not saved
+            if (this.title === "Untitled") {
+                this.isTitleSaved = false;
             }
         }
+
+        // Update display text with truncation
+        const length = this.editorWidth ? (this.editorWidth <= 350 ? 16 : 24) : 16;
+        const displayTitle = this.title;
+
+        if (displayTitle.length > length) {
+            this.pageTitle.textContent = displayTitle.substring(0, length) + "...";
+        } else {
+            this.pageTitle.textContent = displayTitle;
+        }
+
+        // Update UI states when exiting edit mode
+        this.updateFrameContainerHoverState();
+        this.updateAddNewInfoSectionVisibility();
     }
 
     private refreshPage() {
         const editor = (globalThis as any).activeEditor;
         if (editor) {
-            const newInfoSectionButton = editor.getWrapper().find(".add-new-info-section")[0];
-            if (newInfoSectionButton) {
-                newInfoSectionButton.addStyle({ display: "flex" });
-            }
-
             const unTitledPage = editor.getWrapper().find(".untitled-page")[0];
             if (unTitledPage) {
                 unTitledPage.removeClass("untitled-page");
             }
         }
     }
-
 
     render(container: HTMLElement) {
         container.appendChild(this.container);

@@ -7,6 +7,10 @@ import { ConfirmationBox } from "../components/ConfirmationBox";
 import { truncateString } from "../../utils/helpers";
 import { AppVersion } from "../../types";
 import { FormField } from "../components/FormField";
+import { EditorEvents } from "../../controls/editor/EditorEvents";
+import { EditorManager } from "../../controls/editor/EditorManager";
+import { ThemeManager } from "../../controls/themes/ThemeManager";
+import { ThemeSelection } from "../components/ThemeSelection";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -66,6 +70,11 @@ export class VersionSelectionView {
   }
 
   public async initializeVersionOptions(): Promise<void> {
+    const existingVersionSelection = this.selectionDiv.querySelector('.theme-options-list');
+    if (existingVersionSelection) {
+      existingVersionSelection.remove();
+    }
+
     this.versionSelection.className = "theme-options-list";
     this.versionSelection.setAttribute("role", "listbox");
     this.versionSelection.innerHTML = ""; // Clear existing options
@@ -80,7 +89,7 @@ export class VersionSelectionView {
     this.appVersions = versions;
     versions.forEach((version: AppVersion) => this.createVersionOption(version));
 
-    this.addTemplatesButton();
+    // this.addTemplatesButton();
     this.selectionDiv.appendChild(this.versionSelection);
   }
 
@@ -116,7 +125,7 @@ export class VersionSelectionView {
     versionOption.append(optionButtons);
 
     // Check if this is the active version
-    const activeVersion = (window as any).app.currentVersion;
+    const activeVersion = (globalThis as any).activeVersion;
     const isActive = (version.AppVersionId === activeVersion.AppVersionId);
 
     if (isActive) {
@@ -230,12 +239,55 @@ export class VersionSelectionView {
       // Activate version and reload if successful
       const activationResult = await this.versionController.activateVersion(version.AppVersionId);
       if (activationResult) {
-        location.reload();
+        this.reloadPage(activationResult);
       }
 
       this.closeSelection();
     } catch (error) {
       console.error("Error activating version:", error);
+    }
+  }
+
+  private async reloadPage(appVersion: any) {
+    this.clearGlobalVariables();
+    (globalThis as any).activeVersion = appVersion.AppVersion;
+    const editorEvents = new EditorEvents();
+    editorEvents.clearAllEditors();
+    const newEditor = new EditorManager();
+    newEditor.init(appVersion.AppVersion);
+    console.log('appVersion.AppVersion', appVersion.AppVersion)
+    this.updateTheme(appVersion.AppVersion?.ThemeId);
+    this.refreshVersionList();
+  }
+
+  private clearGlobalVariables(): void {
+    (globalThis as any).selectedComponent = null;
+    (globalThis as any).pageData = null;
+    (globalThis as any).activeVersion = null;
+    (globalThis as any).tileMapper = null;
+    (globalThis as any).activeEditor = null;
+    (globalThis as any).currentPageId = null;
+    (globalThis as any).ctaContainerId = null;
+    (globalThis as any).frameId = null;
+    (globalThis as any).wrapper = null;
+  }
+
+  private updateTheme(themeId: string): void {
+    if (!themeId) return;
+    const themeSelectionEl = document.getElementById("tb-custom-theme-selection");
+    if (themeSelectionEl) {
+
+      const themeList = themeSelectionEl.querySelectorAll(".theme-option") as NodeListOf<HTMLDivElement>;
+      themeList.forEach((theme) => {
+        theme.classList.remove("selected");
+        if (theme.id === themeId) {
+          theme.classList.add("selected");
+          const selectedThemeEl = themeSelectionEl.querySelector(`.selected-theme-value`) as HTMLSpanElement;
+          if (selectedThemeEl) {
+            selectedThemeEl.innerText = theme.innerText;
+          }
+        }
+      });
     }
   }
 
@@ -347,11 +399,10 @@ export class VersionSelectionView {
         }
 
         modal.close();
-        await this.refreshVersionList();
 
         // Reload only for create and activate actions
         if (result && (action === "create" || action === "duplicate")) {
-          location.reload();
+          this.reloadPage(result);
         }
       } catch (error) {
         console.error(`Error during ${action} operation:`, error);
@@ -389,14 +440,13 @@ export class VersionSelectionView {
   }
 
   public async refreshVersionList(): Promise<void> {
-    await this.initializeVersionOptions();
-
-    // Ensure the dropdown is visible
-    this.versionSelection.classList.add("show");
-
-    const button = this.container.querySelector(".theme-select-button") as HTMLElement;
-    button.classList.add("open");
-    button.setAttribute("aria-expanded", "true");
+    this.container.innerHTML = "";
+    this.selectionDiv = document.createElement("div");
+    this.versionSelection = document.createElement("div");
+    this.versionList = document.createElement("div");
+    this.activeVersion = document.createElement("span");
+    
+    await this.init();
   }
 
   public render(container: HTMLElement): void {

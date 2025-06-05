@@ -70,11 +70,11 @@ export class CtaButtonProperties {
     private ctaActionDisplay () {
         const contentSection = document.querySelector("#content-page-section");
         const labelValue = this.ctaAttributes?.CtaLabel;
-        const labelInput = new ActionInput(labelValue, this.ctaAttributes);
+        const labelInput = new ActionInput(labelValue, this.ctaAttributes, "label", "cta");
         labelInput.render(contentSection as HTMLElement);
 
         const actionValue = this.ctaAttributes?.CtaAction;
-        const actionInput = new ActionInput(actionValue, this.ctaAttributes, "action");
+        const actionInput = new ActionInput(actionValue, this.ctaAttributes, "action", "cta");
         actionInput.render(contentSection as HTMLElement);
     }
 

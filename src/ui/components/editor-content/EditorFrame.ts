@@ -4,47 +4,53 @@ import { HomeAppBar } from "./HomeAppBar";
 import { PageAppBar } from "./PageAppBar";
 
 export class EditorFrame {
-    private container: HTMLElement;
-    private id: string;
-    private isHome: boolean;
-    private pageName?: string;
-    pageData: any;
-    isNewPage: boolean = false;
+  private container: HTMLElement;
+  private id: string;
+  private isHome: boolean;
+  private pageName?: string;
+  pageData: any;
+  isNewPage: boolean = false;
 
-    constructor(id: string, isHome: boolean = false, pageData:any, pageName?: string, isNewPage: boolean = false) {
-        this.container = document.createElement('div');
-        this.id = id;
-        this.isHome = isHome
-        this.pageName = pageName;
-        this.pageData = pageData
-        this.isNewPage = isNewPage
-        this.init();
-    }
+  constructor(
+    id: string,
+    isHome: boolean = false,
+    pageData: any,
+    pageName?: string,
+    isNewPage: boolean = false
+  ) {
+    this.container = document.createElement("div");
+    this.id = id;
+    this.isHome = isHome;
+    this.pageName = pageName;
+    this.pageData = pageData;
+    this.isNewPage = isNewPage;
+    this.init();
+  }
 
-    init() {
-        this.container.className = "mobile-frame";
-        this.container.id = `${this.id}-frame`;
-        this.container.setAttribute('data-pageid', this.pageData.PageId);
+  init() {
+    // Setup container
+    this.container.className = "mobile-frame";
+    this.container.id = `${this.id}-frame`;
+    this.container.setAttribute("data-pageid", this.pageData.PageId);
 
-        const frameHeader = new FrameHeader();
-        const homeAppBar = new HomeAppBar();
-        const pageAppBar = new PageAppBar(this.id, this.pageName, this.isNewPage); 
+    // Render frame header
+    const frameHeader = new FrameHeader();
+    frameHeader.render(this.container);
 
-        frameHeader.render(this.container);
-        if (this.isHome) {
-            homeAppBar.render(this.container);
-        } else {
-            pageAppBar.render(this.container);
-        }
-        
-        const editor = document.createElement('div');
-        editor.id = this.id;
-        this.container.appendChild(editor);
+    const appBar = this.isHome
+      ? new HomeAppBar()
+      : new PageAppBar(this.id, this.pageName, this.isNewPage);
+    appBar.render(this.container);
 
-        const deletePageButton = new DeletePageButton(this.pageData, this.container);
-    }
+    // Create and append editor container
+    const editor = document.createElement("div");
+    editor.id = this.id;
+    this.container.appendChild(editor);
 
-    render(container: HTMLElement) {
-        container.appendChild(this.container);
-    }
+    new DeletePageButton(this.pageData, this.container);
+  }
+
+  render(container: HTMLElement) {
+    container.appendChild(this.container);
+  }
 }

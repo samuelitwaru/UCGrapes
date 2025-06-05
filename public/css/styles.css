@@ -481,6 +481,11 @@ span#scroll-right:hover {
   border-width: 1px;
 }
 
+.appbar-title-container h1[contenteditable="true"]:empty:before {
+      content: attr(data-placeholder);
+      color: #9e9e9ec5;
+    }
+
 .app-bar .appbar-title-container svg {
   width: 18px;
   height: 18px;
@@ -2664,6 +2669,11 @@ details .tb_debug_details-content {
   align-items: center;
 }
 
+.menu-container .menu-item:last-child:hover {
+    border-bottom-right-radius: 9px;
+    border-bottom-left-radius: 9px;
+}
+
 .menu-container .menu-item.expandable {
   background-color: #f0f0f0;
 }
@@ -2733,6 +2743,11 @@ details .tb_debug_details-content {
   border-top-right-radius: 9px;
 }
 
+.menu-container .menu-category:first-child .menu-item:first-child {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 .menu-container .menu-category:last-child .menu-item:last-child {
   border-bottom-left-radius: 9px;
   border-bottom-right-radius: 9px;
@@ -2765,8 +2780,23 @@ details .tb_debug_details-content {
 }
 
 .menu-container .sub-menu-container .menu-item:last-child {
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
+}
+
+.menu-container .sub-menu-container .menu-item:last-child:hover {
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
+}
+
+.menu-container .sub-menu-container .menu-item:first-child:hover {
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+}
+
+.menu-container .sub-menu-container .first-menu-item:hover {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }
 
 .delete-page-icon {

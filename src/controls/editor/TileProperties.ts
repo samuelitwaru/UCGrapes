@@ -1,9 +1,11 @@
 import { i18n } from "../../i18n/i18n";
+import { Tile } from "../../types";
+import { ActionInput } from "../../ui/components/tools-section/content-section/ActionInput";
 import { rgbToHex } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
 export class TileProperties {
-  tileAttributes: any;
+  tileAttributes: Tile;
   selectedComponent: any;
   themeManager: any;
 
@@ -25,9 +27,10 @@ export class TileProperties {
   private setBgColorProperties(): void {
     const themeColors = document.getElementById("theme-color-palette");
     const tileEl = this.selectedComponent.getEl() as HTMLElement;
-    
+
     const computedStyle = window.getComputedStyle(tileEl);
-    const backgroundColor = computedStyle.backgroundColor || tileEl.style.backgroundColor;
+    const backgroundColor =
+      computedStyle.backgroundColor || tileEl.style.backgroundColor;
     const tileBGColorHex = rgbToHex(backgroundColor);
     const hasBgImage: boolean =
       this.selectedComponent.getStyle()?.["background-image"];
@@ -107,19 +110,36 @@ export class TileProperties {
       const slider = document.querySelector("#slider-wrapper") as HTMLElement;
       if (slider) {
         slider.style.display = "none";
-      } 
+      }
     }
   }
 
   private setTitleStyleProperties() {
     const title = document.querySelector("#tile-title") as HTMLInputElement;
     const tileTitle = this.tileAttributes?.Text;
-    title.focus()
+    title.focus();
     const defaultTitles = ["title", "titel"];
     if (tileTitle && !defaultTitles.includes(tileTitle.toLowerCase())) {
-      title.value = tileTitle;      
+      title.value = tileTitle;
     } else {
       title.value = "";
+    }
+
+    const parentDiv = title.parentElement as HTMLElement;
+
+    // Remove existing actionInput if it exists
+    const existingActionInput = parentDiv.querySelector(".cta-action-input");
+    if (existingActionInput) {
+      existingActionInput.remove();
+    }
+
+    if (
+      this.tileAttributes?.Action?.ObjectType === "Phone" ||
+      this.tileAttributes?.Action?.ObjectType === "Email" ||
+      this.tileAttributes?.Action?.ObjectType === "WebLink"
+    ) {
+      const actionInput = this.tileActionDisplay();
+      title.insertAdjacentElement("afterend", actionInput);
     }
 
     const tileColor = this.tileAttributes?.Color;
@@ -153,19 +173,24 @@ export class TileProperties {
       const categoryTitle = this.themeManager.getIconCategory(tileIcon);
       this.themeManager.updateThemeIcons(categoryTitle);
 
-      const categoryContainer = document.querySelector("#icon-categories-list") as HTMLElement;
-      const allOptions =
-      categoryContainer.querySelectorAll(".category-option");
-        allOptions.forEach((opt) => {
-          opt.classList.remove("selected");
-          if (opt.getAttribute("data-value") === categoryTitle) {
-            opt.classList.add("selected");
-            const selectedCategory = categoryContainer.querySelector(".selected-category-value") as HTMLElement;
-            if (selectedCategory) {
-              selectedCategory.textContent = i18n.t(`sidebar.icon_category.${categoryTitle.toLowerCase()}`);             
-            }
+      const categoryContainer = document.querySelector(
+        "#icon-categories-list"
+      ) as HTMLElement;
+      const allOptions = categoryContainer.querySelectorAll(".category-option");
+      allOptions.forEach((opt) => {
+        opt.classList.remove("selected");
+        if (opt.getAttribute("data-value") === categoryTitle) {
+          opt.classList.add("selected");
+          const selectedCategory = categoryContainer.querySelector(
+            ".selected-category-value"
+          ) as HTMLElement;
+          if (selectedCategory) {
+            selectedCategory.textContent = i18n.t(
+              `sidebar.icon_category.${categoryTitle.toLowerCase()}`
+            );
           }
-        });
+        }
+      });
     }
 
     const iconDiv = this.selectedComponent
@@ -182,7 +207,11 @@ export class TileProperties {
       const iconElement = icon as HTMLElement;
       const iconTitle = iconElement.getAttribute("title") ?? "";
 
-      if (tileIcon && iconTitle === tileIcon && iconTitle === selectedTileIcon) {
+      if (
+        tileIcon &&
+        iconTitle === tileIcon &&
+        iconTitle === selectedTileIcon
+      ) {
         iconElement.style.border = "2px solid #5068A8";
         const svgPath = iconElement.querySelector("svg path") as SVGPathElement;
         if (svgPath) {
@@ -198,46 +227,15 @@ export class TileProperties {
     });
   }
 
-  // private setActionProperties(): void {
-  //   // const tileActionType = this.tileAttributes?.Action?.ObjectType;
-  //   // const tileActionName = this.tileAttributes?.Text;
+  private tileActionDisplay() {
+    const actionValue = this.tileAttributes?.Action?.ObjectUrl;
+    const actionInput = new ActionInput(
+      actionValue,
+      this.tileAttributes,
+      "action",
+      "tile"
+    );
 
-  //   //   let actionLabel = "";
-  //   //   if (tileActionType == "Page") {
-  //   //     actionLabel = i18n.t("sidebar.action_list.page");
-  //   //   } else if (tileActionType == "Web Link") {
-  //   //     actionLabel = i18n.t("sidebar.action_list.services");
-  //   //   } else if (tileActionType == "Service/Product Page") {
-  //   //     actionLabel = i18n.t("sidebar.action_list.weblink");
-  //   //   } else if (tileActionType == "Dynamic Form") {
-  //   //     actionLabel = i18n.t("sidebar.action_list.forms");
-  //   //   } else if (tileActionType == "Module") {
-  //   //     actionLabel = i18n.t("sidebar.action_list.module");
-  //   //   } else if (tileActionType == "Content") {
-  //   //     actionLabel = i18n.t("sidebar.action_list.content");
-  //   //   }
-
-  //   // const actionHeader = document.querySelector(
-  //   //   ".tb-dropdown-header"
-  //   // ) as HTMLElement;
-  //   // const actionHeaderLabel = actionHeader.querySelector(
-  //   //   "#sidebar_select_action_label"
-  //   // ) as HTMLElement;
-
-  //   // if (actionHeaderLabel) {
-  //   //   if (!tileActionType) {
-  //   //     actionHeaderLabel.innerText = "Select Action";
-  //   //   } else {
-  //   //     actionHeaderLabel.innerText = `${
-  //   //       tileActionName.length > 10
-  //   //         ? tileActionName.substring(0, 14) + ""
-  //   //         : tileActionName
-  //   //     }, ${
-  //   //       tileActionName.length > 10
-  //   //         ? tileActionName.substring(0, 14) + "..."
-  //   //         : tileActionName
-  //   //     }`;
-  //   //   }
-  //   // }
-  // }
+    return actionInput.getInputElement();
+  }
 }

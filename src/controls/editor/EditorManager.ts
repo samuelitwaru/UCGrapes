@@ -92,7 +92,7 @@ export class EditorManager {
     (window as any).app.editors[`gjs-0`] = editor;
     this.finalizeEditorSetup(editor);
     await this.loadHomePage(editor);
-    this.activateHomeEditor(`gjs-0`);
+    this.activateHomeEditor(`gjs-0`, editor);
 
     const theme = this.themeManager.getThemeById((globalThis as any).activeVersion.ThemeId);
     this.themeManager.setTheme(theme);
@@ -166,10 +166,10 @@ export class EditorManager {
     }
   }
 
-  activateHomeEditor(frameId: string) {
+  activateHomeEditor(frameId: string, editor: any) {
     const homeFrame = document.getElementById(`${frameId}-frame`) as HTMLElement;
     homeFrame.classList.add("active-editor");
-  }
+  }  
 
   loadPageHistory(pageData: any) {
     const historyManager = new HistoryManager(pageData?.PageId);

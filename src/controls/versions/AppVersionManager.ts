@@ -1,6 +1,8 @@
+import { version } from "d3";
 import { AppConfig } from "../../AppConfig";
 import { ToolBoxService } from "../../services/ToolBoxService";
 import { TileMapper } from "../editor/TileMapper";
+import { AppVersionController } from "./AppVersionController";
 
 export class AppVersionManager {
   private config: AppConfig;
@@ -24,6 +26,19 @@ export class AppVersionManager {
 
   //   return (globalThis as any).activeVersion;
   // }
+
+  public async getCurrentVersion() {
+    const versionController = new AppVersionController();
+    const toolboxService = new ToolBoxService();
+    const versions = await versionController.getVersions();
+    const location = await toolboxService.getLocationData();
+    const cureentPublishedAppId = location.BC_Trn_Location.PublishedActiveAppVersionId;
+    console.log(location);
+    console.log(versions);
+    console.log(cureentPublishedAppId);
+    return versions.find((version: any) => version.AppVersionId == cureentPublishedAppId);
+    
+  }
 
   public async getActiveVersion() {
     (globalThis as any).activeVersion = (window as any).app.currentVersion;

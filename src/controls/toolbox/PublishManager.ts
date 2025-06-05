@@ -15,10 +15,29 @@ export class PublishManager {
     this.appVersions = new AppVersionManager();
   }
 
-  openModal() {
+  async openModal() {
     const div = document.createElement("div");
     const p = document.createElement("p");
     p.innerText = i18n.t("navbar.publish.modal_description");
+    //p.innerText = i18n.t("navbar.publish.modal_with_version_description", {current_published_version: current_version.AppVersionName, version_being_published: new_version.AppVersionName});
+
+    const current_version = await this.appVersions.getCurrentVersion();
+    const current_version_paragraph = document.createElement("p");
+    const current_version_label = document.createElement("b");
+    current_version_label.innerText = i18n.t("navbar.publish.current_version");
+    const current_version_value = document.createElement("span");
+    current_version_value.innerHTML = current_version?.AppVersionName || "";
+    const new_version = await this.appVersions.getUpdatedActiveVersion();
+    const new_version_paragraph = document.createElement("p");
+    const new_version_label = document.createElement("b");
+    new_version_label.innerText = i18n.t("navbar.publish.new_version");
+    const new_version_value = document.createElement("span");
+    new_version_value.innerHTML = new_version.AppVersionName;
+    
+    current_version_paragraph.appendChild(current_version_label);
+    current_version_paragraph.appendChild(current_version_value);
+    new_version_paragraph.appendChild(new_version_label);
+    new_version_paragraph.appendChild(new_version_value);
     
     const label = document.createElement("label") as HTMLLabelElement;
     label.className = "notify_residents";
@@ -52,6 +71,9 @@ export class PublishManager {
 
     submitSection.appendChild(saveBtn);
     submitSection.appendChild(cancelBtn);
+
+    div.appendChild(current_version_paragraph);
+    div.appendChild(new_version_paragraph);
 
     div.appendChild(p);
     div.appendChild(label);

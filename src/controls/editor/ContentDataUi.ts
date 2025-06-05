@@ -65,10 +65,19 @@ export class ContentDataUi {
         i18n.t("tile.cancel_button")
       );
 
+      const characterCounterSection = document.createElement("div");
+      characterCounterSection.classList.add("row");
+      const characterCounterSpan = document.createElement("span");
+      characterCounterSection.style.paddingLeft = "20px";
+      characterCounterSpan.style.fontSize = "small";
+      characterCounterSpan.style.fontStyle = "italic";
+      characterCounterSection.appendChild(characterCounterSpan);
+
       submitSection.appendChild(saveBtn);
       submitSection.appendChild(cancelBtn);
 
       modalBody.appendChild(modalContent);
+      modalBody.appendChild(characterCounterSection);
       modalBody.appendChild(submitSection);
 
       const modal = new Modal({
@@ -89,6 +98,8 @@ export class ContentDataUi {
         placeholder: "Start typing here...",
       });
 
+      characterCounterSpan.innerHTML = (quill.getLength() - 1)+ "/1000";
+
       setTimeout(() => {
         // First focus the editor
         quill.focus();
@@ -104,6 +115,16 @@ export class ContentDataUi {
         const hasContent =
           editorContent !== "<p><br></p>" && editorContent.trim() !== "";
         saveBtn.disabled = !hasContent;
+
+        if (quill.getLength() > 1000) {
+          quill.deleteText(1000, quill.getLength());
+          characterCounterSpan
+          characterCounterSpan.innerHTML = "1000/1000"
+          //console.log("InfoSectionManager");
+      } else {
+        const textLeft = quill.getLength() - 1;
+        characterCounterSpan.innerHTML = textLeft + "/1000"
+      }
 
         // Update button styling based on disabled state
         if (saveBtn.disabled) {

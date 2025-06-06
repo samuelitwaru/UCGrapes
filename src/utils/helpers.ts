@@ -1,3 +1,5 @@
+import { i18n } from "../i18n/i18n";
+
 export const randomIdGenerator = (length: number) => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   let result = "";
@@ -35,4 +37,42 @@ export function truncateString(str: string, n: number): string {
 
 export function capitalizeWords(str:string) {
   return str.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+export function getIconCategories() {
+  let categories: { name: string; label: string }[] = [
+        {
+          name: "Technical Services & Support",
+          label: i18n.t("sidebar.icon_category.general"),
+        },
+        {
+          name: "Real Estate & Rental",
+          label: i18n.t("sidebar.icon_category.real_estate_rental"),
+        },
+        {
+          name: "Community & Connection",
+          label: i18n.t("sidebar.icon_category.community_connection"),
+        },
+        {
+          name: "Building & Furnishing",
+          label: i18n.t("sidebar.icon_category.building_furnishing"),
+        },
+        {
+          name: "Services & Hospitality",
+          label: i18n.t("sidebar.icon_category.services_hospitality"),
+        },
+        {
+          name: "Mobility & Transport",
+          label: i18n.t("sidebar.icon_category.mobility_transport"),
+        },
+        {
+          name: "Care & Wellbeing",
+          label: i18n.t("sidebar.icon_category.care_wellbeing"),
+        },
+        {
+          name: "Communication & Media",
+          label: i18n.t("sidebar.icon_category.communication_media"),
+        },
+      ];
+      return categories;
 }

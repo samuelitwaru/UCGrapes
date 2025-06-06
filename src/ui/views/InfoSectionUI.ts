@@ -205,7 +205,7 @@ export class InfoSectionUI {
           
           <div ${DefaultAttributes}>
             <img class="product-service-image" 
-            ${DefaultAttributes} src="${imageUrl}" alt="Full-width Image">
+            ${DefaultAttributes} src="${imageUrl}" alt="Image Not Found" onerror="this.src='https://staging.comforta.yukon.software/Resources/UCGrapes/public/images/default.jpg'">
           </div>
       </div>
     `;
@@ -244,7 +244,7 @@ export class InfoSectionUI {
                           class="product-service-image"                
                           src="${imageUrl}"
                           data-gjs-type="default"
-                          alt="Full-width Image"
+                          alt="Image Not Found" onerror="this.src='https://staging.comforta.yukon.software/Resources/UCGrapes/public/images/default.jpg'"
                   />
                  </div>
                   `

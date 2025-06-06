@@ -376,7 +376,7 @@ export class JSONToGrapesJSInformation {
             ${DefaultAttributes}
             src="${content.InfoValue}"
             data-gjs-type="default"
-            alt="Full-width Image"
+            alt="Image Not Found" onerror="this.src='https://staging.comforta.yukon.software/Resources/UCGrapes/public/images/default.jpg'"
             style="border: 1px dashed #222f54;"
         />
       </div>
@@ -441,7 +441,7 @@ export class JSONToGrapesJSInformation {
         ${length > 1 ? `<div ${DefaultAttributes} data-gjs-type="text" class="numbertext">${index} / ${length}</div>` : ""}
         <img ${DefaultAttributes} data-gjs-type="default"
             src="${image.InfoImageValue}"
-            alt="Full-width Image" class="product-service-image">
+            alt="Image Not Found" onerror="this.src='https://staging.comforta.yukon.software/Resources/UCGrapes/public/images/default.jpg'" class="product-service-image">
     </div>`;
   }
 
@@ -511,7 +511,7 @@ export class JSONToGrapesJSInformation {
             ${DefaultAttributes}
             src="${baseURL}/Resources/UCGrapes/dist/images/default.jpg"
             data-gjs-type="default"
-            alt="Full-width Image"
+            alt="Image Not Found" onerror="this.src='https://staging.comforta.yukon.software/Resources/UCGrapes/public/images/default.jpg'"
             style="border: 1px dashed #222f54;"
         />
       </div>

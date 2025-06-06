@@ -18,7 +18,7 @@ export class ImageUploadUi {
 
   constructor(controller: ImageUploadManager) {
     this.controller = controller;
-    this.sectionId = controller.sectionId;
+    this.sectionId = controller.getSectionId;
     this.modalContent = document.createElement("div");
     this.init();
   }

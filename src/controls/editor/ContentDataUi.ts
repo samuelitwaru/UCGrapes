@@ -150,12 +150,46 @@ export class ContentDataUi {
       });
       modal.open();
 
+      const Delta = Quill.import('delta');
       const quill = new Quill("#editor", {
+        formats: [
+          'bold',
+          'italic',
+          'underline',
+          'link',
+          'list'
+        ],
         modules: {
           toolbar: [
             ["bold", "italic", "underline", "link"],
             [{ list: "ordered" }, { list: "bullet" }],
           ],
+          clipboard: {
+            matchers: [
+              [ 
+                Node.ELEMENT_NODE,
+                (node: Node, delta: any) => {
+                  return delta.compose(new Delta().retain(delta.length(), {
+                    background: false,
+                    color: false,
+                    font: false,
+                    code: false,
+                    size: false,
+                    strike: false,
+                    script: false,
+                    blockquote: false,
+                    header: false,
+                    indent: false,
+                    align: false,
+                    direction: false,
+                    formula: false,
+                    image: false,
+                    video: false
+                  }));
+                }
+              ] 
+            ]
+          }
         },
         theme: "snow",
         placeholder: "Start typing here...",

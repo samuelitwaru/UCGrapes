@@ -5,3 +5,4 @@ dist/bundle.js
 src/utils/env.ts
 /node_modules/
 dist/
+dist/bundle.js

@@ -172,10 +172,9 @@ export class TileProperties {
     if (tileIcon) {
       const categoryTitle = this.themeManager.getIconCategory(tileIcon);
       this.themeManager.updateThemeIcons(categoryTitle);
-
+      if (!categoryTitle) return;
       let categories: { name: string; label: string }[] = getIconCategories()
       const category = categories.find((cat) => cat.name.toLowerCase() === categoryTitle.toLowerCase())
-      console.log(category)
       
       if (!category) return
       const categoryContainer = document.querySelector(

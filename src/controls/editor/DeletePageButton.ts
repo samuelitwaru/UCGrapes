@@ -2,6 +2,7 @@ import { ToolBoxService } from "../../services/ToolBoxService";
 import { Alert } from "../../ui/components/Alert";
 import { Modal } from "../../ui/components/Modal";
 import { AppVersionManager } from "../versions/AppVersionManager";
+import { EditorEvents } from "./EditorEvents";
 
 export class DeletePageButton {
     button: HTMLButtonElement | null = null;
@@ -84,9 +85,12 @@ export class DeletePageButton {
                 if(!res.error.message) {
                     deleteModal.close();
                     localStorage.removeItem(`data-${this.pageData.PageId}`);
-                    (window as any).app.toolboxApp.editor.init()
                     const versionManager = new AppVersionManager();
                     versionManager.refreshVersion();
+                    const editorEvents = new EditorEvents();
+                    editorEvents.removeEditor()
+                    //console.log((globalThis as any).activeVersion)
+                    //(window as any).app.toolboxApp.editor.init((globalThis as any).activeVersion)
                 }else {
                     new Alert("error", res.error.message)
                 }

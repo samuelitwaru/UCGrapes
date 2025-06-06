@@ -38,7 +38,7 @@ export class EditorManager {
   }
 
   async init(newVersion?: any) {
-    const version = newVersion || await this.appVersion.getActiveVersion();
+    const version = newVersion || await this.appVersion.getUpdatedActiveVersion();
     (globalThis as any).activeVersion = version;
     this.homepage = version?.Pages.find((page: any) => page.PageName === "Home");
     const mainContainer = document.getElementById('main-content') as HTMLDivElement

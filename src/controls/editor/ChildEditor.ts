@@ -72,9 +72,6 @@ export class ChildEditor {
     } else if (this.pageData?.PageType === "Reception") {
       const receptionEditor = new LoadReceptionData(childEditor, this.pageData);
       receptionEditor.setupEditor();
-    } else if (this.pageData?.PageType === "Content") {
-      converter = new JSONToGrapesJSContent(this.pageData);
-      setUpEditor(converter);
     } else if (
       this.pageData?.PageType === "WebLink" ||
       this.pageData?.PageType === "DynamicForm"

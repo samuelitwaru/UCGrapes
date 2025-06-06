@@ -147,6 +147,7 @@ export interface Tile {
     Icon?: string;
     BGColor?: string;
     BGImageUrl?: string;
+    OriginalImageUrl?: string;
     Opacity?: number;
     Permissions?: [];
     Action?: {

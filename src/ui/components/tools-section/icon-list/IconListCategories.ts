@@ -1,6 +1,7 @@
 import { ThemeManager } from "../../../../controls/themes/ThemeManager";
 import { IconList } from "./IconList";
 import { i18n } from "../../../../i18n/i18n";
+import { getIconCategories } from "../../../../utils/helpers";
 
 export class IconListCategories {
   container: HTMLElement;
@@ -11,7 +12,7 @@ export class IconListCategories {
   categoryTitle: string;
   // icons: string[];
 
-  constructor(categoryTitle: string = "General") {
+  constructor(categoryTitle: string = "Technical Services & Support") {
     this.categoryTitle = categoryTitle;
     this.container = document.createElement("div") as HTMLElement;
     this.selectionDiv = document.createElement("div") as HTMLElement;
@@ -62,26 +63,8 @@ export class IconListCategories {
     this.categoryOptions.className = "category-options-list";
     this.categoryOptions.setAttribute("role", "listbox");
 
-    let categories: { name: string; label: string }[] = [
-      {
-        name: "General",
-        label: i18n.t("sidebar.icon_category.general"),
-      },
-      {
-        name: "Services",
-        label: i18n.t("sidebar.icon_category.services"),
-      },
-      {
-        name: "Health",
-        label: i18n.t("sidebar.icon_category.health"),
-      },
-      {
-        name: "Living",
-        label: i18n.t("sidebar.icon_category.living"),
-      },
-    ];
+    let categories: { name: string; label: string }[] = getIconCategories()
     
-
     categories.forEach((category) => {
       const categoryOption = document.createElement("div") as HTMLElement;
       categoryOption.className = "category-option";

@@ -477,12 +477,13 @@ export class EditorEvents {
   }
 
   private processClick(e: MouseEvent, targetElement: Element): void {
+    this.uiManager.activateEditor(this.frameId);
     this.uiManager.clearAllMenuContainers();
     (globalThis as any).eventTarget = targetElement;
 
     this.uiManager.handleTileManager(e);
     this.uiManager.openMenu(e);
-    this.uiManager.initContentDataUi(e);
+    this.uiManager.initContentDataUi(e, this.pageData);
     this.uiManager.activateEditor(this.frameId);
 
     const editorManager = new EditorManager();
@@ -703,10 +704,10 @@ export class EditorEvents {
     this.uiManager.activateEditor(frameId);
   }
 
-  private activateFrameEvents(wrapper: any): void {   
+  private activateFrameEvents(wrapper: any): void {
     if (!this.isHome) return;
     const frameContainer = wrapper?.find('#frame-container')[0]?.getEl();
-    
+
     if (frameContainer) frameContainer.style.pointerEvents = "all";
   }
 

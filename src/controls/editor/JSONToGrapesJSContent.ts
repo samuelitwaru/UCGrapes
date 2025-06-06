@@ -320,7 +320,7 @@ export class JSONToGrapesJSContent {
             ${DefaultAttributes}
             src="${content?.ContentValue}"
             data-gjs-type="default"
-            alt="Full-width Image"
+            alt="Image Not Found" onerror="this.src='https://staging.comforta.yukon.software/Resources/UCGrapes/public/images/default.jpg'"
         />
       </div>
     `;

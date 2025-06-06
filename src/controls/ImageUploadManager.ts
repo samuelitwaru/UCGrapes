@@ -1,5 +1,5 @@
 import { ToolBoxService } from "../services/ToolBoxService";
-import { Image, InfoType, Media } from "../types";
+import { Image, InfoType, Media, Tile } from "../types";
 import { ImageUploadUi } from "../ui/components/tools-section/tile-image/ImageUploadUi";
 import { TileProperties } from "./editor/TileProperties";
 import { InfoSectionManager } from "./InfoSectionManager";
@@ -10,13 +10,16 @@ export class ImageUploadManager {
   private selectedImages: Map<string, { Id: string; Url: string }>;
   private infoId?: string;
   private sectionId?: string;
+  private croppedUrl?: string;
+  private imgFrame!: HTMLElement;
   private saveCallback?: (urls: Array<{ Id: string; Url: string }>) => void;
+
   private currentPosition: {
     x: number;
     y: number;
     scale: number;
-    left: string,
-    top: string,
+    left: string;
+    top: string;
     backgroundSize: string;
     backgroundPosition: string;
   } | null = null;
@@ -66,7 +69,7 @@ export class ImageUploadManager {
   // Get info content
   public getInfoContent(): InfoType | null {
     if (this.infoId) {
-      return this.infoSectionManager.getInfoContent(this.infoId);      
+      return this.infoSectionManager.getInfoContent(this.infoId);
     }
 
     return null;
@@ -81,49 +84,61 @@ export class ImageUploadManager {
     const frameRect = frame.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
-    const relativeX = ((frameRect.left - containerRect.left) / containerRect.width) * 100;
-    const relativeY = ((frameRect.top - containerRect.top) / containerRect.height) * 100;
+    const relativeX =
+      ((frameRect.left - containerRect.left) / containerRect.width) * 100;
+    const relativeY =
+      ((frameRect.top - containerRect.top) / containerRect.height) * 100;
 
     const scaleX = containerRect.width / frameRect.width;
     const scaleY = containerRect.height / frameRect.height;
-    const scale = Math.max(scaleX, scaleY); 
+    const scale = Math.max(scaleX, scaleY);
     let backgroundSizePercent = scale * 100;
     const selectedComponent = (globalThis as any).selectedComponent;
 
-    if (selectedComponent) {
-      const tileWrapperComp = selectedComponent.parent();
-      const rowComponent = tileWrapperComp.parent();
-      const components = rowComponent.components();
+    // if (selectedComponent) {
+    //   const tileWrapperComp = selectedComponent.parent();
+    //   const rowComponent = tileWrapperComp.parent();
+    //   const components = rowComponent.components();
 
-      if (components.length === 1) {
-        if (tileWrapperComp?.getStyle()?.["height"] === '80px') {
-            backgroundSizePercent = 110          
-        } else if (tileWrapperComp?.getStyle()?.["height"] === '120px') {
-            backgroundSizePercent = 120
-        } else if (tileWrapperComp?.getStyle()?.["height"] === '160px') {
-            backgroundSizePercent = 150
-        }
-      }
-    }
+    //   if (components.length === 1) {
+    //     if (tileWrapperComp?.getStyle()?.["height"] === "80px") {
+    //       backgroundSizePercent = 110;
+    //     } else if (tileWrapperComp?.getStyle()?.["height"] === "120px") {
+    //       backgroundSizePercent = 120;
+    //     } else if (tileWrapperComp?.getStyle()?.["height"] === "160px") {
+    //       backgroundSizePercent = 150;
+    //     }
+    //   }
+    // }
 
-    const backgroundPosX = (relativeX / (100 - (frameRect.width / containerRect.width) * 100)) * 100;
-    const backgroundPosY = (relativeY / (100 - (frameRect.height / containerRect.height) * 100)) * 100;
+    const backgroundPosX =
+      (relativeX / (100 - (frameRect.width / containerRect.width) * 100)) * 100;
+    const backgroundPosY =
+      (relativeY / (100 - (frameRect.height / containerRect.height) * 100)) *
+      100;
 
-    const clampedBackgroundPosX = Math.max(0, Math.min(100, backgroundPosX || 0));
-    const clampedBackgroundPosY = Math.max(0, Math.min(100, backgroundPosY || 0));
+    const clampedBackgroundPosX = Math.max(
+      0,
+      Math.min(100, backgroundPosX || 0)
+    );
+    const clampedBackgroundPosY = Math.max(
+      0,
+      Math.min(100, backgroundPosY || 0)
+    );
 
     this.currentPosition = {
       x: relativeX,
       y: relativeY,
-      
+
       left: frame.style.left,
       top: frame.style.top,
-      
+
       scale: scale,
       backgroundSize: `${backgroundSizePercent}%`,
       backgroundPosition: `${clampedBackgroundPosX}% ${clampedBackgroundPosY}%`,
     };
-    
+
+    this.imgFrame = frame;
     return this.currentPosition;
   }
 
@@ -131,15 +146,100 @@ export class ImageUploadManager {
     return this.currentPosition;
   }
 
+  private async createImageFromUrl(imgUrl: string) {
+    if (!this.currentPosition || !this.imgFrame) return;
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = imgUrl;
+
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("Image failed to load"));
+    });
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Get the frame dimensions from currentPosition
+    const frameWidth = this.imgFrame.offsetWidth;
+    const frameHeight = this.imgFrame.offsetHeight;
+
+    // Set canvas to the exact frame size
+    canvas.width = frameWidth;
+    canvas.height = frameHeight;
+
+    // Calculate the source crop dimensions based on background size and position
+    const bgSize = parseFloat(this.currentPosition.backgroundSize) / 100;
+    const [bgPosX, bgPosY] = this.currentPosition.backgroundPosition
+      .split(" ")
+      .map((pos) => parseFloat(pos) / 100);
+
+    // Calculate the source image dimensions after scaling
+    const sourceWidth = img.naturalWidth / bgSize;
+    const sourceHeight = img.naturalHeight / bgSize;
+
+    // Calculate the source crop position
+    const sourceX = (img.naturalWidth - sourceWidth) * bgPosX;
+    const sourceY = (img.naturalHeight - sourceHeight) * bgPosY;
+
+    // Draw the image cropped to the frame dimensions
+    ctx.drawImage(
+      img,
+      sourceX, // source x
+      sourceY, // source y
+      sourceWidth, // source width
+      sourceHeight, // source height
+      0, // destination x
+      0, // destination y
+      frameWidth, // destination width
+      frameHeight // destination height
+    );
+
+    // Apply brightness enhancement
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = Math.min(255, data[i] * 1.1); // red
+      data[i + 1] = Math.min(255, data[i + 1] * 1.1); // green
+      data[i + 2] = Math.min(255, data[i + 2] * 1.1); // blue
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    const croppedDataUrl = canvas.toDataURL("image/jpeg");
+    const mediaSize = Math.round(croppedDataUrl.length * (3 / 4) - 2);
+    const uniqueId = Date.now().toString();
+    const uniqueFileName = `cropped-image-${uniqueId}.jpeg`;
+
+    const newMedia: Media = {
+      MediaId: uniqueId,
+      MediaName: uniqueFileName,
+      MediaUrl: croppedDataUrl,
+      MediaType: "jpeg",
+      MediaSize: mediaSize,
+    };
+
+    const response = await this.toolboxService.uploadCroppedFile(
+      newMedia.MediaUrl,
+      newMedia.MediaName,
+      newMedia.MediaSize,
+      newMedia.MediaType
+    );
+
+    return response.BC_Trn_Media.MediaUrl;
+  }
+
   /* Image Handling Methods */
-  public async handleSave(opacityValue: number) {
+  public async handleSave(opacityValue: number, nextSectionId?: string) {
+    // console.log('handleSave nextSectionId', nextSectionId);
     try {
       const selectedImages = this.getSelectedImages();
 
       if (this.saveCallback) {
         this.saveCallback(selectedImages);
       } else if (this.type === "info") {
-        await this.saveMultipleImages(selectedImages);
+        await this.saveMultipleImages(selectedImages, nextSectionId);
       } else if (this.type === "cta") {
         this.updateInfoCtaButtonImage(selectedImages[0]);
       } else {
@@ -151,29 +251,34 @@ export class ImageUploadManager {
     }
   }
 
-  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>) {
+  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>, nextSectionId?: string) {
     await this.infoSectionManager.addMultipleImages(
       images,
       Boolean(this.infoId),
-      this.infoId
+      this.infoId,
+      nextSectionId
     );
   }
 
-  private async saveSingleImage(image: { Id: string; Url: string }, opacityValue: number) {
+  private async saveSingleImage(
+    image: { Id: string; Url: string },
+    opacityValue: number
+  ) {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return;
 
-    const safeMediaUrl = encodeURI(image.Url);
+    const originalMediaUrl = encodeURI(image.Url);
+    const croppedUrl = await this.createImageFromUrl(image.Url);
+    const safeMediaUrl = encodeURI(croppedUrl || image.Url);
     const styleProperties: any = {
       "background-image": `url(${safeMediaUrl})`,
       "background-blend-mode": "overlay",
     };
 
     if (this.currentPosition) {
-      styleProperties["background-size"] = this.currentPosition.backgroundSize;
-      styleProperties["background-position"] =
-        this.currentPosition.backgroundPosition;
-      styleProperties['background-color'] = `rgba(0, 0, 0, ${opacityValue})`
+      styleProperties["background-size"] = "cover";
+      styleProperties["background-position"] = "center";
+      styleProperties["background-color"] = `rgba(0, 0, 0, ${opacityValue})`;
     }
 
     selectedComponent.addStyle(styleProperties);
@@ -188,6 +293,13 @@ export class ImageUploadManager {
         tileWrapper.getId(),
         "BGImageUrl",
         safeMediaUrl
+      );
+
+      this.infoSectionManager.updateInfoTileAttributes(
+        rowComponent.getId(),
+        tileWrapper.getId(),
+        "OriginalImageUrl",
+        originalMediaUrl
       );
 
       this.infoSectionManager.updateInfoTileAttributes(
@@ -359,11 +471,24 @@ export class ImageUploadManager {
     const selectedComponent = (globalThis as any).selectedComponent;
     if (!selectedComponent) return null;
 
-    const tileElement = selectedComponent.getStyle();
-    const backgroundImage = tileElement["background-image"];
-    if (!backgroundImage) return null;
+    const tileWrapper = selectedComponent.parent();
+    const rowComponent = tileWrapper.parent();
+    const pageData = (globalThis as any).pageData;
 
-    return backgroundImage.replace(/url\(["']?|["']?\)/g, "");
+    const tileAttributes: Tile = this.updateInfoTileAttributes(
+      rowComponent.getId(),
+      tileWrapper.getId()
+    );
+    let backgroundImage;
+    if (tileAttributes.OriginalImageUrl) {
+      backgroundImage = tileAttributes.OriginalImageUrl;
+    } else {
+      const tileElement = selectedComponent.getStyle();
+      backgroundImage = tileElement["background-image"];
+      if (!backgroundImage) return null;
+      backgroundImage.replace(/url\(["']?|["']?\)/g, "");
+    }
+    return backgroundImage;
   }
 
   private readFileAsDataURL(file: File): Promise<string> {
@@ -389,11 +514,11 @@ export class ImageUploadManager {
     return this.infoId;
   }
 
-  get getType () {
+  get getType() {
     return this.type;
   }
 
-  get getSectionId () {
+  get getSectionId() {
     return this.sectionId;
   }
 }

@@ -1,7 +1,7 @@
 import { i18n } from "../../i18n/i18n";
 import { Tile } from "../../types";
 import { ActionInput } from "../../ui/components/tools-section/content-section/ActionInput";
-import { rgbToHex } from "../../utils/helpers";
+import { getIconCategories, rgbToHex } from "../../utils/helpers";
 import { ThemeManager } from "../themes/ThemeManager";
 
 export class TileProperties {
@@ -172,11 +172,16 @@ export class TileProperties {
     if (tileIcon) {
       const categoryTitle = this.themeManager.getIconCategory(tileIcon);
       this.themeManager.updateThemeIcons(categoryTitle);
-
+      if (!categoryTitle) return;
+      let categories: { name: string; label: string }[] = getIconCategories()
+      const category = categories.find((cat) => cat.name.toLowerCase() === categoryTitle.toLowerCase())
+      
+      if (!category) return
       const categoryContainer = document.querySelector(
         "#icon-categories-list"
       ) as HTMLElement;
       const allOptions = categoryContainer.querySelectorAll(".category-option");
+      console.log(allOptions)
       allOptions.forEach((opt) => {
         opt.classList.remove("selected");
         if (opt.getAttribute("data-value") === categoryTitle) {
@@ -185,9 +190,7 @@ export class TileProperties {
             ".selected-category-value"
           ) as HTMLElement;
           if (selectedCategory) {
-            selectedCategory.textContent = i18n.t(
-              `sidebar.icon_category.${categoryTitle.toLowerCase()}`
-            );
+            selectedCategory.textContent = category.label;
           }
         }
       });

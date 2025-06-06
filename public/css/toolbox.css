@@ -1308,6 +1308,10 @@ img.content-page-block {
   word-wrap: break-word;
 }
 
+.info-desc-section ol {
+  list-style-position: inside;
+}
+
 .info-desc-section:hover {
   border: 1px dashed #5068a8;
 }

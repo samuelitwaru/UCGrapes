@@ -483,7 +483,8 @@ export class EditorEvents {
 
     this.uiManager.handleTileManager(e);
     this.uiManager.openMenu(e);
-    this.uiManager.initContentDataUi(e);
+    this.uiManager.initContentDataUi(e, this.pageData);
+    this.uiManager.activateEditor(this.frameId);
 
     const editorManager = new EditorManager();
     editorManager.loadPageHistory(this.pageData);

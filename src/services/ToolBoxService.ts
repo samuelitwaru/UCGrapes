@@ -431,6 +431,34 @@ export class ToolBoxService {
     );
   }
 
+  async uploadCroppedFile(
+    fileData: string,
+    fileName: string,
+    fileSize: number,
+    fileType: string
+  ) {
+    if (!fileData) {
+      throw new Error("Please select a file!");
+    }
+
+    return await this.fetchAPI(
+      "/api/media/upload/cropped",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: JSON.stringify({
+          MediaName: fileName,
+          MediaImageData: fileData,
+          MediaSize: fileSize,
+          MediaType: fileType,
+        }),
+      },
+      true
+    );
+  }
+
   async uploadLogo(logoUrl: string) {
     return await this.fetchAPI("/api/media/upload/logo", {
       method: "POST",

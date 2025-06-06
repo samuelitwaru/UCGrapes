@@ -249,15 +249,17 @@ export class VersionSelectionView {
   }
 
   private async reloadPage(appVersion: any) {
-    this.clearGlobalVariables();
-    (globalThis as any).activeVersion = appVersion.AppVersion;
-    const editorEvents = new EditorEvents();
-    editorEvents.clearAllEditors();
-    const newEditor = new EditorManager();
-    newEditor.init(appVersion.AppVersion);
-    console.log('appVersion.AppVersion', appVersion.AppVersion)
-    this.updateTheme(appVersion.AppVersion?.ThemeId);
-    this.refreshVersionList();
+    // reload browser
+    window.location.reload();
+    // this.clearGlobalVariables();
+    // (globalThis as any).activeVersion = appVersion.AppVersion; 
+    // const editorEvents = new EditorEvents();   
+    // editorEvents.clearAllEditors();
+    // const newEditor = new EditorManager();
+    // newEditor.init(appVersion.AppVersion);
+    // console.log('appVersion.AppVersion', appVersion.AppVersion)
+    // this.updateTheme(appVersion.AppVersion?.ThemeId);
+    // this.refreshVersionList();
   }
 
   private clearGlobalVariables(): void {

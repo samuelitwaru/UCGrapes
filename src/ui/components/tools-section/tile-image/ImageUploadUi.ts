@@ -385,7 +385,6 @@ export class ImageUploadUi {
           container,
           tileAspectRatio
         );
-        const newPosition = this.controller.getCurrentPosition();
       };
 
       document.addEventListener("mousemove", onMouseMove);
@@ -451,7 +450,6 @@ export class ImageUploadUi {
           container,
           tileAspectRatio
         );
-        const newPosition = this.controller.getCurrentPosition();
       }
     });
   }

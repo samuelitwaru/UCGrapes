@@ -636,6 +636,16 @@ img.content-page-block {
   font-size: 12px;
   color: #555;
   text-align:center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.cta-width-medium .cta-label,
+.cta-width-small .cta-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .img-button-container,

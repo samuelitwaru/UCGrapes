@@ -83,7 +83,7 @@ export class JSONToGrapesJSInformation {
             </svg>
                         </div>
                         <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
-        }" class="img-button-label label">${this.getCtaLabel(cta)}</span>
+        }" class="img-button-label label">${this.callGetCtaLabel(cta)}</span>
                         <i ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
         }" class="fa fa-angle-right img-button-arrow"></i>
                     </div>
@@ -113,7 +113,7 @@ export class JSONToGrapesJSInformation {
                     </div>
                     
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
-        }" class="label">${this.getCtaLabel(cta)}</span>
+        }" class="label">${this.callGetCtaLabel(cta)}</span>
                 </button>
             </div>
             `;
@@ -148,7 +148,7 @@ export class JSONToGrapesJSInformation {
                       </svg>
                     </div>
                     <span ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
-        }" class="img-button-label label">${this.getCtaLabel(cta)}</span>
+        }" class="img-button-label label">${this.callGetCtaLabel(cta)}</span>
                     <i ${DefaultAttributes} style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
         }" class="fa fa-angle-right img-button-arrow"></i>
                 </div>
@@ -177,7 +177,7 @@ export class JSONToGrapesJSInformation {
             </svg>
                     </div>
                 </div>
-                <span class="cta-label label" ${DefaultAttributes}>${this.getCtaLabel(
+                <span class="cta-label label" ${DefaultAttributes}>${this.callGetCtaLabel(
         cta
       )}</span>
             </div>
@@ -185,7 +185,7 @@ export class JSONToGrapesJSInformation {
     }
   }
 
-  getCtaLabel(cta: any): string {
+  callGetCtaLabel(cta: any): string {
     const ctaManager = new CtaManager();
     return ctaManager.getCtaLabel(cta);
   }

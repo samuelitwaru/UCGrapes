@@ -24,7 +24,7 @@ export class CtaButtonProperties {
             this.ctaColorAttributes();
             this.ctaActionDisplay();
             this.ctaLabelColor();
-        });        
+        });
     }
 
     private waitForButtonLayoutContainer(callback: () => void) {
@@ -36,7 +36,7 @@ export class CtaButtonProperties {
                 callback();
             }
         }, 100);
-    }    
+    }
 
     private checkButtonLayouts() {
         if (this.ctaAttributes) {
@@ -48,14 +48,17 @@ export class CtaButtonProperties {
                     button.style.border = "2px solid #5068a8";
                 } else if (this.ctaAttributes.CtaButtonType === "Image" && button.id === "image-button-layout") {
                     button.style.border = "2px solid #5068a8";
+                } else if (this.ctaAttributes.CtaButtonType === "Round" && button.id === "round-button-layout") {
+                    button.style.border = "2px solid #5068a8";
+                    button.style.borderRadius = "50%";
                 } else {
-                    button.style.border = "";                    
+                    button.style.border = "";
                 }
             });
         }
     }
 
-    private ctaColorAttributes() {        
+    private ctaColorAttributes() {
         const contentSection = document.querySelector("#content-page-section");
         const colorItems = contentSection?.querySelectorAll(".color-item > input");
         let ctaColorAttribute = this.themeManager.getThemeCtaColor(this.ctaAttributes?.CtaBGColor);
@@ -65,9 +68,9 @@ export class CtaButtonProperties {
                 input.checked = true;
             }
         });
-    }  
-    
-    private ctaActionDisplay () {
+    }
+
+    private ctaActionDisplay() {
         const contentSection = document.querySelector("#content-page-section");
         const labelValue = this.ctaAttributes?.CtaLabel;
         const labelInput = new ActionInput(labelValue, this.ctaAttributes, "label", "cta");
@@ -88,11 +91,11 @@ export class CtaButtonProperties {
         const ctaColorSection = contentSection?.querySelector("#text-color-palette");
         const ctaColorsOptions = ctaColorSection?.querySelectorAll("input");
         ctaColorsOptions?.forEach((option) => {
-          if (option.value === color) {
-            option.checked = true;
-          } else {
-            option.checked = false;
-          }
+            if (option.value === color) {
+                option.checked = true;
+            } else {
+                option.checked = false;
+            }
         });
     }
 }

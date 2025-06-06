@@ -336,12 +336,11 @@ export class CtaManager {
   getCtaLabel(attributes: any): string {
     let label = attributes.CtaLabel;
     if (label) {
-      if (attributes.CtaButtonType === "Round") {
-        label = label.length > 10 ? truncateString(label, 10) : label;
+      if (attributes.CtaButtonType === "Round" || attributes.CtaButtonType === "FullWidth") {
+        // set round to default 36 - truncating will happen in updateRoundCtaWidths
+        label = label.length > 36 ? truncateString(label, 36) : label;
       } else if (attributes.CtaButtonType === "Icon" || attributes.CtaButtonType === "Image") {
         label = label.length > 20 ? truncateString(label, 20) : label;
-      } else if (attributes.CtaButtonType === "FullWidth") {
-        label = label.length > 36 ? truncateString(label, 36) : label;
       }
       return label;
     }
@@ -489,7 +488,7 @@ export class CtaManager {
     attributes: any,
     ctaSVG: string
   ): string {
-    console.log('Creating Ellipse Btn.......', attributes);
+    // console.log('Creating Ellipse Btn.......', attributes);
     const bgColor = this.themeManager.getThemeCtaColor(attributes.CtaBGColor);
     const textColor = attributes.CtaColor || "#ffffff";
     const pageTypeAttribute = this.isInformationPage()

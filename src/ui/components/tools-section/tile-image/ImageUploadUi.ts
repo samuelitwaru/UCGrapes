@@ -14,9 +14,11 @@ export class ImageUploadUi {
   private fileListElement: HTMLElement | null = null;
   private isEditingMode: boolean = false;
   private opacityValue!: number;
+  private sectionId?: string;
 
   constructor(controller: ImageUploadManager) {
     this.controller = controller;
+    this.sectionId = controller.getSectionId;
     this.modalContent = document.createElement("div");
     this.init();
   }
@@ -24,6 +26,8 @@ export class ImageUploadUi {
   private init() {
     this.modalContent.innerHTML = "";
     this.modalContent.className = "tb-modal-content";
+
+    // console.log('ImageUploadUi this.sectionId', this.sectionId);
 
     this.createModalHeader();
     this.createUploadArea();
@@ -108,7 +112,7 @@ export class ImageUploadUi {
     saveBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       try {
-        await this.controller.handleSave(this.opacityValue);
+        await this.controller.handleSave(this.opacityValue, this.sectionId);
         this.closeModal();
       } catch (error) {
         console.error("Error saving images:", error);
@@ -235,13 +239,13 @@ export class ImageUploadUi {
     let aspectRatio = 1;
     let tile: Tile | undefined = this.getTile(selectedComponent);
 
-    if (selectedComponent) {      
+    if (selectedComponent) {
       const selectedComponentEl = selectedComponent.getEl() as HTMLElement;
       const componentWidth = selectedComponentEl.clientWidth;
       const componentHeight = selectedComponentEl.clientHeight;
       aspectRatio = parseFloat((componentWidth / componentHeight).toFixed(2));
 
-      if (aspectRatio > 3) aspectRatio = 2.3 
+      if (aspectRatio > 3) aspectRatio = 2.3
 
       // aspectRatio = 1.5;
       let frameWidth = componentWidth * aspectRatio;
@@ -258,7 +262,7 @@ export class ImageUploadUi {
         frame.style.top = `${tile.Top}`;
       }
 
-      container.style.filter = `brightness(${tile?.Opacity ? (1 - (tile.Opacity)/100) : 1})`;
+      container.style.filter = `brightness(${tile?.Opacity ? (1 - (tile.Opacity) / 100) : 1})`;
 
       frame.style.width = `${frameWidth}px`;
       frame.style.height = `${frameHeight}px`;
@@ -268,7 +272,7 @@ export class ImageUploadUi {
     this.addDragFunctionality(frame, container, aspectRatio);
   }
 
-  private getTile (selectedComponent: any) {
+  private getTile(selectedComponent: any) {
     let tile;
     const infoContent: InfoType | null = this.controller.getInfoContent();
     if (infoContent) {

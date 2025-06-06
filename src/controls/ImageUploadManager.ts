@@ -231,14 +231,15 @@ export class ImageUploadManager {
   }
 
   /* Image Handling Methods */
-  public async handleSave(opacityValue: number) {
+  public async handleSave(opacityValue: number, nextSectionId?: string) {
+    // console.log('handleSave nextSectionId', nextSectionId);
     try {
       const selectedImages = this.getSelectedImages();
 
       if (this.saveCallback) {
         this.saveCallback(selectedImages);
       } else if (this.type === "info") {
-        await this.saveMultipleImages(selectedImages);
+        await this.saveMultipleImages(selectedImages, nextSectionId);
       } else if (this.type === "cta") {
         this.updateInfoCtaButtonImage(selectedImages[0]);
       } else {
@@ -250,11 +251,12 @@ export class ImageUploadManager {
     }
   }
 
-  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>) {
+  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>, nextSectionId?: string) {
     await this.infoSectionManager.addMultipleImages(
       images,
       Boolean(this.infoId),
-      this.infoId
+      this.infoId,
+      nextSectionId
     );
   }
 

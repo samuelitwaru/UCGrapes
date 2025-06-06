@@ -27,10 +27,10 @@ export class ActionInput {
     this.pageData = (globalThis as any).pageData;
     this.inputId = `cta-${this.type}-input`;
     this.input = document.createElement("input");
-    
+
     // Create debounced update function
     this.debouncedUpdate = this.debounce(this.updateInfoSection.bind(this), 500);
-    
+
     this.init();
   }
 
@@ -78,10 +78,13 @@ export class ActionInput {
     if (this.type === "label") {
       const ctaTitle = selectedComponent.find(".label")[0];
       if (ctaTitle) {
-        const isRoundButton = this.ctaAttributes.CtaButtonType;
-        const truncatedTitle = isRoundButton === "Round" 
-          ? this.truncate(10) 
-          : this.truncate(14);
+        let truncatedTitle = this.input.value;
+        if (this.ctaAttributes.CtaButtonType === "Round" || this.ctaAttributes.CtaButtonType === "FullWidth") {
+          // set round to default 36 - truncating will happen in updateRoundCtaWidths
+          truncatedTitle = this.truncate(36);
+        } else if (this.ctaAttributes.CtaButtonType === "Icon" || this.ctaAttributes.CtaButtonType === "Image") {
+          truncatedTitle = this.truncate(20);
+        }
 
         ctaTitle.components(truncatedTitle);
         ctaTitle.addAttributes({ title: this.input.value });
@@ -92,7 +95,7 @@ export class ActionInput {
   private handleInputChange(): void {
     // Update UI immediately for better UX
     this.updateUIElements();
-    
+
     // Debounce the InfoSectionManager updates
     this.debouncedUpdate();
   }
@@ -109,7 +112,7 @@ export class ActionInput {
     this.input.id = this.inputId;
     this.input.style.marginTop = "10px";
     this.input.value = (this.value as string) || "";
-    
+
     // Use readonly instead of disabled for form inputs to allow click events
     if (this.ctaAttributes.CtaType === "Form") {
       this.input.readOnly = true;
@@ -132,14 +135,14 @@ export class ActionInput {
     });
   }
 
-   private openFormEditModal(): void {
+  private openFormEditModal(): void {
     const service = new PageCreationService(
-                true,
-                'Form'
-              );
+      true,
+      'Form'
+    );
     service.handleForm();
   }
-  
+
   private truncate(length: number): string {
     if (this.input.value.length > length) {
       return this.input.value.substring(0, length) + "..";

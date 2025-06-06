@@ -3442,3 +3442,9 @@ input[type="range"]::-webkit-slider-thumb {
 .btn-danger:hover {
   background-color: #b31412;
 }
+
+.ql-editor{
+  height: 250px;
+  max-height: 250px;
+  overflow: auto;
+}

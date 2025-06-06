@@ -64,10 +64,12 @@ export class EditorUIManager {
     new ContentDataUi(e, this.editor, pageData);
   }
 
-  clearAllMenuContainers() {
+  clearAllMenuContainers(excludeTileMenu: boolean = false) {
     const existingMenu = document.querySelectorAll(".menu-container");
     existingMenu.forEach((menu: any) => {
-      menu.remove();
+      if (!excludeTileMenu || menu.classList.contains("info-section-popup")) {
+        menu.remove();
+      }
     });
 
     const infoSections = this.editor?.getWrapper()?.find(".info-section-spacing-container");
@@ -493,7 +495,7 @@ export class EditorUIManager {
     if (selectedComponent && tileInfoSectionAttributes) {
       const tileAttributes = tileInfoSectionAttributes?.Tiles?.find(
         (tile: any) => tile.Id === tileWrapper.getId()
-      );   
+      );
       this.tileProperties = new TileProperties(
         selectedComponent,
         tileAttributes
@@ -597,6 +599,28 @@ export class EditorUIManager {
     this.activateNavigators();
   }
 
+  removeEditor(): void {
+    const frameId = (globalThis as any).frameId;
+    const editorContainer = document.querySelector(
+      `#${frameId}-frame`
+    ) as HTMLElement;
+    if (editorContainer) {
+      this.removeOtherEditors();
+      editorContainer.remove();
+    }
+
+    // Remove the corresponding thumbnail from the thumbs list
+    const thumbsList = document.querySelector(
+      ".editor-thumbs-list"
+    ) as HTMLElement;
+    const thumbToRemove = thumbsList.querySelector(
+      `div[id="${frameId}"]`
+    );
+    if (thumbToRemove) {
+      thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+    }
+  }
+
   removeOtherEditors(): void {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
@@ -605,7 +629,6 @@ export class EditorUIManager {
         while (nextElement) {
           const elementToRemove = nextElement;
           nextElement = nextElement.nextElementSibling;
-
           if (elementToRemove) {
             const thumbsList = document.querySelector(
               ".editor-thumbs-list"
@@ -628,16 +651,16 @@ export class EditorUIManager {
     const framelist = document.querySelectorAll(".mobile-frame");
     framelist.forEach((frame: any) => {
       const thumbsList = document.querySelector(
-          ".editor-thumbs-list"
-        ) as HTMLElement;
-        const thumbToRemove = thumbsList.querySelector(
-          `div[id="${frame.id}"]`
-        );
-        if (thumbToRemove) {
-          thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
-        }
+        ".editor-thumbs-list"
+      ) as HTMLElement;
+      const thumbToRemove = thumbsList.querySelector(
+        `div[id="${frame.id}"]`
+      );
+      if (thumbToRemove) {
+        thumbToRemove.parentElement?.parentElement?.parentElement?.remove();
+      }
 
-        frame.remove();
+      frame.remove();
     });
   }
 

@@ -53,6 +53,9 @@ export class ThemeManager {
     this._currentTheme = this.getThemes().find(
       (theme: Theme) => theme.ThemeId === this.getWindowAppCurrentThemeId()
     ) || null;
+    if(this._currentTheme) {
+      window.DynamicFormSubmitButtonColor = this._currentTheme.ThemeColors.backgroundColor;
+    }
   }
 
   getThemes(): Theme[] {
@@ -81,6 +84,12 @@ export class ThemeManager {
     this.setWindowAppCurrentThemeId(theme.ThemeId);
     this.config.currentThemeId = theme.ThemeId;
     this.applyTheme(theme.ThemeId);
+    if(this._currentTheme) {
+      window.DynamicFormSubmitButtonColor = this._currentTheme.ThemeColors.backgroundColor;
+      if(window.DynamicFormSubmitButton) {
+        window.DynamicFormSubmitButton.style.backgroundColor = window.DynamicFormSubmitButtonColor;
+      }
+    }
   }
 
   updateColorPallete(colors: ThemeColors): void {
@@ -130,7 +139,7 @@ export class ThemeManager {
     return this._currentTheme.ThemeColors[colorName as keyof ThemeColors] || 'transparent';
   }
 
-  getThemeCtaColor(colorName: string = "CtaColorOne"): string {
+  getThemeCtaColor(colorName: string = "ctaColor1"): string {
     if (!this._currentTheme || !this._currentTheme.ThemeCtaColors) {
       console.error("ThemeColors is undefined or invalid:", this._currentTheme);
       return '#5068a8';

@@ -12,7 +12,9 @@ export const i18n = new I18n({
         notify_residents: "Notify residents about the updates made",
         modal_confirm: "Publish",
         modal_cancel: "Cancel",
-        sidebar_mapping_title: "Mapping"
+        sidebar_mapping_title: "Mapping",
+        current_version: "Current published version: ",
+        new_version: "Version being published: "
       },
       debug: {
         label: "Debug",
@@ -155,6 +157,8 @@ export const i18n = new I18n({
         modal_confirm: "Publiceren",
         modal_cancel: "Annuleren",
         sidebar_mapping_title: "Indeling",
+        current_version: "Huidige gepubliceerde versie: ",
+        new_version: "Versie wordt gepubliceerd: "
       },
       debug: {
         label: "Debug",

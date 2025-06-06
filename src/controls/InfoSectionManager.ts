@@ -92,6 +92,7 @@ export class InfoSectionManager {
     isUpdating: boolean = false,
     infoId?: string
   ) {
+    console.log("Selected images: ", selectedImages);
     const imgContainer = this.infoSectionUI.getMultipleImages(
       selectedImages.map((img) => img.Url),
       isUpdating,
@@ -153,10 +154,20 @@ export class InfoSectionManager {
       "Cancel"
     );
 
+    const characterCounterSection = document.createElement("div");
+    characterCounterSection.classList.add("row");
+    const characterCounterSpan = document.createElement("span");
+    characterCounterSection.style.paddingLeft = "20px";
+    characterCounterSpan.style.fontSize = "small";
+    characterCounterSpan.style.fontStyle = "italic";
+    characterCounterSection.appendChild(characterCounterSpan);
+    characterCounterSpan.innerHTML = "0/1000";
+
     submitSection.appendChild(saveBtn);
     submitSection.appendChild(cancelBtn);
 
     modalBody.appendChild(modalContent);
+    modalBody.appendChild(characterCounterSection);
     modalBody.appendChild(submitSection);
 
     const modal = new Modal({
@@ -182,6 +193,8 @@ export class InfoSectionManager {
       quill.focus();
     }, 0);
 
+    
+
     // Monitor content changes to enable/disable save button
     quill.on("text-change", () => {
       const editorContent = quill.root.innerHTML;
@@ -189,6 +202,16 @@ export class InfoSectionManager {
       const hasContent =
         editorContent !== "<p><br></p>" && editorContent.trim() !== "";
       saveBtn.disabled = !hasContent;
+
+      if (quill.getLength() > 1000) {
+          quill.deleteText(1000, quill.getLength());
+          characterCounterSpan
+          characterCounterSpan.innerHTML = "1000/1000"
+          //console.log("InfoSectionManager");
+      } else {
+        const textLeft = quill.getLength() - 1;
+        characterCounterSpan.innerHTML = textLeft + "/1000"
+      }
 
       // Update button styling based on disabled state
       if (saveBtn.disabled) {

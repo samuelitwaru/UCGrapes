@@ -541,7 +541,7 @@ export class ImageUploadUi {
     fileInput.addEventListener("change", async () => {
       if (fileInput.files && fileInput.files.length > 0) {
         const newImages = await this.controller.handleFiles(fileInput.files);
-        newImages.forEach((image) => this.controller.addSelectedImage(image));
+        // newImages.forEach((image) => this.controller.addSelectedImage(image));
         await this.loadMediaFiles();
       }
     });
@@ -567,7 +567,7 @@ export class ImageUploadUi {
         const newImages = await this.controller.handleFiles(
           e.dataTransfer.files
         );
-        newImages.forEach((image) => this.controller.addSelectedImage(image));
+        // newImages.forEach((image) => this.controller.addSelectedImage(image));
         await this.loadMediaFiles();
       }
     });

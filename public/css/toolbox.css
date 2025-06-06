@@ -1294,6 +1294,10 @@ img.content-page-block {
   width: 100%;
 }
 
+.info-desc-section p {
+  word-wrap: break-word;
+}
+
 .info-desc-section:hover {
   border: 1px dashed #5068a8;
 }

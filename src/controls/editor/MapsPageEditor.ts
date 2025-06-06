@@ -42,7 +42,7 @@ export class MapsPageEditor {
     const component = this.editor.addComponents(`
       <div ${DefaultAttributes} id="frame-container" style="position: relative; width: 100%; height: 100vh; overflow: hidden;">
         <div ${DefaultAttributes} id="map-preloader" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
-          <img ${DefaultAttributes} src="/Resources/UCGrapes1/src/images/spinner.gif" width="32" height="32" alt="Loading...">
+          <img ${DefaultAttributes} src="/Resources/UCGrapes/public/images/spinner.gif" width="32" height="32" alt="Loading...">
         </div>
         <iframe 
           id="map-frame"

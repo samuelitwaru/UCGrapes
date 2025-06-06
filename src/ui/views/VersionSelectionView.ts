@@ -6,11 +6,11 @@ import { i18n } from "../../i18n/i18n";
 import { ConfirmationBox } from "../components/ConfirmationBox";
 import { truncateString } from "../../utils/helpers";
 import { AppVersion } from "../../types";
+import { FormField } from "../components/FormField";
 import { EditorEvents } from "../../controls/editor/EditorEvents";
 import { EditorManager } from "../../controls/editor/EditorManager";
 import { ThemeManager } from "../../controls/themes/ThemeManager";
 import { ThemeSelection } from "../components/ThemeSelection";
-import { FormField } from "../components/FormField";
 
 export class VersionSelectionView {
   private container: HTMLElement;
@@ -125,7 +125,7 @@ export class VersionSelectionView {
     versionOption.append(optionButtons);
 
     // Check if this is the active version
-    const activeVersion = (globalThis as any).activeVersion;
+    const activeVersion = (globalThis as any).activeVersion || await this.versionController.getActiveVersion();
     const isActive = (version.AppVersionId === activeVersion.AppVersionId);
 
     if (isActive) {
@@ -278,7 +278,7 @@ export class VersionSelectionView {
     if (!themeId) return;
     const themeSelectionEl = document.getElementById("tb-custom-theme-selection");
     if (themeSelectionEl) {
-      
+
       const themeList = themeSelectionEl.querySelectorAll(".theme-option") as NodeListOf<HTMLDivElement>;
       themeList.forEach((theme) => {
         theme.classList.remove("selected");
@@ -286,7 +286,7 @@ export class VersionSelectionView {
           theme.classList.add("selected");
           const selectedThemeEl = themeSelectionEl.querySelector(`.selected-theme-value`) as HTMLSpanElement;
           if (selectedThemeEl) {
-            selectedThemeEl.innerText = theme.innerText;        
+            selectedThemeEl.innerText = theme.innerText;
           }
         }
       });

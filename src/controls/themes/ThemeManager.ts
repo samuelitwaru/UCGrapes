@@ -53,6 +53,9 @@ export class ThemeManager {
     this._currentTheme = this.getThemes().find(
       (theme: Theme) => theme.ThemeId === this.getWindowAppCurrentThemeId()
     ) || null;
+    if(this._currentTheme) {
+      window.DynamicFormSubmitButtonColor = this._currentTheme.ThemeColors.backgroundColor;
+    }
   }
 
   getThemes(): Theme[] {
@@ -81,6 +84,12 @@ export class ThemeManager {
     this.setWindowAppCurrentThemeId(theme.ThemeId);
     this.config.currentThemeId = theme.ThemeId;
     this.applyTheme(theme.ThemeId);
+    if(this._currentTheme) {
+      window.DynamicFormSubmitButtonColor = this._currentTheme.ThemeColors.backgroundColor;
+      if(window.DynamicFormSubmitButton) {
+        window.DynamicFormSubmitButton.style.backgroundColor = window.DynamicFormSubmitButtonColor;
+      }
+    }
   }
 
   updateColorPallete(colors: ThemeColors): void {

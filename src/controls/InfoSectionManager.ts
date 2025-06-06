@@ -125,6 +125,7 @@ export class InfoSectionManager {
         const infoType: InfoType = {
           InfoId: imageComponent.id,
           InfoType: "Images",
+          InfoPositionId: nextSectionId,
           Images: selectedImages.map((img) => ({
             InfoImageId: `id-${img.Id}` || randomIdGenerator(15),
             InfoImageValue: img.Url,
@@ -348,6 +349,7 @@ export class InfoSectionManager {
   deleteInfoImageOrDesc(infoId: string) {
     const component = this.editor?.getWrapper().find(`#${infoId}`)[0];
     if (component) {
+      console.log('component deleteInfoImageOrDesc', component);
       component.remove();
       this.removeInfoMapper(infoId);
       this.removeConsecutivePlusButtons();

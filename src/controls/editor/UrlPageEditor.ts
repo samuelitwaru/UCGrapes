@@ -109,6 +109,13 @@ export class UrlPageEditor {
                   if (fallback) {
                   }
                   fallback.style.display = "none";
+
+                  const dynamicFormContent = el.contentDocument;
+                  const submitButton = dynamicFormContent.querySelector(".MobileSubmitBtn");
+                  window.DynamicForm = dynamicFormContent;
+                  window.DynamicFormSubmitButton = submitButton;
+                  submitButton.style.backgroundColor = window.DynamicFormSubmitButtonColor;
+                  
                 });
     
                 el.addEventListener("error", (e: any) => {
@@ -148,4 +155,8 @@ export class UrlPageEditor {
           console.error("Error setting up object component:", error.message);
         }
       }
+
+    async renderDynamicFormTheme(colorValue: string) {
+      
+    } 
 }

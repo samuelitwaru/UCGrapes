@@ -18,6 +18,7 @@ import { resizeButton } from "../../utils/gjs-components";
 import { AddInfoSectionButton } from "../components/AddInfoSectionButton";
 import { ImageUploadManager } from "../../controls/ImageUploadManager";
 import { i18n } from "../../i18n/i18n";
+import { CtaManager } from "../../controls/themes/CtaManager";
 
 export class InfoSectionUI {
   themeManager: any;
@@ -44,6 +45,11 @@ export class InfoSectionUI {
 
     document.body.appendChild(modal);
     document.body.appendChild(uploadInput);
+  }
+
+  callGetCtaLabel(cta: any): string {
+    const ctaManager = new CtaManager();
+    return ctaManager.getCtaLabel(cta);
   }
 
   addCtaButton(cta: any) {
@@ -103,7 +109,7 @@ export class InfoSectionUI {
             </svg>
             </div>
             <span ${DefaultAttributes} class="img-button-label label" style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
-      }">${cta.CtaLabel ? truncateString(cta.CtaLabel, 20) : cta.CtaLabel}</span>
+      }">${this.callGetCtaLabel(cta)}</span>
                         <i ${DefaultAttributes} class="fa fa-angle-right img-button-arrow" style="color:${cta.CtaColor ? cta.CtaColor : "#ffffff"
       }"></i>
         </div>

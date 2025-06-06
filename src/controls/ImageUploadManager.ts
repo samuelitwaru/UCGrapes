@@ -9,7 +9,7 @@ export class ImageUploadManager {
   private toolboxService: ToolBoxService;
   private selectedImages: Map<string, { Id: string; Url: string }>;
   private infoId?: string;
-  private sectionId?: string;
+  public sectionId?: string;
   private saveCallback?: (urls: Array<{ Id: string; Url: string }>) => void;
   private currentPosition: {
     x: number;
@@ -66,7 +66,7 @@ export class ImageUploadManager {
   // Get info content
   public getInfoContent(): InfoType | null {
     if (this.infoId) {
-      return this.infoSectionManager.getInfoContent(this.infoId);      
+      return this.infoSectionManager.getInfoContent(this.infoId);
     }
 
     return null;
@@ -86,7 +86,7 @@ export class ImageUploadManager {
 
     const scaleX = containerRect.width / frameRect.width;
     const scaleY = containerRect.height / frameRect.height;
-    const scale = Math.max(scaleX, scaleY); 
+    const scale = Math.max(scaleX, scaleY);
     let backgroundSizePercent = scale * 100;
     const selectedComponent = (globalThis as any).selectedComponent;
 
@@ -97,11 +97,11 @@ export class ImageUploadManager {
 
       if (components.length === 1) {
         if (tileWrapperComp?.getStyle()?.["height"] === '80px') {
-            backgroundSizePercent = 110          
+          backgroundSizePercent = 110
         } else if (tileWrapperComp?.getStyle()?.["height"] === '120px') {
-            backgroundSizePercent = 120
+          backgroundSizePercent = 120
         } else if (tileWrapperComp?.getStyle()?.["height"] === '160px') {
-            backgroundSizePercent = 150
+          backgroundSizePercent = 150
         }
       }
     }
@@ -115,15 +115,15 @@ export class ImageUploadManager {
     this.currentPosition = {
       x: relativeX,
       y: relativeY,
-      
+
       left: frame.style.left,
       top: frame.style.top,
-      
+
       scale: scale,
       backgroundSize: `${backgroundSizePercent}%`,
       backgroundPosition: `${clampedBackgroundPosX}% ${clampedBackgroundPosY}%`,
     };
-    
+
     return this.currentPosition;
   }
 
@@ -132,14 +132,15 @@ export class ImageUploadManager {
   }
 
   /* Image Handling Methods */
-  public async handleSave(opacityValue: number) {
+  public async handleSave(opacityValue: number, nextSectionId?: string) {
+    // console.log('handleSave nextSectionId', nextSectionId);
     try {
       const selectedImages = this.getSelectedImages();
 
       if (this.saveCallback) {
         this.saveCallback(selectedImages);
       } else if (this.type === "info") {
-        await this.saveMultipleImages(selectedImages);
+        await this.saveMultipleImages(selectedImages, nextSectionId);
       } else if (this.type === "cta") {
         this.updateInfoCtaButtonImage(selectedImages[0]);
       } else {
@@ -151,11 +152,12 @@ export class ImageUploadManager {
     }
   }
 
-  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>) {
+  private async saveMultipleImages(images: Array<{ Id: string; Url: string }>, nextSectionId?: string) {
     await this.infoSectionManager.addMultipleImages(
       images,
       Boolean(this.infoId),
-      this.infoId
+      this.infoId,
+      nextSectionId
     );
   }
 
@@ -389,11 +391,11 @@ export class ImageUploadManager {
     return this.infoId;
   }
 
-  get getType () {
+  get getType() {
     return this.type;
   }
 
-  get getSectionId () {
+  get getSectionId() {
     return this.sectionId;
   }
 }

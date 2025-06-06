@@ -60,8 +60,8 @@ export class EditorUIManager {
     );
   }
 
-  initContentDataUi(e: MouseEvent) {
-    new ContentDataUi(e, this.editor, this.pageData);
+  initContentDataUi(e: MouseEvent, pageData: any) {
+    new ContentDataUi(e, this.editor, pageData);
   }
 
   clearAllMenuContainers() {

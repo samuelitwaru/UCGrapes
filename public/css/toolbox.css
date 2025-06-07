@@ -247,10 +247,6 @@ button {
   padding: 0;
 }
 
-.action-button:hover {
-  /* transform: scale(1.1); */
-}
-
 .action-button:disabled {
   display: none;
 }

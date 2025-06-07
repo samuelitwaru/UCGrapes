@@ -486,9 +486,8 @@ export class ImageUploadManager {
       const tileElement = selectedComponent.getStyle();
       backgroundImage = tileElement["background-image"];
       if (!backgroundImage) return null;
-      backgroundImage.replace(/url\(["']?|["']?\)/g, "");
     }
-    return backgroundImage;
+    return backgroundImage.replace(/url\(["']?|["']?\)/g, "");
   }
 
   private readFileAsDataURL(file: File): Promise<string> {

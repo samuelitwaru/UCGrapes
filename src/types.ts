@@ -1,17 +1,17 @@
 import { DateTime } from "i18n-js";
 
 export interface ActionPage {
-    PageId: string;
-    PageName: string;
-    TileName: string;
-    PageType: string;
+  PageId: string;
+  PageName: string;
+  TileName: string;
+  PageType: string;
 }
 
 export interface AppVersion {
-    AppVersionId: string;
-    AppVersionName: string;
-    IsActive: boolean;
-    ThemeId: string;
+  AppVersionId: string;
+  AppVersionName: string;
+  IsActive: boolean;
+  ThemeId: string;
 }
 
 export interface CallToAction {
@@ -25,44 +25,44 @@ export interface CallToAction {
 
 
 export interface Category {
-    name: string;
-    displayName: string;
-    label: string;
-    options: ActionPage[];
-    canCreatePage: boolean;
-  }
+  name: string;
+  displayName: string;
+  label: string;
+  options: ActionPage[];
+  canCreatePage: boolean;
+}
 
-  export interface CtaAttributes {
-    CtaId: string;
-    CtaType: string;
-    CtaLabel?: string;
-    CtaAction?: string;
-    CtaColor?: string;
-    CtaBGColor?: string;
-    CtaButtonType?: string;
-    CtaButtonImgUrl?: string;
-    CtaButtonIcon?: string;
-    CtaSupplierIsConnected?: boolean;
-    CtaConnectedSupplierId?: string;
-    Action? : {}
+export interface CtaAttributes {
+  CtaId: string;
+  CtaType: string;
+  CtaLabel?: string;
+  CtaAction?: string;
+  CtaColor?: string;
+  CtaBGColor?: string;
+  CtaButtonType?: string;
+  CtaButtonImgUrl?: string;
+  CtaButtonIcon?: string;
+  CtaSupplierIsConnected?: boolean;
+  CtaConnectedSupplierId?: string;
+  Action?: {}
 }
 
 export interface DebugResults {
-    Summary: {
-        TotalUrls: string;
-        SuccessCount: string;
-        FailureCount: string;
-    };
-    Pages: {
-        Page: string;
-        UrlList: {
-            Url: string;
-            StatusCode: number;
-            StatusMessage: string;
-            AffectedType: string;
-            AffectedName: string;
-        }[];
+  Summary: {
+    TotalUrls: string;
+    SuccessCount: string;
+    FailureCount: string;
+  };
+  Pages: {
+    Page: string;
+    UrlList: {
+      Url: string;
+      StatusCode: number;
+      StatusMessage: string;
+      AffectedType: string;
+      AffectedName: string;
     }[];
+  }[];
 }
 
 
@@ -72,7 +72,7 @@ export interface InfoType {
   InfoValue?: string;
   InfoPositionId?: string;
   CtaAttributes?: CtaAttributes;
-  Tiles?:Tile[];
+  Tiles?: Tile[];
   Images?: Image[];
 }
 
@@ -83,11 +83,11 @@ export interface Image {
 }
 
 export interface MenuItem {
-    id: string;
-    label: string;
-    name?: string;
-    action: (categoryItems?: any[]) => void;
-    expandable?: boolean;
+  id: string;
+  label: string;
+  name?: string;
+  action: (categoryItems?: any[]) => void;
+  expandable?: boolean;
 }
 
 export interface SelectOptionConfig<DropdownOption> {
@@ -116,61 +116,62 @@ export interface SupplierList {
 }
 
 export interface Template {
+  Id: string;
+  Rows: Array<{
     Id: string;
-    Rows: Array<{
-        Id: string;
-        Tiles: Array<{
-            Id: string;
-            Name: string;
-            Text: string;
-            Color: string;
-            Align: string;
-            Icon: string;
-            BGColor: string;
-            BGImageUrl: string;
-            Opacity: string;
-            Action: {
-                ObjectType: string;
-                ObjectId: string;
-                ObjectUrl: string;
-            }
-        }>
+    Tiles: Array<{
+      Id: string;
+      Name: string;
+      Text: string;
+      Color: string;
+      Align: string;
+      Icon: string;
+      BGColor: string;
+      BGImageUrl: string;
+      Opacity: string;
+      Action: {
+        ObjectType: string;
+        ObjectId: string;
+        ObjectUrl: string;
+      }
     }>
+  }>
 }
 
 export interface Tile {
-    Id: string;
-    Name?: string;
-    Text?: string;
-    Color?: string;
-    Align?: string;
-    Icon?: string;
-    BGColor?: string;
-    BGImageUrl?: string;
-    OriginalImageUrl?: string;
-    Opacity?: number;
-    Permissions?: [];
-    Action?: {
-        ObjectType?: string;
-        ObjectId?: string;
-        ObjectUrl?: string;
-    };
-    BGSize?: string,
-    BGPosition?: string
-    Left?: string;
-    Top?: string;
+  Id: string;
+  Name?: string;
+  Text?: string;
+  Color?: string;
+  Align?: string;
+  Icon?: string;
+  BGColor?: string;
+  BGImageUrl?: string;
+  OriginalImageUrl?: string;
+  Opacity?: number;
+  Permissions?: [];
+  Action?: {
+    ObjectType?: string;
+    ObjectId?: string;
+    ObjectUrl?: string;
+    FormId?: number;
+  };
+  BGSize?: string,
+  BGPosition?: string
+  Left?: string;
+  Top?: string;
 }
 
 export interface TrashItem {
-    Type: string;
-    Page: any;
-    Version: AppVersion;
-    DeletedAt: DateTime;
-    TrashId: string;
+  Type: string;
+  Page: any;
+  Version: AppVersion;
+  DeletedAt: DateTime;
+  TrashId: string;
 }
 
 export interface TrashItems {
-    TrashItems: TrashItem[];
+  TrashItems: TrashItem[];
 }
 
 
@@ -211,52 +212,52 @@ export interface Theme {
 }
 
 export interface Form {
-    FormId: string;
-    ReferenceName: string;
-    FormUrl: string;
+  FormId: string;
+  ReferenceName: string;
+  FormUrl: string;
 }
 
 export interface Media {
-    MediaId: string;
-    MediaName: string;
-    MediaImage?: Uint8Array | null;
-    MediaImage_GXI?: string | null;
-    MediaSize: number;
-    MediaType: string;
-    MediaUrl: string;
+  MediaId: string;
+  MediaName: string;
+  MediaImage?: Uint8Array | null;
+  MediaImage_GXI?: string | null;
+  MediaSize: number;
+  MediaType: string;
+  MediaUrl: string;
 }
 
 export interface Page {
-    PageId: string;
-    LocationId: string;
-    PageName: string;
-    PageJsonContent?: string | null;
-    PageGJSHTML?: string | null;
-    PageGJSJson?: string | null;
-    PageIsPublished?: boolean | null;
-    PageIsPredefined: boolean;
-    PageIsContentPage?: boolean | null;
-    PageIsDynamicForm: boolean;
-    PageIsWeblinkPage: boolean;
-    PageChildren?: string | null;
-    ProductServiceId?: string | null;
-    OrganisationId: string;
-    PageTileName?: string;
+  PageId: string;
+  LocationId: string;
+  PageName: string;
+  PageJsonContent?: string | null;
+  PageGJSHTML?: string | null;
+  PageGJSJson?: string | null;
+  PageIsPublished?: boolean | null;
+  PageIsPredefined: boolean;
+  PageIsContentPage?: boolean | null;
+  PageIsDynamicForm: boolean;
+  PageIsWeblinkPage: boolean;
+  PageChildren?: string | null;
+  ProductServiceId?: string | null;
+  OrganisationId: string;
+  PageTileName?: string;
 }
 
 export interface ProductService {
-    ProductServiceId: string;
-    LocationId: string;
-    OrganisationId: string;
-    ProductServiceName: string;
-    ProductServiceTileName: string;
-    ProductServiceDescription: string;
-    ProductServiceImage: Uint8Array;
-    ProductServiceImage_GXI?: string | null;
-    ProductServiceGroup: string;
-    SupplierGenId?: string | null;
-    SupplierAGBId?: string | null;
-    ProductServiceClass: string;
+  ProductServiceId: string;
+  LocationId: string;
+  OrganisationId: string;
+  ProductServiceName: string;
+  ProductServiceTileName: string;
+  ProductServiceDescription: string;
+  ProductServiceImage: Uint8Array;
+  ProductServiceImage_GXI?: string | null;
+  ProductServiceGroup: string;
+  SupplierGenId?: string | null;
+  SupplierAGBId?: string | null;
+  ProductServiceClass: string;
 }
 
 export interface ResizeState {

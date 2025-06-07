@@ -125,7 +125,7 @@ export class VersionSelectionView {
     versionOption.append(optionButtons);
 
     // Check if this is the active version
-    const activeVersion = (globalThis as any).activeVersion;
+    const activeVersion = (globalThis as any).activeVersion || await this.versionController.getActiveVersion();
     const isActive = (version.AppVersionId === activeVersion.AppVersionId);
 
     if (isActive) {

@@ -184,7 +184,7 @@ export class ActionListManager {
       ["Name", form.PageName],
       ["Action.ObjectType", "DynamicForm"],
       ["Action.ObjectId", childPage.PageId],
-      ["Action.ObjectUrl", formUrl],
+      ["Action.ObjectUrl", form.PageUrl || formUrl],
     ];
 
     for (const [property, value] of updates) {

@@ -1312,6 +1312,10 @@ img.content-page-block {
   list-style-position: inside;
 }
 
+.info-desc-section ul {
+  list-style-position: inside;
+}
+
 .info-desc-section:hover {
   border: 1px dashed #5068a8;
 }

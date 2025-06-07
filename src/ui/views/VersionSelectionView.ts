@@ -126,7 +126,9 @@ export class VersionSelectionView {
 
     // Check if this is the active version
     const activeVersion = (globalThis as any).activeVersion;
-    const isActive = (version.AppVersionId === activeVersion.AppVersionId);
+    // console.log('activeVersion', activeVersion);
+    // console.log('version', version);
+    const isActive = (version.AppVersionId === activeVersion?.AppVersionId);
 
     if (isActive) {
       versionOption.classList.add("selected");
@@ -447,7 +449,7 @@ export class VersionSelectionView {
     this.versionSelection = document.createElement("div");
     this.versionList = document.createElement("div");
     this.activeVersion = document.createElement("span");
-    
+
     await this.init();
   }
 

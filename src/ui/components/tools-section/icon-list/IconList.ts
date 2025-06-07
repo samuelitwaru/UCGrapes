@@ -7,7 +7,7 @@ import { DefaultAttributes } from "../../../../utils/default-attributes";
 export class IconList {
   private themeManager: ThemeManager;
   private icons: HTMLElement[] = [];
-  iconsCategory: string = "General";
+  iconsCategory: string = "Technical Services & Support";
 
   constructor(themeManager: ThemeManager, iconsCategory: string) {
     this.themeManager = themeManager;

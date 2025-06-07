@@ -480,8 +480,8 @@ export class ImageUploadManager {
       tileWrapper.getId()
     );
     let backgroundImage;
-    if (tileAttributes.OriginalImageUrl) {
-      backgroundImage = tileAttributes.OriginalImageUrl;
+    if (tileAttributes?.OriginalImageUrl) {
+      backgroundImage = tileAttributes?.OriginalImageUrl;
     } else {
       const tileElement = selectedComponent.getStyle();
       backgroundImage = tileElement["background-image"];

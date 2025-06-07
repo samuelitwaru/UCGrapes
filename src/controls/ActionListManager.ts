@@ -7,6 +7,7 @@ import { ChildEditor } from "./editor/ChildEditor";
 import { AppVersionManager } from "./versions/AppVersionManager";
 import { i18n } from "../i18n/i18n";
 import { MenuItem } from "../types";
+import { InfoSectionManager } from "./InfoSectionManager";
 
 export class ActionListManager {
   private toolboxService: ToolBoxService;
@@ -189,7 +190,13 @@ export class ActionListManager {
     ];
 
     for (const [property, value] of updates) {
-      (globalThis as any).tileMapper.updateTile(tileId, property, value);
+      const infoSectionManager = new InfoSectionManager();
+      infoSectionManager.updateInfoTileAttributes(
+        rowId,
+        tileId,
+        property,
+        value
+      );
     }
     const tileAttributes = (globalThis as any).tileMapper.getTile(
       rowId,

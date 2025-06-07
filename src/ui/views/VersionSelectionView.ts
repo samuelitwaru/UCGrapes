@@ -125,8 +125,10 @@ export class VersionSelectionView {
     versionOption.append(optionButtons);
 
     // Check if this is the active version
-    const activeVersion = (globalThis as any).activeVersion || await this.versionController.getActiveVersion();
-    const isActive = (version.AppVersionId === activeVersion.AppVersionId);
+    const activeVersion = (globalThis as any).activeVersion;
+    // console.log('activeVersion', activeVersion);
+    // console.log('version', version);
+    const isActive = (version.AppVersionId === activeVersion?.AppVersionId);
 
     if (isActive) {
       versionOption.classList.add("selected");
@@ -447,7 +449,7 @@ export class VersionSelectionView {
     this.versionSelection = document.createElement("div");
     this.versionList = document.createElement("div");
     this.activeVersion = document.createElement("span");
-    
+
     await this.init();
   }
 
